@@ -1,0 +1,78 @@
+//
+//  PublicTypes.h
+//  NinchatSDK
+//
+//  Created by Matti Dahlbom on 08/07/2018.
+//  Copyright © 2018 Somia Reality Oy. All rights reserved.
+//
+
+#ifndef PublicTypes_h
+#define PublicTypes_h
+
+/** Asynchronous completion callback for the -start operation. */
+typedef void (^startCallbackBlock)(NSError* _Nullable error);
+
+/** Defines the type for a overrideable color asset. */
+typedef NSString* const NINImageAssetKey NS_STRING_ENUM;
+
+// Image asset keys
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconLoader;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatWritingIndicator;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatBackground;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatCloseButton;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconChatCloseButton;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatBubbleLeft;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatBubbleLeftRepeated;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatBubbleRight;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatBubbleRightRepeated;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconRatingPositive;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconRatingNeutral;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconRatingNegative;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatAvatarRight;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatAvatarLeft;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatPlayVideo;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconTextareaCamera;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconTextareaAttachment;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyTextareaSubmitButton;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconTextareaSubmitButtonIcon;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconVideoToggleFull;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconVideoToggleNormal;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconVideoSoundOn;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconVideoSoundOff;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconVideoMicrophoneOn;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconVideoMicrophoneOff;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconVideoCameraOn;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconVideoCameraOff;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconVideoHangup;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyPrimaryButton;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeySecondaryButton;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconDownload;
+
+
+/** Defines the type for a overrideable color asset. */
+typedef NSString* const NINColorAssetKey NS_STRING_ENUM;
+
+// Color asset keys
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyButtonPrimaryText;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyButtonSecondaryText;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyInfoText;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyChatName;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyChatTimestamp;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyChatBubbleLeftText;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyChatBubbleRightText;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyTextareaText;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyTextareaSubmitText;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyChatBubbleLeftLink;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyChatBubbleRightLink;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyModalBackground;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyModalText;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetBackgroundTop;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetTextTop;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetLink;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetBackgroundBottom;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetTextBottom;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetRatingPositiveText;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetRatingNeutralText;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetRatingNegativeText;
+
+#endif /* PublicTypes_h */

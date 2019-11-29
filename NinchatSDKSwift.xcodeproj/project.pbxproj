@@ -3,13 +3,19 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		855B9F1B238ECDB30081A9C6 /* NinchatSDKSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 855B9F11238ECDB30081A9C6 /* NinchatSDKSwift.framework */; };
 		855B9F20238ECDB30081A9C6 /* NinchatSDKSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855B9F1F238ECDB30081A9C6 /* NinchatSDKSwiftTests.swift */; };
 		855B9F22238ECDB30081A9C6 /* NinchatSDKSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 855B9F14238ECDB30081A9C6 /* NinchatSDKSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		855B9F2F238ECE650081A9C6 /* NINChatExceptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855B9F2B238ECE650081A9C6 /* NINChatExceptions.swift */; };
+		855B9F30238ECE650081A9C6 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855B9F2C238ECE650081A9C6 /* Constants.swift */; };
+		855B9F31238ECE650081A9C6 /* NINChatSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855B9F2D238ECE650081A9C6 /* NINChatSession.swift */; };
+		855B9F32238ECE650081A9C6 /* NINChatSessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855B9F2E238ECE650081A9C6 /* NINChatSessionDelegate.swift */; };
+		855B9F7B238ED5340081A9C6 /* Pods_NinchatSDKSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 495ADA60487CD354EDC07332 /* Pods_NinchatSDKSwift.framework */; };
+		855B9F9E238ED9DC0081A9C6 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 855B9F9D238ED9DC0081A9C6 /* Podfile */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -23,12 +29,23 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		09DD5867425B01E4FDCE822C /* Pods-NinchatSDKSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwift.release.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwift/Pods-NinchatSDKSwift.release.xcconfig"; sourceTree = "<group>"; };
+		495ADA60487CD354EDC07332 /* Pods_NinchatSDKSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDKSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		852751D8238EE67000B6A44A /* NinchatSDKSwift.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = NinchatSDKSwift.podspec; sourceTree = "<group>"; };
+		852751DA238EE67800B6A44A /* BUILDING.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = BUILDING.md; path = "../ninchat-sdk-ios/BUILDING.md"; sourceTree = "<group>"; };
+		852751DB238EE67800B6A44A /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = "../ninchat-sdk-ios/README.md"; sourceTree = "<group>"; };
 		855B9F11238ECDB30081A9C6 /* NinchatSDKSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NinchatSDKSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		855B9F14238ECDB30081A9C6 /* NinchatSDKSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NinchatSDKSwift.h; sourceTree = "<group>"; };
 		855B9F15238ECDB30081A9C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		855B9F1A238ECDB30081A9C6 /* NinchatSDKSwiftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NinchatSDKSwiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		855B9F1F238ECDB30081A9C6 /* NinchatSDKSwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NinchatSDKSwiftTests.swift; sourceTree = "<group>"; };
 		855B9F21238ECDB30081A9C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		855B9F2B238ECE650081A9C6 /* NINChatExceptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINChatExceptions.swift; sourceTree = "<group>"; };
+		855B9F2C238ECE650081A9C6 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		855B9F2D238ECE650081A9C6 /* NINChatSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINChatSession.swift; sourceTree = "<group>"; };
+		855B9F2E238ECE650081A9C6 /* NINChatSessionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINChatSessionDelegate.swift; sourceTree = "<group>"; };
+		855B9F9D238ED9DC0081A9C6 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		ED659B1BF359B2E2971FF138 /* Pods-NinchatSDKSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwift.debug.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwift/Pods-NinchatSDKSwift.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,6 +53,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				855B9F7B238ED5340081A9C6 /* Pods_NinchatSDKSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -50,12 +68,35 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1F3E30E3300160A871D02F85 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				495ADA60487CD354EDC07332 /* Pods_NinchatSDKSwift.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		51F561339DA2FBB7CF2F5A02 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				ED659B1BF359B2E2971FF138 /* Pods-NinchatSDKSwift.debug.xcconfig */,
+				09DD5867425B01E4FDCE822C /* Pods-NinchatSDKSwift.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		855B9F07238ECDB30081A9C6 = {
 			isa = PBXGroup;
 			children = (
+				855B9F9D238ED9DC0081A9C6 /* Podfile */,
+				852751D8238EE67000B6A44A /* NinchatSDKSwift.podspec */,
+				852751DA238EE67800B6A44A /* BUILDING.md */,
+				852751DB238EE67800B6A44A /* README.md */,
 				855B9F13238ECDB30081A9C6 /* NinchatSDKSwift */,
 				855B9F1E238ECDB30081A9C6 /* NinchatSDKSwiftTests */,
 				855B9F12238ECDB30081A9C6 /* Products */,
+				51F561339DA2FBB7CF2F5A02 /* Pods */,
+				1F3E30E3300160A871D02F85 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -71,6 +112,10 @@
 		855B9F13238ECDB30081A9C6 /* NinchatSDKSwift */ = {
 			isa = PBXGroup;
 			children = (
+				855B9F2C238ECE650081A9C6 /* Constants.swift */,
+				855B9F2B238ECE650081A9C6 /* NINChatExceptions.swift */,
+				855B9F2D238ECE650081A9C6 /* NINChatSession.swift */,
+				855B9F2E238ECE650081A9C6 /* NINChatSessionDelegate.swift */,
 				855B9F14238ECDB30081A9C6 /* NinchatSDKSwift.h */,
 				855B9F15238ECDB30081A9C6 /* Info.plist */,
 			);
@@ -104,10 +149,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 855B9F25238ECDB30081A9C6 /* Build configuration list for PBXNativeTarget "NinchatSDKSwift" */;
 			buildPhases = (
+				B479ECA229361050905B7FA9 /* [CP] Check Pods Manifest.lock */,
 				855B9F0C238ECDB30081A9C6 /* Headers */,
 				855B9F0D238ECDB30081A9C6 /* Sources */,
 				855B9F0E238ECDB30081A9C6 /* Frameworks */,
 				855B9F0F238ECDB30081A9C6 /* Resources */,
+				49C5F568678769EA44412BA2 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -148,6 +195,7 @@
 				TargetAttributes = {
 					855B9F10238ECDB30081A9C6 = {
 						CreatedOnToolsVersion = 11.2.1;
+						LastSwiftMigration = 1120;
 					};
 					855B9F19238ECDB30081A9C6 = {
 						CreatedOnToolsVersion = 11.2.1;
@@ -178,6 +226,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				855B9F9E238ED9DC0081A9C6 /* Podfile in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -190,11 +239,57 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		49C5F568678769EA44412BA2 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwift/Pods-NinchatSDKSwift-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwift/Pods-NinchatSDKSwift-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwift/Pods-NinchatSDKSwift-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B479ECA229361050905B7FA9 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-NinchatSDKSwift-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		855B9F0D238ECDB30081A9C6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				855B9F2F238ECE650081A9C6 /* NINChatExceptions.swift in Sources */,
+				855B9F30238ECE650081A9C6 /* Constants.swift in Sources */,
+				855B9F31238ECE650081A9C6 /* NINChatSession.swift in Sources */,
+				855B9F32238ECE650081A9C6 /* NINChatSessionDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -339,7 +434,9 @@
 		};
 		855B9F26238ECDB30081A9C6 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = ED659B1BF359B2E2971FF138 /* Pods-NinchatSDKSwift.debug.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 86P62K2K2N;
@@ -356,6 +453,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ninchat.NinchatSDKSwift;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -363,7 +462,9 @@
 		};
 		855B9F27238ECDB30081A9C6 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 09DD5867425B01E4FDCE822C /* Pods-NinchatSDKSwift.release.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 86P62K2K2N;
@@ -380,6 +481,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ninchat.NinchatSDKSwift;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -388,6 +490,7 @@
 		855B9F29238ECDB30081A9C6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86P62K2K2N;
 				INFOPLIST_FILE = NinchatSDKSwiftTests/Info.plist;
@@ -406,6 +509,7 @@
 		855B9F2A238ECDB30081A9C6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86P62K2K2N;
 				INFOPLIST_FILE = NinchatSDKSwiftTests/Info.plist;

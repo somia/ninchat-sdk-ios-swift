@@ -1,0 +1,27 @@
+language: swift
+osx_image: xcode11.2
+
+xcode_workspace: NinchatSDKSwift.xcworkspace
+xcode_scheme: NinchatSDKSwift
+xcode_destination: platform=iOS Simulator,OS=13.2,name=iPhone 8
+
+before_install:
+  - git submodule update --init --recursive
+  - brew update
+
+  - brew install go
+  - go get -u golang.org/x/mobile/cmd/gomobile
+  - export PATH=$PATH:~/go/bin
+  - gomobile init
+  - ./update-go-framework.sh
+  
+  - brew install cocoapods
+  - pod setup
+
+  - gem install ocunit2junit
+  - gem install xcpretty
+
+script:
+  - pod update
+  - pod install
+  - set -o pipefail && xcodebuild -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -configuration "Release" | tee raw.txt | xcpretty -c cat raw.txt | ocunit2junit

@@ -1,0 +1,57 @@
+PODS:
+  - AFNetworking (3.2.1):
+    - AFNetworking/NSURLSession (= 3.2.1)
+    - AFNetworking/Reachability (= 3.2.1)
+    - AFNetworking/Security (= 3.2.1)
+    - AFNetworking/Serialization (= 3.2.1)
+    - AFNetworking/UIKit (= 3.2.1)
+  - AFNetworking/NSURLSession (3.2.1):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (3.2.1)
+  - AFNetworking/Security (3.2.1)
+  - AFNetworking/Serialization (3.2.1)
+  - AFNetworking/UIKit (3.2.1):
+    - AFNetworking/NSURLSession
+  - GoogleWebRTC (1.1.27828)
+  - NinchatLowLevelClient (0.0.11)
+  - NinchatSDK (0.0.39):
+    - AFNetworking (~> 3.0)
+    - GoogleWebRTC (~> 1.1)
+    - NinchatLowLevelClient (~> 0)
+    - NinchatSDK/SDK (= 0.0.39)
+  - NinchatSDK/SDK (0.0.39):
+    - AFNetworking (~> 3.0)
+    - GoogleWebRTC (~> 1.1)
+    - NinchatLowLevelClient (~> 0)
+
+DEPENDENCIES:
+  - NinchatSDK (from `https://github.com/somia/ninchat-sdk-ios`, branch `swift`)
+
+SPEC REPOS:
+  https://github.com/somia/ninchat-podspecs.git:
+    - NinchatLowLevelClient
+  trunk:
+    - AFNetworking
+    - GoogleWebRTC
+
+EXTERNAL SOURCES:
+  NinchatSDK:
+    :branch: swift
+    :git: https://github.com/somia/ninchat-sdk-ios
+
+CHECKOUT OPTIONS:
+  NinchatSDK:
+    :commit: 313f842711cead91426877b582fefdd97b9b0937
+    :git: https://github.com/somia/ninchat-sdk-ios
+
+SPEC CHECKSUMS:
+  AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
+  GoogleWebRTC: 55e46bee9ac2a4961542e9571bea589b64493f45
+  NinchatLowLevelClient: ecd9900e5795e60e3e5f5065f3bb1f61b566acb7
+  NinchatSDK: a10dd661a95dfca3fb401f0b7f36b7a92cd239e2
+
+PODFILE CHECKSUM: 272d62c052d0df66b4774a84d9e77967ffcd4d51
+
+COCOAPODS: 1.8.4

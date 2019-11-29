@@ -1,0 +1,11 @@
+/* 
+  Localizable.strings
+  NinchatSDK
+
+  Created by Matti Dahlbom on 11/12/2018.
+  Copyright © 2018 Somia Reality Oy. All rights reserved.
+*/
+
+"Camera" = "Camera";
+"Photo Library" = "Photo Library";
+

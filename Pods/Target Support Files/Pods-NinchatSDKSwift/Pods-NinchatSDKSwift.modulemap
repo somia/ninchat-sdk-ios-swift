@@ -1,0 +1,6 @@
+framework module Pods_NinchatSDKSwift {
+  umbrella header "Pods-NinchatSDKSwift-umbrella.h"
+
+  export *
+  module * { export * }
+}
