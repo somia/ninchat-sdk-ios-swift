@@ -33,7 +33,7 @@ Then, run pod commands in *Terminal*: ```pod update && pod install```
 
 The SDK's API client is to be re-created every time a new chat session is started; once it has terminated, it cannot be used any more and must be disposed of to deallocate memory.
 
-To initialize the client, you need a server address and a configuration key (and optionally a site secret). These will point the SDK to your chat server realm. You obtain these from Ninchat. Optionally, you may specify a list of siteconfig environments to use over the default one. 
+To initialize the client, you need a configuration key which will point the SDK to your organization. You obtain that from Ninchat. Optionally, you may specify a list of siteconfig environments to use over the default one. 
 
 You must keep a reference to the created API client instance until the SDK UI terminates.
 
@@ -44,12 +44,10 @@ import NinchatLowLevelClient
 
 var ninchatSession: NINChatSessionSwift!
 ninchatSession = NINChatSessionSwift(configKey: configKey, queueID: queueID, environments: environments)
-ninchatSession.siteSecret = ""
 ```
 
 * `queueID` define a valid queue ID to join the queue directly; omit the paramter to show queue selection view.
 * `environments` is optional and may not be required for your deployment
-* `siteSecret` is optional and may not be required for your deployment
 
 Considering the optional paramters, you can initiate the session with less efforts: 
 

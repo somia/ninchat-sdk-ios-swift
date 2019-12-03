@@ -271,14 +271,4 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
     NSLog(@"%@ deallocated.", NSStringFromClass(self.class));
 }
 
-// Prevent calling the default initializer
--(id) init {
-    self = [super init];
-
-    @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                   reason:[NSString stringWithFormat:@"-init is not a valid initializer for the class %@", NSStringFromClass(self.class)]
-                                 userInfo:nil];
-    return nil;
-}
-
 @end

@@ -6,5 +6,6 @@ source 'https://github.com/somia/ninchat-podspecs.git'
 
 target 'NinchatSDKSwift' do
   pod 'NinchatSDK', :git => 'https://github.com/somia/ninchat-sdk-ios', :branch => 'swift'
+  #pod 'NinchatSDK', :path => '../ninchat-sdk-ios'
 end
 
