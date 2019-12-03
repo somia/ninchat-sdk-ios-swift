@@ -85,6 +85,15 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		8543414B239655200078D11A /* Implementations */ = {
+			isa = PBXGroup;
+			children = (
+				855B9F2C238ECE650081A9C6 /* Constants.swift */,
+				855B9F2B238ECE650081A9C6 /* NINChatExceptions.swift */,
+			);
+			path = Implementations;
+			sourceTree = "<group>";
+		};
 		855B9F07238ECDB30081A9C6 = {
 			isa = PBXGroup;
 			children = (
@@ -112,10 +121,9 @@
 		855B9F13238ECDB30081A9C6 /* NinchatSDKSwift */ = {
 			isa = PBXGroup;
 			children = (
-				855B9F2C238ECE650081A9C6 /* Constants.swift */,
-				855B9F2B238ECE650081A9C6 /* NINChatExceptions.swift */,
 				855B9F2D238ECE650081A9C6 /* NINChatSession.swift */,
 				855B9F2E238ECE650081A9C6 /* NINChatSessionDelegate.swift */,
+				8543414B239655200078D11A /* Implementations */,
 				855B9F14238ECDB30081A9C6 /* NinchatSDKSwift.h */,
 				855B9F15238ECDB30081A9C6 /* Info.plist */,
 			);

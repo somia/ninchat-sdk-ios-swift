@@ -6,9 +6,9 @@
 //  Copyright © 2019 Somia Reality Oy. All rights reserved.
 //
 
+import UIKit
 import NinchatSDK
 import NinchatLowLevelClient
-import UIKit
 
 /**
 * Delegate protocol for NINChatSession class. All the methods are called on

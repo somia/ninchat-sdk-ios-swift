@@ -6,10 +6,9 @@
 //  Copyright © 2019 Somia Reality Oy. All rights reserved.
 //
 
+import UIKit
 import NinchatSDK
 import NinchatLowLevelClient
-import Foundation
-import UIKit
 
 public typealias EmptyClouser = (Error?) -> Void
 
@@ -202,16 +201,20 @@ private extension NINChatSession {
 
 extension NINChatSession {
     func log(format: String, _ args: CVarArg...) {
-//        self.delegate?.didOutputSDKLog(session: self, log: String(format: format, args))
+        self.delegate?.didOutputSDKLog(session: self, log: String(format: format, args))
     }
     
     func override(imageAsset key: NINImageAssetKey) -> UIImage? {
-//        return self.delegate?.overrideImageAsset(session: self, forKey: key)
-        return nil
+        guard let assetKey = AssetConstants(rawValue: key) else {
+            fatalError("Cannot convert `NINImageAssetKey` to `AssetConstants`")
+        }
+        return self.delegate?.overrideImageAsset(session: self, forKey: assetKey)
     }
     
     func override(colorAsset key: NINColorAssetKey) -> UIColor? {
-//        return self.delegate?.overrideColorAsset(session: self, forKey: key)
-        return nil
+        guard let colorKey = ColorConstants(rawValue: key) else {
+            fatalError("Cannot convert `NINColorAssetKey` to `ColorConstants`")
+        }
+        return self.delegate?.overrideColorAsset(session: self, forKey: colorKey)
     }
 }
