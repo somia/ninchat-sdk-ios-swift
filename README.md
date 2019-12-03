@@ -76,8 +76,8 @@ ninchatSession.start { [unowned self] error in
 ```
 #### Callback
 
-The SDK provides *delegate* and *clouser* as the callback approaches, to keep providing support for both *Objective-c* and *Swift* projects. 
-- To use *delegate* pattern, use below for implementing the methods. All of delegate methods are always called on the main UI thread. **Please be noted that support of *delegate* pattern will be deprecated in a future relase. Consider to replacing it with clousers**
+The SDK provides *delegate* and *closuer* as the callback approaches, to keep providing support for both *Objective-c* and *Swift* projects. 
+- To use *delegate* pattern, use below for implementing the methods. All of delegate methods are always called on the main UI thread. **Please be noted that support of *delegate* pattern will be deprecated in a future relase. Consider to replacing it with closuers**
 
 ```swift
 /// This method is called when the chat session has terminated.
@@ -125,7 +125,7 @@ func didOutputSDKLog(session: NINChatSession, value: String) {
 }
 ```
 
-- To use clousers in *Swift*, use the following implementations. All of the clousers are alwayes called on the main UI thread.
+- To use closuers in *Swift*, use the following implementations. All of the closuers are alwayes called on the main UI thread.
 
 ```swift
 ninchatSession.didOutputSDKLog = { session, logValue in
