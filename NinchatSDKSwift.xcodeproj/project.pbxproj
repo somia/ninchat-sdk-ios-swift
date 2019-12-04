@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		851ECF6423969297006D332F /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 851ECF6323969297006D332F /* README.md */; };
 		855B9F1B238ECDB30081A9C6 /* NinchatSDKSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 855B9F11238ECDB30081A9C6 /* NinchatSDKSwift.framework */; };
 		855B9F20238ECDB30081A9C6 /* NinchatSDKSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855B9F1F238ECDB30081A9C6 /* NinchatSDKSwiftTests.swift */; };
 		855B9F22238ECDB30081A9C6 /* NinchatSDKSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 855B9F14238ECDB30081A9C6 /* NinchatSDKSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -31,9 +32,9 @@
 /* Begin PBXFileReference section */
 		09DD5867425B01E4FDCE822C /* Pods-NinchatSDKSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwift.release.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwift/Pods-NinchatSDKSwift.release.xcconfig"; sourceTree = "<group>"; };
 		495ADA60487CD354EDC07332 /* Pods_NinchatSDKSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDKSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		851ECF6323969297006D332F /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		852751D8238EE67000B6A44A /* NinchatSDKSwift.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = NinchatSDKSwift.podspec; sourceTree = "<group>"; };
 		852751DA238EE67800B6A44A /* BUILDING.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = BUILDING.md; path = "../ninchat-sdk-ios/BUILDING.md"; sourceTree = "<group>"; };
-		852751DB238EE67800B6A44A /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = "../ninchat-sdk-ios/README.md"; sourceTree = "<group>"; };
 		855B9F11238ECDB30081A9C6 /* NinchatSDKSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NinchatSDKSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		855B9F14238ECDB30081A9C6 /* NinchatSDKSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NinchatSDKSwift.h; sourceTree = "<group>"; };
 		855B9F15238ECDB30081A9C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -100,7 +101,7 @@
 				855B9F9D238ED9DC0081A9C6 /* Podfile */,
 				852751D8238EE67000B6A44A /* NinchatSDKSwift.podspec */,
 				852751DA238EE67800B6A44A /* BUILDING.md */,
-				852751DB238EE67800B6A44A /* README.md */,
+				851ECF6323969297006D332F /* README.md */,
 				855B9F13238ECDB30081A9C6 /* NinchatSDKSwift */,
 				855B9F1E238ECDB30081A9C6 /* NinchatSDKSwiftTests */,
 				855B9F12238ECDB30081A9C6 /* Products */,
@@ -234,6 +235,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				851ECF6423969297006D332F /* README.md in Resources */,
 				855B9F9E238ED9DC0081A9C6 /* Podfile in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

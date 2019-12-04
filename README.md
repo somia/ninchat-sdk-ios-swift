@@ -1,15 +1,19 @@
 # Ninchat iOS SDK Swift Integrator's Guide
+![build_status](https://travis-ci.org/somia/ninchat-sdk-ios-swift.svg?branch=master)
+![cocoapods compatible](https://img.shields.io/badge/Cocoapods-compatible-4BC51D.svg?style=flat)
+![Licence](https://img.shields.io/github/license/somia/ninchat-sdk-ios-swift)
 
 This document describes integrating the Ninchat iOS SDK into an iOS application.
 
 ## Installation
 
-Install the SDK via CocoaPods.
+Install the SDK via CocoaPods. **Please note that currently, `NinchatSDKSwift` is using `NinchatSDK` framework. That means, you can continue using the objective-c implementations, however, all new features will be delivered only in *Swift* implementation** 
 
 Example Podfile:
 
 ```
 platform :ios, '9.0'
+use_frameworks!
 
 source 'https://cdn.cocoapods.org/'
 source 'https://github.com/somia/ninchat-podspecs.git'
@@ -19,8 +23,9 @@ target 'NinchatClient' do
     pod 'NinchatSDK', :git => 'https://github.com/somia/ninchat-sdk-ios', :branch => 'swift'
 end
 ```
+**Don't forget to specify *swift* branch for `NinchatSDK`. Otherwise, the project fails to build.**
 
-Install by running `pod install`.
+Then, run pod commands in *Terminal*: ```pod update && pod install```
 
 ## Usage
 
@@ -28,22 +33,27 @@ Install by running `pod install`.
 
 The SDK's API client is to be re-created every time a new chat session is started; once it has terminated, it cannot be used any more and must be disposed of to deallocate memory.
 
-To initialize the client, you need a server address and a configuration key (and optionally a site secret). These will point the SDK to your chat server realm. You obtain these from Ninchat. Optionally, you may specify a list of siteconfig environments to use over the default one. 
+To initialize the client, you need a configuration key which will point the SDK to your organization. You obtain that from Ninchat. Optionally, you may specify a list of siteconfig environments to use over the default one. 
 
 You must keep a reference to the created API client instance until the SDK UI terminates.
 
 ```swift
+import UIKit
 import NinchatSDKSwift
 import NinchatLowLevelClient
 
-self.ninchatSession = NINChatSession(configKey: configKey, queueID: queueID, environments: environments)
-self.ninchatSession.delegate = self
+var ninchatSession: NINChatSessionSwift!
+ninchatSession = NINChatSessionSwift(configKey: configKey, queueID: queueID, environments: environments)
 ```
 
-##### Optional parameters
+* `queueID` define a valid queue ID to join the queue directly; omit the paramter to show queue selection view.
+* `environments` is optional and may not be required for your deployment
 
-* `siteSecret` is optional and may not be required for your deployment
-* `queueID` define a valid queue ID to join the queue directly; specify nil to show queue selection view.
+Considering the optional paramters, you can initiate the session with less efforts: 
+
+```swift
+ninchatSession = NINChatSessionSwift(configKey: configKey)
+```
 
 #### Starting the API client
 
@@ -62,46 +72,30 @@ ninchatSession.start { [unowned self] error in
     }
 }
 ```
+#### Callback
 
-
-#### Showing the SDK UI
-
-Once you have started the API client, you can retrieve its UI to be displayed in your application's UI stack. Typically you would do this within the `start` callback upon successful completion. The API returns an `UIViewController` which you must display using a `UINavigationController` as such:
-
-```swift
-do {
-    let controller = try self.ninchatSession.viewController(withNavigationController: false)
-
-    self.navigationController?.setNavigationBarHidden(true, animated: true)
-    self.navigationController?.pushViewController(controller!, animated: true)
-} catch {
-    log.error("Failed to instantiate SDK UI: \(error.localizedDescription)")
-}
-```
-
-If your application doesn't use an `UINavigationController`, specify `withNavigationController: true` and the SDK will provide one for you.
-
-#### Implementing the API client's delegate methods
-
-The SDK uses a delegate pattern for providing callbacks into the host application. See below for implementing these methods. All of these methods are always called on the main UI thread.
+The SDK provides *delegate* and *closure* as the callback approaches, to keep providing support for both *Objective-c* and *Swift* projects. 
+- To use *delegate* pattern, use below for implementing the methods. All of delegate methods are always called on the main UI thread. **Please be noted that support of *delegate* pattern will be deprecated in a future relase. Consider to replacing it with closures**
 
 ```swift
-// MARK: From NINChatSessionDelegate
-
 /// This method is called when the chat session has terminated.
 /// The host app should remove the SDK UI from its UI stack and restore
 /// the navigation bar if it uses one.
-func didEndSession(session: NINChatSession) {
-    log.debug("Ninchat session ended; removing the SDK UI");
-    self.navigationController?.popToViewController(self, animated: true)
-    ninchatSession = nil
-    self.navigationController?.setNavigationBarHidden(false, animated: true)
-}
+func didEndSession(session: NINChatSession)
 
 /// This method is called when ever loading an overrideable graphics asset;
 /// the host app may supply a custom UIImage to be shown in the SDK UI.
 /// For any asset it does NOT wish to override, return nil.
 func overrideColorAsset(session: NINChatSession, forKey assetKey: ColorConstants) -> UIColor? {
+    switch assetKey {
+    case .buttonPrimaryText:
+        return .yellow
+    default:
+        return nil
+    }
+}
+
+func overrideImageAsset(session: NINChatSessionSwift, forKey assetKey: AssetConstants) -> UIImage? {
     switch assetKey {
     case .queueViewProgressIndicator:
         return UIImage.init(named: "icon_queue_progress_indicator")
@@ -125,9 +119,63 @@ func onLowLevelEvent(session: NINChatSession, params: NINLowLevelClientProps, pa
 
 /// This method is called when the SDK emits a log message. Optional method.
 func didOutputSDKLog(session: NINChatSession, value: String) {
-    log.debug("** NINCHAT SDK **: \(message)")
+    log.debug("Ninchat session ended; removing the SDK UI")
 }
 ```
+
+- To use closures in *Swift*, use the following implementations. All of the closures are alwayes called on the main UI thread.
+
+```swift
+ninchatSession.didOutputSDKLog = { session, logValue in
+    log.debug("** NINCHAT SDK **: \(logValue)")
+}
+
+ninchatSession.onLowLevelEvent = { session, props, payload, lastReplay in
+    let eventType = try! props.getString("event")
+    switch eventType {
+    case "channel_joined":
+        log.debug("We joined a channel.");
+    default:
+        break
+    }
+}
+ninchatSession.overrideImageAsset = { [weak self] (session, key) -> UIImage? in
+    switch key {
+    case .queueViewProgressIndicator:
+        return UIImage.init(named: "icon_queue_progress_indicator")
+    default:
+        return nil
+    }
+}
+ninchatSession.overrideColorAsset = { [weak self] (session, key) -> UIColor? in
+    switch key {
+    case .buttonPrimaryText:
+        return .yellow
+    default:
+        return nil
+    }
+}
+ninchatSession.didEndSession = { [unowned self] session in
+    log.debug("Ninchat session ended; removing the SDK UI")
+}
+```
+
+#### Showing the SDK UI
+
+Once you have started the API client, you can retrieve its UI to be displayed in your application's UI stack. Typically you would do this within the `start` callback upon successful completion. The API returns an `UIViewController` which you must display using a `UINavigationController` as such:
+
+```swift
+do {
+    let controller = try self.ninchatSession.viewController(withNavigationController: false)
+
+    self.navigationController?.setNavigationBarHidden(true, animated: true)
+    self.navigationController?.pushViewController(controller!, animated: true)
+} catch {
+    log.error("Failed to instantiate SDK UI: \(error.localizedDescription)")
+}
+```
+
+If your application doesn't use an `UINavigationController`, specify `withNavigationController: true` and the SDK will provide one for you.
 
 #### Info.plist keys Required by the SDK
 
@@ -231,5 +279,5 @@ Using the API delegate method `overrideColorAsset(session:forKey:)` you may supp
 
 ## Contact
 
-If you have any questions, contact:
+If you have any questions, feel free to contact me:
 * Hassan Shahbazi / Ninchat <hassan@ninchat.com>
