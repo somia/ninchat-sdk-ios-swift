@@ -47,7 +47,7 @@
  * Optional method.
  */
 @optional
--(UIImage* _Nullable) ninchat:(NINChatSession*_Nonnull)session overrideImageAssetForKey:(NINImageAssetKey _Nonnull)assetKey;
+-(UIImage* _Nullable) ninchat:(NINChatSession*_Nonnull)session overrideImageAssetForKey:(NSString* _Nonnull)assetKey;
 
 /**
  * This method allows the SDK user to override color assets used in the SDK UI.
@@ -59,7 +59,7 @@
  * Optional method.
  */
 @optional
--(UIColor* _Nullable) ninchat:(NINChatSession*_Nonnull)session overrideColorAssetForKey:(NINColorAssetKey _Nonnull)assetKey;
+-(UIColor* _Nullable) ninchat:(NINChatSession*_Nonnull)session overrideColorAssetForKey:(NSString* _Nonnull)assetKey;
 
 /**
  * Indicates that the Ninchat SDK UI has completed its chat. and would like
@@ -95,35 +95,5 @@
 
 /** Value to be passed as audience_metadata parameter for request_audience calls. */
 @property (nonatomic, strong) NINLowLevelClientProps* _Nullable audienceMetadata;
-
-/**
- * Initializes the API using default environment.
- *
- * @param configKey configuration key; this decides the chat realm
- * @param queueID ID of the queue to join automatically. Nil to not join automatically to a queue.
- * @return new API facade instance
- */
--(id _Nonnull) initWithConfigKey:(NSString* _Nonnull)configKey queueID:(NSString* _Nullable)queueID;
-
-/**
- * Initializes the API.
- *
- * @param configKey configuration key; this decides the chat realm
- * @param queueID ID of the queue to join automatically. Nil to not join automatically to a queue.
- * @param environments site config environments to use instead of default
- * @return new API facade instance
- */
--(id _Nonnull) initWithConfigKey:(NSString* _Nonnull)configKey queueID:(NSString* _Nullable)queueID environments:(NSArray<NSString*>* _Nullable)environments;
-
-/**
- * Starts the API engine. Must be called before other API methods. The caller
- * must wait for the callback block to be called without errors.
- */
--(void) startWithCallback:(nonnull startCallbackBlock)callbackBlock;
-
-/**
- * Returns the view controller for the Ninchat UI.
- */
--(nonnull UIViewController*) viewControllerWithNavigationController:(BOOL)withNavigationController;
 
 @end
