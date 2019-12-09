@@ -11,13 +11,15 @@ import NinchatSDK
 
 final class NINQueueViewController: UIViewController, ViewController {
     
+    // MARK: - Injected
+    
+    var viewModel: NINQueueViewModel!
     var onQueueActionTapped: (() -> Void)?
     private var queueTransferListener: AnyHashable!
     
     // MARK: - ViewController
     
     var session: NINChatSessionSwift!
-    var queueToJoin: NINQueue!
     
     // MARK: - Outlets
     
@@ -26,6 +28,9 @@ final class NINQueueViewController: UIViewController, ViewController {
     @IBOutlet private weak var spinnerImageView: UIImageView!
     @IBOutlet private weak var queueInfoTextView: UITextView! {
         didSet {
+            if let textTopColor = self.session.override(colorAsset: .textTop) {
+                self.queueInfoTextView.textColor = textTopColor
+            }
             queueInfoTextView.text = nil
             queueInfoTextView.delegate = self
         }
@@ -62,7 +67,18 @@ final class NINQueueViewController: UIViewController, ViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.overrideAssets()
-        self.connect(to: self.queueToJoin.queueID)
+        
+        self.viewModel.connect()
+        self.viewModel.onInfoTextUpdate = { [weak self] text in
+            DispatchQueue.main.async {
+                self?.queueInfoTextView.setFormattedText(text ?? "")
+            }
+        }
+        self.viewModel.onJoinSuccess = { [weak self] in
+            DispatchQueue.main.async {
+                self?.onQueueActionTapped?()
+            }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -109,35 +125,6 @@ private extension NINQueueViewController {
             let attribute = [NSAttributedString.Key.foregroundColor: linkColor]
             queueInfoTextView.linkTextAttributes = attribute
             motdTextView.linkTextAttributes = attribute
-        }
-    }
-    
-    private func connect(to queueID: String) {
-        self.session.sessionManager.joinQueue(withId: queueID, progress: { [weak self] error, progress in
-            if let error = error {
-                self?.session.log(format: "Failed to join the queue: %@", error.localizedDescription)
-            }
-            DispatchQueue.main.async {
-                self?.updateQueueTextInfo(progress)
-                if let textTopColor = self?.session.override(colorAsset: .textTop) {
-                    self?.queueInfoTextView.textColor = textTopColor
-                }
-            }
-        }, channelJoined: { [weak self] in
-            self?.onQueueActionTapped?()
-        })
-    }
-    
-    private func updateQueueTextInfo(_ progress: Int) {
-        switch progress {
-        case 1:
-            let position = session.sessionManager.translation(Constants.kQueuePositionNext.rawValue,
-                                                              formatParams: ["audienceQueue.queue_attrs.name": "\(progress)"])
-            queueInfoTextView.setFormattedText(position ?? "")
-        default:
-            let position = session.sessionManager.translation(Constants.kQueuePositionN.rawValue,
-                                                              formatParams: ["audienceQueue.queue_position": "\(progress)"])
-            queueInfoTextView.setFormattedText(position ?? "")
         }
     }
 }

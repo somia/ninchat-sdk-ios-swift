@@ -68,9 +68,10 @@ extension NINCoordinator {
     
     @discardableResult
     internal func joinDirectly(to queue: NINQueue) -> UIViewController? {
+        let viewModel: NINQueueViewModel = NINQueueViewModelImpl(session: self.session, queue: queue)
         let joinViewController: NINQueueViewController = storyboard.instantiateViewController()
         joinViewController.session = session
-        joinViewController.queueToJoin = queue
+        joinViewController.viewModel = viewModel
         joinViewController.onQueueActionTapped = { [weak self] in
             
         }

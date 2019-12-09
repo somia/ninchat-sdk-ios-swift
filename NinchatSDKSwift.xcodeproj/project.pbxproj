@@ -31,6 +31,7 @@
 		85DC59CC239E4C42007ABAE3 /* NINButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59CB239E4C42007ABAE3 /* NINButton.swift */; };
 		85DC59D0239E6A38007ABAE3 /* NINChatSessionClosure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59CF239E6A38007ABAE3 /* NINChatSessionClosure.swift */; };
 		85DC59D2239E7850007ABAE3 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 85DC59D1239E7850007ABAE3 /* Media.xcassets */; };
+		85DC59D5239E7C3B007ABAE3 /* NINQueueViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59D4239E7C3B007ABAE3 /* NINQueueViewModel.swift */; };
 		A9AB26D31FF8CC4A41698EB5 /* Pods_NinchatSDKSwiftTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FEAD27BEEC9ED9A48EB128E /* Pods_NinchatSDKSwiftTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -77,6 +78,7 @@
 		85DC59CB239E4C42007ABAE3 /* NINButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINButton.swift; sourceTree = "<group>"; };
 		85DC59CF239E6A38007ABAE3 /* NINChatSessionClosure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINChatSessionClosure.swift; sourceTree = "<group>"; };
 		85DC59D1239E7850007ABAE3 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
+		85DC59D4239E7C3B007ABAE3 /* NINQueueViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINQueueViewModel.swift; sourceTree = "<group>"; };
 		CE774BD7EED85980393E55AF /* Pods-NinchatSDKSwiftTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftTests.release.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED659B1BF359B2E2971FF138 /* Pods-NinchatSDKSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwift.debug.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwift/Pods-NinchatSDKSwift.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -127,7 +129,8 @@
 			children = (
 				855B9F2C238ECE650081A9C6 /* Constants.swift */,
 				855B9F2B238ECE650081A9C6 /* NINChatExceptions.swift */,
-				855CBE1C2397C46000A024A7 /* UI */,
+				855CBE1C2397C46000A024A7 /* View */,
+				85DC59D3239E7BD5007ABAE3 /* View Model */,
 				855CBE202397CBB800A024A7 /* Helpers */,
 			);
 			path = Implementations;
@@ -181,7 +184,7 @@
 			path = NinchatSDKSwiftTests;
 			sourceTree = "<group>";
 		};
-		855CBE1C2397C46000A024A7 /* UI */ = {
+		855CBE1C2397C46000A024A7 /* View */ = {
 			isa = PBXGroup;
 			children = (
 				855CBE252397DAE900A024A7 /* Chat.storyboard */,
@@ -189,7 +192,7 @@
 				855CBE292397DE7800A024A7 /* ViewController */,
 				85DC59CA239E4C20007ABAE3 /* UIKit */,
 			);
-			path = UI;
+			path = View;
 			sourceTree = "<group>";
 		};
 		855CBE1D2397C4A500A024A7 /* Coordinator */ = {
@@ -228,6 +231,14 @@
 				85DC59CB239E4C42007ABAE3 /* NINButton.swift */,
 			);
 			path = UIKit;
+			sourceTree = "<group>";
+		};
+		85DC59D3239E7BD5007ABAE3 /* View Model */ = {
+			isa = PBXGroup;
+			children = (
+				85DC59D4239E7C3B007ABAE3 /* NINQueueViewModel.swift */,
+			);
+			path = "View Model";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -456,6 +467,7 @@
 				855CBE4423990CB100A024A7 /* Bundle+Extension.swift in Sources */,
 				855CBE2B2397DEA300A024A7 /* NINInitialViewController.swift in Sources */,
 				855CBE3E2397FAE900A024A7 /* NINQueueViewController.swift in Sources */,
+				85DC59D5239E7C3B007ABAE3 /* NINQueueViewModel.swift in Sources */,
 				855CBE222397CCA800A024A7 /* Storyboard+Extension.swift in Sources */,
 				855CBE1F2397C4F600A024A7 /* Coordinator.swift in Sources */,
 				855CBE422399060900A024A7 /* UIColor+Extensions.swift in Sources */,

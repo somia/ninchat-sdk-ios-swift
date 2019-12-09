@@ -1,0 +1,57 @@
+//
+//  NINQueueViewModel.swift
+//  NinchatSDKSwift
+//
+//  Created by Hassan Shahbazi on 9.12.2019.
+//  Copyright © 2019 Hassan Shahbazi. All rights reserved.
+//
+
+import NinchatSDK
+
+protocol NINQueueViewModel {
+    var onInfoTextUpdate: ((String?) -> Void)? { get set }
+    var onJoinSuccess: (() -> Void)? { get set }
+    
+    init(session: NINChatSessionSwift, queue: NINQueue)
+    func connect()
+}
+
+struct NINQueueViewModelImpl: NINQueueViewModel {
+    
+    private let session: NINChatSessionSwift
+    private let queue: NINQueue
+    
+    // MARK: - NINQueueViewModel
+    
+    var onInfoTextUpdate: ((String?) -> Void)?
+    var onJoinSuccess: (() -> Void)?
+    
+    init(session: NINChatSessionSwift, queue: NINQueue) {
+        self.session = session
+        self.queue = queue
+    }
+    
+    func connect() {
+        self.session.sessionManager.joinQueue(withId: queue.queueID, progress: { error, progress in
+            if let error = error {
+                self.session.log(format: "Failed to join the queue: %@", error.localizedDescription)
+            }
+            self.onInfoTextUpdate?(self.queueTextInfo(progress))
+        }, channelJoined: {
+            self.onJoinSuccess?()
+        })
+    }
+}
+
+// MARK: - Private helpers
+
+extension NINQueueViewModelImpl {
+    private func queueTextInfo(_ progress: Int) -> String? {
+        switch progress {
+        case 1:
+            return session.sessionManager.translation(Constants.kQueuePositionNext.rawValue, formatParams: ["audienceQueue.queue_attrs.name": "\(progress)"])
+        default:
+            return session.sessionManager.translation(Constants.kQueuePositionN.rawValue, formatParams: ["audienceQueue.queue_position": "\(progress)"])
+        }
+    }
+}

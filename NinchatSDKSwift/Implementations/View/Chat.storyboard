@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="YpM-11-QhB">
-    <device id="retina4_7" orientation="portrait" appearance="light"/>
+    <device id="retina4_7" orientation="portrait" appearance="dark"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -64,6 +64,7 @@ you are next.</string>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed " textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="RGm-bx-l81">
                                         <rect key="frame" x="20" y="50" width="335" height="54.5"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                         <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
@@ -73,7 +74,7 @@ you are next.</string>
                                         <color key="backgroundColor" red="1" green="0.0" blue="0.2431916516" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </view>
                                 </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <constraints>
                                     <constraint firstItem="RGm-bx-l81" firstAttribute="leading" secondItem="dkT-tD-Ztq" secondAttribute="leading" constant="20" id="5jM-rZ-3KI"/>
                                     <constraint firstItem="8zZ-5c-Lgm" firstAttribute="centerX" secondItem="dkT-tD-Ztq" secondAttribute="centerX" id="JIZ-bn-UmW"/>
@@ -105,19 +106,18 @@ you are next.</string>
                         <outlet property="queueInfoTextView" destination="LqB-7o-Qb9" id="7qT-70-C2m"/>
                         <outlet property="spinnerImageView" destination="9Zh-Yi-kTD" id="8EU-4Y-vjc"/>
                         <outlet property="topContainerView" destination="cVi-ux-Foo" id="s3c-Oi-dM8"/>
-                        <segue destination="bZ9-oP-wEd" kind="show" identifier="ninchatsdk.segue.QueueToChat" id="LLf-7w-9Uz"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ude-D9-dhZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1056.8" y="148.87556221889056"/>
+            <point key="canvasLocation" x="697" y="149"/>
         </scene>
         <!--Chat View Controller-->
         <scene sceneID="5s0-Qq-Gee">
             <objects>
                 <viewController id="bZ9-oP-wEd" customClass="NINChatViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="wrn-IT-ZNh">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tZn-zd-Dxr" customClass="NINEmbeddableNavigationBar">
@@ -210,7 +210,7 @@ you are next.</string>
                                 </constraints>
                             </view>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="brw-f0-DOL" userLabel="Chat view" customClass="NINEmbeddableChatView">
-                                <rect key="frame" x="0.0" y="257" width="375" height="295.5"/>
+                                <rect key="frame" x="0.0" y="257" width="375" height="315.5"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
@@ -223,11 +223,11 @@ you are next.</string>
                                 </variation>
                             </view>
                             <view tag="201" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zwn-LD-a0m" userLabel="Input controls background view">
-                                <rect key="frame" x="0.0" y="552.5" width="375" height="94.5"/>
+                                <rect key="frame" x="0.0" y="572.5" width="375" height="94.5"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kml-pm-EfW" userLabel="Chat input controls container">
-                                <rect key="frame" x="0.0" y="552.5" width="375" height="94.5"/>
+                                <rect key="frame" x="0.0" y="572.5" width="375" height="94.5"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="12n-mg-urX" userLabel="text input container">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="46.5"/>
@@ -696,7 +696,7 @@ you are next.</string>
                         <subviews>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="W4D-ft-8zg" customClass="NINEmbeddableNavigationBar">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="0.0"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" id="qfh-00-Oy7"/>
                                 </constraints>
@@ -710,6 +710,7 @@ you are next.</string>
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed " textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="sio-TM-FLm">
                                                 <rect key="frame" x="20" y="50" width="335" height="54.5"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                 <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
@@ -776,7 +777,7 @@ you are next.</string>
                                         </constraints>
                                     </view>
                                 </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="MP0-uv-PXT" secondAttribute="trailing" id="Gnf-37-icC"/>
                                     <constraint firstAttribute="bottom" secondItem="MP0-uv-PXT" secondAttribute="bottom" id="Snv-lA-mDW"/>
@@ -807,7 +808,7 @@ you are next.</string>
                                 </constraints>
                             </view>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="3xg-1C-FCR" firstAttribute="leading" secondItem="R8Q-s8-woL" secondAttribute="leading" id="2zm-4i-BQF"/>
                             <constraint firstItem="3xg-1C-FCR" firstAttribute="top" secondItem="Wa1-0U-Lj7" secondAttribute="bottom" id="4T6-uF-e7I"/>
