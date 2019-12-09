@@ -8,15 +8,9 @@
 
 import UIKit
 import NinchatSDK
-import NinchatLowLevelClient
 
-public protocol NINChatSessionProtocol {
+public protocol NINChatSessionProtocol: NINChatSessionClosure {
     var delegateSwift: NINChatSessionDelegateSwift? { get set }
-    var didOutputSDKLog: ((NINChatSession, String) -> Void)? { get set }
-    var onLowLevelEvent: ((NINChatSession, NINLowLevelClientProps, NINLowLevelClientPayload, Bool) -> Void)? { get set }
-    var overrideImageAsset: ((NINChatSession, AssetConstants) -> UIImage?)? { get set }
-    var overrideColorAsset: ((NINChatSession, ColorConstants) -> UIColor?)? { get set }
-    var didEndSession: ((NINChatSession) -> Void)? { get set }
     
     var serverAddress: String? { get set }
     var siteSecret: String? { get set }
@@ -24,13 +18,21 @@ public protocol NINChatSessionProtocol {
     var session: NINLowLevelClientSession { get }
     
     init(configKey: String, queueID: String?, environments: [String]?)
-    init(configKey: String, queueID: String?)
     func start(completion: @escaping (Error?) -> Void)
-    func viewController(withNavigationController navigation: Bool) throws -> UIViewController?
+    func chatSession(within navigationController: UINavigationController) throws -> UIViewController?
+}
+public extension NINChatSessionProtocol {
+    init(configKey: String) {
+        self.init(configKey: configKey, queueID: nil, environments: nil)
+    }
+    init(configKey: String, queueID: String?) {
+        self.init(configKey: configKey, queueID: queueID, environments: nil)
+    }
 }
 
 public final class NINChatSessionSwift: NINChatSession, NINChatSessionProtocol {
-    private let sessionManager = NINSessionManager()
+    let sessionManager = NINSessionManager()
+    private let coordinator: Coordinator! = NINCoordinator()
     private let configKey: String
     private let queueID: String?
     private let environments: [String]?
@@ -43,15 +45,17 @@ public final class NINChatSessionSwift: NINChatSession, NINChatSessionProtocol {
         #endif
     }
     
-    // MARK: - NINChatSessionProtocol
+    // MARK: - NINChatSessionClosure
     
-    public weak var delegateSwift: NINChatSessionDelegateSwift?
     public var didOutputSDKLog: ((NINChatSession, String) -> Void)?
     public var onLowLevelEvent: ((NINChatSession, NINLowLevelClientProps, NINLowLevelClientPayload, Bool) -> Void)?
     public var overrideImageAsset: ((NINChatSession, AssetConstants) -> UIImage?)?
     public var overrideColorAsset: ((NINChatSession, ColorConstants) -> UIColor?)?
     public var didEndSession: ((NINChatSession) -> Void)?
     
+    // MARK: - NINChatSessionProtocol
+    
+    public weak var delegateSwift: NINChatSessionDelegateSwift?
     override public var serverAddress: String? {
         set {
             self.sessionManager.serverAddress = newValue
@@ -83,12 +87,7 @@ public final class NINChatSessionSwift: NINChatSession, NINChatSessionProtocol {
         return self.sessionManager.session
     }
     
-    public convenience init(configKey: String) {
-        self.init(configKey: configKey, queueID: nil, environments: nil)
-    }
-    public convenience init(configKey: String, queueID: String?) {
-        self.init(configKey: configKey, queueID: queueID, environments: nil)
-    }
+
     public init(configKey: String, queueID: String?, environments: [String]?) {
         self.configKey = configKey
         self.queueID = queueID
@@ -109,18 +108,14 @@ public final class NINChatSessionSwift: NINChatSession, NINChatSessionProtocol {
         self.fetchSiteConfiguration(completion: completion)
     }
     
-    public func viewController(withNavigationController navigation: Bool) throws -> UIViewController? {
+    public func chatSession(within navigationController: UINavigationController) throws -> UIViewController? {
         guard Thread.isMainThread else {
-            fatalError("Must be called in main thread")
+            throw NINChatExceptions.mainThread
         }
         guard self.started else {
             throw NINChatExceptions.apiNotStarted
         }
-        
-        if let queueID = self.queueID {
-            return joinAutomatically(to: queueID)
-        }
-        return showJoinOptions(with: navigation)
+        return coordinator.start(with: self.queueID, in: self, within: navigationController)
     }
 }
 
@@ -219,38 +214,6 @@ private extension NINChatSessionSwift {
     }
 }
 
-private extension NINChatSessionSwift {
-    private func joinAutomatically(to queue: String) -> UIViewController? {
-        guard let queueID = self.queueID, let queue = self.sessionManager.queues.compactMap({ $0 }).filter({ $0.queueID ==
-            queueID }).first else {
-                return nil
-        }
-        
-        guard let vc = UIStoryboard(name: "Chat", bundle: findResourceBundle()).instantiateViewController(withIdentifier: "NINQueueViewController") as? NINQueueViewController else {
-            fatalError("Invalid NINQueueViewController")
-        }
-        vc.sessionManager = self.sessionManager
-        vc.queueToJoin = queue
-        
-        return vc
-    }
-    
-    private func showJoinOptions(with withNavigation: Bool) -> UIViewController? {
-        guard let navigationController = UIStoryboard(name: "Chat", bundle: findResourceBundle()).instantiateInitialViewController() as? UINavigationController else {
-            fatalError("Storyboard initial view controller is not UINavigationController")
-        }
-        if withNavigation {
-            return navigationController
-        }
-        
-        guard let initialViewController = navigationController.topViewController as? NINInitialViewController else {
-            fatalError("Storyboard navigation controller's top view controller is not NINInitialViewController")
-        }
-        initialViewController.sessionManager = self.sessionManager
-        return initialViewController
-    }
-}
-
 // MARK: - Internal helper methods
 
 extension NINChatSessionSwift {
@@ -258,11 +221,11 @@ extension NINChatSessionSwift {
         self.ninchat(self, didOutputSDKLog: String(format: format, args))
     }
     
-    func override(imageAsset key: NINImageAssetKey) -> UIImage? {
-        return self.ninchat(self, overrideImageAssetForKey: key)
+    func override(imageAsset key: AssetConstants) -> UIImage? {
+        return self.ninchat(self, overrideImageAssetForKey: key.rawValue)
     }
     
-    func override(colorAsset key: NINColorAssetKey) -> UIColor? {
-        return self.ninchat(self, overrideColorAssetForKey: key)
+    func override(colorAsset key: ColorConstants) -> UIColor? {
+        return self.ninchat(self, overrideColorAssetForKey: key.rawValue)
     }
 }

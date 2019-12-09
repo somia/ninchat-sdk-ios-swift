@@ -8,7 +8,6 @@
 
 import UIKit
 import NinchatSDK
-import NinchatLowLevelClient
 
 /**
 * Delegate protocol for NINChatSession class. All the methods are called on
