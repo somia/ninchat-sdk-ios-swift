@@ -32,7 +32,7 @@ public extension NINChatSessionProtocol {
 
 public final class NINChatSessionSwift: NINChatSession, NINChatSessionProtocol {
     let sessionManager = NINSessionManager()
-    private let coordinator: Coordinator! = NINCoordinator()
+    private var coordinator: Coordinator!
     private let configKey: String
     private let queueID: String?
     private let environments: [String]?
@@ -115,7 +115,8 @@ public final class NINChatSessionSwift: NINChatSession, NINChatSessionProtocol {
         guard self.started else {
             throw NINChatExceptions.apiNotStarted
         }
-        return coordinator.start(with: self.queueID, in: self, within: navigationController)
+        coordinator = NINCoordinator(with: self)
+        return coordinator.start(with: self.queueID, within: navigationController)
     }
 }
 

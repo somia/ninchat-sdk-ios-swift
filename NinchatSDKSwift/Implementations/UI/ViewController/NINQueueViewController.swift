@@ -81,7 +81,6 @@ final class NINQueueViewController: UIViewController, ViewController {
 
 private extension NINQueueViewController {
     private func spin() {
-//        spinnerImageView.backgroundColor = .blue
         guard spinnerImageView.layer.animation(forKey: "SpinAnimation") == nil else { return }
         
         let animation = CABasicAnimation(keyPath: "transform.rotation.z")

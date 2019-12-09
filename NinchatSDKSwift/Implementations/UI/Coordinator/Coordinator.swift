@@ -10,21 +10,25 @@ import UIKit
 import NinchatSDK
 
 protocol Coordinator: class {
-    func start(with queue: String?, in session: NINChatSessionSwift, within navigation: UINavigationController) -> UIViewController?
+    init(with session: NINChatSessionSwift)
+    func start(with queue: String?, within navigation: UINavigationController) -> UIViewController?
 }
 
 final class NINCoordinator: Coordinator {
     
     // MARK: - Coordinator
     
-    internal unowned var session: NINChatSessionSwift!
+    internal unowned let session: NINChatSessionSwift
     internal var navigationController: UINavigationController?
     internal var storyboard: UIStoryboard {
         return UIStoryboard(name: "Chat", bundle: .SDKBundle)
     }
     
-    func start(with queue: String?, in session: NINChatSessionSwift, within navigation: UINavigationController) -> UIViewController? {
+    init(with session: NINChatSessionSwift) {
         self.session = session
+    }
+    
+    func start(with queue: String?, within navigation: UINavigationController) -> UIViewController? {
         self.navigationController = navigation
         if let queue = queue {
             return joinAutomatically(for: queue)
