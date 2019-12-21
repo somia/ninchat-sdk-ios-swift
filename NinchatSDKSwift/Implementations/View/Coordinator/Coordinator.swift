@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreServices
 import NinchatSDK
 
 protocol Coordinator: class {
@@ -51,6 +52,40 @@ extension NINCoordinator {
         guard let target = queue, let queueVC = joinDirectly(to: target) else { return }
         self.navigationController?.pushViewController(queueVC, animated: true)
     }
+    
+    internal func showChatViewController() {
+        let viewModel: NINChatViewModel = NINChatViewModelImpl(session: self.session)
+        let chatViewController: NINChatViewController = storyboard.instantiateViewController()
+        chatViewController.viewModel = viewModel
+        chatViewController.session = session
+        chatViewController.onOpenGallery = { [weak self] source, delegate in
+            let controller = UIImagePickerController()
+            controller.sourceType = source
+            controller.mediaTypes = [kUTTypeImage, kUTTypeMovie] as [String]
+            controller.allowsEditing = true
+            controller.delegate = delegate
+
+            self?.navigationController?.present(controller, animated: true, completion: nil)
+        }
+        chatViewController.onOpenPhotoAttachment = { file in
+            
+        }
+        chatViewController.onOpenVideoAttachment = {
+            
+        }
+        chatViewController.onBackToQueue = { [weak self] in
+            self?.navigationController?.popViewController(animated: true)
+        }
+        chatViewController.onChatClosed = { [weak self] in
+            self?.showRatingViewController()
+        }
+        
+        self.navigationController?.pushViewController(chatViewController, animated: true)
+    }
+    
+    private func showRatingViewController() {
+        
+    }
 }
 
 // MARK: - Initial View Controller
@@ -73,7 +108,7 @@ extension NINCoordinator {
         joinViewController.session = session
         joinViewController.viewModel = viewModel
         joinViewController.onQueueActionTapped = { [weak self] in
-            
+            self?.showChatViewController()
         }
         
         return joinViewController

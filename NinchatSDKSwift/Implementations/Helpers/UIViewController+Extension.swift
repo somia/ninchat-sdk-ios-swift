@@ -15,7 +15,8 @@ extension UIViewController {
         NotificationCenter.default.addObserver(self, selector: Selector(("keyboardWillHide")),
                                                name: UIResponder.keyboardWillHideNotification, object: nil)
     }
-
+    
+    @objc
     func keyboardWillShow(notification: Notification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue,
            let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval {
@@ -35,12 +36,29 @@ extension UIViewController {
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
+    @objc
     func keyboardWillHide(notification: Notification) {
        if let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval {
             UIView.animate(withDuration: duration) {
                 self.view.transform = CGAffineTransform.identity
             }
         }
+    }
+}
+
+extension UIViewController {
+    func addRotationListener() {
+        NotificationCenter.default.addObserver(self, selector: Selector(("orientationChanged")),
+                                               name: UIDevice.orientationDidChangeNotification, object: nil)
+    }
+    
+    @objc
+    func orientationChanged(notification: Notification) {
+        fatalError("Should be overriden by the target")
+    }
+    
+    func removeRotationListener() {
+        NotificationCenter.default.removeObserver(self, name: UIDevice.orientationDidChangeNotification, object: nil)
     }
 }
 
@@ -57,7 +75,7 @@ extension UIViewController: UITextViewDelegate {
         return true
     }
     
-    @available(iOS, deprecated: 9.0)
+    @available(iOS, deprecated: 10.0)
     @objc public func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange) -> Bool {
         return true
     }

@@ -20,4 +20,8 @@ extension NINSiteConfiguration {
     var inQueue: String? {
         self.value(forKey: "inQueueText") as? String
     }
+    
+    var sendButtonTitle: String? {
+        self.value(forKey: "sendButtonText") as? String
+    }
 }

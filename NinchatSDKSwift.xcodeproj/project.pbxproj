@@ -8,6 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		851ECF6423969297006D332F /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 851ECF6323969297006D332F /* README.md */; };
+		8530EC8123AD3FC300BAA52A /* NINChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8530EC8023AD3FC300BAA52A /* NINChatViewController.swift */; };
+		8530EC8523AD405200BAA52A /* VideoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8530EC8323AD405200BAA52A /* VideoView.xib */; };
+		8530EC8623AD405200BAA52A /* VideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8530EC8423AD405200BAA52A /* VideoView.swift */; };
+		8530EC8A23AD405C00BAA52A /* ChatInputControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8530EC8823AD405C00BAA52A /* ChatInputControls.swift */; };
+		8530EC8B23AD405C00BAA52A /* ChatInputControls.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8530EC8923AD405C00BAA52A /* ChatInputControls.xib */; };
+		8530EC9223ADFE9900BAA52A /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8530EC9023ADFE9800BAA52A /* UIView+Extensions.swift */; };
+		8530EC9323ADFE9900BAA52A /* UIButton+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8530EC9123ADFE9800BAA52A /* UIButton+Extensions.swift */; };
+		8530EC9523ADFEA600BAA52A /* NINChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8530EC9423ADFEA600BAA52A /* NINChatViewModel.swift */; };
 		855B9F1B238ECDB30081A9C6 /* NinchatSDKSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 855B9F11238ECDB30081A9C6 /* NinchatSDKSwift.framework */; };
 		855B9F22238ECDB30081A9C6 /* NinchatSDKSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 855B9F14238ECDB30081A9C6 /* NinchatSDKSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		855B9F2F238ECE650081A9C6 /* NINChatExceptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855B9F2B238ECE650081A9C6 /* NINChatExceptions.swift */; };
@@ -32,6 +40,18 @@
 		85DC59D0239E6A38007ABAE3 /* NINChatSessionClosure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59CF239E6A38007ABAE3 /* NINChatSessionClosure.swift */; };
 		85DC59D2239E7850007ABAE3 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 85DC59D1239E7850007ABAE3 /* Media.xcassets */; };
 		85DC59D5239E7C3B007ABAE3 /* NINQueueViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59D4239E7C3B007ABAE3 /* NINQueueViewModel.swift */; };
+		85DD6C5523AE0CBC0023FFEF /* SourceSansPro-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C4923AE0CBC0023FFEF /* SourceSansPro-BlackItalic.ttf */; };
+		85DD6C5623AE0CBC0023FFEF /* SourceSansPro-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C4A23AE0CBC0023FFEF /* SourceSansPro-SemiBoldItalic.ttf */; };
+		85DD6C5723AE0CBC0023FFEF /* SourceSansPro-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C4B23AE0CBC0023FFEF /* SourceSansPro-Regular.ttf */; };
+		85DD6C5823AE0CBC0023FFEF /* SourceSansPro-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C4C23AE0CBC0023FFEF /* SourceSansPro-Bold.ttf */; };
+		85DD6C5923AE0CBC0023FFEF /* SourceSansPro-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C4D23AE0CBC0023FFEF /* SourceSansPro-LightItalic.ttf */; };
+		85DD6C5A23AE0CBC0023FFEF /* SourceSansPro-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C4E23AE0CBC0023FFEF /* SourceSansPro-Light.ttf */; };
+		85DD6C5B23AE0CBC0023FFEF /* SourceSansPro-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C4F23AE0CBC0023FFEF /* SourceSansPro-Black.ttf */; };
+		85DD6C5C23AE0CBC0023FFEF /* SourceSansPro-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C5023AE0CBC0023FFEF /* SourceSansPro-ExtraLight.ttf */; };
+		85DD6C5D23AE0CBC0023FFEF /* SourceSansPro-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C5123AE0CBC0023FFEF /* SourceSansPro-BoldItalic.ttf */; };
+		85DD6C5E23AE0CBC0023FFEF /* SourceSansPro-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C5223AE0CBC0023FFEF /* SourceSansPro-SemiBold.ttf */; };
+		85DD6C5F23AE0CBC0023FFEF /* SourceSansPro-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C5323AE0CBC0023FFEF /* SourceSansPro-ExtraLightItalic.ttf */; };
+		85DD6C6023AE0CBC0023FFEF /* SourceSansPro-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C5423AE0CBC0023FFEF /* SourceSansPro-Italic.ttf */; };
 		A9AB26D31FF8CC4A41698EB5 /* Pods_NinchatSDKSwiftTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FEAD27BEEC9ED9A48EB128E /* Pods_NinchatSDKSwiftTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -53,6 +73,14 @@
 		851ECF6323969297006D332F /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		852751D8238EE67000B6A44A /* NinchatSDKSwift.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = NinchatSDKSwift.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		852751DA238EE67800B6A44A /* BUILDING.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = BUILDING.md; path = "../ninchat-sdk-ios/BUILDING.md"; sourceTree = "<group>"; };
+		8530EC8023AD3FC300BAA52A /* NINChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINChatViewController.swift; sourceTree = "<group>"; };
+		8530EC8323AD405200BAA52A /* VideoView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VideoView.xib; sourceTree = "<group>"; };
+		8530EC8423AD405200BAA52A /* VideoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoView.swift; sourceTree = "<group>"; };
+		8530EC8823AD405C00BAA52A /* ChatInputControls.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatInputControls.swift; sourceTree = "<group>"; };
+		8530EC8923AD405C00BAA52A /* ChatInputControls.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChatInputControls.xib; sourceTree = "<group>"; };
+		8530EC9023ADFE9800BAA52A /* UIView+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
+		8530EC9123ADFE9800BAA52A /* UIButton+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIButton+Extensions.swift"; sourceTree = "<group>"; };
+		8530EC9423ADFEA600BAA52A /* NINChatViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINChatViewModel.swift; sourceTree = "<group>"; };
 		855B9F11238ECDB30081A9C6 /* NinchatSDKSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NinchatSDKSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		855B9F14238ECDB30081A9C6 /* NinchatSDKSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NinchatSDKSwift.h; sourceTree = "<group>"; };
 		855B9F15238ECDB30081A9C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -79,6 +107,18 @@
 		85DC59CF239E6A38007ABAE3 /* NINChatSessionClosure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINChatSessionClosure.swift; sourceTree = "<group>"; };
 		85DC59D1239E7850007ABAE3 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		85DC59D4239E7C3B007ABAE3 /* NINQueueViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINQueueViewModel.swift; sourceTree = "<group>"; };
+		85DD6C4923AE0CBC0023FFEF /* SourceSansPro-BlackItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-BlackItalic.ttf"; sourceTree = "<group>"; };
+		85DD6C4A23AE0CBC0023FFEF /* SourceSansPro-SemiBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
+		85DD6C4B23AE0CBC0023FFEF /* SourceSansPro-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-Regular.ttf"; sourceTree = "<group>"; };
+		85DD6C4C23AE0CBC0023FFEF /* SourceSansPro-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-Bold.ttf"; sourceTree = "<group>"; };
+		85DD6C4D23AE0CBC0023FFEF /* SourceSansPro-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-LightItalic.ttf"; sourceTree = "<group>"; };
+		85DD6C4E23AE0CBC0023FFEF /* SourceSansPro-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-Light.ttf"; sourceTree = "<group>"; };
+		85DD6C4F23AE0CBC0023FFEF /* SourceSansPro-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-Black.ttf"; sourceTree = "<group>"; };
+		85DD6C5023AE0CBC0023FFEF /* SourceSansPro-ExtraLight.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-ExtraLight.ttf"; sourceTree = "<group>"; };
+		85DD6C5123AE0CBC0023FFEF /* SourceSansPro-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-BoldItalic.ttf"; sourceTree = "<group>"; };
+		85DD6C5223AE0CBC0023FFEF /* SourceSansPro-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-SemiBold.ttf"; sourceTree = "<group>"; };
+		85DD6C5323AE0CBC0023FFEF /* SourceSansPro-ExtraLightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
+		85DD6C5423AE0CBC0023FFEF /* SourceSansPro-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-Italic.ttf"; sourceTree = "<group>"; };
 		CE774BD7EED85980393E55AF /* Pods-NinchatSDKSwiftTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftTests.release.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED659B1BF359B2E2971FF138 /* Pods-NinchatSDKSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwift.debug.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwift/Pods-NinchatSDKSwift.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -124,6 +164,24 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		8530EC8223AD405200BAA52A /* Video View */ = {
+			isa = PBXGroup;
+			children = (
+				8530EC8423AD405200BAA52A /* VideoView.swift */,
+				8530EC8323AD405200BAA52A /* VideoView.xib */,
+			);
+			path = "Video View";
+			sourceTree = "<group>";
+		};
+		8530EC8723AD405C00BAA52A /* Input Controls */ = {
+			isa = PBXGroup;
+			children = (
+				8530EC8823AD405C00BAA52A /* ChatInputControls.swift */,
+				8530EC8923AD405C00BAA52A /* ChatInputControls.xib */,
+			);
+			path = "Input Controls";
+			sourceTree = "<group>";
+		};
 		8543414B239655200078D11A /* Implementations */ = {
 			isa = PBXGroup;
 			children = (
@@ -167,7 +225,7 @@
 				855B9F2E238ECE650081A9C6 /* NINChatSessionDelegate.swift */,
 				85DC59CF239E6A38007ABAE3 /* NINChatSessionClosure.swift */,
 				8543414B239655200078D11A /* Implementations */,
-				85DC59D1239E7850007ABAE3 /* Media.xcassets */,
+				85DD6C4723AE0C8A0023FFEF /* Resources */,
 				855B9F14238ECDB30081A9C6 /* NinchatSDKSwift.h */,
 				855B9F15238ECDB30081A9C6 /* Info.plist */,
 			);
@@ -206,6 +264,8 @@
 		855CBE202397CBB800A024A7 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				8530EC9123ADFE9800BAA52A /* UIButton+Extensions.swift */,
+				8530EC9023ADFE9800BAA52A /* UIView+Extensions.swift */,
 				855CBE212397CCA800A024A7 /* Storyboard+Extension.swift */,
 				855CBE2E2397E3AB00A024A7 /* UIViewController+Extension.swift */,
 				855CBE3F2399010C00A024A7 /* SiteConfiguration+Extension.swift */,
@@ -221,6 +281,7 @@
 				855CBE2C2397DF5700A024A7 /* ViewController.swift */,
 				855CBE2A2397DEA300A024A7 /* NINInitialViewController.swift */,
 				855CBE3D2397FAE900A024A7 /* NINQueueViewController.swift */,
+				8530EC8023AD3FC300BAA52A /* NINChatViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -228,6 +289,8 @@
 		85DC59CA239E4C20007ABAE3 /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
+				8530EC8723AD405C00BAA52A /* Input Controls */,
+				8530EC8223AD405200BAA52A /* Video View */,
 				85DC59CB239E4C42007ABAE3 /* NINButton.swift */,
 			);
 			path = UIKit;
@@ -236,9 +299,38 @@
 		85DC59D3239E7BD5007ABAE3 /* View Model */ = {
 			isa = PBXGroup;
 			children = (
+				8530EC9423ADFEA600BAA52A /* NINChatViewModel.swift */,
 				85DC59D4239E7C3B007ABAE3 /* NINQueueViewModel.swift */,
 			);
 			path = "View Model";
+			sourceTree = "<group>";
+		};
+		85DD6C4723AE0C8A0023FFEF /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				85DD6C4823AE0CBC0023FFEF /* Fonts */,
+				85DC59D1239E7850007ABAE3 /* Media.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		85DD6C4823AE0CBC0023FFEF /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				85DD6C4923AE0CBC0023FFEF /* SourceSansPro-BlackItalic.ttf */,
+				85DD6C4A23AE0CBC0023FFEF /* SourceSansPro-SemiBoldItalic.ttf */,
+				85DD6C4B23AE0CBC0023FFEF /* SourceSansPro-Regular.ttf */,
+				85DD6C4C23AE0CBC0023FFEF /* SourceSansPro-Bold.ttf */,
+				85DD6C4D23AE0CBC0023FFEF /* SourceSansPro-LightItalic.ttf */,
+				85DD6C4E23AE0CBC0023FFEF /* SourceSansPro-Light.ttf */,
+				85DD6C4F23AE0CBC0023FFEF /* SourceSansPro-Black.ttf */,
+				85DD6C5023AE0CBC0023FFEF /* SourceSansPro-ExtraLight.ttf */,
+				85DD6C5123AE0CBC0023FFEF /* SourceSansPro-BoldItalic.ttf */,
+				85DD6C5223AE0CBC0023FFEF /* SourceSansPro-SemiBold.ttf */,
+				85DD6C5323AE0CBC0023FFEF /* SourceSansPro-ExtraLightItalic.ttf */,
+				85DD6C5423AE0CBC0023FFEF /* SourceSansPro-Italic.ttf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -340,10 +432,24 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8530EC8B23AD405C00BAA52A /* ChatInputControls.xib in Resources */,
+				85DD6C5D23AE0CBC0023FFEF /* SourceSansPro-BoldItalic.ttf in Resources */,
 				855CBE262397DAE900A024A7 /* Chat.storyboard in Resources */,
+				85DD6C5B23AE0CBC0023FFEF /* SourceSansPro-Black.ttf in Resources */,
+				85DD6C5623AE0CBC0023FFEF /* SourceSansPro-SemiBoldItalic.ttf in Resources */,
+				85DD6C5A23AE0CBC0023FFEF /* SourceSansPro-Light.ttf in Resources */,
+				85DD6C5523AE0CBC0023FFEF /* SourceSansPro-BlackItalic.ttf in Resources */,
 				851ECF6423969297006D332F /* README.md in Resources */,
 				85DC59D2239E7850007ABAE3 /* Media.xcassets in Resources */,
+				85DD6C5E23AE0CBC0023FFEF /* SourceSansPro-SemiBold.ttf in Resources */,
+				85DD6C6023AE0CBC0023FFEF /* SourceSansPro-Italic.ttf in Resources */,
+				85DD6C5C23AE0CBC0023FFEF /* SourceSansPro-ExtraLight.ttf in Resources */,
+				85DD6C5923AE0CBC0023FFEF /* SourceSansPro-LightItalic.ttf in Resources */,
+				8530EC8523AD405200BAA52A /* VideoView.xib in Resources */,
+				85DD6C5823AE0CBC0023FFEF /* SourceSansPro-Bold.ttf in Resources */,
+				85DD6C5F23AE0CBC0023FFEF /* SourceSansPro-ExtraLightItalic.ttf in Resources */,
 				855B9F9E238ED9DC0081A9C6 /* Podfile in Resources */,
+				85DD6C5723AE0CBC0023FFEF /* SourceSansPro-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -459,6 +565,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8530EC9223ADFE9900BAA52A /* UIView+Extensions.swift in Sources */,
 				855CBE2F2397E3AB00A024A7 /* UIViewController+Extension.swift in Sources */,
 				85DC59CC239E4C42007ABAE3 /* NINButton.swift in Sources */,
 				85DC59D0239E6A38007ABAE3 /* NINChatSessionClosure.swift in Sources */,
@@ -467,14 +574,19 @@
 				855CBE4423990CB100A024A7 /* Bundle+Extension.swift in Sources */,
 				855CBE2B2397DEA300A024A7 /* NINInitialViewController.swift in Sources */,
 				855CBE3E2397FAE900A024A7 /* NINQueueViewController.swift in Sources */,
+				8530EC9323ADFE9900BAA52A /* UIButton+Extensions.swift in Sources */,
+				8530EC9523ADFEA600BAA52A /* NINChatViewModel.swift in Sources */,
 				85DC59D5239E7C3B007ABAE3 /* NINQueueViewModel.swift in Sources */,
 				855CBE222397CCA800A024A7 /* Storyboard+Extension.swift in Sources */,
 				855CBE1F2397C4F600A024A7 /* Coordinator.swift in Sources */,
 				855CBE422399060900A024A7 /* UIColor+Extensions.swift in Sources */,
 				855B9F31238ECE650081A9C6 /* NINChatSession.swift in Sources */,
+				8530EC8123AD3FC300BAA52A /* NINChatViewController.swift in Sources */,
 				855CBE2D2397DF5700A024A7 /* ViewController.swift in Sources */,
+				8530EC8A23AD405C00BAA52A /* ChatInputControls.swift in Sources */,
 				855CBE402399010C00A024A7 /* SiteConfiguration+Extension.swift in Sources */,
 				855B9F32238ECE650081A9C6 /* NINChatSessionDelegate.swift in Sources */,
+				8530EC8623AD405200BAA52A /* VideoView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -549,7 +661,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -606,7 +718,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;

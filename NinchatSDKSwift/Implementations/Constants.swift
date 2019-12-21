@@ -80,4 +80,21 @@ public enum Constants: String {
     case kQueuePositionN = "Joined audience queue {{audienceQueue.queue_attrs.name}}, you are at position {{audienceQueue.queue_position}}."
     case kQueuePositionNext = "Joined audience queue {{audienceQueue.queue_attrs.name}}, you are next."
     case kCloseChatText = "Close chat"
+    case kTextInputPlaceholderText = "Enter your message"
+}
+
+enum WebRTCConstants: String {
+    case kNINMessageTypeWebRTCIceCandidate = "ninchat.com/rtc/ice-candidate"
+    case kNINMessageTypeWebRTCAnswer = "ninchat.com/rtc/answer"
+    case kNINMessageTypeWebRTCOffer = "ninchat.com/rtc/offer"
+    case kNINMessageTypeWebRTCCall = "ninchat.com/rtc/call"
+    case kNINMessageTypeWebRTCPickup = "ninchat.com/rtc/pick-up"
+    case kNINMessageTypeWebRTCHangup = "ninchat.com/rtc/hang-up"
+}
+
+enum NotificationCostatns: String {
+    case kChannelMessageNotification =  "ninchatsdk.ChannelMessageNotification"
+    case kNINWebRTCSignalNotification = "ninchatsdk.NWebRTCSignalNotification"
+    case kNINChannelClosedNotification = "ninchatsdk.ChannelClosedNotification"
+    case kNINQueuedNotification = "ninchatsdk.QueuedNotification"
 }

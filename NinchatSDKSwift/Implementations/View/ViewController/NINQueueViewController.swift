@@ -68,7 +68,6 @@ final class NINQueueViewController: UIViewController, ViewController {
         super.viewDidLoad()
         self.overrideAssets()
         
-        self.viewModel.connect()
         self.viewModel.onInfoTextUpdate = { [weak self] text in
             DispatchQueue.main.async {
                 self?.queueInfoTextView.setFormattedText(text ?? "")
@@ -79,6 +78,7 @@ final class NINQueueViewController: UIViewController, ViewController {
                 self?.onQueueActionTapped?()
             }
         }
+        self.viewModel.connect()
     }
     
     override func viewWillAppear(_ animated: Bool) {
