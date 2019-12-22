@@ -53,7 +53,8 @@ extension NINCoordinator {
         self.navigationController?.pushViewController(queueVC, animated: true)
     }
     
-    internal func showChatViewController() {
+    @discardableResult
+    internal func showChatViewController() -> UIViewController {
         let viewModel: NINChatViewModel = NINChatViewModelImpl(session: self.session)
         let chatViewController: NINChatViewController = storyboard.instantiateViewController()
         chatViewController.viewModel = viewModel
@@ -81,6 +82,7 @@ extension NINCoordinator {
         }
         
         self.navigationController?.pushViewController(chatViewController, animated: true)
+        return chatViewController
     }
     
     private func showRatingViewController() {

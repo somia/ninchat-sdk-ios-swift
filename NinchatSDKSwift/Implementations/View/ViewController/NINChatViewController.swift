@@ -140,7 +140,7 @@ final class NINChatViewController: UIViewController, ViewController {
     
     deinit {
         self.stopChatObservers()
-        self.disconnectRTC()
+        self.deallocRTC()
         NotificationCenter.default.removeObserver(self,
                                                   name: UIApplication.didEnterBackgroundNotification, object: nil)
         NotificationCenter.default.removeObserver(self,
@@ -230,6 +230,12 @@ final class NINChatViewController: UIViewController, ViewController {
             self?.webRTCClient = nil
             completion?()
         }
+    }
+    
+    /// The function is aimed to disconnect the RTC client on deallocation of the View Controller
+    /// Capturing `[weak self]` while deallocating result in crash
+    private func deallocRTC() {
+        self.viewModel.disconnectRTC(self.webRTCClient, completion: nil)
     }
     
     private func stopChatObservers() {

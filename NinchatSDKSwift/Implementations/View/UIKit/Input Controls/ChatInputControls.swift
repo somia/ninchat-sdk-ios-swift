@@ -16,7 +16,7 @@ protocol ChatInputActions {
 }
 
 protocol ChatInputControlsProtocol: UIView, ChatInputActions {
-    var session: NINChatSessionSwift! { get set }
+    var session: NINChatSessionSwift? { get set }
     var viewModel: NINChatViewModel! { get set }
     var isSelected: Bool! { get set }
     
@@ -33,14 +33,14 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
     private var placeholderColor: UIColor = .systemGray
     private var textColor: UIColor = .black
     private var placeholderText: String {
-        return self.session.sessionManager.translation(Constants.kTextInputPlaceholderText.rawValue, formatParams: [:]) ?? ""
+        return self.session?.sessionManager.translation(Constants.kTextInputPlaceholderText.rawValue, formatParams: [:]) ?? ""
     }
     
     // MARK: - ChatInputControls
     
-    var session: NINChatSessionSwift!
+    var session: NINChatSessionSwift?
     var viewModel: NINChatViewModel!
-    var isSelected: Bool! {
+    var isSelected: Bool! = false {
         didSet {
             textInput.becomeFirstResponder()
         }
@@ -54,41 +54,41 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
     
     // MARK: - Outlets
     
-    @IBOutlet private weak var inputControlsContainerView: UIView!
-    @IBOutlet private weak var textInput: UITextView! {
+    @IBOutlet private(set) weak var inputControlsContainerView: UIView!
+    @IBOutlet private(set) weak var textInput: UITextView! {
         didSet {
             textInput.delegate = self
         }
     }
-    @IBOutlet private weak var attachmentButton: UIButton!
-    @IBOutlet private weak var sendMessageButton: UIButton!
-    @IBOutlet private weak var sendMessageButtonWidthConstraint: NSLayoutConstraint!
+    @IBOutlet private(set) weak var attachmentButton: UIButton!
+    @IBOutlet private(set) weak var sendMessageButton: UIButton!
+    @IBOutlet private(set) weak var sendMessageButtonWidthConstraint: NSLayoutConstraint!
     
     func overrideAssets() {
-        if let sendButtonTitle = self.session.sessionManager.siteConfiguration.sendButtonTitle {
+        if let sendButtonTitle = self.session?.sessionManager.siteConfiguration.sendButtonTitle {
             self.sendMessageButtonWidthConstraint.isActive = false
             self.sendMessageButton.setImage(nil, for: .normal)
             self.sendMessageButton.setTitle(sendButtonTitle, for: .normal)
             self.sendMessageButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
             
-            if let backgroundImage = self.session.override(imageAsset: .textareaSubmitButton) {
+            if let backgroundImage = self.session?.override(imageAsset: .textareaSubmitButton) {
                 self.sendMessageButton.setBackgroundImage(backgroundImage, for: .normal)
             } else if let backgroundBundle = UIImage(named: "icon_send_message_border", in: .SDKBundle, compatibleWith: nil) {
                 self.sendMessageButton.setBackgroundImage(backgroundBundle, for: .normal)
             }
             
-            if let titleColor = self.session.override(colorAsset: .textareaSubmitText) {
+            if let titleColor = self.session?.override(colorAsset: .textareaSubmitText) {
                 self.sendMessageButton.setTitleColor(titleColor, for: .normal)
             }
-        } else if let buttonImage = self.session.override(imageAsset: .textareaSubmitButton) {
+        } else if let buttonImage = self.session?.override(imageAsset: .textareaSubmitButton) {
             self.sendMessageButton.setImage(buttonImage, for: .normal)
         }
         
-        if let attachmentIcon = self.session.override(imageAsset: .iconTextareaAttachment) {
+        if let attachmentIcon = self.session?.override(imageAsset: .iconTextareaAttachment) {
             self.attachmentButton.setImage(attachmentIcon, for: .normal)
         }
 
-        if let inputTextColor = self.session.overrideColorAsset(forKey: .textareaText) {
+        if let inputTextColor = self.session?.overrideColorAsset(forKey: .textareaText) {
             self.textInput.textColor = inputTextColor
             textColor = inputTextColor
         }
@@ -141,5 +141,17 @@ extension ChatInputControls: UITextViewDelegate {
     func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
         self.updatePlaceholder()
         return true
+    }
+}
+
+// MARK: - Test Facilities
+
+extension ChatInputControls {
+    internal func sendAction() {
+        self.onSendButtonTapped(sender: sendMessageButton)
+    }
+    
+    internal func attachmentAction() {
+        self.onAttachmentButtonTapped(sender: sendMessageButton)
     }
 }

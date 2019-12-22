@@ -92,7 +92,7 @@ enum WebRTCConstants: String {
     case kNINMessageTypeWebRTCHangup = "ninchat.com/rtc/hang-up"
 }
 
-enum NotificationCostatns: String {
+enum NotificationConstants: String {
     case kChannelMessageNotification =  "ninchatsdk.ChannelMessageNotification"
     case kNINWebRTCSignalNotification = "ninchatsdk.NWebRTCSignalNotification"
     case kNINChannelClosedNotification = "ninchatsdk.ChannelClosedNotification"

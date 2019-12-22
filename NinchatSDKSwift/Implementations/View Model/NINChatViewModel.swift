@@ -25,7 +25,7 @@ protocol NINChatRTCProtocol {
                               onCallInitiated: @escaping RTCCallInitial,
                               onCallHangup: @escaping RTCCallHangup)
     func pickup(answer: Bool, completion: @escaping ((Error?) -> Void))
-    func disconnectRTC(_ client: NINWebRTCClient?, completion: @escaping (() -> Void))
+    func disconnectRTC(_ client: NINWebRTCClient?, completion: (() -> Void)?)
 }
 
 protocol NINChatStateProtocol {
@@ -63,12 +63,12 @@ final class NINChatViewModelImpl: NINChatViewModel {
     }
     
     private func setupListeners() {
-        fetchNotification(NotificationCostatns.kNINChannelClosedNotification.rawValue) { [weak self] _ in
+        fetchNotification(NotificationConstants.kNINChannelClosedNotification.rawValue) { [weak self] _ in
             self?.onChannelClosed?()
             return true
         }
         
-        fetchNotification(NotificationCostatns.kNINQueuedNotification.rawValue, { [weak self] notification -> Bool in
+        fetchNotification(NotificationConstants.kNINQueuedNotification.rawValue, { [weak self] notification -> Bool in
             if let event = notification.userInfo?["event"] as? String, event == "audience_enqueued" {
                 self?.onQueued?()
                 return true
@@ -76,7 +76,7 @@ final class NINChatViewModelImpl: NINChatViewModel {
             return false
         })
         
-        messageObserver = fetchNotification(NotificationCostatns.kChannelMessageNotification.rawValue) { [weak self] notification -> Bool in
+        messageObserver = fetchNotification(NotificationConstants.kChannelMessageNotification.rawValue) { [weak self] notification -> Bool in
             #if DEBUG
             print("The message is received: \(notification)")
             #endif
@@ -96,7 +96,7 @@ extension NINChatViewModelImpl {
                               onCallReceived: @escaping RTCCallReceive,
                               onCallInitiated: @escaping RTCCallInitial,
                               onCallHangup: @escaping RTCCallHangup) {
-        signalingObserver = fetchNotification(NotificationCostatns.kNINWebRTCSignalNotification.rawValue) { [weak self] notification -> Bool in
+        signalingObserver = fetchNotification(NotificationConstants.kNINWebRTCSignalNotification.rawValue) { [weak self] notification -> Bool in
             guard let messageType = notification.userInfo?["messageType"] as? String, let rtcType = WebRTCConstants(rawValue: messageType) else { return false }
             
             switch rtcType {
@@ -126,14 +126,14 @@ extension NINChatViewModelImpl {
         }
     }
     
-    func disconnectRTC(_ client: NINWebRTCClient?, completion: @escaping (() -> Void)) {
+    func disconnectRTC(_ client: NINWebRTCClient?, completion: (() -> Void)?) {
         if let client = client {
             #if DEBUG
             print("Disconnecting webRTC resources")
             #endif
             
             client.disconnect()
-            completion()
+            completion?()
         }
     }
 }

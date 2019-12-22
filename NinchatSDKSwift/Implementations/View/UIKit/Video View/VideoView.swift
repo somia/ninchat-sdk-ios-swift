@@ -76,7 +76,7 @@ final class VideoView: UIView, VideoViewProtocol {
             }
         }
     }
-    var isSelected: Bool! {
+    var isSelected: Bool! = false {
         didSet {
             microphoneEnabledButton.isSelected = isSelected
             cameraEnabledButton.isSelected = isSelected
@@ -85,27 +85,27 @@ final class VideoView: UIView, VideoViewProtocol {
     
     // MARK: - Outlets
     
-    @IBOutlet private weak var videoContainerView: UIView!
+    @IBOutlet private(set) weak var videoContainerView: UIView!
     
-    @IBOutlet private weak var remoteVideoViewContainer: UIView!
-    @IBOutlet private weak var remoteViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet private weak var remoteViewWidthConstraint: NSLayoutConstraint!
+    @IBOutlet private(set) weak var remoteVideoViewContainer: UIView!
+    @IBOutlet private(set) weak var remoteViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet private(set) weak var remoteViewWidthConstraint: NSLayoutConstraint!
     
-    @IBOutlet private weak var localVideoView: RTCCameraPreviewView!
-    @IBOutlet private weak var localViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet private weak var localViewWidthConstraint: NSLayoutConstraint!
+    @IBOutlet private(set) weak var localVideoView: RTCCameraPreviewView!
+    @IBOutlet private(set) weak var localViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet private(set) weak var localViewWidthConstraint: NSLayoutConstraint!
     
-    @IBOutlet private weak var hangupButton: UIButton! {
+    @IBOutlet private(set) weak var hangupButton: UIButton! {
         didSet {
             hangupButton.roundCorners()
         }
     }
-    @IBOutlet private weak var microphoneEnabledButton: UIButton! {
+    @IBOutlet private(set) weak var microphoneEnabledButton: UIButton! {
         didSet {
             microphoneEnabledButton.roundCorners()
         }
     }
-    @IBOutlet private weak var cameraEnabledButton: UIButton! {
+    @IBOutlet private(set) weak var cameraEnabledButton: UIButton! {
         didSet {
             cameraEnabledButton.roundCorners()
         }
@@ -185,5 +185,21 @@ final class VideoView: UIView, VideoViewProtocol {
     @IBAction private func onCameraButtonTapped(sender: UIButton) {
         self.localVideoView.isHidden = !cameraEnabledButton.isSelected
         self.onCameraTapped?(sender)
+    }
+}
+
+// MARK: - Test Facilities
+
+extension VideoView {
+    internal func hangupAction() {
+        self.onHangupButtonTapped(sender: hangupButton)
+    }
+    
+    internal func audioAction() {
+        self.onAudioButtonTapped(sender: microphoneEnabledButton)
+    }
+    
+    internal func cameraAction() {
+        self.onCameraButtonTapped(sender: cameraEnabledButton)
     }
 }

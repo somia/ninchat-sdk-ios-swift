@@ -51,4 +51,10 @@ class CoordinatorTests: XCTestCase {
         XCTAssertNotNil(vc)
         XCTAssertEqual(vc?.session, session)
     }
+    
+    func testChatViewController() {
+        let vc = coordinator.showChatViewController() as? NINChatViewController
+        XCTAssertNotNil(vc)
+        XCTAssertEqual(vc?.session, session)
+    }
 }
