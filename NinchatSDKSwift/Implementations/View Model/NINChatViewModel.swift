@@ -16,14 +16,16 @@ enum MessageUpdateType {
 protocol NINChatRTCProtocol {
     var signalingObserver: Any? { get set } ///TODO:Should be refactored once observers are removed
     var messageObserver: Any? { get set } ///TODO:Should be refactored once observers are removed
-    var webRTCClient: NINWebRTCClient? { get set }
     
     typealias RTCCallReceive = ((NINChannelUser?) -> Void)
     typealias RTCCallInitial = ((Error?, NINWebRTCClient?) -> Void)
     typealias RTCCallHangup = (() -> Void)
-    func listenToRTCSignaling(onCallReceived: @escaping RTCCallReceive, onCallInitiated: @escaping RTCCallInitial, onCallHangup: @escaping RTCCallHangup)
+    func listenToRTCSignaling(delegate: NINWebRTCClientDelegate,
+                              onCallReceived: @escaping RTCCallReceive,
+                              onCallInitiated: @escaping RTCCallInitial,
+                              onCallHangup: @escaping RTCCallHangup)
     func pickup(answer: Bool, completion: @escaping ((Error?) -> Void))
-    func disconnectRTC(completion: @escaping (() -> Void))
+    func disconnectRTC(_ client: NINWebRTCClient?, completion: @escaping (() -> Void))
 }
 
 protocol NINChatStateProtocol {
@@ -36,28 +38,24 @@ protocol NINChatMessageProtocol {
     func send(message: String, completion: @escaping ((Error?) -> Void))
     func send(action: NINComposeContentView, completion: @escaping ((Error?) -> Void))
     func send(attachment: String, data: Data, completion: @escaping ((Error?) -> Void))
+    func send(type: String, payload: [String:String], completion: @escaping ((Error?) -> Void)) 
 }
 
 protocol NINChatViewModel: NINChatRTCProtocol, NINChatStateProtocol, NINChatMessageProtocol {
-    typealias ChannelClosed = (() -> Void)
-    typealias Queued = (() -> Void)
-    typealias ChannelMessage = ((MessageUpdateType) -> Void)
-    var onChannelClosed: ChannelClosed? { get set }
-    var onQueued: Queued? { get set }
-    var onChannelMessage: ChannelMessage? { get set }
+    var onChannelClosed: (() -> Void)? { get set }
+    var onQueued: (() -> Void)? { get set }
+    var onChannelMessage: ((MessageUpdateType) -> Void)? { get set }
     
     init(session: NINChatSessionSwift)
 }
 
 final class NINChatViewModelImpl: NINChatViewModel {
     private let session: NINChatSessionSwift
-    var webRTCClient: NINWebRTCClient?
     var signalingObserver: Any? = nil
     var messageObserver: Any? = nil
-    
-    var onChannelClosed: ChannelClosed?
-    var onQueued: Queued?
-    var onChannelMessage: ChannelMessage?
+    var onChannelClosed: (() -> Void)?
+    var onQueued: (() -> Void)?
+    var onChannelMessage: ((MessageUpdateType) -> Void)?
     
     init(session: NINChatSessionSwift) {
         self.session = session
@@ -94,7 +92,10 @@ final class NINChatViewModelImpl: NINChatViewModel {
 // MARK: - NINChatRTC
 
 extension NINChatViewModelImpl {
-    func listenToRTCSignaling(onCallReceived: @escaping RTCCallReceive, onCallInitiated: @escaping RTCCallInitial, onCallHangup: @escaping RTCCallHangup) {
+    func listenToRTCSignaling(delegate: NINWebRTCClientDelegate,
+                              onCallReceived: @escaping RTCCallReceive,
+                              onCallInitiated: @escaping RTCCallInitial,
+                              onCallHangup: @escaping RTCCallHangup) {
         signalingObserver = fetchNotification(NotificationCostatns.kNINWebRTCSignalNotification.rawValue) { [weak self] notification -> Bool in
             guard let messageType = notification.userInfo?["messageType"] as? String, let rtcType = WebRTCConstants(rawValue: messageType) else { return false }
             
@@ -106,6 +107,7 @@ extension NINChatViewModelImpl {
                 
                 self?.session.sessionManager.beginICE { error, stunServers, turnServers in
                     let client = NINWebRTCClient(sessionManager: self?.session.sessionManager, operatingMode: .callee, stunServers: stunServers, turnServers: turnServers)
+                    client?.delegate = delegate
                     client?.start(withSDP: sdp)
                     onCallInitiated(error, client)
                 }
@@ -124,8 +126,8 @@ extension NINChatViewModelImpl {
         }
     }
     
-    func disconnectRTC(completion: @escaping (() -> Void)) {
-        if let client = webRTCClient {
+    func disconnectRTC(_ client: NINWebRTCClient?, completion: @escaping (() -> Void)) {
+        if let client = client {
             #if DEBUG
             print("Disconnecting webRTC resources")
             #endif
@@ -165,6 +167,12 @@ extension NINChatViewModelImpl {
     
     func send(attachment: String, data: Data, completion: @escaping ((Error?) -> Void)) {
         self.session.sessionManager.sendFile(withFilename: attachment, with: data) { error in
+            completion(error)
+        }
+    }
+    
+    func send(type: String, payload: [String:String], completion: @escaping ((Error?) -> Void)) {
+        self.session.sessionManager.sendMessage(withMessageType: type, payloadDict: payload) { error in
             completion(error)
         }
     }

@@ -48,7 +48,7 @@ extension UIViewController {
 
 extension UIViewController {
     func addRotationListener() {
-        NotificationCenter.default.addObserver(self, selector: Selector(("orientationChanged")),
+        NotificationCenter.default.addObserver(self, selector: #selector(orientationChanged(notification:)),
                                                name: UIDevice.orientationDidChangeNotification, object: nil)
     }
     

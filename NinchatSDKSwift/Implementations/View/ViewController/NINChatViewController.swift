@@ -14,11 +14,7 @@ import NinchatSDK
 final class NINChatViewController: UIViewController, ViewController {
     
     private let animationDuration: Double = 0.3
-    private var webRTCClient: NINWebRTCClient? {
-        didSet {
-            webRTCClient?.delegate = self
-        }
-    }
+    private var webRTCClient: NINWebRTCClient?
     
     // MARK: - Injected
     
@@ -36,32 +32,14 @@ final class NINChatViewController: UIViewController, ViewController {
         let view: VideoView = VideoView.loadFromNib()
         view.viewModel = viewModel
         view.session = session
-        view.onCameraTapped = { [unowned self] button in
-            if button.isSelected {
-                guard self.webRTCClient?.enableLocalVideo() ?? false else { return }
-                self.session.ninchat(self.session, didOutputSDKLog: "Video enabled")
-            } else {
-                guard self.webRTCClient?.disableLocalVideo() ?? false else { return }
-                self.session.ninchat(self.session, didOutputSDKLog: "Video disabled")
-            }
-            button.isSelected = !button.isSelected
+        view.onCameraTapped = { [weak self] button in
+            self?.onVideoCameraTapped(with: button)
         }
-        view.onAudioTapped = { [unowned self] button in
-            if button.isSelected {
-                guard self.webRTCClient?.unmuteLocalAudio() ?? false else { return }
-                self.session.ninchat(self.session, didOutputSDKLog: "Audio unmuted")
-            } else {
-                guard self.webRTCClient?.muteLocalAudio() ?? false else { return }
-                self.session.ninchat(self.session, didOutputSDKLog: "Audio muted")
-            }
-            button.isSelected = !button.isSelected
+        view.onAudioTapped = { [weak self] button in
+            self?.onVideoAudioTappe(with: button)
         }
-        view.onHangupTapped = { [unowned self] _ in
-            self.session.ninchat(self.session, didOutputSDKLog: "Hang-up button pressed")
-            self.viewModel.send(message: WebRTCConstants.kNINMessageTypeWebRTCHangup.rawValue) { error in
-                self.disconnectRTC()
-                self.adjustConstraints(for: self.view.bounds.size, withAnimation: true)
-            }
+        view.onHangupTapped = { [weak self] _ in
+            self?.onVideoHangupTapped()
         }
         
         return view
@@ -92,7 +70,7 @@ final class NINChatViewController: UIViewController, ViewController {
             closeChatButton.setButtonTitle(closeTitle)
             closeChatButton.overrideAssets(with: self.session)
             closeChatButton.pressedCallback = { [weak self] in
-                self?.onCloseChatButtonPressed()
+                self?.onCloseChatTapped()
             }
         }
     }
@@ -101,39 +79,14 @@ final class NINChatViewController: UIViewController, ViewController {
         let view: ChatInputControls = ChatInputControls.loadFromNib()
         view.viewModel = viewModel
         view.session = session
-        view.onSendTapped = { [unowned self] text in
-            self.viewModel.send(message: text) { error in
-                if error != nil { NINToast.showWithErrorMessage("failed to send message", callback: nil) }
-            }
+        view.onSendTapped = { [weak self] text in
+            self?.onSendTapped(text)
         }
-        view.onAttachmentTapped = { [unowned self] button in
-            guard let bundle = Bundle.SDKBundle else {
-                fatalError("Error in getting SDK Bundle")
-            }
-            let camera = NSLocalizedString("Camera", tableName: "Localizable", bundle: bundle, value: "", comment: "")
-            let photo = NSLocalizedString("Photo", tableName: "Localizable", bundle: bundle, value: "", comment: "")
-            NINChoiceDialog.show(withOptionTitles: [camera, photo]) { canceled, index in
-                guard !canceled else { return }
-            
-                let source: UIImagePickerController.SourceType = (index == 0) ? .camera : .photoLibrary
-                guard UIImagePickerController.isSourceTypeAvailable(source) else {
-                    NINToast.showWithErrorMessage("That source type is not available on this device", callback: nil)
-                    return
-                }
-                
-                switch source {
-                case .camera:
-                    self.openVideo()
-                case .photoLibrary:
-                    self.openGallery()
-                default:
-                    return
-                }
-            }
+        view.onAttachmentTapped = { [weak self] button in
+            self?.onAttachmentTapped(with: button)
         }
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(inputControlsContainerTapped(_:))))
-        
         
         return view
     }()
@@ -144,8 +97,6 @@ final class NINChatViewController: UIViewController, ViewController {
             inputControlsView
                 .fix(left: (0.0, inputContainer), right: (0.0, inputContainer), isRelative: false)
                 .fix(top: (0.0, inputContainer), bottom: (0.0, inputContainer), isRelative: false)
-//            inputContainer
-//                .fix(top: (0, self.view), isRelative: true)
         }
     }
     
@@ -190,8 +141,10 @@ final class NINChatViewController: UIViewController, ViewController {
     deinit {
         self.stopChatObservers()
         self.disconnectRTC()
-        NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.removeObserver(self,
+                                                  name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.removeObserver(self,
+                                                  name: UIApplication.willResignActiveNotification, object: nil)
     }
     
     // MARK: - Setup View
@@ -226,7 +179,7 @@ final class NINChatViewController: UIViewController, ViewController {
     // MARK: - Helpers
     
     private func connectRTC() {
-        self.viewModel.listenToRTCSignaling(onCallReceived: { [unowned self] channel in
+        self.viewModel.listenToRTCSignaling(delegate: self, onCallReceived: { [unowned self] channel in
             #if DEBUG
             print("Got WebRTC call")
             #endif
@@ -234,41 +187,39 @@ final class NINChatViewController: UIViewController, ViewController {
             self.view.endEditing(true)
             NINVideoCallConsentDialog.show(on: self.view, forRemoteUser: channel, sessionManager: self.session.sessionManager) { result in
                 self.viewModel.pickup(answer: result == .accepted) { error in
-                    if error != nil {
-                        NINToast.showWithErrorMessage("failed to send WebRTC pickup message", callback: nil)
-                    }
+                    if error != nil { NINToast.showWithErrorMessage("failed to send WebRTC pickup message", callback: nil) }
                 }
             }
             
-        }, onCallInitiated: { [unowned self] error, rtcClinet in
+        }, onCallInitiated: { [weak self] error, rtcClinet in
             #if DEBUG
             print("Got WebRTC offer - initializing webrtc for video call (answer)")
             #endif
             
-            self.webRTCClient = rtcClinet
-            self.closeChatButton.hide = true
-            self.adjustConstraints(for: self.view.bounds.size, withAnimation: true)
+            self?.webRTCClient = rtcClinet
+            self?.closeChatButton.hide = true
+            self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
             
-            self.videoView.isSelected = false
-            self.videoView.resizeLocalVideo()
-        }, onCallHangup: { [unowned self] in
+            self?.videoView.isSelected = false
+            self?.videoView.resizeLocalVideo()
+        }, onCallHangup: { [weak self] in
             #if DEBUG
             print("Got WebRTC hang-up - closing the video call.")
             #endif
             
-            self.disconnectRTC()
-            self.adjustConstraints(for: self.view.bounds.size, withAnimation: true)
+            self?.disconnectRTC {
+                self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
+            }
         })
     }
     
-    private func disconnectRTC() {
-        guard webRTCClient != nil else { return }
-        
-        self.viewModel.disconnectRTC { [weak self] in
+    private func disconnectRTC(completion: (() -> Void)? = nil) {
+        self.viewModel.disconnectRTC(self.webRTCClient) { [weak self] in
             self?.closeChatButton.hide = false
             self?.videoView.localCapture = nil
             self?.videoView.remoteVideoTrack = nil
             self?.webRTCClient = nil
+            completion?()
         }
     }
     
@@ -319,12 +270,11 @@ extension NINChatViewController {
             // In landscape we make video fullscreen ie. hide the chat view + input controls
             // If no video; get rid of the video view. the input container and video (0-height) will dictate size
             videoContainerHeight.constant = (self.webRTCClient != nil) ? size.height : 0
-            chatContainerHeight.constant = (self.webRTCClient != nil) ? 0 : size.height
             self.alignInputControlsTopToScreenBottom(self.webRTCClient != nil)
         case .portrait, .portraitUpsideDown, .faceUp, .faceDown:
             // In portrait we make the video cover about the top half of the screen
             // If no video; get rid of the video view
-            videoContainerHeight.constant = size.height * ((self.webRTCClient != nil) ? 0.45 : 0.0)
+            videoContainerHeight.constant = (self.webRTCClient != nil) ? size.height * 0.45 : 0
             self.alignInputControlsTopToScreenBottom(false)
         default:
             break
@@ -333,10 +283,8 @@ extension NINChatViewController {
         chatContainerHeight.isActive = true
         self.setNeedsStatusBarAppearanceUpdate()
         
-        if animation {
-            UIView.animate(withDuration: animationDuration) {
-                self.view.layoutIfNeeded()
-            }
+        UIView.animate(withDuration: animation ? animationDuration : 0.0) {
+            self.view.layoutIfNeeded()
         }
     }
     
@@ -391,7 +339,7 @@ extension NINChatViewController {
         inputControlsView.isSelected = true
     }
     
-    private func onCloseChatButtonPressed() {
+    private func onCloseChatTapped() {
         #if DEGBU
         print("Close chat button pressed!")
         #endif
@@ -402,6 +350,73 @@ extension NINChatViewController {
             self?.stopChatObservers()
             self?.disconnectRTC()
             self?.onChatClosed?()
+        }
+    }
+    
+    // MARK: - Message
+    
+    private func onSendTapped(_ text: String) {
+        self.viewModel.send(message: text) { error in
+            if error != nil { NINToast.showWithErrorMessage("failed to send message", callback: nil) }
+        }
+    }
+    
+    private func onAttachmentTapped(with button: UIButton) {
+        guard let bundle = Bundle.SDKBundle else {
+            fatalError("Error in getting SDK Bundle")
+        }
+        let camera = NSLocalizedString("Camera", tableName: "Localizable", bundle: bundle, value: "", comment: "")
+        let photo = NSLocalizedString("Photo", tableName: "Localizable", bundle: bundle, value: "", comment: "")
+        NINChoiceDialog.show(withOptionTitles: [camera, photo]) { [weak self] canceled, index in
+            guard !canceled else { return }
+        
+            let source: UIImagePickerController.SourceType = (index == 0) ? .camera : .photoLibrary
+            guard UIImagePickerController.isSourceTypeAvailable(source) else {
+                NINToast.showWithErrorMessage("That source type is not available on this device", callback: nil)
+                return
+            }
+            
+            switch source {
+            case .camera:
+                self?.openVideo()
+            case .photoLibrary:
+                self?.openGallery()
+            default:
+                fatalError("Invalid attachment type")
+            }
+        }
+    }
+    
+    // MARK: - Video
+    
+    private func onVideoCameraTapped(with button: UIButton) {
+        if button.isSelected {
+            guard self.webRTCClient?.enableLocalVideo() ?? false else { return }
+            self.session.ninchat(session, didOutputSDKLog: "Video enabled")
+        } else {
+            guard self.webRTCClient?.disableLocalVideo() ?? false else { return }
+            self.session.ninchat(session, didOutputSDKLog: "Video disabled")
+        }
+        button.isSelected = !button.isSelected
+    }
+    
+    private func onVideoAudioTappe(with button: UIButton) {
+        if button.isSelected {
+            guard self.webRTCClient?.unmuteLocalAudio() ?? false else { return }
+            self.session.ninchat(session, didOutputSDKLog: "Audio unmuted")
+        } else {
+            guard self.webRTCClient?.muteLocalAudio() ?? false else { return }
+            self.session.ninchat(session, didOutputSDKLog: "Audio muted")
+        }
+        button.isSelected = !button.isSelected
+    }
+    
+    private func onVideoHangupTapped() {
+        self.session.ninchat(session, didOutputSDKLog: "Hang-up button pressed")
+        self.viewModel.send(type: WebRTCConstants.kNINMessageTypeWebRTCHangup.rawValue, payload: [:]) { [weak self] error in
+            self?.disconnectRTC {
+                self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
+            }
         }
     }
 }
@@ -434,9 +449,10 @@ extension NINChatViewController {
             }
             #endif
             
-            self?.disconnectRTC()
-            self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
             self?.view.endEditing(true)
+            self?.disconnectRTC {
+                self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
+            }
         }
     }
     
@@ -510,8 +526,9 @@ extension NINChatViewController: NINWebRTCClientDelegate {
         print("NINCHAT: didGetError: \(String(describing: error))")
         #endif
         
-        self.disconnectRTC()
-        self.adjustConstraints(for: self.view.bounds.size, withAnimation: true)
+        self.disconnectRTC {
+            self.adjustConstraints(for: self.view.bounds.size, withAnimation: true)
+        }
     }
     
     func webrtcClient(_ client: NINWebRTCClient!, didChange newState: RTCIceConnectionState) {
@@ -569,7 +586,7 @@ extension NINChatViewController: NINChatViewDelegate {
     }
     
     func closeChatRequested(by chatView: NINChatView!) {
-        self.onCloseChatButtonPressed()
+        self.onCloseChatTapped()
     }
     
     func uiActionSent(by composeContentView: NINComposeContentView!) {

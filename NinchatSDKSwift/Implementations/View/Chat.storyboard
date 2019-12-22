@@ -128,13 +128,6 @@ you are next.</string>
                                     <constraint firstAttribute="height" id="aY5-Cb-FLp"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vRt-6h-EED">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="257"/>
-                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="257" id="D2h-AS-DsR"/>
-                                </constraints>
-                            </view>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rVm-KF-mbW" userLabel="Video container view">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="257"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -182,20 +175,16 @@ you are next.</string>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.47450980390000003" blue="0.1764705882" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="vRt-6h-EED" firstAttribute="top" secondItem="wrn-IT-ZNh" secondAttribute="top" id="3VO-uu-svj"/>
-                            <constraint firstItem="vRt-6h-EED" firstAttribute="leading" secondItem="wrn-IT-ZNh" secondAttribute="leading" id="9rn-d0-Cew"/>
                             <constraint firstAttribute="trailing" secondItem="tZn-zd-Dxr" secondAttribute="trailing" id="A63-zf-iEA"/>
                             <constraint firstItem="rVm-KF-mbW" firstAttribute="leading" secondItem="pew-Xu-b1Q" secondAttribute="leading" id="Atj-LB-M3X"/>
                             <constraint firstItem="brw-f0-DOL" firstAttribute="leading" secondItem="pew-Xu-b1Q" secondAttribute="leading" id="IYK-k8-alS"/>
                             <constraint firstItem="Zwn-LD-a0m" firstAttribute="top" secondItem="brw-f0-DOL" secondAttribute="bottom" id="Kg1-HW-3hc"/>
-                            <constraint firstItem="vRt-6h-EED" firstAttribute="bottom" secondItem="rVm-KF-mbW" secondAttribute="bottom" id="XSS-SI-raj"/>
-                            <constraint firstAttribute="trailing" secondItem="vRt-6h-EED" secondAttribute="trailing" id="YLf-n0-bXa"/>
-                            <constraint firstItem="brw-f0-DOL" firstAttribute="top" secondItem="vRt-6h-EED" secondAttribute="bottom" id="cp3-Da-z3t"/>
                             <constraint firstItem="pew-Xu-b1Q" firstAttribute="trailing" secondItem="brw-f0-DOL" secondAttribute="trailing" id="fc7-oh-dei"/>
                             <constraint firstItem="tZn-zd-Dxr" firstAttribute="top" secondItem="wrn-IT-ZNh" secondAttribute="top" id="fuB-Kv-MIW"/>
                             <constraint firstItem="Sle-hz-0wC" firstAttribute="top" secondItem="pew-Xu-b1Q" secondAttribute="top" constant="10" id="iqb-aZ-4Qf"/>
                             <constraint firstItem="Zwn-LD-a0m" firstAttribute="leading" secondItem="wrn-IT-ZNh" secondAttribute="leading" id="jQp-ny-Bvt"/>
                             <constraint firstItem="pew-Xu-b1Q" firstAttribute="trailing" secondItem="Sle-hz-0wC" secondAttribute="trailing" constant="10" id="joD-bx-Hvv"/>
+                            <constraint firstItem="brw-f0-DOL" firstAttribute="top" secondItem="rVm-KF-mbW" secondAttribute="bottom" id="mOA-sr-gFd"/>
                             <constraint firstItem="pew-Xu-b1Q" firstAttribute="trailing" secondItem="rVm-KF-mbW" secondAttribute="trailing" id="mly-DR-Web"/>
                             <constraint firstItem="tZn-zd-Dxr" firstAttribute="leading" secondItem="wrn-IT-ZNh" secondAttribute="leading" id="n46-JX-rhi"/>
                             <constraint firstItem="Zwn-LD-a0m" firstAttribute="trailing" secondItem="wrn-IT-ZNh" secondAttribute="trailing" id="qZ6-l5-M6u"/>

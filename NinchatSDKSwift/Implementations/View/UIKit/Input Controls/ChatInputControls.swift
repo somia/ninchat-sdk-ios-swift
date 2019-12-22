@@ -53,7 +53,7 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
     // MARK: - Outlets
     
     @IBOutlet private weak var inputControlsContainerView: UIView!
-    @IBOutlet private weak var textInput: NINExpandingTextView! {
+    @IBOutlet private weak var textInput: UITextView! {
         didSet {
             textInput.delegate = self
         }
@@ -117,6 +117,7 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
         if isOnPlaceholderMode {
             textInput.text = placeholderText
         }
+        textInput.updateSize()
     }
 }
 

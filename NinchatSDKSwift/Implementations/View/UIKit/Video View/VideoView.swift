@@ -57,10 +57,10 @@ final class VideoView: UIView, VideoViewProtocol {
                 fatalError("Unable to convert `RTCVideoRenderer` to `UIView`")
             }
             
-            self.videoContainerView.addSubview(view)
+            self.remoteVideoViewContainer.addSubview(view)
             view
-                .fix(left: (0.0, self.videoContainerView), right: (0.0, self.videoContainerView), isRelative: false)
-                .fix(top: (0.0, self.videoContainerView), bottom: (0.0, self.videoContainerView), isRelative: false)
+                .fix(left: (0.0, remoteVideoViewContainer), right: (0.0, remoteVideoViewContainer), isRelative: false)
+                .fix(top: (0.0, remoteVideoViewContainer), bottom: (0.0, remoteVideoViewContainer), isRelative: false)
         }
     }
     var remoteVideoTrack: RTCVideoTrack? {
@@ -172,12 +172,6 @@ final class VideoView: UIView, VideoViewProtocol {
         }
     }
     
-    // MARK: - View
-    
-    override var description: String {
-        return "VideoView"
-    }
-    
     // MARK: - User actions
     
     @IBAction private func onHangupButtonTapped(sender: UIButton) {
@@ -189,6 +183,7 @@ final class VideoView: UIView, VideoViewProtocol {
     }
     
     @IBAction private func onCameraButtonTapped(sender: UIButton) {
+        self.localVideoView.isHidden = !cameraEnabledButton.isSelected
         self.onCameraTapped?(sender)
     }
 }

@@ -19,15 +19,15 @@
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yy1-Yt-omB">
                             <rect key="frame" x="0.0" y="0.0" width="414" height="275"/>
-                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="414" id="3D9-Lv-Ix7"/>
                                 <constraint firstAttribute="height" constant="275" id="MNK-kU-XWQ"/>
                             </constraints>
                         </view>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ihz-gf-SMX" customClass="RTCCameraPreviewView" customModule="NinchatSwiftSDKUI" customModuleProvider="target">
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ihz-gf-SMX" customClass="RTCCameraPreviewView">
                             <rect key="frame" x="290" y="171" width="120" height="100"/>
-                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="100" id="F87-fn-mhG"/>
                                 <constraint firstAttribute="width" constant="120" id="gUW-e0-jz8"/>
@@ -82,7 +82,7 @@
                             <viewLayoutGuide key="safeArea" id="mJ7-vo-ITn"/>
                         </stackView>
                     </subviews>
-                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
                         <constraint firstAttribute="trailing" secondItem="ihz-gf-SMX" secondAttribute="trailing" constant="4" id="1Zi-Q8-auf"/>
                         <constraint firstItem="yy1-Yt-omB" firstAttribute="centerX" secondItem="Udg-YC-b7k" secondAttribute="centerX" id="5Pi-Yd-9ex"/>
@@ -93,7 +93,7 @@
                     </constraints>
                 </view>
             </subviews>
-            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="Udg-YC-b7k" secondAttribute="bottom" id="5nr-gf-zqn"/>
                 <constraint firstItem="Udg-YC-b7k" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="IrH-vS-KI6"/>
