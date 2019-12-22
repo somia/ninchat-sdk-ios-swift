@@ -12,6 +12,7 @@ import NinchatSDK
 protocol ChatInputActions {
     var onSendTapped: ((String) -> Void)? { get set }
     var onAttachmentTapped: ((UIButton) -> Void)? { get set }
+    var onTextSizeChanged: ((CGFloat) -> Void)? { get set }
 }
 
 protocol ChatInputControlsProtocol: UIView, ChatInputActions {
@@ -49,6 +50,7 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
     
     var onSendTapped: ((String) -> Void)?
     var onAttachmentTapped: ((UIButton) -> Void)?
+    var onTextSizeChanged: ((CGFloat) -> Void)?
     
     // MARK: - Outlets
     
@@ -117,7 +119,8 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
         if isOnPlaceholderMode {
             textInput.text = placeholderText
         }
-        textInput.updateSize()
+        textInput.updateSize(to: textInput.newSize())
+        onTextSizeChanged?(textInput.newSize())
     }
 }
 

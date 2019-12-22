@@ -9,13 +9,7 @@
 import UIKit
 
 extension UITextView {
-    func updateSize(maxHeight: CGFloat = 9999) {
-        let newHeight = ceil(self.sizeThatFits(CGSize(width: self.bounds.width, height: 9999)).height)
-        self.isScrollEnabled = true
-        
-        /// Limiting the max size
-        guard newHeight <= maxHeight else { return }
-        
+    func updateSize(to height: CGFloat) {
         /// Update height constraint value if exists.
         guard let heightConstraint = self.constraints.filter({
             if let item = $0.firstItem as? UITextView {
@@ -25,11 +19,16 @@ extension UITextView {
         }).first else {
             fatalError("Height constraint must have been set in IB!")
         }
-        heightConstraint.constant = newHeight
+        heightConstraint.constant = height
         
         self.setNeedsLayout()
         self.superview?.setNeedsLayout()
         self.layoutIfNeeded()
         self.superview?.layoutIfNeeded()
+    }
+    
+    func newSize(maxHeight: CGFloat = 9999) -> CGFloat {
+        let newHeight = ceil(self.sizeThatFits(CGSize(width: self.bounds.width, height: 9999)).height)
+        return min(newHeight, maxHeight)
     }
 }

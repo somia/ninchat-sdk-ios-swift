@@ -152,6 +152,15 @@ final class NINChatViewController: UIViewController, ViewController {
     private func setupView() {
         self.overrideAssets()
         self.setupGestures()
+        
+        self.inputControlsView.onTextSizeChanged = { [weak self] height in
+            #if DEBUG
+            print("new text area height: \(height + 64)")
+            #endif
+            
+            self?.inputContainerHeight.constant = height + 64
+            self?.view.layoutIfNeeded()
+        }
     }
     
     // MARK: - Setup ViewModel
