@@ -16,8 +16,3 @@ end
 target 'NinchatSDKSwiftTests' do
     all_pods
 end
-
-target 'NinchatSDKSwiftUITests' do
-    all_pods
-end
-
