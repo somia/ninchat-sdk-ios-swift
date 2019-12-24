@@ -36,6 +36,10 @@
 		855CBE402399010C00A024A7 /* SiteConfiguration+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855CBE3F2399010C00A024A7 /* SiteConfiguration+Extension.swift */; };
 		855CBE422399060900A024A7 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855CBE412399060900A024A7 /* UIColor+Extensions.swift */; };
 		855CBE4423990CB100A024A7 /* Bundle+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855CBE4323990CB100A024A7 /* Bundle+Extension.swift */; };
+		8563004023B230350098A7B0 /* NINFullScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563003F23B230350098A7B0 /* NINFullScreenViewController.swift */; };
+		8563004323B231350098A7B0 /* TopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563004223B231350098A7B0 /* TopBar.swift */; };
+		8563004523B2313F0098A7B0 /* TopBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8563004423B2313F0098A7B0 /* TopBar.xib */; };
+		8563004723B249010098A7B0 /* NINFullScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563004623B249010098A7B0 /* NINFullScreenViewModel.swift */; };
 		85DC59C9239E384D007ABAE3 /* UIMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59C8239E384D007ABAE3 /* UIMigrationTests.swift */; };
 		85DC59CC239E4C42007ABAE3 /* NINButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59CB239E4C42007ABAE3 /* NINButton.swift */; };
 		85DC59D0239E6A38007ABAE3 /* NINChatSessionClosure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59CF239E6A38007ABAE3 /* NINChatSessionClosure.swift */; };
@@ -108,6 +112,10 @@
 		855CBE3F2399010C00A024A7 /* SiteConfiguration+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SiteConfiguration+Extension.swift"; sourceTree = "<group>"; };
 		855CBE412399060900A024A7 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		855CBE4323990CB100A024A7 /* Bundle+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extension.swift"; sourceTree = "<group>"; };
+		8563003F23B230350098A7B0 /* NINFullScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINFullScreenViewController.swift; sourceTree = "<group>"; };
+		8563004223B231350098A7B0 /* TopBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopBar.swift; sourceTree = "<group>"; };
+		8563004423B2313F0098A7B0 /* TopBar.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TopBar.xib; sourceTree = "<group>"; };
+		8563004623B249010098A7B0 /* NINFullScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINFullScreenViewModel.swift; sourceTree = "<group>"; };
 		85DC59C8239E384D007ABAE3 /* UIMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIMigrationTests.swift; sourceTree = "<group>"; };
 		85DC59CB239E4C42007ABAE3 /* NINButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINButton.swift; sourceTree = "<group>"; };
 		85DC59CF239E6A38007ABAE3 /* NINChatSessionClosure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINChatSessionClosure.swift; sourceTree = "<group>"; };
@@ -297,13 +305,24 @@
 				855CBE2A2397DEA300A024A7 /* NINInitialViewController.swift */,
 				855CBE3D2397FAE900A024A7 /* NINQueueViewController.swift */,
 				8530EC8023AD3FC300BAA52A /* NINChatViewController.swift */,
+				8563003F23B230350098A7B0 /* NINFullScreenViewController.swift */,
 			);
 			path = ViewController;
+			sourceTree = "<group>";
+		};
+		8563004123B231230098A7B0 /* Top Bar */ = {
+			isa = PBXGroup;
+			children = (
+				8563004223B231350098A7B0 /* TopBar.swift */,
+				8563004423B2313F0098A7B0 /* TopBar.xib */,
+			);
+			path = "Top Bar";
 			sourceTree = "<group>";
 		};
 		85DC59CA239E4C20007ABAE3 /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
+				8563004123B231230098A7B0 /* Top Bar */,
 				8530EC8723AD405C00BAA52A /* Input Controls */,
 				8530EC8223AD405200BAA52A /* Video View */,
 				85DC59CB239E4C42007ABAE3 /* NINButton.swift */,
@@ -316,6 +335,7 @@
 			children = (
 				8530EC9423ADFEA600BAA52A /* NINChatViewModel.swift */,
 				85DC59D4239E7C3B007ABAE3 /* NINQueueViewModel.swift */,
+				8563004623B249010098A7B0 /* NINFullScreenViewModel.swift */,
 			);
 			path = "View Model";
 			sourceTree = "<group>";
@@ -452,6 +472,7 @@
 				855CBE262397DAE900A024A7 /* Chat.storyboard in Resources */,
 				85DD6C5B23AE0CBC0023FFEF /* SourceSansPro-Black.ttf in Resources */,
 				85DD6C5623AE0CBC0023FFEF /* SourceSansPro-SemiBoldItalic.ttf in Resources */,
+				8563004523B2313F0098A7B0 /* TopBar.xib in Resources */,
 				85DD6C5A23AE0CBC0023FFEF /* SourceSansPro-Light.ttf in Resources */,
 				85DD6C5523AE0CBC0023FFEF /* SourceSansPro-BlackItalic.ttf in Resources */,
 				851ECF6423969297006D332F /* README.md in Resources */,
@@ -591,12 +612,15 @@
 				855CBE3E2397FAE900A024A7 /* NINQueueViewController.swift in Sources */,
 				8530EC9323ADFE9900BAA52A /* UIButton+Extensions.swift in Sources */,
 				8530EC9523ADFEA600BAA52A /* NINChatViewModel.swift in Sources */,
+				8563004723B249010098A7B0 /* NINFullScreenViewModel.swift in Sources */,
 				85DC59D5239E7C3B007ABAE3 /* NINQueueViewModel.swift in Sources */,
+				8563004323B231350098A7B0 /* TopBar.swift in Sources */,
 				855CBE222397CCA800A024A7 /* Storyboard+Extension.swift in Sources */,
 				85DD6C6223AF6F5A0023FFEF /* UITextView+Extensions.swift in Sources */,
 				855CBE1F2397C4F600A024A7 /* Coordinator.swift in Sources */,
 				855CBE422399060900A024A7 /* UIColor+Extensions.swift in Sources */,
 				855B9F31238ECE650081A9C6 /* NINChatSession.swift in Sources */,
+				8563004023B230350098A7B0 /* NINFullScreenViewController.swift in Sources */,
 				8530EC8123AD3FC300BAA52A /* NINChatViewController.swift in Sources */,
 				855CBE2D2397DF5700A024A7 /* ViewController.swift in Sources */,
 				8530EC8A23AD405C00BAA52A /* ChatInputControls.swift in Sources */,

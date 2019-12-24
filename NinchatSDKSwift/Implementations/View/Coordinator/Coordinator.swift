@@ -8,6 +8,8 @@
 
 import UIKit
 import CoreServices
+import AVFoundation
+import AVKit
 import NinchatSDK
 
 protocol Coordinator: class {
@@ -68,11 +70,16 @@ extension NINCoordinator {
 
             self?.navigationController?.present(controller, animated: true, completion: nil)
         }
-        chatViewController.onOpenPhotoAttachment = { file in
-            
+        chatViewController.onOpenPhotoAttachment = { [weak self] image, attachment in
+            self?.showFullScreenViewController(image, attachment)
         }
-        chatViewController.onOpenVideoAttachment = {
-            
+        chatViewController.onOpenVideoAttachment = { attachment in
+            guard let attachmentURL = attachment.url, let playerURL = URL(string: attachmentURL) else { return }
+            let playerViewController = AVPlayerViewController()
+            playerViewController.player = AVPlayer(url: playerURL)
+            self.navigationController?.present(playerViewController, animated: true) {
+                playerViewController.player?.play()
+            }
         }
         chatViewController.onBackToQueue = { [weak self] in
             self?.navigationController?.popViewController(animated: true)
@@ -83,6 +90,21 @@ extension NINCoordinator {
         
         self.navigationController?.pushViewController(chatViewController, animated: true)
         return chatViewController
+    }
+    
+    @discardableResult
+    private func showFullScreenViewController(_ image: UIImage, _ attachment: NINFileInfo) -> UIViewController? {
+        let viewModel: NINFullScreenViewModel = NINFullScreenViewModelImpl(session: self.session)
+        let previewViewController: NINFullScreenViewController = storyboard.instantiateViewController()
+        previewViewController.viewModel = viewModel
+        previewViewController.image = image
+        previewViewController.attachment = attachment
+        previewViewController.onCloseTapped = { [weak self] in
+            self?.navigationController?.popViewController(animated: true)
+        }
+        
+        self.navigationController?.pushViewController(previewViewController, animated: true)
+        return previewViewController
     }
     
     private func showRatingViewController() {

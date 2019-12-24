@@ -23,8 +23,8 @@ final class NINChatViewController: UIViewController, ViewController {
     var onChatClosed: (() -> Void)?
     var onBackToQueue: (() -> Void)?
     var onOpenGallery: ((UIImagePickerController.SourceType, UIImagePickerControllerDelegate & UINavigationControllerDelegate) -> Void)?
-    var onOpenPhotoAttachment: ((NINFileInfo) -> Void)?
-    var onOpenVideoAttachment: (() -> Void)?
+    var onOpenPhotoAttachment: ((UIImage, NINFileInfo) -> Void)?
+    var onOpenVideoAttachment: ((NINFileInfo) -> Void)?
     
     // MARK: - Outlets
     
@@ -285,6 +285,8 @@ extension NINChatViewController {
         self.view.layoutIfNeeded()
     }
     
+    // Aligns (or cancels existing alignment) the input control container view's top
+    // to the screen bottom to hide the controls.
     private func alignInputControlsTopToScreenBottom(_ hide: Bool) {
         self.updateInputContainerHeight((hide) ? 0 : self.inputContainerHeight, update: false)
         self.inputContainer.isHidden = hide
@@ -497,27 +499,27 @@ extension NINChatViewController {
 
 extension NINChatViewController: UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        DispatchQueue.global(qos: .background).async {
-            var fileName = "photo.jpg"
-            
-            // Photos from photo library have file names; extract it
-            if #available(iOS 11, *) {
-                if picker.sourceType == .photoLibrary,
-                    let asset = info[UIImagePickerController.InfoKey.phAsset] as? PHAsset,
-                    let assetResource = PHAssetResource.assetResources(for: asset).last {
-                    
-                    fileName = assetResource.originalFilename
-                }
-            } else {
-                if picker.sourceType == .photoLibrary,
-                    let url = info[UIImagePickerController.InfoKey.referenceURL] as? URL,
-                    let phAsset = PHAsset.fetchAssets(withALAssetURLs: [url], options: nil).lastObject,
-                    let name = phAsset.value(forKey: "filename") as? String {
-                    
-                    fileName = name
-                }
+        var fileName = "photo.jpg"
+        
+        // Photos from photo library have file names; extract it
+        if #available(iOS 11, *) {
+            if picker.sourceType == .photoLibrary,
+                let asset = info[UIImagePickerController.InfoKey.phAsset] as? PHAsset,
+                let assetResource = PHAssetResource.assetResources(for: asset).last {
+                
+                fileName = assetResource.originalFilename
             }
-            
+        } else {
+            if picker.sourceType == .photoLibrary,
+                let url = info[UIImagePickerController.InfoKey.referenceURL] as? URL,
+                let phAsset = PHAsset.fetchAssets(withALAssetURLs: [url], options: nil).lastObject,
+                let name = phAsset.value(forKey: "filename") as? String {
+                
+                fileName = name
+            }
+        }
+        
+        DispatchQueue.global(qos: .background).async {
             switch info[UIImagePickerController.InfoKey.mediaType] as! CFString {
             case kUTTypeImage:
                 if let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage, let data = image.jpegData(compressionQuality: 1.0) {
@@ -605,9 +607,9 @@ extension NINChatViewController: RTCVideoViewDelegate {
 extension NINChatViewController: NINChatViewDelegate {
     func chatView(_ chatView: NINChatView!, imageSelected image: UIImage!, forAttachment attachment: NINFileInfo!) {
         if attachment.isImage() {
-            self.onOpenPhotoAttachment?(attachment)
+            self.onOpenPhotoAttachment?(image, attachment)
         } else if attachment.isVideo() {
-            self.onOpenVideoAttachment?()
+            self.onOpenVideoAttachment?(attachment)
         }
     }
     

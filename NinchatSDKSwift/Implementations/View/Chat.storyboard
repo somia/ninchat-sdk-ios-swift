@@ -203,10 +203,10 @@ you are next.</string>
             </objects>
             <point key="canvasLocation" x="1637.5999999999999" y="148.87556221889056"/>
         </scene>
-        <!--Full Screen Image View Controller-->
+        <!--Full Screen View Controller-->
         <scene sceneID="7Sk-fg-k4i">
             <objects>
-                <viewController id="kp2-RL-Kqz" customClass="NINFullScreenImageViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NINFullScreenViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="kp2-RL-Kqz" customClass="NINFullScreenViewController" customModule="NinchatSDKSwift" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="7ZM-ms-G5f">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -227,56 +227,14 @@ you are next.</string>
                                     <constraint firstItem="WiY-xq-PIw" firstAttribute="top" secondItem="2wb-ko-jfV" secondAttribute="top" id="xCU-wt-XQa"/>
                                 </constraints>
                                 <connections>
-                                    <outlet property="delegate" destination="kp2-RL-Kqz" id="D00-nn-OEM"/>
+                                    <outlet property="delegate" destination="kp2-RL-Kqz" id="qJw-D9-oMu"/>
                                 </connections>
                             </scrollView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PMo-Y7-zHd">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="60"/>
-                                <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gjX-BK-gzs" userLabel="Top bar background">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="60"/>
-                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                    </view>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="IMG_423492987.JPG" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QX0-zo-sPu">
-                                        <rect key="frame" x="15" y="20" width="136" height="20.5"/>
-                                        <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yp6-u1-JT0">
-                                        <rect key="frame" x="314" y="19.5" width="21" height="21"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="21" id="fQ1-Rd-hPK"/>
-                                            <constraint firstAttribute="height" constant="21" id="kOK-LX-wUy"/>
-                                        </constraints>
-                                        <state key="normal" image="icon_download"/>
-                                        <connections>
-                                            <action selector="downloadButtonPressed" destination="kp2-RL-Kqz" eventType="touchUpInside" id="x8u-wg-9CB"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RUE-nC-9kB">
-                                        <rect key="frame" x="350" y="22.5" width="15" height="15"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="15" id="Mbi-R8-Se6"/>
-                                            <constraint firstAttribute="height" constant="15" id="fIh-17-J1x"/>
-                                        </constraints>
-                                        <state key="normal" image="icon_close_x"/>
-                                        <connections>
-                                            <action selector="closeButtonPressed" destination="kp2-RL-Kqz" eventType="touchUpInside" id="NKX-hs-w9d"/>
-                                        </connections>
-                                    </button>
-                                </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstItem="QX0-zo-sPu" firstAttribute="centerY" secondItem="PMo-Y7-zHd" secondAttribute="centerY" id="3de-eW-ZNw"/>
-                                    <constraint firstAttribute="trailing" secondItem="RUE-nC-9kB" secondAttribute="trailing" constant="10" id="A4C-DC-sgP"/>
                                     <constraint firstAttribute="height" constant="60" id="IoL-GC-Ni8"/>
-                                    <constraint firstAttribute="trailing" secondItem="gjX-BK-gzs" secondAttribute="trailing" id="JAI-RP-hS9"/>
-                                    <constraint firstItem="gjX-BK-gzs" firstAttribute="leading" secondItem="PMo-Y7-zHd" secondAttribute="leading" id="LqR-9G-LDJ"/>
-                                    <constraint firstItem="yp6-u1-JT0" firstAttribute="centerY" secondItem="PMo-Y7-zHd" secondAttribute="centerY" id="RBY-Xb-nR2"/>
-                                    <constraint firstItem="RUE-nC-9kB" firstAttribute="centerY" secondItem="PMo-Y7-zHd" secondAttribute="centerY" id="RN3-vQ-k6f"/>
-                                    <constraint firstItem="QX0-zo-sPu" firstAttribute="leading" secondItem="PMo-Y7-zHd" secondAttribute="leading" constant="15" id="d3P-oj-vyv"/>
-                                    <constraint firstItem="RUE-nC-9kB" firstAttribute="leading" secondItem="yp6-u1-JT0" secondAttribute="trailing" constant="15" id="xCq-Pv-rdk"/>
-                                    <constraint firstAttribute="bottom" secondItem="gjX-BK-gzs" secondAttribute="bottom" id="xKN-Bh-9ZG"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -287,7 +245,6 @@ you are next.</string>
                             <constraint firstItem="WiY-xq-PIw" firstAttribute="height" secondItem="7ZM-ms-G5f" secondAttribute="height" id="Fr9-Nk-b3f"/>
                             <constraint firstAttribute="trailing" secondItem="2wb-ko-jfV" secondAttribute="trailing" id="Mwa-MM-gma"/>
                             <constraint firstAttribute="trailing" secondItem="PMo-Y7-zHd" secondAttribute="trailing" id="f8x-4s-w8w"/>
-                            <constraint firstItem="gjX-BK-gzs" firstAttribute="top" secondItem="7ZM-ms-G5f" secondAttribute="top" id="gHl-gs-gcw"/>
                             <constraint firstItem="PMo-Y7-zHd" firstAttribute="leading" secondItem="7ZM-ms-G5f" secondAttribute="leading" id="knq-Nx-W9y"/>
                             <constraint firstItem="2wb-ko-jfV" firstAttribute="top" secondItem="7ZM-ms-G5f" secondAttribute="top" id="kzl-GV-obI"/>
                             <constraint firstItem="2wb-ko-jfV" firstAttribute="leading" secondItem="7ZM-ms-G5f" secondAttribute="leading" id="n16-Ap-aa5"/>
@@ -297,17 +254,14 @@ you are next.</string>
                     </view>
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
-                        <outlet property="closeButton" destination="RUE-nC-9kB" id="0tt-bK-BGn"/>
-                        <outlet property="downloadButton" destination="yp6-u1-JT0" id="wNx-JW-6rG"/>
-                        <outlet property="fileNameLabel" destination="QX0-zo-sPu" id="v6f-W0-gOt"/>
-                        <outlet property="fullScreenImageView" destination="WiY-xq-PIw" id="Ah2-a7-MMN"/>
-                        <outlet property="scrollView" destination="2wb-ko-jfV" id="UE9-aa-snm"/>
-                        <outlet property="topBarView" destination="PMo-Y7-zHd" id="9eB-kS-bCC"/>
+                        <outlet property="imageView" destination="WiY-xq-PIw" id="2QB-4j-USV"/>
+                        <outlet property="scrollView" destination="2wb-ko-jfV" id="N3O-4b-glL"/>
+                        <outlet property="topBarContainer" destination="PMo-Y7-zHd" id="90q-BC-QYT"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pyg-OC-SUZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1840.8" y="862.21889055472275"/>
+            <point key="canvasLocation" x="2618" y="422"/>
         </scene>
         <!--Rating View Controller-->
         <scene sceneID="AoA-TJ-9Dd">
@@ -504,7 +458,7 @@ you are next.</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xNA-rk-MTU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2597.5999999999999" y="148.87556221889056"/>
+            <point key="canvasLocation" x="2618" y="-248"/>
         </scene>
         <!--Initial View Controller-->
         <scene sceneID="XHh-YP-k7w">
@@ -660,8 +614,6 @@ you are next.</string>
         </scene>
     </scenes>
     <resources>
-        <image name="icon_close_x" width="375" height="375"/>
-        <image name="icon_download" width="13" height="14"/>
         <image name="icon_face_happy" width="898" height="898"/>
         <image name="icon_face_neutral" width="898" height="898"/>
         <image name="icon_face_sad" width="898" height="898"/>

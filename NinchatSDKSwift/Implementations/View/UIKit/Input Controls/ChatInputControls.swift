@@ -46,7 +46,7 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
         }
     }
     
-    // MARK: - ChatInputControls
+    // MARK: - ChatInputActions
     
     var onSendTapped: ((String) -> Void)?
     var onAttachmentTapped: ((UIButton) -> Void)?
