@@ -18,8 +18,8 @@ protocol NINQueueViewModel {
 
 struct NINQueueViewModelImpl: NINQueueViewModel {
     
-    private let session: NINChatSessionSwift
-    private let queue: NINQueue
+    private unowned let session: NINChatSessionSwift
+    private unowned let queue: NINQueue
     
     // MARK: - NINQueueViewModel
     

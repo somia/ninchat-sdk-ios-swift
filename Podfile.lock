@@ -43,7 +43,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   NinchatSDK:
-    :commit: c6d0386310cf12229beaed1c2b3b582bb994c0a7
+    :commit: 58e58feb27216db9ea8a7da1d30ec91e7246543d
     :git: https://github.com/somia/ninchat-sdk-ios
 
 SPEC CHECKSUMS:

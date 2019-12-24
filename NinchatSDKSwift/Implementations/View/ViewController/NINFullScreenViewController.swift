@@ -67,6 +67,7 @@ final class NINFullScreenViewController: UIViewController, ViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupRation()
+        self.topBar.overrideAssets()
     }
 }
 

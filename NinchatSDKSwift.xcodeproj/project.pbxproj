@@ -40,6 +40,10 @@
 		8563004323B231350098A7B0 /* TopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563004223B231350098A7B0 /* TopBar.swift */; };
 		8563004523B2313F0098A7B0 /* TopBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8563004423B2313F0098A7B0 /* TopBar.xib */; };
 		8563004723B249010098A7B0 /* NINFullScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563004623B249010098A7B0 /* NINFullScreenViewModel.swift */; };
+		8563004923B286360098A7B0 /* NINRatingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563004823B286360098A7B0 /* NINRatingViewController.swift */; };
+		8563004C23B286FB0098A7B0 /* FacesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563004B23B286FB0098A7B0 /* FacesView.swift */; };
+		8563004E23B2886F0098A7B0 /* FacesView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8563004D23B2886F0098A7B0 /* FacesView.xib */; };
+		8563005023B291600098A7B0 /* NINRatingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563004F23B291600098A7B0 /* NINRatingViewModel.swift */; };
 		85DC59C9239E384D007ABAE3 /* UIMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59C8239E384D007ABAE3 /* UIMigrationTests.swift */; };
 		85DC59CC239E4C42007ABAE3 /* NINButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59CB239E4C42007ABAE3 /* NINButton.swift */; };
 		85DC59D0239E6A38007ABAE3 /* NINChatSessionClosure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59CF239E6A38007ABAE3 /* NINChatSessionClosure.swift */; };
@@ -116,6 +120,10 @@
 		8563004223B231350098A7B0 /* TopBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopBar.swift; sourceTree = "<group>"; };
 		8563004423B2313F0098A7B0 /* TopBar.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TopBar.xib; sourceTree = "<group>"; };
 		8563004623B249010098A7B0 /* NINFullScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINFullScreenViewModel.swift; sourceTree = "<group>"; };
+		8563004823B286360098A7B0 /* NINRatingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINRatingViewController.swift; sourceTree = "<group>"; };
+		8563004B23B286FB0098A7B0 /* FacesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacesView.swift; sourceTree = "<group>"; };
+		8563004D23B2886F0098A7B0 /* FacesView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FacesView.xib; sourceTree = "<group>"; };
+		8563004F23B291600098A7B0 /* NINRatingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINRatingViewModel.swift; sourceTree = "<group>"; };
 		85DC59C8239E384D007ABAE3 /* UIMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIMigrationTests.swift; sourceTree = "<group>"; };
 		85DC59CB239E4C42007ABAE3 /* NINButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINButton.swift; sourceTree = "<group>"; };
 		85DC59CF239E6A38007ABAE3 /* NINChatSessionClosure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINChatSessionClosure.swift; sourceTree = "<group>"; };
@@ -306,6 +314,7 @@
 				855CBE3D2397FAE900A024A7 /* NINQueueViewController.swift */,
 				8530EC8023AD3FC300BAA52A /* NINChatViewController.swift */,
 				8563003F23B230350098A7B0 /* NINFullScreenViewController.swift */,
+				8563004823B286360098A7B0 /* NINRatingViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -319,9 +328,19 @@
 			path = "Top Bar";
 			sourceTree = "<group>";
 		};
+		8563004A23B286E70098A7B0 /* Faces View */ = {
+			isa = PBXGroup;
+			children = (
+				8563004B23B286FB0098A7B0 /* FacesView.swift */,
+				8563004D23B2886F0098A7B0 /* FacesView.xib */,
+			);
+			path = "Faces View";
+			sourceTree = "<group>";
+		};
 		85DC59CA239E4C20007ABAE3 /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
+				8563004A23B286E70098A7B0 /* Faces View */,
 				8563004123B231230098A7B0 /* Top Bar */,
 				8530EC8723AD405C00BAA52A /* Input Controls */,
 				8530EC8223AD405200BAA52A /* Video View */,
@@ -336,6 +355,7 @@
 				8530EC9423ADFEA600BAA52A /* NINChatViewModel.swift */,
 				85DC59D4239E7C3B007ABAE3 /* NINQueueViewModel.swift */,
 				8563004623B249010098A7B0 /* NINFullScreenViewModel.swift */,
+				8563004F23B291600098A7B0 /* NINRatingViewModel.swift */,
 			);
 			path = "View Model";
 			sourceTree = "<group>";
@@ -478,6 +498,7 @@
 				851ECF6423969297006D332F /* README.md in Resources */,
 				85DC59D2239E7850007ABAE3 /* Media.xcassets in Resources */,
 				85DD6C5E23AE0CBC0023FFEF /* SourceSansPro-SemiBold.ttf in Resources */,
+				8563004E23B2886F0098A7B0 /* FacesView.xib in Resources */,
 				85DD6C6023AE0CBC0023FFEF /* SourceSansPro-Italic.ttf in Resources */,
 				85DD6C5C23AE0CBC0023FFEF /* SourceSansPro-ExtraLight.ttf in Resources */,
 				85DD6C5923AE0CBC0023FFEF /* SourceSansPro-LightItalic.ttf in Resources */,
@@ -605,10 +626,12 @@
 				855CBE2F2397E3AB00A024A7 /* UIViewController+Extension.swift in Sources */,
 				85DC59CC239E4C42007ABAE3 /* NINButton.swift in Sources */,
 				85DC59D0239E6A38007ABAE3 /* NINChatSessionClosure.swift in Sources */,
+				8563004923B286360098A7B0 /* NINRatingViewController.swift in Sources */,
 				855B9F2F238ECE650081A9C6 /* NINChatExceptions.swift in Sources */,
 				855B9F30238ECE650081A9C6 /* Constants.swift in Sources */,
 				855CBE4423990CB100A024A7 /* Bundle+Extension.swift in Sources */,
 				855CBE2B2397DEA300A024A7 /* NINInitialViewController.swift in Sources */,
+				8563005023B291600098A7B0 /* NINRatingViewModel.swift in Sources */,
 				855CBE3E2397FAE900A024A7 /* NINQueueViewController.swift in Sources */,
 				8530EC9323ADFE9900BAA52A /* UIButton+Extensions.swift in Sources */,
 				8530EC9523ADFEA600BAA52A /* NINChatViewModel.swift in Sources */,
@@ -623,6 +646,7 @@
 				8563004023B230350098A7B0 /* NINFullScreenViewController.swift in Sources */,
 				8530EC8123AD3FC300BAA52A /* NINChatViewController.swift in Sources */,
 				855CBE2D2397DF5700A024A7 /* ViewController.swift in Sources */,
+				8563004C23B286FB0098A7B0 /* FacesView.swift in Sources */,
 				8530EC8A23AD405C00BAA52A /* ChatInputControls.swift in Sources */,
 				855CBE402399010C00A024A7 /* SiteConfiguration+Extension.swift in Sources */,
 				855B9F32238ECE650081A9C6 /* NINChatSessionDelegate.swift in Sources */,

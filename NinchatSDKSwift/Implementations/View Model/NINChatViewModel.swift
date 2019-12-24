@@ -50,7 +50,7 @@ protocol NINChatViewModel: NINChatRTCProtocol, NINChatStateProtocol, NINChatMess
 }
 
 final class NINChatViewModelImpl: NINChatViewModel {
-    private let session: NINChatSessionSwift
+    private unowned let session: NINChatSessionSwift
     var signalingObserver: Any? = nil
     var messageObserver: Any? = nil
     var onChannelClosed: (() -> Void)?

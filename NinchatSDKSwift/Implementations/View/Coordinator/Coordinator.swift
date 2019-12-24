@@ -93,7 +93,7 @@ extension NINCoordinator {
     }
     
     @discardableResult
-    private func showFullScreenViewController(_ image: UIImage, _ attachment: NINFileInfo) -> UIViewController? {
+    internal func showFullScreenViewController(_ image: UIImage, _ attachment: NINFileInfo) -> UIViewController? {
         let viewModel: NINFullScreenViewModel = NINFullScreenViewModelImpl(session: self.session)
         let previewViewController: NINFullScreenViewController = storyboard.instantiateViewController()
         previewViewController.viewModel = viewModel
@@ -107,8 +107,15 @@ extension NINCoordinator {
         return previewViewController
     }
     
-    private func showRatingViewController() {
+    @discardableResult
+    internal func showRatingViewController() -> UIViewController? {
+        let viewModel: NINRatingViewModel = NINRatingViewModelImpl(session: self.session)
+        let ratingViewController: NINRatingViewController = storyboard.instantiateViewController()
+        ratingViewController.session = session
+        ratingViewController.viewModel = viewModel
         
+        self.navigationController?.pushViewController(ratingViewController, animated: true)
+        return ratingViewController
     }
 }
 

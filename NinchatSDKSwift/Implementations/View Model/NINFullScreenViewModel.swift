@@ -15,7 +15,7 @@ protocol NINFullScreenViewModel {
 
 final class NINFullScreenViewModelImpl: NINFullScreenViewModel {
     
-    private let session: NINChatSessionSwift
+    private unowned let session: NINChatSessionSwift
     private var downloadCompletion: ((Error?) -> Void)?
     
     // MARK: - NINFullScreenViewModel

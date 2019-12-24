@@ -57,4 +57,10 @@ class CoordinatorTests: XCTestCase {
         XCTAssertNotNil(vc)
         XCTAssertEqual(vc?.session, session)
     }
+    
+    func testRatingViewController() {
+        let vc = coordinator.showRatingViewController() as? NINRatingViewController
+        XCTAssertNotNil(vc)
+        XCTAssertEqual(vc?.session, session)
+    }
 }
