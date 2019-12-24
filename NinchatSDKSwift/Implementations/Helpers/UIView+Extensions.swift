@@ -10,12 +10,12 @@ import UIKit
 
 extension UIView {
     @discardableResult
-    func fix(width: CGFloat = 0, height: CGFloat = 0) -> UIView {
+    func fix(width: CGFloat = -1, height: CGFloat = -1) -> UIView {
         self.translatesAutoresizingMaskIntoConstraints = false
-        if width > 0 {
+        if width >= 0 {
             self.widthAnchor.constraint(equalToConstant: width).isActive = true
         }
-        if height > 0 {
+        if height >= 0 {
             self.heightAnchor.constraint(equalToConstant: height).isActive = true
         }
         
@@ -58,6 +58,27 @@ extension UIView {
         }
         if let view = toY {
             self.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 0).isActive = true
+        }
+        return self
+    }
+    
+    @discardableResult
+    func deactivate(origin: [NSLayoutConstraint.Attribute] = [], size: [NSLayoutConstraint.Attribute] = []) -> UIView {
+        origin.forEach { attribute in
+            self.superview?.constraints
+                .filter({ target in
+                    target.firstItem as? UIView == self && target.firstAttribute == attribute
+                })
+                .first?
+                .isActive = false
+        }
+        size.forEach { attribute in
+            self.constraints
+                .filter({ target in
+                    target.firstItem as? UIView == self && target.firstAttribute == attribute
+                })
+                .first?
+                .isActive = false
         }
         return self
     }

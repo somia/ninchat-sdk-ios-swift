@@ -21,10 +21,10 @@ extension UITextView {
         }
         heightConstraint.constant = height
         
-        self.setNeedsLayout()
         self.superview?.setNeedsLayout()
-        self.layoutIfNeeded()
         self.superview?.layoutIfNeeded()
+        self.setNeedsLayout()
+        self.layoutIfNeeded()
     }
     
     func newSize(maxHeight: CGFloat = 9999) -> CGFloat {

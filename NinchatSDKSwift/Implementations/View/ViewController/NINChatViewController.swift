@@ -90,9 +90,10 @@ final class NINChatViewController: UIViewController, ViewController {
         
         return view
     }()
-    @IBOutlet private weak var inputContainerHeight: NSLayoutConstraint!
+    private var inputContainerHeight: CGFloat!
     @IBOutlet private weak var inputContainer: UIView! {
         didSet {
+            inputContainerHeight = 94.5
             inputContainer.addSubview(inputControlsView)
             inputControlsView
                 .fix(left: (0.0, inputContainer), right: (0.0, inputContainer), isRelative: false)
@@ -158,8 +159,7 @@ final class NINChatViewController: UIViewController, ViewController {
             print("new text area height: \(height + 64)")
             #endif
             
-            self?.inputContainerHeight.constant = height + 64
-            self?.view.layoutIfNeeded()
+            self?.updateInputContainerHeight(height + 64.0)
         }
     }
     
@@ -275,8 +275,19 @@ extension NINChatViewController {
         }
     }
     
-    private func alignInputControlsTopToScreenBottom(_ align: Bool) {
-        self.inputContainer.isHidden = align
+    private func updateInputContainerHeight(_ value: CGFloat, update: Bool = true) {
+        self.inputContainer.deactivate(size: [.height])
+        self.inputContainer.fix(height: value)
+        
+        if update {
+            self.inputContainerHeight = value
+        }
+        self.view.layoutIfNeeded()
+    }
+    
+    private func alignInputControlsTopToScreenBottom(_ hide: Bool) {
+        self.updateInputContainerHeight((hide) ? 0 : self.inputContainerHeight, update: false)
+        self.inputContainer.isHidden = hide
     }
     
     private func adjustConstraints(for size: CGSize, withAnimation animation: Bool) {

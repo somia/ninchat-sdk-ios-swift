@@ -136,10 +136,10 @@ you are next.</string>
                                 </constraints>
                             </view>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="brw-f0-DOL" userLabel="Chat view" customClass="NINChatView">
-                                <rect key="frame" x="0.0" y="257" width="375" height="315.5"/>
+                                <rect key="frame" x="0.0" y="257" width="375" height="290"/>
                                 <subviews>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="g76-kj-vdH">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="315.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="290"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="separatorColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <connections>
@@ -162,11 +162,8 @@ you are next.</string>
                                 </connections>
                             </view>
                             <view tag="201" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zwn-LD-a0m">
-                                <rect key="frame" x="0.0" y="572.5" width="375" height="94.5"/>
+                                <rect key="frame" x="0.0" y="547" width="375" height="120"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="94.5" id="1rN-7U-yJU"/>
-                                </constraints>
                             </view>
                             <view contentMode="scaleToFill" placeholderIntrinsicWidth="132" placeholderIntrinsicHeight="45" translatesAutoresizingMaskIntoConstraints="NO" id="Sle-hz-0wC" customClass="NINEmbeddableCloseChatButton">
                                 <rect key="frame" x="233" y="10" width="132" height="45"/>
@@ -198,14 +195,13 @@ you are next.</string>
                         <outlet property="chatView" destination="brw-f0-DOL" id="yXn-pk-cEC"/>
                         <outlet property="closeChatButton" destination="Sle-hz-0wC" id="R6I-Ra-xeb"/>
                         <outlet property="inputContainer" destination="Zwn-LD-a0m" id="1ck-0f-ywi"/>
-                        <outlet property="inputContainerHeight" destination="1rN-7U-yJU" id="HAT-1w-TKi"/>
                         <outlet property="videoContainer" destination="rVm-KF-mbW" id="A69-9b-rAg"/>
                         <outlet property="videoContainerHeight" destination="drK-a0-uHv" id="lnT-Nc-QYq"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="N5V-LR-dPx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1638" y="149"/>
+            <point key="canvasLocation" x="1637.5999999999999" y="148.87556221889056"/>
         </scene>
         <!--Full Screen Image View Controller-->
         <scene sceneID="7Sk-fg-k4i">
