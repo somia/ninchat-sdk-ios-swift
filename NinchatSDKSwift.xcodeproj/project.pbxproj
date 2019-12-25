@@ -44,6 +44,10 @@
 		8563004C23B286FB0098A7B0 /* FacesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563004B23B286FB0098A7B0 /* FacesView.swift */; };
 		8563004E23B2886F0098A7B0 /* FacesView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8563004D23B2886F0098A7B0 /* FacesView.xib */; };
 		8563005023B291600098A7B0 /* NINRatingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563004F23B291600098A7B0 /* NINRatingViewModel.swift */; };
+		8563007B23B3846B0098A7B0 /* NINChatDataSourceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563007A23B3846B0098A7B0 /* NINChatDataSourceDelegate.swift */; };
+		8563007D23B391840098A7B0 /* NINWebRTCDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563007C23B391840098A7B0 /* NINWebRTCDelegate.swift */; };
+		8563007F23B393D00098A7B0 /* NINRTCVideoDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563007E23B393D00098A7B0 /* NINRTCVideoDelegate.swift */; };
+		8563008123B398AB0098A7B0 /* NINPickerControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563008023B398AB0098A7B0 /* NINPickerControllerDelegate.swift */; };
 		85DC59C9239E384D007ABAE3 /* UIMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59C8239E384D007ABAE3 /* UIMigrationTests.swift */; };
 		85DC59CC239E4C42007ABAE3 /* NINButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59CB239E4C42007ABAE3 /* NINButton.swift */; };
 		85DC59D0239E6A38007ABAE3 /* NINChatSessionClosure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59CF239E6A38007ABAE3 /* NINChatSessionClosure.swift */; };
@@ -124,6 +128,10 @@
 		8563004B23B286FB0098A7B0 /* FacesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacesView.swift; sourceTree = "<group>"; };
 		8563004D23B2886F0098A7B0 /* FacesView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FacesView.xib; sourceTree = "<group>"; };
 		8563004F23B291600098A7B0 /* NINRatingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINRatingViewModel.swift; sourceTree = "<group>"; };
+		8563007A23B3846B0098A7B0 /* NINChatDataSourceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINChatDataSourceDelegate.swift; sourceTree = "<group>"; };
+		8563007C23B391840098A7B0 /* NINWebRTCDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINWebRTCDelegate.swift; sourceTree = "<group>"; };
+		8563007E23B393D00098A7B0 /* NINRTCVideoDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINRTCVideoDelegate.swift; sourceTree = "<group>"; };
+		8563008023B398AB0098A7B0 /* NINPickerControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINPickerControllerDelegate.swift; sourceTree = "<group>"; };
 		85DC59C8239E384D007ABAE3 /* UIMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIMigrationTests.swift; sourceTree = "<group>"; };
 		85DC59CB239E4C42007ABAE3 /* NINButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINButton.swift; sourceTree = "<group>"; };
 		85DC59CF239E6A38007ABAE3 /* NINChatSessionClosure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINChatSessionClosure.swift; sourceTree = "<group>"; };
@@ -217,6 +225,7 @@
 				855B9F2B238ECE650081A9C6 /* NINChatExceptions.swift */,
 				855CBE1C2397C46000A024A7 /* View */,
 				85DC59D3239E7BD5007ABAE3 /* View Model */,
+				8563007923B384590098A7B0 /* Data Source - Delegate */,
 				855CBE202397CBB800A024A7 /* Helpers */,
 			);
 			path = Implementations;
@@ -335,6 +344,17 @@
 				8563004D23B2886F0098A7B0 /* FacesView.xib */,
 			);
 			path = "Faces View";
+			sourceTree = "<group>";
+		};
+		8563007923B384590098A7B0 /* Data Source - Delegate */ = {
+			isa = PBXGroup;
+			children = (
+				8563007A23B3846B0098A7B0 /* NINChatDataSourceDelegate.swift */,
+				8563007C23B391840098A7B0 /* NINWebRTCDelegate.swift */,
+				8563007E23B393D00098A7B0 /* NINRTCVideoDelegate.swift */,
+				8563008023B398AB0098A7B0 /* NINPickerControllerDelegate.swift */,
+			);
+			path = "Data Source - Delegate";
 			sourceTree = "<group>";
 		};
 		85DC59CA239E4C20007ABAE3 /* UIKit */ = {
@@ -622,6 +642,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8563007B23B3846B0098A7B0 /* NINChatDataSourceDelegate.swift in Sources */,
 				8530EC9223ADFE9900BAA52A /* UIView+Extensions.swift in Sources */,
 				855CBE2F2397E3AB00A024A7 /* UIViewController+Extension.swift in Sources */,
 				85DC59CC239E4C42007ABAE3 /* NINButton.swift in Sources */,
@@ -631,6 +652,7 @@
 				855B9F30238ECE650081A9C6 /* Constants.swift in Sources */,
 				855CBE4423990CB100A024A7 /* Bundle+Extension.swift in Sources */,
 				855CBE2B2397DEA300A024A7 /* NINInitialViewController.swift in Sources */,
+				8563007D23B391840098A7B0 /* NINWebRTCDelegate.swift in Sources */,
 				8563005023B291600098A7B0 /* NINRatingViewModel.swift in Sources */,
 				855CBE3E2397FAE900A024A7 /* NINQueueViewController.swift in Sources */,
 				8530EC9323ADFE9900BAA52A /* UIButton+Extensions.swift in Sources */,
@@ -639,7 +661,9 @@
 				85DC59D5239E7C3B007ABAE3 /* NINQueueViewModel.swift in Sources */,
 				8563004323B231350098A7B0 /* TopBar.swift in Sources */,
 				855CBE222397CCA800A024A7 /* Storyboard+Extension.swift in Sources */,
+				8563008123B398AB0098A7B0 /* NINPickerControllerDelegate.swift in Sources */,
 				85DD6C6223AF6F5A0023FFEF /* UITextView+Extensions.swift in Sources */,
+				8563007F23B393D00098A7B0 /* NINRTCVideoDelegate.swift in Sources */,
 				855CBE1F2397C4F600A024A7 /* Coordinator.swift in Sources */,
 				855CBE422399060900A024A7 /* UIColor+Extensions.swift in Sources */,
 				855B9F31238ECE650081A9C6 /* NINChatSession.swift in Sources */,

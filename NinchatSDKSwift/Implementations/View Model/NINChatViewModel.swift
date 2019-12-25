@@ -101,8 +101,16 @@ extension NINChatViewModelImpl {
             
             switch rtcType {
             case .kNINMessageTypeWebRTCCall:
+                #if DEBUG
+                print("Got WebRTC call")
+                #endif
+
                 onCallReceived(notification.userInfo?["messageUser"] as? NINChannelUser)
             case .kNINMessageTypeWebRTCOffer:
+                #if DEBUG
+                print("Got WebRTC offer - initializing webrtc for video call (answer)")
+                #endif
+
                 guard let offerPayload = notification.userInfo?["payload"] as? [String:Any], let sdp = offerPayload["sdp"] as? [AnyHashable:Any] else { return false }
                 
                 self?.session.sessionManager.beginICE { error, stunServers, turnServers in
@@ -112,6 +120,10 @@ extension NINChatViewModelImpl {
                     onCallInitiated(error, client)
                 }
             case .kNINMessageTypeWebRTCHangup:
+                #if DEBUG
+                print("Got WebRTC hang-up - closing the video call.")
+                #endif
+
                 onCallHangup()
             default:
                 break

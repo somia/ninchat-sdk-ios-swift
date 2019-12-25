@@ -58,28 +58,25 @@ extension NINCoordinator {
     @discardableResult
     internal func showChatViewController() -> UIViewController {
         let viewModel: NINChatViewModel = NINChatViewModelImpl(session: self.session)
+        let videoDelegate: NINRTCVideoDelegate = chatVideoDelegate()
+        let mediaDelegate: NINPickerControllerDelegate = chatMediaPicker(viewModel)
         let chatViewController: NINChatViewController = storyboard.instantiateViewController()
         chatViewController.viewModel = viewModel
         chatViewController.session = session
-        chatViewController.onOpenGallery = { [weak self] source, delegate in
+        chatViewController.chatDataSourceDelegate = chatDataSourceDelegate(viewModel)
+        chatViewController.chatVideoDelegate = videoDelegate
+        chatViewController.chatRTCDelegate = chatRTCDelegate(videoDelegate)
+        chatViewController.chatMediaPickerDelegate = mediaDelegate
+        
+        
+        chatViewController.onOpenGallery = { [weak self] source in
             let controller = UIImagePickerController()
             controller.sourceType = source
             controller.mediaTypes = [kUTTypeImage, kUTTypeMovie] as [String]
             controller.allowsEditing = true
-            controller.delegate = delegate
+            controller.delegate = mediaDelegate
 
             self?.navigationController?.present(controller, animated: true, completion: nil)
-        }
-        chatViewController.onOpenPhotoAttachment = { [weak self] image, attachment in
-            self?.showFullScreenViewController(image, attachment)
-        }
-        chatViewController.onOpenVideoAttachment = { attachment in
-            guard let attachmentURL = attachment.url, let playerURL = URL(string: attachmentURL) else { return }
-            let playerViewController = AVPlayerViewController()
-            playerViewController.player = AVPlayer(url: playerURL)
-            self.navigationController?.present(playerViewController, animated: true) {
-                playerViewController.player?.play()
-            }
         }
         chatViewController.onBackToQueue = { [weak self] in
             self?.navigationController?.popViewController(animated: true)
@@ -97,6 +94,7 @@ extension NINCoordinator {
         let viewModel: NINFullScreenViewModel = NINFullScreenViewModelImpl(session: self.session)
         let previewViewController: NINFullScreenViewController = storyboard.instantiateViewController()
         previewViewController.viewModel = viewModel
+        previewViewController.session = session
         previewViewController.image = image
         previewViewController.attachment = attachment
         previewViewController.onCloseTapped = { [weak self] in
@@ -143,5 +141,38 @@ extension NINCoordinator {
         }
         
         return joinViewController
+    }
+}
+
+
+// MARK: - NINChatViewController componenets
+
+extension NINCoordinator {
+    internal func chatDataSourceDelegate(_ viewModel: NINChatViewModel) -> NINChatDataSourceDelegate {
+        let dataSourceDelegate: NINChatDataSourceDelegate = NINChatDataSourceDelegateImpl(viewModel: viewModel)
+        dataSourceDelegate.onOpenPhotoAttachment = { [weak self] image, attachment in
+            self?.showFullScreenViewController(image, attachment)
+        }
+        dataSourceDelegate.onOpenVideoAttachment = { attachment in
+            guard let attachmentURL = attachment.url, let playerURL = URL(string: attachmentURL) else { return }
+            let playerViewController = AVPlayerViewController()
+            playerViewController.player = AVPlayer(url: playerURL)
+            self.navigationController?.present(playerViewController, animated: true) {
+                playerViewController.player?.play()
+            }
+        }
+        return dataSourceDelegate
+    }
+    
+    internal func chatVideoDelegate() -> NINRTCVideoDelegate {
+        return NINRTCVideoDelegateImpl()
+    }
+    
+    internal func chatRTCDelegate(_ videoDelegate: NINRTCVideoDelegate) -> NINWebRTCDelegate {
+        return NINWebRTCDelegateImpl(remoteVideoDelegate: videoDelegate)
+    }
+    
+    internal func chatMediaPicker(_ viewModel: NINChatViewModel) -> NINPickerControllerDelegate {
+        return NINPickerControllerDelegateImpl(viewModel: viewModel)
     }
 }

@@ -7,8 +7,6 @@
 //
 
 import UIKit
-import Photos
-import CoreServices
 import NinchatSDK
 
 final class NINChatViewController: UIViewController, ViewController {
@@ -20,9 +18,59 @@ final class NINChatViewController: UIViewController, ViewController {
     
     var viewModel: NINChatViewModel!    
     var session: NINChatSessionSwift!
+    var chatDataSourceDelegate: NINChatDataSourceDelegate! {
+        didSet {
+            chatDataSourceDelegate.onCloseChatTapped = { [weak self] in
+                self?.onCloseChatTapped()
+            }
+            chatDataSourceDelegate.onUIActionError = { _ in
+                NINToast.showWithErrorMessage("failed to send message", callback: nil)
+            }
+        }
+    }
+    var chatVideoDelegate: NINRTCVideoDelegate! {
+        didSet {
+            chatVideoDelegate.onSizeChange = { [weak self] size in
+                self?.videoView.resizeRemoteVideo(to: size)
+            }
+        }
+    }
+    var chatRTCDelegate: NINWebRTCDelegate! {
+        didSet {
+            chatRTCDelegate.onError = { [weak self] error in
+                self?.disconnectRTC {
+                    self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
+                }
+            }
+            
+            chatRTCDelegate.onRemoteVideoTrack = { [weak self] remoteVideo, remoteVideoTrack in
+                self?.videoView.remoteCapture = remoteVideo
+                
+                guard self?.videoView.remoteVideoTrack != remoteVideoTrack else { return }
+                self?.videoView.remoteVideoTrack = remoteVideoTrack
+            }
+            
+            chatRTCDelegate.onLocalCapturer = { [weak self] localCapturer in
+                self?.videoView.localCapture = localCapturer
+            }
+        }
+    }
+    var chatMediaPickerDelegate: NINPickerControllerDelegate! {
+        didSet {
+            chatMediaPickerDelegate.onMediaSent = { error in
+                if error != nil {
+                    NINToast.showWithErrorMessage("Failed to send the attachment", callback: nil)
+                }
+            }
+            chatMediaPickerDelegate.onDismissPicker = { [weak self] in
+                self?.dismiss(animated: true, completion: nil)
+            }
+        }
+    }
+    
     var onChatClosed: (() -> Void)?
     var onBackToQueue: (() -> Void)?
-    var onOpenGallery: ((UIImagePickerController.SourceType, UIImagePickerControllerDelegate & UINavigationControllerDelegate) -> Void)?
+    var onOpenGallery: ((UIImagePickerController.SourceType) -> Void)?
     var onOpenPhotoAttachment: ((UIImage, NINFileInfo) -> Void)?
     var onOpenVideoAttachment: ((NINFileInfo) -> Void)?
     
@@ -60,8 +108,8 @@ final class NINChatViewController: UIViewController, ViewController {
             /// TODO: Update after migration of `NINChatView`
             chatView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(sender:))))
             chatView.sessionManager = session.sessionManager
-            chatView.delegate = self
-            chatView.dataSource = self
+            chatView.delegate = chatDataSourceDelegate
+            chatView.dataSource = chatDataSourceDelegate
         }
     }
     @IBOutlet private weak var closeChatButton: NINCloseChatButton! {
@@ -188,11 +236,7 @@ final class NINChatViewController: UIViewController, ViewController {
     // MARK: - Helpers
     
     private func connectRTC() {
-        self.viewModel.listenToRTCSignaling(delegate: self, onCallReceived: { [unowned self] channel in
-            #if DEBUG
-            print("Got WebRTC call")
-            #endif
-            
+        self.viewModel.listenToRTCSignaling(delegate: chatRTCDelegate, onCallReceived: { [unowned self] channel in
             self.view.endEditing(true)
             NINVideoCallConsentDialog.show(on: self.view, forRemoteUser: channel, sessionManager: self.session.sessionManager) { result in
                 self.viewModel.pickup(answer: result == .accepted) { error in
@@ -201,10 +245,6 @@ final class NINChatViewController: UIViewController, ViewController {
             }
             
         }, onCallInitiated: { [weak self] error, rtcClinet in
-            #if DEBUG
-            print("Got WebRTC offer - initializing webrtc for video call (answer)")
-            #endif
-            
             self?.webRTCClient = rtcClinet
             self?.closeChatButton.hide = true
             self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
@@ -212,10 +252,6 @@ final class NINChatViewController: UIViewController, ViewController {
             self?.videoView.isSelected = false
             self?.videoView.resizeLocalVideo()
         }, onCallHangup: { [weak self] in
-            #if DEBUG
-            print("Got WebRTC hang-up - closing the video call.")
-            #endif
-            
             self?.disconnectRTC {
                 self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
             }
@@ -336,7 +372,7 @@ extension NINChatViewController {
                     }
                 }, callback: nil)
             } else {
-                self.onOpenGallery?(.photoLibrary, self)
+                self.onOpenGallery?(.photoLibrary)
             }
         }
     }
@@ -352,7 +388,7 @@ extension NINChatViewController {
                     }
                 }, callback: nil)
             } else {
-                self.onOpenGallery?(.camera, self)
+                self.onOpenGallery?(.camera)
             }
         }
     }
@@ -492,149 +528,5 @@ extension NINChatViewController {
         
         /// TODO: pause video - if one should be active - here?
         viewModel.appWillResignActive { _ in }
-    }
-}
-
-// MARK: - UIImagePickerControllerDelegate
-
-extension NINChatViewController: UIImagePickerControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        var fileName = "photo.jpg"
-        
-        // Photos from photo library have file names; extract it
-        if #available(iOS 11, *) {
-            if picker.sourceType == .photoLibrary,
-                let asset = info[UIImagePickerController.InfoKey.phAsset] as? PHAsset,
-                let assetResource = PHAssetResource.assetResources(for: asset).last {
-                
-                fileName = assetResource.originalFilename
-            }
-        } else {
-            if picker.sourceType == .photoLibrary,
-                let url = info[UIImagePickerController.InfoKey.referenceURL] as? URL,
-                let phAsset = PHAsset.fetchAssets(withALAssetURLs: [url], options: nil).lastObject,
-                let name = phAsset.value(forKey: "filename") as? String {
-                
-                fileName = name
-            }
-        }
-        
-        DispatchQueue.global(qos: .background).async {
-            switch info[UIImagePickerController.InfoKey.mediaType] as! CFString {
-            case kUTTypeImage:
-                if let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage, let data = image.jpegData(compressionQuality: 1.0) {
-                    self.viewModel.send(attachment: fileName, data: data) { error in
-                        if let _ = error { NINToast.showWithErrorMessage("Failed to send image file", callback: nil) }
-                    }
-                }
-            case kUTTypeMovie:
-                if let videoURL = info[UIImagePickerController.InfoKey.mediaURL] as? URL, let data = try? Data(contentsOf: videoURL) {
-                    self.viewModel.send(attachment: fileName, data: data) { error in
-                        if let _ = error { NINToast.showWithErrorMessage("Failed to send video file", callback: nil) }
-                    }
-                }
-            default:
-                fatalError("Invalid media type!")
-            }
-        }
-    
-        self.dismiss(animated: true, completion: nil)
-    }
-    
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        self.dismiss(animated: true, completion: nil)
-    }
-}
-
-// MARK: - NINWebRTCClientDelegate
-
-extension NINChatViewController: NINWebRTCClientDelegate {
-    func webrtcClient(_ client: NINWebRTCClient!, didGetError error: Error!) {
-        #if DEBUG
-        print("NINCHAT: didGetError: \(String(describing: error))")
-        #endif
-        
-        self.disconnectRTC {
-            self.adjustConstraints(for: self.view.bounds.size, withAnimation: true)
-        }
-    }
-    
-    func webrtcClient(_ client: NINWebRTCClient!, didChange newState: RTCIceConnectionState) {
-        #if DEBUG
-        print("WebRTC new state: \(newState.rawValue)")
-        #endif
-    }
-    
-    /** Called when the video call is initiated and the remote video track is available. */
-    func webrtcClient(_ client: NINWebRTCClient!, didReceiveRemoteVideoTrack remoteVideoTrack: RTCVideoTrack!) {
-        #if DEBUG
-        print("NINCHAT: didReceiveRemoteVideoTrack: \(String(describing: remoteVideoTrack))")
-        #endif
-        
-        #if RTC_SUPPORTS_METAL
-        let remoteView = RTCMTLVideoView(frame: .zero)
-        remoteVide.delegate = self
-        self.videoView.remoteCapture = remoteView
-        #else
-        let remoteView = RTCEAGLVideoView(frame: .zero)
-        remoteView.delegate = self
-        self.videoView.remoteCapture = remoteView
-        #endif
-        
-        guard self.videoView.remoteVideoTrack != remoteVideoTrack else { return }
-        self.videoView.remoteVideoTrack = remoteVideoTrack
-    }
-    
-    func webrtcClient(_ client: NINWebRTCClient!, didCreateLocalCapturer localCapturer: RTCCameraVideoCapturer!) {
-        #if DEBUG
-        print("didCreateLocalCapturer: \(String(describing: localCapturer))")
-        #endif
-        
-        self.videoView.localCapture = localCapturer
-    }
-}
- 
-// MARK: - RTCVideoViewDelegate
-
-extension NINChatViewController: RTCVideoViewDelegate {
-    func videoView(_ videoView: RTCVideoRenderer, didChangeVideoSize size: CGSize) {
-        self.videoView.resizeRemoteVideo(to: size)
-    }
-}
-
-// MARK: - NINChatViewDelegate
-
-extension NINChatViewController: NINChatViewDelegate {
-    func chatView(_ chatView: NINChatView!, imageSelected image: UIImage!, forAttachment attachment: NINFileInfo!) {
-        if attachment.isImage() {
-            self.onOpenPhotoAttachment?(image, attachment)
-        } else if attachment.isVideo() {
-            self.onOpenVideoAttachment?(attachment)
-        }
-    }
-    
-    func closeChatRequested(by chatView: NINChatView!) {
-        self.onCloseChatTapped()
-    }
-    
-    func uiActionSent(by composeContentView: NINComposeContentView!) {
-        self.viewModel.send(action: composeContentView) { error in
-            if let _ = error {
-                NINToast.showWithErrorMessage("failed to send message", callback: nil)
-                composeContentView.sendActionFailed()
-            }
-        }
-    }
-}
-
-// MARK: - NINChatViewDataSource
-
-extension NINChatViewController: NINChatViewDataSource {
-    func numberOfMessages(for chatView: NINChatView!) -> Int {
-        return self.session.sessionManager.chatMessages.count
-    }
-    
-    func chatView(_ chatView: NINChatView!, messageAt index: Int) -> NINChatMessage! {
-        return self.session.sessionManager.chatMessages[index]
     }
 }
