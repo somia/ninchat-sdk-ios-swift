@@ -1,9 +1,7 @@
 //
-//  NINChatSession.swift
-//  NinchatSDK
-//
-//  Created by Hassan Shahbazi on 22.11.2019.
-//  Copyright © 2019 Somia Reality Oy. All rights reserved.
+// Copyright (c) 22.11.2019 Somia Reality Oy. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
 //
 
 import UIKit
@@ -176,10 +174,7 @@ private extension NINChatSessionSwift {
                 return
             }
             
-            #if DEBUG
-            print("Got site config: \(String(describing: config))")
-            #endif
-            
+            debugger("Got site config: \(String(describing: config))")
             self?.sessionManager.siteConfiguration = NINSiteConfiguration(config)
             self?.sessionManager.siteConfiguration.environments = self?.environments
             

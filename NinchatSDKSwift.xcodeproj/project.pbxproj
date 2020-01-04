@@ -48,6 +48,7 @@
 		8563007D23B391840098A7B0 /* NINWebRTCDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563007C23B391840098A7B0 /* NINWebRTCDelegate.swift */; };
 		8563007F23B393D00098A7B0 /* NINRTCVideoDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563007E23B393D00098A7B0 /* NINRTCVideoDelegate.swift */; };
 		8563008123B398AB0098A7B0 /* NINPickerControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563008023B398AB0098A7B0 /* NINPickerControllerDelegate.swift */; };
+		8571D44423C091C000C16758 /* Debugger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D44323C091C000C16758 /* Debugger.swift */; };
 		85DC59C9239E384D007ABAE3 /* UIMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59C8239E384D007ABAE3 /* UIMigrationTests.swift */; };
 		85DC59CC239E4C42007ABAE3 /* NINButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59CB239E4C42007ABAE3 /* NINButton.swift */; };
 		85DC59D0239E6A38007ABAE3 /* NINChatSessionClosure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59CF239E6A38007ABAE3 /* NINChatSessionClosure.swift */; };
@@ -132,6 +133,7 @@
 		8563007C23B391840098A7B0 /* NINWebRTCDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINWebRTCDelegate.swift; sourceTree = "<group>"; };
 		8563007E23B393D00098A7B0 /* NINRTCVideoDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINRTCVideoDelegate.swift; sourceTree = "<group>"; };
 		8563008023B398AB0098A7B0 /* NINPickerControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINPickerControllerDelegate.swift; sourceTree = "<group>"; };
+		8571D44323C091C000C16758 /* Debugger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debugger.swift; sourceTree = "<group>"; };
 		85DC59C8239E384D007ABAE3 /* UIMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIMigrationTests.swift; sourceTree = "<group>"; };
 		85DC59CB239E4C42007ABAE3 /* NINButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINButton.swift; sourceTree = "<group>"; };
 		85DC59CF239E6A38007ABAE3 /* NINChatSessionClosure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINChatSessionClosure.swift; sourceTree = "<group>"; };
@@ -311,6 +313,7 @@
 				855CBE412399060900A024A7 /* UIColor+Extensions.swift */,
 				855CBE4323990CB100A024A7 /* Bundle+Extension.swift */,
 				85DD6C6123AF6F5A0023FFEF /* UITextView+Extensions.swift */,
+				8571D44323C091C000C16758 /* Debugger.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -642,6 +645,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8571D44423C091C000C16758 /* Debugger.swift in Sources */,
 				8563007B23B3846B0098A7B0 /* NINChatDataSourceDelegate.swift in Sources */,
 				8530EC9223ADFE9900BAA52A /* UIView+Extensions.swift in Sources */,
 				855CBE2F2397E3AB00A024A7 /* UIViewController+Extension.swift in Sources */,

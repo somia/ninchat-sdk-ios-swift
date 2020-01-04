@@ -1,9 +1,7 @@
 //
-//  NINChatViewModel.swift
-//  NinchatSDKSwift
-//
-//  Created by Hassan Shahbazi on 9.12.2019.
-//  Copyright © 2019 Hassan Shahbazi. All rights reserved.
+// Copyright (c) 9.12.2019 Somia Reality Oy. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
 //
 
 import NinchatSDK
@@ -101,16 +99,10 @@ extension NINChatViewModelImpl {
             
             switch rtcType {
             case .kNINMessageTypeWebRTCCall:
-                #if DEBUG
-                print("Got WebRTC call")
-                #endif
-
+                debugger("Got WebRTC call")
                 onCallReceived(notification.userInfo?["messageUser"] as? NINChannelUser)
             case .kNINMessageTypeWebRTCOffer:
-                #if DEBUG
-                print("Got WebRTC offer - initializing webrtc for video call (answer)")
-                #endif
-
+                debugger("Got WebRTC offer - initializing webrtc for video call (answer)")
                 guard let offerPayload = notification.userInfo?["payload"] as? [String:Any], let sdp = offerPayload["sdp"] as? [AnyHashable:Any] else { return false }
                 
                 self?.session.sessionManager.beginICE { error, stunServers, turnServers in
@@ -120,10 +112,7 @@ extension NINChatViewModelImpl {
                     onCallInitiated(error, client)
                 }
             case .kNINMessageTypeWebRTCHangup:
-                #if DEBUG
-                print("Got WebRTC hang-up - closing the video call.")
-                #endif
-
+                debugger("Got WebRTC hang-up - closing the video call.")
                 onCallHangup()
             default:
                 break
@@ -140,10 +129,7 @@ extension NINChatViewModelImpl {
     
     func disconnectRTC(_ client: NINWebRTCClient?, completion: (() -> Void)?) {
         if let client = client {
-            #if DEBUG
-            print("Disconnecting webRTC resources")
-            #endif
-            
+            debugger("Disconnecting webRTC resources")
             client.disconnect()
             completion?()
         }

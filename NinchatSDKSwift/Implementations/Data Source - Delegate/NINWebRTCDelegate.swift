@@ -1,9 +1,7 @@
 //
-//  NINWebRTCDelegate.swift
-//  NinchatSDKSwift
-//
-//  Created by Hassan Shahbazi on 25.12.2019.
-//  Copyright © 2019 Hassan Shahbazi. All rights reserved.
+// Copyright (c) 25.12.2019 Somia Reality Oy. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
 //
 
 import Foundation
@@ -40,24 +38,17 @@ final class NINWebRTCDelegateImpl: NSObject, NINWebRTCDelegate {
 
 extension NINWebRTCDelegateImpl {
     func webrtcClient(_ client: NINWebRTCClient!, didGetError error: Error!) {
-        #if DEBUG
-        print("NINCHAT: didGetError: \(String(describing: error))")
-        #endif
-        
+        debugger("NINCHAT: didGetError: \(String(describing: error))")
         self.onError?(error)
     }
     
     func webrtcClient(_ client: NINWebRTCClient!, didChange newState: RTCIceConnectionState) {
-        #if DEBUG
-        print("WebRTC new state: \(newState.rawValue)")
-        #endif
+        debugger("WebRTC new state: \(newState.rawValue)")
     }
     
     /** Called when the video call is initiated and the remote video track is available. */
     func webrtcClient(_ client: NINWebRTCClient!, didReceiveRemoteVideoTrack remoteVideoTrack: RTCVideoTrack!) {
-        #if DEBUG
-        print("NINCHAT: didReceiveRemoteVideoTrack: \(String(describing: remoteVideoTrack))")
-        #endif
+        debugger("NINCHAT: didReceiveRemoteVideoTrack: \(String(describing: remoteVideoTrack))")
         
         #if RTC_SUPPORTS_METAL
         let remoteView = RTCMTLVideoView(frame: .zero)
@@ -73,10 +64,7 @@ extension NINWebRTCDelegateImpl {
     }
     
     func webrtcClient(_ client: NINWebRTCClient!, didCreateLocalCapturer localCapturer: RTCCameraVideoCapturer!) {
-        #if DEBUG
-        print("didCreateLocalCapturer: \(String(describing: localCapturer))")
-        #endif
-        
+        debugger("didCreateLocalCapturer: \(String(describing: localCapturer))")
         self.onLocalCapturer?(localCapturer)
     }
 }

@@ -1,9 +1,7 @@
 //
-//  NINChatViewController.swift
-//  NinchatSDKSwift
-//
-//  Created by Hassan Shahbazi on 9.12.2019.
-//  Copyright © 2019 Hassan Shahbazi. All rights reserved.
+// Copyright (c) 9.12.2019 Somia Reality Oy. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
 //
 
 import UIKit
@@ -203,10 +201,7 @@ final class NINChatViewController: UIViewController, ViewController {
         self.setupGestures()
         
         self.inputControlsView.onTextSizeChanged = { [weak self] height in
-            #if DEBUG
-            print("new text area height: \(height + 64)")
-            #endif
-            
+            debugger("new text area height: \(height + 64)")
             self?.updateInputContainerHeight(height + 64.0)
         }
     }
@@ -507,11 +502,9 @@ extension NINChatViewController {
     @objc
     private func didEnterBackground(notification: Notification) {
         viewModel.appDidEnterBackground { [weak self] error in
-            #if DEBUG
             if let error = error {
-                print("failed to send hang-up: \(error)")
+                debugger("failed to send hang-up: \(error)")
             }
-            #endif
             
             self?.view.endEditing(true)
             self?.disconnectRTC {
@@ -522,9 +515,7 @@ extension NINChatViewController {
     
     @objc
     private func willResignActive(notification: Notification) {
-        #if DEBUG
-        print("applicationWillResignActive: no action.")
-        #endif
+        debugger("applicationWillResignActive: no action.")
         
         /// TODO: pause video - if one should be active - here?
         viewModel.appWillResignActive { _ in }

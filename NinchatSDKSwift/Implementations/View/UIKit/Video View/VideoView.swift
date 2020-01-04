@@ -1,9 +1,7 @@
 //
-//  VideoView.swift
-//  NinchatSDKSwift
-//
-//  Created by Hassan Shahbazi on 9.12.2019.
-//  Copyright © 2019 Hassan Shahbazi. All rights reserved.
+// Copyright (c) 9.12.2019 Somia Reality Oy. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
 //
 
 import UIKit
@@ -159,9 +157,7 @@ final class VideoView: UIView, VideoViewProtocol {
         let containerHeight = self.videoContainerView.bounds.height
         guard containerWidth > 1, containerHeight > 1 else { return }
         
-        #if DEBUG
-        print("Adjusting local video view size")
-        #endif
+        debugger("Adjusting local video view size")
         
         let videoRect = CGRect(x: 0, y: 0, width: containerWidth / 3, height: containerHeight / 3)
         self.localViewWidthConstraint.constant = videoRect.width
