@@ -6,12 +6,6 @@
 
 import Foundation
 
-enum ChatStatus: Int {
-    case happy = 1
-    case neutral = 0
-    case sad = -1
-}
-
 protocol NINRatingViewModel {
     init(session: NINChatSessionSwift)
     

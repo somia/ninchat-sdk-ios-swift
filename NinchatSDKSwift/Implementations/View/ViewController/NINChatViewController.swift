@@ -472,7 +472,7 @@ extension NINChatViewController {
     
     private func onVideoHangupTapped() {
         self.session.ninchat(session, didOutputSDKLog: "Hang-up button pressed")
-        self.viewModel.send(type: WebRTCConstants.kNINMessageTypeWebRTCHangup.rawValue, payload: [:]) { [weak self] error in
+        self.viewModel.send(type: MessageType.hangup.rawValue, payload: [:]) { [weak self] error in
             self?.disconnectRTC {
                 self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
             }

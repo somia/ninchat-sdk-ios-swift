@@ -49,6 +49,22 @@
 		8563007F23B393D00098A7B0 /* NINRTCVideoDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563007E23B393D00098A7B0 /* NINRTCVideoDelegate.swift */; };
 		8563008123B398AB0098A7B0 /* NINPickerControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563008023B398AB0098A7B0 /* NINPickerControllerDelegate.swift */; };
 		8571D44423C091C000C16758 /* Debugger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D44323C091C000C16758 /* Debugger.swift */; };
+		8571D44C23C0B47300C16758 /* ChatMessagePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D44623C0B47300C16758 /* ChatMessagePayload.swift */; };
+		8571D44D23C0B47300C16758 /* RTCSignal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D44723C0B47300C16758 /* RTCSignal.swift */; };
+		8571D44E23C0B47300C16758 /* NINTextMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D44923C0B47300C16758 /* NINTextMessage.swift */; };
+		8571D44F23C0B47300C16758 /* ComposeMessagePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D44A23C0B47300C16758 /* ComposeMessagePayload.swift */; };
+		8571D45023C0B47300C16758 /* NINFileInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D44B23C0B47300C16758 /* NINFileInfo.swift */; };
+		8571D45623C0B48B00C16758 /* Data+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D45123C0B48A00C16758 /* Data+Extension.swift */; };
+		8571D45723C0B48B00C16758 /* NINLowLevelClientPayload+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D45223C0B48A00C16758 /* NINLowLevelClientPayload+Extension.swift */; };
+		8571D45823C0B48B00C16758 /* NINLowLevelClientProps+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D45323C0B48A00C16758 /* NINLowLevelClientProps+Extension.swift */; };
+		8571D45923C0B48B00C16758 /* NINLowLevelClientSession+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D45423C0B48A00C16758 /* NINLowLevelClientSession+Extension.swift */; };
+		8571D45A23C0B48B00C16758 /* NINLowLevelClientStrings+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D45523C0B48B00C16758 /* NINLowLevelClientStrings+Extension.swift */; };
+		8571D46823C0B4A900C16758 /* NinchatSessionManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D46723C0B4A900C16758 /* NinchatSessionManagerTests.swift */; };
+		8571D46F23C0C7D100C16758 /* NINChatSessionManagerImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D46A23C0C7D000C16758 /* NINChatSessionManagerImpl.swift */; };
+		8571D47023C0C7D100C16758 /* NINChatSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D46B23C0C7D000C16758 /* NINChatSessionManager.swift */; };
+		8571D47123C0C7D100C16758 /* NINChatSeesionManagerPrivate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D46C23C0C7D000C16758 /* NINChatSeesionManagerPrivate.swift */; };
+		8571D47223C0C7D100C16758 /* NINChatSessionManagerClosures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D46D23C0C7D000C16758 /* NINChatSessionManagerClosures.swift */; };
+		8571D47323C0C7D100C16758 /* NINChatSessionManagerEventHandlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D46E23C0C7D000C16758 /* NINChatSessionManagerEventHandlers.swift */; };
 		85DC59C9239E384D007ABAE3 /* UIMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59C8239E384D007ABAE3 /* UIMigrationTests.swift */; };
 		85DC59CC239E4C42007ABAE3 /* NINButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59CB239E4C42007ABAE3 /* NINButton.swift */; };
 		85DC59D0239E6A38007ABAE3 /* NINChatSessionClosure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59CF239E6A38007ABAE3 /* NINChatSessionClosure.swift */; };
@@ -134,6 +150,22 @@
 		8563007E23B393D00098A7B0 /* NINRTCVideoDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINRTCVideoDelegate.swift; sourceTree = "<group>"; };
 		8563008023B398AB0098A7B0 /* NINPickerControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINPickerControllerDelegate.swift; sourceTree = "<group>"; };
 		8571D44323C091C000C16758 /* Debugger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debugger.swift; sourceTree = "<group>"; };
+		8571D44623C0B47300C16758 /* ChatMessagePayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessagePayload.swift; sourceTree = "<group>"; };
+		8571D44723C0B47300C16758 /* RTCSignal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RTCSignal.swift; sourceTree = "<group>"; };
+		8571D44923C0B47300C16758 /* NINTextMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINTextMessage.swift; sourceTree = "<group>"; };
+		8571D44A23C0B47300C16758 /* ComposeMessagePayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposeMessagePayload.swift; sourceTree = "<group>"; };
+		8571D44B23C0B47300C16758 /* NINFileInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINFileInfo.swift; sourceTree = "<group>"; };
+		8571D45123C0B48A00C16758 /* Data+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Extension.swift"; sourceTree = "<group>"; };
+		8571D45223C0B48A00C16758 /* NINLowLevelClientPayload+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NINLowLevelClientPayload+Extension.swift"; sourceTree = "<group>"; };
+		8571D45323C0B48A00C16758 /* NINLowLevelClientProps+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NINLowLevelClientProps+Extension.swift"; sourceTree = "<group>"; };
+		8571D45423C0B48A00C16758 /* NINLowLevelClientSession+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NINLowLevelClientSession+Extension.swift"; sourceTree = "<group>"; };
+		8571D45523C0B48B00C16758 /* NINLowLevelClientStrings+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NINLowLevelClientStrings+Extension.swift"; sourceTree = "<group>"; };
+		8571D46723C0B4A900C16758 /* NinchatSessionManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatSessionManagerTests.swift; sourceTree = "<group>"; };
+		8571D46A23C0C7D000C16758 /* NINChatSessionManagerImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINChatSessionManagerImpl.swift; sourceTree = "<group>"; };
+		8571D46B23C0C7D000C16758 /* NINChatSessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINChatSessionManager.swift; sourceTree = "<group>"; };
+		8571D46C23C0C7D000C16758 /* NINChatSeesionManagerPrivate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINChatSeesionManagerPrivate.swift; sourceTree = "<group>"; };
+		8571D46D23C0C7D000C16758 /* NINChatSessionManagerClosures.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINChatSessionManagerClosures.swift; sourceTree = "<group>"; };
+		8571D46E23C0C7D000C16758 /* NINChatSessionManagerEventHandlers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINChatSessionManagerEventHandlers.swift; sourceTree = "<group>"; };
 		85DC59C8239E384D007ABAE3 /* UIMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIMigrationTests.swift; sourceTree = "<group>"; };
 		85DC59CB239E4C42007ABAE3 /* NINButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINButton.swift; sourceTree = "<group>"; };
 		85DC59CF239E6A38007ABAE3 /* NINChatSessionClosure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINChatSessionClosure.swift; sourceTree = "<group>"; };
@@ -227,7 +259,9 @@
 				855B9F2B238ECE650081A9C6 /* NINChatExceptions.swift */,
 				855CBE1C2397C46000A024A7 /* View */,
 				85DC59D3239E7BD5007ABAE3 /* View Model */,
+				8571D44523C0B47300C16758 /* Models */,
 				8563007923B384590098A7B0 /* Data Source - Delegate */,
+				8571D45B23C0B49A00C16758 /* Managers */,
 				855CBE202397CBB800A024A7 /* Helpers */,
 			);
 			path = Implementations;
@@ -275,10 +309,11 @@
 			isa = PBXGroup;
 			children = (
 				855B9F21238ECDB30081A9C6 /* Info.plist */,
+				851E359823B1214E000FA966 /* AutolayouTests.swift */,
 				855CBE232397D18900A024A7 /* CoordinatorTests.swift */,
 				85DC59C8239E384D007ABAE3 /* UIMigrationTests.swift */,
 				85DD6C6523AFAACF0023FFEF /* NINChatViewModelTests.swift */,
-				851E359823B1214E000FA966 /* AutolayouTests.swift */,
+				8571D46723C0B4A900C16758 /* NinchatSessionManagerTests.swift */,
 			);
 			path = NinchatSDKSwiftTests;
 			sourceTree = "<group>";
@@ -305,6 +340,11 @@
 		855CBE202397CBB800A024A7 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				8571D45123C0B48A00C16758 /* Data+Extension.swift */,
+				8571D45223C0B48A00C16758 /* NINLowLevelClientPayload+Extension.swift */,
+				8571D45323C0B48A00C16758 /* NINLowLevelClientProps+Extension.swift */,
+				8571D45423C0B48A00C16758 /* NINLowLevelClientSession+Extension.swift */,
+				8571D45523C0B48B00C16758 /* NINLowLevelClientStrings+Extension.swift */,
 				8530EC9123ADFE9800BAA52A /* UIButton+Extensions.swift */,
 				8530EC9023ADFE9800BAA52A /* UIView+Extensions.swift */,
 				855CBE212397CCA800A024A7 /* Storyboard+Extension.swift */,
@@ -358,6 +398,47 @@
 				8563008023B398AB0098A7B0 /* NINPickerControllerDelegate.swift */,
 			);
 			path = "Data Source - Delegate";
+			sourceTree = "<group>";
+		};
+		8571D44523C0B47300C16758 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				8571D44823C0B47300C16758 /* NINChatMessages */,
+				8571D44623C0B47300C16758 /* ChatMessagePayload.swift */,
+				8571D44723C0B47300C16758 /* RTCSignal.swift */,
+				8571D44A23C0B47300C16758 /* ComposeMessagePayload.swift */,
+				8571D44B23C0B47300C16758 /* NINFileInfo.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		8571D44823C0B47300C16758 /* NINChatMessages */ = {
+			isa = PBXGroup;
+			children = (
+				8571D44923C0B47300C16758 /* NINTextMessage.swift */,
+			);
+			path = NINChatMessages;
+			sourceTree = "<group>";
+		};
+		8571D45B23C0B49A00C16758 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				8571D46923C0C7D000C16758 /* Session Manager */,
+			);
+			name = Managers;
+			path = "../../../swift-backup/session-swift/ninchat-sdk-ios-swift/NinchatSDKSwift/Implementations/Managers";
+			sourceTree = "<group>";
+		};
+		8571D46923C0C7D000C16758 /* Session Manager */ = {
+			isa = PBXGroup;
+			children = (
+				8571D46B23C0C7D000C16758 /* NINChatSessionManager.swift */,
+				8571D46A23C0C7D000C16758 /* NINChatSessionManagerImpl.swift */,
+				8571D46C23C0C7D000C16758 /* NINChatSeesionManagerPrivate.swift */,
+				8571D46D23C0C7D000C16758 /* NINChatSessionManagerClosures.swift */,
+				8571D46E23C0C7D000C16758 /* NINChatSessionManagerEventHandlers.swift */,
+			);
+			path = "Session Manager";
 			sourceTree = "<group>";
 		};
 		85DC59CA239E4C20007ABAE3 /* UIKit */ = {
@@ -645,7 +726,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8571D47023C0C7D100C16758 /* NINChatSessionManager.swift in Sources */,
 				8571D44423C091C000C16758 /* Debugger.swift in Sources */,
+				8571D47223C0C7D100C16758 /* NINChatSessionManagerClosures.swift in Sources */,
 				8563007B23B3846B0098A7B0 /* NINChatDataSourceDelegate.swift in Sources */,
 				8530EC9223ADFE9900BAA52A /* UIView+Extensions.swift in Sources */,
 				855CBE2F2397E3AB00A024A7 /* UIViewController+Extension.swift in Sources */,
@@ -656,29 +739,42 @@
 				855B9F30238ECE650081A9C6 /* Constants.swift in Sources */,
 				855CBE4423990CB100A024A7 /* Bundle+Extension.swift in Sources */,
 				855CBE2B2397DEA300A024A7 /* NINInitialViewController.swift in Sources */,
+				8571D45A23C0B48B00C16758 /* NINLowLevelClientStrings+Extension.swift in Sources */,
 				8563007D23B391840098A7B0 /* NINWebRTCDelegate.swift in Sources */,
 				8563005023B291600098A7B0 /* NINRatingViewModel.swift in Sources */,
 				855CBE3E2397FAE900A024A7 /* NINQueueViewController.swift in Sources */,
+				8571D44E23C0B47300C16758 /* NINTextMessage.swift in Sources */,
 				8530EC9323ADFE9900BAA52A /* UIButton+Extensions.swift in Sources */,
+				8571D47123C0C7D100C16758 /* NINChatSeesionManagerPrivate.swift in Sources */,
 				8530EC9523ADFEA600BAA52A /* NINChatViewModel.swift in Sources */,
+				8571D45623C0B48B00C16758 /* Data+Extension.swift in Sources */,
 				8563004723B249010098A7B0 /* NINFullScreenViewModel.swift in Sources */,
+				8571D44C23C0B47300C16758 /* ChatMessagePayload.swift in Sources */,
 				85DC59D5239E7C3B007ABAE3 /* NINQueueViewModel.swift in Sources */,
 				8563004323B231350098A7B0 /* TopBar.swift in Sources */,
 				855CBE222397CCA800A024A7 /* Storyboard+Extension.swift in Sources */,
+				8571D46F23C0C7D100C16758 /* NINChatSessionManagerImpl.swift in Sources */,
 				8563008123B398AB0098A7B0 /* NINPickerControllerDelegate.swift in Sources */,
+				8571D44F23C0B47300C16758 /* ComposeMessagePayload.swift in Sources */,
 				85DD6C6223AF6F5A0023FFEF /* UITextView+Extensions.swift in Sources */,
 				8563007F23B393D00098A7B0 /* NINRTCVideoDelegate.swift in Sources */,
 				855CBE1F2397C4F600A024A7 /* Coordinator.swift in Sources */,
 				855CBE422399060900A024A7 /* UIColor+Extensions.swift in Sources */,
+				8571D45923C0B48B00C16758 /* NINLowLevelClientSession+Extension.swift in Sources */,
 				855B9F31238ECE650081A9C6 /* NINChatSession.swift in Sources */,
 				8563004023B230350098A7B0 /* NINFullScreenViewController.swift in Sources */,
 				8530EC8123AD3FC300BAA52A /* NINChatViewController.swift in Sources */,
+				8571D45723C0B48B00C16758 /* NINLowLevelClientPayload+Extension.swift in Sources */,
+				8571D44D23C0B47300C16758 /* RTCSignal.swift in Sources */,
 				855CBE2D2397DF5700A024A7 /* ViewController.swift in Sources */,
 				8563004C23B286FB0098A7B0 /* FacesView.swift in Sources */,
+				8571D45023C0B47300C16758 /* NINFileInfo.swift in Sources */,
+				8571D47323C0C7D100C16758 /* NINChatSessionManagerEventHandlers.swift in Sources */,
 				8530EC8A23AD405C00BAA52A /* ChatInputControls.swift in Sources */,
 				855CBE402399010C00A024A7 /* SiteConfiguration+Extension.swift in Sources */,
 				855B9F32238ECE650081A9C6 /* NINChatSessionDelegate.swift in Sources */,
 				8530EC8623AD405200BAA52A /* VideoView.swift in Sources */,
+				8571D45823C0B48B00C16758 /* NINLowLevelClientProps+Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -690,6 +786,7 @@
 				851E359923B1214E000FA966 /* AutolayouTests.swift in Sources */,
 				85DC59C9239E384D007ABAE3 /* UIMigrationTests.swift in Sources */,
 				855CBE242397D18900A024A7 /* CoordinatorTests.swift in Sources */,
+				8571D46823C0B4A900C16758 /* NinchatSessionManagerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -830,6 +927,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -842,6 +940,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -880,6 +979,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -892,6 +992,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

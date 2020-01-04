@@ -102,16 +102,16 @@ public final class NINChatSessionSwift: NINChatSession, NINChatSessionProtocol {
     /// 2. Using that configuration, starts a new chat session
     /// 3. Retrieves the queues available for this realm (realm id from site configuration)
     public func start(completion: @escaping (Error?) -> Void) {
-        // Fetch the site configuration
+        /// Fetch the site configuration
         self.fetchSiteConfiguration(completion: completion)
     }
     
     public func chatSession(within navigationController: UINavigationController) throws -> UIViewController? {
         guard Thread.isMainThread else {
-            throw NINChatExceptions.mainThread
+            throw NINExceptions.mainThread
         }
         guard self.started else {
-            throw NINChatExceptions.apiNotStarted
+            throw NINExceptions.apiNotStarted
         }
         coordinator = NINCoordinator(with: self)
         return coordinator.start(with: self.queueID, within: navigationController)

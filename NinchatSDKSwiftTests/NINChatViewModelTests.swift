@@ -87,18 +87,18 @@ class NINChatViewModelTests: XCTestCase {
 extension NINChatViewModelTests {
     private func simulateSignalCall() {
         postNotification(NotificationConstants.kNINWebRTCSignalNotification.rawValue,
-                         ["messageType": WebRTCConstants.kNINMessageTypeWebRTCOffer.rawValue])
+                         ["messageType": MessageType.offer.rawValue])
     }
     
     private func simulateCallInitiate() {
         postNotification(NotificationConstants.kNINWebRTCSignalNotification.rawValue,
-                         ["messageType": WebRTCConstants.kNINMessageTypeWebRTCCall.rawValue,
+                         ["messageType": MessageType.call.rawValue,
                           "payload": ["sdp":""]])
     }
     
     private func simulateHangup() {
         postNotification(NotificationConstants.kNINWebRTCSignalNotification.rawValue,
-                         ["messageType": WebRTCConstants.kNINMessageTypeWebRTCHangup.rawValue])
+                         ["messageType": MessageType.hangup.rawValue])
     }
 }
 

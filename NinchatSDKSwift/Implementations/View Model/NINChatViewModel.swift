@@ -75,9 +75,7 @@ final class NINChatViewModelImpl: NINChatViewModel {
         })
         
         messageObserver = fetchNotification(NotificationConstants.kChannelMessageNotification.rawValue) { [weak self] notification -> Bool in
-            #if DEBUG
-            print("The message is received: \(notification)")
-            #endif
+            debugger("The message is received: \(notification)")
             
             if let index = notification.userInfo?["index"] as? Int, let action = notification.userInfo?["action"] as? String {
                 (action == "insert") ? self?.onChannelMessage?(.insert(index)) : self?.onChannelMessage?(.remove(index))
@@ -95,13 +93,13 @@ extension NINChatViewModelImpl {
                               onCallInitiated: @escaping RTCCallInitial,
                               onCallHangup: @escaping RTCCallHangup) {
         signalingObserver = fetchNotification(NotificationConstants.kNINWebRTCSignalNotification.rawValue) { [weak self] notification -> Bool in
-            guard let messageType = notification.userInfo?["messageType"] as? String, let rtcType = WebRTCConstants(rawValue: messageType) else { return false }
+            guard let messageType = notification.userInfo?["messageType"] as? String, let rtcType = MessageType(rawValue: messageType) else { return false }
             
             switch rtcType {
-            case .kNINMessageTypeWebRTCCall:
+            case .call:
                 debugger("Got WebRTC call")
                 onCallReceived(notification.userInfo?["messageUser"] as? NINChannelUser)
-            case .kNINMessageTypeWebRTCOffer:
+            case .offer:
                 debugger("Got WebRTC offer - initializing webrtc for video call (answer)")
                 guard let offerPayload = notification.userInfo?["payload"] as? [String:Any], let sdp = offerPayload["sdp"] as? [AnyHashable:Any] else { return false }
                 
@@ -111,7 +109,7 @@ extension NINChatViewModelImpl {
                     client?.start(withSDP: sdp)
                     onCallInitiated(error, client)
                 }
-            case .kNINMessageTypeWebRTCHangup:
+            case .hangup:
                 debugger("Got WebRTC hang-up - closing the video call.")
                 onCallHangup()
             default:
@@ -122,7 +120,7 @@ extension NINChatViewModelImpl {
     }
     
     func pickup(answer: Bool, completion: @escaping ((Error?) -> Void)) {
-        self.session.sessionManager.sendMessage(withMessageType: WebRTCConstants.kNINMessageTypeWebRTCPickup.rawValue, payloadDict: ["answer": answer]) { error in
+        self.session.sessionManager.sendMessage(withMessageType: MessageType.pickup.rawValue, payloadDict: ["answer": answer]) { error in
             completion(error)
         }
     }
@@ -140,7 +138,7 @@ extension NINChatViewModelImpl {
 
 extension NINChatViewModelImpl {
     func appDidEnterBackground(completion: @escaping ((Error?) -> Void)) {
-        session.sessionManager.sendMessage(withMessageType: WebRTCConstants.kNINMessageTypeWebRTCHangup.rawValue, payloadDict: [:]) { error in
+        session.sessionManager.sendMessage(withMessageType: MessageType.hangup.rawValue, payloadDict: [:]) { error in
             completion(error)
         }
     }

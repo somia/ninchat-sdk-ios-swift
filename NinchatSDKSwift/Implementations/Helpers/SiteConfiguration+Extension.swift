@@ -22,4 +22,20 @@ extension NINSiteConfiguration {
     var sendButtonTitle: String? {
         self.value(forKey: "sendButtonText") as? String
     }
+    
+    var audienceRealm: String? {
+        self.value(forKey: "audienceRealmId") as? String
+    }
+    
+    var audienceQueues: [String]? {
+        self.value(forKey: "audienceQueues") as? [String]
+    }
+    
+    var username: String? {
+        self.value(forKey: "userName") as? String
+    }
+    
+    var translation: [String:String]? {
+        self.value(forKey: "translations") as?  [String:String]
+    }
 }
