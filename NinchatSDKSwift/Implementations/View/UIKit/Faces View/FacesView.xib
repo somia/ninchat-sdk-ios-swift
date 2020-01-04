@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="SourceSansPro-Regular.ttf">
+            <string>SourceSansPro-Regular</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="e6q-1L-Knb" userLabel="Top part container view" customClass="FacesView" customModule="NinchatSDKSwift">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="180"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="3gu-T1-l8V">
+                    <rect key="frame" x="16" y="16" width="382" height="148"/>
+                    <subviews>
+                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="g2F-aL-V5g">
+                            <rect key="frame" x="0.0" y="20.5" width="116.5" height="107.5"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vsV-iU-E6T">
+                                    <rect key="frame" x="23.5" y="0.0" width="70" height="70"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="70" id="92b-pi-OcP"/>
+                                        <constraint firstAttribute="height" constant="70" id="LL2-9J-Yqa"/>
+                                    </constraints>
+                                    <color key="tintColor" red="0.0" green="0.47450980390000003" blue="0.1764705882" alpha="1" colorSpace="calibratedRGB"/>
+                                    <state key="normal" image="icon_face_happy"/>
+                                    <connections>
+                                        <action selector="onPositiveButtonTappedWithSender:" destination="e6q-1L-Knb" eventType="touchUpInside" id="n8g-Be-oiG"/>
+                                    </connections>
+                                </button>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="GOOD" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T9p-OJ-8ui">
+                                    <rect key="frame" x="23.5" y="86" width="70" height="21.5"/>
+                                    <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="17"/>
+                                    <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                            <constraints>
+                                <constraint firstItem="T9p-OJ-8ui" firstAttribute="width" secondItem="vsV-iU-E6T" secondAttribute="width" id="rsC-JV-DF7"/>
+                            </constraints>
+                        </stackView>
+                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="XSK-Db-1ZX">
+                            <rect key="frame" x="132.5" y="20.5" width="117" height="107.5"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hEI-x1-dee">
+                                    <rect key="frame" x="23.5" y="0.0" width="70" height="70"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="70" id="qT4-2m-tCX"/>
+                                        <constraint firstAttribute="width" constant="70" id="tFm-B2-czz"/>
+                                    </constraints>
+                                    <color key="tintColor" red="0.98039215690000003" green="0.6705882353" blue="0.066666666669999999" alpha="1" colorSpace="calibratedRGB"/>
+                                    <state key="normal" image="icon_face_neutral"/>
+                                    <connections>
+                                        <action selector="onNeutralButtonTappedWithSender:" destination="e6q-1L-Knb" eventType="touchUpInside" id="Xxd-4t-zJg"/>
+                                    </connections>
+                                </button>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="OKAY" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5bu-kj-nMW">
+                                    <rect key="frame" x="23.5" y="86" width="70" height="21.5"/>
+                                    <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="17"/>
+                                    <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                            <constraints>
+                                <constraint firstItem="5bu-kj-nMW" firstAttribute="width" secondItem="hEI-x1-dee" secondAttribute="width" id="2gJ-pO-AwZ"/>
+                            </constraints>
+                        </stackView>
+                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="XjG-xk-T14">
+                            <rect key="frame" x="265.5" y="20.5" width="116.5" height="107.5"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ra2-rs-CKY">
+                                    <rect key="frame" x="23" y="0.0" width="70" height="70"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="70" id="QZc-Ni-Dnp"/>
+                                        <constraint firstAttribute="width" constant="70" id="xAE-oG-jO5"/>
+                                    </constraints>
+                                    <color key="tintColor" red="0.69019607839999997" green="0.20000000000000001" blue="0.20392156859999999" alpha="1" colorSpace="calibratedRGB"/>
+                                    <state key="normal" image="icon_face_sad"/>
+                                    <connections>
+                                        <action selector="onNegativeButtonTappedWithSender:" destination="e6q-1L-Knb" eventType="touchUpInside" id="sWV-50-c2t"/>
+                                    </connections>
+                                </button>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="POOR" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GV7-hU-CuT">
+                                    <rect key="frame" x="23" y="86" width="70" height="21.5"/>
+                                    <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="17"/>
+                                    <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                            <constraints>
+                                <constraint firstItem="GV7-hU-CuT" firstAttribute="width" secondItem="Ra2-rs-CKY" secondAttribute="width" id="OKL-JK-C5A"/>
+                            </constraints>
+                        </stackView>
+                    </subviews>
+                </stackView>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="NyQ-WR-mDi" firstAttribute="trailing" secondItem="3gu-T1-l8V" secondAttribute="trailing" constant="16" id="Dje-E9-5VE"/>
+                <constraint firstItem="3gu-T1-l8V" firstAttribute="leading" secondItem="NyQ-WR-mDi" secondAttribute="leading" constant="16" id="Lqr-P0-4nu"/>
+                <constraint firstItem="3gu-T1-l8V" firstAttribute="top" secondItem="e6q-1L-Knb" secondAttribute="top" constant="16" id="gBJ-7s-fxy"/>
+                <constraint firstItem="NyQ-WR-mDi" firstAttribute="bottom" secondItem="3gu-T1-l8V" secondAttribute="bottom" constant="16" id="xiB-dV-OOC"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="NyQ-WR-mDi"/>
+            <connections>
+                <outlet property="negativeButton" destination="Ra2-rs-CKY" id="NA0-Vo-LWd"/>
+                <outlet property="negativeLabel" destination="GV7-hU-CuT" id="ukS-uX-YWh"/>
+                <outlet property="neutralButton" destination="hEI-x1-dee" id="0Y3-I4-nJo"/>
+                <outlet property="neutralLabel" destination="5bu-kj-nMW" id="5fh-hB-nof"/>
+                <outlet property="positiveButton" destination="vsV-iU-E6T" id="Y4A-tk-fWE"/>
+                <outlet property="positiveLabel" destination="T9p-OJ-8ui" id="KO0-fc-au5"/>
+            </connections>
+            <point key="canvasLocation" x="-146.37681159420291" y="354.24107142857139"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="icon_face_happy" width="898" height="898"/>
+        <image name="icon_face_neutral" width="898" height="898"/>
+        <image name="icon_face_sad" width="898" height="898"/>
+    </resources>
+</document>

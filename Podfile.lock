@@ -43,15 +43,15 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   NinchatSDK:
-    :commit: 313f842711cead91426877b582fefdd97b9b0937
+    :commit: 58e58feb27216db9ea8a7da1d30ec91e7246543d
     :git: https://github.com/somia/ninchat-sdk-ios
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
   GoogleWebRTC: 55e46bee9ac2a4961542e9571bea589b64493f45
   NinchatLowLevelClient: ecd9900e5795e60e3e5f5065f3bb1f61b566acb7
-  NinchatSDK: a10dd661a95dfca3fb401f0b7f36b7a92cd239e2
+  NinchatSDK: d4152005ebec7ec91ee8ff194d580481de7e3378
 
-PODFILE CHECKSUM: 272d62c052d0df66b4774a84d9e77967ffcd4d51
+PODFILE CHECKSUM: a3779012126d60e7ce85a9422c6d4fe3f468374f
 
 COCOAPODS: 1.8.4

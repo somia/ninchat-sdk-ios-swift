@@ -1,14 +1,11 @@
 //
-//  NINChatSessionDelegate.swift
-//  NinchatSDK
-//
-//  Created by Hassan Shahbazi on 22.11.2019.
-//  Copyright © 2019 Somia Reality Oy. All rights reserved.
+// Copyright (c) 22.11.2019 Somia Reality Oy. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
 //
 
 import UIKit
 import NinchatSDK
-import NinchatLowLevelClient
 
 /**
 * Delegate protocol for NINChatSession class. All the methods are called on

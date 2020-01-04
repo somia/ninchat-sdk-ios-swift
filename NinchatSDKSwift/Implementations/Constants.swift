@@ -1,9 +1,7 @@
 //
-//  Constants.swift
-//  NinchatSDK
-//
-//  Created by Hassan Shahbazi on 22.11.2019.
-//  Copyright © 2019 Somia Reality Oy. All rights reserved.
+// Copyright (c) 22.11.2019 Somia Reality Oy. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
 //
 
 import Foundation
@@ -74,4 +72,27 @@ public enum ColorConstants: NINColorAssetKey {
 public enum Constants: String {
     case kTestServerAddress = "api.luupi.net"
     case kProductionServerAddress = "api.ninchat.com"
+    
+    case kCloseWindowText = "Close window"
+    case kJoinQueueText = "Join audience queue {{audienceQueue.queue_attrs.name}}"
+    case kQueuePositionN = "Joined audience queue {{audienceQueue.queue_attrs.name}}, you are at position {{audienceQueue.queue_position}}."
+    case kQueuePositionNext = "Joined audience queue {{audienceQueue.queue_attrs.name}}, you are next."
+    case kCloseChatText = "Close chat"
+    case kTextInputPlaceholderText = "Enter your message"
+}
+
+enum WebRTCConstants: String {
+    case kNINMessageTypeWebRTCIceCandidate = "ninchat.com/rtc/ice-candidate"
+    case kNINMessageTypeWebRTCAnswer = "ninchat.com/rtc/answer"
+    case kNINMessageTypeWebRTCOffer = "ninchat.com/rtc/offer"
+    case kNINMessageTypeWebRTCCall = "ninchat.com/rtc/call"
+    case kNINMessageTypeWebRTCPickup = "ninchat.com/rtc/pick-up"
+    case kNINMessageTypeWebRTCHangup = "ninchat.com/rtc/hang-up"
+}
+
+enum NotificationConstants: String {
+    case kChannelMessageNotification =  "ninchatsdk.ChannelMessageNotification"
+    case kNINWebRTCSignalNotification = "ninchatsdk.NWebRTCSignalNotification"
+    case kNINChannelClosedNotification = "ninchatsdk.ChannelClosedNotification"
+    case kNINQueuedNotification = "ninchatsdk.QueuedNotification"
 }
