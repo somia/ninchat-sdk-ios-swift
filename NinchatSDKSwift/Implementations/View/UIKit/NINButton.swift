@@ -7,7 +7,7 @@
 import UIKit
 
 public final class NINButton: UIButton {
-    private var closure: ((UIButton) -> Void)?
+    public var closure: ((UIButton) -> Void)?
     
     override init(frame: CGRect) {
         super.init(frame: frame)

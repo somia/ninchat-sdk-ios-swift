@@ -31,7 +31,7 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
     private var placeholderColor: UIColor = .systemGray
     private var textColor: UIColor = .black
     private var placeholderText: String {
-        return self.session?.sessionManager.translation(Constants.kTextInputPlaceholderText.rawValue, formatParams: [:]) ?? ""
+        return self.session?.sessionManager.translate(key: Constants.kTextInputPlaceholderText.rawValue, formatParams: [:]) ?? ""
     }
     
     // MARK: - ChatInputControls
@@ -85,8 +85,8 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
         if let attachmentIcon = self.session?.override(imageAsset: .iconTextareaAttachment) {
             self.attachmentButton.setImage(attachmentIcon, for: .normal)
         }
-
-        if let inputTextColor = self.session?.overrideColorAsset(forKey: .textareaText) {
+        
+        if let inputTextColor = self.session?.override(colorAsset: .textareaText) {
             self.textInput.textColor = inputTextColor
             textColor = inputTextColor
         }

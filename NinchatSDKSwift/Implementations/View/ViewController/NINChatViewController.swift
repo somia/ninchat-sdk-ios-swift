@@ -103,19 +103,19 @@ final class NINChatViewController: UIViewController, ViewController {
     @IBOutlet private weak var chatContainerHeight: NSLayoutConstraint!
     @IBOutlet private weak var chatView: NINChatView! {
         didSet {
-            /// TODO: Update after migration of `NINChatView`
-            chatView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(sender:))))
-            chatView.sessionManager = session.sessionManager
+            /// TODO: Update here
+//            chatView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(sender:))))
+//            chatView.sessionManager = session.sessionManager
             chatView.delegate = chatDataSourceDelegate
             chatView.dataSource = chatDataSourceDelegate
         }
     }
-    @IBOutlet private weak var closeChatButton: NINCloseChatButton! {
+    @IBOutlet private weak var closeChatButton: NINButton! {
         didSet {
-            let closeTitle = self.session.sessionManager.translation(Constants.kCloseChatText.rawValue, formatParams: [:])
-            closeChatButton.setButtonTitle(closeTitle)
-            closeChatButton.overrideAssets(with: self.session)
-            closeChatButton.pressedCallback = { [weak self] in
+            let closeTitle = self.session.sessionManager.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
+            closeChatButton.setTitle(closeTitle, for: .normal)
+            closeChatButton.overrideAssets(with: self.session, isPrimary: true)
+            closeChatButton.closure = { [weak self] button in
                 self?.onCloseChatTapped()
             }
         }
@@ -186,7 +186,6 @@ final class NINChatViewController: UIViewController, ViewController {
     }
     
     deinit {
-        self.stopChatObservers()
         self.deallocRTC()
         NotificationCenter.default.removeObserver(self,
                                                   name: UIApplication.didEnterBackgroundNotification, object: nil)
@@ -210,11 +209,9 @@ final class NINChatViewController: UIViewController, ViewController {
     
     private func setupViewModel() {
         self.viewModel.onChannelClosed = { [weak self] in
-            self?.stopChatObservers()
             self?.disableView()
         }
         self.viewModel.onQueued = { [weak self] in
-            self?.stopChatObservers()
             self?.disableView()
             self?.onBackToQueue?()
         }
@@ -233,11 +230,12 @@ final class NINChatViewController: UIViewController, ViewController {
     private func connectRTC() {
         self.viewModel.listenToRTCSignaling(delegate: chatRTCDelegate, onCallReceived: { [unowned self] channel in
             self.view.endEditing(true)
-            NINVideoCallConsentDialog.show(on: self.view, forRemoteUser: channel, sessionManager: self.session.sessionManager) { result in
-                self.viewModel.pickup(answer: result == .accepted) { error in
-                    if error != nil { NINToast.showWithErrorMessage("failed to send WebRTC pickup message", callback: nil) }
-                }
-            }
+            /// TODO: Update here
+//            NINVideoCallConsentDialog.show(on: self.view, forRemoteUser: channel, sessionManager: self.session.sessionManager) { result in
+//                self.viewModel.pickup(answer: result == .accepted) { error in
+//                    if error != nil { NINToast.showWithErrorMessage("failed to send WebRTC pickup message", callback: nil) }
+//                }
+//            }
             
         }, onCallInitiated: { [weak self] error, rtcClinet in
             self?.webRTCClient = rtcClinet
@@ -267,18 +265,6 @@ final class NINChatViewController: UIViewController, ViewController {
     /// Capturing `[weak self]` while deallocating result in crash
     private func deallocRTC() {
         self.viewModel.disconnectRTC(self.webRTCClient, completion: nil)
-    }
-    
-    private func stopChatObservers() {
-        if let observer = self.viewModel.signalingObserver {
-            NotificationCenter.default.removeObserver(observer)
-            self.viewModel.signalingObserver = nil
-        }
-        
-        if let observer = self.viewModel.messageObserver {
-            NotificationCenter.default.removeObserver(observer)
-            self.viewModel.messageObserver = nil
-        }
     }
 }
 
@@ -399,17 +385,14 @@ extension NINChatViewController {
     }
     
     private func onCloseChatTapped() {
-        #if DEGBU
-        print("Close chat button pressed!")
-        #endif
-        
-        NINConfirmCloseChatDialog.show(on: self.view, sessionManager: self.session.sessionManager) { [weak self] result in
-            guard result == .close else { return }
-            
-            self?.stopChatObservers()
-            self?.disconnectRTC()
-            self?.onChatClosed?()
-        }
+        debugger("Close chat button pressed!")
+        /// TODO: Update here
+//        NINConfirmCloseChatDialog.show(on: self.view, sessionManager: self.session.sessionManager) { [weak self] result in
+//            guard result == .close else { return }
+//
+//            self?.disconnectRTC()
+//            self?.onChatClosed?()
+//        }
     }
     
     // MARK: - Message
@@ -451,10 +434,10 @@ extension NINChatViewController {
     private func onVideoCameraTapped(with button: UIButton) {
         if button.isSelected {
             guard self.webRTCClient?.enableLocalVideo() ?? false else { return }
-            self.session.ninchat(session, didOutputSDKLog: "Video enabled")
+            self.session.log(value: "Video enabled")
         } else {
             guard self.webRTCClient?.disableLocalVideo() ?? false else { return }
-            self.session.ninchat(session, didOutputSDKLog: "Video disabled")
+            self.session.log(value: "Video disabled")
         }
         button.isSelected = !button.isSelected
     }
@@ -462,19 +445,19 @@ extension NINChatViewController {
     private func onVideoAudioTappe(with button: UIButton) {
         if button.isSelected {
             guard self.webRTCClient?.unmuteLocalAudio() ?? false else { return }
-            self.session.ninchat(session, didOutputSDKLog: "Audio unmuted")
+            self.session.log(value: "Audio unmuted")
         } else {
             guard self.webRTCClient?.muteLocalAudio() ?? false else { return }
-            self.session.ninchat(session, didOutputSDKLog: "Audio muted")
+            self.session.log(value: "Audio muted")
         }
         button.isSelected = !button.isSelected
     }
     
     private func onVideoHangupTapped() {
-        self.session.ninchat(session, didOutputSDKLog: "Hang-up button pressed")
-        self.viewModel.send(type: MessageType.hangup.rawValue, payload: [:]) { [weak self] error in
-            self?.disconnectRTC {
-                self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
+        self.session.log(value: "Hang-up button pressed")
+        self.viewModel?.send(type: .hangup, payload: [:]) { [unowned self] error in
+            self.disconnectRTC {
+                self.adjustConstraints(for: self.view.bounds.size, withAnimation: true)
             }
         }
     }

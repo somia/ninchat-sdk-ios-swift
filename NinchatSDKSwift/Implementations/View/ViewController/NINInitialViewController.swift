@@ -32,7 +32,7 @@ final class NINInitialViewController: UIViewController, ViewController {
     @IBOutlet private weak var queueButtonsStackView: UIStackView!
     @IBOutlet private weak var closeWindowButton: NINButton! {
         didSet {
-            if let closeText = self.session.sessionManager.translation(Constants.kCloseWindowText.rawValue, formatParams: [:]) {
+            if let closeText = self.session.sessionManager.translate(key: Constants.kCloseWindowText.rawValue, formatParams: [:]) {
                 closeWindowButton.setTitle(closeText, for: .normal)
             }
             closeWindowButton.layer.cornerRadius = closeWindowButton.bounds.height / 2
@@ -75,7 +75,7 @@ final class NINInitialViewController: UIViewController, ViewController {
     // MARK: - User actions
     
     @IBAction private func closeWindowButtonPressed(button: UIButton) {
-        self.session.sessionManager.closeChat()
+        try? self.session.sessionManager.closeChat()
     }
 }
 
@@ -84,19 +84,19 @@ final class NINInitialViewController: UIViewController, ViewController {
 private extension NINInitialViewController {
     private func overrideAssets() {
         closeWindowButton.overrideAssets(with: self.session, isPrimary: false)
-        if let topBackgroundColor = session.overrideColorAsset(forKey: .backgroundTop) {
+        if let topBackgroundColor = session.override(colorAsset: .backgroundTop) {
             topContainerView.backgroundColor = topBackgroundColor
         }
-        if let bottomBackgroundColor = session.overrideColorAsset(forKey: .backgroundBottom) {
+        if let bottomBackgroundColor = session.override(colorAsset: .backgroundBottom) {
             bottomContainerView.backgroundColor = bottomBackgroundColor
         }
-        if let textTopColor = session.overrideColorAsset(forKey: .textTop) {
+        if let textTopColor = session.override(colorAsset: .textTop) {
             welcomeTextView.textColor = textTopColor
         }
-        if let textBottomColor = session.overrideColorAsset(forKey: .textBottom) {
+        if let textBottomColor = session.override(colorAsset: .textBottom) {
             motdTextView.textColor = textBottomColor
         }
-        if let linkColor = session.overrideColorAsset(forKey: .link) {
+        if let linkColor = session.override(colorAsset: .link) {
             let attribute = [NSAttributedString.Key.foregroundColor: linkColor]
             welcomeTextView.linkTextAttributes = attribute
             motdTextView.linkTextAttributes = attribute
@@ -118,7 +118,7 @@ private extension NINInitialViewController {
             button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
             button.backgroundColor = .defaultBackgroundButton
             button.setTitleColor(.white, for: .normal)
-            button.setTitle(self.session.sessionManager.translation(Constants.kJoinQueueText.rawValue,
+            button.setTitle(self.session.sessionManager.translate(key: Constants.kJoinQueueText.rawValue,
                                                             formatParams: ["audienceQueue.queue_attrs.name": queue.name]), for: .normal)
             button.overrideAssets(with: self.session, isPrimary: true)
             

@@ -14,7 +14,7 @@ class NinchatSessionManagerTests: XCTestCase {
     
     override func setUp() {
         sessionSwift = NINChatSessionSwift(configKey: "")
-        sessionManager = NINChatSessionManagerImpl(session: sessionSwift)
+        sessionManager = NINChatSessionManagerImpl(session: sessionSwift, serverAddress: "")
     }
 
     override func tearDown() { }
@@ -26,10 +26,6 @@ class NinchatSessionManagerTests: XCTestCase {
         XCTAssertNotNil(sessionManager as NINChatSessionManagerDelegate)
         XCTAssertNotNil(sessionManager as NINChatSessionManager)
     }
-    
-    func testInjection() {
-        XCTAssertEqual((sessionManager as! NINChatSessionManagerImpl).sessionSwift, sessionSwift)
-    }
 }
 
 class NinchatSessionManagerPrivateTests: XCTestCase {
@@ -39,7 +35,7 @@ class NinchatSessionManagerPrivateTests: XCTestCase {
     
     override func setUp() {
         sessionSwift = NINChatSessionSwift(configKey: "")
-        sessionManager = NINChatSessionManagerImpl(session: sessionSwift)
+        sessionManager = NINChatSessionManagerImpl(session: sessionSwift, serverAddress: "")
     }
 
     func testIndexOfItem() {
@@ -59,7 +55,7 @@ class NinchatSessionManagerClosureHandlersTests: XCTestCase {
     
     override func setUp() {
         sessionSwift = NINChatSessionSwift(configKey: "")
-        sessionManager = NINChatSessionManagerImpl(session: sessionSwift)
+        sessionManager = NINChatSessionManagerImpl(session: sessionSwift, serverAddress: "")
     }
     
     func testBindErrorClosures() {

@@ -27,12 +27,10 @@ enum MessageType: String, Decodable {
 }
 
 struct RTCSignal: Decodable {
-    let type: MessageType
     let candidate: [String:String]
     let sdp: [String:String]
     
     enum CodingKeys: String, CodingKey {
-        case type = "messageType"
         case candidate, sdp
     }
 }

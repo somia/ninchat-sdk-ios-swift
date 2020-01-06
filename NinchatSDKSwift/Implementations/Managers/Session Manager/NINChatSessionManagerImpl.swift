@@ -8,18 +8,9 @@ import Foundation
 import NinchatSDK
 
 protocol NINChatSessionManagerInternalActions {
-//    var onActionQueueUdpdated: ((_ actionID: Int, _ position: Int, _ queueID: String) -> Void)? { get set }
-//
-//    var onActionSeversError: ((_ actionID: Int, Error?) -> Void)? { get set }
-//
-//    var onActionSession: CompletionWithError? { get set }
-    
-    
-    
-    
     var onActionSessionEvent: ((Events, Error?) -> Void)? { get set }
     var onActionID: ((_ actionID: Int, Error?) -> Void)? { get set }
-    var onProgress: ((_ position: Int, Events, Error?) -> Void)? { get set }
+    var onProgress: ((_ queueID: String, _ position: Int, Events, Error?) -> Void)? { get set }
     var onChannelJoined: Completion? { get set }
     var onActionSevers: ((_ actionID: Int, _ stunServers: [NINWebRTCServerInfo]?, _ turnServers: [NINWebRTCServerInfo]?) -> Void)? { get set }
     var onActionFileInfo: ((_ actionID: Int, _ fileInfo: [String:Any]?, Error?) -> Void)? { get set }
@@ -27,8 +18,7 @@ protocol NINChatSessionManagerInternalActions {
 }
 
 final class NINChatSessionManagerImpl: NINChatSessionManager, NINChatSessionManagerInternalActions {
-    internal unowned let sessionSwift: NINChatSessionSwift
-    internal let serverAddress: String?
+    internal let serverAddress: String
     internal let siteSecret: String?
     internal let audienceMetadata: NINLowLevelClientProps?
     
@@ -39,22 +29,15 @@ final class NINChatSessionManagerImpl: NINChatSessionManager, NINChatSessionMana
     internal var myUserID: String?
     internal var realmID: String?
     internal var messageThrottler: NINMessageThrottler?
-    internal var configuration: NINSiteConfiguration! {
-        return NINSiteConfiguration(self.siteConfiguration)
-    }
+    internal weak var delegate: NINChatSessionInternalDelegate?
     
     // MARK: - NINChatSessionManagerInternalActions
     
-    
     internal var onActionSessionEvent: ((Events, Error?) -> Void)?
-    
     internal var actionBindedClosures: [Int:((Error?) -> Void)] = [:]
     internal var onActionID: ((Int, Error?) -> Void)?
-    
-    internal var progressBindedClosures: [String:((Error?, Int) -> Void)] = [:]
-    internal var onProgress: ((Int, Events, Error?) -> Void)?
+    internal var onProgress: ((String, Int, Events, Error?) -> Void)?
     internal var onChannelJoined: Completion?
-    
     internal var onActionSevers: ((Int, [NINWebRTCServerInfo]?, [NINWebRTCServerInfo]?) -> Void)?
     internal var onActionFileInfo: ((Int, [String:Any]?, Error?) -> Void)?
     internal var onActionChannel: ((Int, String) -> Void)?
@@ -68,7 +51,7 @@ final class NINChatSessionManagerImpl: NINChatSessionManager, NINChatSessionMana
     
     // MARK: - NINChatSessionMessanger variables
     
-    var chatMessages: [NINChatMessage]!
+    var chatMessages: [NINChatMessage]! = []
     
     // MARK: - NINChatSessionManagerDelegate
     
@@ -76,7 +59,7 @@ final class NINChatSessionManagerImpl: NINChatSessionManager, NINChatSessionMana
     var onMessageAdded: ((_ index: Int) -> Void)?
     var onMessageRemoved: ((_ index: Int) -> Void)?
     var onChannelClosed: (() -> Void)?
-    var onRTCSignal: ((_ signal: RTCSignal) -> Void)?
+    var onRTCSignal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)?
     
     // MARK: - NINChatSessionManager
     
@@ -86,22 +69,10 @@ final class NINChatSessionManagerImpl: NINChatSessionManager, NINChatSessionMana
         }
     }
     var audienceQueues: [NINQueue]! = []
-    var siteConfiguration: [String:Any]! = [:]
-    
-    convenience init(session: NINChatSessionSwift) {
-        self.init(session: session, serverAddress: nil, siteSecret: nil, audienceMetadata: nil)
-    }
-    
-    convenience init(session: NINChatSessionSwift, serverAddress: String?) {
-        self.init(session: session, serverAddress: serverAddress, siteSecret: nil, audienceMetadata: nil)
-    }
-    
-    convenience init(session: NINChatSessionSwift, serverAddress: String?, siteSecret: String?) {
-        self.init(session: session, serverAddress: serverAddress, siteSecret: siteSecret, audienceMetadata: nil)
-    }
-    
-    init(session: NINChatSessionSwift, serverAddress: String?, siteSecret: String?, audienceMetadata: NINLowLevelClientProps?) {
-        self.sessionSwift = session
+    var siteConfiguration: NINSiteConfiguration!
+        
+    init(session: NINChatSessionInternalDelegate, serverAddress: String, siteSecret: String? = nil, audienceMetadata: NINLowLevelClientProps? = nil) {
+        self.delegate = session
         self.serverAddress = serverAddress
         self.siteSecret = siteSecret
         self.audienceMetadata = audienceMetadata
@@ -116,10 +87,22 @@ final class NINChatSessionManagerImpl: NINChatSessionManager, NINChatSessionMana
 // MARK: - NINChatSessionConnectionManager
 
 extension NINChatSessionManagerImpl {
+    func fetchSiteConfiguration(config key: String, environments: [String]?, completion: @escaping CompletionWithError) {
+        fetchSiteConfig(self.serverAddress, key) { (config, error) in
+            if let error = error {
+                completion(error); return
+            }
+            
+            debugger("Got site config: \(String(describing: config))")
+            self.siteConfiguration = NINSiteConfiguration(config)
+            self.siteConfiguration.environments = environments
+            completion(nil)
+        }
+    }
+    
     func openSession(completion: @escaping CompletionWithError) throws {
         guard self.session == nil else { throw NINSessionExceptions.hasActiveSession }
-        guard let server = self.serverAddress else { throw NINSessionExceptions.invalidServerAddress }
-        sessionSwift.ninchat(sessionSwift, didOutputSDKLog: "Opening new chat session using server address: \(server)")
+        delegate?.log(value: "Opening new chat session using server address: \(serverAddress)")
         
         /// Wait for the session creation event
         self.onActionSessionEvent = { event, error in
@@ -132,7 +115,7 @@ extension NINChatSessionManagerImpl {
         }
         
         /// Make sure our site configuration contains a realm_id
-        guard let realmId = self.configuration.audienceRealm else { throw NINSessionExceptions.invalidRealmConfiguration }
+        guard let realmId = self.siteConfiguration.audienceRealm else { throw NINSessionExceptions.invalidRealmConfiguration }
         self.realmID = realmId
         
         let sessionParam = NINLowLevelClientProps.initiate
@@ -140,7 +123,7 @@ extension NINChatSessionManagerImpl {
             sessionParam.set(site: secret)
         }
         
-        if let userName = self.configuration.username {
+        if let userName = self.siteConfiguration.username {
             let attr = NINLowLevelClientProps.initiate
             attr.set(name: userName)
             sessionParam.set(user: attr)
@@ -181,31 +164,39 @@ extension NINChatSessionManagerImpl {
     func join(queue ID: String, progress: @escaping ((Error?, Int) -> Void), completion: @escaping Completion) throws {
         
         func performJoin() throws {
-            sessionSwift.ninchat(sessionSwift, didOutputSDKLog: "Joining queue \(ID)..")
-            self.onChannelJoined = { completion() }
-            
-            guard let currentQueue = self.currentQueueID else { return }
-            guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
-            let param = NINLowLevelClientProps.initiate
-            param.set_requestAudeience()
-            param.set(queue: ID)
-            if let audienceMetadata = self.audienceMetadata {
-                param.set(metadata: audienceMetadata)
+            delegate?.log(value: "Joining queue \(ID)..")
+            self.onChannelJoined = {
+                completion()
             }
             
-            do {
-                _ = try session.send(param)
-                self.bind(queue: currentQueue, closure: progress)
-            } catch {
-                progress(error, -1)
+            /// Check if we are already in an active queue
+            if self.currentQueueID == nil {
+                guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
+                
+                let param = NINLowLevelClientProps.initiate
+                param.set_requestAudeience()
+                param.set(queue: ID)
+                if let audienceMetadata = self.audienceMetadata {
+                    param.set(metadata: audienceMetadata)
+                }
+                do {
+                    _ = try session.send(param)
+                } catch {
+                    progress(error, -1)
+                }
+            }
+            self.onProgress = { [weak self] queueID, position, event, error in
+                if event == .queueUpdated, self?.currentQueueID == queueID {
+                    progress(error, position)
+                }
             }
         }
         
         if let currentChannel = currentChannelID {
-            sessionSwift.ninchat(sessionSwift, didOutputSDKLog: "Parting current channel first")
+            delegate?.log(value: "Parting current channel first")
             
             try self.part(channel: currentChannel) { [unowned self] error in
-                self.sessionSwift.ninchat(self.sessionSwift, didOutputSDKLog: "Channel parted; joining queue.")
+                self.delegate?.log(value: "Channel parted; joining queue.")
                 self.backgroundChannelID = self.currentChannelID
                 self.currentChannelID = nil
                 try? performJoin()
@@ -217,14 +208,14 @@ extension NINChatSessionManagerImpl {
     
     /// Leaves the current queue, if any
     func leave(completion: @escaping CompletionWithError) {
-        guard let currentQueue = self.currentQueueID else {
-            sessionSwift.ninchat(sessionSwift, didOutputSDKLog: "Error: tried to leave current queue but not in queue currently!")
+        guard self.currentQueueID != nil else {
+            delegate?.log(value: "Error: tried to leave current queue but not in queue currently!")
             return
         }
         
-        sessionSwift.didOutputSDKLog?(sessionSwift, "Leaving current queue.")
+        delegate?.log(value: "Leaving current queue.")
         self.onChannelJoined = nil
-        self.unbind(queue: currentQueue)
+        self.onProgress = nil
         completion(nil)
     }
     
@@ -248,12 +239,12 @@ extension NINChatSessionManagerImpl {
     
     /// Low-level shutdown of the chatsession; invalidates session resource.
     func closeChat() throws {
-        sessionSwift.ninchat(sessionSwift, didOutputSDKLog: "Shutting down chat Session..")
+        delegate?.log(value: "Shutting down chat Session..")
         try self.deleteCurrentUser { [unowned self] error in
             self.disconnect()
             
             /// Signal the delegate that our session has ended
-            self.sessionSwift.ninchatDidEnd(self.sessionSwift)
+            self.delegate?.onDidEnd()
         }
     }
     
@@ -418,7 +409,7 @@ extension NINChatSessionManagerImpl {
     
     func translate(key: String, formatParams: [String:String]?) -> String? {
         /// Look for a translation. If one is not available for this key, use the key itself.
-        if let translationDictionary = self.configuration.translation {
+        if let translationDictionary = self.siteConfiguration.translation {
             return formatParams?.reduce(into: translationDictionary[key] ?? key, { translation, dict in
                 translation = translation.replacingOccurrences(of: "{{\(dict.key)}}", with: dict.value)
             })

@@ -47,18 +47,15 @@ class CoordinatorTests: XCTestCase {
     func testInitialViewController_queueOptions() {
         let vc = coordinator.showJoinOptions() as? NINInitialViewController
         XCTAssertNotNil(vc)
-        XCTAssertEqual(vc?.session, session)
     }
     
     func testChatViewController() {
         let vc = coordinator.showChatViewController() as? NINChatViewController
         XCTAssertNotNil(vc)
-        XCTAssertEqual(vc?.session, session)
     }
     
     func testRatingViewController() {
         let vc = coordinator.showRatingViewController() as? NINRatingViewController
         XCTAssertNotNil(vc)
-        XCTAssertEqual(vc?.session, session)
     }
 }

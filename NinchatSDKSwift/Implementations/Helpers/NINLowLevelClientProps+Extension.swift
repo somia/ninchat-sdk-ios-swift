@@ -34,7 +34,7 @@ extension NINLowLevelClientProps {
         return NinchatError(code: 1, title: try self.getString("error_type"))
     }
 
-    func event() throws -> String {
+    public func event() throws -> String {
         return try self.getString("event")
     }
     
@@ -99,19 +99,19 @@ extension NINLowLevelClientProps {
     }
     
     func userAttributes_IconURL() throws -> String {
-        return try userAttributes().getString("iconurl")
+        return try self.getString("iconurl")
     }
     
     func userAttributes_DisplayName() throws -> String {
-        return try userAttributes().getString("name")
+        return try self.getString("name")
     }
     
     func userAttributes_RealName() throws -> String {
-        return try userAttributes().getString("realname")
+        return try self.getString("realname")
     }
     
     func userAttributes_IsGuest() throws -> Bool {
-        return try userAttributes().getBool("guest")
+        return try self.getBool("guest")
     }
 
     // MARK: - File

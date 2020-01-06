@@ -29,6 +29,12 @@ enum Events: String {
 }
 
 protocol NINChatSessionManagerEventHandlers: class {
+    var eventSessionHandler: NINLowLevelClientSessionEventHandlerProtocol! { get }
+    var eventHandler: NINLowLevelClientEventHandlerProtocol! { get }
+    var closeHandler: NINLowLevelClientCloseHandlerProtocol! { get}
+    var logHandler: NINLowLevelClientLogHandlerProtocol! { get }
+    var connHandler: NINLowLevelClientConnStateHandlerProtocol! { get }
+    
     func onSessionEvent(param: NINLowLevelClientProps)
     func onEvent(param: NINLowLevelClientProps, payload: NINLowLevelClientPayload, lastReplay: Bool)
     func onClose()
@@ -37,12 +43,28 @@ protocol NINChatSessionManagerEventHandlers: class {
 }
 
 extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
+    var eventSessionHandler: NINLowLevelClientSessionEventHandlerProtocol! {
+        return NINChatSessionManagerSessionEventHandler(session: self)
+    }
+    var eventHandler: NINLowLevelClientEventHandlerProtocol! {
+        return NINChatSessionManagerEventHandler(session: self)
+    }
+    var closeHandler: NINLowLevelClientCloseHandlerProtocol! {
+        return NINChatSessionManagerCloseHandler(session: self)
+    }
+    var logHandler: NINLowLevelClientLogHandlerProtocol! {
+        return NINChatSessionManagerLogHandler(session: self)
+    }
+    var connHandler: NINLowLevelClientConnStateHandlerProtocol! {
+        return NINChatSessionManagerConnHandler(session: self)
+    }
+    
     internal func setEventHandlers() {
-        self.session?.setOnClose(NINChatSessionManagerCloseHandler(session: self))
-        self.session?.setOnConnState(NINChatSessionManagerConnHandler(session: self))
-        self.session?.setOnLog(NINChatSessionManagerLogHandler(session: self))
-        self.session?.setOnEvent(NINChatSessionManagerEventHandler(session: self))
-        self.session?.setOnSessionEvent(NINChatSessionManagerSessionEventHandler(session: self))
+        self.session?.setOnSessionEvent(eventSessionHandler)
+        self.session?.setOnEvent(eventHandler)
+        self.session?.setOnClose(closeHandler)
+        self.session?.setOnLog(logHandler)
+        self.session?.setOnConnState(connHandler)
     }
     
     func onSessionEvent(param: NINLowLevelClientProps) {
@@ -52,7 +74,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                 switch eventType {
                 case .sessionCreated:
                     self.myUserID = try param.userID()
-                    self.sessionSwift.ninchat(sessionSwift, didOutputSDKLog: "Session created - my user ID is: \(String(describing: self.myUserID))")
+                    self.delegate?.log(value: "Session created - my user ID is: \(String(describing: self.myUserID))")
                     self.onActionSessionEvent?(eventType, nil)
                 case .userDeleted:
                     try self.didDeleteUser(param: param)
@@ -69,6 +91,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
         
         do {
             let event = try param.event()
+            print("event handler: \(event)")
             if let eventType = Events(rawValue: event) {
                 switch eventType {
                 case .error:
@@ -97,7 +120,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                 }
                 
                 /// Forward the event to the SDK
-                self.sessionSwift.onLowLevelEvent?(sessionSwift, param, payload, lastReplay)
+                self.delegate?.onLowLevelEvent(event: param, payload: payload, lastReply: lastReplay)
             }
         } catch {
             debugger("Error occured: \(error)")
@@ -122,7 +145,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
 * They cannot hold a reference to 'proxy objects' ie. the ClientSession.
 */
 
-final class NINChatSessionManagerSessionEventHandler: NINLowLevelClientSessionEventHandler {
+final class NINChatSessionManagerSessionEventHandler: NSObject, NINLowLevelClientSessionEventHandlerProtocol {
     
     private weak var session: NINChatSessionManagerEventHandlers!
     
@@ -131,14 +154,14 @@ final class NINChatSessionManagerSessionEventHandler: NINLowLevelClientSessionEv
         self.session = session
     }
     
-    override func onSessionEvent(_ params: NINLowLevelClientProps!) {
+    func onSessionEvent(_ params: NINLowLevelClientProps!) {
         DispatchQueue.main.async {
             self.session?.onSessionEvent(param: params)
         }
     }
 }
 
-final class NINChatSessionManagerEventHandler: NINLowLevelClientEventHandler {
+final class NINChatSessionManagerEventHandler: NSObject, NINLowLevelClientEventHandlerProtocol {
     
     private weak var session: NINChatSessionManagerEventHandlers?
        
@@ -147,14 +170,14 @@ final class NINChatSessionManagerEventHandler: NINLowLevelClientEventHandler {
         self.session = session
     }
     
-    override func onEvent(_ params: NINLowLevelClientProps!, payload: NINLowLevelClientPayload!, lastReply: Bool) {
+    func onEvent(_ params: NINLowLevelClientProps!, payload: NINLowLevelClientPayload!, lastReply: Bool) {
         DispatchQueue.main.async {
             self.session?.onEvent(param: params, payload: payload, lastReplay: lastReply)
         }
     }
 }
  
-final class NINChatSessionManagerCloseHandler: NINLowLevelClientCloseHandler {
+final class NINChatSessionManagerCloseHandler: NSObject, NINLowLevelClientCloseHandlerProtocol {
     
     private weak var session: NINChatSessionManagerEventHandlers?
        
@@ -163,14 +186,14 @@ final class NINChatSessionManagerCloseHandler: NINLowLevelClientCloseHandler {
         self.session = session
     }
     
-    override func onClose() {
+    func onClose() {
         DispatchQueue.main.async {
             self.session?.onClose()
         }
     }
 }
 
-final class NINChatSessionManagerLogHandler: NINLowLevelClientLogHandler {
+final class NINChatSessionManagerLogHandler: NSObject, NINLowLevelClientLogHandlerProtocol {
     
     private weak var session: NINChatSessionManagerEventHandlers?
        
@@ -179,14 +202,14 @@ final class NINChatSessionManagerLogHandler: NINLowLevelClientLogHandler {
         self.session = session
     }
     
-    override func onLog(_ msg: String!) {
+    func onLog(_ msg: String!) {
         DispatchQueue.main.async {
             self.session?.onLog(value: msg)
         }
     }
 }
 
-final class NINChatSessionManagerConnHandler: NINLowLevelClientConnStateHandler {
+final class NINChatSessionManagerConnHandler: NSObject, NINLowLevelClientConnStateHandlerProtocol {
     
     private weak var session: NINChatSessionManagerEventHandlers?
        
@@ -195,7 +218,7 @@ final class NINChatSessionManagerConnHandler: NINLowLevelClientConnStateHandler 
         self.session = session
     }
     
-    override func onConnState(_ state: String!) {
+    func onConnState(_ state: String!) {
         DispatchQueue.main.async {
             self.session?.onConnState(state: state)
         }

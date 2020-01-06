@@ -24,6 +24,9 @@ final class NINCoordinator: Coordinator {
     internal var storyboard: UIStoryboard {
         return UIStoryboard(name: "Chat", bundle: .SDKBundle)
     }
+    internal var sessionManager: NINChatSessionManager {
+        return session.sessionManager
+    }
     
     init(with session: NINChatSessionSwift) {
         self.session = session
@@ -42,7 +45,7 @@ final class NINCoordinator: Coordinator {
 
 extension NINCoordinator {
     internal func joinAutomatically(for queue: String) -> UIViewController? {
-        guard let target = session.sessionManager.queues.filter({ $0.queueID == queue }).first else {
+        guard let target = self.sessionManager.queues.filter({ $0.queueID == queue }).first else {
             return nil
         }
         return joinDirectly(to: target)
@@ -55,8 +58,8 @@ extension NINCoordinator {
     
     @discardableResult
     internal func showChatViewController() -> UIViewController {
-        let viewModel: NINChatViewModel = NINChatViewModelImpl(session: self.session)
-        let videoDelegate: NINRTCVideoDelegate = chatVideoDelegate()
+        let viewModel: NINChatViewModel = NINChatViewModelImpl(sessionManager: self.sessionManager)
+        let videoDelegate: NINRTCVideoDelegate = NINRTCVideoDelegateImpl()
         let mediaDelegate: NINPickerControllerDelegate = chatMediaPicker(viewModel)
         let chatViewController: NINChatViewController = storyboard.instantiateViewController()
         chatViewController.viewModel = viewModel
@@ -65,7 +68,6 @@ extension NINCoordinator {
         chatViewController.chatVideoDelegate = videoDelegate
         chatViewController.chatRTCDelegate = chatRTCDelegate(videoDelegate)
         chatViewController.chatMediaPickerDelegate = mediaDelegate
-        
         
         chatViewController.onOpenGallery = { [weak self] source in
             let controller = UIImagePickerController()
@@ -89,7 +91,7 @@ extension NINCoordinator {
     
     @discardableResult
     internal func showFullScreenViewController(_ image: UIImage, _ attachment: NINFileInfo) -> UIViewController? {
-        let viewModel: NINFullScreenViewModel = NINFullScreenViewModelImpl(session: self.session)
+        let viewModel: NINFullScreenViewModel = NINFullScreenViewModelImpl(delegate: self.session)
         let previewViewController: NINFullScreenViewController = storyboard.instantiateViewController()
         previewViewController.viewModel = viewModel
         previewViewController.session = session
@@ -105,7 +107,7 @@ extension NINCoordinator {
     
     @discardableResult
     internal func showRatingViewController() -> UIViewController? {
-        let viewModel: NINRatingViewModel = NINRatingViewModelImpl(session: self.session)
+        let viewModel: NINRatingViewModel = NINRatingViewModelImpl(sessionManager: self.sessionManager)
         let ratingViewController: NINRatingViewController = storyboard.instantiateViewController()
         ratingViewController.session = session
         ratingViewController.viewModel = viewModel
@@ -130,7 +132,7 @@ extension NINCoordinator {
     
     @discardableResult
     internal func joinDirectly(to queue: NINQueue) -> UIViewController? {
-        let viewModel: NINQueueViewModel = NINQueueViewModelImpl(session: self.session, queue: queue)
+        let viewModel: NINQueueViewModel = NINQueueViewModelImpl(sessionManager: self.sessionManager, queue: queue, delegate: self.session)
         let joinViewController: NINQueueViewController = storyboard.instantiateViewController()
         joinViewController.session = session
         joinViewController.viewModel = viewModel
@@ -161,11 +163,7 @@ extension NINCoordinator {
         }
         return dataSourceDelegate
     }
-    
-    internal func chatVideoDelegate() -> NINRTCVideoDelegate {
-        return NINRTCVideoDelegateImpl()
-    }
-    
+        
     internal func chatRTCDelegate(_ videoDelegate: NINRTCVideoDelegate) -> NINWebRTCDelegate {
         return NINWebRTCDelegateImpl(remoteVideoDelegate: videoDelegate)
     }

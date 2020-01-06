@@ -6,19 +6,19 @@
 import UIKit
 
 protocol NINFullScreenViewModel {
-    init(session: NINChatSessionSwift)
+    init(delegate: NINChatSessionInternalDelegate?)
     func download(image: UIImage, completion: @escaping ((Error?) -> Void))
 }
 
 final class NINFullScreenViewModelImpl: NINFullScreenViewModel {
     
-    private unowned let session: NINChatSessionSwift
+    private weak var delegate: NINChatSessionInternalDelegate?
     private var downloadCompletion: ((Error?) -> Void)?
     
     // MARK: - NINFullScreenViewModel
     
-    init(session: NINChatSessionSwift) {
-        self.session = session
+    init(delegate: NINChatSessionInternalDelegate?) {
+        self.delegate = delegate
     }
     
     func download(image: UIImage, completion: @escaping ((Error?) -> Void)) {
@@ -31,7 +31,7 @@ extension NINFullScreenViewModelImpl {
     @objc
     private func didSaved(_ image: UIImage, error: Error?) {
         if let error = error {
-            self.session.ninchat(session, didOutputSDKLog: "Error: failed to save image to Photos album: \(error)")
+            self.delegate?.log(value: "Error: failed to save image to Photos album: \(error)")
         }
         downloadCompletion?(error)
     }

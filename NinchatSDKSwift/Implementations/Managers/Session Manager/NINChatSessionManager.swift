@@ -24,6 +24,9 @@ protocol NINChatSessionConnectionManager {
     /** Whether or not this session is connected. */
     var connected: Bool! { get }
     
+    /** Fetchs site's configuration using given `server address` in the initialization **/
+    func fetchSiteConfiguration(config key: String, environments: [String]?, completion: @escaping CompletionWithError)
+    
     /** Opens the session with an asynchronous completion callback. */
     func openSession(completion: @escaping CompletionWithError) throws
     
@@ -66,6 +69,7 @@ protocol NINChatSessionMessanger {
     func send(attachment: String, data: Data, completion: @escaping CompletionWithError) throws
     
     /** Sends a message to the activa channel. Active channel must exist. */
+    @discardableResult
     func send(type: MessageType, payload: [String:Any], completion: @escaping CompletionWithError) throws -> Int
     
     /** Load channel history. */
@@ -90,10 +94,10 @@ protocol NINChatSessionManagerDelegate {
     var onMessageAdded: ((_ index: Int) -> Void)? { get set }
     var onMessageRemoved: ((_ index: Int) -> Void)? { get set }
     var onChannelClosed: (() -> Void)? { get set }
-    var onRTCSignal: ((_ signal: RTCSignal) -> Void)? { get set }
+    var onRTCSignal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
 }
 
-protocol NINChatSessionManager: NINChatSessionConnectionManager, NINChatSessionMessanger, NINChatSessionAttachment, NINChatSessionTranslation, NINChatSessionManagerDelegate {
+protocol NINChatSessionManager: class, NINChatSessionConnectionManager, NINChatSessionMessanger, NINChatSessionAttachment, NINChatSessionTranslation, NINChatSessionManagerDelegate {
     /** List of available queues for the realm_id. */
     var queues: [NINQueue]! { get set }
     
@@ -101,10 +105,7 @@ protocol NINChatSessionManager: NINChatSessionConnectionManager, NINChatSessionM
     var audienceQueues: [NINQueue]! { get set }
     
     /** Site configuration. */
-    var siteConfiguration: [String:Any]! { get set }
+    var siteConfiguration: NINSiteConfiguration! { get }
     
-    init(session: NINChatSessionSwift)
-    init(session: NINChatSessionSwift, serverAddress: String?)
-    init(session: NINChatSessionSwift, serverAddress: String?, siteSecret: String?)
-    init(session: NINChatSessionSwift, serverAddress: String?, siteSecret: String?, audienceMetadata: NINLowLevelClientProps?)
+    init(session: NINChatSessionInternalDelegate, serverAddress: String, siteSecret: String?, audienceMetadata: NINLowLevelClientProps?)
 }

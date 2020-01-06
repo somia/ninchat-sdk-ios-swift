@@ -7,9 +7,9 @@
 import NinchatSDK
 
 public protocol NINChatSessionClosure {
-    var didOutputSDKLog: ((NINChatSession, String) -> Void)? { get set }
-    var onLowLevelEvent: ((NINChatSession, NINLowLevelClientProps, NINLowLevelClientPayload, Bool) -> Void)? { get set }
-    var overrideImageAsset: ((NINChatSession, AssetConstants) -> UIImage?)? { get set }
-    var overrideColorAsset: ((NINChatSession, ColorConstants) -> UIColor?)? { get set }
-    var didEndSession: ((NINChatSession) -> Void)? { get set }
+    var didOutputSDKLog: ((NINChatSessionSwift, String) -> Void)? { get set }
+    var onLowLevelEvent: ((NINChatSessionSwift, NINLowLevelClientProps, NINLowLevelClientPayload, Bool) -> Void)? { get set }
+    var overrideImageAsset: ((NINChatSessionSwift, AssetConstants) -> UIImage?)? { get set }
+    var overrideColorAsset: ((NINChatSessionSwift, ColorConstants) -> UIColor?)? { get set }
+    var didEndSession: ((NINChatSessionSwift) -> Void)? { get set }
 }

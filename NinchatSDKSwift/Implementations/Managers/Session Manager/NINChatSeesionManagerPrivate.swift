@@ -12,7 +12,7 @@ import NinchatSDK
 extension NINChatSessionManagerImpl {
     internal func didRealmQueuesFind(param: NINLowLevelClientProps) throws {
         /// Clear existing queue list
-        sessionSwift.ninchat(sessionSwift, didOutputSDKLog: "Realm queues found - flushing list of previously available queues.")
+        delegate?.log(value: "Realm queues found - flushing list of previously available queues.")
         queues.removeAll()
         
         let queuesParser = NINClientPropsParser()
@@ -28,7 +28,7 @@ extension NINChatSessionManagerImpl {
             
             /// Form the list of audience queues; if audienceQueues is specified in siteConfig, we use those;
             /// if not, we use the complete list of queues.
-            if let audienceQueueIDs = self.configuration.audienceQueues {
+            if let audienceQueueIDs = self.siteConfiguration.audienceQueues {
                 self.audienceQueues = audienceQueueIDs.compactMap { [weak self] id in
                     /// Returns the queue with given id
                     self?.queues.filter({ $0.queueID == id }).compactMap({ $0 }).first
@@ -48,12 +48,15 @@ extension NINChatSessionManagerImpl {
             let queueID = try param.queueID()
             do {
                 let position = try param.queuePosition()
-                if actionID != 0 || type == .queueUpdated {
-                    self.onQueueUpdated?(type, queueID, position, nil)
-                } else if type == .audienceEnqueued {
-                    guard self.currentQueueID == nil else { throw NINSessionExceptions.hasActiveChannel }
+                if type == .audienceEnqueued {
+                    guard self.currentQueueID == nil else { throw NINSessionExceptions.hasActiveQueue }
+                    
                     self.currentQueueID = queueID
                     self.onQueueUpdated?(type, queueID, position, nil)
+                }
+                
+                if actionID != 0 || type == .queueUpdated {
+                    self.onProgress?(queueID, position, type, nil)
                 }
             } catch {
                 self.onQueueUpdated?(type, queueID, nil, error)
@@ -90,7 +93,7 @@ extension NINChatSessionManagerImpl {
         do {
             let userID = try param.userID()
             if userID == myUserID {
-                sessionSwift.ninchat(sessionSwift, didOutputSDKLog: "Current user deleted.")
+                delegate?.log(value: "Current user deleted.")
             }
             self.onActionID?(actionID, nil)
         } catch {
@@ -104,8 +107,7 @@ extension NINChatSessionManagerImpl {
         
         do {
             let channelID = try param.channelID()
-            
-            sessionSwift.ninchat(sessionSwift, didOutputSDKLog: "Joined channel ID: \(channelID)")
+            delegate?.log(value: "Joined channel ID: \(channelID)")
 
             /// Set the currently active channel
             self.currentChannelID = channelID
@@ -250,13 +252,13 @@ extension NINChatSessionManagerImpl {
         do {
             let channelID = try param.channelID()
             guard channelID != currentChannelID, channelID != backgroundChannelID else {
-                self.sessionSwift.ninchat(sessionSwift, didOutputSDKLog: "Error: Got event for wrong channel: \(channelID)")
+                self.delegate?.log(value: "Error: Got event for wrong channel: \(channelID)")
                 return
             }
             
             let userID = try param.userID()
             guard let messageUser = channelUsers[userID] else {
-                self.sessionSwift.ninchat(sessionSwift, didOutputSDKLog: "Update from unknown user: \(userID)")
+                self.delegate?.log(value: "Update from unknown user: \(userID)")
                 return
             }
             
@@ -317,7 +319,7 @@ extension NINChatSessionManagerImpl {
         }
         
         chatMessages.insert(message, at: 0)
-        chatMessages.sort { $0.timestamp.compare($1.timestamp) == .orderedAscending }
+        chatMessages.sort { $0.timestamp.compare($1.timestamp) == .orderedDescending }
         self.onMessageAdded?((chatMessages as NSArray).index(of: message))
     }
     
@@ -341,7 +343,7 @@ extension NINChatSessionManagerImpl {
     }
     
     internal func disconnect() {
-        self.sessionSwift.ninchat(sessionSwift, didOutputSDKLog: "disconnect: Closing Ninchat session.")
+        self.delegate?.log(value: "disconnect: Closing Ninchat session.")
         
         self.messageThrottler?.stop()
         self.messageThrottler = nil
@@ -379,7 +381,7 @@ extension NINChatSessionManagerImpl {
                     let decode: Result<RTCSignal> = payload.get(index)!.decode()
                     switch decode {
                     case .success(let signal):
-                        self?.onRTCSignal?(signal)
+                        self?.onRTCSignal?(messageType, messageUser, signal)
                     case .failure(let error):
                         throw error
                     }
@@ -406,7 +408,7 @@ extension NINChatSessionManagerImpl {
                 var hasAttachment = false
                 if let files = message.files, files.count > 0 {
                     files.forEach { [unowned self] file in
-                        self.sessionSwift.ninchat(self.sessionSwift, didOutputSDKLog: "Got file with MIME type: \(String(describing: file.attributes.type))")
+                        self.delegate?.log(value: "Got file with MIME type: \(String(describing: file.attributes.type))")
                         let fileInfo = NINFileInfo(fileID: file.id, name: file.attributes.name, mimeType: file.attributes.type, size: file.attributes.size)
 
                         // Only process certain files at this point
