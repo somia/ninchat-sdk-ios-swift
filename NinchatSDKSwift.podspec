@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
   s.subspec "SDKSwift" do |ss|
     ss.source_files  = "NinchatSDKSwift/**/*.{swift}"
     ss.resource_bundles = {
-        "NinchatSwiftSDKUI" => ["NinchatSDKSwift/**/*.{storyboard,xib,xcassets,strings}"],
+        "NinchatSwiftSDKUI" => "NinchatSDKSwift/**/*.{storyboard,xib,xcassets,strings}"
     }
   end
 
@@ -27,6 +27,7 @@ Pod::Spec.new do |s|
 
   # Cocoapods dependencies
   s.dependency "NinchatSDK"
+  s.dependency "Kingfisher"
 
   s.module_name = "NinchatSDKSwift"
 end

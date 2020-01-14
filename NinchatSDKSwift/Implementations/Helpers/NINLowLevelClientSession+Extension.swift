@@ -8,9 +8,9 @@ import Foundation
 import NinchatSDK
 
 extension NINLowLevelClientSession {
-    func send(_ param: NINLowLevelClientProps) throws -> Int {
+    func send(_ param: NINLowLevelClientProps, _ payload: NINLowLevelClientPayload? = nil) throws -> Int {
         var actionID: Int64 = 0
-        try self.send(param, payload: nil, actionId: &actionID)
+        try self.send(param, payload: payload, actionId: &actionID)
         
         return Int(actionID)
     }

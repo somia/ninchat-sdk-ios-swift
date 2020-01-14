@@ -71,7 +71,7 @@ extension NINLowLevelClientProps {
     }
     
     func queueAttributes_Name() throws -> String {
-        return try self.getObject("queue_attrs").getString("String")
+        return try self.getObject("queue_attrs").getString("name")
     }
     
     // MARK: - Channels

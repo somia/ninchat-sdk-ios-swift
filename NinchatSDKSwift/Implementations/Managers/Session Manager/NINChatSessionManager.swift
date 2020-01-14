@@ -24,7 +24,7 @@ protocol NINChatSessionConnectionManager {
     /** Whether or not this session is connected. */
     var connected: Bool! { get }
     
-    /** Fetchs site's configuration using given `server address` in the initialization **/
+    /** Fetchs site's configuration using given `server address` in the initialization */
     func fetchSiteConfiguration(config key: String, environments: [String]?, completion: @escaping CompletionWithError)
     
     /** Opens the session with an asynchronous completion callback. */
@@ -106,6 +106,9 @@ protocol NINChatSessionManager: class, NINChatSessionConnectionManager, NINChatS
     
     /** Site configuration. */
     var siteConfiguration: NINSiteConfiguration! { get }
+    
+    /**  A weak reference to internal functions declared in `NINChatSessionSwift` */
+    var delegate: NINChatSessionInternalDelegate? { get }
     
     init(session: NINChatSessionInternalDelegate, serverAddress: String, siteSecret: String?, audienceMetadata: NINLowLevelClientProps?)
 }

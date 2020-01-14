@@ -102,7 +102,6 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
         textInput.text = ""
         self.onSendTapped?(text)
         self.updatePlaceholder()
-        textInput.resignFirstResponder()
     }
         
     @IBAction private func onAttachmentButtonTapped(sender: UIButton) {
@@ -134,6 +133,13 @@ extension ChatInputControls: UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {
         self.updatePlaceholder()
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if textView.text == placeholderText {
+            textView.text.removeAll()
+        }
+        return true
     }
     
     func textViewShouldEndEditing(_ textView: UITextView) -> Bool {

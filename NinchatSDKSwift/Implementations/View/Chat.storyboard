@@ -135,17 +135,13 @@ you are next.</string>
                                     <constraint firstAttribute="height" constant="257" id="drK-a0-uHv"/>
                                 </constraints>
                             </view>
-                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="brw-f0-DOL" userLabel="Chat view" customClass="NINChatView">
+                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="brw-f0-DOL" userLabel="Chat view" customClass="ChatView" customModule="NinchatSDKSwift" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="257" width="375" height="290"/>
                                 <subviews>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="g76-kj-vdH">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="290"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="separatorColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <connections>
-                                            <outlet property="dataSource" destination="brw-f0-DOL" id="kQF-xi-OG7"/>
-                                            <outlet property="delegate" destination="brw-f0-DOL" id="N2a-Mr-HeE"/>
-                                        </connections>
                                     </tableView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -158,7 +154,7 @@ you are next.</string>
                                     <constraint firstItem="g76-kj-vdH" firstAttribute="top" secondItem="brw-f0-DOL" secondAttribute="top" id="qQE-hG-NOO"/>
                                 </constraints>
                                 <connections>
-                                    <outlet property="tableView" destination="g76-kj-vdH" id="oHm-zA-u3x"/>
+                                    <outlet property="tableView" destination="g76-kj-vdH" id="gyG-SR-gx1"/>
                                 </connections>
                             </view>
                             <view tag="201" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zwn-LD-a0m">

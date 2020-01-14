@@ -20,6 +20,26 @@ public enum NINExceptions: Error {
     }
 }
 
+public enum NINUIExceptions: Error {
+    case noMessage
+    case noAttachment
+    case invalidAttachment
+    case noThumbnailManager
+    
+    public var localizedDescription: String {
+        switch self {
+        case .noMessage:
+            return "Must be a text message"
+        case .noAttachment:
+            return "Must have attachment"
+        case .invalidAttachment:
+            return "Attachment must be image or video"
+        case .noThumbnailManager:
+            return "Must have `VideoThumbnailManager`"
+        }
+    }
+}
+
 public enum NINSessionExceptions: Error {
     case hasActiveSession
     case noActiveSession

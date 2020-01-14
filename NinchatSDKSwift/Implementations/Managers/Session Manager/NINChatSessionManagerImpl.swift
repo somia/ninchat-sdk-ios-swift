@@ -29,7 +29,6 @@ final class NINChatSessionManagerImpl: NINChatSessionManager, NINChatSessionMana
     internal var myUserID: String?
     internal var realmID: String?
     internal var messageThrottler: NINMessageThrottler?
-    internal weak var delegate: NINChatSessionInternalDelegate?
     
     // MARK: - NINChatSessionManagerInternalActions
     
@@ -63,6 +62,7 @@ final class NINChatSessionManagerImpl: NINChatSessionManager, NINChatSessionMana
     
     // MARK: - NINChatSessionManager
     
+    weak var delegate: NINChatSessionInternalDelegate?
     var queues: [NINQueue]! = [] {
         didSet {
             self.audienceQueues = self.queues
@@ -319,7 +319,7 @@ extension NINChatSessionManagerImpl {
         payload.append(data)
         
         do {
-            let actionID = try session.send(param)
+            let actionID = try session.send(param, payload)
             
             /// When this action completes, trigger the completion block callback
             self.bind(action: actionID, closure: completion)
@@ -350,12 +350,13 @@ extension NINChatSessionManagerImpl {
         }
         
         do {
-            let data = NSKeyedArchiver.archivedData(withRootObject: payload)
+            let data = try JSONSerialization.data(withJSONObject: payload, options: .prettyPrinted)
             
             let newPayload = NINLowLevelClientPayload.initiate
             newPayload.append(data)
             
-            let actionID = try session.send(param)
+            let actionID = try session.send(param, newPayload)
+            
             /// When this action completes, trigger the completion block callback
             self.bind(action: actionID, closure: completion)
             return actionID

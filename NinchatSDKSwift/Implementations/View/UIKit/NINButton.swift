@@ -6,8 +6,8 @@
 
 import UIKit
 
-public final class NINButton: UIButton {
-    public var closure: ((UIButton) -> Void)?
+final class NINButton: UIButton {
+    var closure: ((NINButton) -> Void)?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -25,7 +25,7 @@ public final class NINButton: UIButton {
     
     // MARK: - User actions
     
-    override public func sendActions(for controlEvents: UIControl.Event) {
+    override func sendActions(for controlEvents: UIControl.Event) {
         super.sendActions(for: controlEvents)
         self.closure?(self)
     }
@@ -36,13 +36,13 @@ public final class NINButton: UIButton {
     
     // MARK: - Helper methods
     
-    public func overrideAssets(with session: NINChatSessionSwift, isPrimary primary: Bool) {
-        if let overrideImage = session.override(imageAsset: primary ? .primaryButton : .secondaryButton) {
+    func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary primary: Bool) {
+        if let overrideImage = delegate?.override(imageAsset: primary ? .primaryButton : .secondaryButton) {
             self.setBackgroundImage(overrideImage, for: .normal)
             self.backgroundColor = .clear
             self.layer.cornerRadius = 0
             self.layer.borderWidth = 0
-        } else if let overrideColor = session.override(colorAsset: primary ? .buttonPrimaryText : .buttonSecondaryText) {
+        } else if let overrideColor = delegate?.override(colorAsset: primary ? .buttonPrimaryText : .buttonSecondaryText) {
             self.setTitleColor(overrideColor, for: .normal)
         }
     }

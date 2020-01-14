@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="SourceSansPro-Regular.ttf">
+            <string>SourceSansPro-Regular</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="FyA-uo-lSb" userLabel="ChatMetaCell" customClass="ChatMetaCell" customModule="NinchatSDKSwift">
+            <rect key="frame" x="0.0" y="0.0" width="396" height="149"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="FyA-uo-lSb" id="eEc-j9-Oc2">
+                <rect key="frame" x="0.0" y="0.0" width="396" height="149"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="x0N-3W-u1q" userLabel="Container view">
+                        <rect key="frame" x="0.0" y="0.0" width="396" height="149"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Conversation started. Oh, did I mention this could take up multiple lines?" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WkV-Az-Oj6">
+                                <rect key="frame" x="15" y="10" width="366" height="30.5"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <view clipsSubviews="YES" tag="123" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UQg-Rm-BHH" userLabel="Button container view">
+                                <rect key="frame" x="0.0" y="50.5" width="396" height="98.5"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" placeholderIntrinsicWidth="135" placeholderIntrinsicHeight="45" translatesAutoresizingMaskIntoConstraints="NO" id="uKt-hw-mCs" customClass="NINEmbeddableCloseChatButton">
+                                        <rect key="frame" x="130.5" y="20" width="135" height="58.5"/>
+                                        <color key="backgroundColor" red="1" green="0.0" blue="0.2431916516" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="uKt-hw-mCs" firstAttribute="centerY" secondItem="UQg-Rm-BHH" secondAttribute="centerY" id="LgS-fH-N4r"/>
+                                    <constraint firstItem="uKt-hw-mCs" firstAttribute="top" secondItem="UQg-Rm-BHH" secondAttribute="top" priority="999" constant="10" id="Q2a-8D-DDQ"/>
+                                    <constraint firstAttribute="bottom" secondItem="uKt-hw-mCs" secondAttribute="bottom" priority="999" constant="20" id="Xyf-SL-xoe"/>
+                                    <constraint firstItem="uKt-hw-mCs" firstAttribute="centerX" secondItem="UQg-Rm-BHH" secondAttribute="centerX" id="ZE1-4b-oAC"/>
+                                    <constraint firstAttribute="height" constant="98.5" id="u0W-GJ-ZuZ"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="UQg-Rm-BHH" secondAttribute="trailing" id="A5D-cX-MJz"/>
+                            <constraint firstItem="UQg-Rm-BHH" firstAttribute="leading" secondItem="x0N-3W-u1q" secondAttribute="leading" id="BDe-EQ-Sya"/>
+                            <constraint firstAttribute="trailing" secondItem="WkV-Az-Oj6" secondAttribute="trailing" constant="15" id="Ez7-5p-la8"/>
+                            <constraint firstItem="UQg-Rm-BHH" firstAttribute="top" secondItem="WkV-Az-Oj6" secondAttribute="bottom" priority="999" constant="10" id="YRP-uq-DLs"/>
+                            <constraint firstAttribute="bottom" secondItem="UQg-Rm-BHH" secondAttribute="bottom" id="gRx-lF-Qg5"/>
+                            <constraint firstItem="WkV-Az-Oj6" firstAttribute="top" secondItem="x0N-3W-u1q" secondAttribute="top" constant="10" id="nut-tt-ogK"/>
+                            <constraint firstItem="WkV-Az-Oj6" firstAttribute="leading" secondItem="x0N-3W-u1q" secondAttribute="leading" constant="15" id="tWr-HX-0dn"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                <constraints>
+                    <constraint firstAttribute="bottom" secondItem="x0N-3W-u1q" secondAttribute="bottom" id="0FH-Pc-MwS"/>
+                    <constraint firstItem="x0N-3W-u1q" firstAttribute="top" secondItem="eEc-j9-Oc2" secondAttribute="top" id="PW2-P1-3K6"/>
+                    <constraint firstAttribute="trailing" secondItem="x0N-3W-u1q" secondAttribute="trailing" id="tRI-Df-7Fe"/>
+                    <constraint firstItem="x0N-3W-u1q" firstAttribute="leading" secondItem="eEc-j9-Oc2" secondAttribute="leading" id="vAm-jX-jQH"/>
+                </constraints>
+            </tableViewCellContentView>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <connections>
+                <outlet property="closeChatButton" destination="uKt-hw-mCs" id="BCb-dS-FhW"/>
+                <outlet property="closeChatButtonContainer" destination="UQg-Rm-BHH" id="ycp-rI-xAo"/>
+                <outlet property="metaTextLabel" destination="WkV-Az-Oj6" id="nrp-hH-RB0"/>
+            </connections>
+            <point key="canvasLocation" x="17.600000000000001" y="-62.518740629685162"/>
+        </tableViewCell>
+    </objects>
+</document>

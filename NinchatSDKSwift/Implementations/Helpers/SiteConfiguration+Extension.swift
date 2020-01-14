@@ -38,4 +38,20 @@ extension NINSiteConfiguration {
     var translation: [String:String]? {
         self.value(forKey: "translations") as?  [String:String]
     }
+    
+    var agentAvatar: String? {
+        self.value(forKey: "agentAvatar") as? String
+    }
+    
+    var agentName: String? {
+        self.value(forKey: "agentName") as? String
+    }
+    
+    var userAvatar: String? {
+        self.value(forKey: "userAvatar") as? String
+    }
+    
+    var userName: String? {
+        self.value(forKey: "userName") as? String
+    }
 }

@@ -5,10 +5,10 @@
 //
 
 import Foundation
+import UIKit
 
-
-public typealias NINImageAssetKey = String
-public enum AssetConstants: NINImageAssetKey {
+public typealias NINImageAssetDictionary = [AssetConstants:UIImage]
+public enum AssetConstants: String {
     case iconLoader = "NINImageAssetKeyQueueViewProgressIndicator"
     case iconChatCloseButton = "NINImageAssetKeyIconChatCloseButton"
     case iconRatingPositive = "NINImageAssetKeyIconRatingPositive"
@@ -44,8 +44,8 @@ public enum AssetConstants: NINImageAssetKey {
     case secondaryButton = "NINImageAssetKeySecondaryButton"
 }
 
-public typealias NINColorAssetKey = String
-public enum ColorConstants: NINColorAssetKey {
+public typealias NINColorAssetDictionary = [ColorConstants:UIColor]
+public enum ColorConstants: String {
     case buttonPrimaryText = "NINColorAssetKeyButtonPrimaryText"
     case buttonSecondaryText = "NINColorAssetKeyButtonSecondaryText"
     case infoText = "NINColorAssetKeyInfoText"

@@ -44,8 +44,6 @@ protocol NINChatViewModel: NINChatRTCProtocol, NINChatStateProtocol, NINChatMess
 
 final class NINChatViewModelImpl: NINChatViewModel {
     private unowned var sessionManager: NINChatSessionManager
-    var signalingObserver: Any? = nil
-    var messageObserver: Any? = nil
     var onChannelClosed: (() -> Void)?
     var onQueued: (() -> Void)?
     var onChannelMessage: ((MessageUpdateType) -> Void)?

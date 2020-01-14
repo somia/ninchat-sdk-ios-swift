@@ -5,6 +5,7 @@ source 'https://cdn.cocoapods.org/'
 source 'https://github.com/somia/ninchat-podspecs.git'
 
 def all_pods
+    pod 'Kingfisher'
     pod 'NinchatSDK', :git => 'https://github.com/somia/ninchat-sdk-ios', :branch => 'swift'
     #pod 'NinchatSDK', :path => '../ninchat-sdk-ios'
 end

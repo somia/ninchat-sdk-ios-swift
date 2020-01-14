@@ -20,7 +20,13 @@ final class NINCoordinator: Coordinator {
     // MARK: - Coordinator
     
     internal unowned let session: NINChatSessionSwift
-    internal var navigationController: UINavigationController?
+    internal weak var navigationController: UINavigationController? {
+        didSet {
+            if #available(iOS 13.0, *) {
+                navigationController?.overrideUserInterfaceStyle = .light
+            }
+        }
+    }
     internal var storyboard: UIStoryboard {
         return UIStoryboard(name: "Chat", bundle: .SDKBundle)
     }
@@ -149,7 +155,7 @@ extension NINCoordinator {
 
 extension NINCoordinator {
     internal func chatDataSourceDelegate(_ viewModel: NINChatViewModel) -> NINChatDataSourceDelegate {
-        let dataSourceDelegate: NINChatDataSourceDelegate = NINChatDataSourceDelegateImpl(viewModel: viewModel)
+        var dataSourceDelegate: NINChatDataSourceDelegate = NINChatDataSourceDelegateImpl(viewModel: viewModel)
         dataSourceDelegate.onOpenPhotoAttachment = { [weak self] image, attachment in
             self?.showFullScreenViewController(image, attachment)
         }

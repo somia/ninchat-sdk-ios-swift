@@ -101,13 +101,9 @@ final class NINChatViewController: UIViewController, ViewController {
     }
     
     @IBOutlet private weak var chatContainerHeight: NSLayoutConstraint!
-    @IBOutlet private weak var chatView: NINChatView! {
+    @IBOutlet private weak var chatView: ChatView! {
         didSet {
-            /// TODO: Update here
-//            chatView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(sender:))))
-//            chatView.sessionManager = session.sessionManager
-            chatView.delegate = chatDataSourceDelegate
-            chatView.dataSource = chatDataSourceDelegate
+            chatView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(sender:))))
         }
     }
     @IBOutlet private weak var closeChatButton: NINButton! {
@@ -170,7 +166,10 @@ final class NINChatViewController: UIViewController, ViewController {
         super.viewWillAppear(animated)
         self.addKeyboardListeners()
         self.addRotationListener()
-        self.adjustConstraints(for: self.view.bounds.size, withAnimation: false)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.adjustConstraints(for: self.view.bounds.size, withAnimation: false)
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -198,11 +197,18 @@ final class NINChatViewController: UIViewController, ViewController {
     private func setupView() {
         self.overrideAssets()
         self.setupGestures()
+        self.setupChatView()
         
         self.inputControlsView.onTextSizeChanged = { [weak self] height in
             debugger("new text area height: \(height + 64)")
             self?.updateInputContainerHeight(height + 64.0)
         }
+    }
+    
+    private func setupChatView() {
+        chatView.sessionManager = self.session.sessionManager
+        chatView.delegate = self.chatDataSourceDelegate
+        chatView.dataSource = self.chatDataSourceDelegate
     }
     
     // MARK: - Setup ViewModel
@@ -218,9 +224,9 @@ final class NINChatViewController: UIViewController, ViewController {
         self.viewModel.onChannelMessage = { [weak self] update in
             switch update {
             case .insert(let index):
-                self?.chatView.newMessageWasAdded(at: index)
+                self?.chatView.didAddMessage(at: index)
             case .remove(let index):
-                self?.chatView.messageWasRemoved(at: index)
+                self?.chatView.didRemoveMessage(from: index)
             }
         }
     }
@@ -298,8 +304,8 @@ extension NINChatViewController {
         
         if update {
             self.inputContainerHeight = value
+            self.view.layoutIfNeeded()
         }
-        self.view.layoutIfNeeded()
     }
     
     // Aligns (or cancels existing alignment) the input control container view's top

@@ -15,6 +15,7 @@ PODS:
   - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
   - GoogleWebRTC (1.1.27828)
+  - Kingfisher (4.10.1)
   - NinchatLowLevelClient (0.0.11)
   - NinchatSDK (0.0.39):
     - AFNetworking (~> 3.0)
@@ -27,6 +28,7 @@ PODS:
     - NinchatLowLevelClient (~> 0)
 
 DEPENDENCIES:
+  - Kingfisher
   - NinchatSDK (from `https://github.com/somia/ninchat-sdk-ios`, branch `swift`)
 
 SPEC REPOS:
@@ -35,6 +37,7 @@ SPEC REPOS:
   trunk:
     - AFNetworking
     - GoogleWebRTC
+    - Kingfisher
 
 EXTERNAL SOURCES:
   NinchatSDK:
@@ -49,9 +52,10 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
   GoogleWebRTC: 55e46bee9ac2a4961542e9571bea589b64493f45
+  Kingfisher: c148cd7b47ebde9989f6bc7c27dcaa79d81279a0
   NinchatLowLevelClient: ecd9900e5795e60e3e5f5065f3bb1f61b566acb7
   NinchatSDK: d4152005ebec7ec91ee8ff194d580481de7e3378
 
-PODFILE CHECKSUM: a3779012126d60e7ce85a9422c6d4fe3f468374f
+PODFILE CHECKSUM: ac7fa33eb802eb2f730966e0defc201a09fde74d
 
 COCOAPODS: 1.8.4

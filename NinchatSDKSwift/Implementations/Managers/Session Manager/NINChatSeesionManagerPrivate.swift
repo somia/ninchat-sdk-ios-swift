@@ -115,7 +115,7 @@ extension NINChatSessionManagerImpl {
 
             /// Get the queue we are joining
             let queueName = self.queues.compactMap({ $0 }).filter({ [weak self] queue in
-                queue.queueID == self?.currentChannelID }).first?.name ?? ""
+                queue.queueID == self?.currentQueueID }).first?.name ?? ""
             
             /// We are no longer in the queue; clear the queue reference
             self.currentQueueID = nil;
@@ -301,18 +301,26 @@ extension NINChatSessionManagerImpl {
     }
     
     internal func add(message: NINChatMessage) {
-        // Check if the previous (normal) message was sent by the same user, ie. is the
-        // message part of a series
+        /// Check if the previous (normal) message was sent by the same user, ie. is the
+        /// message part of a series
         if let channelMessage = message as? NINChannelMessage {
-            // Guard against the same message getting added multiple times
-            // should only happen if the client makes extraneous load_history calls elsewhere
+            /// Guard against the same message getting added multiple times
+            /// should only happen if the client makes extraneous load_history calls elsewhere
             guard self.chatMessages.filter({
                 ($0 as? NINChannelMessage)?.messageID == channelMessage.messageID
             }).count == 0 else { return }
             
             // Find the previous channel message
-            if let prevMsg = chatMessages.compactMap({ $0 as? NINTextMessage }).last {
-                channelMessage.series = prevMsg.sender.userID == channelMessage.sender.userID
+            if let prevMsg = chatMessages
+                .compactMap({ $0 as? NINTextMessage })
+                .sorted(by: { $0.timestamp.compare($1.timestamp) == .orderedAscending })
+                .last {
+                channelMessage.series = (prevMsg.sender.userID == channelMessage.sender.userID)
+                
+                let dateDiff = channelMessage.timestamp - prevMsg.timestamp
+                if let minDiff = dateDiff.minute {
+                    channelMessage.series = channelMessage.series && minDiff == 0
+                }
             } else {
                 channelMessage.series = false
             }
@@ -421,8 +429,8 @@ extension NINChatSessionManagerImpl {
                 }
     
                 /// Only allocate a new message now if there is text and no attachment
-                if !hasAttachment, !message.text.isEmpty {
-                    self.add(message:  NINTextMessage(messageID: id, textContent: message.text, sender: user, timestamp: Date(timeIntervalSince1970: time), mine: user.userID == self.myUserID, attachment: nil))
+                if let text = message.text, !text.isEmpty, !hasAttachment {
+                    self.add(message:  NINTextMessage(messageID: id, textContent: text, sender: user, timestamp: Date(timeIntervalSince1970: time), mine: user.userID == self.myUserID, attachment: nil))
                 }
             case .failure(let error):
                 throw error

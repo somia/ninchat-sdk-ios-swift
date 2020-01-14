@@ -7,9 +7,9 @@
 import Foundation
 import NinchatSDK
 
-final class NINTextMessage: NSObject, NINChatMessage {
-    private var messageID: String!
-    private var mine: Bool!
+final class NINTextMessage: NSObject, NINChannelMessage {
+    internal var messageID: String!
+    internal var mine: Bool
     var sender: NINChannelUser!
     var textContent: String?
     var timestamp: Date!
@@ -19,7 +19,7 @@ final class NINTextMessage: NSObject, NINChatMessage {
         * YES if this message is a part in a series, ie. the sender of the previous message
         * also sent this message.
     */
-    var series: Bool! = false
+    var series: Bool = false
     
     init(messageID: String, textContent: String?, sender: NINChannelUser, timestamp: Date, mine: Bool, attachment: NINFileInfo?) {
         self.messageID = messageID
