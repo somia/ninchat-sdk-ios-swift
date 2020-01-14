@@ -20,23 +20,31 @@ protocol NINChatSessionInternalDelegate: class {
 
 extension NINChatSessionSwift: NINChatSessionInternalDelegate {
     internal func log(value: String) {
-        self.delegate?.didOutputSDKLog(session: self, value: value)
-        self.didOutputSDKLog?(self, value)
+        DispatchQueue.main.async {
+            self.delegate?.didOutputSDKLog(session: self, value: value)
+            self.didOutputSDKLog?(self, value)
+        }
     }
     
     internal func log(format: String, _ args: CVarArg...) {
-        self.delegate?.didOutputSDKLog(session: self, value: String(format: format, args))
-        self.didOutputSDKLog?(self, String(format: format, args))
+        DispatchQueue.main.async {
+            self.delegate?.didOutputSDKLog(session: self, value: String(format: format, args))
+            self.didOutputSDKLog?(self, String(format: format, args))
+        }
     }
     
     internal func onLowLevelEvent(event: NINLowLevelClientProps, payload: NINLowLevelClientPayload, lastReply: Bool) {
-        self.delegate?.onLowLevelEvent(session: self, params: event, payload: payload, lastReply: lastReply)
-        self.onLowLevelEvent?(self, event, payload, lastReply)
+        DispatchQueue.main.async {
+            self.delegate?.onLowLevelEvent(session: self, params: event, payload: payload, lastReply: lastReply)
+            self.onLowLevelEvent?(self, event, payload, lastReply)
+        }
     }
     
     internal func onDidEnd() {
-        self.delegate?.didEndSession(session: self)
-        self.didEndSession?(self)
+        DispatchQueue.main.async {
+            self.delegate?.didEndSession(session: self)
+            self.didEndSession?(self)
+        }
     }
     
     internal func override(imageAsset key: AssetConstants) -> UIImage? {

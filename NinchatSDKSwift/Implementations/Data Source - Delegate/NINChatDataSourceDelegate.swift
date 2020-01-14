@@ -73,9 +73,9 @@ extension NINChatDataSourceDelegateImpl {
 
 extension NINChatDataSourceDelegateImpl {
     func didSelect(image: UIImage?, for attachment: NINFileInfo?, _ view: ChatView) {
-        guard let attachment = attachment, let image = image else { return }
+        guard let attachment = attachment else { return }
         
-        if attachment.isImage {
+        if attachment.isImage, let image = image {
             self.onOpenPhotoAttachment?(image, attachment)
         } else if attachment.isVideo {
             self.onOpenVideoAttachment?(attachment)

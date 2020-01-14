@@ -45,7 +45,7 @@ final class ChatView: UIView, ChatViewProtocol {
     * in the message with each object being a dictionary that gets received and passed
     * to NINUIComposeElement objects that are responsible for generating and reading it.
     */
-    var composeMessageStates: [String:[Any]]?
+    var composeMessageStates: [String:[Any]]? = [:]
     
     /** Configuration for agent avatar. */
     private var agentAvatarConfig: NINAvatarConfig!
@@ -59,8 +59,13 @@ final class ChatView: UIView, ChatViewProtocol {
     
     @IBOutlet private weak var tableView: UITableView! {
         didSet {
+            tableView.register(ChatChannelCell.self)
+            tableView.register(ChatMetaCell.self)
             tableView.dataSource = self
             tableView.delegate = self
+            
+            /// Rotate the table view 180 degrees; we will use it upside down
+            tableView.rotate()
         }
     }
     
@@ -89,17 +94,6 @@ final class ChatView: UIView, ChatViewProtocol {
     }
     
     // MARK: - UIView
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        
-        self.tableView.register(ChatChannelCell.self)
-        self.tableView.register(ChatMetaCell.self)
-        
-        /// Rotate the table view 180 degrees; we will use it upside down
-        self.tableView.rotate()
-        self.composeMessageStates = [:]
-    }
     
     deinit {
         debugger("`ChatView` deallocated")

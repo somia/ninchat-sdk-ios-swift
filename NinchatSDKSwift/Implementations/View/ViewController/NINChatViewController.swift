@@ -104,6 +104,9 @@ final class NINChatViewController: UIViewController, ViewController {
     @IBOutlet private weak var chatView: ChatView! {
         didSet {
             chatView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(sender:))))
+            chatView.sessionManager = self.session.sessionManager
+            chatView.delegate = self.chatDataSourceDelegate
+            chatView.dataSource = self.chatDataSourceDelegate
         }
     }
     @IBOutlet private weak var closeChatButton: NINButton! {
@@ -166,10 +169,7 @@ final class NINChatViewController: UIViewController, ViewController {
         super.viewWillAppear(animated)
         self.addKeyboardListeners()
         self.addRotationListener()
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.adjustConstraints(for: self.view.bounds.size, withAnimation: false)
-        }
+        self.adjustConstraints(for: self.view.bounds.size, withAnimation: false)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -197,18 +197,11 @@ final class NINChatViewController: UIViewController, ViewController {
     private func setupView() {
         self.overrideAssets()
         self.setupGestures()
-        self.setupChatView()
         
         self.inputControlsView.onTextSizeChanged = { [weak self] height in
             debugger("new text area height: \(height + 64)")
             self?.updateInputContainerHeight(height + 64.0)
         }
-    }
-    
-    private func setupChatView() {
-        chatView.sessionManager = self.session.sessionManager
-        chatView.delegate = self.chatDataSourceDelegate
-        chatView.dataSource = self.chatDataSourceDelegate
     }
     
     // MARK: - Setup ViewModel
@@ -335,6 +328,7 @@ extension NINChatViewController {
         self.setNeedsStatusBarAppearanceUpdate()
         
         UIView.animate(withDuration: animation ? animationDuration : 0.0) {
+            self.view.setNeedsLayout()
             self.view.layoutIfNeeded()
         }
     }

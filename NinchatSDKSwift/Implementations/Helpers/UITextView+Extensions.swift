@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import NinchatSDK
 
 extension UITextView {
     func updateSize(to height: CGFloat) {

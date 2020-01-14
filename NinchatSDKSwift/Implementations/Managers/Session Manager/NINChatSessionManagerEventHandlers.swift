@@ -115,6 +115,8 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                     try self.didPartChannel(param: param)
                 case .channelMemberUpdated:
                     try self.didUpdateMember(param: param)
+                case .fileFound:
+                    try self.didFindFile(param: param)
                 default:
                     break
                 }

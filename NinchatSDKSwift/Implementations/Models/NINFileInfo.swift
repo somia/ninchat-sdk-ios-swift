@@ -51,11 +51,10 @@ final class NINFileInfo {
         /// The URL must not expire within the next 15 minutes
         let comparisonDate = Date(timeIntervalSinceNow: -(15*60))
         
-        guard self.url != nil, let expiry = self.urlExpiry,
-            expiry.compare(comparisonDate) != .orderedAscending else {
-                debugger("No need to update file, it is up to date.")
-                completion(nil, false)
-                return
+        guard self.url == nil || self.urlExpiry == nil || self.urlExpiry?.compare(comparisonDate) == .orderedAscending else {
+            debugger("No need to update file, it is up to date.")
+            completion(nil, false)
+            return
         }
         
         debugger("Must update file info; call describe_file")
@@ -64,12 +63,12 @@ final class NINFileInfo {
                 if let error = error {
                     completion(error, true)
                 } else if let info = fileInfo {
-                    let data = NSKeyedArchiver.archivedData(withRootObject: info)
-                    if let file = try? JSONDecoder().decode(FileInfo.self, from: data) {
-                        self?.url = file.url
-                        self?.urlExpiry = file.urlExpiry
-                        self?.aspectRatio = file.aspectRatio
-                    }
+                    let file = FileInfo(json: info)
+                    
+                    self?.url = file.url
+                    self?.urlExpiry = file.urlExpiry
+                    self?.aspectRatio = file.aspectRatio
+                    completion(nil, true)
                 }
             }
         } catch {
@@ -80,8 +79,14 @@ final class NINFileInfo {
     // MARK: - Codable object
     
     struct FileInfo: Codable {
-        let url: String
-        let urlExpiry: Date
-        let aspectRatio: Double
+        let url: String?
+        let urlExpiry: Date?
+        let aspectRatio: Double?
+        
+        init(json: [String:Any]) {
+            self.url = json["url"] as? String
+            self.urlExpiry = Date(timeIntervalSince1970: json["urlExpiry"] as? Double ?? -1)
+            self.aspectRatio = json["aspectRatio"] as? Double
+        }
     }
 }

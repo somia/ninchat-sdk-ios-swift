@@ -105,7 +105,7 @@ extension ChatChannelCell: ChannelCell {
         self.senderNameLabel.text = (message.sender.displayName.count < 1) ? "Guest" : message.sender.displayName
         self.timeLabel.text = DateFormatter.shortTime()?.string(from: message.timestamp) ?? ""
         /// Hide the name and timestamp if it's a part of series message chain
-        self.infoContainerHeightConstraint.constant = (message.series) ? 0 : 34
+        self.infoContainerHeightConstraint.constant = (message.series) ? 0 : 40
                 
         /// Make Image view background match the bubble color
         self.messageImageView.backgroundColor = self.bubbleImageView.tintColor
@@ -171,12 +171,15 @@ extension ChatChannelCell {
     }
     
     private func setImage(aspect ratio: CGFloat) {
-        self.messageImageViewContainer.scale(aspectRatio: ratio)
+        let width = self.contentView.bounds.width/2
+        self.bubbleImageView.deactivate(size: [.width, .height])
+        self.bubbleImageView.fix(width: width, height: width * ratio)
     }
     
     private func resetImageLayout() {
         self.messageImageView.image = nil
-        self.messageImageView.gestureRecognizers?.forEach { self.messageImageView.removeGestureRecognizer($0) }
+        self.messageImageViewContainer.gestureRecognizers?.forEach { self.messageImageViewContainer.removeGestureRecognizer($0) }
+        self.videoPlayerContainer.gestureRecognizers?.forEach { self.videoPlayerContainer.removeGestureRecognizer($0) }
     }
     
     private func toggleBubbleConstraints(isMyMessage: Bool, isSeries: Bool) {
@@ -235,6 +238,7 @@ extension ChatChannelCell {
         /// Black text on white bubble
         self.bubbleImageView.tintColor = .white
         self.messageTextView.textColor = .black
+        self.messageTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.blue]
         
         /// Push the bubble to the left edge by setting the right and left constraints
         self.mainContainerLeftConstraint.constant = 0
@@ -272,7 +276,7 @@ extension ChatChannelCell {
     private func apply(avatar config: NINAvatarConfig, imageView: UIImageView) {
         imageView.isHidden = !config.show
         if !config.imageOverrideUrl.isEmpty {
-            imageView.fetchImage(config.imageOverrideUrl)
+            imageView.setImageURL(config.imageOverrideUrl)
         }
     }
     
@@ -280,7 +284,7 @@ extension ChatChannelCell {
     private func updateVideo(thumbnail: UIImage, fromCache: Bool) {
         self.setImage(aspect: thumbnail.size.height / thumbnail.size.width)
         self.messageImageView.image = thumbnail
-        
+                
         if !fromCache {
             /// Animate the thumbnail in
             self.messageImageViewContainer.alpha = 0
@@ -291,6 +295,7 @@ extension ChatChannelCell {
         /// We do this regardless of fromCache -value as this method may have been called asynchronously
         /// from `updateInfo(session:completion:)` completion block in populate method.
         self.contentView.setNeedsLayout()
+        self.contentView.layoutIfNeeded()
         self.onConstraintsUpdate?()
     }
     
@@ -301,40 +306,40 @@ extension ChatChannelCell {
         guard let attachment = message.attachment else { throw NINUIExceptions.noAttachment }
         guard attachment.isVideo || attachment.isImage else { throw NINUIExceptions.invalidAttachment }
         
-        self.messageImageViewContainer.isHidden = !attachment.isImage
+        self.messageImageViewContainer.isHidden = !attachment.isImage && !attachment.isVideo
         self.videoPlayerContainer.isHidden = !attachment.isVideo
         self.composeMessageView.isHidden = true
         self.messageTextView.isHidden = true
-        
-        
-        /// Make sure we have an image tap recognizer in place
-        self.messageImageView.image = nil
-        self.messageImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTappedOnImage)))
                 
-        /// Set message image's aspect ratio
+        /// Make sure we have an image tap recognizer in place
+        self.resetImageLayout()
+        self.messageImageViewContainer.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTappedOnImage)))
+        self.videoPlayerContainer.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTappedOnImage)))
+        
+        /// Set message image's aspect ratio<
         if let ratio = attachment.aspectRatio, ratio > 0 {
             self.setImage(aspect: CGFloat(ratio))
         }
         
         if attachment.isImage, let imageURL = attachment.url {
             /// Load the image in message image view over HTTP or from local cache
-            self.messageImageView.fetchImage(imageURL, completion: { [weak self] in
-                guard asynchronous else { return }
-                
-                /// Inform the chat view that our cell might need resizing due to new constraints.
-                self?.contentView.setNeedsLayout()
-                self?.onConstraintsUpdate?()
-            })
+            self.messageImageView.setImageURL(imageURL)
+            
+            guard asynchronous else { return }
+            /// Inform the chat view that our cell might need resizing due to new constraints.
+            self.contentView.setNeedsLayout()
+            self.contentView.layoutIfNeeded()
+            self.onConstraintsUpdate?()
         } else if attachment.isVideo, let videoURL = attachment.url {
             guard let thumbnailManager = self.videoThumbnailManager else { throw NINUIExceptions.noThumbnailManager }
             
             /// For video we must fetch the thumbnail image
-            thumbnailManager.getVideoThumbnail(videoURL) { [weak self] error, fromCache, thumbnail in
+            thumbnailManager.getVideoThumbnail(videoURL) { [unowned self] error, fromCache, thumbnail in
                 guard let image = thumbnail, error == nil else {
                     /// TODO: localize error msg
                     NINToast.showWithErrorMessage("Failed to get video thumbnail", callback: nil); return
                 }
-                self?.updateVideo(thumbnail: image, fromCache: fromCache)
+                self.updateVideo(thumbnail: image, fromCache: fromCache)
             }
         }
     }
@@ -350,8 +355,8 @@ extension ChatChannelCell {
         
         self.resetImageLayout()
         self.composeMessageView.isHidden = true
-        self.messageImageView.isHidden = attachment?.isImage ?? true
-        self.videoPlayerContainer.isHidden = attachment?.isVideo ?? true
+        self.messageImageViewContainer.isHidden = !(attachment?.isImage ?? false) || attachment?.isPDF ?? true
+        self.videoPlayerContainer.isHidden = !(attachment?.isVideo ?? false) || attachment?.isPDF ?? true
         
         if attachment?.isPDF ?? false, let url = attachment?.url, let name = attachment?.name {
             self.messageTextView.setFormattedText("<a href=\"\(url)\">\(name)</a>")
@@ -363,12 +368,13 @@ extension ChatChannelCell {
         
         /// Update the message image, if any
         if let attachment = attachment, attachment.isImage || attachment.isVideo {
-            attachment.updateInfo(session: self.session) { [weak self] (_, didRefreshNetwork) in
+            attachment.updateInfo(session: self.session) { [unowned self] _, didRefreshNetwork in
                 do {
-                    try self?.updateImage(asynchronous: didRefreshNetwork)
+                    try self.updateImage(asynchronous: didRefreshNetwork)
                 } catch {
                     debugger("Error in updating attachment info: \(error)")
                 }
+
             }
         } else {
             /// No image; clear image constraints etc so it wont affect layout

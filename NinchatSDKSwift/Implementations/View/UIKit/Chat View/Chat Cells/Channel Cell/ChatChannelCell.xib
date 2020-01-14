@@ -28,7 +28,7 @@
                                 <rect key="frame" x="20" y="0.0" width="50" height="141"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" image="icon_avatar_other" translatesAutoresizingMaskIntoConstraints="NO" id="nRb-Bh-vqb">
-                                        <rect key="frame" x="0.0" y="12" width="50" height="50"/>
+                                        <rect key="frame" x="0.0" y="12" width="50" height="50.000000000000114"/>
                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="50" id="AUC-QC-dAw"/>
@@ -76,23 +76,15 @@
                                         </constraints>
                                     </view>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_bubble_right" translatesAutoresizingMaskIntoConstraints="NO" id="1Nj-ja-lgx">
-                                        <rect key="frame" x="8" y="40" width="272" height="90"/>
+                                        <rect key="frame" x="8" y="40" width="272" height="45"/>
                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </imageView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Nc9-aw-Vh3">
-                                        <rect key="frame" x="8" y="40" width="272" height="90"/>
+                                        <rect key="frame" x="8" y="40" width="272" height="45"/>
                                         <subviews>
                                             <imageView clipsSubviews="YES" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="nxG-Xe-od5">
-                                                <rect key="frame" x="8" y="4" width="256" height="82"/>
+                                                <rect key="frame" x="8" y="4" width="256" height="37"/>
                                                 <color key="backgroundColor" red="0.45776203440000002" green="0.89454518299999997" blue="0.91693240399999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" constant="40" id="3TJ-hp-hQV"/>
-                                                </constraints>
-                                                <variation key="default">
-                                                    <mask key="constraints">
-                                                        <exclude reference="3TJ-hp-hQV"/>
-                                                    </mask>
-                                                </variation>
                                             </imageView>
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -104,10 +96,10 @@
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zsw-s3-FM2">
-                                        <rect key="frame" x="16" y="40" width="256" height="90"/>
+                                        <rect key="frame" x="16" y="40" width="256" height="45"/>
                                         <subviews>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_play" translatesAutoresizingMaskIntoConstraints="NO" id="TZc-dA-30g">
-                                                <rect key="frame" x="108" y="25" width="40" height="40"/>
+                                                <rect key="frame" x="108" y="2.5" width="40" height="40"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
@@ -123,7 +115,7 @@
                                         </constraints>
                                     </view>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" text="Bubble chat message content text " textAlignment="right" translatesAutoresizingMaskIntoConstraints="NO" id="ggr-BW-AKj">
-                                        <rect key="frame" x="16" y="40" width="256" height="90"/>
+                                        <rect key="frame" x="16" y="40" width="256" height="45"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
@@ -131,7 +123,7 @@
                                         <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
                                     </textView>
                                     <view contentMode="scaleToFill" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="fjd-1d-buR" customClass="NINComposeMessageView">
-                                        <rect key="frame" x="16" y="40" width="256" height="90"/>
+                                        <rect key="frame" x="16" y="40" width="256" height="45"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
                                 </subviews>
@@ -174,7 +166,7 @@
                                 <rect key="frame" x="700" y="0.0" width="50" height="141"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" image="icon_avatar_mine" translatesAutoresizingMaskIntoConstraints="NO" id="5ai-5V-plL">
-                                        <rect key="frame" x="0.0" y="12" width="50" height="50"/>
+                                        <rect key="frame" x="0.0" y="12" width="50" height="50.000000000000114"/>
                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="50" id="331-PX-XlO"/>

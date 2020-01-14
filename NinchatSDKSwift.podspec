@@ -27,7 +27,6 @@ Pod::Spec.new do |s|
 
   # Cocoapods dependencies
   s.dependency "NinchatSDK"
-  s.dependency "Kingfisher"
 
   s.module_name = "NinchatSDKSwift"
 end

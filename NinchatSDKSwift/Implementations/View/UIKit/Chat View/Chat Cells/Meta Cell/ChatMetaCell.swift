@@ -52,7 +52,7 @@ final class ChatMetaCell: UITableViewCell, ChatMeta {
         } else {
             self.closeChatButtonContainer.fix(height: 0)
             self.closeChatButton.fix(height: 0)
-            self.closeChatButton.closure = nil
+//            self.closeChatButton.closure = nil
         }
     }
 }
