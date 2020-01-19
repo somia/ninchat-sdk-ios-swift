@@ -157,3 +157,29 @@ extension UIView {
         self.transform = CGAffineTransform(rotationAngle: angle)
     }
 }
+
+extension UIView {
+    @objc
+    func keyboardWillShow(notification: Notification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue,
+           let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval {
+            
+            var height = keyboardSize.height
+            if #available(iOS 11.0, *) {
+                height -= self.safeAreaInsets.bottom
+            }
+            UIView.animate(withDuration: duration) {
+                self.transform = CGAffineTransform(translationX: 0, y: -height)
+            }
+        }
+    }
+    
+    @objc
+    func keyboardWillHide(notification: Notification) {
+       if let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval {
+            UIView.animate(withDuration: duration) {
+                self.transform = CGAffineTransform.identity
+            }
+        }
+    }
+}

@@ -30,14 +30,12 @@ final class NINInitialViewController: UIViewController, ViewController {
         }
     }
     @IBOutlet private weak var queueButtonsStackView: UIStackView!
-    @IBOutlet private weak var closeWindowButton: NINButton! {
+    @IBOutlet private weak var closeWindowButton: Button! {
         didSet {
             if let closeText = self.session.sessionManager.translate(key: Constants.kCloseWindowText.rawValue, formatParams: [:]) {
                 closeWindowButton.setTitle(closeText, for: .normal)
             }
-            closeWindowButton.layer.cornerRadius = closeWindowButton.bounds.height / 2
-            closeWindowButton.layer.borderColor = UIColor.defaultBackgroundButton.cgColor
-            closeWindowButton.layer.borderWidth = 1
+            closeWindowButton.round(1, .defaultBackgroundButton)
         }
     }
     @IBOutlet private weak var motdTextView: UITextView! {
@@ -110,7 +108,7 @@ private extension NINInitialViewController {
         let buttonHeights: CGFloat = (numberOfButtons > 2) ? 40.0 : 60.0
         for queue in self.session.sessionManager.queues {
             guard queueButtonsStackView.subviews.count <= numberOfButtons else { return }
-            let button = NINButton(frame: .zero) { [weak self] _ in
+            let button = Button(frame: .zero) { [weak self] _ in
                 self?.onQueueActionTapped?(queue)
             }
             button.translatesAutoresizingMaskIntoConstraints = false

@@ -6,8 +6,8 @@
 
 import UIKit
 
-final class NINButton: UIButton {
-    var closure: ((NINButton) -> Void)?
+final class Button: UIButton {
+    var closure: ((Button) -> Void)?
     
     override init(frame: CGRect) {
         super.init(frame: frame)

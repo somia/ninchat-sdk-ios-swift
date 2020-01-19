@@ -109,11 +109,11 @@ final class NINChatViewController: UIViewController, ViewController {
             chatView.dataSource = self.chatDataSourceDelegate
         }
     }
-    @IBOutlet private weak var closeChatButton: NINButton! {
+    @IBOutlet private weak var closeChatButton: CloseButton! {
         didSet {
             let closeTitle = self.session.sessionManager.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
-            closeChatButton.setTitle(closeTitle, for: .normal)
-            closeChatButton.overrideAssets(with: self.session, isPrimary: true)
+            closeChatButton.buttonTitle = closeTitle
+            closeChatButton.overrideAssets(with: self.session)
             closeChatButton.closure = { [weak self] button in
                 self?.onCloseChatTapped()
             }

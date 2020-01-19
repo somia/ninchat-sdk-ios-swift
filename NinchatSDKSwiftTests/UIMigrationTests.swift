@@ -15,8 +15,8 @@ class UIMigrationTests: XCTestCase {
 
     func testUIButtonAction() {
         let expectation = self.expectation(description: "The `UIButton` action is fulfilled")
-        let button = NINButton(frame: .zero, touch: { button in
-            XCTAssertNotNil(button as? NINButton)
+        let button = Button(frame: .zero, touch: { button in
+            XCTAssertNotNil(button as? Button)
             expectation.fulfill()
         })
         button.sendActions(for: .touchUpInside)

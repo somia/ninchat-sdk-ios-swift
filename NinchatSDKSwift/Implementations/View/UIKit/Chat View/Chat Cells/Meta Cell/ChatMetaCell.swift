@@ -13,12 +13,12 @@ final class ChatMetaCell: UITableViewCell, ChatMeta {
     
     @IBOutlet private weak var metaTextLabel: UILabel!
     @IBOutlet private weak var closeChatButtonContainer: UIView!
-    @IBOutlet private weak var closeChatButton: NINButton!
+    @IBOutlet private weak var closeChatButton: CloseButton!
     
     // MARK: - ChatMeta
     
     weak var delegate: NINChatSessionInternalDelegate?
-    var onCloseChatTapped: ((NINButton) -> Void)?
+    var onCloseChatTapped: ((Button) -> Void)?
     
     func populate(message: NINChatMetaMessage, colorAssets: NINColorAssetDictionary) {
         self.applyAssets(message, colorAssets)
@@ -44,15 +44,15 @@ final class ChatMetaCell: UITableViewCell, ChatMeta {
         if let title = message.closeChatButtonTitle {
             
             self.deactivate(size: [.height])
-            self.closeChatButton.setTitle(title, for: .normal)
-            self.closeChatButton.overrideAssets(with: self.delegate, isPrimary: false)
+            self.closeChatButton.buttonTitle = title
+            self.closeChatButton.overrideAssets(with: self.delegate)
             self.closeChatButton.closure = { [weak self] button in
                 self?.onCloseChatTapped?(button)
             }
         } else {
             self.closeChatButtonContainer.fix(height: 0)
             self.closeChatButton.fix(height: 0)
-//            self.closeChatButton.closure = nil
+            self.onCloseChatTapped = nil
         }
     }
 }

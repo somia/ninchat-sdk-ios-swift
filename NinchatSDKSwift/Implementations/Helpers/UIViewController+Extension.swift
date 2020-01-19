@@ -8,9 +8,9 @@ import UIKit
 
 extension UIViewController {
     func addKeyboardListeners() {
-        NotificationCenter.default.addObserver(self, selector: Selector(("keyboardWillShow")),
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(notification:)),
                                                name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: Selector(("keyboardWillHide")),
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(notification:)),
                                                name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     

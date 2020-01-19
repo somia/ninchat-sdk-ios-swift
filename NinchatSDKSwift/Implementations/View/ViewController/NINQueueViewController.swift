@@ -47,10 +47,10 @@ final class NINQueueViewController: UIViewController, ViewController {
             motdTextView.delegate = self
         }
     }
-    @IBOutlet private weak var closeChatButton: NINButton! {
+    @IBOutlet private weak var closeChatButton: CloseButton! {
         didSet {
             if let closeText = self.sessionManager.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) {
-                closeChatButton.setTitle(closeText, for: .normal)
+                closeChatButton.buttonTitle = closeText
             }
             closeChatButton.closure = { [weak self] button in
                 self?.sessionManager.leave { _ in
@@ -112,7 +112,7 @@ private extension NINQueueViewController {
     }
     
     private func overrideAssets() {
-        closeChatButton.overrideAssets(with: self.session, isPrimary: false)
+        closeChatButton.overrideAssets(with: self.session)
         
         if let topBackgroundColor = session.override(colorAsset: .backgroundTop) {
             topContainerView.backgroundColor = topBackgroundColor
