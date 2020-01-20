@@ -19,6 +19,8 @@
 		8530EC9523ADFEA600BAA52A /* NINChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8530EC9423ADFEA600BAA52A /* NINChatViewModel.swift */; };
 		853C53DC23C3980C00DF37D0 /* ChatChannelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853C53DB23C3980C00DF37D0 /* ChatChannelCell.swift */; };
 		853C53E223C3991F00DF37D0 /* ChatChannelCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 853C53E123C3991F00DF37D0 /* ChatChannelCell.xib */; };
+		854843B223D5ED4C006DC9CE /* ConfirmVideoCallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854843B123D5ED4C006DC9CE /* ConfirmVideoCallView.swift */; };
+		854843B423D5F26D006DC9CE /* ConfirmVideoCallView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 854843B323D5F26D006DC9CE /* ConfirmVideoCallView.xib */; };
 		855B9F1B238ECDB30081A9C6 /* NinchatSDKSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 855B9F11238ECDB30081A9C6 /* NinchatSDKSwift.framework */; };
 		855B9F22238ECDB30081A9C6 /* NinchatSDKSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 855B9F14238ECDB30081A9C6 /* NinchatSDKSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		855B9F2F238ECE650081A9C6 /* NINChatExceptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855B9F2B238ECE650081A9C6 /* NINChatExceptions.swift */; };
@@ -96,6 +98,9 @@
 		85DD6C6023AE0CBC0023FFEF /* SourceSansPro-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C5423AE0CBC0023FFEF /* SourceSansPro-Italic.ttf */; };
 		85DD6C6223AF6F5A0023FFEF /* UITextView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DD6C6123AF6F5A0023FFEF /* UITextView+Extensions.swift */; };
 		85DD6C6623AFAACF0023FFEF /* NINChatViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DD6C6523AFAACF0023FFEF /* NINChatViewModelTests.swift */; };
+		85DDD22223D4CBD900E00844 /* ConfirmCloseChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DDD22123D4CBD900E00844 /* ConfirmCloseChatView.swift */; };
+		85DDD22423D4CC0800E00844 /* ConfirmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DDD22323D4CC0800E00844 /* ConfirmView.swift */; };
+		85DDD22623D4DD1200E00844 /* ConfirmCloseChatView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85DDD22523D4DD1200E00844 /* ConfirmCloseChatView.xib */; };
 		A9AB26D31FF8CC4A41698EB5 /* Pods_NinchatSDKSwiftTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FEAD27BEEC9ED9A48EB128E /* Pods_NinchatSDKSwiftTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -130,6 +135,8 @@
 		8530EC9423ADFEA600BAA52A /* NINChatViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINChatViewModel.swift; sourceTree = "<group>"; };
 		853C53DB23C3980C00DF37D0 /* ChatChannelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelCell.swift; sourceTree = "<group>"; };
 		853C53E123C3991F00DF37D0 /* ChatChannelCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChatChannelCell.xib; sourceTree = "<group>"; };
+		854843B123D5ED4C006DC9CE /* ConfirmVideoCallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmVideoCallView.swift; sourceTree = "<group>"; };
+		854843B323D5F26D006DC9CE /* ConfirmVideoCallView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ConfirmVideoCallView.xib; sourceTree = "<group>"; };
 		855B9F11238ECDB30081A9C6 /* NinchatSDKSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NinchatSDKSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		855B9F14238ECDB30081A9C6 /* NinchatSDKSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NinchatSDKSwift.h; sourceTree = "<group>"; };
 		855B9F15238ECDB30081A9C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -209,6 +216,9 @@
 		85DD6C5423AE0CBC0023FFEF /* SourceSansPro-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-Italic.ttf"; sourceTree = "<group>"; };
 		85DD6C6123AF6F5A0023FFEF /* UITextView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextView+Extensions.swift"; sourceTree = "<group>"; };
 		85DD6C6523AFAACF0023FFEF /* NINChatViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINChatViewModelTests.swift; sourceTree = "<group>"; };
+		85DDD22123D4CBD900E00844 /* ConfirmCloseChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmCloseChatView.swift; sourceTree = "<group>"; };
+		85DDD22323D4CC0800E00844 /* ConfirmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmView.swift; sourceTree = "<group>"; };
+		85DDD22523D4DD1200E00844 /* ConfirmCloseChatView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ConfirmCloseChatView.xib; sourceTree = "<group>"; };
 		CE774BD7EED85980393E55AF /* Pods-NinchatSDKSwiftTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftTests.release.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests.release.xcconfig"; sourceTree = "<group>"; };
 		D463517AB20A2F6A738E2978 /* Pods-NinchatSDKSwiftUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftUITests.debug.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftUITests/Pods-NinchatSDKSwiftUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		ED659B1BF359B2E2971FF138 /* Pods-NinchatSDKSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwift.debug.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwift/Pods-NinchatSDKSwift.debug.xcconfig"; sourceTree = "<group>"; };
@@ -526,6 +536,7 @@
 		85DC59CA239E4C20007ABAE3 /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
+				85DDD22023D4CB8B00E00844 /* Confirm View */,
 				8561EADA23C3597E00943C72 /* Chat View */,
 				8563004A23B286E70098A7B0 /* Faces View */,
 				8563004123B231230098A7B0 /* Top Bar */,
@@ -573,6 +584,18 @@
 				85DD6C5423AE0CBC0023FFEF /* SourceSansPro-Italic.ttf */,
 			);
 			path = Fonts;
+			sourceTree = "<group>";
+		};
+		85DDD22023D4CB8B00E00844 /* Confirm View */ = {
+			isa = PBXGroup;
+			children = (
+				85DDD22323D4CC0800E00844 /* ConfirmView.swift */,
+				85DDD22123D4CBD900E00844 /* ConfirmCloseChatView.swift */,
+				85DDD22523D4DD1200E00844 /* ConfirmCloseChatView.xib */,
+				854843B123D5ED4C006DC9CE /* ConfirmVideoCallView.swift */,
+				854843B323D5F26D006DC9CE /* ConfirmVideoCallView.xib */,
+			);
+			path = "Confirm View";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -682,6 +705,7 @@
 				85DD6C5623AE0CBC0023FFEF /* SourceSansPro-SemiBoldItalic.ttf in Resources */,
 				8563004523B2313F0098A7B0 /* TopBar.xib in Resources */,
 				85DD6C5A23AE0CBC0023FFEF /* SourceSansPro-Light.ttf in Resources */,
+				85DDD22623D4DD1200E00844 /* ConfirmCloseChatView.xib in Resources */,
 				85DD6C5523AE0CBC0023FFEF /* SourceSansPro-BlackItalic.ttf in Resources */,
 				851ECF6423969297006D332F /* README.md in Resources */,
 				85DC59D2239E7850007ABAE3 /* Media.xcassets in Resources */,
@@ -694,6 +718,7 @@
 				8530EC8523AD405200BAA52A /* VideoView.xib in Resources */,
 				85DD6C5823AE0CBC0023FFEF /* SourceSansPro-Bold.ttf in Resources */,
 				85DD6C5F23AE0CBC0023FFEF /* SourceSansPro-ExtraLightItalic.ttf in Resources */,
+				854843B423D5F26D006DC9CE /* ConfirmVideoCallView.xib in Resources */,
 				855B9F9E238ED9DC0081A9C6 /* Podfile in Resources */,
 				85DD6C5723AE0CBC0023FFEF /* SourceSansPro-Regular.ttf in Resources */,
 			);
@@ -823,6 +848,7 @@
 				8563004923B286360098A7B0 /* NINRatingViewController.swift in Sources */,
 				8561EAD923C2805900943C72 /* NINChatSessionManagerEventHandlers.swift in Sources */,
 				8561EADE23C37C3000943C72 /* UITableView+Extension.swift in Sources */,
+				85DDD22223D4CBD900E00844 /* ConfirmCloseChatView.swift in Sources */,
 				855B9F2F238ECE650081A9C6 /* NINChatExceptions.swift in Sources */,
 				855B9F30238ECE650081A9C6 /* Constants.swift in Sources */,
 				855CBE4423990CB100A024A7 /* Bundle+Extension.swift in Sources */,
@@ -839,6 +865,7 @@
 				8571D44C23C0B47300C16758 /* ChatMessagePayload.swift in Sources */,
 				85DC59D5239E7C3B007ABAE3 /* NINQueueViewModel.swift in Sources */,
 				8563004323B231350098A7B0 /* TopBar.swift in Sources */,
+				85DDD22423D4CC0800E00844 /* ConfirmView.swift in Sources */,
 				855CBE222397CCA800A024A7 /* Storyboard+Extension.swift in Sources */,
 				8561EADC23C3598E00943C72 /* ChatView.swift in Sources */,
 				8561EAE323C393A500943C72 /* ChatMetaCell.swift in Sources */,
@@ -848,6 +875,7 @@
 				85DD6C6223AF6F5A0023FFEF /* UITextView+Extensions.swift in Sources */,
 				8561EAD423C2805900943C72 /* NINChatSessionInternal.swift in Sources */,
 				8563007F23B393D00098A7B0 /* NINRTCVideoDelegate.swift in Sources */,
+				854843B223D5ED4C006DC9CE /* ConfirmVideoCallView.swift in Sources */,
 				8561EAE123C3937600943C72 /* ChatCell.swift in Sources */,
 				855CBE1F2397C4F600A024A7 /* Coordinator.swift in Sources */,
 				855CBE422399060900A024A7 /* UIColor+Extensions.swift in Sources */,

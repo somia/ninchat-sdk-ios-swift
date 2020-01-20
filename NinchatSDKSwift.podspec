@@ -27,6 +27,7 @@ Pod::Spec.new do |s|
 
   # Cocoapods dependencies
   s.dependency "NinchatSDK"
+  s.dependency "AnyCodable"
 
   s.module_name = "NinchatSDKSwift"
 end

@@ -5,6 +5,7 @@
 //
 
 import Foundation
+import AnyCodable
 
 enum MessageType: String, Decodable {
     case candidate = "ninchat.com/rtc/ice-candidate"
@@ -26,11 +27,21 @@ enum MessageType: String, Decodable {
     }
 }
 
-struct RTCSignal: Decodable {
-    let candidate: [String:String]
-    let sdp: [String:String]
+final class RTCSignal: Codable {
+    let candidate: [String:String]?
+    let sdp: [String:String]?
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        candidate = try container.decodeIfPresent([String:AnyCodable].self, forKey: .candidate)?.reduce(into: [:]) { (dic: inout [String:String], item) in
+            dic[item.key] = String(describing: "\(item.value)")
+        }
+        sdp = try container.decodeIfPresent([String:String].self, forKey: .sdp)
+    }
     
     enum CodingKeys: String, CodingKey {
         case candidate, sdp
     }
 }
+

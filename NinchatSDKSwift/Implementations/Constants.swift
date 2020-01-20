@@ -78,7 +78,12 @@ public enum Constants: String {
     case kQueuePositionN = "Joined audience queue {{audienceQueue.queue_attrs.name}}, you are at position {{audienceQueue.queue_position}}."
     case kQueuePositionNext = "Joined audience queue {{audienceQueue.queue_attrs.name}}, you are next."
     case kCloseChatText = "Close chat"
+    case kCancelDialog = "Continue chat"
+    case kAcceptDialog = "Accept"
+    case kRejectDialog = "Decline"
     case kTextInputPlaceholderText = "Enter your message"
+    case kCallInvitationText = "You are invited to a video chat"
+    case kCallInvitationInfoText = "wants to video chat with you"
 }
 
 enum NotificationConstants: String {

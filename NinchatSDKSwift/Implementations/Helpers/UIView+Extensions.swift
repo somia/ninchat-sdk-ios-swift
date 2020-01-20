@@ -137,13 +137,20 @@ extension UIView {
 extension UIView {
     var hide: Bool {
         set {
-            UIView.animate(withDuration: 0.3) {
-                self.alpha = (newValue) ? 0.0 : 1.0
-            }
+            self.hide(newValue)
         }
         get {
             return self.alpha == 0
         }
+    }
+    
+    func hide(_ hide: Bool, withActions action: (() -> Void)? = nil, andCompletion completion: (() -> Void)? = nil) {
+        UIView.animate(withDuration: 0.3, animations: {
+            action?()
+            self.alpha = (hide) ? 0.0 : 1.0
+        }, completion: { finished in
+            completion?()
+        })
     }
     
     func round(_ borderWidth: CGFloat = 0.0, _ borderColor: UIColor = .clear) {

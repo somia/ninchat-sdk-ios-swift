@@ -23,6 +23,10 @@ extension NINSiteConfiguration {
         self.value(forKey: "sendButtonText") as? String
     }
     
+    var confirmDialogTitle: String? {
+        self.value(forKey: "closeConfirmText") as? String
+    }
+        
     var audienceRealm: String? {
         self.value(forKey: "audienceRealmId") as? String
     }

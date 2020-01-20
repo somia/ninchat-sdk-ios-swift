@@ -229,13 +229,18 @@ final class NINChatViewController: UIViewController, ViewController {
     private func connectRTC() {
         self.viewModel.listenToRTCSignaling(delegate: chatRTCDelegate, onCallReceived: { [unowned self] channel in
             self.view.endEditing(true)
-            /// TODO: Update here
-//            NINVideoCallConsentDialog.show(on: self.view, forRemoteUser: channel, sessionManager: self.session.sessionManager) { result in
-//                self.viewModel.pickup(answer: result == .accepted) { error in
-//                    if error != nil { NINToast.showWithErrorMessage("failed to send WebRTC pickup message", callback: nil) }
-//                }
-//            }
             
+            let confirmVideoDialog: ConfirmVideoCallView = ConfirmVideoCallView.loadFromNib()
+            confirmVideoDialog.user = channel
+            confirmVideoDialog.session = self.session
+            confirmVideoDialog.onViewAction = { [weak self] action in
+                confirmVideoDialog.hideConfrimView()
+                self?.viewModel.pickup(answer: action == .confirm) { error in
+                    if error != nil { NINToast.showWithErrorMessage("failed to send WebRTC pickup message", callback: nil) }
+                }
+            }
+            confirmVideoDialog.showConfrimView(on: self.view)
+
         }, onCallInitiated: { [weak self] error, rtcClinet in
             self?.webRTCClient = rtcClinet
             self?.closeChatButton.hide = true
@@ -386,13 +391,17 @@ extension NINChatViewController {
     
     private func onCloseChatTapped() {
         debugger("Close chat button pressed!")
-        /// TODO: Update here
-//        NINConfirmCloseChatDialog.show(on: self.view, sessionManager: self.session.sessionManager) { [weak self] result in
-//            guard result == .close else { return }
-//
-//            self?.disconnectRTC()
-//            self?.onChatClosed?()
-//        }
+        
+        let confirmCloseDialog: ConfirmCloseChatView = ConfirmCloseChatView.loadFromNib()
+        confirmCloseDialog.session = self.session
+        confirmCloseDialog.onViewAction = { [weak self] action in
+            confirmCloseDialog.hideConfrimView()
+            guard action == .confirm else { return }
+            
+            self?.disconnectRTC()
+            self?.onChatClosed?()
+        }
+        confirmCloseDialog.showConfrimView(on: self.view)
     }
     
     // MARK: - Message
