@@ -61,7 +61,7 @@ final class NINFileInfo {
         do {
             try session.describe(file: self.fileID) { [weak self] error, fileInfo in
                 if let error = error {
-                    completion(error, true)
+                    completion(error, false)
                 } else if let info = fileInfo {
                     let file = FileInfo(json: info)
                     
@@ -72,7 +72,7 @@ final class NINFileInfo {
                 }
             }
         } catch {
-            completion(error, true)
+            completion(error, false)
         }
     }
     
@@ -85,7 +85,7 @@ final class NINFileInfo {
         
         init(json: [String:Any]) {
             self.url = json["url"] as? String
-            self.urlExpiry = Date(timeIntervalSince1970: json["urlExpiry"] as? Double ?? -1)
+            self.urlExpiry = json["urlExpiry"] as? Date
             self.aspectRatio = json["aspectRatio"] as? Double
         }
     }

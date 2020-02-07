@@ -59,6 +59,7 @@ final class NINChatSessionManagerImpl: NINChatSessionManager, NINChatSessionMana
     var onMessageRemoved: ((_ index: Int) -> Void)?
     var onChannelClosed: (() -> Void)?
     var onRTCSignal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)?
+    var onRTCClientSingal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)?
     
     // MARK: - NINChatSessionManager
     
@@ -70,7 +71,8 @@ final class NINChatSessionManagerImpl: NINChatSessionManager, NINChatSessionMana
     }
     var audienceQueues: [NINQueue]! = []
     var siteConfiguration: NINSiteConfiguration!
-        
+    var appDetails: String?
+    
     init(session: NINChatSessionInternalDelegate, serverAddress: String, siteSecret: String? = nil, audienceMetadata: NINLowLevelClientProps? = nil) {
         self.delegate = session
         self.serverAddress = serverAddress
@@ -87,6 +89,28 @@ final class NINChatSessionManagerImpl: NINChatSessionManager, NINChatSessionMana
 // MARK: - NINChatSessionConnectionManager
 
 extension NINChatSessionManagerImpl {
+    private var sdkDetails: String {
+        var details = "ninchat-sdk-ios"
+        
+        /// SDK Version
+        if let sdkVersion = Bundle.SDKBundle?.infoDictionary?["CFBundleShortVersionString"] as? String {
+            details += "/\(sdkVersion)"
+        }
+        
+        /// Device OS
+        details += " (ios " + UIDevice.current.systemVersion + "; "
+        
+        /// Device Model
+        details += UIDevice.current.deviceType + ")"
+        
+        /// User given details
+        if let appDetails = self.appDetails {
+            details += " " + appDetails
+        }
+        
+        return details
+    }
+    
     func fetchSiteConfiguration(config key: String, environments: [String]?, completion: @escaping CompletionWithError) {
         fetchSiteConfig(self.serverAddress, key) { (config, error) in
             if let error = error {
@@ -135,6 +159,7 @@ extension NINChatSessionManagerImpl {
         
         self.session = NINLowLevelClientSession()
         self.session?.setAddress(self.serverAddress)
+        self.session?.setHeader("User-Agent", value: self.sdkDetails)
         self.setEventHandlers()
         
         try self.session?.setParams(sessionParam)
@@ -300,7 +325,7 @@ extension NINChatSessionManagerImpl {
     func send(action: NINComposeContentView, completion: @escaping CompletionWithError) throws {
         guard self.session != nil else { throw NINSessionExceptions.noActiveSession }
         
-        try self.send(type: .uiAction, payload: ["action": "click", "target": action], completion: completion)
+        try self.send(type: .uiAction, payload: ["action": "click", "target": action.composeMessageDict], completion: completion)
     }
     
     func send(attachment: String, data: Data, completion: @escaping CompletionWithError) throws {
@@ -408,10 +433,10 @@ extension NINChatSessionManagerImpl {
         }
     }
     
-    func translate(key: String, formatParams: [String:String]?) -> String? {
+    func translate(key: String, formatParams: [String:String]) -> String? {
         /// Look for a translation. If one is not available for this key, use the key itself.
         if let translationDictionary = self.siteConfiguration.translation {
-            return formatParams?.reduce(into: translationDictionary[key] ?? key, { translation, dict in
+            return formatParams.reduce(into: translationDictionary[key] ?? key, { translation, dict in
                 translation = translation.replacingOccurrences(of: "{{\(dict.key)}}", with: dict.value)
             })
         }

@@ -10,7 +10,7 @@ import NinchatSDK
 final class NINChatViewController: UIViewController, ViewController {
     
     private let animationDuration: Double = 0.3
-    private var webRTCClient: NINWebRTCClient?
+    private var webRTCClient: NINChatWebRTCClient?
     
     // MARK: - Injected
     
@@ -35,7 +35,7 @@ final class NINChatViewController: UIViewController, ViewController {
     }
     var chatRTCDelegate: NINWebRTCDelegate! {
         didSet {
-            chatRTCDelegate.onError = { [weak self] error in
+            chatRTCDelegate.onActionError = { [weak self] error in
                 self?.disconnectRTC {
                     self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
                 }
@@ -129,6 +129,9 @@ final class NINChatViewController: UIViewController, ViewController {
         }
         view.onAttachmentTapped = { [weak self] button in
             self?.onAttachmentTapped(with: button)
+        }
+        view.onWritingStatusChanged = { [weak self] isWriting in
+            self?.viewModel.updateWriting(state: isWriting)
         }
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(inputControlsContainerTapped(_:))))
@@ -297,7 +300,6 @@ extension NINChatViewController {
     }
     
     private func updateInputContainerHeight(_ value: CGFloat, update: Bool = true) {
-        self.inputContainer.deactivate(size: [.height])
         self.inputContainer.fix(height: value)
         
         if update {
@@ -332,7 +334,8 @@ extension NINChatViewController {
         chatContainerHeight.isActive = true
         self.setNeedsStatusBarAppearanceUpdate()
         
-        UIView.animate(withDuration: animation ? animationDuration : 0.0) {
+        guard animation else { return }
+        UIView.animate(withDuration: animationDuration) {
             self.view.setNeedsLayout()
             self.view.layoutIfNeeded()
         }
@@ -441,24 +444,16 @@ extension NINChatViewController {
     // MARK: - Video
     
     private func onVideoCameraTapped(with button: UIButton) {
-        if button.isSelected {
-            guard self.webRTCClient?.enableLocalVideo() ?? false else { return }
-            self.session.log(value: "Video enabled")
-        } else {
-            guard self.webRTCClient?.disableLocalVideo() ?? false else { return }
-            self.session.log(value: "Video disabled")
-        }
+        self.webRTCClient?.disableLocalVideo = button.isSelected
+        self.session.log(value: "Video disabled: \(button.isSelected)")
+        
         button.isSelected = !button.isSelected
     }
     
     private func onVideoAudioTappe(with button: UIButton) {
-        if button.isSelected {
-            guard self.webRTCClient?.unmuteLocalAudio() ?? false else { return }
-            self.session.log(value: "Audio unmuted")
-        } else {
-            guard self.webRTCClient?.muteLocalAudio() ?? false else { return }
-            self.session.log(value: "Audio muted")
-        }
+        self.webRTCClient?.disableLocalAudio = button.isSelected
+        self.session.log(value: "Audio disabled: \(button.isSelected)")
+        
         button.isSelected = !button.isSelected
     }
     
@@ -474,19 +469,8 @@ extension NINChatViewController {
 
 // MARK: - Notifications handlers
 
-extension NINChatViewController {
-    override func keyboardWillShow(notification: Notification) {
-        super.keyboardWillShow(notification: notification)
-        self.viewModel.updateWriting(state: true)
-    }
-    
-    override func keyboardWillHide(notification: Notification) {
-        super.keyboardWillHide(notification: notification)
-        self.viewModel.updateWriting(state: false)
-    }
-    
+extension NINChatViewController {    
     override func orientationChanged(notification: Notification) {
-        /// TODO: figure-out why they had passed a global variable and reset it
         self.videoView.resizeRemoteVideo()
         self.videoView.resizeLocalVideo()
     }

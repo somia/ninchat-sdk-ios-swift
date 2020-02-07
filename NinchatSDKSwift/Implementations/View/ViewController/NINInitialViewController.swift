@@ -106,7 +106,7 @@ private extension NINInitialViewController {
         
         let numberOfButtons = min(3, self.session.sessionManager.audienceQueues.count)
         let buttonHeights: CGFloat = (numberOfButtons > 2) ? 40.0 : 60.0
-        for queue in self.session.sessionManager.queues {
+        for queue in self.session.sessionManager.queues.sorted(by: { $0.name > $1.name }) {
             guard queueButtonsStackView.subviews.count <= numberOfButtons else { return }
             let button = Button(frame: .zero) { [weak self] _ in
                 self?.onQueueActionTapped?(queue)
@@ -116,8 +116,7 @@ private extension NINInitialViewController {
             button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
             button.backgroundColor = .defaultBackgroundButton
             button.setTitleColor(.white, for: .normal)
-            button.setTitle(self.session.sessionManager.translate(key: Constants.kJoinQueueText.rawValue,
-                                                            formatParams: ["audienceQueue.queue_attrs.name": queue.name]), for: .normal)
+            button.setTitle(self.session.sessionManager.translate(key: Constants.kJoinQueueText.rawValue, formatParams: ["audienceQueue.queue_attrs.name": queue.name]), for: .normal)
             button.overrideAssets(with: self.session, isPrimary: true)
             
             queueButtonsStackView.addArrangedSubview(button)

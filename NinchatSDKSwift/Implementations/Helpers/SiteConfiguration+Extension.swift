@@ -43,16 +43,16 @@ extension NINSiteConfiguration {
         self.value(forKey: "translations") as?  [String:String]
     }
     
-    var agentAvatar: String? {
-        self.value(forKey: "agentAvatar") as? String
+    var agentAvatar: Any? {
+        self.value(forKey: "agentAvatar")
     }
     
     var agentName: String? {
         self.value(forKey: "agentName") as? String
     }
     
-    var userAvatar: String? {
-        self.value(forKey: "userAvatar") as? String
+    var userAvatar: Any? {
+        self.value(forKey: "userAvatar")
     }
     
     var userName: String? {

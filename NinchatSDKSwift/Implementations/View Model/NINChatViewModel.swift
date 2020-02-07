@@ -13,12 +13,12 @@ enum MessageUpdateType {
 
 protocol NINChatRTCProtocol {
     typealias RTCCallReceive = ((NINChannelUser?) -> Void)
-    typealias RTCCallInitial = ((Error?, NINWebRTCClient?) -> Void)
+    typealias RTCCallInitial = ((Error?, NINChatWebRTCClient?) -> Void)
     typealias RTCCallHangup = (() -> Void)
     
-    func listenToRTCSignaling(delegate: NINWebRTCClientDelegate, onCallReceived: @escaping RTCCallReceive, onCallInitiated: @escaping RTCCallInitial, onCallHangup: @escaping RTCCallHangup)
+    func listenToRTCSignaling(delegate: NINChatWebRTCClientDelegate?, onCallReceived: @escaping RTCCallReceive, onCallInitiated: @escaping RTCCallInitial, onCallHangup: @escaping RTCCallHangup)
     func pickup(answer: Bool, completion: @escaping ((Error?) -> Void))
-    func disconnectRTC(_ client: NINWebRTCClient?, completion: (() -> Void)?)
+    func disconnectRTC(_ client: NINChatWebRTCClient?, completion: (() -> Void)?)
 }
 
 protocol NINChatStateProtocol {
@@ -59,9 +59,7 @@ final class NINChatViewModelImpl: NINChatViewModel {
             self?.onChannelClosed?()
         }
         self.sessionManager.onQueueUpdated = { [weak self] event, queueID, position, error in
-            if event == .queueUpdated {
-                self?.onQueued?()
-            }
+            self?.onQueued?()
         }
         self.sessionManager.onMessageAdded = { [weak self] index in
             self?.onChannelMessage?(.insert(index))
@@ -75,7 +73,7 @@ final class NINChatViewModelImpl: NINChatViewModel {
 // MARK: - NINChatRTC
 
 extension NINChatViewModelImpl {
-    func listenToRTCSignaling(delegate: NINWebRTCClientDelegate, onCallReceived: @escaping RTCCallReceive, onCallInitiated: @escaping RTCCallInitial, onCallHangup: @escaping RTCCallHangup) {
+    func listenToRTCSignaling(delegate: NINChatWebRTCClientDelegate?, onCallReceived: @escaping RTCCallReceive, onCallInitiated: @escaping RTCCallInitial, onCallHangup: @escaping RTCCallHangup) {
         
         sessionManager.onRTCSignal = { [weak self] type, user, signal in
             switch type {
@@ -88,12 +86,14 @@ extension NINChatViewModelImpl {
                 
                 do {
                     try self?.sessionManager.beginICE { error, stunServers, turnServers in
-                        /// TODO: Update here
-                        
-//                            let client = NINWebRTCClient(sessionManager: self?.session.sessionManager, operatingMode: .callee, stunServers: stunServers, turnServers: turnServers)
-//                            client?.delegate = delegate
-//                            client?.start(withSDP: signal.sdp)
-//                            onCallInitiated(error, client)
+                        do {
+                            let client: NINChatWebRTCClient = NINChatWebRTCClientImpl(sessionManager: self?.sessionManager, operatingMode: .callee, stunServers: stunServers, turnServers: turnServers, delegate: delegate)
+                            try client.start(with: signal)
+                            
+                            onCallInitiated(error, client)
+                        } catch {
+                            onCallInitiated(error, nil)
+                        }
                     }
                 } catch {
                     onCallInitiated(error, nil)
@@ -115,7 +115,7 @@ extension NINChatViewModelImpl {
         }
     }
     
-    func disconnectRTC(_ client: NINWebRTCClient?, completion: (() -> Void)?) {
+    func disconnectRTC(_ client: NINChatWebRTCClient?, completion: (() -> Void)?) {
         if let client = client {
             debugger("Disconnecting webRTC resources")
             client.disconnect()

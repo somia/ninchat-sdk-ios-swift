@@ -54,6 +54,7 @@ final class ChatView: UIView, ChatViewProtocol {
     private var userAvatarConfig: NINAvatarConfig!
     
     private let videoThumbnailManager = NINVideoThumbnailManager()
+    private var cellConstraints: Array<CGSize> = []
     
     // MARK: - Outlets
     
@@ -188,6 +189,7 @@ extension ChatView {
 
 extension ChatView: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        self.cellConstraints.insert(.zero, at: 0)
         return dataSource.numberOfMessages(for: self)
     }
     
@@ -203,10 +205,6 @@ extension ChatView: UITableViewDataSource, UITableViewDelegate {
         }
         fatalError("Invalid message type")
     }
-    
-    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableView.automaticDimension
-    }
 }
 
 // MARK: - Helper methods for Cell Setup
@@ -217,7 +215,6 @@ extension ChatView {
         cell.session = self.sessionManager
         cell.videoThumbnailManager = videoThumbnailManager
 
-        /// callback needs to be set before the populate call, probably should just refactor to avoid the potential trap
         cell.onComposeSendTapped = { [unowned self] composeContentView in
             self.delegate?.didSendUIAction(composeContent: composeContentView)
         }
@@ -234,7 +231,7 @@ extension ChatView {
             }
         }
         
-        cell.populateChannel(message: message, configuration: self.sessionManager.siteConfiguration, imageAssets: self.imageAssets, colorAssets: self.colorAssets, agentAvatarConfig: self.agentAvatarConfig, userAvatarConfig: self.userAvatarConfig, composeState: [message.messageID as Any])
+        cell.populateChannel(message: message, configuration: self.sessionManager.siteConfiguration, imageAssets: self.imageAssets, colorAssets: self.colorAssets, agentAvatarConfig: self.agentAvatarConfig, userAvatarConfig: self.userAvatarConfig, composeState: self.composeMessageStates?[message.messageID])
         return cell
     }
 

@@ -117,6 +117,7 @@ extension NINCoordinator {
         let ratingViewController: NINRatingViewController = storyboard.instantiateViewController()
         ratingViewController.session = session
         ratingViewController.viewModel = viewModel
+        ratingViewController.translate = sessionManager
         
         self.navigationController?.pushViewController(ratingViewController, animated: true)
         return ratingViewController

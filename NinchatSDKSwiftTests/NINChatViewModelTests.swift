@@ -8,10 +8,17 @@ import XCTest
 import NinchatSDK
 @testable import NinchatSDKSwift
 
-class NINChatViewModelTests: XCTestCase {
+class NINChatViewModelTests: XCTestCase, NINChatWebRTCClientDelegate {
     var sessionManager: NINChatSessionManager!
     var viewModel: NINChatViewModel!
+
+    // MARK: - NINChatWebRTCClientDelegate
     
+    var onConnectionStateChange: ((NINChatWebRTCClient, ConnectionState) -> Void)?
+    var onLocalCapturerCreate: ((NINChatWebRTCClient, RTCCameraVideoCapturer) -> Void)?
+    var onRemoteVideoTrackReceive: ((NINChatWebRTCClient, RTCVideoTrack) -> Void)?
+    var onError: ((NINChatWebRTCClient, Error) -> Void)?
+
     override func setUp() {
         let delegate = NINChatSessionSwift(configKey: "")
         sessionManager = NINChatSessionManagerImpl(session: delegate, serverAddress: "")
@@ -45,7 +52,7 @@ class NINChatViewModelTests: XCTestCase {
     
     func testRTCDisconnect() {
         let expectation = self.expectation(description: "The disconnect should happen")
-        self.viewModel.disconnectRTC(NINWebRTCClient()) {
+        self.viewModel.disconnectRTC(NINChatWebRTCClientImpl()) {
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 1.0)
@@ -90,7 +97,7 @@ extension NINChatViewModelTests {
     }
     
     private func simulateCallInitiate() {
-        sessionManager.onRTCSignal?(.call, nil, RTCSignal(candidate: [:], sdp: ["sdp": ""]))
+        sessionManager.onRTCSignal?(.call, nil, RTCSignal(candidate: nil, sdp: ["sdp": ""]))
     }
     
     private func simulateHangup() {
@@ -118,12 +125,8 @@ extension NINChatViewModelTests {
     }
 }
 
-extension NINChatViewModelTests: NINWebRTCClientDelegate {
-    func webrtcClient(_ client: NINWebRTCClient!, didChange newState: RTCIceConnectionState) {}
-    
-    func webrtcClient(_ client: NINWebRTCClient!, didCreateLocalCapturer localCapturer: RTCCameraVideoCapturer!) {}
-    
-    func webrtcClient(_ client: NINWebRTCClient!, didReceiveRemoteVideoTrack remoteVideoTrack: RTCVideoTrack!) {}
-    
-    func webrtcClient(_ client: NINWebRTCClient!, didGetError error: Error!) {}
+extension NINChatWebRTCClientImpl {
+    convenience override init() {
+        self.init(sessionManager: nil, operatingMode: .callee, stunServers: nil, turnServers: nil, delegate: nil)
+    }
 }

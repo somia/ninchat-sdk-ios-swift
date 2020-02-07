@@ -44,32 +44,28 @@ extension NINChatSessionManagerImpl {
     /// https://github.com/ninchat/ninchat-api/blob/v2/api.md#queue_updated
     internal func didUpdateQueue(type: Events, param: NINLowLevelClientProps) throws {
         let actionID = try param.actionID()
+        let queueID = param.queueID()
         do {
-            let queueID = try param.queueID()
-            do {
-                let position = try param.queuePosition()
-                if type == .audienceEnqueued {
-                    guard self.currentQueueID == nil else { throw NINSessionExceptions.hasActiveQueue }
-                    
-                    self.currentQueueID = queueID
-                    self.onQueueUpdated?(type, queueID, position, nil)
-                }
+            let position = try param.queuePosition()
+            if type == .audienceEnqueued {
+                guard self.currentQueueID == nil else { throw NINSessionExceptions.hasActiveQueue }
                 
-                if actionID != 0 || type == .queueUpdated {
-                    self.onProgress?(queueID, position, type, nil)
-                }
-            } catch {
-                self.onQueueUpdated?(type, queueID, nil, error)
+                self.currentQueueID = queueID
+                self.onQueueUpdated?(type, queueID, position, nil)
+            }
+            
+            if actionID != 0 || type == .queueUpdated {
+                self.onProgress?(queueID, position, type, nil)
             }
         } catch {
-           self.onActionID?(actionID, error)
-       }
+            self.onQueueUpdated?(type, queueID, nil, error)
+        }
     }
     
     internal func didUpdateUser(param: NINLowLevelClientProps) throws {
         guard self.currentChannelID != nil else { throw NINSessionExceptions.noActiveChannel }
         
-        let userID = try param.userID()
+        let userID = param.userID()
         self.channelUsers[userID] = parse(userAttr: try param.userAttributes(), userID: userID)
     }
     
@@ -79,8 +75,10 @@ extension NINChatSessionManagerImpl {
             
         let actionID = try param.actionID()
         do {
-            let fileURL = try param.fileURL()
+            let fileURL = param.fileURL()
             let urlExpiry = try param.urlExpiry()
+            
+            print("expire: \(urlExpiry)")
             
             self.onActionFileInfo?(actionID, ["aspectRatio": aspectRatio, "url": fileURL, "urlExpiry": urlExpiry], nil)
         } catch {
@@ -90,83 +88,71 @@ extension NINChatSessionManagerImpl {
     
     internal func didDeleteUser(param: NINLowLevelClientProps) throws {
         let actionID = try param.actionID()
-        do {
-            let userID = try param.userID()
-            if userID == myUserID {
-                delegate?.log(value: "Current user deleted.")
-            }
-            self.onActionID?(actionID, nil)
-        } catch {
-            self.onActionID?(actionID, error)
+        let userID = param.userID()
+        if userID == myUserID {
+            delegate?.log(value: "Current user deleted.")
         }
+        self.onActionID?(actionID, nil)
     }
     
     internal func didJoinChannel(param: NINLowLevelClientProps) throws {
         guard currentQueueID != nil else { throw NINSessionExceptions.noActiveQueue }
         guard currentChannelID == nil else { throw NINSessionExceptions.noActiveChannel }
         
+        let channelID = param.channelID()
+        delegate?.log(value: "Joined channel ID: \(channelID)")
+
+        /// Set the currently active channel
+        self.currentChannelID = channelID
+        self.backgroundChannelID = nil
+
+        /// Get the queue we are joining
+        let queueName = self.queues.compactMap({ $0 }).filter({ [weak self] queue in
+            queue.queueID == self?.currentQueueID }).first?.name ?? ""
+        
+        /// We are no longer in the queue; clear the queue reference
+        self.currentQueueID = nil;
+
+        /// Clear current list of messages and users
+        chatMessages.removeAll()
+        channelUsers.removeAll()
+        
+        /// Insert a meta message about the conversation start
+        self.add(message: NINChatMetaMessage(text: self.translate(key: "Audience in queue {{queue}} accepted.", formatParams: ["queue": queueName]), timestamp: Date(), closeChatButtonTitle: nil))
+
+        /// Extract the channel members' data
         do {
-            let channelID = try param.channelID()
-            delegate?.log(value: "Joined channel ID: \(channelID)")
-
-            /// Set the currently active channel
-            self.currentChannelID = channelID
-            self.backgroundChannelID = nil
-
-            /// Get the queue we are joining
-            let queueName = self.queues.compactMap({ $0 }).filter({ [weak self] queue in
-                queue.queueID == self?.currentQueueID }).first?.name ?? ""
+            let parser = NINClientPropsParser()
+            let members = try param.channelMembers()
+            try members.accept(parser)
             
-            /// We are no longer in the queue; clear the queue reference
-            self.currentQueueID = nil;
-
-            /// Clear current list of messages and users
-            chatMessages.removeAll()
-            channelUsers.removeAll()
-            
-            /// Insert a meta message about the conversation start
-            self.add(message: NINChatMetaMessage(text: self.translate(key: "Audience in queue {{queue}} accepted.", formatParams: ["queue": queueName]), timestamp: Date(), closeChatButtonTitle: nil))
-
-            /// Extract the channel members' data
-            do {
-                let parser = NINClientPropsParser()
-                let members = try param.channelMembers()
-                try members.accept(parser)
-                
-                try parser.properties.compactMap({ dict in
-                    (dict.key, dict.value) as? (String,NINLowLevelClientProps)
-                }).map({ key, value in
-                    try (key, value.userAttributes())
-                }).forEach({ [weak self] userID, attributes in
-                    self?.channelUsers[userID] = self?.parse(userAttr: attributes, userID: userID)
-                })
-            } catch {
-                debugger(error.localizedDescription)
-            }
-            
-            /// Signal channel join event to the asynchronous listener
-            self.onChannelJoined?()
+            try parser.properties.compactMap({ dict in
+                (dict.key, dict.value) as? (String,NINLowLevelClientProps)
+            }).map({ key, value in
+                try (key, value.userAttributes())
+            }).forEach({ [weak self] userID, attributes in
+                self?.channelUsers[userID] = self?.parse(userAttr: attributes, userID: userID)
+            })
         } catch {
-            throw NINSessionExceptions.noParamChannel
+            debugger(error.localizedDescription)
         }
+        
+        /// Signal channel join event to the asynchronous listener
+        self.onChannelJoined?()
     }
     
     internal func didPartChannel(param: NINLowLevelClientProps) throws {
         let actionID = try param.actionID()
-        do {
-            let channelID = try param.channelID()
-            
-            /// No body is listening to this closure, so, what? :D
-            self.onActionChannel?(actionID, channelID)
-        } catch {
-            self.onActionID?(actionID, error)
-        }
+        let channelID = param.channelID()
+        
+        /// No body is listening to this closure, so, what? :D
+        self.onActionChannel?(actionID, channelID)
     }
     
     internal func didUpdateChannel(param: NINLowLevelClientProps) throws {
         guard currentChannelID != nil || backgroundChannelID != nil else { throw NINSessionExceptions.noActiveChannel }
         
-        let channelID = try param.channelID()
+        let channelID = param.channelID()
         guard channelID == currentChannelID || channelID == backgroundChannelID else {
             debugger("Got channel_updated for wrong channel: \(channelID)")
             return
@@ -175,8 +161,8 @@ extension NINChatSessionManagerImpl {
         let channelClosed = try param.channelClosed()
         let channelSuspended = try param.channelSuspended()
         if channelClosed || channelSuspended {
-            let text = self.translate(key: "Conversation ended", formatParams: nil)
-            let closeTitle = self.translate(key: "Close chat", formatParams: nil)
+            let text = self.translate(key: "Conversation ended", formatParams: [:])
+            let closeTitle = self.translate(key: "Close chat", formatParams: [:])
             self.add(message: NINChatMetaMessage(text: text, timestamp: Date(), closeChatButtonTitle: closeTitle))
             self.onChannelClosed?()
         }
@@ -192,7 +178,7 @@ extension NINChatSessionManagerImpl {
             
             /// Parse the STUN server list
             let stunServers = try [Int](0..<stunServersParam.length()).map({ index -> NINLowLevelClientProps in
-                stunServersParam.get(index)
+                stunServersParam.get(index)!
             }).compactMap({ prop -> NINLowLevelClientStrings in
                 try prop.srversURLs()
             }).compactMap({ servers -> ([Int], NINLowLevelClientStrings) in
@@ -203,9 +189,9 @@ extension NINChatSessionManagerImpl {
             
             /// Parse the TURN server list
             let turnServers = try [Int](0..<turnServersParam.length()).map({ index -> NINLowLevelClientProps in
-                turnServersParam.get(index)
+                turnServersParam.get(index)!
             }).compactMap({ prop -> (NINLowLevelClientStrings, String, String) in
-                (try prop.srversURLs(), try prop.turnServers_UserName(), try prop.turnServers_Credential())
+                (try prop.srversURLs(), prop.turnServers_UserName(), prop.turnServers_Credential())
             }).compactMap({ (servers, userName, credential) -> ([Int], NINLowLevelClientStrings, String, String) in
                 ([Int](0..<servers.length()), servers, userName, credential)
             }).map({ (indexArray, serversArray, userName, credential) -> [NINWebRTCServerInfo] in
@@ -220,14 +206,14 @@ extension NINChatSessionManagerImpl {
    
    internal func parse(userAttr: NINLowLevelClientProps, userID: String) -> NINChannelUser? {
         do {
-            return NINChannelUser(id: userID, realName: try userAttr.userAttributes_RealName(), displayName: try userAttr.userAttributes_DisplayName(), iconURL: try userAttr.userAttributes_IconURL(), guest: try userAttr.userAttributes_IsGuest())
+            return NINChannelUser(id: userID, realName: userAttr.userAttributes_RealName(), displayName: userAttr.userAttributes_DisplayName(), iconURL: userAttr.userAttributes_IconURL(), guest: try userAttr.userAttributes_IsGuest())
         } catch {
             return nil
         }
     }
     
     internal func didReceiveMessage(param: NINLowLevelClientProps, payload: NINLowLevelClientPayload) throws {
-        let messageType = try param.messageType()
+        let messageType = param.messageType()
         debugger("Received message of type \(String(describing: messageType))")
         
         /// handle transfers
@@ -250,13 +236,13 @@ extension NINChatSessionManagerImpl {
         let actionID = try param.actionID()
         
         do {
-            let channelID = try param.channelID()
-            guard channelID != currentChannelID, channelID != backgroundChannelID else {
+            let channelID = param.channelID()
+            guard channelID == currentChannelID || channelID == backgroundChannelID else {
                 self.delegate?.log(value: "Error: Got event for wrong channel: \(channelID)")
                 return
             }
             
-            let userID = try param.userID()
+            let userID = param.userID()
             guard let messageUser = channelUsers[userID] else {
                 self.delegate?.log(value: "Update from unknown user: \(userID)")
                 return
@@ -370,41 +356,44 @@ extension NINChatSessionManagerImpl {
 extension NINChatSessionManagerImpl {
     internal func handleInbound(param: NINLowLevelClientProps, actionID: Int, payload: NINLowLevelClientPayload) throws {
         
-        let messageID = try param.messageID()
-        let messageUserID = try param.messageUserID()
+        let messageID = param.messageID()
+        let messageUserID = param.messageUserID()
         let messageTime = try param.messageTime()
-        guard let messageUser = self.channelUsers[messageUserID] else {
-            debugger("Message from unknown user: \(messageUserID)")
-            return
-        }
+        let messageUser = self.channelUsers[messageUserID]
         
-        if let messageType = try param.messageType() {
-            switch messageType {
-            case .candidate, .answer, .offer, .call, .pickup, .hangup:
-                /// This message originates from me; we can ignore it.
-                if actionID != 0 { return }
-                
-                try [Int](0..<payload.length()).forEach { [weak self] index in
-                    /// Handle a WebRTC signaling message
-                    let decode: Result<RTCSignal> = payload.get(index)!.decode()
-                    switch decode {
-                    case .success(let signal):
+        let messageType = param.messageType()!
+        switch messageType {
+        case .candidate, .answer, .offer, .call, .pickup, .hangup:
+            /// This message originates from me; we can ignore it.
+            if actionID != 0 { return }
+            
+            try [Int](0..<payload.length()).forEach { [weak self] index in
+                /// Handle a WebRTC signaling message
+                let decode: Result<RTCSignal> = payload.get(index)!.decode()
+                switch decode {
+                case .success(let signal):
+                    if  [.offer, .call, .pickup, .hangup].filter({ $0 == messageType }).count > 0 {
                         self?.onRTCSignal?(messageType, messageUser, signal)
-                    case .failure(let error):
-                        throw error
+                    } else if [.candidate, .answer].filter({ $0 == messageType }).count > 0 {
+                        self?.onRTCClientSingal?(messageType, messageUser, signal)
                     }
+                case .failure(let error):
+                    throw error
                 }
-            case .text, .file:
-                try self.handleInbound(message: messageID, user: messageUser, time: messageTime, actionID: actionID, payload: payload)
-            case .compose:
-                try self.handleCompose(message: messageID, user: messageUser, time: messageTime, actionID: actionID, payload: payload)
-            case .channel:
-                try self.handleChannel(message: messageID, user: messageUser, time: messageTime, actionID: actionID, payload: payload)
-            default:
-                debugger("Ignoring unsupported message type: \(messageType.rawValue)")
-                break
             }
+        case .text, .file:
+            guard messageUser != nil else { return }
+            try self.handleInbound(message: messageID, user: messageUser!, time: messageTime, actionID: actionID, payload: payload)
+        case .compose:
+            guard messageUser != nil else { return }
+            try self.handleCompose(message: messageID, user: messageUser!, time: messageTime, actionID: actionID, payload: payload)
+        case .channel:
+            try self.handleChannel(message: messageID, user: messageUser, time: messageTime, actionID: actionID, payload: payload)
+        default:
+            debugger("Ignoring unsupported message type: \(messageType.rawValue)")
+            break
         }
+
     }
     
     internal func handleInbound(message id: String, user: NINChannelUser, time: Double, actionID: Int, payload: NINLowLevelClientPayload) throws {
@@ -423,6 +412,8 @@ extension NINChatSessionManagerImpl {
                         guard fileInfo.isImage || fileInfo.isVideo || fileInfo.isPDF else { return }
                         hasAttachment = true
                         fileInfo.updateInfo(session: self) { error, didRefreshNetwork in
+                            guard error == nil else { return }
+                            
                             self.add(message: NINTextMessage(messageID: id, textContent: nil, sender: user, timestamp: Date(timeIntervalSince1970: time), mine: user.userID == self.myUserID, attachment: fileInfo))
                         }
                     }
@@ -438,10 +429,10 @@ extension NINChatSessionManagerImpl {
         })
     }
     
-    internal func handleChannel(message id: String, user: NINChannelUser, time: Double, actionID: Int, payload: NINLowLevelClientPayload) throws {
+    internal func handleChannel(message id: String, user: NINChannelUser?, time: Double, actionID: Int, payload: NINLowLevelClientPayload) throws {
         
         try [Int](0..<payload.length()).forEach { index in
-            let decode: Result<ChatMessagePayload> = payload.get(index)!.decode()
+            let decode: Result<ChatChannelPayload> = payload.get(index)!.decode()
             switch decode {
             case .success(let message):
                 /// There is no receiver for the decoded payload
@@ -456,15 +447,13 @@ extension NINChatSessionManagerImpl {
     internal func handleCompose(message id: String, user: NINChannelUser, time: Double, actionID: Int, payload: NINLowLevelClientPayload) throws {
         
         try [Int](0..<payload.length()).forEach { [unowned self] index in
-            let decode: Result<ComposeMessagePayload> = payload.get(index)!.decode()
+            let decode: Result<[ComposeMessagePayload]> = payload.get(index)!.decode()
             switch decode {
             case .success(let compose):
                 debugger("Received Compose message with payload: \(compose)")
-                if let type = compose.element, type == .button, type != .select {
-                    /// There is no receiver for the decoded payload
-                    /// TODO: Check the code to find the appropriate usage later
-                    debugger("Found ui/compose object with unhandled element= \(type), discarding message")
-                } else if let msg = NINUIComposeMessage(id: id, sender: user, timestamp: Date(timeIntervalSince1970: time), mine: user.userID == self.myUserID, payload: [compose]) {
+                if compose.filter({ $0.element != .button && $0.element != .select }).count > 0 {
+                    debugger("Found ui/compose object with unhandled element, discarding message")
+                } else if let msg = NINUIComposeMessage(id: id, sender: user, timestamp: Date(timeIntervalSince1970: time), mine: user.userID == self.myUserID, payload: compose.compactMap({ $0.toDictionary })) {
                     self.add(message: msg)
                 }
             case .failure(let error):
@@ -484,8 +473,7 @@ extension NINChatSessionManagerImpl {
     */
     internal func handlerError(param: NINLowLevelClientProps) throws {
         let actionID = try param.actionID()
-        let error = try param.error()
         
-        self.onActionID?(actionID, error)
+        self.onActionID?(actionID, param.error())
     }
 }

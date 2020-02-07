@@ -30,12 +30,12 @@ extension NINLowLevelClientProps {
         return try self.getBool("writing")
     }
     
-    func error() throws -> Error {
-        return NinchatError(code: 1, title: try self.getString("error_type"))
+    func error() -> Error? {
+        return NinchatError(code: 1, title: self.getString("error_type"))
     }
 
     public func event() throws -> String {
-        return try self.getString("event")
+        return self.getString("event")
     }
     
     // MARK: - ID
@@ -44,20 +44,20 @@ extension NINLowLevelClientProps {
         return try self.getInt("action_id")
     }
     
-    func queueID() throws -> String {
-        return try self.getString("queue_id")
+    func queueID() -> String {
+        return self.getString("queue_id")
     }
     
-    func channelID() throws -> String {
-        return try self.getString("channel_id")
+    func channelID() -> String {
+        return self.getString("channel_id")
     }
     
-    func userID() throws -> String {
-        return try self.getString("user_id")
+    func userID() -> String {
+        return self.getString("user_id")
     }
     
-    func messageID() throws -> String {
-        return try self.getString("message_id")
+    func messageID() -> String {
+        return self.getString("message_id")
     }
     
     // MARK: - Queues
@@ -98,16 +98,16 @@ extension NINLowLevelClientProps {
         return try self.getObject("user_attrs")
     }
     
-    func userAttributes_IconURL() throws -> String {
-        return try self.getString("iconurl")
+    func userAttributes_IconURL() -> String {
+        return self.getString("iconurl")
     }
     
-    func userAttributes_DisplayName() throws -> String {
-        return try self.getString("name")
+    func userAttributes_DisplayName() -> String {
+        return self.getString("name")
     }
     
-    func userAttributes_RealName() throws -> String {
-        return try self.getString("realname")
+    func userAttributes_RealName() -> String {
+        return self.getString("realname")
     }
     
     func userAttributes_IsGuest() throws -> Bool {
@@ -116,8 +116,8 @@ extension NINLowLevelClientProps {
 
     // MARK: - File
     
-    func fileURL() throws -> String {
-        return try self.getString("file_url")
+    func fileURL() -> String {
+        return self.getString("file_url")
     }
     
     func urlExpiry() throws -> Date {
@@ -144,22 +144,22 @@ extension NINLowLevelClientProps {
         return try self.getObjectArray("turn_servers")
     }
     
-    func turnServers_UserName() throws -> String {
-        return try self.getString("username")
+    func turnServers_UserName() -> String {
+        return self.getString("username")
     }
     
-    func turnServers_Credential() throws -> String {
-        return try self.getString("credential")
+    func turnServers_Credential() -> String {
+        return self.getString("credential")
     }
     
     // MARK: - Messages
     
-    func messageType() throws -> MessageType? {
-        return MessageType(rawValue: try self.getString("message_type"))
+    func messageType() -> MessageType? {
+        return MessageType(rawValue: self.getString("message_type"))
     }
     
-    func messageUserID() throws -> String {
-        return try self.getString("message_user_id")
+    func messageUserID() -> String {
+        return self.getString("message_user_id")
     }
     
     func messageTime() throws -> Double {
@@ -319,5 +319,9 @@ extension NINLowLevelClientProps {
         try self.getBool(key, val: &value)
         
         return value.boolValue
+    }
+    
+    func getString(_ key: String) -> String {
+        return self.getString(key, error: nil)
     }
 }

@@ -6,6 +6,7 @@
 
 import UIKit
 import NinchatSDK
+import AutoLayoutSwift
 
 final class ChatMetaCell: UITableViewCell, ChatMeta {
 
@@ -42,14 +43,14 @@ final class ChatMetaCell: UITableViewCell, ChatMeta {
             self.metaTextLabel.textColor = labelColor
         }
         if let title = message.closeChatButtonTitle {
-            
-            self.deactivate(size: [.height])
+            self.deactivate(constraints: [.height])
             self.closeChatButton.buttonTitle = title
             self.closeChatButton.overrideAssets(with: self.delegate)
             self.closeChatButton.closure = { [weak self] button in
                 self?.onCloseChatTapped?(button)
             }
         } else {
+            self.closeChatButton.deactivate(constraints: [.top, .bottom])
             self.closeChatButtonContainer.fix(height: 0)
             self.closeChatButton.fix(height: 0)
             self.onCloseChatTapped = nil

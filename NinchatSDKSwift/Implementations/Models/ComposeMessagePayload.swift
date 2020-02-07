@@ -6,11 +6,25 @@
 
 import Foundation
 
-enum Element: String, Decodable {
+enum Element: String, Codable {
     case select
     case button
 }
 
-struct ComposeMessagePayload: Decodable {
-    let element: Element?
+// MARK: - ComposeMessagePayload
+struct ComposeMessagePayload: Codable {
+    let payloadClass, link, id, label, name: String?
+    let element: Element
+    let options: [Option]?
+    
+    enum CodingKeys: String, CodingKey {
+        case payloadClass = "class"
+        case element, id, label, name, options
+        case link = "href"
+    }
+}
+
+// MARK: - Option
+struct Option: Codable {
+    let label, value: String
 }

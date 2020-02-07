@@ -49,9 +49,9 @@ final class NINQueueViewController: UIViewController, ViewController {
     }
     @IBOutlet private weak var closeChatButton: CloseButton! {
         didSet {
-            if let closeText = self.sessionManager.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) {
-                closeChatButton.buttonTitle = closeText
-            }
+            let closeTitle = self.session.sessionManager.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
+            closeChatButton.buttonTitle = closeTitle
+            closeChatButton.overrideAssets(with: self.session)
             closeChatButton.closure = { [weak self] button in
                 self?.sessionManager.leave { _ in
                     try? self?.sessionManager.closeChat()

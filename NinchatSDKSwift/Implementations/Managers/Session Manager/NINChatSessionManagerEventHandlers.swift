@@ -73,7 +73,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
             if let eventType = Events(rawValue: event) {
                 switch eventType {
                 case .sessionCreated:
-                    self.myUserID = try param.userID()
+                    self.myUserID = param.userID()
                     self.delegate?.log(value: "Session created - my user ID is: \(String(describing: self.myUserID))")
                     self.onActionSessionEvent?(eventType, nil)
                 case .userDeleted:
@@ -156,9 +156,9 @@ final class NINChatSessionManagerSessionEventHandler: NSObject, NINLowLevelClien
         self.session = session
     }
     
-    func onSessionEvent(_ params: NINLowLevelClientProps!) {
+    func onSessionEvent(_ params: NINLowLevelClientProps?) {
         DispatchQueue.main.async {
-            self.session?.onSessionEvent(param: params)
+            self.session?.onSessionEvent(param: params!)
         }
     }
 }
@@ -172,9 +172,9 @@ final class NINChatSessionManagerEventHandler: NSObject, NINLowLevelClientEventH
         self.session = session
     }
     
-    func onEvent(_ params: NINLowLevelClientProps!, payload: NINLowLevelClientPayload!, lastReply: Bool) {
+    func onEvent(_ params: NINLowLevelClientProps?, payload: NINLowLevelClientPayload?, lastReply: Bool) {
         DispatchQueue.main.async {
-            self.session?.onEvent(param: params, payload: payload, lastReplay: lastReply)
+            self.session?.onEvent(param: params!, payload: payload!, lastReplay: lastReply)
         }
     }
 }
@@ -204,9 +204,9 @@ final class NINChatSessionManagerLogHandler: NSObject, NINLowLevelClientLogHandl
         self.session = session
     }
     
-    func onLog(_ msg: String!) {
+    func onLog(_ msg: String?) {
         DispatchQueue.main.async {
-            self.session?.onLog(value: msg)
+            self.session?.onLog(value: msg!)
         }
     }
 }
@@ -220,9 +220,9 @@ final class NINChatSessionManagerConnHandler: NSObject, NINLowLevelClientConnSta
         self.session = session
     }
     
-    func onConnState(_ state: String!) {
+    func onConnState(_ state: String?) {
         DispatchQueue.main.async {
-            self.session?.onConnState(state: state)
+            self.session?.onConnState(state: state!)
         }
     }
 }

@@ -40,6 +40,11 @@ final class RTCSignal: Codable {
         sdp = try container.decodeIfPresent([String:String].self, forKey: .sdp)
     }
     
+    init(candidate: [String:String]?, sdp: [String:String]?) {
+        self.candidate = candidate
+        self.sdp = sdp
+    }
+    
     enum CodingKeys: String, CodingKey {
         case candidate, sdp
     }

@@ -30,4 +30,19 @@ extension UITextView {
         let newHeight = ceil(self.sizeThatFits(CGSize(width: self.bounds.width, height: 9999)).height)
         return min(newHeight, maxHeight)
     }
+    
+    func centerVertically() {
+        let fittingSize = CGSize(width: bounds.width, height: .greatestFiniteMagnitude)
+        let topOffset = (bounds.size.height - sizeThatFits(fittingSize).height * zoomScale) / 2
+        let positiveTopOffset = max(1, topOffset)
+        contentOffset.y = -positiveTopOffset
+    }
+
+    func setPlain(text: String) {
+        do {
+            self.attributedText = try NSMutableAttributedString(data: text.data(using: .utf8)!, options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.plain], documentAttributes: nil)
+        } catch {
+            self.text = text
+        }
+    }
 }

@@ -5,12 +5,14 @@
 //
 
 import UIKit
+import AutoLayoutSwift
 
 final class NINRatingViewController: UIViewController, ViewController {
     
     // MARK: - Injected
     
     var viewModel: NINRatingViewModel!
+    var translate: NINChatSessionTranslation!
     
     // MARK: - ViewController
     
@@ -24,6 +26,7 @@ final class NINRatingViewController: UIViewController, ViewController {
     private lazy var facesView: FacesViewProtocol = {
         var view: FacesView = FacesView.loadFromNib()
         view.session = session
+        view.translate = translate
         view.onPositiveTapped = { [weak self] button in
             self?.onPositiveButtonTapped(sender: button)
         }
@@ -62,6 +65,14 @@ final class NINRatingViewController: UIViewController, ViewController {
     
     func overrideAssets() {
         facesView.overrideAssets()
+        
+        if let title = self.translate.translate(key: Constants.kRatingTitleText.rawValue, formatParams: [:]) {
+            self.titleTextView.setFormattedText(title)
+        }
+        
+        if let skip = self.translate.translate(key: Constants.kRatingSkipText.rawValue, formatParams: [:]) {
+            self.skipButton.setTitle(skip, for: .normal)
+        }
         
         if let topBackgroundColor = self.session.override(colorAsset: .backgroundTop) {
             self.topViewContainer.backgroundColor = topBackgroundColor

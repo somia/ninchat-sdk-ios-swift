@@ -74,3 +74,14 @@ public enum NINSessionExceptions: Error {
         }
     }
 }
+
+public enum NINWebRTCExceptions: Error {
+    case invalidState
+    
+    public var localizedDescription: String {
+        switch self {
+        case .invalidState:
+            return "Invalid state - client was disconnected?"
+        }
+    }
+}

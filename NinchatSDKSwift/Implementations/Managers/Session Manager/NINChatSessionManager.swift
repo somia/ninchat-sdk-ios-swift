@@ -86,7 +86,7 @@ protocol NINChatSessionTranslation {
     * Get a formatted translation from the site configuration.
     * @param formatParams contains format param mappings key -> value
     */
-    func translate(key: String, formatParams: [String:String]?) -> String?
+    func translate(key: String, formatParams: [String:String]) -> String?
 }
 
 protocol NINChatSessionManagerDelegate {
@@ -95,6 +95,7 @@ protocol NINChatSessionManagerDelegate {
     var onMessageRemoved: ((_ index: Int) -> Void)? { get set }
     var onChannelClosed: (() -> Void)? { get set }
     var onRTCSignal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
+    var onRTCClientSingal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
 }
 
 protocol NINChatSessionManager: class, NINChatSessionConnectionManager, NINChatSessionMessanger, NINChatSessionAttachment, NINChatSessionTranslation, NINChatSessionManagerDelegate {
@@ -109,6 +110,11 @@ protocol NINChatSessionManager: class, NINChatSessionConnectionManager, NINChatS
     
     /**  A weak reference to internal functions declared in `NINChatSessionSwift` */
     var delegate: NINChatSessionInternalDelegate? { get }
+    
+    /** Host application details including name, version, and some more details.
+    *  will be appended to some predefined values such as SDK version, device OS, and device model.
+    */
+    var appDetails: String? { get set }
     
     init(session: NINChatSessionInternalDelegate, serverAddress: String, siteSecret: String?, audienceMetadata: NINLowLevelClientProps?)
 }

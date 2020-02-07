@@ -11,6 +11,7 @@ protocol ChatInputActions {
     var onSendTapped: ((String) -> Void)? { get set }
     var onAttachmentTapped: ((UIButton) -> Void)? { get set }
     var onTextSizeChanged: ((CGFloat) -> Void)? { get set }
+    var onWritingStatusChanged: ((_ writing: Bool) -> Void)? { get set }
 }
 
 protocol ChatInputControlsProtocol: UIView, ChatInputActions {
@@ -49,6 +50,7 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
     var onSendTapped: ((String) -> Void)?
     var onAttachmentTapped: ((UIButton) -> Void)?
     var onTextSizeChanged: ((CGFloat) -> Void)?
+    var onWritingStatusChanged: ((Bool) -> Void)?
     
     // MARK: - Outlets
     
@@ -102,6 +104,7 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
         textInput.text = ""
         self.onSendTapped?(text)
         self.updatePlaceholder()
+        self.onWritingStatusChanged?(false)
     }
         
     @IBAction private func onAttachmentButtonTapped(sender: UIButton) {
@@ -133,6 +136,7 @@ extension ChatInputControls: UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {
         self.updatePlaceholder()
+        self.onWritingStatusChanged?(true)
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {

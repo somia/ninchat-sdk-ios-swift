@@ -28,6 +28,7 @@ final class CloseButton: UIView, CloseButtonProtocol {
     private lazy var closeButtonImageView: UIImageView = {
         let view = UIImageView(frame: .zero)
         view.contentMode = .scaleToFill
+        view.tintColor = .defaultBackgroundButton
         view.image = UIImage(named: "icon_close_x", in: .SDKBundle, compatibleWith: nil)
         
         return view
@@ -77,7 +78,9 @@ final class CloseButton: UIView, CloseButtonProtocol {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
+    }
+    
+    private func setupView() {
         self.backgroundColor = .white
         self.round(1.0, .defaultBackgroundButton)
         
@@ -98,6 +101,7 @@ final class CloseButton: UIView, CloseButtonProtocol {
     override func updateConstraints() {
         super.updateConstraints()
         self.fix(width: self.frame.width + 54.0, height: 44.0)
+        self.setupView()
         
         self.setNeedsLayout()
         self.layoutIfNeeded()

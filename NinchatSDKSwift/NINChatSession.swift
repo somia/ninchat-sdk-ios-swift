@@ -8,6 +8,13 @@ import UIKit
 import NinchatSDK
 
 public protocol NINChatSessionProtocol: NINChatSessionClosure {
+    /**
+    * Append information to the user agent string. The string should be in
+    * the form "app-name/version" or "app-name/version (more; details)".
+    *
+    * Set this prior to calling startWithCallback:
+    */
+    var appDetails: String? { get set }
     var delegate: NINChatSessionDelegateSwift? { get set }
     
     init(configKey: String, queueID: String?, environments: [String]?, serverAddress: String?, siteSecret: String?, metadata: NINLowLevelClientProps?)
@@ -42,6 +49,11 @@ public final class NINChatSessionSwift: NINChatSessionProtocol {
     // MARK: - NINChatSessionProtocol
     
     public weak var delegate: NINChatSessionDelegateSwift?
+    public var appDetails: String? {
+        didSet {
+            sessionManager.appDetails = appDetails
+        }
+    }
     
     public init(configKey: String, queueID: String? = nil, environments: [String]? = nil, serverAddress: String? = nil, siteSecret: String? = nil, metadata: NINLowLevelClientProps? = nil) {
         self.configKey = configKey

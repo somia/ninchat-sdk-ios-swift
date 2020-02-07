@@ -64,24 +64,22 @@ final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol {
         }
 
         guard let sessionManager = session?.sessionManager else { return }
-        if let agentAvatar = sessionManager.siteConfiguration.agentAvatar, let agentName = sessionManager.siteConfiguration.agentName {
-            
-            let agentAvatarConfig = NINAvatarConfig(avatar: agentAvatar, name: agentName)
-            
-            /// Caller's Avatar image
-            if !agentAvatarConfig.imageOverrideUrl.isEmpty {
-                self.avatarImageView.setImageURL(agentAvatarConfig.imageOverrideUrl)
-            } else {
-                self.avatarImageView.setImageURL(user.iconURL)
-            }
-            
-            /// Caller's name
-            if !agentAvatarConfig.nameOverride.isEmpty {
-                self.usernameLabel.text = agentAvatarConfig.nameOverride
-            } else {
-                self.usernameLabel.text = user.displayName
-            }
+        let agentAvatarConfig = NINAvatarConfig(avatar: sessionManager.siteConfiguration.agentAvatar ?? "", name: sessionManager.siteConfiguration.agentName ?? "")
+        
+        /// Caller's Avatar image
+        if !agentAvatarConfig.imageOverrideUrl.isEmpty {
+            self.avatarImageView.setImageURL(agentAvatarConfig.imageOverrideUrl)
+        } else if !user.iconURL.isEmpty {
+            self.avatarImageView.setImageURL(user.iconURL)
         }
+        
+        /// Caller's name
+        if !agentAvatarConfig.nameOverride.isEmpty {
+            self.usernameLabel.text = agentAvatarConfig.nameOverride
+        } else {
+            self.usernameLabel.text = user.displayName
+        }
+
         
         if let acceptTitle = sessionManager.translate(key: Constants.kAcceptDialog.rawValue, formatParams: [:]) {
             self.acceptButton.setTitle(acceptTitle, for: .normal)

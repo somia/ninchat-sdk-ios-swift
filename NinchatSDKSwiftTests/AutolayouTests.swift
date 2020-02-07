@@ -53,7 +53,7 @@ class AutolayouTests: XCTestCase {
         view.setNeedsLayout()
         view.layoutIfNeeded()
         
-        view.deactivate(origin: [.leading])
+        view.deactivate(constraints: [.leading])
         superView.setNeedsLayout()
         superView.layoutIfNeeded()
         view.setNeedsLayout()
@@ -77,7 +77,7 @@ class AutolayouTests: XCTestCase {
         view.setNeedsLayout()
         view.layoutIfNeeded()
 
-        view.deactivate(size: [.height])
+        view.deactivate(constraints: [.height])
         view.setNeedsLayout()
         view.layoutIfNeeded()
         

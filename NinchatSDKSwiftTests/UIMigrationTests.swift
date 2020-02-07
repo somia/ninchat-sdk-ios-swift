@@ -90,4 +90,24 @@ class UIMigrationTests: XCTestCase {
 
         wait(for: [expectationHangup, expectationMute, expectationCamera], timeout: 1.0)
    }
+    
+    func testSubviews() {
+        let parent1 = UIView(frame: .zero)
+        parent1.tag = 1
+        
+        let child1 = UIView(frame: .zero)
+        child1.tag = 11
+        
+        let child2 = UIView(frame: .zero)
+        child1.tag = 12
+        
+        let grandChild1 = UIView(frame: .zero)
+        grandChild1.tag = 111
+        
+        child1.addSubview(grandChild1)
+        parent1.addSubview(child1)
+        parent1.addSubview(child2)
+        
+        XCTAssertEqual(3, parent1.allSubviews.count)
+    }
 }

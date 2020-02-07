@@ -21,6 +21,9 @@
 		853C53E223C3991F00DF37D0 /* ChatChannelCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 853C53E123C3991F00DF37D0 /* ChatChannelCell.xib */; };
 		854843B223D5ED4C006DC9CE /* ConfirmVideoCallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854843B123D5ED4C006DC9CE /* ConfirmVideoCallView.swift */; };
 		854843B423D5F26D006DC9CE /* ConfirmVideoCallView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 854843B323D5F26D006DC9CE /* ConfirmVideoCallView.xib */; };
+		854843B723D60EEF006DC9CE /* NINChatWebRTCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854843B623D60EEF006DC9CE /* NINChatWebRTCClient.swift */; };
+		854843B923D610D7006DC9CE /* NINChatWebRTCClientImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854843B823D610D7006DC9CE /* NINChatWebRTCClientImpl.swift */; };
+		854843BB23D77C81006DC9CE /* ChannelMessagePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854843BA23D77C81006DC9CE /* ChannelMessagePayload.swift */; };
 		855B9F1B238ECDB30081A9C6 /* NinchatSDKSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 855B9F11238ECDB30081A9C6 /* NinchatSDKSwift.framework */; };
 		855B9F22238ECDB30081A9C6 /* NinchatSDKSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 855B9F14238ECDB30081A9C6 /* NinchatSDKSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		855B9F2F238ECE650081A9C6 /* NINChatExceptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855B9F2B238ECE650081A9C6 /* NINChatExceptions.swift */; };
@@ -79,6 +82,8 @@
 		8571D46823C0B4A900C16758 /* NinchatSessionManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D46723C0B4A900C16758 /* NinchatSessionManagerTests.swift */; };
 		85A6C9A523CCC16A001CED6D /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A6C9A423CCC16A001CED6D /* Date+Extension.swift */; };
 		85A6C9A823CE35F7001CED6D /* CloseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A6C9A723CE35F7001CED6D /* CloseButton.swift */; };
+		85CC095D23DC4C9B00482956 /* UIDevice+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CC095C23DC4C9B00482956 /* UIDevice+Extension.swift */; };
+		85CC096423DC66D300482956 /* Encodable+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CC096323DC66D300482956 /* Encodable+Extension.swift */; };
 		85DC59C9239E384D007ABAE3 /* UIMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59C8239E384D007ABAE3 /* UIMigrationTests.swift */; };
 		85DC59CC239E4C42007ABAE3 /* Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59CB239E4C42007ABAE3 /* Button.swift */; };
 		85DC59D0239E6A38007ABAE3 /* NINChatSessionClosure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59CF239E6A38007ABAE3 /* NINChatSessionClosure.swift */; };
@@ -137,6 +142,9 @@
 		853C53E123C3991F00DF37D0 /* ChatChannelCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChatChannelCell.xib; sourceTree = "<group>"; };
 		854843B123D5ED4C006DC9CE /* ConfirmVideoCallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmVideoCallView.swift; sourceTree = "<group>"; };
 		854843B323D5F26D006DC9CE /* ConfirmVideoCallView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ConfirmVideoCallView.xib; sourceTree = "<group>"; };
+		854843B623D60EEF006DC9CE /* NINChatWebRTCClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINChatWebRTCClient.swift; sourceTree = "<group>"; };
+		854843B823D610D7006DC9CE /* NINChatWebRTCClientImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINChatWebRTCClientImpl.swift; sourceTree = "<group>"; };
+		854843BA23D77C81006DC9CE /* ChannelMessagePayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMessagePayload.swift; sourceTree = "<group>"; };
 		855B9F11238ECDB30081A9C6 /* NinchatSDKSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NinchatSDKSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		855B9F14238ECDB30081A9C6 /* NinchatSDKSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NinchatSDKSwift.h; sourceTree = "<group>"; };
 		855B9F15238ECDB30081A9C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -197,6 +205,8 @@
 		8571D46723C0B4A900C16758 /* NinchatSessionManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatSessionManagerTests.swift; sourceTree = "<group>"; };
 		85A6C9A423CCC16A001CED6D /* Date+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extension.swift"; sourceTree = "<group>"; };
 		85A6C9A723CE35F7001CED6D /* CloseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloseButton.swift; sourceTree = "<group>"; };
+		85CC095C23DC4C9B00482956 /* UIDevice+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Extension.swift"; sourceTree = "<group>"; };
+		85CC096323DC66D300482956 /* Encodable+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Encodable+Extension.swift"; sourceTree = "<group>"; };
 		85DC59C8239E384D007ABAE3 /* UIMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIMigrationTests.swift; sourceTree = "<group>"; };
 		85DC59CB239E4C42007ABAE3 /* Button.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Button.swift; sourceTree = "<group>"; };
 		85DC59CF239E6A38007ABAE3 /* NINChatSessionClosure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINChatSessionClosure.swift; sourceTree = "<group>"; };
@@ -311,6 +321,15 @@
 			path = Implementations;
 			sourceTree = "<group>";
 		};
+		854843B523D60EAF006DC9CE /* RTC Client */ = {
+			isa = PBXGroup;
+			children = (
+				854843B623D60EEF006DC9CE /* NINChatWebRTCClient.swift */,
+				854843B823D610D7006DC9CE /* NINChatWebRTCClientImpl.swift */,
+			);
+			path = "RTC Client";
+			sourceTree = "<group>";
+		};
 		855B9F07238ECDB30081A9C6 = {
 			isa = PBXGroup;
 			children = (
@@ -401,6 +420,8 @@
 				85DD6C6123AF6F5A0023FFEF /* UITextView+Extensions.swift */,
 				8561EADD23C37C3000943C72 /* UITableView+Extension.swift */,
 				855FA2A423C7378500A2FB41 /* UITableViewCell+Extension.swift */,
+				85CC095C23DC4C9B00482956 /* UIDevice+Extension.swift */,
+				85CC096323DC66D300482956 /* Encodable+Extension.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -433,6 +454,7 @@
 			children = (
 				8561EACC23C2805900943C72 /* NINChatSession Internal */,
 				8561EACE23C2805900943C72 /* Session Manager */,
+				854843B523D60EAF006DC9CE /* RTC Client */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -448,8 +470,8 @@
 		8561EACE23C2805900943C72 /* Session Manager */ = {
 			isa = PBXGroup;
 			children = (
-				8561EACF23C2805900943C72 /* NINChatSessionManagerImpl.swift */,
 				8561EAD023C2805900943C72 /* NINChatSessionManager.swift */,
+				8561EACF23C2805900943C72 /* NINChatSessionManagerImpl.swift */,
 				8561EAD123C2805900943C72 /* NINChatSeesionManagerPrivate.swift */,
 				8561EAD223C2805900943C72 /* NINChatSessionManagerClosures.swift */,
 				8561EAD323C2805900943C72 /* NINChatSessionManagerEventHandlers.swift */,
@@ -509,8 +531,9 @@
 			children = (
 				8571D44823C0B47300C16758 /* NINChatMessages */,
 				8571D44623C0B47300C16758 /* ChatMessagePayload.swift */,
-				8571D44723C0B47300C16758 /* RTCSignal.swift */,
+				854843BA23D77C81006DC9CE /* ChannelMessagePayload.swift */,
 				8571D44A23C0B47300C16758 /* ComposeMessagePayload.swift */,
+				8571D44723C0B47300C16758 /* RTCSignal.swift */,
 				8571D44B23C0B47300C16758 /* NINFileInfo.swift */,
 			);
 			path = Models;
@@ -853,10 +876,12 @@
 				855B9F30238ECE650081A9C6 /* Constants.swift in Sources */,
 				855CBE4423990CB100A024A7 /* Bundle+Extension.swift in Sources */,
 				855CBE2B2397DEA300A024A7 /* NINInitialViewController.swift in Sources */,
+				85CC095D23DC4C9B00482956 /* UIDevice+Extension.swift in Sources */,
 				8571D45A23C0B48B00C16758 /* NINLowLevelClientStrings+Extension.swift in Sources */,
 				8563007D23B391840098A7B0 /* NINWebRTCDelegate.swift in Sources */,
 				8563005023B291600098A7B0 /* NINRatingViewModel.swift in Sources */,
 				855CBE3E2397FAE900A024A7 /* NINQueueViewController.swift in Sources */,
+				854843B923D610D7006DC9CE /* NINChatWebRTCClientImpl.swift in Sources */,
 				8571D44E23C0B47300C16758 /* NINTextMessage.swift in Sources */,
 				8530EC9323ADFE9900BAA52A /* UIButton+Extensions.swift in Sources */,
 				8530EC9523ADFEA600BAA52A /* NINChatViewModel.swift in Sources */,
@@ -865,6 +890,7 @@
 				8571D44C23C0B47300C16758 /* ChatMessagePayload.swift in Sources */,
 				85DC59D5239E7C3B007ABAE3 /* NINQueueViewModel.swift in Sources */,
 				8563004323B231350098A7B0 /* TopBar.swift in Sources */,
+				854843BB23D77C81006DC9CE /* ChannelMessagePayload.swift in Sources */,
 				85DDD22423D4CC0800E00844 /* ConfirmView.swift in Sources */,
 				855CBE222397CCA800A024A7 /* Storyboard+Extension.swift in Sources */,
 				8561EADC23C3598E00943C72 /* ChatView.swift in Sources */,
@@ -884,10 +910,12 @@
 				855B9F31238ECE650081A9C6 /* NINChatSession.swift in Sources */,
 				8563004023B230350098A7B0 /* NINFullScreenViewController.swift in Sources */,
 				853C53DC23C3980C00DF37D0 /* ChatChannelCell.swift in Sources */,
+				854843B723D60EEF006DC9CE /* NINChatWebRTCClient.swift in Sources */,
 				8530EC8123AD3FC300BAA52A /* NINChatViewController.swift in Sources */,
 				8571D45723C0B48B00C16758 /* NINLowLevelClientPayload+Extension.swift in Sources */,
 				8561EAD723C2805900943C72 /* NINChatSeesionManagerPrivate.swift in Sources */,
 				855FA2A523C7378500A2FB41 /* UITableViewCell+Extension.swift in Sources */,
+				85CC096423DC66D300482956 /* Encodable+Extension.swift in Sources */,
 				8571D44D23C0B47300C16758 /* RTCSignal.swift in Sources */,
 				855CBE2D2397DF5700A024A7 /* ViewController.swift in Sources */,
 				8563004C23B286FB0098A7B0 /* FacesView.swift in Sources */,
@@ -975,7 +1003,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1032,7 +1060,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -1050,7 +1078,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1102,7 +1130,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;

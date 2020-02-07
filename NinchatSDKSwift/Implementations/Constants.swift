@@ -84,6 +84,12 @@ public enum Constants: String {
     case kTextInputPlaceholderText = "Enter your message"
     case kCallInvitationText = "You are invited to a video chat"
     case kCallInvitationInfoText = "wants to video chat with you"
+    case kRatingTitleText = "How was our customer service?"
+    case kRatingSkipText = "Skip"
+    
+    case kRatingPositiveText = "Good"
+    case kRatingNeutralText = "Okay"
+    case kRatingNegativeText = "Poor"
 }
 
 enum NotificationConstants: String {
