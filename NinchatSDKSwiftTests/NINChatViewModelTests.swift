@@ -65,7 +65,7 @@ class NINChatViewModelTests: XCTestCase, NINChatWebRTCClientDelegate {
         }
         
         let expectationQueueChat = self.expectation(description: "Expect to back to the queue view controller")
-        viewModel.onQueued = {
+        viewModel.onQueueUpdated = {
             expectationQueueChat.fulfill()
         }
         
@@ -113,7 +113,9 @@ extension NINChatViewModelTests {
     }
     
     private func simulateChatQueue() {
-        sessionManager.onQueueUpdated?(.audienceEnqueued, "queue", nil, nil)
+        (sessionManager as! NINChatSessionManagerImpl).queueUpdateBoundClosures.forEach {
+            $0.value(.audienceEnqueued, "queue", nil)
+        }
     }
     
     private func simulateChatInsertMessage() {

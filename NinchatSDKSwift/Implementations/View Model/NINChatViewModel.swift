@@ -36,7 +36,7 @@ protocol NINChatMessageProtocol {
 
 protocol NINChatViewModel: NINChatRTCProtocol, NINChatStateProtocol, NINChatMessageProtocol {
     var onChannelClosed: (() -> Void)? { get set }
-    var onQueued: (() -> Void)? { get set }
+    var onQueueUpdated: (() -> Void)? { get set }
     var onChannelMessage: ((MessageUpdateType) -> Void)? { get set }
     
     init(sessionManager: NINChatSessionManager)
@@ -45,7 +45,7 @@ protocol NINChatViewModel: NINChatRTCProtocol, NINChatStateProtocol, NINChatMess
 final class NINChatViewModelImpl: NINChatViewModel {
     private unowned var sessionManager: NINChatSessionManager
     var onChannelClosed: (() -> Void)?
-    var onQueued: (() -> Void)?
+    var onQueueUpdated: (() -> Void)?
     var onChannelMessage: ((MessageUpdateType) -> Void)?
     
     init(sessionManager: NINChatSessionManager) {
@@ -58,9 +58,12 @@ final class NINChatViewModelImpl: NINChatViewModel {
         self.sessionManager.onChannelClosed = { [weak self] in
             self?.onChannelClosed?()
         }
-        self.sessionManager.onQueueUpdated = { [weak self] event, queueID, position, error in
-            self?.onQueued?()
-        }
+        self.sessionManager.bindQueueUpdate(closure: { [weak self] _, _, error in
+            guard error == nil else {
+                try? self?.sessionManager.closeChat(); return
+            }
+            self?.onQueueUpdated?()
+        }, to: self)
         self.sessionManager.onMessageAdded = { [weak self] index in
             self?.onChannelMessage?(.insert(index))
         }
@@ -175,5 +178,13 @@ extension NINChatViewModelImpl {
     
     func updateWriting(state: Bool) {
         try? self.sessionManager.update(isWriting: state, completion: { _ in })
+    }
+}
+
+// MARK: - QueueUpdateCapture
+
+extension NINChatViewModelImpl: QueueUpdateCapture {
+    var desc: String {
+        "NINChatViewModel"
     }
 }

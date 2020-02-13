@@ -86,7 +86,7 @@ class NinchatSessionManagerClosureHandlersTests: XCTestCase {
             expectation.fulfill()
         }
         
-        sessionManager.unbine(action: 0)
+        sessionManager.unbind(action: 0)
         sessionManager.onActionID?(0, nil)
         sessionManager.onActionID?(1, NinchatError(code: 0, title: "title"))
         waitForExpectations(timeout: 1.0, handler: nil)

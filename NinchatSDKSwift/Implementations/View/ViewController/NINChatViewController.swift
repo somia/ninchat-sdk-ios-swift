@@ -82,7 +82,7 @@ final class NINChatViewController: UIViewController, ViewController {
             self?.onVideoCameraTapped(with: button)
         }
         view.onAudioTapped = { [weak self] button in
-            self?.onVideoAudioTappe(with: button)
+            self?.onVideoAudioTapped(with: button)
         }
         view.onHangupTapped = { [weak self] _ in
             self?.onVideoHangupTapped()
@@ -213,7 +213,7 @@ final class NINChatViewController: UIViewController, ViewController {
         self.viewModel.onChannelClosed = { [weak self] in
             self?.disableView()
         }
-        self.viewModel.onQueued = { [weak self] in
+        self.viewModel.onQueueUpdated = { [weak self] in
             self?.disableView()
             self?.onBackToQueue?()
         }
@@ -269,7 +269,7 @@ final class NINChatViewController: UIViewController, ViewController {
     }
     
     /// The function is aimed to disconnect the RTC client on deallocation of the View Controller
-    /// Capturing `[weak self]` while deallocating result in crash
+    /// Capturing `[weak self]` while deallocation results in a crash
     private func deallocRTC() {
         self.viewModel.disconnectRTC(self.webRTCClient, completion: nil)
     }
@@ -308,8 +308,8 @@ extension NINChatViewController {
         }
     }
     
-    // Aligns (or cancels existing alignment) the input control container view's top
-    // to the screen bottom to hide the controls.
+    /// Aligns (or cancels existing alignment) the input control container view's top
+    /// to the screen bottom to hide the controls.
     private func alignInputControlsTopToScreenBottom(_ hide: Bool) {
         self.updateInputContainerHeight((hide) ? 0 : self.inputContainerHeight, update: false)
         self.inputContainer.isHidden = hide
@@ -450,7 +450,7 @@ extension NINChatViewController {
         button.isSelected = !button.isSelected
     }
     
-    private func onVideoAudioTappe(with button: UIButton) {
+    private func onVideoAudioTapped(with button: UIButton) {
         self.webRTCClient?.disableLocalAudio = button.isSelected
         self.session.log(value: "Audio disabled: \(button.isSelected)")
         

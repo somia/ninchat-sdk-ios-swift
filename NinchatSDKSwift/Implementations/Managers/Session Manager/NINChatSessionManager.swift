@@ -52,7 +52,7 @@ protocol NINChatSessionConnectionManager {
 protocol NINChatSessionMessanger {
     /**
     * Chronological list of messages on the current channel. The list is ordered by the message
-    * timestamp in decending order (most recent first).
+    * timestamp in descending order (most recent first).
     */
     var chatMessages: [NINChatMessage]! { get }
     
@@ -68,7 +68,7 @@ protocol NINChatSessionMessanger {
     /** Sends a file to the chat. */
     func send(attachment: String, data: Data, completion: @escaping CompletionWithError) throws
     
-    /** Sends a message to the activa channel. Active channel must exist. */
+    /** Sends a message to the active channel. Active channel must exist. */
     @discardableResult
     func send(type: MessageType, payload: [String:Any], completion: @escaping CompletionWithError) throws -> Int
     
@@ -89,13 +89,19 @@ protocol NINChatSessionTranslation {
     func translate(key: String, formatParams: [String:String]) -> String?
 }
 
+protocol QueueUpdateCapture {
+    var desc: String { get }
+}
+
 protocol NINChatSessionManagerDelegate {
-    var onQueueUpdated: ((Events, _ queueID: String, _ position: Int?, Error?) -> Void)? { get set }    
     var onMessageAdded: ((_ index: Int) -> Void)? { get set }
     var onMessageRemoved: ((_ index: Int) -> Void)? { get set }
     var onChannelClosed: (() -> Void)? { get set }
     var onRTCSignal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
-    var onRTCClientSingal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
+    var onRTCClientSignal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
+
+    func bindQueueUpdate<T: QueueUpdateCapture>(closure: @escaping ((Events, String, Error?) -> Void), to receiver: T)
+    func unbindQueueUpdateClosure<T: QueueUpdateCapture>(from receiver: T)
 }
 
 protocol NINChatSessionManager: class, NINChatSessionConnectionManager, NINChatSessionMessanger, NINChatSessionAttachment, NINChatSessionTranslation, NINChatSessionManagerDelegate {

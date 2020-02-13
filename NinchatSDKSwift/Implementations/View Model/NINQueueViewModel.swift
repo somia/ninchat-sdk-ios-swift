@@ -9,14 +9,14 @@ import NinchatSDK
 protocol NINQueueViewModel {
     var onInfoTextUpdate: ((String?) -> Void)? { get set }
     var onQueueJoin: ((Error?) -> Void)? { get set }
-    
+
     init(sessionManager: NINChatSessionManager, queue: NINQueue, delegate: NINChatSessionInternalDelegate?)
     func connect()
 }
 
-struct NINQueueViewModelImpl: NINQueueViewModel {
+final class NINQueueViewModelImpl: NINQueueViewModel {
     
-    private unowned let sessionManager: NINChatSessionManager
+    private unowned var sessionManager: NINChatSessionManager!
     private unowned let queue: NINQueue
     private weak var delegate: NINChatSessionInternalDelegate?
     
@@ -27,38 +27,59 @@ struct NINQueueViewModelImpl: NINQueueViewModel {
     
     init(sessionManager: NINChatSessionManager, queue: NINQueue, delegate: NINChatSessionInternalDelegate?) {
         self.sessionManager = sessionManager
-        self.queue = queue
         self.delegate = delegate
+        self.queue = queue
+
+        self.sessionManager.unbindQueueUpdateClosure(from: self)
     }
     
     func connect() {
-        do {
-            try self.sessionManager.join(queue: queue.queueID, progress: { error, progress in
-                if let error = error {
-                    self.delegate?.log(format: "Failed to join the queue: %@", error.localizedDescription)
-                    self.onQueueJoin?(error)
-                }
-                self.onInfoTextUpdate?(self.queueTextInfo(progress))
-            }, completion: {
-                self.onQueueJoin?(nil)
-            })
-        } catch {
-            self.onQueueJoin?(error)
-        }
+        self.connect(queue.queueID)
     }
 }
 
 // MARK: - Private helpers
 
 extension NINQueueViewModelImpl {
+    private func connect(_ id: String) {
+        do {
+            try self.sessionManager.join(queue: id, progress: { [unowned self] error, progress in
+                if let error = error {
+                    self.delegate?.log(format: "Failed to join the queue: %@", error.localizedDescription)
+                    self.onQueueJoin?(error)
+                }
+                self.onInfoTextUpdate?(self.queueTextInfo(progress))
+            }, completion: { [unowned self] in
+                self.onQueueJoin?(nil)
+                self.sessionManager.bindQueueUpdate(closure: { _, queueID, error in
+                    guard error == nil else {
+                        try? self.sessionManager.closeChat(); return
+                    }
+                    self.connect(queueID)
+                }, to: self)
+            })
+        } catch {
+            self.onQueueJoin?(error)
+        }
+    }
+
     private func queueTextInfo(_ progress: Int) -> String? {
         switch progress {
         case 1:
             return self.sessionManager.translate(key: Constants.kQueuePositionNext.rawValue,
-                                                 formatParams: ["audienceQueue.queue_attrs.name": "\(progress)"])
+                                                 formatParams: ["audienceQueue.queue_attrs.name": "\(queue.name ?? "")"])
         default:
             return self.sessionManager.translate(key: Constants.kQueuePositionN.rawValue,
-                                                 formatParams: ["audienceQueue.queue_position": "\(progress)"])
+                                                 formatParams: ["audienceQueue.queue_attrs.name": "\(queue.name ?? "")",
+                                                                "audienceQueue.queue_position": "\(progress)"])
         }
+    }
+}
+
+// MARK: - QueueUpdateCapture
+
+extension NINQueueViewModelImpl: QueueUpdateCapture {
+    var desc: String {
+        "NINQueueViewModel"
     }
 }

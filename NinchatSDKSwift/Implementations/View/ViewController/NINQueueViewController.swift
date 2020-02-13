@@ -68,8 +68,12 @@ final class NINQueueViewController: UIViewController, ViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.setupViewModel()
         self.overrideAssets()
-        
+    }
+    
+
+    private func setupViewModel() {
         self.viewModel.onInfoTextUpdate = { [weak self] text in
             DispatchQueue.main.async {
                 self?.queueInfoTextView.setFormattedText(text ?? "")
@@ -84,7 +88,6 @@ final class NINQueueViewController: UIViewController, ViewController {
         }
         self.viewModel.connect()
     }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.addKeyboardListeners()

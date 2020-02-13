@@ -33,14 +33,18 @@ final class NINChatSessionManagerImpl: NINChatSessionManager, NINChatSessionMana
     // MARK: - NINChatSessionManagerInternalActions
     
     internal var onActionSessionEvent: ((Events, Error?) -> Void)?
-    internal var actionBindedClosures: [Int:((Error?) -> Void)] = [:]
     internal var onActionID: ((Int, Error?) -> Void)?
     internal var onProgress: ((String, Int, Events, Error?) -> Void)?
     internal var onChannelJoined: Completion?
     internal var onActionSevers: ((Int, [NINWebRTCServerInfo]?, [NINWebRTCServerInfo]?) -> Void)?
     internal var onActionFileInfo: ((Int, [String:Any]?, Error?) -> Void)?
     internal var onActionChannel: ((Int, String) -> Void)?
-    
+
+    // MARK: - NINChatSessionManagerClosureHandler
+
+    internal var actionBoundClosures: [Int:((Error?) -> Void)] = [:]
+    internal var queueUpdateBoundClosures: [String:((Events, String, Error?) -> Void)] = [:]
+
     // MARK: - NINChatSessionConnectionManager variables
     
     var session: NINLowLevelClientSession?
@@ -48,19 +52,27 @@ final class NINChatSessionManagerImpl: NINChatSessionManager, NINChatSessionMana
         return self.session != nil
     }
     
-    // MARK: - NINChatSessionMessanger variables
+    // MARK: - NINChatSessionManager variables
     
     var chatMessages: [NINChatMessage]! = []
     
     // MARK: - NINChatSessionManagerDelegate
-    
-    var onQueueUpdated: ((Events, String, Int?, Error?) -> Void)?
+
     var onMessageAdded: ((_ index: Int) -> Void)?
     var onMessageRemoved: ((_ index: Int) -> Void)?
     var onChannelClosed: (() -> Void)?
     var onRTCSignal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)?
-    var onRTCClientSingal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)?
-    
+    var onRTCClientSignal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)?
+
+    func bindQueueUpdate<T: QueueUpdateCapture>(closure: @escaping ((Events, String, Error?) -> Void), to receiver: T) {
+        guard queueUpdateBoundClosures.keys.filter({ $0 == receiver.desc }).count == 0 else { return }
+        queueUpdateBoundClosures[receiver.desc] = closure
+    }
+
+    func unbindQueueUpdateClosure<T: QueueUpdateCapture>(from receiver: T) {
+        self.queueUpdateBoundClosures.removeValue(forKey: receiver.desc)
+    }
+
     // MARK: - NINChatSessionManager
     
     weak var delegate: NINChatSessionInternalDelegate?
@@ -210,14 +222,15 @@ extension NINChatSessionManagerImpl {
                     progress(error, -1)
                 }
             }
+
             self.onProgress = { [weak self] queueID, position, event, error in
-                if event == .queueUpdated, self?.currentQueueID == queueID {
+                if (event == .queueUpdated || event == .audienceEnqueued), self?.currentQueueID == queueID {
                     progress(error, position)
                 }
             }
         }
         
-        if let currentChannel = currentChannelID {
+        if let currentChannel = self.currentChannelID {
             delegate?.log(value: "Parting current channel first")
             
             try self.part(channel: currentChannel) { [unowned self] error in
@@ -287,7 +300,7 @@ extension NINChatSessionManagerImpl {
     }
 }
 
-// MARK: - NINChatSessionMessanger
+// MARK: - NINChatSessionMessenger
 
 extension NINChatSessionManagerImpl {
     func update(isWriting: Bool, completion: @escaping CompletionWithError) throws {
@@ -353,7 +366,7 @@ extension NINChatSessionManagerImpl {
         }
     }
     
-    /// Sends a message to the activa channel. Active channel must exist.
+    /// Sends a message to the active channel. Active channel must exist.
     @discardableResult
     func send(type: MessageType, payload: [String:Any], completion: @escaping CompletionWithError) throws -> Int {
         guard let session = self.session else { throw NINSessionExceptions.noActiveSession }

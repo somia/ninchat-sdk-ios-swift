@@ -51,14 +51,14 @@ extension NINChatSessionManagerImpl {
                 guard self.currentQueueID == nil else { throw NINSessionExceptions.hasActiveQueue }
                 
                 self.currentQueueID = queueID
-                self.onQueueUpdated?(type, queueID, position, nil)
+                self.queueUpdateBoundClosures.values.forEach({ $0(type, queueID, nil) })
             }
             
             if actionID != 0 || type == .queueUpdated {
                 self.onProgress?(queueID, position, type, nil)
             }
         } catch {
-            self.onQueueUpdated?(type, queueID, nil, error)
+            self.queueUpdateBoundClosures.values.forEach({ $0(type, queueID, error) })
         }
     }
     
@@ -145,7 +145,6 @@ extension NINChatSessionManagerImpl {
         let actionID = try param.actionID()
         let channelID = param.channelID()
         
-        /// No body is listening to this closure, so, what? :D
         self.onActionChannel?(actionID, channelID)
     }
     
@@ -169,7 +168,7 @@ extension NINChatSessionManagerImpl {
     }
     
     /// Processes the response to the WebRTC connectivity ICE query
-   internal func didBeginICE(param: NINLowLevelClientProps) throws {
+    internal func didBeginICE(param: NINLowLevelClientProps) throws {
         let actionID = try param.actionID()
         
         do {
@@ -204,7 +203,7 @@ extension NINChatSessionManagerImpl {
         }
     }
    
-   internal func parse(userAttr: NINLowLevelClientProps, userID: String) -> NINChannelUser? {
+    internal func parse(userAttr: NINLowLevelClientProps, userID: String) -> NINChannelUser? {
         do {
             return NINChannelUser(id: userID, realName: userAttr.userAttributes_RealName(), displayName: userAttr.userAttributes_DisplayName(), iconURL: userAttr.userAttributes_IconURL(), guest: try userAttr.userAttributes_IsGuest())
         } catch {
@@ -330,7 +329,10 @@ extension NINChatSessionManagerImpl {
         
         do {
             let actionID = try session.send(param)
-            self.bind(action: actionID, closure: completion)
+            self.onActionChannel = { [weak self] id, channelID in
+                guard actionID == id else { return }
+                completion(nil)
+            }
         } catch {
             completion(error)
         }
@@ -375,7 +377,7 @@ extension NINChatSessionManagerImpl {
                     if  [.offer, .call, .pickup, .hangup].filter({ $0 == messageType }).count > 0 {
                         self?.onRTCSignal?(messageType, messageUser, signal)
                     } else if [.candidate, .answer].filter({ $0 == messageType }).count > 0 {
-                        self?.onRTCClientSingal?(messageType, messageUser, signal)
+                        self?.onRTCClientSignal?(messageType, messageUser, signal)
                     }
                 case .failure(let error):
                     throw error

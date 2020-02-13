@@ -98,7 +98,7 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
         guard self.sessionManager != nil else { throw NINSessionExceptions.noActiveSession }
         
         debugger("WebRTC: Starting..")
-        sessionManager?.onRTCClientSingal = { [weak self] type, user, signal in
+        sessionManager?.onRTCClientSignal = { [weak self] type, user, signal in
             switch type {
             case .candidate:
                 self?.peerConnection?.add(RTCIceCandidate.fromDictionary(signal?.candidate))
