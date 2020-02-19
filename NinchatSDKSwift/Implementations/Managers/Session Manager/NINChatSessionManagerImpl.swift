@@ -15,9 +15,10 @@ protocol NINChatSessionManagerInternalActions {
     var onActionSevers: ((_ actionID: Int, _ stunServers: [NINWebRTCServerInfo]?, _ turnServers: [NINWebRTCServerInfo]?) -> Void)? { get set }
     var onActionFileInfo: ((_ actionID: Int, _ fileInfo: [String:Any]?, Error?) -> Void)? { get set }
     var onActionChannel: ((_ actionID: Int, _ channelID: String) -> Void)? { get set }
+    var didEndSession: (() -> Void)? { get set }
 }
 
-final class NINChatSessionManagerImpl: NINChatSessionManager, NINChatSessionManagerInternalActions {
+final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatSessionManagerInternalActions {
     internal let serverAddress: String
     internal let siteSecret: String?
     internal let audienceMetadata: NINLowLevelClientProps?
@@ -39,7 +40,8 @@ final class NINChatSessionManagerImpl: NINChatSessionManager, NINChatSessionMana
     internal var onActionSevers: ((Int, [NINWebRTCServerInfo]?, [NINWebRTCServerInfo]?) -> Void)?
     internal var onActionFileInfo: ((Int, [String:Any]?, Error?) -> Void)?
     internal var onActionChannel: ((Int, String) -> Void)?
-
+    internal var didEndSession: (() -> Void)?
+    
     // MARK: - NINChatSessionManagerClosureHandler
 
     internal var actionBoundClosures: [Int:((Error?) -> Void)] = [:]
@@ -84,8 +86,8 @@ final class NINChatSessionManagerImpl: NINChatSessionManager, NINChatSessionMana
     var audienceQueues: [NINQueue]! = []
     var siteConfiguration: NINSiteConfiguration!
     var appDetails: String?
-    
-    init(session: NINChatSessionInternalDelegate, serverAddress: String, siteSecret: String? = nil, audienceMetadata: NINLowLevelClientProps? = nil) {
+
+    init(session: NINChatSessionInternalDelegate?, serverAddress: String, siteSecret: String? = nil, audienceMetadata: NINLowLevelClientProps? = nil) {
         self.delegate = session
         self.serverAddress = serverAddress
         self.siteSecret = siteSecret
@@ -183,7 +185,7 @@ extension NINChatSessionManagerImpl {
 
         let param = NINLowLevelClientProps.initiate
         param.set_realmQueues()
-        param.set(releamID: realmID!)
+        param.set(realmID: realmID!)
         if let queues = ID {
             param.set(queues: queues.reduce(into: NINLowLevelClientStrings.initiate) { list, id in
                 list.append(id)
@@ -211,7 +213,7 @@ extension NINChatSessionManagerImpl {
                 guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
                 
                 let param = NINLowLevelClientProps.initiate
-                param.set_requestAudeience()
+                param.set_requestAudience()
                 param.set(queue: ID)
                 if let audienceMetadata = self.audienceMetadata {
                     param.set(metadata: audienceMetadata)
@@ -248,7 +250,7 @@ extension NINChatSessionManagerImpl {
     func leave(completion: @escaping CompletionWithError) {
         guard self.currentQueueID != nil else {
             delegate?.log(value: "Error: tried to leave current queue but not in queue currently!")
-            return
+            completion(nil); return
         }
         
         delegate?.log(value: "Leaving current queue.")
@@ -283,6 +285,7 @@ extension NINChatSessionManagerImpl {
             
             /// Signal the delegate that our session has ended
             self.delegate?.onDidEnd()
+            self.didEndSession?()
         }
     }
     
@@ -338,7 +341,7 @@ extension NINChatSessionManagerImpl {
     func send(action: NINComposeContentView, completion: @escaping CompletionWithError) throws {
         guard self.session != nil else { throw NINSessionExceptions.noActiveSession }
         
-        try self.send(type: .uiAction, payload: ["action": "click", "target": action.composeMessageDict], completion: completion)
+        try self.send(type: .uiAction, payload: ["action": "click", "target": action.composeMessageDict!], completion: completion)
     }
     
     func send(attachment: String, data: Data, completion: @escaping CompletionWithError) throws {
@@ -414,8 +417,6 @@ extension NINChatSessionManagerImpl {
         
         do {
             let actionID = try session.send(param)
-            
-            /// When this action completes, trigger the completion block callback
             self.bind(action: actionID, closure: completion)
         } catch {
             completion(error)

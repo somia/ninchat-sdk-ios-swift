@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1130"
-   version = "1.3">
+   version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
-            buildForTesting = "YES">
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "855B9F19238ECDB30081A9C6"
-               BuildableName = "NinchatSDKSwiftTests.xctest"
-               BlueprintName = "NinchatSDKSwiftTests"
+               BlueprintIdentifier = "85B72A9223F57ADF00D1C4BC"
+               BuildableName = "NinchatSDKSwiftServerTests.xctest"
+               BlueprintName = "NinchatSDKSwiftServerTests"
                ReferencedContainer = "container:NinchatSDKSwift.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -22,17 +25,22 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES">
+      shouldUseLaunchSchemeArgsEnv = "NO">
       <Testables>
          <TestableReference
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "855B9F19238ECDB30081A9C6"
-               BuildableName = "NinchatSDKSwiftTests.xctest"
-               BlueprintName = "NinchatSDKSwiftTests"
+               BlueprintIdentifier = "85B72A9223F57ADF00D1C4BC"
+               BuildableName = "NinchatSDKSwiftServerTests.xctest"
+               BlueprintName = "NinchatSDKSwiftServerTests"
                ReferencedContainer = "container:NinchatSDKSwift.xcodeproj">
             </BuildableReference>
+            <SelectedTests>
+               <Test
+                  Identifier = "NinchatXCTestCase">
+               </Test>
+            </SelectedTests>
          </TestableReference>
       </Testables>
    </TestAction>

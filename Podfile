@@ -19,3 +19,7 @@ end
 target 'NinchatSDKSwiftTests' do
     all_pods
 end
+
+target 'NinchatSDKSwiftServerTests' do
+  all_pods
+end

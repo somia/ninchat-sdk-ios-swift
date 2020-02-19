@@ -62,7 +62,7 @@ final class ChatChannelCell: UITableViewCell, ChatCell {
             }
         }
         get {
-            return self.composeMessageView.uiComposeSendPressedCallback
+            self.composeMessageView.uiComposeSendPressedCallback
         }
     }
     var onComposeUpdateTapped: (([Any]?) -> Void)?

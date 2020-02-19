@@ -184,7 +184,7 @@ extension NINLowLevelClientProps {
         self.setString("action", val: "describe_realm_queues")
     }
     
-    func set(releamID id: String) {
+    func set(realmID id: String) {
         self.setString("realm_id", val: id)
     }
     
@@ -192,7 +192,7 @@ extension NINLowLevelClientProps {
         self.setStringArray("queue_ids", ref: id)
     }
     
-    func set_requestAudeience() {
+    func set_requestAudience() {
         self.setString("action", val: "request_audience")
     }
     

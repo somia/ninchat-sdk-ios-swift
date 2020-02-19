@@ -312,7 +312,12 @@ extension NINChatSessionManagerImpl {
         }
         
         chatMessages.insert(message, at: 0)
-        chatMessages.sort { $0.timestamp.compare($1.timestamp) == .orderedDescending }
+        chatMessages.sort {
+            if let msg1 = $0 as? NINChannelMessage, let msg2 = $1 as? NINChannelMessage {
+                return msg1.messageID.compare(msg2.messageID) == .orderedDescending
+            }
+            return $0.timestamp.compare($1.timestamp) == .orderedDescending
+        }
         self.onMessageAdded?((chatMessages as NSArray).index(of: message))
     }
     
@@ -329,7 +334,7 @@ extension NINChatSessionManagerImpl {
         
         do {
             let actionID = try session.send(param)
-            self.onActionChannel = { [weak self] id, channelID in
+            self.onActionChannel = { id, channelID in
                 guard actionID == id else { return }
                 completion(nil)
             }
@@ -363,7 +368,7 @@ extension NINChatSessionManagerImpl {
         let messageTime = try param.messageTime()
         let messageUser = self.channelUsers[messageUserID]
         
-        let messageType = param.messageType()!
+        guard let messageType = param.messageType() else { return }
         switch messageType {
         case .candidate, .answer, .offer, .call, .pickup, .hangup:
             /// This message originates from me; we can ignore it.
@@ -469,10 +474,7 @@ extension NINChatSessionManagerImpl {
         /// Update to use JSON decode as soon as we find how the function works
         debugger("Received a Part message with payload: \(payload)")
     }
-    
-    /*
-    Event: map[event_id:2 action_id:1 channel_id:5npnrkp1009n error_type:channel_not_found event:error]
-    */
+ 
     internal func handlerError(param: NINLowLevelClientProps) throws {
         let actionID = try param.actionID()
         

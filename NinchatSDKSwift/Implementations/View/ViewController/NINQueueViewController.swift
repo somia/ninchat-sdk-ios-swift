@@ -71,23 +71,7 @@ final class NINQueueViewController: UIViewController, ViewController {
         self.setupViewModel()
         self.overrideAssets()
     }
-    
 
-    private func setupViewModel() {
-        self.viewModel.onInfoTextUpdate = { [weak self] text in
-            DispatchQueue.main.async {
-                self?.queueInfoTextView.setFormattedText(text ?? "")
-            }
-        }
-        self.viewModel.onQueueJoin = { [weak self] error in
-            guard error == nil else { return }
-            
-            DispatchQueue.main.async {
-                self?.onQueueActionTapped?()
-            }
-        }
-        self.viewModel.connect()
-    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.addKeyboardListeners()
@@ -97,6 +81,22 @@ final class NINQueueViewController: UIViewController, ViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.removeKeyboardListeners()
+    }
+
+    private func setupViewModel() {
+        self.viewModel.onInfoTextUpdate = { [weak self] text in
+            DispatchQueue.main.async {
+                self?.queueInfoTextView.setFormattedText(text ?? "")
+            }
+        }
+        self.viewModel.onQueueJoin = { [weak self] error in
+            guard error == nil else { return }
+
+            DispatchQueue.main.async {
+                self?.onQueueActionTapped?()
+            }
+        }
+        self.viewModel.connect()
     }
 }
 

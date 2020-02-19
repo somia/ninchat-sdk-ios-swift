@@ -114,7 +114,7 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
         }
         
         /// Configure & create our RTC peer connection
-        debugger("Configuring & initializing RTC Peer Connectiong")
+        debugger("Configuring & initializing RTC Peer Connection")
         let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: ["DtlsSrtpKeyAgreement": "true"])
         let configuration = RTCConfiguration()
         configuration.iceServers = self.iceServers ?? []
@@ -185,9 +185,7 @@ extension NINChatWebRTCClientImpl {
     private func startLocalCapture() {
         DispatchQueue.main.async {
             let availableDevices = RTCCameraVideoCapturer.captureDevices()
-            guard let device = availableDevices.filter({ $0.position == .front }).first ?? availableDevices.first else {
-                fatalError("Failed to find device")
-            }
+            guard let device = availableDevices.filter({ $0.position == .front }).first ?? availableDevices.first else { return }
             
             /// We will try to find closest match for this video dimension
             let targetDimension = CGSize(width: 640, height: 480)

@@ -85,7 +85,7 @@ extension NINChatViewModelImpl {
                 onCallReceived(user)
             
             case .offer:
-                debugger("Got WebRTC offer - initializing webrtc for video call (answer)")
+                debugger("Got WebRTC offer - initializing WebRTC for video call (answer)")
                 
                 do {
                     try self?.sessionManager.beginICE { error, stunServers, turnServers in

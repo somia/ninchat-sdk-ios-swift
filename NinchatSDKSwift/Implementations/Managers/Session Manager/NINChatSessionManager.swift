@@ -24,7 +24,7 @@ protocol NINChatSessionConnectionManager {
     /** Whether or not this session is connected. */
     var connected: Bool! { get }
     
-    /** Fetchs site's configuration using given `server address` in the initialization */
+    /** Fetch site's configuration using given `server address` in the initialization */
     func fetchSiteConfiguration(config key: String, environments: [String]?, completion: @escaping CompletionWithError)
     
     /** Opens the session with an asynchronous completion callback. */
@@ -49,7 +49,7 @@ protocol NINChatSessionConnectionManager {
     func finishChat(rating status: ChatStatus?) throws
 }
 
-protocol NINChatSessionMessanger {
+protocol NANChatSessionMessenger {
     /**
     * Chronological list of messages on the current channel. The list is ordered by the message
     * timestamp in descending order (most recent first).
@@ -104,7 +104,7 @@ protocol NINChatSessionManagerDelegate {
     func unbindQueueUpdateClosure<T: QueueUpdateCapture>(from receiver: T)
 }
 
-protocol NINChatSessionManager: class, NINChatSessionConnectionManager, NINChatSessionMessanger, NINChatSessionAttachment, NINChatSessionTranslation, NINChatSessionManagerDelegate {
+protocol NINChatSessionManager: class, NINChatSessionConnectionManager, NANChatSessionMessenger, NINChatSessionAttachment, NINChatSessionTranslation, NINChatSessionManagerDelegate {
     /** List of available queues for the realm_id. */
     var queues: [NINQueue]! { get set }
     
@@ -122,5 +122,5 @@ protocol NINChatSessionManager: class, NINChatSessionConnectionManager, NINChatS
     */
     var appDetails: String? { get set }
     
-    init(session: NINChatSessionInternalDelegate, serverAddress: String, siteSecret: String?, audienceMetadata: NINLowLevelClientProps?)
+    init(session: NINChatSessionInternalDelegate?, serverAddress: String, siteSecret: String?, audienceMetadata: NINLowLevelClientProps?)
 }

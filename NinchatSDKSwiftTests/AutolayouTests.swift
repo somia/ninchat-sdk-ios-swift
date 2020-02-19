@@ -7,7 +7,7 @@
 import XCTest
 @testable import NinchatSDKSwift
 
-class AutolayouTests: XCTestCase {
+class AutolayoutTests: XCTestCase {
     var superView: UIView!
     var view: UIView!
     
