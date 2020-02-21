@@ -122,7 +122,7 @@ extension NINChatSessionManagerImpl {
 
         /// Extract the channel members' data
         do {
-            let parser = NINClientPropsParser()
+            let parser = NINChatClientPropsParser()
             let members = try param.channelMembers()
             try members.accept(parser)
             
