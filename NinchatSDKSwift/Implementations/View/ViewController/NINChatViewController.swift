@@ -90,8 +90,8 @@ final class NINChatViewController: UIViewController, ViewController {
         
         return view
     }()
-    @IBOutlet private weak var videoContainerHeight: NSLayoutConstraint!
-    @IBOutlet private weak var videoContainer: UIView! {
+    @IBOutlet private(set) weak var videoContainerHeight: NSLayoutConstraint!
+    @IBOutlet private(set) weak var videoContainer: UIView! {
         didSet {
             videoContainer.addSubview(videoView)
             videoView
@@ -100,8 +100,8 @@ final class NINChatViewController: UIViewController, ViewController {
         }
     }
     
-    @IBOutlet private weak var chatContainerHeight: NSLayoutConstraint!
-    @IBOutlet private weak var chatView: ChatView! {
+    @IBOutlet private(set) weak var chatContainerHeight: NSLayoutConstraint!
+    @IBOutlet private(set) weak var chatView: ChatView! {
         didSet {
             chatView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(sender:))))
             chatView.sessionManager = self.session.sessionManager
@@ -109,7 +109,7 @@ final class NINChatViewController: UIViewController, ViewController {
             chatView.dataSource = self.chatDataSourceDelegate
         }
     }
-    @IBOutlet private weak var closeChatButton: CloseButton! {
+    @IBOutlet private(set) weak var closeChatButton: CloseButton! {
         didSet {
             let closeTitle = self.session.sessionManager.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
             closeChatButton.buttonTitle = closeTitle
@@ -153,7 +153,7 @@ final class NINChatViewController: UIViewController, ViewController {
     
     override var prefersStatusBarHidden: Bool {
         // Prefer no status bar if video is active
-        return webRTCClient != nil
+        webRTCClient != nil
     }
     
     override func viewDidLoad() {
@@ -237,12 +237,12 @@ final class NINChatViewController: UIViewController, ViewController {
             confirmVideoDialog.user = channel
             confirmVideoDialog.session = self.session
             confirmVideoDialog.onViewAction = { [weak self] action in
-                confirmVideoDialog.hideConfrimView()
+                confirmVideoDialog.hideConfirmView()
                 self?.viewModel.pickup(answer: action == .confirm) { error in
                     if error != nil { NINToast.showWithErrorMessage("failed to send WebRTC pickup message", callback: nil) }
                 }
             }
-            confirmVideoDialog.showConfrimView(on: self.view)
+            confirmVideoDialog.showConfirmView(on: self.view)
 
         }, onCallInitiated: { [weak self] error, rtcClinet in
             self?.webRTCClient = rtcClinet
@@ -398,13 +398,13 @@ extension NINChatViewController {
         let confirmCloseDialog: ConfirmCloseChatView = ConfirmCloseChatView.loadFromNib()
         confirmCloseDialog.session = self.session
         confirmCloseDialog.onViewAction = { [weak self] action in
-            confirmCloseDialog.hideConfrimView()
+            confirmCloseDialog.hideConfirmView()
             guard action == .confirm else { return }
             
             self?.disconnectRTC()
             self?.onChatClosed?()
         }
-        confirmCloseDialog.showConfrimView(on: self.view)
+        confirmCloseDialog.showConfirmView(on: self.view)
     }
     
     // MARK: - Message

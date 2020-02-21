@@ -49,8 +49,11 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
     func onSessionEvent(param: NINLowLevelClientProps) {
         do {
             let event = try param.event()
+            print("session event handler: \(event)")
             if let eventType = Events(rawValue: event) {
                 switch eventType {
+                case .error:
+                    self.onActionSessionEvent?(eventType, param.error())
                 case .sessionCreated:
                     self.myUserID = param.userID()
                     self.delegate?.log(value: "Session created - my user ID is: \(String(describing: self.myUserID))")

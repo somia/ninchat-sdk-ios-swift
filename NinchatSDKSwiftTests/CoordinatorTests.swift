@@ -16,7 +16,7 @@ class CoordinatorTests: XCTestCase {
         coordinator = NINCoordinator(with: session)
     }
 
-    override func tearDown() {}
+    override func tearDown() { }
     
     func testStoryboardAccess() {
         let joinViewController: NINQueueViewController = coordinator.storyboard.instantiateViewController()
@@ -47,6 +47,7 @@ class CoordinatorTests: XCTestCase {
     func testInitialViewController_queueOptions() {
         let vc = coordinator.showJoinOptions() as? NINInitialViewController
         XCTAssertNotNil(vc)
+        XCTAssertNotNil(vc?.onQueueActionTapped)
     }
     
     func testChatViewController() {

@@ -144,7 +144,7 @@ extension NINChatSessionManagerImpl {
         
         /// Wait for the session creation event
         self.onActionSessionEvent = { event, error in
-            if event == .sessionCreated { completion(error) }
+            completion(error)
         }
         
         /// Create message throttler to manage inbound message order

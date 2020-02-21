@@ -14,22 +14,22 @@ protocol ConfirmVideoCallViewProtocol: ConfirmView {
 final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol {
     
     // MARK: - Outlets
-    @IBOutlet private weak var headerContainerView: UIView!
-    @IBOutlet private weak var bottomContainerView: UIView!
-    @IBOutlet private weak var titleLabel: UILabel!
-    @IBOutlet private weak var avatarImageView: UIImageView! {
+    @IBOutlet private(set) weak var headerContainerView: UIView!
+    @IBOutlet private(set) weak var bottomContainerView: UIView!
+    @IBOutlet private(set) weak var titleLabel: UILabel!
+    @IBOutlet private(set) weak var avatarImageView: UIImageView! {
         didSet {
             avatarImageView.round()
         }
     }
-    @IBOutlet private weak var usernameLabel: UILabel!
-    @IBOutlet private weak var infoLabel: UILabel!
-    @IBOutlet private weak var acceptButton: Button! {
+    @IBOutlet private(set) weak var usernameLabel: UILabel!
+    @IBOutlet private(set) weak var infoLabel: UILabel!
+    @IBOutlet private(set) weak var acceptButton: Button! {
         didSet {
             acceptButton.round(1.0)
         }
     }
-    @IBOutlet private weak var rejectButton: Button! {
+    @IBOutlet private(set) weak var rejectButton: Button! {
         didSet {
             rejectButton.round(1.0, .defaultBackgroundButton)
         }

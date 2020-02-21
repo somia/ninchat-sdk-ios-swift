@@ -15,17 +15,17 @@ extension NINChatSessionManagerImpl {
         delegate?.log(value: "Realm queues found - flushing list of previously available queues.")
         queues.removeAll()
         
-        let queuesParser = NINClientPropsParser()
+        let queuesParser = NINChatClientPropsParser()
         let actionID = try param.actionID()
-        
+    
         do {
             let realmQueues = try param.realmQueue()
             try realmQueues.accept(queuesParser)
-            
+        
             self.queues = queuesParser.properties.keys.compactMap({ key in
                 NINQueue(id: key, andName: try? realmQueues.getObject(key).queueAttributes_Name())
             })
-            
+        
             /// Form the list of audience queues; if audienceQueues is specified in siteConfig, we use those;
             /// if not, we use the complete list of queues.
             if let audienceQueueIDs = self.siteConfiguration.audienceQueues {

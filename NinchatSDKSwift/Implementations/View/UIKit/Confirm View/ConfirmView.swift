@@ -6,26 +6,28 @@
 
 import UIKit
 
-enum ConfrimAction {
+enum ConfirmAction {
     case confirm
     case cancel
 }
 
 protocol ConfirmView where Self:UIView {
-    typealias OnViewAction = ((ConfrimAction) -> Void)
+    typealias OnViewAction = ((ConfirmAction) -> Void)
     var onViewAction: OnViewAction? { get set }
     var session: NINChatSessionSwift? { get set }
     
-    func showConfrimView(on view: UIView)
-    func hideConfrimView()
+    func showConfirmView(on view: UIView)
+    func hideConfirmView()
     func overrideAssets()
 }
 
+final class FadeView: UIView {}
+
 extension ConfirmView {
-    func showConfrimView(on view: UIView) {
-        let faderView = self.faderView(on: view)
-        view.addSubview(faderView)
-        faderView
+    func showConfirmView(on view: UIView) {
+        let fadeView = self.fadeView(on: view)
+        view.addSubview(fadeView)
+        fadeView
             .fix(left: (0, view), right: (0, view), isRelative: false)
             .fix(top: (0, view), bottom: (0, view), isRelative: false)
         
@@ -40,11 +42,10 @@ extension ConfirmView {
         })
     }
     
-    /// Create a "fader" view to fade out the background a bit and constrain it to match the view
-    private func faderView(on target: UIView) -> UIView {
-        let view = UIView(frame: target.bounds)
-        view.backgroundColor = UIColor(white: 0.0, alpha: 1.0)
-        view.alpha = 0.0
+    /// Create a "fade" view to fade out the background a bit and constrain it to match the view
+    private func fadeView(on target: UIView) -> UIView {
+        let view = FadeView(frame: target.bounds)
+        view.backgroundColor = UIColor(white: 0.0, alpha: 0.0)
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector(("onDismissTapped:"))))
         
         return view
@@ -52,10 +53,11 @@ extension ConfirmView {
 }
 
 extension ConfirmView {
-    func hideConfrimView() {
+    func hideConfirmView() {
         self.hide(true, withActions: { [weak self] in
             self?.transform = CGAffineTransform(translationX: 0, y: -(self?.bounds.height ?? 0))
         }, andCompletion: { [weak self] in
+            self?.superview?.subviews.compactMap { $0 as? FadeView }.forEach { $0.removeFromSuperview() }
             self?.removeFromSuperview()
         })
     }

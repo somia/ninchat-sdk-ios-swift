@@ -19,9 +19,9 @@ final class NINInitialViewController: UIViewController, ViewController {
     
     // MARK: - Outlets
     
-    @IBOutlet private weak var topContainerView: UIView!
-    @IBOutlet private weak var bottomContainerView: UIView!
-    @IBOutlet private weak var welcomeTextView: UITextView! {
+    @IBOutlet private(set) weak var topContainerView: UIView!
+    @IBOutlet private(set) weak var bottomContainerView: UIView!
+    @IBOutlet private(set) weak var welcomeTextView: UITextView! {
         didSet {
             if let welcomeText = self.session.sessionManager.siteConfiguration.welcome {
                 welcomeTextView.setFormattedText(welcomeText)
@@ -29,8 +29,8 @@ final class NINInitialViewController: UIViewController, ViewController {
             }
         }
     }
-    @IBOutlet private weak var queueButtonsStackView: UIStackView!
-    @IBOutlet private weak var closeWindowButton: Button! {
+    @IBOutlet private(set) weak var queueButtonsStackView: UIStackView!
+    @IBOutlet private(set) weak var closeWindowButton: Button! {
         didSet {
             if let closeText = self.session.sessionManager.translate(key: Constants.kCloseWindowText.rawValue, formatParams: [:]) {
                 closeWindowButton.setTitle(closeText, for: .normal)
@@ -38,7 +38,7 @@ final class NINInitialViewController: UIViewController, ViewController {
             closeWindowButton.round(1, .defaultBackgroundButton)
         }
     }
-    @IBOutlet private weak var motdTextView: UITextView! {
+    @IBOutlet private(set) weak var motdTextView: UITextView! {
         didSet {
             if let motdText = self.session.sessionManager.siteConfiguration.motd {
                 motdTextView.setFormattedText(motdText)

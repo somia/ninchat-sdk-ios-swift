@@ -11,16 +11,16 @@ final class ConfirmCloseChatView: UIView, ConfirmView {
     
     // MARK: - Outlets
     
-    @IBOutlet private weak var headerContainerView: UIView!
-    @IBOutlet private weak var bottomContainerView: UIView!
-    @IBOutlet private weak var titleLabel: UILabel!
-    @IBOutlet private weak var infoTextView: UITextView!
-    @IBOutlet private weak var confirmButton: Button! {
+    @IBOutlet private(set) weak var headerContainerView: UIView!
+    @IBOutlet private(set) weak var bottomContainerView: UIView!
+    @IBOutlet private(set) weak var titleLabel: UILabel!
+    @IBOutlet private(set) weak var infoTextView: UITextView!
+    @IBOutlet private(set) weak var confirmButton: Button! {
         didSet {
             confirmButton.round(1.0)
         }
     }
-    @IBOutlet private weak var cancelButton: Button! {
+    @IBOutlet private(set) weak var cancelButton: Button! {
         didSet {
             cancelButton.round(1.0, .defaultBackgroundButton)
         }

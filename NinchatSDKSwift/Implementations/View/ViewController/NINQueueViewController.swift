@@ -25,10 +25,10 @@ final class NINQueueViewController: UIViewController, ViewController {
     
     // MARK: - Outlets
     
-    @IBOutlet private weak var topContainerView: UIView!
-    @IBOutlet private weak var bottomContainerView: UIView!
-    @IBOutlet private weak var spinnerImageView: UIImageView!
-    @IBOutlet private weak var queueInfoTextView: UITextView! {
+    @IBOutlet private(set) weak var topContainerView: UIView!
+    @IBOutlet private(set) weak var bottomContainerView: UIView!
+    @IBOutlet private(set) weak var spinnerImageView: UIImageView!
+    @IBOutlet private(set) weak var queueInfoTextView: UITextView! {
         didSet {
             if let textTopColor = self.session.override(colorAsset: .textTop) {
                 self.queueInfoTextView.textColor = textTopColor
@@ -37,7 +37,7 @@ final class NINQueueViewController: UIViewController, ViewController {
             queueInfoTextView.delegate = self
         }
     }
-    @IBOutlet private weak var motdTextView: UITextView! {
+    @IBOutlet private(set) weak var motdTextView: UITextView! {
         didSet {
             if let queueText = self.sessionManager.siteConfiguration.inQueue {
                 motdTextView.setFormattedText(queueText)
@@ -47,7 +47,7 @@ final class NINQueueViewController: UIViewController, ViewController {
             motdTextView.delegate = self
         }
     }
-    @IBOutlet private weak var closeChatButton: CloseButton! {
+    @IBOutlet private(set) weak var closeChatButton: CloseButton! {
         didSet {
             let closeTitle = self.session.sessionManager.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
             closeChatButton.buttonTitle = closeTitle

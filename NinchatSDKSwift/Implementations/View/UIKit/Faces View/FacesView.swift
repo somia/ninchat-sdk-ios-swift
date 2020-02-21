@@ -74,15 +74,15 @@ final class FacesView: UIView, FacesViewProtocol {
     
     // MARK: - User actions
     
-    @IBAction private func onPositiveButtonTapped(sender: UIButton) {
+    @IBAction internal func onPositiveButtonTapped(sender: UIButton) {
         self.onPositiveTapped?(sender)
     }
     
-    @IBAction private func onNeutralButtonTapped(sender: UIButton) {
+    @IBAction internal func onNeutralButtonTapped(sender: UIButton) {
         self.onNeutralTapped?(sender)
     }
     
-    @IBAction private func onNegativeButtonTapped(sender: UIButton) {
+    @IBAction internal func onNegativeButtonTapped(sender: UIButton) {
         self.onNegativeTapped?(sender)
     }
 }
