@@ -3,6 +3,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 //
+
 import UIKit
 
 protocol NINFullScreenViewModel {
@@ -10,7 +11,7 @@ protocol NINFullScreenViewModel {
     func download(image: UIImage, completion: @escaping ((Error?) -> Void))
 }
 
-final class NINFullScreenViewModelImpl: NINFullScreenViewModel {
+final class NINFullScreenViewModelImpl: NSObject, NINFullScreenViewModel {
     
     private weak var delegate: NINChatSessionInternalDelegate?
     private var downloadCompletion: ((Error?) -> Void)?
@@ -20,16 +21,16 @@ final class NINFullScreenViewModelImpl: NINFullScreenViewModel {
     init(delegate: NINChatSessionInternalDelegate?) {
         self.delegate = delegate
     }
-    
+
     func download(image: UIImage, completion: @escaping ((Error?) -> Void)) {
         downloadCompletion = completion
-        UIImageWriteToSavedPhotosAlbum(image, self, #selector(didSaved(_:error:)), nil)
+        UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.didSaved(_:error:context:)), nil)
     }
 }
 
 extension NINFullScreenViewModelImpl {
     @objc
-    private func didSaved(_ image: UIImage, error: Error?) {
+    private func didSaved(_ image: UIImage, error: Error?, context: UnsafeMutableRawPointer) {
         if let error = error {
             self.delegate?.log(value: "Error: failed to save image to Photos album: \(error)")
         }

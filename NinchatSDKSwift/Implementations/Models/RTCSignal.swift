@@ -23,7 +23,7 @@ enum MessageType: String, Decodable {
     case uiAction = "ninchat.com/ui/action"
     
     var isRTC: Bool {
-        return self.rawValue.hasPrefix("ninchat.com/rtc/")
+        self.rawValue.hasPrefix("ninchat.com/rtc/")
     }
 }
 

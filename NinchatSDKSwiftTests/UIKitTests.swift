@@ -83,6 +83,129 @@ final class UIKitTests: XCTestCase {
         
         waitForExpectations(timeout: 1.0)
     }
+    
+    func test_expandableUITextView() {
+        let textView = UITextView(frame: CGRect(x: 0, y: 0, width: 200, height: 0))
+        XCTAssertEqual(textView.bounds.height, 0)
+        
+        textView.insertText("first line")
+        textView.insertText("\n")
+        textView.insertText("second line")
+        
+        textView.fix(height: 10)
+        textView.updateSize(to: textView.newSize())
+        XCTAssertGreaterThan(textView.newSize(), 0)
+    }
+    
+    func test_inputController() {
+        let view: ChatInputControls = ChatInputControls.loadFromNib()
+        
+        let expect_text = self.expectation(description: "Expected to get inserted text")
+        view.onSendTapped = { text in
+            XCTAssertEqual(text, "send text\n\nEOT")
+            expect_text.fulfill()
+        }
+    
+        let expect_attachment = self.expectation(description: "Expected to trigger attachment event")
+        view.onAttachmentTapped = { button in
+            XCTAssertNotNil(button)
+            expect_attachment.fulfill()
+        }
+    
+        var expectedWritingStatus = true
+        view.onWritingStatusChanged = { status in
+            XCTAssertEqual(status, expectedWritingStatus)
+        }
+        
+        var expected_size: CGFloat = 33.0
+        view.onTextSizeChanged = { newSize in
+            XCTAssertGreaterThanOrEqual(newSize, expected_size)
+            expected_size = newSize
+        }
+    
+        expectedWritingStatus = true
+        view.textInput.insertText("send text")
+        view.textInput.insertText("\n\n")
+        view.textInput.insertText("EOT")
+    
+        expectedWritingStatus = false
+        expected_size = 33.0
+        view.onSendButtonTapped(sender: view.sendMessageButton)
+        view.onAttachmentButtonTapped(sender: view.attachmentButton)
+        XCTAssertFalse(view.isSelected)
+        
+        waitForExpectations(timeout: 3.0)
+    }
+    
+    func test_button() {
+        let expect_button = self.expectation(description: "The `UIButton` action is fulfilled")
+        let button = Button(frame: .zero, touch: { button in
+            XCTAssertNotNil(button as? Button)
+            expect_button.fulfill()
+        })
+        button.sendActions(for: .touchUpInside)
+        
+        let expect_close = self.expectation(description: "The `CloseButton` action is fulfilled")
+        let close = CloseButton(frame: .zero)
+        close.closure = { button in
+            expect_close.fulfill()
+        }
+        close.theButton.sendActions(for: .touchUpInside)
+        
+        waitForExpectations(timeout: 0.2, handler: nil)
+    }
+    
+    func test_videoView() {
+        let videoView: VideoView = VideoView.loadFromNib()
+        
+        let expectationHangup = self.expectation(description: "Expect to get hangup action")
+        videoView.onHangupTapped = { button in
+            XCTAssertNotNil(button)
+            expectationHangup.fulfill()
+        }
+        videoView.hangupAction()
+        
+        let expectationMute = self.expectation(description: "Expect to get mute action")
+        videoView.onAudioTapped = { button in
+            XCTAssertNotNil(button)
+            expectationMute.fulfill()
+        }
+        videoView.audioAction()
+        
+        let expectationCamera = self.expectation(description: "Expect to get camera disable action")
+        videoView.onCameraTapped = { button in
+            XCTAssertNotNil(button)
+            expectationCamera.fulfill()
+        }
+        videoView.cameraAction()
+        
+        XCTAssertFalse(videoView.isSelected)
+        videoView.isSelected = true
+        XCTAssertTrue(videoView.microphoneEnabledButton.isSelected)
+        XCTAssertTrue(videoView.cameraEnabledButton.isSelected)
+        
+        wait(for: [expectationHangup, expectationMute, expectationCamera], timeout: 1.0)
+    }
+    
+    func test_subviews() {
+        let parent1 = UIView(frame: .zero)
+        parent1.tag = 1
+        
+        let child1 = UIView(frame: .zero)
+        child1.tag = 11
+        
+        let child2 = UIView(frame: .zero)
+        child1.tag = 12
+        
+        let grandChild1 = UIView(frame: .zero)
+        grandChild1.tag = 111
+        
+        child1.addSubview(grandChild1)
+        parent1.addSubview(child1)
+        parent1.addSubview(child2)
+        
+        XCTAssertEqual(3, parent1.allSubviews.count)
+    }
 }
 
 extension UIKitTests {

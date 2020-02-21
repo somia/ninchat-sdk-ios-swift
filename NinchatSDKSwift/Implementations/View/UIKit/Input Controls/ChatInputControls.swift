@@ -97,7 +97,7 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
     
     // MARK: - User actions
 
-    @IBAction private func onSendButtonTapped(sender: UIButton) {
+    @IBAction internal func onSendButtonTapped(sender: UIButton) {
         let text = textInput.text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty, !isOnPlaceholderMode else { return }
         
@@ -107,7 +107,7 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
         self.onWritingStatusChanged?(false)
     }
         
-    @IBAction private func onAttachmentButtonTapped(sender: UIButton) {
+    @IBAction internal func onAttachmentButtonTapped(sender: UIButton) {
         self.textInput.resignFirstResponder()
         self.onAttachmentTapped?(sender)
     }
@@ -149,17 +149,5 @@ extension ChatInputControls: UITextViewDelegate {
     func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
         self.updatePlaceholder()
         return true
-    }
-}
-
-// MARK: - Test Facilities
-
-extension ChatInputControls {
-    internal func sendAction() {
-        self.onSendButtonTapped(sender: sendMessageButton)
-    }
-    
-    internal func attachmentAction() {
-        self.onAttachmentButtonTapped(sender: sendMessageButton)
     }
 }

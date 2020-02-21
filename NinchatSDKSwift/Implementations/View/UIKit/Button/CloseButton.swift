@@ -17,7 +17,7 @@ final class CloseButton: UIView, CloseButtonProtocol {
     
     // MARK: - Outlets
     
-    private lazy var theButton: Button! = {
+    private(set) lazy var theButton: Button! = {
         let view = Button(frame: .zero)
         view.backgroundColor = .clear
         view.setTitleColor(.defaultBackgroundButton, for: .normal)
@@ -25,7 +25,7 @@ final class CloseButton: UIView, CloseButtonProtocol {
         
         return view
     }()
-    private lazy var closeButtonImageView: UIImageView = {
+    private(set) lazy var closeButtonImageView: UIImageView = {
         let view = UIImageView(frame: .zero)
         view.contentMode = .scaleToFill
         view.tintColor = .defaultBackgroundButton
