@@ -28,13 +28,13 @@ extension ConfirmView {
         let fadeView = self.fadeView(on: view)
         view.addSubview(fadeView)
         fadeView
-            .fix(left: (0, view), right: (0, view), isRelative: false)
-            .fix(top: (0, view), bottom: (0, view), isRelative: false)
+            .fix(leading: (0, view), trailing: (0, view))
+            .fix(top: (0, view), bottom: (0, view))
         
         view.addSubview(self)
         self
-            .fix(top: (0, view), isRelative: false)
-            .fix(left: (0, view), right: (0, view), isRelative: false)
+            .fix(top: (0, view))
+            .fix(leading: (0, view), trailing: (0, view))
         
         self.transform = CGAffineTransform(translationX: 0, y: -bounds.height)
         self.hide(false, withActions: { [weak self] in

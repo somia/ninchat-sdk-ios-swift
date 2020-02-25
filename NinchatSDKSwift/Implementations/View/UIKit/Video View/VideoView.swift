@@ -57,8 +57,8 @@ final class VideoView: UIView, VideoViewProtocol {
             
             self.remoteVideoViewContainer.addSubview(view)
             view
-                .fix(left: (0.0, remoteVideoViewContainer), right: (0.0, remoteVideoViewContainer), isRelative: false)
-                .fix(top: (0.0, remoteVideoViewContainer), bottom: (0.0, remoteVideoViewContainer), isRelative: false)
+                .fix(leading: (0.0, remoteVideoViewContainer), trailing: (0.0, remoteVideoViewContainer))
+                .fix(top: (0.0, remoteVideoViewContainer), bottom: (0.0, remoteVideoViewContainer))
         }
     }
     var remoteVideoTrack: RTCVideoTrack? {

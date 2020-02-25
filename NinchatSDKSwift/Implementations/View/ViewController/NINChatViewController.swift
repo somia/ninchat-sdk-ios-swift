@@ -95,8 +95,8 @@ final class NINChatViewController: UIViewController, ViewController {
         didSet {
             videoContainer.addSubview(videoView)
             videoView
-                .fix(left: (0.0, videoContainer), right: (0.0, videoContainer), isRelative: false)
-                .fix(top: (0.0, videoContainer), bottom: (0.0, videoContainer), isRelative: false)
+                .fix(leading: (0.0, videoContainer), trailing: (0.0, videoContainer))
+                .fix(top: (0.0, videoContainer), bottom: (0.0, videoContainer))
         }
     }
     
@@ -144,8 +144,8 @@ final class NINChatViewController: UIViewController, ViewController {
             inputContainerHeight = 94.5
             inputContainer.addSubview(inputControlsView)
             inputControlsView
-                .fix(left: (0.0, inputContainer), right: (0.0, inputContainer), isRelative: false)
-                .fix(top: (0.0, inputContainer), bottom: (0.0, inputContainer), isRelative: false)
+                .fix(leading: (0.0, inputContainer), trailing: (0.0, inputContainer))
+                .fix(top: (0.0, inputContainer), bottom: (0.0, inputContainer))
         }
     }
     

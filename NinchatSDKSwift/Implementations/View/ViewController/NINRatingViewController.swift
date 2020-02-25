@@ -43,8 +43,8 @@ final class NINRatingViewController: UIViewController, ViewController {
         didSet {
             facesViewContiner.addSubview(facesView)
             facesView
-                .fix(left: (0, facesViewContiner), right: (0, facesViewContiner), isRelative: false)
-                .fix(top: (0, facesViewContiner), bottom: (0, facesViewContiner), isRelative: false)
+                .fix(leading: (0, facesViewContiner), trailing: (0, facesViewContiner))
+                .fix(top: (0, facesViewContiner), bottom: (0, facesViewContiner))
         }
     }
     

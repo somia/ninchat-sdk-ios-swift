@@ -156,11 +156,11 @@ extension ChatChannelCell: TypingCell {
 
         /// To make the loading bigger and more visible.
         self.messageImageViewContainer
-            .fix(left: (0, self.bubbleImageView), right: (0, self.bubbleImageView), isRelative: false)
-            .fix(top: (0, self.bubbleImageView), bottom: (0, self.bubbleImageView), isRelative: false)
+            .fix(leading: (0, self.bubbleImageView), trailing: (0, self.bubbleImageView))
+            .fix(top: (0, self.bubbleImageView), bottom: (0, self.bubbleImageView))
         self.messageImageView
-            .fix(left: (4, self.messageImageViewContainer), right: (4, self.messageImageViewContainer), isRelative: false)
-            .fix(top: (4, self.messageImageViewContainer), bottom: (4, self.messageImageViewContainer), isRelative: false)
+            .fix(leading: (4, self.messageImageViewContainer), trailing: (4, self.messageImageViewContainer))
+            .fix(top: (4, self.messageImageViewContainer), bottom: (4, self.messageImageViewContainer))
     }
 }
 
@@ -186,8 +186,8 @@ extension ChatChannelCell {
 
         /// Just to remind the image view to keep the constraints
         self.messageImageView
-            .fix(top: (8, self.messageImageViewContainer), bottom: (8, self.messageImageViewContainer), isRelative: false)
-            .fix(left: (8, self.messageImageViewContainer), right: (8, self.messageImageViewContainer), isRelative: false)
+            .fix(top: (8, self.messageImageViewContainer), bottom: (8, self.messageImageViewContainer))
+            .fix(leading: (8, self.messageImageViewContainer), trailing: (8, self.messageImageViewContainer))
     }
     
     private func resetImageLayout() {
@@ -218,8 +218,8 @@ extension ChatChannelCell {
             let left_right: CGFloat = ($0 == self.composeMessageView) ? 8 : 4
             let top_bottom: CGFloat = ($0 == self.composeMessageView) ? 16 : 8
             $0
-                .fix(left: (left_right, self.bubbleImageView), right: (left_right, self.bubbleImageView), isRelative: false)
-                .fix(top: (top_bottom, self.bubbleImageView), bottom: (top_bottom, self.bubbleImageView), isRelative: false)
+                .fix(leading: (left_right, self.bubbleImageView), trailing: (left_right, self.bubbleImageView))
+                .fix(top: (top_bottom, self.bubbleImageView), bottom: (top_bottom, self.bubbleImageView))
         })
     }
     

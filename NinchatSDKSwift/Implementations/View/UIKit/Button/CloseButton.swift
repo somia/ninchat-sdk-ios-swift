@@ -86,14 +86,14 @@ final class CloseButton: UIView, CloseButtonProtocol {
         
         self.addSubview(theButton)
         self.theButton
-            .fix(top: (0, self), bottom: (0, self), isRelative: false)
-            .fix(left: (0, self), right: (28, self), isRelative: false)
+            .fix(top: (0, self), bottom: (0, self))
+            .fix(leading: (0, self), trailing: (28, self))
         
         self.addSubview(closeButtonImageView)
         self.closeButtonImageView
             .center(toY: self)
             .fix(width: 14.0, height: 14.0)
-            .fix(right: (14, self), isRelative: false)
+            .fix(trailing: (14, self))
         self.bringSubviewToFront(closeButtonImageView)
     }
     

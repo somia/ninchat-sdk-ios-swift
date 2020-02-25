@@ -43,8 +43,8 @@ final class NINFullScreenViewController: UIViewController, ViewController {
         didSet {
             topBarContainer.addSubview(topBar)
             topBar
-                .fix(left: (0, topBarContainer), right: (0, topBarContainer), isRelative: false)
-                .fix(top: (0, topBarContainer), bottom: (0, topBarContainer), isRelative: false)
+                .fix(leading: (0, topBarContainer), trailing: (0, topBarContainer))
+                .fix(top: (0, topBarContainer), bottom: (0, topBarContainer))
         }
     }
     
