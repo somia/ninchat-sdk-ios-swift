@@ -33,7 +33,7 @@ class AutolayoutTests: XCTestCase {
     }
     
     func testAutolayoutOrigin() {
-        view.fix(left: (30, superView), isRelative: false)
+        view.fix(leading: (30, superView), isRelative: false)
         view.fix(top: (10, superView), isRelative: false)
         superView.setNeedsLayout()
         superView.layoutIfNeeded()
@@ -47,7 +47,7 @@ class AutolayoutTests: XCTestCase {
     func testAutolayoutOriginActivate() {
         view
             .fix(top: (10, superView), isRelative: false)
-            .fix(left: (30, superView), isRelative: false)
+            .fix(leading: (30, superView), isRelative: false)
         superView.setNeedsLayout()
         superView.layoutIfNeeded()
         view.setNeedsLayout()
@@ -62,7 +62,7 @@ class AutolayoutTests: XCTestCase {
         XCTAssertEqual(view.frame.origin.y, 10)
         XCTAssertEqual(view.frame.origin.x, 0)
         
-        view.fix(left: (30, superView), isRelative: false)
+        view.fix(leading: (30, superView), isRelative: false)
         superView.setNeedsLayout()
         superView.layoutIfNeeded()
         view.setNeedsLayout()

@@ -39,12 +39,12 @@ final class NINRatingViewController: UIViewController, ViewController {
         
         return view
     }()
-    @IBOutlet private(set) weak var facesViewContiner: UIView! {
+    @IBOutlet private(set) weak var facesViewContainer: UIView! {
         didSet {
-            facesViewContiner.addSubview(facesView)
+            facesViewContainer.addSubview(facesView)
             facesView
-                .fix(leading: (0, facesViewContiner), trailing: (0, facesViewContiner))
-                .fix(top: (0, facesViewContiner), bottom: (0, facesViewContiner))
+                .fix(leading: (0, facesViewContainer), trailing: (0, facesViewContainer))
+                .fix(top: (0, facesViewContainer), bottom: (0, facesViewContainer))
         }
     }
     

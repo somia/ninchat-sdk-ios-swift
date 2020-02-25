@@ -319,7 +319,7 @@ you are next.</string>
                         <viewLayoutGuide key="safeArea" id="oWm-rW-0NV"/>
                     </view>
                     <connections>
-                        <outlet property="facesViewContiner" destination="B6F-ML-XSh" id="kg3-Et-Ydv"/>
+                        <outlet property="facesViewContainer" destination="B6F-ML-XSh" id="kg3-Et-Ydv"/>
                         <outlet property="skipButton" destination="PLV-Oi-4sR" id="BII-Eo-jaz"/>
                         <outlet property="titleTextView" destination="Ikj-NF-Jwm" id="0CS-jr-358"/>
                         <outlet property="topViewContainer" destination="L5U-F0-l9Y" id="L0c-wH-tU0"/>
