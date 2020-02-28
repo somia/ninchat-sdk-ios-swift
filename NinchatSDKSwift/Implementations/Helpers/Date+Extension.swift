@@ -30,3 +30,14 @@ extension Date {
         return DateCompare(diff: diff)
     }
 }
+
+extension DateFormatter {
+    static var shortTime: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
+        formatter.timeZone = .current
+        
+        return formatter
+    }
+}

@@ -61,12 +61,14 @@ final class ChatView: UIView, ChatViewProtocol {
     @IBOutlet private weak var tableView: UITableView! {
         didSet {
             tableView.register(ChatChannelCell.self)
+            tableView.register(ChatTypingCell.self)
             tableView.register(ChatMetaCell.self)
             tableView.dataSource = self
             tableView.delegate = self
             
             /// Rotate the table view 180 degrees; we will use it upside down
             tableView.rotate()
+            tableView.contentInset = UIEdgeInsets(top: 48, left: 0, bottom: 0, right: 0)
         }
     }
     
@@ -235,11 +237,8 @@ extension ChatView {
         return cell
     }
 
-    private func setupTypingCell(_ message: NINUserTypingMessage, at indexPath: IndexPath) -> ChatChannelCell {
-        let cell: ChatChannelCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
-        cell.session = self.sessionManager
-        cell.videoThumbnailManager = videoThumbnailManager
-        
+    private func setupTypingCell(_ message: NINUserTypingMessage, at indexPath: IndexPath) -> ChatTypingCell {
+        let cell: ChatTypingCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
         cell.populateTyping(message: message, imageAssets: imageAssets, colorAssets: colorAssets, agentAvatarConfig: agentAvatarConfig)
         return cell
     }
