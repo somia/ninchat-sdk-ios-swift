@@ -20,7 +20,3 @@ protocol ChatCell: UIView {
 protocol ChannelCell: UIView {
     func populateChannel(message: NINChannelMessage, configuration: NINSiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: NINAvatarConfig, userAvatarConfig: NINAvatarConfig, composeState: [Any]?)
 }
-
-protocol TypingCell: UIView {
-    func populateTyping(message: NINUserTypingMessage, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: NINAvatarConfig)
-}

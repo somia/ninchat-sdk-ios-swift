@@ -86,7 +86,7 @@ final class ChatChannelCell: UITableViewCell, ChatCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-
+        
         self.onConstraintsUpdate = nil
         self.onImageTapped = nil
         self.onComposeSendTapped = nil
@@ -94,7 +94,6 @@ final class ChatChannelCell: UITableViewCell, ChatCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.messageTextView.centerVertically()
     }
 }
 
@@ -102,11 +101,11 @@ extension ChatChannelCell: ChannelCell {
     func populateChannel(message: NINChannelMessage, configuration: NINSiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: NINAvatarConfig, userAvatarConfig: NINAvatarConfig, composeState: [Any]?) {
         self.message = message
         
-        /// TODO: Porbably needs localized string
+        /// TODO: Probably needs localized string
         self.senderNameLabel.text = (message.sender.displayName.count < 1) ? "Guest" : message.sender.displayName
-        self.timeLabel.text = DateFormatter.shortTime()?.string(from: message.timestamp) ?? ""
+        self.timeLabel.text = DateFormatter.shortTime.string(from: message.timestamp) ?? ""
         /// Hide the name and timestamp if it's a part of series message chain
-        self.infoContainerHeightConstraint.constant = (message.series) ? 0 : 40
+        self.infoContainerHeightConstraint.constant = (message.series) ? 0 : 24
                 
         /// Make Image view background match the bubble color
         self.messageImageView.backgroundColor = self.bubbleImageView.tintColor
@@ -130,37 +129,6 @@ extension ChatChannelCell: ChannelCell {
                 self.senderNameLabel.text = agentAvatarConfig.nameOverride
             }
         }
-    }
-}
-
-extension ChatChannelCell: TypingCell {
-    func populateTyping(message: NINUserTypingMessage, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: NINAvatarConfig) {
-        
-        self.senderNameLabel.text = (agentAvatarConfig.nameOverride.isEmpty) ? message.user.displayName : agentAvatarConfig.nameOverride
-        self.messageTextView.text = ""
-        
-        self.configureOtherMessage(avatar: message.user.iconURL, imageAssets: imageAssets, colorAssets: colorAssets, config: agentAvatarConfig, series: false)
-        self.removeSubviews(but: [self.messageImageViewContainer])
-
-        /// Make Image view background match the bubble color
-        self.messageImageView.backgroundColor = self.bubbleImageView.tintColor
-        self.messageImageView.image = imageAssets[.chatWritingIndicator]
-        self.messageImageView.tintColor = .black
-
-        /// Show the name and timestamp for typing messages
-        self.infoContainerHeightConstraint.constant = 40
-        self.toggleBubbleConstraints(isMyMessage: false, isSeries: false)
-
-        /// Set the image aspect ratio to match the animation frames' size 40x20
-        self.setImage(aspect: 10.0)
-
-        /// To make the loading bigger and more visible.
-        self.messageImageViewContainer
-            .fix(leading: (0, self.bubbleImageView), trailing: (0, self.bubbleImageView))
-            .fix(top: (0, self.bubbleImageView), bottom: (0, self.bubbleImageView))
-        self.messageImageView
-            .fix(leading: (4, self.messageImageViewContainer), trailing: (4, self.messageImageViewContainer))
-            .fix(top: (4, self.messageImageViewContainer), bottom: (4, self.messageImageViewContainer))
     }
 }
 
@@ -215,29 +183,28 @@ extension ChatChannelCell {
             self.contentsViewContainer.addSubview($0)
 
             /// Compose view uses different constraints than others
-            let left_right: CGFloat = ($0 == self.composeMessageView) ? 8 : 4
             let top_bottom: CGFloat = ($0 == self.composeMessageView) ? 16 : 8
             $0
-                .fix(leading: (left_right, self.bubbleImageView), trailing: (left_right, self.bubbleImageView))
+                .fix(leading: (12, self.bubbleImageView), trailing: (12, self.bubbleImageView))
                 .fix(top: (top_bottom, self.bubbleImageView), bottom: (top_bottom, self.bubbleImageView))
         })
     }
     
-    private func toggleBubbleConstraints(isMyMessage: Bool, isSeries: Bool) {
-        self.leftAvatarImageView.isHidden = isMyMessage ? true : isSeries
-        self.rightAvatarImageView.isHidden = isMyMessage ? isSeries : true
+    private func toggleBubbleConstraints(isMyMessage: Bool, isSeries: Bool, showByConfig: Bool) {
+        self.leftAvatarImageView.isHidden = isMyMessage ? true : (isSeries || !showByConfig)
+        self.rightAvatarImageView.isHidden = isMyMessage ? (isSeries || !showByConfig) : true
         
         self.bubbleImageLeftEqualConstraint.isActive = !isMyMessage
-        self.bubbleImageLeftGreaterConstraint.isActive = isMyMessage
+        self.bubbleImageRightEqualConstraint.isActive = isMyMessage
         
         self.bubbleImageRightEqualConstraint.isActive = isMyMessage
         self.bubbleImageRightGreaterConstraint.isActive = !isMyMessage
-        
+
         self.infoContainerLeftConstraint.isActive = !isMyMessage
         self.infoContainerRightConstraint.isActive = isMyMessage
 
-        self.leftAvatarWidthConstraint.constant = isMyMessage ? 0 : 50
-        self.rightAvatarWidthConstraint.constant = isMyMessage ? 50 : 0
+        self.leftAvatarWidthConstraint.constant = (!isMyMessage && showByConfig) ? 35 : 0
+        self.rightAvatarWidthConstraint.constant = (isMyMessage && showByConfig) ? 35 : 0
     }
 }
 
@@ -246,7 +213,8 @@ extension ChatChannelCell {
 extension ChatChannelCell {
     /// Configures the cell to be "on the right"
     private func configureMyMessage(avatar url: String, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, config: NINAvatarConfig, series: Bool) {
-        
+    
+        self.senderNameLabel.textAlignment = .right
         self.messageTextView.textAlignment = .right
         self.bubbleImageView.image = (series) ? imageAssets[.chatBubbleRightRepeated] : imageAssets[.chatBubbleRight]
         
@@ -257,13 +225,13 @@ extension ChatChannelCell {
         /// Push the bubble to the right edge by setting the left and right constraints
         self.mainContainerLeftConstraint.constant = 20
         self.mainContainerRightConstraint.constant = 0
-                
+        
         /// Apply asset overrides
         self.applyCommon(imageAssets: imageAssets, colorAssets: colorAssets)
         self.apply(avatar: config, imageView: self.rightAvatarImageView)
         
         /// Push the top label container to the left edge by toggling the constraints
-        self.toggleBubbleConstraints(isMyMessage: true, isSeries: series)
+        self.toggleBubbleConstraints(isMyMessage: true, isSeries: series, showByConfig: config.show)
         
         if let bubbleTextColor = colorAssets[.chatBubbleRightText] {
             self.messageTextView.textColor = bubbleTextColor
@@ -275,7 +243,8 @@ extension ChatChannelCell {
     
     /// Configures the cell to be "on the left"
     private func configureOtherMessage(avatar url: String, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, config: NINAvatarConfig, series: Bool) {
-        
+    
+        self.senderNameLabel.textAlignment = .left
         self.messageTextView.textAlignment = .left
         self.bubbleImageView.image = (series) ? imageAssets[.chatBubbleLeftRepeated] : imageAssets[.chatBubbleLeft]
     
@@ -291,9 +260,9 @@ extension ChatChannelCell {
         /// Apply asset overrides
         self.applyCommon(imageAssets: imageAssets, colorAssets: colorAssets)
         self.apply(avatar: config, imageView: self.leftAvatarImageView)
-        
+    
         /// Push the top label container to the left edge by toggling the hidden flag
-        self.toggleBubbleConstraints(isMyMessage: false, isSeries: series)
+        self.toggleBubbleConstraints(isMyMessage: false, isSeries: series, showByConfig: config.show)
         
         if let bubbleTextColor = colorAssets[.chatBubbleLeftText] {
             self.messageTextView.textColor = bubbleTextColor
@@ -431,7 +400,6 @@ extension ChatChannelCell {
             self?.onComposeUpdateTapped?(composeStates)
         }
         self.composeMessageView.populate(with: message, siteConfiguration: configuration, colorAssets: Dictionary(uniqueKeysWithValues: colorAssets.map { ($0.key.rawValue, $0.value) } ), composeState: composeStates)
-        //self.composeMessageView.fix(width: self.contentsViewContainer.bounds.width)
     }
 }
 
