@@ -414,10 +414,10 @@ extension NINChatSessionManagerImpl {
                     files.forEach { [unowned self] file in
                         self.delegate?.log(value: "Got file with MIME type: \(String(describing: file.attributes.type))")
                         let fileInfo = NINFileInfo(fileID: file.id, name: file.attributes.name, mimeType: file.attributes.type, size: file.attributes.size)
-
+                        hasAttachment = fileInfo.isImage || fileInfo.isVideo || fileInfo.isPDF
+                        
                         // Only process certain files at this point
-                        guard fileInfo.isImage || fileInfo.isVideo || fileInfo.isPDF else { return }
-                        hasAttachment = true
+                        guard hasAttachment else { return }
                         fileInfo.updateInfo(session: self) { error, didRefreshNetwork in
                             guard error == nil else { return }
                             

@@ -300,12 +300,12 @@ extension NINChatViewController {
     }
     
     private func updateInputContainerHeight(_ value: CGFloat, update: Bool = true) {
-        self.inputContainer.fix(height: value)
-        
+        self.inputContainer.height?.constant = value
         if update {
             self.inputContainerHeight = value
-            self.view.layoutIfNeeded()
         }
+    
+        self.view.layoutIfNeeded()
     }
     
     /// Aligns (or cancels existing alignment) the input control container view's top

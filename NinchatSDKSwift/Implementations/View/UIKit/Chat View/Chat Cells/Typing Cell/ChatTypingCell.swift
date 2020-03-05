@@ -42,7 +42,7 @@ final class ChatTypingCell: UITableViewCell, TypingCell {
     
     func populateTyping(message: NINUserTypingMessage, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: NINAvatarConfig) {
         self.senderNameLabel.text = (agentAvatarConfig.nameOverride.isEmpty) ? message.user.displayName : agentAvatarConfig.nameOverride
-        self.timeLabel.text = DateFormatter.shortTime.string(from: message.timestamp) ?? ""
+        self.timeLabel.text = DateFormatter.shortTime.string(from: message.timestamp)
     
         /// Make Image view background match the bubble color
         self.bubbleImageView.tintColor = .white

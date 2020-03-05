@@ -21,7 +21,14 @@ protocol ConfirmView where Self:UIView {
     func overrideAssets()
 }
 
-final class FadeView: UIView {}
+final class FadeView: UIView {
+    var onViewAction: ((ConfirmAction) -> Void)?
+    
+    @objc
+    public func onViewTapped(_ sender: UITapGestureRecognizer) {
+        self.onViewAction?(.cancel)
+    }
+}
 
 extension ConfirmView {
     func showConfirmView(on view: UIView) {
@@ -38,6 +45,7 @@ extension ConfirmView {
         
         self.transform = CGAffineTransform(translationX: 0, y: -bounds.height)
         self.hide(false, withActions: { [weak self] in
+            fadeView.alpha = 1.0
             self?.transform = .identity
         })
     }
@@ -45,8 +53,9 @@ extension ConfirmView {
     /// Create a "fade" view to fade out the background a bit and constrain it to match the view
     private func fadeView(on target: UIView) -> UIView {
         let view = FadeView(frame: target.bounds)
-        view.backgroundColor = UIColor(white: 0.0, alpha: 0.0)
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector(("onDismissTapped:"))))
+        view.backgroundColor = UIColor(white: 0.0, alpha: 0.5)
+        view.onViewAction = self.onViewAction
+        view.addGestureRecognizer(UITapGestureRecognizer(target: view, action: #selector(view.onViewTapped(_:))))
         
         return view
     }
@@ -54,15 +63,13 @@ extension ConfirmView {
 
 extension ConfirmView {
     func hideConfirmView() {
+        let fadeView = self.superview?.subviews.compactMap { $0 as? FadeView }.first
         self.hide(true, withActions: { [weak self] in
             self?.transform = CGAffineTransform(translationX: 0, y: -(self?.bounds.height ?? 0))
+            fadeView?.alpha = 0.0
         }, andCompletion: { [weak self] in
-            self?.superview?.subviews.compactMap { $0 as? FadeView }.forEach { $0.removeFromSuperview() }
+            fadeView?.removeFromSuperview()
             self?.removeFromSuperview()
         })
-    }
-    
-    private func onDismissTapped(_ sender: UIGestureRecognizer) {
-        self.onViewAction?(.cancel)
     }
 }

@@ -12,7 +12,11 @@ final class ChatMetaCell: UITableViewCell, ChatMeta {
 
     // MARK: - Outlets
     
-    @IBOutlet private weak var metaTextLabel: UILabel!
+    @IBOutlet private weak var metaTextLabel: UILabel! {
+        didSet {
+            metaTextLabel.font = .ninchat
+        }
+    }
     @IBOutlet private weak var closeChatButtonContainer: UIView!
     @IBOutlet private weak var closeChatButton: CloseButton!
     

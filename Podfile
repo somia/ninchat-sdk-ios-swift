@@ -6,7 +6,7 @@ source 'https://github.com/somia/ninchat-podspecs.git'
 
 def all_pods
     pod 'AnyCodable', :inhibit_warnings => true
-    pod 'AutoLayoutSwift'
+    pod 'AutoLayoutSwift', '4.0.0'
     pod 'NinchatLowLevelClient', '~> 0.0.40', :inhibit_warnings => true
     pod 'NinchatSDK', :git => 'https://github.com/somia/ninchat-sdk-ios', :branch => 'swift'
 end

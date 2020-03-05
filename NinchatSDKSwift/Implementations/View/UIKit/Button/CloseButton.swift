@@ -50,6 +50,7 @@ final class CloseButton: UIView, CloseButtonProtocol {
     }
     
     func overrideAssets(with session: NINChatSessionInternalDelegate?) {
+        self.theButton.titleLabel?.font = .ninchat
         if let overrideImage = session?.override(imageAsset: .chatCloseButton) {
             /// Overriding (setting) the button background image; no border.
             self.theButton.setBackgroundImage(overrideImage, for: .normal)
@@ -100,6 +101,7 @@ final class CloseButton: UIView, CloseButtonProtocol {
     /// Update button's size constraints once the title is set
     override func updateConstraints() {
         super.updateConstraints()
+        self.deactivate(constraints: [.width, .height])
         self.fix(width: self.frame.width + 54.0, height: 44.0)
         self.setupView()
         

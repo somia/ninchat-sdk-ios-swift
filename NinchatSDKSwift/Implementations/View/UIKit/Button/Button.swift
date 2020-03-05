@@ -37,6 +37,7 @@ final class Button: UIButton {
     // MARK: - Helper methods
     
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary primary: Bool) {
+        self.titleLabel?.font = .ninchat
         if let overrideImage = delegate?.override(imageAsset: primary ? .primaryButton : .secondaryButton) {
             self.setBackgroundImage(overrideImage, for: .normal)
             self.backgroundColor = .clear

@@ -60,7 +60,14 @@ final class ChatView: UIView, ChatViewProtocol {
     
     @IBOutlet private weak var tableView: UITableView! {
         didSet {
-            tableView.register(ChatChannelCell.self)
+            tableView.register(ChatChannelComposeCell.self)
+            
+            tableView.register(ChatChannelMediaMineCell.self)
+            tableView.register(ChatChannelTextMineCell.self)
+    
+            tableView.register(ChatChannelMediaOthersCell.self)
+            tableView.register(ChatChannelTextOthersCell.self)
+            
             tableView.register(ChatTypingCell.self)
             tableView.register(ChatMetaCell.self)
             tableView.dataSource = self
@@ -68,8 +75,20 @@ final class ChatView: UIView, ChatViewProtocol {
             
             /// Rotate the table view 180 degrees; we will use it upside down
             tableView.rotate()
-            tableView.contentInset = UIEdgeInsets(top: 48, left: 0, bottom: 0, right: 0)
+            tableView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
         }
+    }
+    
+    private var cell: ((NINChannelMessage, UITableView, IndexPath) -> ChatChannelCell) = { (message, tableView, index) -> ChatChannelCell in
+        if let compose = message as? NINUIComposeMessage {
+            return tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelComposeCell
+        } else if let text = message as? NINTextMessage {
+            if let attachment = text.attachment, attachment.isImage || attachment.isVideo {
+                return (text.mine) ? tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelMediaMineCell : tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelMediaOthersCell
+            }
+            return (text.mine) ? tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelTextMineCell : tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelTextOthersCell
+        }
+        fatalError("Unsupported cell type")
     }
     
     // MARK: - ChatViewProtocol
@@ -213,7 +232,7 @@ extension ChatView: UITableViewDataSource, UITableViewDelegate {
 
 extension ChatView {
     private func setupBubbleCell(_ message: NINChannelMessage, at indexPath: IndexPath) -> ChatChannelCell {
-        let cell: ChatChannelCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
+        let cell = self.cell(message, tableView, indexPath)
         cell.session = self.sessionManager
         cell.videoThumbnailManager = videoThumbnailManager
 
@@ -227,10 +246,13 @@ extension ChatView {
             self.delegate.didSelect(image: image, for: attachment, self)
         }
         cell.onConstraintsUpdate = { [unowned self] in
-            UIView.animate(withDuration: 0.3) {
+            cell.isReloading = true
+            UIView.animate(withDuration: 0.3, animations: {
                 self.tableView.beginUpdates()
                 self.tableView.endUpdates()
-            }
+            }, completion: { finished in
+                cell.isReloading = !finished
+            })
         }
         
         cell.populateChannel(message: message, configuration: self.sessionManager.siteConfiguration, imageAssets: self.imageAssets, colorAssets: self.colorAssets, agentAvatarConfig: self.agentAvatarConfig, userAvatarConfig: self.userAvatarConfig, composeState: self.composeMessageStates?[message.messageID])

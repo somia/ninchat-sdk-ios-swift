@@ -219,22 +219,12 @@ you are next.</string>
                                     <outlet property="delegate" destination="kp2-RL-Kqz" id="qJw-D9-oMu"/>
                                 </connections>
                             </scrollView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PMo-Y7-zHd">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="60"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="60" id="IoL-GC-Ni8"/>
-                                </constraints>
-                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="PMo-Y7-zHd" firstAttribute="top" secondItem="Qyc-Oh-tKW" secondAttribute="top" id="3vQ-Tm-gjr"/>
                             <constraint firstItem="WiY-xq-PIw" firstAttribute="width" secondItem="7ZM-ms-G5f" secondAttribute="width" id="7jG-b4-Q6S"/>
                             <constraint firstItem="WiY-xq-PIw" firstAttribute="height" secondItem="7ZM-ms-G5f" secondAttribute="height" id="Fr9-Nk-b3f"/>
                             <constraint firstAttribute="trailing" secondItem="2wb-ko-jfV" secondAttribute="trailing" id="Mwa-MM-gma"/>
-                            <constraint firstAttribute="trailing" secondItem="PMo-Y7-zHd" secondAttribute="trailing" id="f8x-4s-w8w"/>
-                            <constraint firstItem="PMo-Y7-zHd" firstAttribute="leading" secondItem="7ZM-ms-G5f" secondAttribute="leading" id="knq-Nx-W9y"/>
                             <constraint firstItem="2wb-ko-jfV" firstAttribute="top" secondItem="7ZM-ms-G5f" secondAttribute="top" id="kzl-GV-obI"/>
                             <constraint firstItem="2wb-ko-jfV" firstAttribute="leading" secondItem="7ZM-ms-G5f" secondAttribute="leading" id="n16-Ap-aa5"/>
                             <constraint firstAttribute="bottom" secondItem="2wb-ko-jfV" secondAttribute="bottom" id="tbB-xw-cq2"/>
@@ -245,7 +235,6 @@ you are next.</string>
                     <connections>
                         <outlet property="imageView" destination="WiY-xq-PIw" id="2QB-4j-USV"/>
                         <outlet property="scrollView" destination="2wb-ko-jfV" id="N3O-4b-glL"/>
-                        <outlet property="topBarContainer" destination="PMo-Y7-zHd" id="90q-BC-QYT"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pyg-OC-SUZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
