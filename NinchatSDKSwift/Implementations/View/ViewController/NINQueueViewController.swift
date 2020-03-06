@@ -74,13 +74,7 @@ final class NINQueueViewController: UIViewController, ViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.addKeyboardListeners()
         self.spin()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.removeKeyboardListeners()
     }
 
     private func setupViewModel() {
@@ -117,6 +111,9 @@ private extension NINQueueViewController {
     private func overrideAssets() {
         closeChatButton.overrideAssets(with: self.session)
         
+        if let spinnerImage = session.override(imageAsset: .iconLoader) {
+            self.spinnerImageView.image = spinnerImage
+        }
         if let topBackgroundColor = session.override(colorAsset: .backgroundTop) {
             topContainerView.backgroundColor = topBackgroundColor
         }

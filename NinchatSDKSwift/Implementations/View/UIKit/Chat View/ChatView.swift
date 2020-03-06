@@ -22,6 +22,9 @@ protocol ChatViewProtocol: UIView {
     
     /** A message was removed from given index. */
     func didRemoveMessage(from index: Int)
+    
+    /** Should update table content offset when keyboard state changes. */
+    func updateContentSize(_ value: CGFloat)
 }
 
 final class ChatView: UIView, ChatViewProtocol {
@@ -75,7 +78,7 @@ final class ChatView: UIView, ChatViewProtocol {
             
             /// Rotate the table view 180 degrees; we will use it upside down
             tableView.rotate()
-            tableView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
+            tableView.contentInset = UIEdgeInsets(top: 8.0, left: 0.0, bottom: 0.0, right: 0.0)
         }
     }
     
@@ -113,6 +116,10 @@ final class ChatView: UIView, ChatViewProtocol {
     
     func didRemoveMessage(from index: Int) {
         tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+    }
+    
+    func updateContentSize(_ value: CGFloat) {
+        self.tableView.contentInset = UIEdgeInsets(top: 8.0, left: 0.0, bottom: value, right: 0.0)
     }
     
     // MARK: - UIView

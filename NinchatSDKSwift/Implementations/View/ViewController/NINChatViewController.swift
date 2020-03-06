@@ -7,7 +7,7 @@
 import UIKit
 import NinchatSDK
 
-final class NINChatViewController: UIViewController, ViewController {
+final class NINChatViewController: UIViewController, ViewController, KeyboardHandler {
     
     private let animationDuration: Double = 0.3
     private var webRTCClient: NINChatWebRTCClient?
@@ -71,6 +71,10 @@ final class NINChatViewController: UIViewController, ViewController {
     var onOpenGallery: ((UIImagePickerController.SourceType) -> Void)?
     var onOpenPhotoAttachment: ((UIImage, NINFileInfo) -> Void)?
     var onOpenVideoAttachment: ((NINFileInfo) -> Void)?
+    
+    // MARK: - KeyboardHandler
+    
+    var onKeyboardSizeChanged: ((CGFloat) -> Void)?
     
     // MARK: - Outlets
     
@@ -160,6 +164,7 @@ final class NINChatViewController: UIViewController, ViewController {
         super.viewDidLoad()
         self.setupView()
         self.setupViewModel()
+        self.setupKeyboardClosure()
         self.connectRTC()
         
         NotificationCenter.default.addObserver(self, selector: #selector(didEnterBackground(notification:)),
@@ -296,6 +301,12 @@ extension NINChatViewController {
             self.view.backgroundColor = UIColor(patternImage: backgroundImage)
         } else if let bundleImage = UIImage(named: "chat_background_pattern", in: .SDKBundle, compatibleWith: nil) {
             self.view.backgroundColor = UIColor(patternImage: bundleImage)
+        }
+    }
+    
+    func setupKeyboardClosure() {
+        self.onKeyboardSizeChanged = { [unowned self] height in
+            self.chatView.updateContentSize(height)
         }
     }
     

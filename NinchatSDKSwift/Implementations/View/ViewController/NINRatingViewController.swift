@@ -27,6 +27,7 @@ final class NINRatingViewController: UIViewController, ViewController {
         var view: FacesView = FacesView.loadFromNib()
         view.session = session
         view.translate = translate
+        view.backgroundColor = .clear
         view.onPositiveTapped = { [weak self] button in
             self?.onPositiveButtonTapped(sender: button)
         }

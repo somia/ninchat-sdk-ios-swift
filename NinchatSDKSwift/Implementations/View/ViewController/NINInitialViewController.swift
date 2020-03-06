@@ -60,16 +60,6 @@ final class NINInitialViewController: UIViewController, ViewController {
         self.drawQueueButtons()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.addKeyboardListeners()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.removeKeyboardListeners()
-    }
-    
     // MARK: - User actions
     
     @IBAction private func closeWindowButtonPressed(button: UIButton) {
