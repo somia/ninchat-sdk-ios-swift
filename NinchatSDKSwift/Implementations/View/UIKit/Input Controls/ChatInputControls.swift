@@ -34,6 +34,11 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
     private var placeholderText: String {
         return self.session?.sessionManager.translate(key: Constants.kTextInputPlaceholderText.rawValue, formatParams: [:]) ?? ""
     }
+    private var isWriting: Bool = false {
+        didSet {
+            self.onWritingStatusChanged?(isWriting)
+        }
+    }
     
     // MARK: - ChatInputControls
     
@@ -104,7 +109,7 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
         textInput.text = ""
         self.onSendTapped?(text)
         self.updatePlaceholder()
-        self.onWritingStatusChanged?(false)
+        self.isWriting = false
     }
         
     @IBAction internal func onAttachmentButtonTapped(sender: UIButton) {
@@ -131,12 +136,15 @@ extension ChatInputControls: UITextViewDelegate {
         if textView.text == placeholderText {
             textView.text.removeAll()
         }
+        self.isWriting = true
         return true
     }
     
     func textViewDidChange(_ textView: UITextView) {
         self.updatePlaceholder()
-        self.onWritingStatusChanged?(true)
+        if !self.isWriting {
+            self.isWriting = true
+        }
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
@@ -148,6 +156,7 @@ extension ChatInputControls: UITextViewDelegate {
     
     func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
         self.updatePlaceholder()
+        self.isWriting = false
         return true
     }
 }
