@@ -7,7 +7,7 @@
 import UIKit
 import NinchatSDK
 
-final class NINChatViewController: UIViewController, ViewController {
+final class NINChatViewController: UIViewController, ViewController, KeyboardHandler {
     
     private let animationDuration: Double = 0.3
     private var webRTCClient: NINChatWebRTCClient?
@@ -71,6 +71,10 @@ final class NINChatViewController: UIViewController, ViewController {
     var onOpenGallery: ((UIImagePickerController.SourceType) -> Void)?
     var onOpenPhotoAttachment: ((UIImage, NINFileInfo) -> Void)?
     var onOpenVideoAttachment: ((NINFileInfo) -> Void)?
+    
+    // MARK: - KeyboardHandler
+    
+    var onKeyboardSizeChanged: ((CGFloat) -> Void)?
     
     // MARK: - Outlets
     
@@ -160,6 +164,7 @@ final class NINChatViewController: UIViewController, ViewController {
         super.viewDidLoad()
         self.setupView()
         self.setupViewModel()
+        self.setupKeyboardClosure()
         self.connectRTC()
         
         NotificationCenter.default.addObserver(self, selector: #selector(didEnterBackground(notification:)),
@@ -299,13 +304,19 @@ extension NINChatViewController {
         }
     }
     
+    func setupKeyboardClosure() {
+        self.onKeyboardSizeChanged = { [unowned self] height in
+            self.chatView.updateContentSize(height)
+        }
+    }
+    
     private func updateInputContainerHeight(_ value: CGFloat, update: Bool = true) {
-        self.inputContainer.fix(height: value)
-        
+        self.inputContainer.height?.constant = value
         if update {
             self.inputContainerHeight = value
-            self.view.layoutIfNeeded()
         }
+    
+        self.view.layoutIfNeeded()
     }
     
     /// Aligns (or cancels existing alignment) the input control container view's top

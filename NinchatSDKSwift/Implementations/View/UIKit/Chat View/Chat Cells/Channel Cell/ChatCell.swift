@@ -8,6 +8,8 @@ import UIKit
 import NinchatSDK
 
 protocol ChatCell: UIView {
+    var isReloading: Bool! { get set }
+    
     var session: NINChatSessionAttachment! { get set }
     var videoThumbnailManager: NINVideoThumbnailManager? { get set }
     var onImageTapped: ((_ attachment: NINFileInfo, _ image: UIImage?) -> Void)? { get set }

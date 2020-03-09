@@ -28,7 +28,7 @@ Pod::Spec.new do |s|
   # Cocoapods dependencies
   s.dependency "NinchatSDK"
   s.dependency "AnyCodable"
-  s.dependency "AutoLayoutSwift"
+  s.dependency "AutoLayoutSwift", "4.0.0"
 
   s.module_name = "NinchatSDKSwift"
 end

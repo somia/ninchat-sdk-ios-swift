@@ -38,11 +38,20 @@ extension UIView {
         })
     }
     
-    func round(_ borderWidth: CGFloat = 0.0, _ borderColor: UIColor = .clear) {
-        self.layer.cornerRadius = self.bounds.height / 2
+    @discardableResult
+    func round(radius: CGFloat? = nil, _ borderWidth: CGFloat = 0.0, _ borderColor: UIColor = .clear) -> Self {
+        if let radius = radius {
+            self.layer.cornerRadius = radius
+        } else if let heightAnchor = self.height?.constant {
+            self.layer.cornerRadius = heightAnchor / 2
+        } else if self.bounds.height > 0 {
+            self.layer.cornerRadius = self.bounds.height / 2
+        }
         self.layer.masksToBounds = true
         self.layer.borderWidth = borderWidth
         self.layer.borderColor = borderColor.cgColor
+        
+        return self
     }
     
     func rotate(_ angle: CGFloat = .pi) {
