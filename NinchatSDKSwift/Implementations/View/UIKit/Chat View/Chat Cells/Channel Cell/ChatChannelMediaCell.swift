@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import NinchatSDK
 
 protocol ChannelMediaCell {
     /// Outlets
