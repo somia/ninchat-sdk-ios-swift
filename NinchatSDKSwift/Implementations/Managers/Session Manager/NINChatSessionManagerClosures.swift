@@ -7,12 +7,13 @@
 import Foundation
 
 protocol NINChatSessionManagerClosureHandler {
-    func bind(action id: Int, closure: @escaping ((Error?) -> Void))
-    func unbind(action id: Int)
+    func bind(action id: Int?, closure: @escaping ((Error?) -> Void))
+    func unbind(action id: Int?)
 }
 
 extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
-    internal func bind(action id: Int, closure: @escaping ((Error?) -> Void)) {
+    internal func bind(action id: Int?, closure: @escaping ((Error?) -> Void)) {
+        guard let id = id else { return }
         if actionBoundClosures.keys.filter({ $0 == id }).count > 0 { return }
         actionBoundClosures[id] = closure
         
@@ -23,7 +24,8 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
             }
         }
     }
-    internal func unbind(action id: Int) {
+    internal func unbind(action id: Int?) {
+        guard let id = id else { return }
         if actionBoundClosures.keys.filter({ $0 == id }).count == 0 { return }
         actionBoundClosures.removeValue(forKey: id)
     }

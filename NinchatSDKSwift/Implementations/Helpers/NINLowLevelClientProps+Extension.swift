@@ -260,7 +260,7 @@ extension NINLowLevelClientProps {
         self.setString("action", val: "send_message")
     }
     
-    func set(message type: String) {
+    func set(messageType type: String) {
         self.setString("message_type", val: type)
     }
     

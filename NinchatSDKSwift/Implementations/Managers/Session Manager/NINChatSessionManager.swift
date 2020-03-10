@@ -70,7 +70,7 @@ protocol NANChatSessionMessenger {
     
     /** Sends a message to the active channel. Active channel must exist. */
     @discardableResult
-    func send(type: MessageType, payload: [String:Any], completion: @escaping CompletionWithError) throws -> Int
+    func send(type: MessageType, payload: [String:Any], completion: @escaping CompletionWithError) throws -> Int?
     
     /** Load channel history. */
     func loadHistory(completion: @escaping CompletionWithError) throws
@@ -104,7 +104,7 @@ protocol NINChatSessionManagerDelegate {
     func unbindQueueUpdateClosure<T: QueueUpdateCapture>(from receiver: T)
 }
 
-protocol NINChatSessionManager: class, NINChatSessionConnectionManager, NANChatSessionMessenger, NINChatSessionAttachment, NINChatSessionTranslation, NINChatSessionManagerDelegate {
+protocol NINChatSessionManager: class, NINChatSessionConnectionManager, NANChatSessionMessenger, NINChatDevHelper, NINChatSessionAttachment, NINChatSessionTranslation, NINChatSessionManagerDelegate {
     /** List of available queues for the realm_id. */
     var queues: [NINQueue]! { get set }
     
@@ -114,13 +114,14 @@ protocol NINChatSessionManager: class, NINChatSessionConnectionManager, NANChatS
     /** Site configuration. */
     var siteConfiguration: NINSiteConfiguration! { get }
     
-    /**  A weak reference to internal functions declared in `NINChatSessionSwift` */
+    /** A weak reference to internal functions declared in `NINChatSessionSwift` */
     var delegate: NINChatSessionInternalDelegate? { get }
     
     /** Host application details including name, version, and some more details.
-    *  will be appended to some predefined values such as SDK version, device OS, and device model.
+    *   will be appended to some predefined values such as SDK version, device OS, and device model.
     */
     var appDetails: String? { get set }
     
-    init(session: NINChatSessionInternalDelegate?, serverAddress: String, siteSecret: String?, audienceMetadata: NINLowLevelClientProps?)
+    /** Default initializer for NinchatSessionManager. */
+    init(session: NINChatSessionInternalDelegate?, serverAddress: String, audienceMetadata: NINLowLevelClientProps?)
 }

@@ -8,10 +8,13 @@ import Foundation
 import NinchatLowLevelClient
 
 extension NINLowLevelClientSession {
-    func send(_ param: NINLowLevelClientProps, _ payload: NINLowLevelClientPayload? = nil) throws -> Int {
-        var actionID: Int64 = 0
-        try self.send(param, payload: payload, actionId: &actionID)
+    func send(_ param: NINLowLevelClientProps, _ payload: NINLowLevelClientPayload? = nil) throws -> Int? {
+        var actionID = UnsafeMutablePointer<Int64>.allocate(capacity: 1)
+        try self.send(param, payload: payload, actionId: actionID)
         
-        return Int(actionID)
+        defer {
+            actionID.deallocate()
+        }
+        return Int(actionID.pointee)
     }
 }

@@ -50,7 +50,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
             try self.sessionManager.list(queues: self.sessionManager.siteConfiguration.audienceQueues) { error in
                 XCTAssertNil(error)
                 XCTAssertNotNil(self.sessionManager.queues)
-                XCTAssertEqual(self.sessionManager.queues.count, 4)
+                XCTAssertGreaterThan(self.sessionManager.queues.count, 0)
                 XCTAssertEqual(self.sessionManager.queues.map({ $0.queueID }).sorted(), self.sessionManager.siteConfiguration.audienceQueues?.sorted())
                 expect.fulfill()
             }
@@ -88,7 +88,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         let expect_offer = self.expectation(description: "Expected to get a call offer")
         let expect_hangup = self.expectation(description: "Expected to hangup the offer")
     
-        self.simulateTextMessage("Start a new video chat to run tests")
+        try! self.simulateTextMessage("Start a new video chat to run tests")
     
         self.sessionManager.onRTCSignal = { type, user, signal in
             XCTAssertNotNil(signal)
@@ -99,7 +99,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
                 XCTAssertNil(signal?.sdp)
             
                 try! self.sessionManager.send(type: .pickup, payload: ["answer": true]) { error in
-                    self.simulateTextMessage("Now hangup to continue running tests")
+                    try! self.simulateTextMessage("Now hangup to continue running tests")
                     XCTAssertNil(error)
                 }
                 expect_call.fulfill()
@@ -187,8 +187,8 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
 }
 
 extension NinchatSDKSwiftAcceptanceTests: QueueUpdateCapture {
-    internal func simulateTextMessage(_ message: String) {
-        try! self.sessionManager.send(message: message, completion: { _ in })
+    internal func simulateTextMessage(_ message: String) throws {
+        try self.sessionManager.send(message: message, completion: { _ in })
     }
     
     var desc: String {

@@ -18,9 +18,7 @@ protocol NINChatSessionManagerInternalActions {
     var didEndSession: (() -> Void)? { get set }
 }
 
-final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatSessionManagerInternalActions {
-    internal let serverAddress: String
-    internal let siteSecret: String?
+final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatDevHelper, NINChatSessionManagerInternalActions {
     internal let audienceMetadata: NINLowLevelClientProps?
     
     internal var channelUsers: [String:NINChannelUser] = [:]
@@ -65,7 +63,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatS
     var onChannelClosed: (() -> Void)?
     var onRTCSignal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)?
     var onRTCClientSignal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)?
-
+    
     func bindQueueUpdate<T: QueueUpdateCapture>(closure: @escaping ((Events, String, Error?) -> Void), to receiver: T) {
         guard queueUpdateBoundClosures.keys.filter({ $0 == receiver.desc }).count == 0 else { return }
         queueUpdateBoundClosures[receiver.desc] = closure
@@ -86,12 +84,22 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatS
     var audienceQueues: [NINQueue]! = []
     var siteConfiguration: NINSiteConfiguration!
     var appDetails: String?
-
-    init(session: NINChatSessionInternalDelegate?, serverAddress: String, siteSecret: String? = nil, audienceMetadata: NINLowLevelClientProps? = nil) {
+    
+    // MARK: - NINChatSessionManagerDevTools
+    
+    var serverAddress: String!
+    var siteSecret: String?
+    
+    init(session: NINChatSessionInternalDelegate?, serverAddress: String, audienceMetadata: NINLowLevelClientProps? = nil) {
         self.delegate = session
         self.serverAddress = serverAddress
-        self.siteSecret = siteSecret
         self.audienceMetadata = audienceMetadata
+    }
+    
+    /** Designed for test and internal purposes. */
+    convenience init(session: NINChatSessionInternalDelegate?, serverAddress: String, siteSecret: String?, audienceMetadata: NINLowLevelClientProps? = nil) {
+        self.init(session: session, serverAddress: serverAddress, audienceMetadata: audienceMetadata)
+        self.siteSecret = siteSecret
     }
     
     deinit {
@@ -140,7 +148,7 @@ extension NINChatSessionManagerImpl {
     
     func openSession(completion: @escaping CompletionWithError) throws {
         guard self.session == nil else { throw NINSessionExceptions.hasActiveSession }
-        delegate?.log(value: "Opening new chat session using server address: \(serverAddress)")
+        delegate?.log(value: "Opening new chat session using server address: \(serverAddress!)")
         
         /// Wait for the session creation event
         self.onActionSessionEvent = { event, error in
@@ -168,7 +176,12 @@ extension NINChatSessionManagerImpl {
         }
         
         let messageType = NINLowLevelClientStrings.initiate
-        messageType.append("ninchat.com/*")
+        messageType.append(MessageType.file.rawValue)
+        messageType.append(MessageType.text.rawValue)
+        messageType.append(MessageType.metadata.rawValue)
+        messageType.append(MessageType.rtc.rawValue)
+        messageType.append(MessageType.ui.rawValue)
+        messageType.append(MessageType.info.rawValue)
         sessionParam.set(message: messageType)
         
         self.session = NINLowLevelClientSession()
@@ -277,7 +290,7 @@ extension NINChatSessionManagerImpl {
         }
     }
     
-    /// Low-level shutdown of the chatsession; invalidates session resource.
+    /// Low-level shutdown of the chat's session; invalidates session resource.
     func closeChat() throws {
         delegate?.log(value: "Shutting down chat Session..")
         try self.deleteCurrentUser { [unowned self] error in
@@ -371,13 +384,13 @@ extension NINChatSessionManagerImpl {
     
     /// Sends a message to the active channel. Active channel must exist.
     @discardableResult
-    func send(type: MessageType, payload: [String:Any], completion: @escaping CompletionWithError) throws -> Int {
+    func send(type: MessageType, payload: [String:Any], completion: @escaping CompletionWithError) throws -> Int? {
         guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
         guard let currentChannel = self.currentChannelID else { throw NINSessionExceptions.noActiveChannel }
         
         let param = NINLowLevelClientProps.initiate
         param.set_sendMessage()
-        param.set(message: type.rawValue)
+        param.set(messageType: type.rawValue)
         param.set(channel: currentChannel)
         
         if type == .metadata, let _ = (payload["data"] as? [String:String])?["rating"] {
