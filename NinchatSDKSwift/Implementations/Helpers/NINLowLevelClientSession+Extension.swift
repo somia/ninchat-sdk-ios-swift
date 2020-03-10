@@ -5,7 +5,7 @@
 //
 
 import Foundation
-import NinchatSDK
+import NinchatLowLevelClient
 
 extension NINLowLevelClientSession {
     func send(_ param: NINLowLevelClientProps, _ payload: NINLowLevelClientPayload? = nil) throws -> Int {

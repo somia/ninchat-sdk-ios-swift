@@ -5,9 +5,8 @@
 //
 
 import UIKit
-import CoreServices
-import AVFoundation
 import AVKit
+import CoreServices
 import NinchatSDK
 
 protocol Coordinator: class {

@@ -4,13 +4,12 @@
 // license that can be found in the LICENSE file.
 //
 
-import Foundation
-import NinchatSDK
+import NinchatLowLevelClient
 
 extension NINLowLevelClientStrings {
     /// For some unknown reasons, the `NINLowLevelClientStrings` initialization is optional
     /// The following variable unwrap it
     static var initiate: NINLowLevelClientStrings {
-        return NINLowLevelClientStrings()!
+        NINLowLevelClientStrings()!
     }
 }

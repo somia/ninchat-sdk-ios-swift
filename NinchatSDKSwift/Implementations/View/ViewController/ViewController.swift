@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import NinchatSDK
 
 protocol ViewController: UIViewController {
     var session: NINChatSessionSwift! { get set }

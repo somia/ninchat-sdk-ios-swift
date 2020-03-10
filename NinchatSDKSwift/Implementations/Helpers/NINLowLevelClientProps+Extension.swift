@@ -4,21 +4,21 @@
 // license that can be found in the LICENSE file.
 //
 
-import Foundation
-import NinchatSDK
+import UIKit
+import NinchatLowLevelClient
 
 struct NinchatError: Error {
     let code: Int
     let title: String
 }
 
-// MARK: - Unoptional initializer
+// MARK: - Un-optional initializer
 
 extension NINLowLevelClientProps {
     /// For some unknown reasons, the `NINLowLevelClientProps` initialization is optional
     /// The following variable unwrap it
     static var initiate: NINLowLevelClientProps {
-        return NINLowLevelClientProps()!
+        NINLowLevelClientProps()!
     }
 }
 

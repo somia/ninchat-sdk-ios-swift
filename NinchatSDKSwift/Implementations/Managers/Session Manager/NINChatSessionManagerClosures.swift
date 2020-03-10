@@ -5,7 +5,6 @@
 //
 
 import Foundation
-import NinchatSDK
 
 protocol NINChatSessionManagerClosureHandler {
     func bind(action id: Int, closure: @escaping ((Error?) -> Void))
