@@ -7,7 +7,7 @@
 import XCTest
 @testable import NinchatSDKSwift
 
-class AutolayouTests: XCTestCase {
+class AutolayoutTests: XCTestCase {
     var superView: UIView!
     var view: UIView!
     
@@ -23,7 +23,7 @@ class AutolayouTests: XCTestCase {
         view.removeConstraints(view.constraints)
     }
 
-    func testAutolayouSize() {
+    func testAutolayoutSize() {
         view.fix(width: 150, height: 170)
         view.setNeedsLayout()
         view.layoutIfNeeded()
@@ -32,8 +32,8 @@ class AutolayouTests: XCTestCase {
         XCTAssertEqual(view.frame.height, 170)
     }
     
-    func testAutolayouOrigin() {
-        view.fix(left: (30, superView), isRelative: false)
+    func testAutolayoutOrigin() {
+        view.fix(leading: (30, superView), isRelative: false)
         view.fix(top: (10, superView), isRelative: false)
         superView.setNeedsLayout()
         superView.layoutIfNeeded()
@@ -47,13 +47,13 @@ class AutolayouTests: XCTestCase {
     func testAutolayoutOriginActivate() {
         view
             .fix(top: (10, superView), isRelative: false)
-            .fix(left: (30, superView), isRelative: false)
+            .fix(leading: (30, superView), isRelative: false)
         superView.setNeedsLayout()
         superView.layoutIfNeeded()
         view.setNeedsLayout()
         view.layoutIfNeeded()
         
-        view.deactivate(origin: [.leading])
+        view.deactivate(constraints: [.leading])
         superView.setNeedsLayout()
         superView.layoutIfNeeded()
         view.setNeedsLayout()
@@ -62,7 +62,7 @@ class AutolayouTests: XCTestCase {
         XCTAssertEqual(view.frame.origin.y, 10)
         XCTAssertEqual(view.frame.origin.x, 0)
         
-        view.fix(left: (30, superView), isRelative: false)
+        view.fix(leading: (30, superView), isRelative: false)
         superView.setNeedsLayout()
         superView.layoutIfNeeded()
         view.setNeedsLayout()
@@ -77,11 +77,28 @@ class AutolayouTests: XCTestCase {
         view.setNeedsLayout()
         view.layoutIfNeeded()
 
-        view.deactivate(size: [.height])
+        view.deactivate(constraints: [.height])
         view.setNeedsLayout()
         view.layoutIfNeeded()
         
         XCTAssertEqual(view.frame.width, 150)
         XCTAssertEqual(view.frame.height, 0)
+    }
+
+    func testScale() {
+        view.fix(width: 20)
+        view.scale(aspectRatio: 2.0)
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+        
+        XCTAssertEqual(view.bounds.height, 40)
+    }
+    
+    func testGetConstants() {
+        view.fix(width: 20, height: 30)
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+        
+        XCTAssertEqual(view.constants(in: [.width, .height]), [.width: 20, .height: 30])
     }
 }

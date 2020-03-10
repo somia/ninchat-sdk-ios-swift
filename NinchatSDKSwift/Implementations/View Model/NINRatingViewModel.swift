@@ -6,14 +6,8 @@
 
 import Foundation
 
-enum ChatStatus: Int {
-    case happy = 1
-    case neutral = 0
-    case sad = -1
-}
-
 protocol NINRatingViewModel {
-    init(session: NINChatSessionSwift)
+    init(sessionManager: NINChatSessionManager)
     
     func rateChat(with status: ChatStatus)
     func skipRating()
@@ -21,19 +15,19 @@ protocol NINRatingViewModel {
 
 struct NINRatingViewModelImpl: NINRatingViewModel {
     
-    private unowned let session: NINChatSessionSwift
+    private unowned let sessionManager: NINChatSessionManager
     
     // MARK: - NINRatingViewModel
     
-    init(session: NINChatSessionSwift) {
-        self.session = session
+    init(sessionManager: NINChatSessionManager) {
+        self.sessionManager = sessionManager
     }
     
     func rateChat(with status: ChatStatus) {
-        session.sessionManager.finishChat(NSNumber(value: status.rawValue))
+        try? self.sessionManager.finishChat(rating: status)
     }
     
     func skipRating() {
-        session.sessionManager.finishChat(nil)
+        try? self.sessionManager.finishChat(rating: nil)
     }
 }

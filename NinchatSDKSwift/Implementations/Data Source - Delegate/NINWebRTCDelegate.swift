@@ -8,20 +8,27 @@ import Foundation
 import NinchatSDK
 
 protocol NINWebRTCActions {
-    var onError: ((Error) -> Void)? { get set }
+    var onActionError: ((Error) -> Void)? { get set }
     var onRemoteVideoTrack: ((RTCVideoRenderer, RTCVideoTrack) -> Void)? { get set }
     var onLocalCapturer: ((RTCCameraVideoCapturer) -> Void)? { get set }
 }
 
-protocol NINWebRTCDelegate: NINWebRTCClientDelegate, NINWebRTCActions {
+protocol NINWebRTCDelegate: NINChatWebRTCClientDelegate, NINWebRTCActions {
     init(remoteVideoDelegate: RTCVideoViewDelegate)
 }
 
-final class NINWebRTCDelegateImpl: NSObject, NINWebRTCDelegate {
+final class NINWebRTCDelegateImpl: NINWebRTCDelegate {
+    
+    // MARK: - NINChatWebRTCClientDelegate
+    
+    var onConnectionStateChange: ((NINChatWebRTCClient, ConnectionState) -> Void)?
+    var onLocalCapturerCreate: ((NINChatWebRTCClient, RTCCameraVideoCapturer) -> Void)?
+    var onRemoteVideoTrackReceive: ((NINChatWebRTCClient, RTCVideoTrack) -> Void)?
+    var onError: ((NINChatWebRTCClient, Error) -> Void)?
     
     // MARK: - NINWebRTCActions
     
-    var onError: ((Error) -> Void)?
+    var onActionError: ((Error) -> Void)?
     var onRemoteVideoTrack: ((RTCVideoRenderer, RTCVideoTrack) -> Void)?
     var onLocalCapturer: ((RTCCameraVideoCapturer) -> Void)?
     
@@ -31,40 +38,36 @@ final class NINWebRTCDelegateImpl: NSObject, NINWebRTCDelegate {
     
     init(remoteVideoDelegate: RTCVideoViewDelegate) {
         self.remoteVideoDelegate = remoteVideoDelegate
-    }
-}
-
-// MARK: - NINWebRTCClientDelegate
-
-extension NINWebRTCDelegateImpl {
-    func webrtcClient(_ client: NINWebRTCClient!, didGetError error: Error!) {
-        debugger("NINCHAT: didGetError: \(String(describing: error))")
-        self.onError?(error)
-    }
-    
-    func webrtcClient(_ client: NINWebRTCClient!, didChange newState: RTCIceConnectionState) {
-        debugger("WebRTC new state: \(newState.rawValue)")
-    }
-    
-    /** Called when the video call is initiated and the remote video track is available. */
-    func webrtcClient(_ client: NINWebRTCClient!, didReceiveRemoteVideoTrack remoteVideoTrack: RTCVideoTrack!) {
-        debugger("NINCHAT: didReceiveRemoteVideoTrack: \(String(describing: remoteVideoTrack))")
         
-        #if RTC_SUPPORTS_METAL
-        let remoteView = RTCMTLVideoView(frame: .zero)
-        remoteVide.delegate = remoteVideoDelegate
+        self.onConnectionStateChange = { client, newState in
+            debugger("WebRTC new state: \(newState.description)")
+        }
         
-        self.onRemoteVideoTrack?(remoteView, remoteVideoTrack)
-        #else
-        let remoteView = RTCEAGLVideoView(frame: .zero)
-        remoteView.delegate = remoteVideoDelegate
+        self.onLocalCapturerCreate = { [weak self] client, capturer in
+            debugger("didCreateLocalCapturer: \(String(describing: capturer))")
+            self?.onLocalCapturer?(capturer)
+        }
         
-        self.onRemoteVideoTrack?(remoteView, remoteVideoTrack)
-        #endif
-    }
-    
-    func webrtcClient(_ client: NINWebRTCClient!, didCreateLocalCapturer localCapturer: RTCCameraVideoCapturer!) {
-        debugger("didCreateLocalCapturer: \(String(describing: localCapturer))")
-        self.onLocalCapturer?(localCapturer)
+        /** Called when the video call is initiated and the remote video track is available. */
+        self.onRemoteVideoTrackReceive = { [weak self] client, remoteVideoTrack in
+            debugger("NINCHAT: didReceiveRemoteVideoTrack: \(String(describing: remoteVideoTrack))")
+            
+            #if RTC_SUPPORTS_METAL
+            let remoteView = RTCMTLVideoView(frame: .zero)
+            remoteVide.delegate = remoteVideoDelegate
+            
+            self.onRemoteVideoTrack?(remoteView, remoteVideoTrack)
+            #else
+            let remoteView = RTCEAGLVideoView(frame: .zero)
+            remoteView.delegate = remoteVideoDelegate
+            
+            self?.onRemoteVideoTrack?(remoteView, remoteVideoTrack)
+            #endif
+        }
+        
+        self.onError = { [weak self] client, error in
+            debugger("NINCHAT: didGetError: \(String(describing: error))")
+            self?.onActionError?(error)
+        }
     }
 }

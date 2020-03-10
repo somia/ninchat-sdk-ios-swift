@@ -9,13 +9,13 @@ Pod::Spec.new do |s|
   s.license      = { :type => "Ninchat", :file => "LICENSE.md" }
   s.author       = { "Hassan Shahbazi" => "hassan@ninchat.com" }
   s.source       = { :git => "https://github.com/somia/ninchat-sdk-ios-swift.git", :tag => "#{s.version}" }
-  s.ios.deployment_target = "9.0"
+  s.ios.deployment_target = "10.0"
 
   # Handle the SDK itself as a subspec with dependencies to the frameworks
   s.subspec "SDKSwift" do |ss|
     ss.source_files  = "NinchatSDKSwift/**/*.{swift}"
     ss.resource_bundles = {
-        "NinchatSwiftSDKUI" => ["NinchatSDKSwift/**/*.{storyboard,xib,xcassets,strings}"],
+        "NinchatSwiftSDKUI" => "NinchatSDKSwift/**/*.{storyboard,xib,xcassets,strings}"
     }
   end
 
@@ -27,6 +27,8 @@ Pod::Spec.new do |s|
 
   # Cocoapods dependencies
   s.dependency "NinchatSDK"
+  s.dependency "AnyCodable"
+  s.dependency "AutoLayoutSwift", "4.0.0"
 
   s.module_name = "NinchatSDKSwift"
 end

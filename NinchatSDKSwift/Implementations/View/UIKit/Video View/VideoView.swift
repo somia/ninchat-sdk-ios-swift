@@ -57,8 +57,8 @@ final class VideoView: UIView, VideoViewProtocol {
             
             self.remoteVideoViewContainer.addSubview(view)
             view
-                .fix(left: (0.0, remoteVideoViewContainer), right: (0.0, remoteVideoViewContainer), isRelative: false)
-                .fix(top: (0.0, remoteVideoViewContainer), bottom: (0.0, remoteVideoViewContainer), isRelative: false)
+                .fix(leading: (0.0, remoteVideoViewContainer), trailing: (0.0, remoteVideoViewContainer))
+                .fix(top: (0.0, remoteVideoViewContainer), bottom: (0.0, remoteVideoViewContainer))
         }
     }
     var remoteVideoTrack: RTCVideoTrack? {
@@ -136,10 +136,7 @@ final class VideoView: UIView, VideoViewProtocol {
     }
     
     func resizeRemoteVideo(to size: CGSize) {
-        #if DEGBU
-        print("Adjusting remote video view size")
-        #endif
-        
+        debugger("Adjusting remote video view size")
         let aspectRatio = (size == .zero) ? CGSize(width: 4, height: 3) : size
         let videoFrame = AVMakeRect(aspectRatio: aspectRatio, insideRect: self.videoContainerView.bounds)
         self.remoteViewWidthConstraint.constant = videoFrame.width
@@ -156,7 +153,6 @@ final class VideoView: UIView, VideoViewProtocol {
         let containerWidth = self.videoContainerView.bounds.width
         let containerHeight = self.videoContainerView.bounds.height
         guard containerWidth > 1, containerHeight > 1 else { return }
-        
         debugger("Adjusting local video view size")
         
         let videoRect = CGRect(x: 0, y: 0, width: containerWidth / 3, height: containerHeight / 3)

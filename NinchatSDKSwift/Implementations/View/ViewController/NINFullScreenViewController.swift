@@ -39,15 +39,6 @@ final class NINFullScreenViewController: UIViewController, ViewController {
         
         return view
     }()
-    @IBOutlet private(set) weak var topBarContainer: UIView! {
-        didSet {
-            topBarContainer.addSubview(topBar)
-            topBar
-                .fix(left: (0, topBarContainer), right: (0, topBarContainer), isRelative: false)
-                .fix(top: (0, topBarContainer), bottom: (0, topBarContainer), isRelative: false)
-        }
-    }
-    
     @IBOutlet private(set) weak var imageView: UIImageView! {
         didSet {
             imageView.image = image
@@ -59,13 +50,19 @@ final class NINFullScreenViewController: UIViewController, ViewController {
     // MARK: - UIViewController
     
     override var prefersStatusBarHidden: Bool {
-        return true
+        true
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupRation()
         self.topBar.overrideAssets()
+    
+        self.view.addSubview(topBar)
+        topBar
+            .fix(top: (0, self.view))
+            .fix(leading: (0, self.view), trailing: (0, self.view))
+            .fix(height: 60)
     }
 }
 
@@ -89,9 +86,9 @@ extension NINFullScreenViewController {
     @objc
     private func onFullScreenImageTapped(sender: UITapGestureRecognizer) {
         /// Toggle the top bar visibility
-        let isHidden = self.topBarContainer.alpha == 0.0
+        let isHidden = self.topBar.alpha == 0.0
         UIView.animate(withDuration: 0.3) {
-            self.topBarContainer.alpha = (isHidden) ? 1.0 : 0.0
+            self.topBar.alpha = (isHidden) ? 1.0 : 0.0
         }
     }
 }
@@ -100,6 +97,6 @@ extension NINFullScreenViewController {
 
 extension NINFullScreenViewController {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-        return self.imageView
+        self.imageView
     }
 }

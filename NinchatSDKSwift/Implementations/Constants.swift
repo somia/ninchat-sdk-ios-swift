@@ -5,10 +5,10 @@
 //
 
 import Foundation
+import UIKit
 
-
-public typealias NINImageAssetKey = String
-public enum AssetConstants: NINImageAssetKey {
+public typealias NINImageAssetDictionary = [AssetConstants:UIImage]
+public enum AssetConstants: String {
     case iconLoader = "NINImageAssetKeyQueueViewProgressIndicator"
     case iconChatCloseButton = "NINImageAssetKeyIconChatCloseButton"
     case iconRatingPositive = "NINImageAssetKeyIconRatingPositive"
@@ -44,8 +44,8 @@ public enum AssetConstants: NINImageAssetKey {
     case secondaryButton = "NINImageAssetKeySecondaryButton"
 }
 
-public typealias NINColorAssetKey = String
-public enum ColorConstants: NINColorAssetKey {
+public typealias NINColorAssetDictionary = [ColorConstants:UIColor]
+public enum ColorConstants: String {
     case buttonPrimaryText = "NINColorAssetKeyButtonPrimaryText"
     case buttonSecondaryText = "NINColorAssetKeyButtonSecondaryText"
     case infoText = "NINColorAssetKeyInfoText"
@@ -78,16 +78,18 @@ public enum Constants: String {
     case kQueuePositionN = "Joined audience queue {{audienceQueue.queue_attrs.name}}, you are at position {{audienceQueue.queue_position}}."
     case kQueuePositionNext = "Joined audience queue {{audienceQueue.queue_attrs.name}}, you are next."
     case kCloseChatText = "Close chat"
+    case kCancelDialog = "Continue chat"
+    case kAcceptDialog = "Accept"
+    case kRejectDialog = "Decline"
     case kTextInputPlaceholderText = "Enter your message"
-}
-
-enum WebRTCConstants: String {
-    case kNINMessageTypeWebRTCIceCandidate = "ninchat.com/rtc/ice-candidate"
-    case kNINMessageTypeWebRTCAnswer = "ninchat.com/rtc/answer"
-    case kNINMessageTypeWebRTCOffer = "ninchat.com/rtc/offer"
-    case kNINMessageTypeWebRTCCall = "ninchat.com/rtc/call"
-    case kNINMessageTypeWebRTCPickup = "ninchat.com/rtc/pick-up"
-    case kNINMessageTypeWebRTCHangup = "ninchat.com/rtc/hang-up"
+    case kCallInvitationText = "You are invited to a video chat"
+    case kCallInvitationInfoText = "wants to video chat with you"
+    case kRatingTitleText = "How was our customer service?"
+    case kRatingSkipText = "Skip"
+    
+    case kRatingPositiveText = "Good"
+    case kRatingNeutralText = "Okay"
+    case kRatingNegativeText = "Poor"
 }
 
 enum NotificationConstants: String {

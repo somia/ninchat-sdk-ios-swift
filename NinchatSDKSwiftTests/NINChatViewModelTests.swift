@@ -8,12 +8,21 @@ import XCTest
 import NinchatSDK
 @testable import NinchatSDKSwift
 
-class NINChatViewModelTests: XCTestCase {
+class NINChatViewModelTests: XCTestCase, NINChatWebRTCClientDelegate {
+    var sessionManager: NINChatSessionManager!
     var viewModel: NINChatViewModel!
+
+    // MARK: - NINChatWebRTCClientDelegate
     
+    var onConnectionStateChange: ((NINChatWebRTCClient, ConnectionState) -> Void)?
+    var onLocalCapturerCreate: ((NINChatWebRTCClient, RTCCameraVideoCapturer) -> Void)?
+    var onRemoteVideoTrackReceive: ((NINChatWebRTCClient, RTCVideoTrack) -> Void)?
+    var onError: ((NINChatWebRTCClient, Error) -> Void)?
+
     override func setUp() {
-        let session = NINChatSessionSwift(configKey: "")
-        viewModel = NINChatViewModelImpl(session: session)
+        let delegate = NINChatSessionSwift(configKey: "")
+        sessionManager = NINChatSessionManagerImpl(session: delegate, serverAddress: "")
+        viewModel = NINChatViewModelImpl(sessionManager: sessionManager)
     }
 
     override func tearDown() { }
@@ -34,7 +43,6 @@ class NINChatViewModelTests: XCTestCase {
         }, onCallInitiated: { error, rtc  in }, onCallHangup: {
             expectationHangup.fulfill()
         })
-        XCTAssertNotNil(viewModel.signalingObserver)
         
         simulateSignalCall()
         simulateCallInitiate()
@@ -44,20 +52,20 @@ class NINChatViewModelTests: XCTestCase {
     
     func testRTCDisconnect() {
         let expectation = self.expectation(description: "The disconnect should happen")
-        self.viewModel.disconnectRTC(NINWebRTCClient()) {
+        self.viewModel.disconnectRTC(NINChatWebRTCClientImpl()) {
             expectation.fulfill()
         }
         wait(for: [expectation], timeout: 1.0)
     }
     
-    func testMessageObservers() {
+    func testMessageClosures() {
         let expectationCloseChat = self.expectation(description: "Expect to close the chat")
         viewModel.onChannelClosed = {
             expectationCloseChat.fulfill()
         }
         
         let expectationQueueChat = self.expectation(description: "Expect to back to the queue view controller")
-        viewModel.onQueued = {
+        viewModel.onQueueUpdated = {
             expectationQueueChat.fulfill()
         }
         
@@ -72,7 +80,6 @@ class NINChatViewModelTests: XCTestCase {
                 expectationMessageRemove.fulfill()
             }
         }
-        XCTAssertNotNil(viewModel.messageObserver)
         
         simulateChatClose()
         simulateChatQueue()
@@ -86,19 +93,15 @@ class NINChatViewModelTests: XCTestCase {
 
 extension NINChatViewModelTests {
     private func simulateSignalCall() {
-        postNotification(NotificationConstants.kNINWebRTCSignalNotification.rawValue,
-                         ["messageType": WebRTCConstants.kNINMessageTypeWebRTCOffer.rawValue])
+        sessionManager.onRTCSignal?(.offer, nil, nil)
     }
     
     private func simulateCallInitiate() {
-        postNotification(NotificationConstants.kNINWebRTCSignalNotification.rawValue,
-                         ["messageType": WebRTCConstants.kNINMessageTypeWebRTCCall.rawValue,
-                          "payload": ["sdp":""]])
+        sessionManager.onRTCSignal?(.call, nil, RTCSignal(candidate: nil, sdp: ["sdp": ""]))
     }
     
     private func simulateHangup() {
-        postNotification(NotificationConstants.kNINWebRTCSignalNotification.rawValue,
-                         ["messageType": WebRTCConstants.kNINMessageTypeWebRTCHangup.rawValue])
+        sessionManager.onRTCSignal?(.hangup, nil, nil)
     }
 }
 
@@ -106,33 +109,26 @@ extension NINChatViewModelTests {
 
 extension NINChatViewModelTests {
     private func simulateChatClose() {
-        postNotification(NotificationConstants.kNINChannelClosedNotification.rawValue, [:])
+        sessionManager.onChannelClosed?()
     }
     
     private func simulateChatQueue() {
-        postNotification(NotificationConstants.kNINQueuedNotification.rawValue,
-                         ["event":"audience_enqueued"])
+        (sessionManager as! NINChatSessionManagerImpl).queueUpdateBoundClosures.forEach {
+            $0.value(.audienceEnqueued, "queue", nil)
+        }
     }
     
     private func simulateChatInsertMessage() {
-        postNotification(NotificationConstants.kChannelMessageNotification.rawValue,
-                         ["index": 0,
-                          "action": "insert"])
+        sessionManager.onMessageAdded?(0)
     }
     
     private func simulateChatRemoveMessage() {
-        postNotification(NotificationConstants.kChannelMessageNotification.rawValue,
-                         ["index": 1,
-                          "action": "remove"])
+        sessionManager.onMessageRemoved?(1)
     }
 }
 
-extension NINChatViewModelTests: NINWebRTCClientDelegate {
-    func webrtcClient(_ client: NINWebRTCClient!, didChange newState: RTCIceConnectionState) {}
-    
-    func webrtcClient(_ client: NINWebRTCClient!, didCreateLocalCapturer localCapturer: RTCCameraVideoCapturer!) {}
-    
-    func webrtcClient(_ client: NINWebRTCClient!, didReceiveRemoteVideoTrack remoteVideoTrack: RTCVideoTrack!) {}
-    
-    func webrtcClient(_ client: NINWebRTCClient!, didGetError error: Error!) {}
+extension NINChatWebRTCClientImpl {
+    convenience override init() {
+        self.init(sessionManager: nil, operatingMode: .callee, stunServers: nil, turnServers: nil, delegate: nil)
+    }
 }

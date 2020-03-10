@@ -5,12 +5,14 @@
 //
 
 import UIKit
+import AutoLayoutSwift
 
 final class NINRatingViewController: UIViewController, ViewController {
     
     // MARK: - Injected
     
     var viewModel: NINRatingViewModel!
+    var translate: NINChatSessionTranslation!
     
     // MARK: - ViewController
     
@@ -24,6 +26,8 @@ final class NINRatingViewController: UIViewController, ViewController {
     private lazy var facesView: FacesViewProtocol = {
         var view: FacesView = FacesView.loadFromNib()
         view.session = session
+        view.translate = translate
+        view.backgroundColor = .clear
         view.onPositiveTapped = { [weak self] button in
             self?.onPositiveButtonTapped(sender: button)
         }
@@ -36,12 +40,12 @@ final class NINRatingViewController: UIViewController, ViewController {
         
         return view
     }()
-    @IBOutlet private(set) weak var facesViewContiner: UIView! {
+    @IBOutlet private(set) weak var facesViewContainer: UIView! {
         didSet {
-            facesViewContiner.addSubview(facesView)
+            facesViewContainer.addSubview(facesView)
             facesView
-                .fix(left: (0, facesViewContiner), right: (0, facesViewContiner), isRelative: false)
-                .fix(top: (0, facesViewContiner), bottom: (0, facesViewContiner), isRelative: false)
+                .fix(leading: (0, facesViewContainer), trailing: (0, facesViewContainer))
+                .fix(top: (0, facesViewContainer), bottom: (0, facesViewContainer))
         }
     }
     
@@ -62,6 +66,14 @@ final class NINRatingViewController: UIViewController, ViewController {
     
     func overrideAssets() {
         facesView.overrideAssets()
+        
+        if let title = self.translate.translate(key: Constants.kRatingTitleText.rawValue, formatParams: [:]) {
+            self.titleTextView.setFormattedText(title)
+        }
+        
+        if let skip = self.translate.translate(key: Constants.kRatingSkipText.rawValue, formatParams: [:]) {
+            self.skipButton.setTitle(skip, for: .normal)
+        }
         
         if let topBackgroundColor = self.session.override(colorAsset: .backgroundTop) {
             self.topViewContainer.backgroundColor = topBackgroundColor

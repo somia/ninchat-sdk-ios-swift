@@ -7,18 +7,37 @@
 import Foundation
 import NinchatSDK
 
-protocol NINChatDelegate: NINChatViewDelegate {
+/** Delegate for the chat view. */
+protocol ChatViewDelegate {
+    /** An image in a cell was selected (tapped). */
+    func didSelect(image: UIImage?, for attachment: NINFileInfo?, _ view: ChatView)
+    
+    /** "Close Chat" button was pressed inside the chat view; the used requests closing the chat SDK. */
+    func didRequestToClose(_ view: ChatView)
+    
+    /** "Send" button was pressed in a ui/compose type message. */
+    func didSendUIAction(composeContent: NINComposeContentView?)
+}
+protocol NINChatDelegate: ChatViewDelegate {
     var onOpenPhotoAttachment: ((UIImage, NINFileInfo) -> Void)? { get set }
     var onOpenVideoAttachment: ((NINFileInfo) -> Void)?  { get set }
     var onCloseChatTapped: (() -> Void)? { get set }
     var onUIActionError: ((Error) -> Void)? { get set }
 }
 
-protocol NINChatDataSource: NINChatViewDataSource {
+/** Data source for the chat view. */
+protocol ChatViewDataSource {
+    /** How many messages there are. */
+    func numberOfMessages(for view: ChatView) -> Int
+    
+    /** Returns the chat message at given index. */
+    func message(at index: Int, _ view: ChatView) -> NINChatMessage
+}
+protocol NINChatDataSource: ChatViewDataSource {
     init(viewModel: NINChatViewModel)
 }
 
-protocol NINChatDataSourceDelegate: NINChatDataSource, NINChatDelegate {}
+protocol NINChatDataSourceDelegate: NINChatDataSource, NINChatDelegate  {}
 
 final class NINChatDataSourceDelegateImpl: NINChatDataSourceDelegate {
     
@@ -38,38 +57,42 @@ final class NINChatDataSourceDelegateImpl: NINChatDataSourceDelegate {
     }
 }
 
-// MARK: - NINChatViewDataSource
+// MARK: - ChatViewDataSource
 
 extension NINChatDataSourceDelegateImpl {
-    func numberOfMessages(for chatView: NINChatView!) -> Int {
-        return chatView.sessionManager.chatMessages.count
+    func numberOfMessages(for view: ChatView) -> Int {
+        return view.sessionManager.chatMessages.count
     }
     
-    func chatView(_ chatView: NINChatView!, messageAt index: Int) -> NINChatMessage! {
-        return chatView.sessionManager.chatMessages[index]
+    func message(at index: Int, _ view: ChatView) -> NINChatMessage {
+        return view.sessionManager.chatMessages[index]
     }
 }
 
-// MARK: - NINChatViewDelegate
+// MARK: - ChatViewDelegate
 
 extension NINChatDataSourceDelegateImpl {
-    func chatView(_ chatView: NINChatView!, imageSelected image: UIImage!, forAttachment attachment: NINFileInfo!) {
-        if attachment.isImage() {
+    func didSelect(image: UIImage?, for attachment: NINFileInfo?, _ view: ChatView) {
+        guard let attachment = attachment else { return }
+        
+        if attachment.isImage, let image = image {
             self.onOpenPhotoAttachment?(image, attachment)
-        } else if attachment.isVideo() {
+        } else if attachment.isVideo {
             self.onOpenVideoAttachment?(attachment)
         }
     }
     
-    func closeChatRequested(by chatView: NINChatView!) {
+    func didRequestToClose(_ view: ChatView) {
         self.onCloseChatTapped?()
     }
     
-    func uiActionSent(by composeContentView: NINComposeContentView!) {
-        self.viewModel.send(action: composeContentView) { [weak self] error in
+    func didSendUIAction(composeContent: NINComposeContentView?) {
+        guard let composeContent = composeContent else { return }
+        
+        self.viewModel.send(action: composeContent) { [weak self] error in
             guard let err = error else { return }
             
-            composeContentView.sendActionFailed()
+            composeContent.sendActionFailed()
             self?.onUIActionError?(err)
         }
     }

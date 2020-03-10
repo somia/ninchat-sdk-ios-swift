@@ -11,6 +11,7 @@ protocol ChatInputActions {
     var onSendTapped: ((String) -> Void)? { get set }
     var onAttachmentTapped: ((UIButton) -> Void)? { get set }
     var onTextSizeChanged: ((CGFloat) -> Void)? { get set }
+    var onWritingStatusChanged: ((_ writing: Bool) -> Void)? { get set }
 }
 
 protocol ChatInputControlsProtocol: UIView, ChatInputActions {
@@ -31,7 +32,12 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
     private var placeholderColor: UIColor = .systemGray
     private var textColor: UIColor = .black
     private var placeholderText: String {
-        return self.session?.sessionManager.translation(Constants.kTextInputPlaceholderText.rawValue, formatParams: [:]) ?? ""
+        return self.session?.sessionManager.translate(key: Constants.kTextInputPlaceholderText.rawValue, formatParams: [:]) ?? ""
+    }
+    private var isWriting: Bool = false {
+        didSet {
+            self.onWritingStatusChanged?(isWriting)
+        }
     }
     
     // MARK: - ChatInputControls
@@ -49,6 +55,7 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
     var onSendTapped: ((String) -> Void)?
     var onAttachmentTapped: ((UIButton) -> Void)?
     var onTextSizeChanged: ((CGFloat) -> Void)?
+    var onWritingStatusChanged: ((Bool) -> Void)?
     
     // MARK: - Outlets
     
@@ -85,8 +92,8 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
         if let attachmentIcon = self.session?.override(imageAsset: .iconTextareaAttachment) {
             self.attachmentButton.setImage(attachmentIcon, for: .normal)
         }
-
-        if let inputTextColor = self.session?.overrideColorAsset(forKey: .textareaText) {
+        
+        if let inputTextColor = self.session?.override(colorAsset: .textareaText) {
             self.textInput.textColor = inputTextColor
             textColor = inputTextColor
         }
@@ -95,17 +102,17 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
     
     // MARK: - User actions
 
-    @IBAction private func onSendButtonTapped(sender: UIButton) {
+    @IBAction internal func onSendButtonTapped(sender: UIButton) {
         let text = textInput.text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty, !isOnPlaceholderMode else { return }
         
         textInput.text = ""
         self.onSendTapped?(text)
         self.updatePlaceholder()
-        textInput.resignFirstResponder()
+        self.isWriting = false
     }
         
-    @IBAction private func onAttachmentButtonTapped(sender: UIButton) {
+    @IBAction internal func onAttachmentButtonTapped(sender: UIButton) {
         self.textInput.resignFirstResponder()
         self.onAttachmentTapped?(sender)
     }
@@ -129,27 +136,27 @@ extension ChatInputControls: UITextViewDelegate {
         if textView.text == placeholderText {
             textView.text.removeAll()
         }
+        self.isWriting = true
         return true
     }
     
     func textViewDidChange(_ textView: UITextView) {
         self.updatePlaceholder()
+        if !self.isWriting {
+            self.isWriting = true
+        }
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if textView.text == placeholderText {
+            textView.text.removeAll()
+        }
+        return true
     }
     
     func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
         self.updatePlaceholder()
+        self.isWriting = false
         return true
-    }
-}
-
-// MARK: - Test Facilities
-
-extension ChatInputControls {
-    internal func sendAction() {
-        self.onSendButtonTapped(sender: sendMessageButton)
-    }
-    
-    internal func attachmentAction() {
-        self.onAttachmentButtonTapped(sender: sendMessageButton)
     }
 }
