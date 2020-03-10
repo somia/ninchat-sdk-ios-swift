@@ -5,4 +5,7 @@ NinchatSDKSwift.xcodeproj/xcuserdata/
 NinchatSDKSwift.xcworkspace/xcuserdata/
 NinchatSDKSwiftServerTests/Secrets.plist
 .idea/
+
+open-dev-env.sh
+close-dev-env.sh
 nohup.out

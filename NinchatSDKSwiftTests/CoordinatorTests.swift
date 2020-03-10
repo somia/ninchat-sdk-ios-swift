@@ -9,6 +9,7 @@ import NinchatSDK
 @testable import NinchatSDKSwift
 
 class CoordinatorTests: XCTestCase {
+    let navigationController = UINavigationController()
     let session = NINChatSessionSwift(configKey: "")
     var coordinator: NINCoordinator!
     
@@ -27,11 +28,11 @@ class CoordinatorTests: XCTestCase {
     }
     
     func testStartNINChatSessionViewController() {
-        let joinOptions = coordinator.start(with: nil, within: UINavigationController())
+        let joinOptions = coordinator.start(with: nil, within: navigationController)
         XCTAssertNotNil(coordinator.navigationController)
         XCTAssertNotNil(joinOptions as? NINInitialViewController)
         
-        let initialChat = coordinator.start(with: "default", within: UINavigationController())
+        let initialChat = coordinator.start(with: "default", within: navigationController)
         XCTAssertNotNil(coordinator.navigationController)
         XCTAssertNil(initialChat as? NINQueueViewController)
     }
