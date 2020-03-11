@@ -166,13 +166,13 @@ extension NINChatSessionManagerImpl {
         
         let sessionParam = NINLowLevelClientProps.initiate
         if let secret = self.siteSecret {
-            sessionParam.set(site: secret)
+            sessionParam.setSite(secret: secret)
         }
         
         if let userName = self.siteConfiguration.username {
             let attr = NINLowLevelClientProps.initiate
             attr.set(name: userName)
-            sessionParam.set(user: attr)
+            sessionParam.setUser(attributes: attr)
         }
         
         let messageType = NINLowLevelClientStrings.initiate
@@ -182,7 +182,7 @@ extension NINChatSessionManagerImpl {
         messageType.append(MessageType.rtc.rawValue)
         messageType.append(MessageType.ui.rawValue)
         messageType.append(MessageType.info.rawValue)
-        sessionParam.set(message: messageType)
+        sessionParam.set(messageTypes: messageType)
         
         self.session = NINLowLevelClientSession()
         self.session?.setAddress(self.serverAddress)
@@ -198,9 +198,9 @@ extension NINChatSessionManagerImpl {
 
         let param = NINLowLevelClientProps.initiate
         param.set_realmQueues()
-        param.set(realmID: realmID!)
+        param.setRealm(id: realmID!)
         if let queues = ID {
-            param.set(queues: queues.reduce(into: NINLowLevelClientStrings.initiate) { list, id in
+            param.setQueues(id: queues.reduce(into: NINLowLevelClientStrings.initiate) { list, id in
                 list.append(id)
             })
         }
@@ -227,7 +227,7 @@ extension NINChatSessionManagerImpl {
                 
                 let param = NINLowLevelClientProps.initiate
                 param.set_requestAudience()
-                param.set(queue: ID)
+                param.setQueue(id: ID)
                 if let audienceMetadata = self.audienceMetadata {
                     param.set(metadata: audienceMetadata)
                 }
@@ -329,8 +329,8 @@ extension NINChatSessionManagerImpl {
         
         let param = NINLowLevelClientProps.initiate
         param.set_updateMember()
-        param.set(channel: currentChannel)
-        param.set(user: userID)
+        param.setChannel(id: currentChannel)
+        param.setUser(id: userID)
         param.set(member: memberAttributes)
         
         do {
@@ -366,8 +366,8 @@ extension NINChatSessionManagerImpl {
         
         let param = NINLowLevelClientProps.initiate
         param.set_sendFile()
-        param.set(file: fileAttributes)
-        param.set(channel: currentChannel)
+        param.setFile(attributes: fileAttributes)
+        param.setChannel(id: currentChannel)
         
         let payload = NINLowLevelClientPayload.initiate
         payload.append(data)
@@ -391,16 +391,16 @@ extension NINChatSessionManagerImpl {
         let param = NINLowLevelClientProps.initiate
         param.set_sendMessage()
         param.set(messageType: type.rawValue)
-        param.set(channel: currentChannel)
+        param.setChannel(id: currentChannel)
         
         if type == .metadata, let _ = (payload["data"] as? [String:String])?["rating"] {
             param.set(recipients: NINLowLevelClientStrings.initiate)
-            param.set(message: false)
+            param.set(messageFold: false)
         }
         
         if type.isRTC {
             /// Add message_ttl to all rtc signaling messages
-            param.set(message: 10)
+            param.set(messageTTL: 10)
         }
         
         do {
@@ -426,7 +426,7 @@ extension NINChatSessionManagerImpl {
         
         let param = NINLowLevelClientProps.initiate
         param.set_loadHistory()
-        param.set(channel: currentChannel)
+        param.setChannel(id: currentChannel)
         
         do {
             let actionID = try session.send(param)
@@ -446,7 +446,7 @@ extension NINChatSessionManagerImpl {
         
         let param = NINLowLevelClientProps.initiate
         param.set_describeFile()
-        param.set(file: id)
+        param.setFile(id: id)
         
         do {
             let actionID = try session.send(param)
