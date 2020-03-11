@@ -4,7 +4,8 @@
 // license that can be found in the LICENSE file.
 //
 
-import NinchatSDK
+import UIKit
+import NinchatLowLevelClient
 
 public protocol NINChatSessionClosure {
     var didOutputSDKLog: ((NINChatSessionSwift, String) -> Void)? { get set }

@@ -179,7 +179,7 @@ extension NINChatSessionManagerImpl {
             let stunServers = try [Int](0..<stunServersParam.length()).map({ index -> NINLowLevelClientProps in
                 stunServersParam.get(index)!
             }).compactMap({ prop -> NINLowLevelClientStrings in
-                try prop.srversURLs()
+                try prop.serversURLs()
             }).compactMap({ servers -> ([Int], NINLowLevelClientStrings) in
                 ([Int](0..<servers.length()), servers)
             }).map({ (indexArray, serversArray) -> [NINWebRTCServerInfo] in
@@ -190,7 +190,7 @@ extension NINChatSessionManagerImpl {
             let turnServers = try [Int](0..<turnServersParam.length()).map({ index -> NINLowLevelClientProps in
                 turnServersParam.get(index)!
             }).compactMap({ prop -> (NINLowLevelClientStrings, String, String) in
-                (try prop.srversURLs(), prop.turnServers_UserName(), prop.turnServers_Credential())
+                (try prop.serversURLs(), prop.turnServers_UserName(), prop.turnServers_Credential())
             }).compactMap({ (servers, userName, credential) -> ([Int], NINLowLevelClientStrings, String, String) in
                 ([Int](0..<servers.length()), servers, userName, credential)
             }).map({ (indexArray, serversArray, userName, credential) -> [NINWebRTCServerInfo] in
@@ -330,7 +330,7 @@ extension NINChatSessionManagerImpl {
         guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
         let param = NINLowLevelClientProps.initiate
         param.set_partChannel()
-        param.set(channel: ID)
+        param.setChannel(id: ID)
         
         do {
             let actionID = try session.send(param)

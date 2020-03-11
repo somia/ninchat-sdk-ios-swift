@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import NinchatSDK
 
 protocol ChatInputActions {
     var onSendTapped: ((String) -> Void)? { get set }

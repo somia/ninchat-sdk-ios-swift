@@ -18,9 +18,7 @@ protocol NINChatSessionManagerInternalActions {
     var didEndSession: (() -> Void)? { get set }
 }
 
-final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatSessionManagerInternalActions {
-    internal let serverAddress: String
-    internal let siteSecret: String?
+final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatDevHelper, NINChatSessionManagerInternalActions {
     internal let audienceMetadata: NINLowLevelClientProps?
     
     internal var channelUsers: [String:NINChannelUser] = [:]
@@ -65,7 +63,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatS
     var onChannelClosed: (() -> Void)?
     var onRTCSignal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)?
     var onRTCClientSignal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)?
-
+    
     func bindQueueUpdate<T: QueueUpdateCapture>(closure: @escaping ((Events, String, Error?) -> Void), to receiver: T) {
         guard queueUpdateBoundClosures.keys.filter({ $0 == receiver.desc }).count == 0 else { return }
         queueUpdateBoundClosures[receiver.desc] = closure
@@ -86,12 +84,22 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatS
     var audienceQueues: [NINQueue]! = []
     var siteConfiguration: NINSiteConfiguration!
     var appDetails: String?
-
-    init(session: NINChatSessionInternalDelegate?, serverAddress: String, siteSecret: String? = nil, audienceMetadata: NINLowLevelClientProps? = nil) {
+    
+    // MARK: - NINChatSessionManagerDevTools
+    
+    var serverAddress: String!
+    var siteSecret: String?
+    
+    init(session: NINChatSessionInternalDelegate?, serverAddress: String, audienceMetadata: NINLowLevelClientProps? = nil) {
         self.delegate = session
         self.serverAddress = serverAddress
-        self.siteSecret = siteSecret
         self.audienceMetadata = audienceMetadata
+    }
+    
+    /** Designed for test and internal purposes. */
+    convenience init(session: NINChatSessionInternalDelegate?, serverAddress: String, siteSecret: String?, audienceMetadata: NINLowLevelClientProps? = nil) {
+        self.init(session: session, serverAddress: serverAddress, audienceMetadata: audienceMetadata)
+        self.siteSecret = siteSecret
     }
     
     deinit {
@@ -140,7 +148,7 @@ extension NINChatSessionManagerImpl {
     
     func openSession(completion: @escaping CompletionWithError) throws {
         guard self.session == nil else { throw NINSessionExceptions.hasActiveSession }
-        delegate?.log(value: "Opening new chat session using server address: \(serverAddress)")
+        delegate?.log(value: "Opening new chat session using server address: \(serverAddress!)")
         
         /// Wait for the session creation event
         self.onActionSessionEvent = { event, error in
@@ -158,18 +166,23 @@ extension NINChatSessionManagerImpl {
         
         let sessionParam = NINLowLevelClientProps.initiate
         if let secret = self.siteSecret {
-            sessionParam.set(site: secret)
+            sessionParam.setSite(secret: secret)
         }
         
         if let userName = self.siteConfiguration.username {
             let attr = NINLowLevelClientProps.initiate
             attr.set(name: userName)
-            sessionParam.set(user: attr)
+            sessionParam.setUser(attributes: attr)
         }
         
         let messageType = NINLowLevelClientStrings.initiate
-        messageType.append("ninchat.com/*")
-        sessionParam.set(message: messageType)
+        messageType.append(MessageType.file.rawValue)
+        messageType.append(MessageType.text.rawValue)
+        messageType.append(MessageType.metadata.rawValue)
+        messageType.append(MessageType.rtc.rawValue)
+        messageType.append(MessageType.ui.rawValue)
+        messageType.append(MessageType.info.rawValue)
+        sessionParam.set(messageTypes: messageType)
         
         self.session = NINLowLevelClientSession()
         self.session?.setAddress(self.serverAddress)
@@ -185,9 +198,9 @@ extension NINChatSessionManagerImpl {
 
         let param = NINLowLevelClientProps.initiate
         param.set_realmQueues()
-        param.set(realmID: realmID!)
+        param.setRealm(id: realmID!)
         if let queues = ID {
-            param.set(queues: queues.reduce(into: NINLowLevelClientStrings.initiate) { list, id in
+            param.setQueues(id: queues.reduce(into: NINLowLevelClientStrings.initiate) { list, id in
                 list.append(id)
             })
         }
@@ -214,7 +227,7 @@ extension NINChatSessionManagerImpl {
                 
                 let param = NINLowLevelClientProps.initiate
                 param.set_requestAudience()
-                param.set(queue: ID)
+                param.setQueue(id: ID)
                 if let audienceMetadata = self.audienceMetadata {
                     param.set(metadata: audienceMetadata)
                 }
@@ -277,7 +290,7 @@ extension NINChatSessionManagerImpl {
         }
     }
     
-    /// Low-level shutdown of the chatsession; invalidates session resource.
+    /// Low-level shutdown of the chat's session; invalidates session resource.
     func closeChat() throws {
         delegate?.log(value: "Shutting down chat Session..")
         try self.deleteCurrentUser { [unowned self] error in
@@ -316,8 +329,8 @@ extension NINChatSessionManagerImpl {
         
         let param = NINLowLevelClientProps.initiate
         param.set_updateMember()
-        param.set(channel: currentChannel)
-        param.set(user: userID)
+        param.setChannel(id: currentChannel)
+        param.setUser(id: userID)
         param.set(member: memberAttributes)
         
         do {
@@ -353,8 +366,8 @@ extension NINChatSessionManagerImpl {
         
         let param = NINLowLevelClientProps.initiate
         param.set_sendFile()
-        param.set(file: fileAttributes)
-        param.set(channel: currentChannel)
+        param.setFile(attributes: fileAttributes)
+        param.setChannel(id: currentChannel)
         
         let payload = NINLowLevelClientPayload.initiate
         payload.append(data)
@@ -371,23 +384,23 @@ extension NINChatSessionManagerImpl {
     
     /// Sends a message to the active channel. Active channel must exist.
     @discardableResult
-    func send(type: MessageType, payload: [String:Any], completion: @escaping CompletionWithError) throws -> Int {
+    func send(type: MessageType, payload: [String:Any], completion: @escaping CompletionWithError) throws -> Int? {
         guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
         guard let currentChannel = self.currentChannelID else { throw NINSessionExceptions.noActiveChannel }
         
         let param = NINLowLevelClientProps.initiate
         param.set_sendMessage()
-        param.set(message: type.rawValue)
-        param.set(channel: currentChannel)
+        param.set(messageType: type.rawValue)
+        param.setChannel(id: currentChannel)
         
         if type == .metadata, let _ = (payload["data"] as? [String:String])?["rating"] {
             param.set(recipients: NINLowLevelClientStrings.initiate)
-            param.set(message: false)
+            param.set(messageFold: false)
         }
         
         if type.isRTC {
             /// Add message_ttl to all rtc signaling messages
-            param.set(message: 10)
+            param.set(messageTTL: 10)
         }
         
         do {
@@ -413,7 +426,7 @@ extension NINChatSessionManagerImpl {
         
         let param = NINLowLevelClientProps.initiate
         param.set_loadHistory()
-        param.set(channel: currentChannel)
+        param.setChannel(id: currentChannel)
         
         do {
             let actionID = try session.send(param)
@@ -433,7 +446,7 @@ extension NINChatSessionManagerImpl {
         
         let param = NINLowLevelClientProps.initiate
         param.set_describeFile()
-        param.set(file: id)
+        param.setFile(id: id)
         
         do {
             let actionID = try session.send(param)

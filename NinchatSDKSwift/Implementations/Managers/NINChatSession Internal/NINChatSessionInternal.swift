@@ -5,7 +5,7 @@
 //
 
 import UIKit
-import NinchatSDK
+import NinchatLowLevelClient
 
 // MARK: - Internal helper methods
 

@@ -5,7 +5,7 @@
 //
 
 import UIKit
-import NinchatSDK
+import NinchatLowLevelClient
 
 /**
 * Delegate protocol for NINChatSession class. All the methods are called on
@@ -13,7 +13,7 @@ import NinchatSDK
 */
 public protocol NINChatSessionDelegateSwift: class {
     /**
-    * Implemeent this if you want to receive debug/error logging from the SDK.
+    * Implement this if you want to receive debug/error logging from the SDK.
     *
     * Optional method.
     */
@@ -61,11 +61,7 @@ extension NINChatSessionDelegateSwift {
     
     func onLowLevelEvent(session: NINChatSessionSwift, params: NINLowLevelClientProps, payload: NINLowLevelClientPayload, lastReply: Bool) { }
     
-    func overrideImageAsset(session: NINChatSessionSwift, forKey assetKey: AssetConstants) -> UIImage? {
-        return nil
-    }
+    func overrideImageAsset(session: NINChatSessionSwift, forKey assetKey: AssetConstants) -> UIImage? { nil }
     
-    func overrideColorAsset(session: NINChatSessionSwift, forKey assetKey: ColorConstants) -> UIColor? {
-        return nil
-    }
+    func overrideColorAsset(session: NINChatSessionSwift, forKey assetKey: ColorConstants) -> UIColor? { nil }
 }

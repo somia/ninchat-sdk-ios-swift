@@ -7,6 +7,11 @@
 import UIKit
 import NinchatSDK
 
+public protocol NINChatDevHelper {
+    var serverAddress: String! { get set }
+    var siteSecret: String? { get set }
+}
+
 public protocol NINChatSessionProtocol: NINChatSessionClosure {
     /**
     * Append information to the user agent string. The string should be in
@@ -17,13 +22,13 @@ public protocol NINChatSessionProtocol: NINChatSessionClosure {
     var appDetails: String? { get set }
     var delegate: NINChatSessionDelegateSwift? { get set }
     
-    init(configKey: String, queueID: String?, environments: [String]?, serverAddress: String?, siteSecret: String?, metadata: NINLowLevelClientProps?)
+    init(configKey: String, queueID: String?, environments: [String]?, metadata: NINLowLevelClientProps?)
     func start(completion: @escaping (Error?) -> Void)
     func chatSession(within navigationController: UINavigationController) throws -> UIViewController?
     func clientSession() throws -> NINLowLevelClientSession?
 }
 
-public final class NINChatSessionSwift: NINChatSessionProtocol {
+public final class NINChatSessionSwift: NINChatSessionProtocol, NINChatDevHelper {
     var sessionManager: NINChatSessionManager!
     private var coordinator: Coordinator!
     private var configKey: String!
@@ -32,10 +37,23 @@ public final class NINChatSessionSwift: NINChatSessionProtocol {
     private var started: Bool!
     private var defaultServerAddress: String {
         #if NIN_USE_TEST_SERVER
-        return Constants.kTestServerAddress.rawValue
+            return Constants.kTestServerAddress.rawValue
         #else
-        return Constants.kProductionServerAddress.rawValue
+            return Constants.kProductionServerAddress.rawValue
         #endif
+    }
+    
+    // MARK: - NINChatDevHelper
+    
+    public var serverAddress: String! = Constants.kProductionServerAddress.rawValue {
+        didSet {
+            self.sessionManager.serverAddress = serverAddress
+        }
+    }
+    public var siteSecret: String? = nil {
+        didSet {
+            self.sessionManager.siteSecret = siteSecret
+        }
     }
     
     // MARK: - NINChatSessionClosure
@@ -55,15 +73,16 @@ public final class NINChatSessionSwift: NINChatSessionProtocol {
         }
     }
     
-    public init(configKey: String, queueID: String? = nil, environments: [String]? = nil, serverAddress: String? = nil, siteSecret: String? = nil, metadata: NINLowLevelClientProps? = nil) {
+    public init(configKey: String, queueID: String? = nil, environments: [String]? = nil, metadata: NINLowLevelClientProps? = nil) {
         self.configKey = configKey
         self.queueID = queueID
         self.environments = environments
         self.started = false
-        
+    
         self.coordinator = NINCoordinator(with: self)
-        self.sessionManager = NINChatSessionManagerImpl(session: self, serverAddress: serverAddress ?? defaultServerAddress, siteSecret: siteSecret, audienceMetadata: metadata)
+        self.sessionManager = NINChatSessionManagerImpl(session: self, serverAddress: defaultServerAddress, audienceMetadata: metadata)
     }
+    
     
     public func clientSession() throws -> NINLowLevelClientSession? {
         guard self.started else { throw NINExceptions.apiNotStarted }

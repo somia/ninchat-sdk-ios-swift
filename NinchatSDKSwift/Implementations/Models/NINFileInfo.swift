@@ -5,7 +5,6 @@
 //
 
 import Foundation
-import NinchatSDK
 
 final class NINFileInfo {
     var fileID: String!

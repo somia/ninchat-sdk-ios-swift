@@ -4,21 +4,21 @@
 // license that can be found in the LICENSE file.
 //
 
-import Foundation
-import NinchatSDK
+import UIKit
+import NinchatLowLevelClient
 
 struct NinchatError: Error {
     let code: Int
     let title: String
 }
 
-// MARK: - Unoptional initializer
+// MARK: - Un-optional initializer
 
 extension NINLowLevelClientProps {
     /// For some unknown reasons, the `NINLowLevelClientProps` initialization is optional
     /// The following variable unwrap it
     static var initiate: NINLowLevelClientProps {
-        return NINLowLevelClientProps()!
+        NINLowLevelClientProps()!
     }
 }
 
@@ -132,7 +132,7 @@ extension NINLowLevelClientProps {
     
     // MARK: - ICE
     
-    func srversURLs() throws -> NINLowLevelClientStrings {
+    func serversURLs() throws -> NINLowLevelClientStrings {
         return try self.getStringArray("urls")
     }
     
@@ -184,11 +184,11 @@ extension NINLowLevelClientProps {
         self.setString("action", val: "describe_realm_queues")
     }
     
-    func set(realmID id: String) {
+    func setRealm(id: String) {
         self.setString("realm_id", val: id)
     }
     
-    func set(queues id: NINLowLevelClientStrings) {
+    func setQueues(id: NINLowLevelClientStrings) {
         self.setStringArray("queue_ids", ref: id)
     }
     
@@ -196,7 +196,7 @@ extension NINLowLevelClientProps {
         self.setString("action", val: "request_audience")
     }
     
-    func set(queue id: String) {
+    func setQueue(id: String) {
         self.setString("queue_id", val: id)
     }
     
@@ -214,11 +214,11 @@ extension NINLowLevelClientProps {
         self.setString("action", val: "describe_file")
     }
     
-    func set(file id: String) {
+    func setFile(id: String) {
         self.setString("file_id", val: id)
     }
     
-    func set(file attributes: NINLowLevelClientProps) {
+    func setFile(attributes: NINLowLevelClientProps) {
         self.setObject("file_attrs", ref: attributes)
     }
     
@@ -228,7 +228,7 @@ extension NINLowLevelClientProps {
         self.setString("action", val: "part_channel")
     }
     
-    func set(channel id: String) {
+    func setChannel(id: String) {
         self.setString("channel_id", val: id)
     }
     
@@ -246,7 +246,7 @@ extension NINLowLevelClientProps {
         self.setBool("writing", val: isWriting)
     }
     
-    func set(user id: String) {
+    func setUser(id: String) {
         self.setString("user_id", val: id)
     }
     
@@ -260,7 +260,7 @@ extension NINLowLevelClientProps {
         self.setString("action", val: "send_message")
     }
     
-    func set(message type: String) {
+    func set(messageType type: String) {
         self.setString("message_type", val: type)
     }
     
@@ -268,11 +268,11 @@ extension NINLowLevelClientProps {
         self.setStringArray("message_recipient_ids", ref: recipients)
     }
     
-    func set(message fold: Bool) {
+    func set(messageFold fold: Bool) {
         self.setBool("message_fold", val: fold)
     }
     
-    func set(message ttl: Int) {
+    func set(messageTTL ttl: Int) {
         self.setInt("message_ttl", val: ttl)
     }
     
@@ -284,15 +284,15 @@ extension NINLowLevelClientProps {
     
     // MARK: - Session
     
-    func set(site secret: String) {
+    func setSite(secret: String) {
         self.setString("site_secret", val: secret)
     }
     
-    func set(user attributes: NINLowLevelClientProps) {
+    func setUser(attributes: NINLowLevelClientProps) {
         self.setObject("user_attrs", ref: attributes)
     }
     
-    func set(message types: NINLowLevelClientStrings) {
+    func set(messageTypes types: NINLowLevelClientStrings) {
         self.setStringArray("message_types", ref: types)
     }
 }

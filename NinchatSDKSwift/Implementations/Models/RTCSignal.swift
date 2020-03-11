@@ -8,18 +8,27 @@ import Foundation
 import AnyCodable
 
 enum MessageType: String, Decodable {
+    case file = "ninchat.com/file"
+    case text = "ninchat.com/text"
+    case metadata = "ninchat.com/metadata"
+    
+    /// rtc
+    case rtc = "ninchat.com/rtc/*"
     case candidate = "ninchat.com/rtc/ice-candidate"
     case answer = "ninchat.com/rtc/answer"
     case offer = "ninchat.com/rtc/offer"
     case call = "ninchat.com/rtc/call"
     case pickup = "ninchat.com/rtc/pick-up"
     case hangup = "ninchat.com/rtc/hang-up"
-    case text = "ninchat.com/text"
-    case file = "ninchat.com/file"
-    case compose = "ninchat.com/ui/compose"
+    
+    /// info
+    case info = "ninchat.com/info/*"
     case channel = "ninchat.com/info/channel"
     case part = "ninchat.com/info/part"
-    case metadata = "ninchat.com/metadata"
+    
+    /// ui
+    case ui = "ninchat.com/ui/*"
+    case compose = "ninchat.com/ui/compose"
     case uiAction = "ninchat.com/ui/action"
     
     var isRTC: Bool {
