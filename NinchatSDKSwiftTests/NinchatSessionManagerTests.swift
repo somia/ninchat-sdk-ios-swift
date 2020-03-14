@@ -209,7 +209,7 @@ class NinchatSessionManagerClosureHandlersTests: XCTestCase {
         }
 
         self.simulateChatQueue()
-        waitForExpectations(timeout: 1.0)
+        waitForExpectations(timeout: 5.0)
     }
 }
 

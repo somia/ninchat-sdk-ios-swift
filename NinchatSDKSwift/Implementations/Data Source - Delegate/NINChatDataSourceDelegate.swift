@@ -16,7 +16,7 @@ protocol ChatViewDelegate {
     func didRequestToClose(_ view: ChatView)
     
     /** "Send" button was pressed in a ui/compose type message. */
-    func didSendUIAction(composeContent: NINComposeContentView?)
+    func didSendUIAction(composeContent: ComposeContentViewProtocol?)
 }
 protocol NINChatDelegate: ChatViewDelegate {
     var onOpenPhotoAttachment: ((UIImage, NINFileInfo) -> Void)? { get set }
@@ -86,13 +86,12 @@ extension NINChatDataSourceDelegateImpl {
         self.onCloseChatTapped?()
     }
     
-    func didSendUIAction(composeContent: NINComposeContentView?) {
+    func didSendUIAction(composeContent: ComposeContentViewProtocol?) {
         guard let composeContent = composeContent else { return }
         
         self.viewModel.send(action: composeContent) { [weak self] error in
             guard let err = error else { return }
             
-            composeContent.sendActionFailed()
             self?.onUIActionError?(err)
         }
     }

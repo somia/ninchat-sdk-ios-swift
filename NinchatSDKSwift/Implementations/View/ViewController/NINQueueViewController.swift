@@ -39,9 +39,9 @@ final class NINQueueViewController: UIViewController, ViewController {
     @IBOutlet private(set) weak var motdTextView: UITextView! {
         didSet {
             if let queueText = self.sessionManager.siteConfiguration.inQueue {
-                motdTextView.setFormattedText(queueText)
+                motdTextView.setAttributed(text: queueText, font: .ninchat)
             } else if let motdText = self.sessionManager.siteConfiguration.motd {
-                motdTextView.setFormattedText(motdText)
+                motdTextView.setAttributed(text: motdText, font: .ninchat)
             }
             motdTextView.delegate = self
         }
@@ -79,7 +79,7 @@ final class NINQueueViewController: UIViewController, ViewController {
     private func setupViewModel() {
         self.viewModel.onInfoTextUpdate = { [weak self] text in
             DispatchQueue.main.async {
-                self?.queueInfoTextView.setFormattedText(text ?? "")
+                self?.queueInfoTextView.setAttributed(text: text ?? "", font: .ninchat)
             }
         }
         self.viewModel.onQueueJoin = { [weak self] error in

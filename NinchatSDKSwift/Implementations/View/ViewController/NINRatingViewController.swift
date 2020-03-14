@@ -68,7 +68,7 @@ final class NINRatingViewController: UIViewController, ViewController {
         facesView.overrideAssets()
         
         if let title = self.translate.translate(key: Constants.kRatingTitleText.rawValue, formatParams: [:]) {
-            self.titleTextView.setFormattedText(title)
+            self.titleTextView.setAttributed(text: title, font: .ninchat)
         }
         
         if let skip = self.translate.translate(key: Constants.kRatingSkipText.rawValue, formatParams: [:]) {

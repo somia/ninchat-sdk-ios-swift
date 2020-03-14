@@ -39,7 +39,7 @@ extension UIView {
     }
     
     @discardableResult
-    func round(radius: CGFloat? = nil, _ borderWidth: CGFloat = 0.0, _ borderColor: UIColor = .clear) -> Self {
+    func round(radius: CGFloat? = nil, borderWidth: CGFloat = 0.0, borderColor: UIColor = .clear) -> Self {
         if let radius = radius {
             self.layer.cornerRadius = radius
         } else if let heightAnchor = self.height?.constant {

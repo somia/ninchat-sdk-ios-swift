@@ -22,13 +22,15 @@ extension UITextView {
         return min(newHeight, maxHeight)
     }
     
-    func setPlain(text: String, font: UIFont?, color: UIColor?) {
-        do {
-            self.attributedText = try NSMutableAttributedString(data: text.data(using: .utf8)!, options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.plain], documentAttributes: nil)
-        } catch {
-            self.text = text
+    func setAttributed(text: String, font: UIFont?, color: UIColor? = nil) {
+        if text.containsTags {
+            self.attributedText = text.htmlAttributedString(withFont: font, alignment: self.textAlignment, color: color ?? self.textColor)
+        } else {
+            self.setPlain(text: text, font: font)
         }
-        self.font = font
-        self.textColor = color
+    }
+    
+    func setPlain(text: String, font: UIFont?) {
+        self.attributedText = text.plainString(withFont: font, alignment: self.textAlignment, color: self.textColor)
     }
 }

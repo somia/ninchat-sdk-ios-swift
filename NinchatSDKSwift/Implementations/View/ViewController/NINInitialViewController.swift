@@ -24,7 +24,7 @@ final class NINInitialViewController: UIViewController, ViewController {
     @IBOutlet private(set) weak var welcomeTextView: UITextView! {
         didSet {
             if let welcomeText = self.session.sessionManager.siteConfiguration.welcome {
-                welcomeTextView.setFormattedText(welcomeText)
+                welcomeTextView.setAttributed(text: welcomeText, font: .ninchat)
                 welcomeTextView.delegate = self
             }
         }
@@ -35,15 +35,16 @@ final class NINInitialViewController: UIViewController, ViewController {
             if let closeText = self.session.sessionManager.translate(key: Constants.kCloseWindowText.rawValue, formatParams: [:]) {
                 closeWindowButton.setTitle(closeText, for: .normal)
             }
-            closeWindowButton.round(1, .defaultBackgroundButton)
+            closeWindowButton.round(borderWidth: 1.0, borderColor: .defaultBackgroundButton)
         }
     }
     @IBOutlet private(set) weak var motdTextView: UITextView! {
         didSet {
             if let motdText = self.session.sessionManager.siteConfiguration.motd {
-                motdTextView.setFormattedText(motdText)
+                motdTextView.setAttributed(text: motdText, font: .ninchat)
             }
             motdTextView.delegate = self
+            motdTextView.textAlignment = .left
         }
     }
     

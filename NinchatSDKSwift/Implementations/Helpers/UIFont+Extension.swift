@@ -6,8 +6,36 @@
 
 import UIKit
 
+enum FontWeight: String {
+    case light      = "Light"
+    case regular    = "Regular"
+    case semiBold   = "SemiBold"
+    case bold       = "Bold"
+}
+
 extension UIFont {
+    private static var fontName: String {
+        "SourceSansPro-\(FontWeight.regular.rawValue)"
+    }
+    
     static var ninchat: UIFont? {
-        UIFont(name: "Helvetica", size: 16.0)
+        guard let font = UIFont(name: fontName, size: 16.0) else {
+            register(font: fontName)
+            return UIFont(name: fontName, size: 16.0)
+        }
+        
+        return font
+    }
+    
+    @discardableResult
+    private static func register(font: String) -> Bool {
+        guard let pathForResourceString = Bundle.SDKBundle?.path(forResource: font, ofType: "ttf"),
+              let fontData = NSData(contentsOfFile: pathForResourceString),
+              let dataProvider = CGDataProvider(data: fontData),
+              let fontRef = CGFont(dataProvider)
+            else { return false }
+        
+        var errorRef: Unmanaged<CFError>? = nil
+        return CTFontManagerRegisterGraphicsFont(fontRef, &errorRef)
     }
 }

@@ -63,7 +63,7 @@ protocol NANChatSessionMessenger {
     func send(message: String, completion: @escaping CompletionWithError) throws
     
     /** Sends a ui/action response to the current channel. */
-    func send(action: NINComposeContentView, completion: @escaping CompletionWithError) throws
+    func send(action: ComposeContentViewProtocol, completion: @escaping CompletionWithError) throws
     
     /** Sends a file to the chat. */
     func send(attachment: String, data: Data, completion: @escaping CompletionWithError) throws
@@ -112,7 +112,7 @@ protocol NINChatSessionManager: class, NINChatSessionConnectionManager, NANChatS
     var audienceQueues: [NINQueue]! { get set }
     
     /** Site configuration. */
-    var siteConfiguration: NINSiteConfiguration! { get }
+    var siteConfiguration: SiteConfiguration! { get }
     
     /** A weak reference to internal functions declared in `NINChatSessionSwift` */
     var delegate: NINChatSessionInternalDelegate? { get }

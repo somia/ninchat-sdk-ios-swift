@@ -98,3 +98,14 @@ enum NotificationConstants: String {
     case kNINChannelClosedNotification = "ninchatsdk.ChannelClosedNotification"
     case kNINQueuedNotification = "ninchatsdk.QueuedNotification"
 }
+
+enum UIComposeMessageElements: String {
+    case button = "button"
+    case select = "select"
+}
+
+enum Margins: CGFloat {
+    case kButtonHeight = 45.0
+    case kComposeVerticalMargin = 10.0
+    case kComposeHorizontalMargin = 60.0
+}

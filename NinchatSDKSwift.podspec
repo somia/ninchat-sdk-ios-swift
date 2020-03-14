@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
   s.subspec "SDKSwift" do |ss|
     ss.source_files  = "NinchatSDKSwift/**/*.{swift}"
     ss.resource_bundles = {
-        "NinchatSwiftSDKUI" => "NinchatSDKSwift/**/*.{storyboard,xib,xcassets,strings}"
+        "NinchatSwiftSDKUI" => "NinchatSDKSwift/**/*.{storyboard,xib,xcassets,strings,ttf}"
     }
   end
 

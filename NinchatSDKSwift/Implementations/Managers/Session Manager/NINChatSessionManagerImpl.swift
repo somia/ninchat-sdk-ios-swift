@@ -82,7 +82,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
         }
     }
     var audienceQueues: [NINQueue]! = []
-    var siteConfiguration: NINSiteConfiguration!
+    var siteConfiguration: SiteConfiguration!
     var appDetails: String?
     
     // MARK: - NINChatSessionManagerDevTools
@@ -140,8 +140,7 @@ extension NINChatSessionManagerImpl {
             }
             
             debugger("Got site config: \(String(describing: config))")
-            self.siteConfiguration = NINSiteConfiguration(config)
-            self.siteConfiguration.environments = environments
+            self.siteConfiguration = NINSiteConfiguration(configuration: config, environments: environments)
             completion(nil)
         }
     }
@@ -351,10 +350,10 @@ extension NINChatSessionManagerImpl {
     }
     
     /// Sends a ui/action response to the current channel
-    func send(action: NINComposeContentView, completion: @escaping CompletionWithError) throws {
+    func send(action: ComposeContentViewProtocol, completion: @escaping CompletionWithError) throws {
         guard self.session != nil else { throw NINSessionExceptions.noActiveSession }
         
-        try self.send(type: .uiAction, payload: ["action": "click", "target": action.composeMessageDict!], completion: completion)
+        try self.send(type: .uiAction, payload: ["action": "click", "target": action.messageDictionary], completion: completion)
     }
     
     func send(attachment: String, data: Data, completion: @escaping CompletionWithError) throws {

@@ -29,19 +29,19 @@ final class NINFileInfo {
     // MARK: - Getters
     
     var description: String {
-        return "ID: \(String(describing: fileID)), mimeType: \(String(describing: mimeType)), size: \(String(describing: size))"
+        "ID: \(String(describing: fileID)), mimeType: \(String(describing: mimeType)), size: \(String(describing: size))"
     }
     
     var isImage: Bool {
-        return self.mimeType.hasPrefix("image/")
+        self.mimeType.hasPrefix("image/")
     }
     
     var isVideo: Bool {
-        return self.mimeType.hasPrefix("video/")
+        self.mimeType.hasPrefix("video/")
     }
     
     var isPDF: Bool {
-        return self.mimeType == "application/pdf"
+        self.mimeType == "application/pdf"
     }
     
     // MARK: - Functions

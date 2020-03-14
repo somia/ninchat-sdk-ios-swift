@@ -206,10 +206,6 @@ final class UIKitTests: XCTestCase {
         
         XCTAssertEqual(3, parent1.allSubviews.count)
     }
-    
-    func test_font() {
-        XCTAssertNotNil(UIFont.ninchat)
-    }
 }
 
 extension UIKitTests {

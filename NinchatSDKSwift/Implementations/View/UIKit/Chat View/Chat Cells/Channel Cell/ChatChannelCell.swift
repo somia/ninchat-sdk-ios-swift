@@ -32,7 +32,7 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
     var session: NINChatSessionAttachment!
     var videoThumbnailManager: NINVideoThumbnailManager?
     var onImageTapped: ((NINFileInfo, UIImage?) -> Void)?
-    var onComposeSendTapped: ((NINComposeContentView) -> Void)?
+    var onComposeSendTapped: ((ComposeContentViewProtocol) -> Void)?
     var onComposeUpdateTapped: (([Any]?) -> Void)?
     var onConstraintsUpdate: (() -> Void)?
         
@@ -50,7 +50,7 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
     
     // MARK: - ChannelCell
     
-    func populateChannel(message: NINChannelMessage, configuration: NINSiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: NINAvatarConfig, userAvatarConfig: NINAvatarConfig, composeState: [Any]?) {
+    func populateChannel(message: NINChannelMessage, configuration: SiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: NINAvatarConfig, userAvatarConfig: NINAvatarConfig, composeState: [Any]?) {
         self.message = message
         
         self.senderNameLabel.text = (message.sender.displayName.count < 1) ? "Guest" : message.sender.displayName
@@ -66,7 +66,6 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
         } else if let cell = self as? ChannelMediaCell, let textMessage = message as? NINTextMessage {
             cell.populateText(message: textMessage, attachment: textMessage.attachment)
         } else if let cell = self as? ChatChannelComposeCell, let uiComposeMessage = message as? NINUIComposeMessage {
-            cell.composeMessageView.clear()
             cell.populateCompose(message: uiComposeMessage, configuration: configuration, colorAssets: colorAssets, composeStates: composeState)
         }
     }
@@ -119,7 +118,7 @@ class ChatChannelMineCell: ChatChannelCell {
         self.bubbleImageView.width?.isActive = false
     }
     
-    override func populateChannel(message: NINChannelMessage, configuration: NINSiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: NINAvatarConfig, userAvatarConfig: NINAvatarConfig, composeState: [Any]?) {
+    override func populateChannel(message: NINChannelMessage, configuration: SiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: NINAvatarConfig, userAvatarConfig: NINAvatarConfig, composeState: [Any]?) {
         super.populateChannel(message: message, configuration: configuration, imageAssets: imageAssets, colorAssets: colorAssets, agentAvatarConfig: agentAvatarConfig, userAvatarConfig: userAvatarConfig, composeState: composeState)
         self.configureMyMessage(avatar: message.sender.iconURL, imageAssets: imageAssets, colorAssets: colorAssets, config: userAvatarConfig, series: message.series)
     }
@@ -165,7 +164,7 @@ class ChatChannelOthersCell: ChatChannelCell {
         self.bubbleImageView.width?.isActive = false
     }
     
-    override func populateChannel(message: NINChannelMessage, configuration: NINSiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: NINAvatarConfig, userAvatarConfig: NINAvatarConfig, composeState: [Any]?) {
+    override func populateChannel(message: NINChannelMessage, configuration: SiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: NINAvatarConfig, userAvatarConfig: NINAvatarConfig, composeState: [Any]?) {
         super.populateChannel(message: message, configuration: configuration, imageAssets: imageAssets, colorAssets: colorAssets, agentAvatarConfig: agentAvatarConfig, userAvatarConfig: userAvatarConfig, composeState: composeState)
         self.configureOtherMessage(avatar: message.sender.iconURL, imageAssets: imageAssets, colorAssets: colorAssets, config: agentAvatarConfig, series: message.series)
     }

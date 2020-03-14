@@ -23,7 +23,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
             expect.fulfill()
         }
 
-        waitForExpectations(timeout: 1.0)
+        waitForExpectations(timeout: 5.0)
     }
 
     func testServer_2_openSession() {
