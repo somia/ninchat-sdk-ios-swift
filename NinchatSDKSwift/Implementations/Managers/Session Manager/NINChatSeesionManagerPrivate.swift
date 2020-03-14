@@ -297,7 +297,7 @@ extension NINChatSessionManagerImpl {
             
             // Find the previous channel message
             if let prevMsg = chatMessages
-                .compactMap({ $0 as? NINTextMessage })
+                .compactMap({ $0 as? TextMessage })
                 .sorted(by: { $0.timestamp.compare($1.timestamp) == .orderedAscending })
                 .last {
                 channelMessage.series = (prevMsg.sender.userID == channelMessage.sender.userID)
@@ -413,7 +413,7 @@ extension NINChatSessionManagerImpl {
                 if let files = message.files, files.count > 0 {
                     files.forEach { [unowned self] file in
                         self.delegate?.log(value: "Got file with MIME type: \(String(describing: file.attributes.type))")
-                        let fileInfo = NINFileInfo(fileID: file.id, name: file.attributes.name, mimeType: file.attributes.type, size: file.attributes.size)
+                        let fileInfo = FileInfo(fileID: file.id, name: file.attributes.name, mimeType: file.attributes.type, size: file.attributes.size)
                         hasAttachment = fileInfo.isImage || fileInfo.isVideo || fileInfo.isPDF
                         
                         // Only process certain files at this point
@@ -421,14 +421,14 @@ extension NINChatSessionManagerImpl {
                         fileInfo.updateInfo(session: self) { error, didRefreshNetwork in
                             guard error == nil else { return }
                             
-                            self.add(message: NINTextMessage(messageID: id, textContent: nil, sender: user, timestamp: Date(timeIntervalSince1970: time), mine: user.userID == self.myUserID, attachment: fileInfo))
+                            self.add(message: TextMessage(messageID: id, textContent: nil, sender: user, timestamp: Date(timeIntervalSince1970: time), mine: user.userID == self.myUserID, attachment: fileInfo))
                         }
                     }
                 }
     
                 /// Only allocate a new message now if there is text and no attachment
                 if let text = message.text, !text.isEmpty, !hasAttachment {
-                    self.add(message:  NINTextMessage(messageID: id, textContent: text, sender: user, timestamp: Date(timeIntervalSince1970: time), mine: user.userID == self.myUserID, attachment: nil))
+                    self.add(message:  TextMessage(messageID: id, textContent: text, sender: user, timestamp: Date(timeIntervalSince1970: time), mine: user.userID == self.myUserID, attachment: nil))
                 }
             case .failure(let error):
                 throw error

@@ -140,7 +140,7 @@ extension NINChatSessionManagerImpl {
             }
             
             debugger("Got site config: \(String(describing: config))")
-            self.siteConfiguration = NINSiteConfiguration(configuration: config, environments: environments)
+            self.siteConfiguration = SiteConfigurationImpl(configuration: config, environments: environments)
             completion(nil)
         }
     }

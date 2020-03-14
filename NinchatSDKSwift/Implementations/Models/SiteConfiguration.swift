@@ -24,7 +24,7 @@ protocol SiteConfiguration  {
     init(configuration: [AnyHashable : Any]?, environments: [String]?)
 }
 
-struct NINSiteConfiguration: SiteConfiguration {
+struct SiteConfigurationImpl: SiteConfiguration {
     private let configuration: [AnyHashable : Any]?
     private let environments: [String]
 
@@ -86,7 +86,7 @@ struct NINSiteConfiguration: SiteConfiguration {
     }
 }
 
-extension NINSiteConfiguration {
+extension SiteConfigurationImpl {
     private func value<T>(for key: String) -> T? {
         guard let configuration = configuration as? [String : Any] else { return nil }
         

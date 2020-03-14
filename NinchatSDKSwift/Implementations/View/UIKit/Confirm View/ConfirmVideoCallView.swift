@@ -68,9 +68,9 @@ final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol {
         
         /// Caller's Avatar image
         if !agentAvatarConfig.imageOverrideUrl.isEmpty {
-            self.avatarImageView.setImageURL(agentAvatarConfig.imageOverrideUrl)
+            self.avatarImageView.image(from: agentAvatarConfig.imageOverrideUrl)
         } else if !user.iconURL.isEmpty {
-            self.avatarImageView.setImageURL(user.iconURL)
+            self.avatarImageView.image(from: user.iconURL)
         }
         
         /// Caller's name

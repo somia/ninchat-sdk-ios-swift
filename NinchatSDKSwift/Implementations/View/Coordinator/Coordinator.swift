@@ -95,7 +95,7 @@ extension NINCoordinator {
     }
     
     @discardableResult
-    internal func showFullScreenViewController(_ image: UIImage, _ attachment: NINFileInfo) -> UIViewController? {
+    internal func showFullScreenViewController(_ image: UIImage, _ attachment: FileInfo) -> UIViewController? {
         let viewModel: NINFullScreenViewModel = NINFullScreenViewModelImpl(delegate: self.session)
         let previewViewController: NINFullScreenViewController = storyboard.instantiateViewController()
         previewViewController.viewModel = viewModel

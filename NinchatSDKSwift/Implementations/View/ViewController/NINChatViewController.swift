@@ -69,8 +69,8 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     var onChatClosed: (() -> Void)?
     var onBackToQueue: (() -> Void)?
     var onOpenGallery: ((UIImagePickerController.SourceType) -> Void)?
-    var onOpenPhotoAttachment: ((UIImage, NINFileInfo) -> Void)?
-    var onOpenVideoAttachment: ((NINFileInfo) -> Void)?
+    var onOpenPhotoAttachment: ((UIImage, FileInfo) -> Void)?
+    var onOpenVideoAttachment: ((FileInfo) -> Void)?
     
     // MARK: - KeyboardHandler
     
@@ -362,7 +362,7 @@ extension NINChatViewController {
 
 extension NINChatViewController {
     private func openGallery() {
-        checkPhotoLibraryPermission { [unowned self] error in
+        Permission.grantPermission(.devicePhotoLibrary) { [unowned self] error in
             if let _ = error {
                 NINToast.showWithErrorMessage("Photo Library access is denied.", touchedCallback: {
                     if #available(iOS 10.0, *) {
@@ -378,7 +378,7 @@ extension NINChatViewController {
     }
     
     private func openVideo() {
-        checkVideoPermission { [unowned self] error in
+        Permission.grantPermission(.deviceCamera) { [unowned self] error in
             if let _ = error {
                 NINToast.showWithErrorMessage("Camera access is denied", touchedCallback: {
                     if #available(iOS 10.0, *) {

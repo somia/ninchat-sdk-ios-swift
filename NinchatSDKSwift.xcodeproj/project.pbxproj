@@ -14,8 +14,8 @@
 		8530EC8623AD405200BAA52A /* VideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8530EC8423AD405200BAA52A /* VideoView.swift */; };
 		8530EC8A23AD405C00BAA52A /* ChatInputControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8530EC8823AD405C00BAA52A /* ChatInputControls.swift */; };
 		8530EC8B23AD405C00BAA52A /* ChatInputControls.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8530EC8923AD405C00BAA52A /* ChatInputControls.xib */; };
-		8530EC9223ADFE9900BAA52A /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8530EC9023ADFE9800BAA52A /* UIView+Extensions.swift */; };
-		8530EC9323ADFE9900BAA52A /* UIButton+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8530EC9123ADFE9800BAA52A /* UIButton+Extensions.swift */; };
+		8530EC9223ADFE9900BAA52A /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8530EC9023ADFE9800BAA52A /* UIView+Extension.swift */; };
+		8530EC9323ADFE9900BAA52A /* UIButton+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8530EC9123ADFE9800BAA52A /* UIButton+Extension.swift */; };
 		8530EC9523ADFEA600BAA52A /* NINChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8530EC9423ADFEA600BAA52A /* NINChatViewModel.swift */; };
 		853C53DC23C3980C00DF37D0 /* ChatChannelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853C53DB23C3980C00DF37D0 /* ChatChannelCell.swift */; };
 		853C53E223C3991F00DF37D0 /* ChatChannelCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 853C53E123C3991F00DF37D0 /* ChatChannelCell.xib */; };
@@ -40,7 +40,7 @@
 		855CBE2D2397DF5700A024A7 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855CBE2C2397DF5700A024A7 /* ViewController.swift */; };
 		855CBE2F2397E3AB00A024A7 /* UIViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855CBE2E2397E3AB00A024A7 /* UIViewController+Extension.swift */; };
 		855CBE3E2397FAE900A024A7 /* NINQueueViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855CBE3D2397FAE900A024A7 /* NINQueueViewController.swift */; };
-		855CBE422399060900A024A7 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855CBE412399060900A024A7 /* UIColor+Extensions.swift */; };
+		855CBE422399060900A024A7 /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855CBE412399060900A024A7 /* UIColor+Extension.swift */; };
 		855CBE4423990CB100A024A7 /* Bundle+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855CBE4323990CB100A024A7 /* Bundle+Extension.swift */; };
 		855FA2A123C735CD00A2FB41 /* MetaCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855FA2A023C735CD00A2FB41 /* MetaCell.swift */; };
 		855FA2A323C736DA00A2FB41 /* ChatMetaCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 855FA2A223C736DA00A2FB41 /* ChatMetaCell.xib */; };
@@ -70,9 +70,9 @@
 		8571D44423C091C000C16758 /* Debugger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D44323C091C000C16758 /* Debugger.swift */; };
 		8571D44C23C0B47300C16758 /* ChatMessagePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D44623C0B47300C16758 /* ChatMessagePayload.swift */; };
 		8571D44D23C0B47300C16758 /* RTCSignal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D44723C0B47300C16758 /* RTCSignal.swift */; };
-		8571D44E23C0B47300C16758 /* NINTextMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D44923C0B47300C16758 /* NINTextMessage.swift */; };
+		8571D44E23C0B47300C16758 /* TextMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D44923C0B47300C16758 /* TextMessage.swift */; };
 		8571D44F23C0B47300C16758 /* ComposeMessagePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D44A23C0B47300C16758 /* ComposeMessagePayload.swift */; };
-		8571D45023C0B47300C16758 /* NINFileInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D44B23C0B47300C16758 /* NINFileInfo.swift */; };
+		8571D45023C0B47300C16758 /* FileInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D44B23C0B47300C16758 /* FileInfo.swift */; };
 		8571D45623C0B48B00C16758 /* Data+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D45123C0B48A00C16758 /* Data+Extension.swift */; };
 		8571D45723C0B48B00C16758 /* NINLowLevelClientPayload+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D45223C0B48A00C16758 /* NINLowLevelClientPayload+Extension.swift */; };
 		8571D45823C0B48B00C16758 /* NINLowLevelClientProps+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D45323C0B48A00C16758 /* NINLowLevelClientProps+Extension.swift */; };
@@ -110,7 +110,7 @@
 		85DD6C5E23AE0CBC0023FFEF /* SourceSansPro-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C5223AE0CBC0023FFEF /* SourceSansPro-SemiBold.ttf */; };
 		85DD6C5F23AE0CBC0023FFEF /* SourceSansPro-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C5323AE0CBC0023FFEF /* SourceSansPro-ExtraLightItalic.ttf */; };
 		85DD6C6023AE0CBC0023FFEF /* SourceSansPro-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C5423AE0CBC0023FFEF /* SourceSansPro-Italic.ttf */; };
-		85DD6C6223AF6F5A0023FFEF /* UITextView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DD6C6123AF6F5A0023FFEF /* UITextView+Extensions.swift */; };
+		85DD6C6223AF6F5A0023FFEF /* UITextView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DD6C6123AF6F5A0023FFEF /* UITextView+Extension.swift */; };
 		85DD6C6623AFAACF0023FFEF /* NINChatViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DD6C6523AFAACF0023FFEF /* NINChatViewModelTests.swift */; };
 		85DDD22223D4CBD900E00844 /* ConfirmCloseChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DDD22123D4CBD900E00844 /* ConfirmCloseChatView.swift */; };
 		85DDD22423D4CC0800E00844 /* ConfirmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DDD22323D4CC0800E00844 /* ConfirmView.swift */; };
@@ -118,19 +118,22 @@
 		91A160605AB6B75C6DB8CC86 /* NinchatXCTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A166D4F9B0F6D7063479E9 /* NinchatXCTestCase.swift */; };
 		91A161853F64C37F1B9EFDDB /* NinchatSDKSwiftAcceptanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A168F7C3E9BB664C126805 /* NinchatSDKSwiftAcceptanceTests.swift */; };
 		91A163085E1C1FAF4BA8BEB8 /* ChatTypingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A167BAE1C0F6F9466CE1D6 /* ChatTypingCell.swift */; };
-		91A165EE393A8B5E007FA670 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16501A258D1244E52AD23 /* String+Extensions.swift */; };
-		91A166E41455F2CB32736453 /* NSMutableAttributedString+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1652A485CCE644E39135E /* NSMutableAttributedString+Extensions.swift */; };
+		91A165EE393A8B5E007FA670 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16501A258D1244E52AD23 /* String+Extension.swift */; };
+		91A166E41455F2CB32736453 /* NSMutableAttributedString+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1652A485CCE644E39135E /* NSMutableAttributedString+Extension.swift */; };
 		91A1676834C91BDD430EB752 /* NinchatSDKSwiftServerHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1607145A515528F6210F5 /* NinchatSDKSwiftServerHandlerTests.swift */; };
+		91A1679D684FC723976C6C14 /* PermissionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16F63734B3B04FB5F4ED3 /* PermissionTests.swift */; };
 		91A167A8436C7DEA859E45C9 /* UIKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16F6CAA073C2B72C58FBF /* UIKitTests.swift */; };
 		91A167D5B0BD96D3FD190F94 /* ComposeMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1689A5BDC25419D67E9BF /* ComposeMessageView.swift */; };
 		91A1688A7C316AEDFAF3BFD1 /* NinchatViewModelTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16BD6BFDA5810A0BE45F4 /* NinchatViewModelTestCase.swift */; };
 		91A168E2844E0CDE5A4D632A /* NinchatSDKSwiftServerHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16E2E2FDA2CB5D3AAA5B7 /* NinchatSDKSwiftServerHelperTests.swift */; };
+		91A16914F0B5CA995B9CD28D /* UIImageView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16A99A8F815E0C72B0AAE /* UIImageView+Extension.swift */; };
 		91A169E910D005D05F1F283F /* NinchatSDKSwiftServerMessengerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16FEAA858008AD23DF96D /* NinchatSDKSwiftServerMessengerTests.swift */; };
+		91A16B43A0A5F40049590528 /* Permission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A163542A73487774FB1D3C /* Permission.swift */; };
 		91A16BB7B698A39F797F0030 /* NINFullScreenViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16127E834359A9052C80F /* NINFullScreenViewModelTests.swift */; };
 		91A16BB9A4B558286273F506 /* ExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A161D30D89818FBC9A0476 /* ExtensionsTests.swift */; };
 		91A16C5D68E8007CBAD77F75 /* Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = 91A16E22A6933B9561BDF84E /* Secrets.plist */; };
 		91A16C9B6FDDC53C045ABD3D /* NINChatClientPropsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16EAC1C68B081618E08E9 /* NINChatClientPropsParser.swift */; };
-		91A16D1F0B9B5ED2C45271B4 /* NINSiteConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A164E1E7207BA353BF6418 /* NINSiteConfiguration.swift */; };
+		91A16D1F0B9B5ED2C45271B4 /* SiteConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A164E1E7207BA353BF6418 /* SiteConfiguration.swift */; };
 		91A16DD374E854007210494B /* UIFont+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A163B62D2DBB763D1B850A /* UIFont+Extension.swift */; };
 		91A16DE58D34AA4B9D3713AB /* ComposeContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1689894322817E8A84EE1 /* ComposeContentView.swift */; };
 		91A16F68F773F5D94A131402 /* NINQueueViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16D9F0168F9CAFE2BDFB2 /* NINQueueViewModelTests.swift */; };
@@ -174,8 +177,8 @@
 		8530EC8423AD405200BAA52A /* VideoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoView.swift; sourceTree = "<group>"; };
 		8530EC8823AD405C00BAA52A /* ChatInputControls.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatInputControls.swift; sourceTree = "<group>"; };
 		8530EC8923AD405C00BAA52A /* ChatInputControls.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChatInputControls.xib; sourceTree = "<group>"; };
-		8530EC9023ADFE9800BAA52A /* UIView+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
-		8530EC9123ADFE9800BAA52A /* UIButton+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIButton+Extensions.swift"; sourceTree = "<group>"; };
+		8530EC9023ADFE9800BAA52A /* UIView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
+		8530EC9123ADFE9800BAA52A /* UIButton+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIButton+Extension.swift"; sourceTree = "<group>"; };
 		8530EC9423ADFEA600BAA52A /* NINChatViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINChatViewModel.swift; sourceTree = "<group>"; };
 		853C53DB23C3980C00DF37D0 /* ChatChannelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelCell.swift; sourceTree = "<group>"; };
 		853C53E123C3991F00DF37D0 /* ChatChannelCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChatChannelCell.xib; sourceTree = "<group>"; };
@@ -202,7 +205,7 @@
 		855CBE2C2397DF5700A024A7 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		855CBE2E2397E3AB00A024A7 /* UIViewController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extension.swift"; sourceTree = "<group>"; };
 		855CBE3D2397FAE900A024A7 /* NINQueueViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINQueueViewController.swift; sourceTree = "<group>"; };
-		855CBE412399060900A024A7 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
+		855CBE412399060900A024A7 /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
 		855CBE4323990CB100A024A7 /* Bundle+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extension.swift"; sourceTree = "<group>"; };
 		855FA2A023C735CD00A2FB41 /* MetaCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetaCell.swift; sourceTree = "<group>"; };
 		855FA2A223C736DA00A2FB41 /* ChatMetaCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChatMetaCell.xib; sourceTree = "<group>"; };
@@ -232,9 +235,9 @@
 		8571D44323C091C000C16758 /* Debugger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debugger.swift; sourceTree = "<group>"; };
 		8571D44623C0B47300C16758 /* ChatMessagePayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessagePayload.swift; sourceTree = "<group>"; };
 		8571D44723C0B47300C16758 /* RTCSignal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RTCSignal.swift; sourceTree = "<group>"; };
-		8571D44923C0B47300C16758 /* NINTextMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINTextMessage.swift; sourceTree = "<group>"; };
+		8571D44923C0B47300C16758 /* TextMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextMessage.swift; sourceTree = "<group>"; };
 		8571D44A23C0B47300C16758 /* ComposeMessagePayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposeMessagePayload.swift; sourceTree = "<group>"; };
-		8571D44B23C0B47300C16758 /* NINFileInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINFileInfo.swift; sourceTree = "<group>"; };
+		8571D44B23C0B47300C16758 /* FileInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileInfo.swift; sourceTree = "<group>"; };
 		8571D45123C0B48A00C16758 /* Data+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Extension.swift"; sourceTree = "<group>"; };
 		8571D45223C0B48A00C16758 /* NINLowLevelClientPayload+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NINLowLevelClientPayload+Extension.swift"; sourceTree = "<group>"; };
 		8571D45323C0B48A00C16758 /* NINLowLevelClientProps+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NINLowLevelClientProps+Extension.swift"; sourceTree = "<group>"; };
@@ -273,7 +276,7 @@
 		85DD6C5223AE0CBC0023FFEF /* SourceSansPro-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-SemiBold.ttf"; sourceTree = "<group>"; };
 		85DD6C5323AE0CBC0023FFEF /* SourceSansPro-ExtraLightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
 		85DD6C5423AE0CBC0023FFEF /* SourceSansPro-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-Italic.ttf"; sourceTree = "<group>"; };
-		85DD6C6123AF6F5A0023FFEF /* UITextView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextView+Extensions.swift"; sourceTree = "<group>"; };
+		85DD6C6123AF6F5A0023FFEF /* UITextView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextView+Extension.swift"; sourceTree = "<group>"; };
 		85DD6C6523AFAACF0023FFEF /* NINChatViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINChatViewModelTests.swift; sourceTree = "<group>"; };
 		85DDD22123D4CBD900E00844 /* ConfirmCloseChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmCloseChatView.swift; sourceTree = "<group>"; };
 		85DDD22323D4CC0800E00844 /* ConfirmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmView.swift; sourceTree = "<group>"; };
@@ -281,21 +284,24 @@
 		91A1607145A515528F6210F5 /* NinchatSDKSwiftServerHandlerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatSDKSwiftServerHandlerTests.swift; sourceTree = "<group>"; };
 		91A16127E834359A9052C80F /* NINFullScreenViewModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINFullScreenViewModelTests.swift; sourceTree = "<group>"; };
 		91A161D30D89818FBC9A0476 /* ExtensionsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionsTests.swift; sourceTree = "<group>"; };
+		91A163542A73487774FB1D3C /* Permission.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Permission.swift; sourceTree = "<group>"; };
 		91A163B62D2DBB763D1B850A /* UIFont+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+Extension.swift"; sourceTree = "<group>"; };
-		91A164E1E7207BA353BF6418 /* NINSiteConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINSiteConfiguration.swift; sourceTree = "<group>"; };
-		91A16501A258D1244E52AD23 /* String+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
-		91A1652A485CCE644E39135E /* NSMutableAttributedString+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSMutableAttributedString+Extensions.swift"; sourceTree = "<group>"; };
+		91A164E1E7207BA353BF6418 /* SiteConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SiteConfiguration.swift; sourceTree = "<group>"; };
+		91A16501A258D1244E52AD23 /* String+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
+		91A1652A485CCE644E39135E /* NSMutableAttributedString+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSMutableAttributedString+Extension.swift"; sourceTree = "<group>"; };
 		91A166D4F9B0F6D7063479E9 /* NinchatXCTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatXCTestCase.swift; sourceTree = "<group>"; };
 		91A167BAE1C0F6F9466CE1D6 /* ChatTypingCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatTypingCell.swift; sourceTree = "<group>"; };
 		91A1689894322817E8A84EE1 /* ComposeContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposeContentView.swift; sourceTree = "<group>"; };
 		91A1689A5BDC25419D67E9BF /* ComposeMessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposeMessageView.swift; sourceTree = "<group>"; };
 		91A168B0495C5D2BBF7733D0 /* TypingCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypingCell.swift; sourceTree = "<group>"; };
 		91A168F7C3E9BB664C126805 /* NinchatSDKSwiftAcceptanceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatSDKSwiftAcceptanceTests.swift; sourceTree = "<group>"; };
+		91A16A99A8F815E0C72B0AAE /* UIImageView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extension.swift"; sourceTree = "<group>"; };
 		91A16BD6BFDA5810A0BE45F4 /* NinchatViewModelTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatViewModelTestCase.swift; sourceTree = "<group>"; };
 		91A16D9F0168F9CAFE2BDFB2 /* NINQueueViewModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINQueueViewModelTests.swift; sourceTree = "<group>"; };
 		91A16E22A6933B9561BDF84E /* Secrets.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Secrets.plist; sourceTree = "<group>"; };
 		91A16E2E2FDA2CB5D3AAA5B7 /* NinchatSDKSwiftServerHelperTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatSDKSwiftServerHelperTests.swift; sourceTree = "<group>"; };
 		91A16EAC1C68B081618E08E9 /* NINChatClientPropsParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINChatClientPropsParser.swift; sourceTree = "<group>"; };
+		91A16F63734B3B04FB5F4ED3 /* PermissionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PermissionTests.swift; sourceTree = "<group>"; };
 		91A16F6CAA073C2B72C58FBF /* UIKitTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIKitTests.swift; sourceTree = "<group>"; };
 		91A16FEAA858008AD23DF96D /* NinchatSDKSwiftServerMessengerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatSDKSwiftServerMessengerTests.swift; sourceTree = "<group>"; };
 		CE774BD7EED85980393E55AF /* Pods-NinchatSDKSwiftTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftTests.release.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -407,6 +413,7 @@
 				8563007923B384590098A7B0 /* Data Source - Delegate */,
 				8561EACB23C2805900943C72 /* Managers */,
 				855CBE202397CBB800A024A7 /* Helpers */,
+				91A16981F4B61A36FE950F24 /* Utilities */,
 			);
 			path = Implementations;
 			sourceTree = "<group>";
@@ -471,6 +478,7 @@
 				91A16F6CAA073C2B72C58FBF /* UIKitTests.swift */,
 				91A16127E834359A9052C80F /* NINFullScreenViewModelTests.swift */,
 				91A161D30D89818FBC9A0476 /* ExtensionsTests.swift */,
+				91A16F63734B3B04FB5F4ED3 /* PermissionTests.swift */,
 			);
 			path = NinchatSDKSwiftTests;
 			sourceTree = "<group>";
@@ -504,20 +512,21 @@
 				8571D45323C0B48A00C16758 /* NINLowLevelClientProps+Extension.swift */,
 				8571D45423C0B48A00C16758 /* NINLowLevelClientSession+Extension.swift */,
 				8571D45523C0B48B00C16758 /* NINLowLevelClientStrings+Extension.swift */,
-				8530EC9123ADFE9800BAA52A /* UIButton+Extensions.swift */,
-				8530EC9023ADFE9800BAA52A /* UIView+Extensions.swift */,
+				8530EC9123ADFE9800BAA52A /* UIButton+Extension.swift */,
+				8530EC9023ADFE9800BAA52A /* UIView+Extension.swift */,
 				855CBE212397CCA800A024A7 /* Storyboard+Extension.swift */,
 				855CBE2E2397E3AB00A024A7 /* UIViewController+Extension.swift */,
-				855CBE412399060900A024A7 /* UIColor+Extensions.swift */,
+				855CBE412399060900A024A7 /* UIColor+Extension.swift */,
 				855CBE4323990CB100A024A7 /* Bundle+Extension.swift */,
-				85DD6C6123AF6F5A0023FFEF /* UITextView+Extensions.swift */,
+				85DD6C6123AF6F5A0023FFEF /* UITextView+Extension.swift */,
 				8561EADD23C37C3000943C72 /* UITableView+Extension.swift */,
 				855FA2A423C7378500A2FB41 /* UITableViewCell+Extension.swift */,
 				85CC095C23DC4C9B00482956 /* UIDevice+Extension.swift */,
 				85CC096323DC66D300482956 /* Encodable+Extension.swift */,
 				91A163B62D2DBB763D1B850A /* UIFont+Extension.swift */,
-				91A1652A485CCE644E39135E /* NSMutableAttributedString+Extensions.swift */,
-				91A16501A258D1244E52AD23 /* String+Extensions.swift */,
+				91A1652A485CCE644E39135E /* NSMutableAttributedString+Extension.swift */,
+				91A16501A258D1244E52AD23 /* String+Extension.swift */,
+				91A16A99A8F815E0C72B0AAE /* UIImageView+Extension.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -629,23 +638,23 @@
 		8571D44523C0B47300C16758 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				8571D44823C0B47300C16758 /* NINChatMessages */,
+				8571D44823C0B47300C16758 /* Chat Messages */,
 				8571D44623C0B47300C16758 /* ChatMessagePayload.swift */,
 				854843BA23D77C81006DC9CE /* ChannelMessagePayload.swift */,
 				8571D44A23C0B47300C16758 /* ComposeMessagePayload.swift */,
 				8571D44723C0B47300C16758 /* RTCSignal.swift */,
-				8571D44B23C0B47300C16758 /* NINFileInfo.swift */,
-				91A164E1E7207BA353BF6418 /* NINSiteConfiguration.swift */,
+				8571D44B23C0B47300C16758 /* FileInfo.swift */,
+				91A164E1E7207BA353BF6418 /* SiteConfiguration.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
 		};
-		8571D44823C0B47300C16758 /* NINChatMessages */ = {
+		8571D44823C0B47300C16758 /* Chat Messages */ = {
 			isa = PBXGroup;
 			children = (
-				8571D44923C0B47300C16758 /* NINTextMessage.swift */,
+				8571D44923C0B47300C16758 /* TextMessage.swift */,
 			);
-			path = NINChatMessages;
+			path = "Chat Messages";
 			sourceTree = "<group>";
 		};
 		85A6C9A623CE35A7001CED6D /* Button */ = {
@@ -749,6 +758,14 @@
 			path = "Confirm View";
 			sourceTree = "<group>";
 		};
+		91A16981F4B61A36FE950F24 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				91A163542A73487774FB1D3C /* Permission.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
 		91A16BF617910CFC1E3E8342 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
@@ -780,7 +797,7 @@
 				855B9F0D238ECDB30081A9C6 /* Sources */,
 				855B9F0E238ECDB30081A9C6 /* Frameworks */,
 				855B9F0F238ECDB30081A9C6 /* Resources */,
-				49C5F568678769EA44412BA2 /* [CP] Copy Pods Resources */,
+				F691B6388C9E036C8BC1EC9C /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -800,7 +817,7 @@
 				855B9F17238ECDB30081A9C6 /* Frameworks */,
 				855B9F18238ECDB30081A9C6 /* Resources */,
 				67256981104993382D10249D /* [CP] Embed Pods Frameworks */,
-				932C90C98208628F23AF244E /* [CP] Copy Pods Resources */,
+				51C55B71D9FC4FB082F818CB /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -821,7 +838,7 @@
 				85B72A9023F57ADF00D1C4BC /* Frameworks */,
 				85B72A9123F57ADF00D1C4BC /* Resources */,
 				942372C88B7C888241A52B6F /* [CP] Embed Pods Frameworks */,
-				51CFFDF4A176B6D82E5D04AF /* [CP] Copy Pods Resources */,
+				758E049836140A0D7F78D761 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -954,38 +971,21 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		49C5F568678769EA44412BA2 /* [CP] Copy Pods Resources */ = {
+		51C55B71D9FC4FB082F818CB /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwift/Pods-NinchatSDKSwift-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwift/Pods-NinchatSDKSwift-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwift/Pods-NinchatSDKSwift-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		51CFFDF4A176B6D82E5D04AF /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftServerTests/Pods-NinchatSDKSwiftServerTests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftServerTests/Pods-NinchatSDKSwiftServerTests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftServerTests/Pods-NinchatSDKSwiftServerTests-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		67256981104993382D10249D /* [CP] Embed Pods Frameworks */ = {
@@ -1005,21 +1005,21 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		932C90C98208628F23AF244E /* [CP] Copy Pods Resources */ = {
+		758E049836140A0D7F78D761 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftServerTests/Pods-NinchatSDKSwiftServerTests-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftServerTests/Pods-NinchatSDKSwiftServerTests-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftServerTests/Pods-NinchatSDKSwiftServerTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		942372C88B7C888241A52B6F /* [CP] Embed Pods Frameworks */ = {
@@ -1083,6 +1083,23 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		F691B6388C9E036C8BC1EC9C /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwift/Pods-NinchatSDKSwift-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwift/Pods-NinchatSDKSwift-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwift/Pods-NinchatSDKSwift-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1092,7 +1109,7 @@
 			files = (
 				8571D44423C091C000C16758 /* Debugger.swift in Sources */,
 				8563007B23B3846B0098A7B0 /* NINChatDataSourceDelegate.swift in Sources */,
-				8530EC9223ADFE9900BAA52A /* UIView+Extensions.swift in Sources */,
+				8530EC9223ADFE9900BAA52A /* UIView+Extension.swift in Sources */,
 				855CBE2F2397E3AB00A024A7 /* UIViewController+Extension.swift in Sources */,
 				85A6C9A523CCC16A001CED6D /* Date+Extension.swift in Sources */,
 				8561EAD623C2805900943C72 /* NINChatSessionManager.swift in Sources */,
@@ -1114,8 +1131,8 @@
 				855CBE3E2397FAE900A024A7 /* NINQueueViewController.swift in Sources */,
 				85973168240A6179002F0346 /* ChatChannelMediaCell.swift in Sources */,
 				854843B923D610D7006DC9CE /* NINChatWebRTCClientImpl.swift in Sources */,
-				8571D44E23C0B47300C16758 /* NINTextMessage.swift in Sources */,
-				8530EC9323ADFE9900BAA52A /* UIButton+Extensions.swift in Sources */,
+				8571D44E23C0B47300C16758 /* TextMessage.swift in Sources */,
+				8530EC9323ADFE9900BAA52A /* UIButton+Extension.swift in Sources */,
 				8530EC9523ADFEA600BAA52A /* NINChatViewModel.swift in Sources */,
 				8571D45623C0B48B00C16758 /* Data+Extension.swift in Sources */,
 				8563004723B249010098A7B0 /* NINFullScreenViewModel.swift in Sources */,
@@ -1131,13 +1148,13 @@
 				8561EAD523C2805900943C72 /* NINChatSessionManagerImpl.swift in Sources */,
 				8563008123B398AB0098A7B0 /* NINPickerControllerDelegate.swift in Sources */,
 				8571D44F23C0B47300C16758 /* ComposeMessagePayload.swift in Sources */,
-				85DD6C6223AF6F5A0023FFEF /* UITextView+Extensions.swift in Sources */,
+				85DD6C6223AF6F5A0023FFEF /* UITextView+Extension.swift in Sources */,
 				8561EAD423C2805900943C72 /* NINChatSessionInternal.swift in Sources */,
 				8563007F23B393D00098A7B0 /* NINRTCVideoDelegate.swift in Sources */,
 				854843B223D5ED4C006DC9CE /* ConfirmVideoCallView.swift in Sources */,
 				8561EAE123C3937600943C72 /* ChatCell.swift in Sources */,
 				855CBE1F2397C4F600A024A7 /* Coordinator.swift in Sources */,
-				855CBE422399060900A024A7 /* UIColor+Extensions.swift in Sources */,
+				855CBE422399060900A024A7 /* UIColor+Extension.swift in Sources */,
 				8571D45923C0B48B00C16758 /* NINLowLevelClientSession+Extension.swift in Sources */,
 				85A6C9A823CE35F7001CED6D /* CloseButton.swift in Sources */,
 				855B9F31238ECE650081A9C6 /* NINChatSession.swift in Sources */,
@@ -1152,7 +1169,7 @@
 				8571D44D23C0B47300C16758 /* RTCSignal.swift in Sources */,
 				855CBE2D2397DF5700A024A7 /* ViewController.swift in Sources */,
 				8563004C23B286FB0098A7B0 /* FacesView.swift in Sources */,
-				8571D45023C0B47300C16758 /* NINFileInfo.swift in Sources */,
+				8571D45023C0B47300C16758 /* FileInfo.swift in Sources */,
 				8530EC8A23AD405C00BAA52A /* ChatInputControls.swift in Sources */,
 				8597316C240A61A0002F0346 /* ChatChannelComposeCell.swift in Sources */,
 				8561EAD823C2805900943C72 /* NINChatSessionManagerClosures.swift in Sources */,
@@ -1163,11 +1180,13 @@
 				91A163085E1C1FAF4BA8BEB8 /* ChatTypingCell.swift in Sources */,
 				91A16FAE023E157B1B3E5FD2 /* TypingCell.swift in Sources */,
 				91A16DD374E854007210494B /* UIFont+Extension.swift in Sources */,
-				91A16D1F0B9B5ED2C45271B4 /* NINSiteConfiguration.swift in Sources */,
+				91A16D1F0B9B5ED2C45271B4 /* SiteConfiguration.swift in Sources */,
 				91A167D5B0BD96D3FD190F94 /* ComposeMessageView.swift in Sources */,
 				91A16DE58D34AA4B9D3713AB /* ComposeContentView.swift in Sources */,
-				91A166E41455F2CB32736453 /* NSMutableAttributedString+Extensions.swift in Sources */,
-				91A165EE393A8B5E007FA670 /* String+Extensions.swift in Sources */,
+				91A166E41455F2CB32736453 /* NSMutableAttributedString+Extension.swift in Sources */,
+				91A165EE393A8B5E007FA670 /* String+Extension.swift in Sources */,
+				91A16914F0B5CA995B9CD28D /* UIImageView+Extension.swift in Sources */,
+				91A16B43A0A5F40049590528 /* Permission.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1182,6 +1201,7 @@
 				91A167A8436C7DEA859E45C9 /* UIKitTests.swift in Sources */,
 				91A16BB7B698A39F797F0030 /* NINFullScreenViewModelTests.swift in Sources */,
 				91A16BB9A4B558286273F506 /* ExtensionsTests.swift in Sources */,
+				91A1679D684FC723976C6C14 /* PermissionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

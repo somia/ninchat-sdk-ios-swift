@@ -31,7 +31,7 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
     
     var session: NINChatSessionAttachment!
     var videoThumbnailManager: NINVideoThumbnailManager?
-    var onImageTapped: ((NINFileInfo, UIImage?) -> Void)?
+    var onImageTapped: ((FileInfo, UIImage?) -> Void)?
     var onComposeSendTapped: ((ComposeContentViewProtocol) -> Void)?
     var onComposeUpdateTapped: (([Any]?) -> Void)?
     var onConstraintsUpdate: (() -> Void)?
@@ -61,9 +61,9 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
             $0.isHidden = message.series
         }
     
-        if let cell = self as? ChannelTextCell, let textMessage = message as? NINTextMessage {
+        if let cell = self as? ChannelTextCell, let textMessage = message as? TextMessage {
             cell.populateText(message: textMessage, attachment: textMessage.attachment)
-        } else if let cell = self as? ChannelMediaCell, let textMessage = message as? NINTextMessage {
+        } else if let cell = self as? ChannelMediaCell, let textMessage = message as? TextMessage {
             cell.populateText(message: textMessage, attachment: textMessage.attachment)
         } else if let cell = self as? ChatChannelComposeCell, let uiComposeMessage = message as? NINUIComposeMessage {
             cell.populateCompose(message: uiComposeMessage, configuration: configuration, colorAssets: colorAssets, composeStates: composeState)
@@ -84,7 +84,7 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
     internal func apply(avatar config: NINAvatarConfig, imageView: UIImageView) {
         imageView.isHidden = !config.show
         if !config.imageOverrideUrl.isEmpty {
-            imageView.setImageURL(config.imageOverrideUrl)
+            imageView.image(from: config.imageOverrideUrl)
         }
     }
 }

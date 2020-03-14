@@ -72,7 +72,7 @@ final class ChatTypingCell: UITableViewCell, TypingCell {
     private func apply(avatar config: NINAvatarConfig, imageView: UIImageView) {
         imageView.isHidden = !config.show
         if !config.imageOverrideUrl.isEmpty {
-            imageView.setImageURL(config.imageOverrideUrl)
+            imageView.image(from: config.imageOverrideUrl)
         }
     }
 }

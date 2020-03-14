@@ -85,7 +85,7 @@ final class ChatView: UIView, ChatViewProtocol {
     private var cell: ((NINChannelMessage, UITableView, IndexPath) -> ChatChannelCell) = { (message, tableView, index) -> ChatChannelCell in
         if let compose = message as? NINUIComposeMessage {
             return tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelComposeCell
-        } else if let text = message as? NINTextMessage {
+        } else if let text = message as? TextMessage {
             if let attachment = text.attachment, attachment.isImage || attachment.isVideo {
                 return (text.mine) ? tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelMediaMineCell : tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelMediaOthersCell
             }

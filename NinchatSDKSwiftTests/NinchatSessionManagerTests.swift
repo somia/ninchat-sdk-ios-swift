@@ -130,7 +130,7 @@ class NinchatSessionManagerPrivateTests: XCTestCase {
 extension NinchatSessionManagerPrivateTests {
     private func simulateAddMessage(id: Int) {
         let user = NINChannelUser(id: "11", realName: "Hassan Shahbazi", displayName: "Hassan", iconURL: "", guest: false)
-        let textMessage = NINTextMessage(messageID: "\(id)", textContent: "content", sender: user!, timestamp: Date(), mine: false, attachment: nil)
+        let textMessage = TextMessage(messageID: "\(id)", textContent: "content", sender: user!, timestamp: Date(), mine: false, attachment: nil)
         self.sessionManager.add(message: textMessage)
     }
 

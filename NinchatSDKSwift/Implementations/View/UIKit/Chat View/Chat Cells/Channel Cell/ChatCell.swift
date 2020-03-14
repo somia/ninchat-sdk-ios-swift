@@ -12,7 +12,7 @@ protocol ChatCell: UIView {
     
     var session: NINChatSessionAttachment! { get set }
     var videoThumbnailManager: NINVideoThumbnailManager? { get set }
-    var onImageTapped: ((_ attachment: NINFileInfo, _ image: UIImage?) -> Void)? { get set }
+    var onImageTapped: ((_ attachment: FileInfo, _ image: UIImage?) -> Void)? { get set }
     var onComposeSendTapped: ((_ compose: ComposeContentViewProtocol) -> Void)? { get set }
     var onComposeUpdateTapped: ((_ state: [Any]?) -> Void)? { get set }
     var onConstraintsUpdate: (() -> Void)? { get set }

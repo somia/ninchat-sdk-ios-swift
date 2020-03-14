@@ -10,7 +10,7 @@ import NinchatSDK
 /** Delegate for the chat view. */
 protocol ChatViewDelegate {
     /** An image in a cell was selected (tapped). */
-    func didSelect(image: UIImage?, for attachment: NINFileInfo?, _ view: ChatView)
+    func didSelect(image: UIImage?, for attachment: FileInfo?, _ view: ChatView)
     
     /** "Close Chat" button was pressed inside the chat view; the used requests closing the chat SDK. */
     func didRequestToClose(_ view: ChatView)
@@ -19,8 +19,8 @@ protocol ChatViewDelegate {
     func didSendUIAction(composeContent: ComposeContentViewProtocol?)
 }
 protocol NINChatDelegate: ChatViewDelegate {
-    var onOpenPhotoAttachment: ((UIImage, NINFileInfo) -> Void)? { get set }
-    var onOpenVideoAttachment: ((NINFileInfo) -> Void)?  { get set }
+    var onOpenPhotoAttachment: ((UIImage, FileInfo) -> Void)? { get set }
+    var onOpenVideoAttachment: ((FileInfo) -> Void)?  { get set }
     var onCloseChatTapped: (() -> Void)? { get set }
     var onUIActionError: ((Error) -> Void)? { get set }
 }
@@ -45,8 +45,8 @@ final class NINChatDataSourceDelegateImpl: NINChatDataSourceDelegate {
     
     // MARK: - NINChatDelegate
     
-    var onOpenPhotoAttachment: ((UIImage, NINFileInfo) -> Void)?
-    var onOpenVideoAttachment: ((NINFileInfo) -> Void)?
+    var onOpenPhotoAttachment: ((UIImage, FileInfo) -> Void)?
+    var onOpenVideoAttachment: ((FileInfo) -> Void)?
     var onCloseChatTapped: (() -> Void)?
     var onUIActionError: ((Error) -> Void)?
     
@@ -72,7 +72,7 @@ extension NINChatDataSourceDelegateImpl {
 // MARK: - ChatViewDelegate
 
 extension NINChatDataSourceDelegateImpl {
-    func didSelect(image: UIImage?, for attachment: NINFileInfo?, _ view: ChatView) {
+    func didSelect(image: UIImage?, for attachment: FileInfo?, _ view: ChatView) {
         guard let attachment = attachment else { return }
         
         if attachment.isImage, let image = image {

@@ -11,11 +11,11 @@ protocol ChannelTextCell {
     /// Outlets
     var messageTextView: UITextView! { get set }
     
-    func populateText(message: NINTextMessage, attachment: NINFileInfo?)
+    func populateText(message: TextMessage, attachment: FileInfo?)
 }
 
 extension ChannelTextCell {
-    func populateText(message: NINTextMessage, attachment: NINFileInfo?) {
+    func populateText(message: TextMessage, attachment: FileInfo?) {
         self.messageTextView.contentInset = (message.series) ? UIEdgeInsets(top: 3.5, left: 0.0, bottom: 0.0, right: 0.0) : .zero
         if attachment?.isPDF ?? false, let url = attachment?.url, let name = attachment?.name {
             self.messageTextView.setAttributed(text: "<a href=\"\(url)\">\(name)</a>", font: .ninchat)
@@ -72,7 +72,7 @@ final class ChatChannelTextOthersCell: ChatChannelOthersCell, ChannelTextCell {
         }
     }
     
-    func populateText(message: NINTextMessage, attachment: NINFileInfo?) {
+    func populateText(message: TextMessage, attachment: FileInfo?) {
         self.messageTextView.contentInset = (message.series) ? UIEdgeInsets(top: 3.5, left: 0.0, bottom: 0.0, right: 0.0) : .zero
         if attachment?.isPDF ?? false, let url = attachment?.url, let name = attachment?.name {
             self.messageTextView.setAttributed(text: "<a href=\"\(url)\">\(name)</a>", font: .ninchat)

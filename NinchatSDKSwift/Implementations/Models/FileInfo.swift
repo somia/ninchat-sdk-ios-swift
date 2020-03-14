@@ -6,7 +6,7 @@
 
 import Foundation
 
-final class NINFileInfo {
+final class FileInfo {
     var fileID: String!
     var name: String!
     var mimeType: String!

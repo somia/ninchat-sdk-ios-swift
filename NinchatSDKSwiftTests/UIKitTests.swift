@@ -211,7 +211,7 @@ final class UIKitTests: XCTestCase {
 extension UIKitTests {
     private func simulateSendMessage() {
         let user = NINChannelUser(id: "11", realName: "Hassan Shahbazi", displayName: "Hassan", iconURL: "", guest: false)
-        let textMessage = NINTextMessage(messageID: "00", textContent: "content", sender: user!, timestamp: Date(), mine: false, attachment: nil)
+        let textMessage = TextMessage(messageID: "00", textContent: "content", sender: user!, timestamp: Date(), mine: false, attachment: nil)
         self.sessionManager.add(message: textMessage)
     }
 }

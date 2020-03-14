@@ -13,7 +13,7 @@ final class NINFullScreenViewController: UIViewController, ViewController {
     
     var viewModel: NINFullScreenViewModel!
     var image: UIImage!
-    var attachment: NINFileInfo!
+    var attachment: FileInfo!
     var onCloseTapped: (() -> Void)?
     
     // MARK: - ViewController
