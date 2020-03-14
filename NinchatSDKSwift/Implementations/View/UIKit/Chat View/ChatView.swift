@@ -51,10 +51,10 @@ final class ChatView: UIView, ChatViewProtocol {
     var composeMessageStates: [String:[Any]]? = [:]
     
     /** Configuration for agent avatar. */
-    private var agentAvatarConfig: NINAvatarConfig!
+    private var agentAvatarConfig: AvatarConfig!
     
     /** Configuration for user avatar. */
-    private var userAvatarConfig: NINAvatarConfig!
+    private var userAvatarConfig: AvatarConfig!
     
     private let videoThumbnailManager = NINVideoThumbnailManager()
     private var cellConstraints: Array<CGSize> = []
@@ -103,10 +103,8 @@ final class ChatView: UIView, ChatViewProtocol {
             self.imageAssets = self.imageAssetsDictionary
             self.colorAssets = self.colorAssetsDictionary
             
-            self.agentAvatarConfig = NINAvatarConfig(avatar: sessionManager.siteConfiguration.agentAvatar ?? "",
-                                                     name: sessionManager.siteConfiguration.agentName ?? "")
-            self.userAvatarConfig = NINAvatarConfig(avatar: sessionManager.siteConfiguration.userAvatar ?? "",
-                                                    name: sessionManager.siteConfiguration.userName ?? "")
+            self.agentAvatarConfig = AvatarConfig(avatar: sessionManager.siteConfiguration.agentAvatar, name: sessionManager.siteConfiguration.agentName)
+            self.userAvatarConfig = AvatarConfig(avatar: sessionManager.siteConfiguration.userAvatar, name: sessionManager.siteConfiguration.userName)
         }
     }
     

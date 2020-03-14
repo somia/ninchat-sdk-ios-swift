@@ -64,11 +64,11 @@ final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol {
         }
 
         guard let sessionManager = session?.sessionManager else { return }
-        let agentAvatarConfig = NINAvatarConfig(avatar: sessionManager.siteConfiguration.agentAvatar ?? "", name: sessionManager.siteConfiguration.agentName ?? "")
+        let agentAvatarConfig = AvatarConfig(avatar: sessionManager.siteConfiguration.agentAvatar, name: sessionManager.siteConfiguration.agentName)
         
         /// Caller's Avatar image
-        if !agentAvatarConfig.imageOverrideUrl.isEmpty {
-            self.avatarImageView.image(from: agentAvatarConfig.imageOverrideUrl)
+        if let overrideURL = agentAvatarConfig.imageOverrideURL {
+            self.avatarImageView.image(from: overrideURL)
         } else if !user.iconURL.isEmpty {
             self.avatarImageView.image(from: user.iconURL)
         }

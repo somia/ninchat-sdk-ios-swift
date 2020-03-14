@@ -20,5 +20,5 @@ protocol ChatCell: UIView {
 
 
 protocol ChannelCell: UIView {
-    func populateChannel(message: NINChannelMessage, configuration: SiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: NINAvatarConfig, userAvatarConfig: NINAvatarConfig, composeState: [Any]?)
+    func populateChannel(message: NINChannelMessage, configuration: SiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: AvatarConfig, userAvatarConfig: AvatarConfig, composeState: [Any]?)
 }

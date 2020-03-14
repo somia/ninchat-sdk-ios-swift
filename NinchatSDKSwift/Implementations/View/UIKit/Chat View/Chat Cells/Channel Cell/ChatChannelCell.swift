@@ -50,7 +50,7 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
     
     // MARK: - ChannelCell
     
-    func populateChannel(message: NINChannelMessage, configuration: SiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: NINAvatarConfig, userAvatarConfig: NINAvatarConfig, composeState: [Any]?) {
+    func populateChannel(message: NINChannelMessage, configuration: SiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: AvatarConfig, userAvatarConfig: AvatarConfig, composeState: [Any]?) {
         self.message = message
         
         self.senderNameLabel.text = (message.sender.displayName.count < 1) ? "Guest" : message.sender.displayName
@@ -81,10 +81,10 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
         }
     }
     
-    internal func apply(avatar config: NINAvatarConfig, imageView: UIImageView) {
+    internal func apply(avatar config: AvatarConfig, imageView: UIImageView) {
         imageView.isHidden = !config.show
-        if !config.imageOverrideUrl.isEmpty {
-            imageView.image(from: config.imageOverrideUrl)
+        if let overrideURL = config.imageOverrideURL {
+            imageView.image(from: overrideURL)
         }
     }
 }
@@ -118,12 +118,12 @@ class ChatChannelMineCell: ChatChannelCell {
         self.bubbleImageView.width?.isActive = false
     }
     
-    override func populateChannel(message: NINChannelMessage, configuration: SiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: NINAvatarConfig, userAvatarConfig: NINAvatarConfig, composeState: [Any]?) {
+    override func populateChannel(message: NINChannelMessage, configuration: SiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: AvatarConfig, userAvatarConfig: AvatarConfig, composeState: [Any]?) {
         super.populateChannel(message: message, configuration: configuration, imageAssets: imageAssets, colorAssets: colorAssets, agentAvatarConfig: agentAvatarConfig, userAvatarConfig: userAvatarConfig, composeState: composeState)
         self.configureMyMessage(avatar: message.sender.iconURL, imageAssets: imageAssets, colorAssets: colorAssets, config: userAvatarConfig, series: message.series)
     }
     
-    internal func configureMyMessage(avatar url: String, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, config: NINAvatarConfig, series: Bool) {
+    internal func configureMyMessage(avatar url: String, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, config: AvatarConfig, series: Bool) {
         self.senderNameLabel.textAlignment = .right
         self.bubbleImageView.image = (series) ? imageAssets[.chatBubbleRightRepeated] : imageAssets[.chatBubbleRight]
         
@@ -164,12 +164,12 @@ class ChatChannelOthersCell: ChatChannelCell {
         self.bubbleImageView.width?.isActive = false
     }
     
-    override func populateChannel(message: NINChannelMessage, configuration: SiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: NINAvatarConfig, userAvatarConfig: NINAvatarConfig, composeState: [Any]?) {
+    override func populateChannel(message: NINChannelMessage, configuration: SiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: AvatarConfig, userAvatarConfig: AvatarConfig, composeState: [Any]?) {
         super.populateChannel(message: message, configuration: configuration, imageAssets: imageAssets, colorAssets: colorAssets, agentAvatarConfig: agentAvatarConfig, userAvatarConfig: userAvatarConfig, composeState: composeState)
         self.configureOtherMessage(avatar: message.sender.iconURL, imageAssets: imageAssets, colorAssets: colorAssets, config: agentAvatarConfig, series: message.series)
     }
     
-    internal func configureOtherMessage(avatar url: String, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, config: NINAvatarConfig, series: Bool) {
+    internal func configureOtherMessage(avatar url: String, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, config: AvatarConfig, series: Bool) {
         self.senderNameLabel.textAlignment = .left
         self.bubbleImageView.image = (series) ? imageAssets[.chatBubbleLeftRepeated] : imageAssets[.chatBubbleLeft]
         

@@ -16,9 +16,9 @@ protocol SiteConfiguration  {
     var audienceQueues: [String]? { get }
     var username: String? { get }
     var translation: [String:String]? { get }
-    var agentAvatar: Any? { get }
+    var agentAvatar: AnyHashable? { get }
     var agentName: String? { get }
-    var userAvatar: Any? { get }
+    var userAvatar: AnyHashable? { get }
     var userName: String? { get }
     
     init(configuration: [AnyHashable : Any]?, environments: [String]?)
@@ -69,7 +69,7 @@ struct SiteConfigurationImpl: SiteConfiguration {
         self.value(for: "translations")
     }
     
-    var agentAvatar: Any? {
+    var agentAvatar: AnyHashable? {
         self.value(for: "agentAvatar")
     }
     
@@ -77,7 +77,7 @@ struct SiteConfigurationImpl: SiteConfiguration {
         self.value(for: "agentName")
     }
     
-    var userAvatar: Any? {
+    var userAvatar: AnyHashable? {
         self.value(for: "userAvatar")
     }
     

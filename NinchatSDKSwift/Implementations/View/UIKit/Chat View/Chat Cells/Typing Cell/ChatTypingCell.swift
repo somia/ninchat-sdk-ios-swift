@@ -40,7 +40,7 @@ final class ChatTypingCell: UITableViewCell, TypingCell {
     
     // MARK: - TypingCell
     
-    func populateTyping(message: NINUserTypingMessage, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: NINAvatarConfig) {
+    func populateTyping(message: NINUserTypingMessage, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: AvatarConfig) {
         self.senderNameLabel.text = (agentAvatarConfig.nameOverride.isEmpty) ? message.user.displayName : agentAvatarConfig.nameOverride
         self.timeLabel.text = DateFormatter.shortTime.string(from: message.timestamp)
     
@@ -69,10 +69,10 @@ final class ChatTypingCell: UITableViewCell, TypingCell {
     }
     
     /// Returns YES if the default avatar image should be applied afterwards
-    private func apply(avatar config: NINAvatarConfig, imageView: UIImageView) {
+    private func apply(avatar config: AvatarConfig, imageView: UIImageView) {
         imageView.isHidden = !config.show
-        if !config.imageOverrideUrl.isEmpty {
-            imageView.image(from: config.imageOverrideUrl)
+        if let overrideURL = config.imageOverrideURL {
+            imageView.image(from: overrideURL)
         }
     }
 }
