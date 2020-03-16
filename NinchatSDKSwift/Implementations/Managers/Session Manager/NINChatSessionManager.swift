@@ -54,7 +54,7 @@ protocol NANChatSessionMessenger {
     * Chronological list of messages on the current channel. The list is ordered by the message
     * timestamp in descending order (most recent first).
     */
-    var chatMessages: [NINChatMessage]! { get }
+    var chatMessages: [ChatMessage]! { get }
     
     /** Indicate whether or not the user is currently typing into the chat. */
     func update(isWriting: Bool, completion: @escaping CompletionWithError) throws
@@ -97,8 +97,8 @@ protocol NINChatSessionManagerDelegate {
     var onMessageAdded: ((_ index: Int) -> Void)? { get set }
     var onMessageRemoved: ((_ index: Int) -> Void)? { get set }
     var onChannelClosed: (() -> Void)? { get set }
-    var onRTCSignal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
-    var onRTCClientSignal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
+    var onRTCSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
+    var onRTCClientSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
 
     func bindQueueUpdate<T: QueueUpdateCapture>(closure: @escaping ((Events, String, Error?) -> Void), to receiver: T)
     func unbindQueueUpdateClosure<T: QueueUpdateCapture>(from receiver: T)

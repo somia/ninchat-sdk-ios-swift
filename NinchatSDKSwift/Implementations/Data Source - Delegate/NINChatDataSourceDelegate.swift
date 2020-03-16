@@ -31,7 +31,7 @@ protocol ChatViewDataSource {
     func numberOfMessages(for view: ChatView) -> Int
     
     /** Returns the chat message at given index. */
-    func message(at index: Int, _ view: ChatView) -> NINChatMessage
+    func message(at index: Int, _ view: ChatView) -> ChatMessage
 }
 protocol NINChatDataSource: ChatViewDataSource {
     init(viewModel: NINChatViewModel)
@@ -61,11 +61,11 @@ final class NINChatDataSourceDelegateImpl: NINChatDataSourceDelegate {
 
 extension NINChatDataSourceDelegateImpl {
     func numberOfMessages(for view: ChatView) -> Int {
-        return view.sessionManager.chatMessages.count
+        view.sessionManager.chatMessages.count
     }
     
-    func message(at index: Int, _ view: ChatView) -> NINChatMessage {
-        return view.sessionManager.chatMessages[index]
+    func message(at index: Int, _ view: ChatView) -> ChatMessage {
+        view.sessionManager.chatMessages[index]
     }
 }
 

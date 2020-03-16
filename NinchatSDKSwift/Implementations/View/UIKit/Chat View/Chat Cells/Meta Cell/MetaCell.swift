@@ -11,5 +11,5 @@ protocol ChatMeta: UIView {
     var delegate: NINChatSessionInternalDelegate? { get set }
     var onCloseChatTapped: ((Button) -> Void)? { get set }
     
-    func populate(message: NINChatMetaMessage, colorAssets: NINColorAssetDictionary)
+    func populate(message: MetaMessage, colorAssets: NINColorAssetDictionary)
 }

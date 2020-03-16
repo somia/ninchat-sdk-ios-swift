@@ -40,7 +40,7 @@ final class ChatTypingCell: UITableViewCell, TypingCell {
     
     // MARK: - TypingCell
     
-    func populateTyping(message: NINUserTypingMessage, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: AvatarConfig) {
+    func populateTyping(message: UserTypingMessage, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: AvatarConfig) {
         self.senderNameLabel.text = (agentAvatarConfig.nameOverride.isEmpty) ? message.user.displayName : agentAvatarConfig.nameOverride
         self.timeLabel.text = DateFormatter.shortTime.string(from: message.timestamp)
     

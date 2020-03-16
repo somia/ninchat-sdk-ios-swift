@@ -33,7 +33,7 @@ class ChatChannelComposeCell: ChatChannelOthersCell {
         self.composeMessageView.clear()
     }
     
-    func populateCompose(message: NINUIComposeMessage, configuration: SiteConfiguration, colorAssets: NINColorAssetDictionary, composeStates: [Any]?) {
+    func populateCompose(message: ComposeMessage, configuration: SiteConfiguration, colorAssets: NINColorAssetDictionary, composeStates: [Bool]?) {
         self.composeMessageView.clear()
         self.composeMessageView.onStateUpdateTapped = { [weak self] composeStates in
             self?.onComposeUpdateTapped?(composeStates)

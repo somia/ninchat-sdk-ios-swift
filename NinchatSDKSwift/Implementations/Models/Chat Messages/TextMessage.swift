@@ -7,26 +7,22 @@
 import Foundation
 import NinchatSDK
 
-final class TextMessage: NSObject, NINChannelMessage {
-    internal var messageID: String!
-    internal var mine: Bool
-    var sender: NINChannelUser!
-    var textContent: String?
-    var timestamp: Date!
-    var attachment: FileInfo?
+struct TextMessage: ChannelMessage, Equatable {
+    // MARK: - ChatMessage
+    let timestamp: Date
     
-    /**
-        * YES if this message is a part in a series, ie. the sender of the previous message
-        * also sent this message.
-    */
+    // MARK: - ChannelMessage
+    let messageID: String
+    let mine: Bool
+    let sender: ChannelUser
     var series: Bool = false
     
-    init(messageID: String, textContent: String?, sender: NINChannelUser, timestamp: Date, mine: Bool, attachment: FileInfo?) {
-        self.messageID = messageID
-        self.textContent = textContent
-        self.sender = sender
-        self.timestamp = timestamp
-        self.mine = mine
-        self.attachment = attachment
+    // MARK: - TextMessage
+    let textContent: String?
+    let attachment: FileInfo?
+    
+    // MARK: - Equatable
+    public static func ==(lhs: Self, rhs: Self) -> Bool {
+        lhs.messageID == rhs.messageID
     }
 }

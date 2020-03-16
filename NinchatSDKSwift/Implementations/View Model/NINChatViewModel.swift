@@ -12,7 +12,7 @@ enum MessageUpdateType {
 }
 
 protocol NINChatRTCProtocol {
-    typealias RTCCallReceive = ((NINChannelUser?) -> Void)
+    typealias RTCCallReceive = ((ChannelUser?) -> Void)
     typealias RTCCallInitial = ((Error?, NINChatWebRTCClient?) -> Void)
     typealias RTCCallHangup = (() -> Void)
     

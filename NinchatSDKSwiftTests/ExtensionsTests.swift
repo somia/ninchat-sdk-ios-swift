@@ -35,4 +35,9 @@ final class ExtensionsTests: XCTestCase {
         XCTAssertFalse("Foo. No tags here.".containsTags)
         XCTAssertFalse("Well, this is <not > a valid tag.".containsTags)
     }
+    
+    func test_dictionary_to_data() {
+        let dic: [AnyHashable:Any] = ["Key": 1, "Key2": "Key", "2": "Key"]
+        XCTAssertNotNil(dic.toData)
+    }
 }

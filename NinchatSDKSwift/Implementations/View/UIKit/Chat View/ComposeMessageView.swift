@@ -11,16 +11,16 @@ protocol ComposeMessageViewProtocol: UIView {
     typealias OnUIComposeSendActionTapped = ((ComposeContentViewProtocol) -> Void)
     var onSendActionTapped: OnUIComposeSendActionTapped? { get set }
     
-    typealias OnUIComposeUpdateActionTapped = (([Any]) -> Void)
+    typealias OnUIComposeUpdateActionTapped = (([Bool]) -> Void)
     var onStateUpdateTapped: OnUIComposeUpdateActionTapped? { get set }
     
     func clear()
-    func populate(message: NINUIComposeMessage, siteConfiguration: SiteConfiguration, colorAssets: NINColorAssetDictionary, composeStates: [Any]?)
+    func populate(message: ComposeMessage, siteConfiguration: SiteConfiguration, colorAssets: NINColorAssetDictionary, composeStates: [Bool]?)
 }
 
 final class ComposeMessageView: UIView, ComposeMessageViewProtocol {
     private var contentViews: [ComposeContentViewProtocol] = []
-    private var composeStates: [Any] = []
+    private var composeStates: [Bool] = []
 
     private var isActive: Bool {
         self.contentViews.count > 0 && !(self.contentViews.first?.isHidden ?? true)
@@ -62,17 +62,18 @@ final class ComposeMessageView: UIView, ComposeMessageViewProtocol {
         self.invalidateIntrinsicContentSize()
     }
 
-    func populate(message: NINUIComposeMessage, siteConfiguration: SiteConfiguration, colorAssets: NINColorAssetDictionary, composeStates: [Any]?) {
+    func populate(message: ComposeMessage, siteConfiguration: SiteConfiguration, colorAssets: NINColorAssetDictionary, composeStates: [Bool]?) {
         /// Reusing existing content views that are already allocated results in UI problems for different scenarios, e.g.
         /// `https://github.com/somia/ninchat-sdk-ios/issues/52`
         self.contentViews = []
-        self.composeStates = composeStates ?? Array(repeating: 0, count: message.content.count)
+        self.composeStates = composeStates ?? Array(repeating: false, count: message.content.count)
         
-        let enableSendButton = message.sendPressedIndex() == -1
-        message.content.forEach { content in
-            let isSelected = content.sendPressed
+        let enableSendButton = message.sendPressedIndex == -1
+        message.content.forEach { ( content: ComposeContent) in
+            var content = content
+            
             let view: ComposeContentViewProtocol = ComposeContentView(frame: .zero)
-            view.populate(message: content, siteConfiguration: siteConfiguration, colorAssets: colorAssets, composeStates: composeStates, enableSendButton: enableSendButton, isSelected: isSelected)
+            view.populate(message: content, siteConfiguration: siteConfiguration, colorAssets: colorAssets, composeStates: composeStates, enableSendButton: enableSendButton, isSelected: content.sendPressed ?? false)
             view.isHidden = false
             view.onSendActionTapped = { [unowned self] contentView in
                 content.sendPressed = true
@@ -82,8 +83,8 @@ final class ComposeMessageView: UIView, ComposeMessageViewProtocol {
                 self.onSendActionTapped?(contentView)
             }
             view.onStateUpdateTapped = { [unowned self] state in
-                self.composeStates[message.content.firstIndex(of: content)!] = state
-                self.onStateUpdateTapped?(state)
+                self.composeStates = state
+                self.onStateUpdateTapped?(self.composeStates)
             }
             
             self.contentViews.append(view)

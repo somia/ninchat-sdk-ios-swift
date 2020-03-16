@@ -48,7 +48,7 @@ final class ChatView: UIView, ChatViewProtocol {
     * in the message with each object being a dictionary that gets received and passed
     * to NINUIComposeElement objects that are responsible for generating and reading it.
     */
-    var composeMessageStates: [String:[Any]]? = [:]
+    var composeMessageStates: [String:[Bool]]? = [:]
     
     /** Configuration for agent avatar. */
     private var agentAvatarConfig: AvatarConfig!
@@ -82,8 +82,8 @@ final class ChatView: UIView, ChatViewProtocol {
         }
     }
     
-    private var cell: ((NINChannelMessage, UITableView, IndexPath) -> ChatChannelCell) = { (message, tableView, index) -> ChatChannelCell in
-        if let compose = message as? NINUIComposeMessage {
+    private var cell: ((ChannelMessage, UITableView, IndexPath) -> ChatChannelCell) = { (message, tableView, index) -> ChatChannelCell in
+        if let compose = message as? ComposeMessage {
             return tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelComposeCell
         } else if let text = message as? TextMessage {
             if let attachment = text.attachment, attachment.isImage || attachment.isVideo {
@@ -222,11 +222,11 @@ extension ChatView: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = dataSource.message(at: indexPath.row, self)
         
-        if let channelMSG = message as? NINChannelMessage {
+        if let channelMSG = message as? ChannelMessage {
             return setupBubbleCell(channelMSG, at: indexPath)
-        } else if let typingMSG = message as? NINUserTypingMessage {
+        } else if let typingMSG = message as? UserTypingMessage {
             return setupTypingCell(typingMSG, at: indexPath)
-        } else if let metaMSG = message as? NINChatMetaMessage {
+        } else if let metaMSG = message as? MetaMessage {
             return setupMetaCell(metaMSG, at: indexPath)
         }
         fatalError("Invalid message type")
@@ -236,7 +236,7 @@ extension ChatView: UITableViewDataSource, UITableViewDelegate {
 // MARK: - Helper methods for Cell Setup
 
 extension ChatView {
-    private func setupBubbleCell(_ message: NINChannelMessage, at indexPath: IndexPath) -> ChatChannelCell {
+    private func setupBubbleCell(_ message: ChannelMessage, at indexPath: IndexPath) -> ChatChannelCell {
         let cell = self.cell(message, tableView, indexPath)
         cell.session = self.sessionManager
         cell.videoThumbnailManager = videoThumbnailManager
@@ -264,13 +264,13 @@ extension ChatView {
         return cell
     }
 
-    private func setupTypingCell(_ message: NINUserTypingMessage, at indexPath: IndexPath) -> ChatTypingCell {
+    private func setupTypingCell(_ message: UserTypingMessage, at indexPath: IndexPath) -> ChatTypingCell {
         let cell: ChatTypingCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
         cell.populateTyping(message: message, imageAssets: imageAssets, colorAssets: colorAssets, agentAvatarConfig: agentAvatarConfig)
         return cell
     }
 
-    private func setupMetaCell(_ message: NINChatMetaMessage, at indexPath: IndexPath) -> ChatMetaCell {
+    private func setupMetaCell(_ message: MetaMessage, at indexPath: IndexPath) -> ChatMetaCell {
         let cell: ChatMetaCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
         cell.delegate = self.sessionManager.delegate
         cell.onCloseChatTapped = { [unowned self] _ in

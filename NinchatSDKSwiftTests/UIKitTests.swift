@@ -210,8 +210,7 @@ final class UIKitTests: XCTestCase {
 
 extension UIKitTests {
     private func simulateSendMessage() {
-        let user = NINChannelUser(id: "11", realName: "Hassan Shahbazi", displayName: "Hassan", iconURL: "", guest: false)
-        let textMessage = TextMessage(messageID: "00", textContent: "content", sender: user!, timestamp: Date(), mine: false, attachment: nil)
-        self.sessionManager.add(message: textMessage)
+        let user = ChannelUser(userID: "11", realName: "Hassan Shahbazi", displayName: "Hassan", iconURL: "", guest: false)
+        self.sessionManager.add(message: TextMessage(timestamp: Date(), messageID:  "11", mine: false, sender: user, textContent: "content", attachment: nil))
     }
 }

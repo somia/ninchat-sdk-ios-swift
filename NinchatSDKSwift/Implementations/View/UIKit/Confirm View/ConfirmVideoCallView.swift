@@ -8,7 +8,7 @@ import UIKit
 import NinchatSDK
 
 protocol ConfirmVideoCallViewProtocol: ConfirmView {
-    var user: NINChannelUser! { get set }
+    var user: ChannelUser! { get set }
 }
 
 final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol {
@@ -37,7 +37,7 @@ final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol {
     
     // MARK: - ConfirmVideoCallViewProtocol
     
-    var user: NINChannelUser!
+    var user: ChannelUser!
     
     // MARK: - ConfirmView
     
@@ -69,8 +69,8 @@ final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol {
         /// Caller's Avatar image
         if let overrideURL = agentAvatarConfig.imageOverrideURL {
             self.avatarImageView.image(from: overrideURL)
-        } else if !user.iconURL.isEmpty {
-            self.avatarImageView.image(from: user.iconURL)
+        } else if let iconURL = user.iconURL {
+            self.avatarImageView.image(from: iconURL)
         }
         
         /// Caller's name

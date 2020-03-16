@@ -14,11 +14,11 @@ protocol ChatCell: UIView {
     var videoThumbnailManager: NINVideoThumbnailManager? { get set }
     var onImageTapped: ((_ attachment: FileInfo, _ image: UIImage?) -> Void)? { get set }
     var onComposeSendTapped: ((_ compose: ComposeContentViewProtocol) -> Void)? { get set }
-    var onComposeUpdateTapped: ((_ state: [Any]?) -> Void)? { get set }
+    var onComposeUpdateTapped: ((_ state: [Bool]?) -> Void)? { get set }
     var onConstraintsUpdate: (() -> Void)? { get set }
 }
 
 
 protocol ChannelCell: UIView {
-    func populateChannel(message: NINChannelMessage, configuration: SiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: AvatarConfig, userAvatarConfig: AvatarConfig, composeState: [Any]?)
+    func populateChannel(message: ChannelMessage, configuration: SiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: AvatarConfig, userAvatarConfig: AvatarConfig, composeState: [Bool]?)
 }

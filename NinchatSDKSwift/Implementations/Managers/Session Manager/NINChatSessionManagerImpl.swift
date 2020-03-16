@@ -21,7 +21,7 @@ protocol NINChatSessionManagerInternalActions {
 final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatDevHelper, NINChatSessionManagerInternalActions {
     internal let audienceMetadata: NINLowLevelClientProps?
     
-    internal var channelUsers: [String:NINChannelUser] = [:]
+    internal var channelUsers: [String:ChannelUser] = [:]
     internal var currentQueueID: String?
     internal var currentChannelID: String?
     internal var backgroundChannelID: String?
@@ -54,15 +54,15 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     
     // MARK: - NINChatSessionManager variables
     
-    var chatMessages: [NINChatMessage]! = []
+    var chatMessages: [ChatMessage]! = []
     
     // MARK: - NINChatSessionManagerDelegate
 
     var onMessageAdded: ((_ index: Int) -> Void)?
     var onMessageRemoved: ((_ index: Int) -> Void)?
     var onChannelClosed: (() -> Void)?
-    var onRTCSignal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)?
-    var onRTCClientSignal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)?
+    var onRTCSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)?
+    var onRTCClientSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)?
     
     func bindQueueUpdate<T: QueueUpdateCapture>(closure: @escaping ((Events, String, Error?) -> Void), to receiver: T) {
         guard queueUpdateBoundClosures.keys.filter({ $0 == receiver.desc }).count == 0 else { return }
