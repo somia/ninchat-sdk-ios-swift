@@ -20,7 +20,7 @@ protocol NINChatSessionManagerInternalActions {
 
 final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatDevHelper, NINChatSessionManagerInternalActions {
     internal let audienceMetadata: NINLowLevelClientProps?
-    
+    internal let serviceManager = ServiceManager()
     internal var channelUsers: [String:ChannelUser] = [:]
     internal var currentQueueID: String?
     internal var currentChannelID: String?
@@ -134,14 +134,16 @@ extension NINChatSessionManagerImpl {
     }
     
     func fetchSiteConfiguration(config key: String, environments: [String]?, completion: @escaping CompletionWithError) {
-        fetchSiteConfig(self.serverAddress, key) { (config, error) in
-            if let error = error {
-                completion(error); return
+        let request = SiteConfigRequest(serverAddress: self.serverAddress, configKey: key)
+        self.serviceManager.perform(request) { result in
+            switch result {
+            case .success(let config):
+                debugger("Got site config: \(String(describing: config.toDictionary))")
+                self.siteConfiguration = SiteConfigurationImpl(configuration: config.toDictionary, environments: environments)
+                completion(nil)
+            case .failure(let error):
+                completion(error)
             }
-            
-            debugger("Got site config: \(String(describing: config))")
-            self.siteConfiguration = SiteConfigurationImpl(configuration: config, environments: environments)
-            completion(nil)
         }
     }
     

@@ -13,3 +13,12 @@ extension UIColor {
     
     static var grayButton: UIColor { #colorLiteral(red: 0.6, green: 0.6, blue: 0.6, alpha: 1) }
 }
+
+extension UIColor {
+    var toImage: UIImage? {
+        UIGraphicsBeginImageContextWithOptions(CGSize(width: 1.0, height: 1.0), true, 0.0)
+        self.setFill()
+        UIRectFill(CGRect(x: 0.0, y: 0.0, width: 1.0, height: 1.0))
+        return UIGraphicsGetImageFromCurrentImageContext()
+    }
+}

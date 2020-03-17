@@ -51,7 +51,7 @@ final class ComposeContentView: UIView, ComposeContentViewProtocol {
     private func applyStyle(to button: UIButton?, borderWidth: CGFloat? = nil, selected: Bool) {
         let mainColor: UIColor = (button == self.sendButton) ? .blueButton : .grayButton
         button?.round(radius: Margins.kButtonHeight.rawValue / 2, borderWidth: borderWidth ?? ((selected) ? 0.0 : 2.0), borderColor: mainColor)
-        button?.setBackgroundImage((selected) ? imageFrom(.blueButton) : imageFrom(.white), for: .normal)
+        button?.setBackgroundImage((selected) ? UIColor.blueButton.toImage : UIColor.white.toImage, for: .normal)
         button?.setTitleColor((selected) ? .white : mainColor, for: .normal)
     }
     

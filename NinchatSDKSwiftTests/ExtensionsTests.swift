@@ -40,4 +40,9 @@ final class ExtensionsTests: XCTestCase {
         let dic: [AnyHashable:Any] = ["Key": 1, "Key2": "Key", "2": "Key"]
         XCTAssertNotNil(dic.toData)
     }
+
+    func test_color_to_image() {
+        XCTAssertNotNil(UIColor.blueButton.toImage)
+        XCTAssertNotNil(UIColor.white.toImage)
+    }
 }
