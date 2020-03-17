@@ -8,8 +8,6 @@ import UIKit
 import NinchatSDK
 
 final class NINChatViewController: UIViewController, ViewController, KeyboardHandler {
-    
-    private let animationDuration: Double = 0.3
     private var webRTCClient: NINChatWebRTCClient?
     
     // MARK: - Injected
@@ -346,7 +344,7 @@ extension NINChatViewController {
         self.setNeedsStatusBarAppearanceUpdate()
         
         guard animation else { return }
-        UIView.animate(withDuration: animationDuration) {
+        UIView.animate(withDuration: TimeConstants.kAnimationDuration.rawValue) {
             self.view.setNeedsLayout()
             self.view.layoutIfNeeded()
         }

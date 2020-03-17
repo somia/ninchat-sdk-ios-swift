@@ -8,8 +8,7 @@ import XCTest
 @testable import NinchatSDKSwift
 
 final class VideoThumbnailManagerTests: XCTestCase {
-    /// TODO: Find an online stable URL
-    let videoURL = ""
+    let videoURL = "https://hw14.cdn.asset.aparat.com/aparat-video/e94c4f4a378767b1ff54cb2fb4c16aa520247612-144p__51113.mp4"
     
     func test_video_thumbnail() {
         let expect_online = self.expectation(description: "Expected to get thumbnail without any errors from the URL")

@@ -171,7 +171,7 @@ final class ComposeContentView: UIView, ComposeContentViewProtocol {
         guard let options = self.message?.options else { return }
         self.selectedOptions = zip(options, self.composeState).map { (arg: (ComposeContentOption, Bool?)) in
             var (option, state) = arg
-            option.selected = state as? Bool
+            option.selected = state
         
             return option
         }
@@ -183,7 +183,7 @@ final class ComposeContentView: UIView, ComposeContentViewProtocol {
             button.titleLabel?.font = .ninchat
             button.setTitle(option.label, for: .normal)
             button.addTarget(self, action: #selector(self.onButtonTapped(_:)), for: .touchUpInside)
-            self.applyStyle(to: button, selected: (state as? Bool) ?? false)
+            self.applyStyle(to: button, selected: state ?? false)
             self.updateTitleScale(for: button)
             self.addSubview(button)
         

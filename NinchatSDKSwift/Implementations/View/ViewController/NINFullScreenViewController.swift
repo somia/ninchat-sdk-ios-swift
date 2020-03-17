@@ -87,7 +87,7 @@ extension NINFullScreenViewController {
     private func onFullScreenImageTapped(sender: UITapGestureRecognizer) {
         /// Toggle the top bar visibility
         let isHidden = self.topBar.alpha == 0.0
-        UIView.animate(withDuration: 0.3) {
+        UIView.animate(withDuration: TimeConstants.kAnimationDuration.rawValue) {
             self.topBar.alpha = (isHidden) ? 1.0 : 0.0
         }
     }

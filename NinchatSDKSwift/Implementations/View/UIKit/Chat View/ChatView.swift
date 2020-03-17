@@ -252,7 +252,7 @@ extension ChatView {
         }
         cell.onConstraintsUpdate = { [unowned self] in
             cell.isReloading = true
-            UIView.animate(withDuration: 0.3, animations: {
+            UIView.animate(withDuration: TimeConstants.kAnimationDuration.rawValue, animations: {
                 self.tableView.beginUpdates()
                 self.tableView.endUpdates()
             }, completion: { finished in

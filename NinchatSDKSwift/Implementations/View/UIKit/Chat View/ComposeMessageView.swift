@@ -70,8 +70,6 @@ final class ComposeMessageView: UIView, ComposeMessageViewProtocol {
         
         let enableSendButton = message.sendPressedIndex == -1
         message.content.forEach { ( content: ComposeContent) in
-            var content = content
-            
             let view: ComposeContentViewProtocol = ComposeContentView(frame: .zero)
             view.populate(message: content, siteConfiguration: siteConfiguration, colorAssets: colorAssets, composeStates: composeStates, enableSendButton: enableSendButton, isSelected: content.sendPressed ?? false)
             view.isHidden = false

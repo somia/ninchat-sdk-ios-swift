@@ -29,7 +29,7 @@ extension String {
     }
     
     private func applyStyle(attrString: NSAttributedString?, _ alignment: NSTextAlignment, _ color: UIColor?) -> NSAttributedString? {
-        guard var attrString = attrString as? NSMutableAttributedString else { return nil }
+        guard let attrString = attrString as? NSMutableAttributedString else { return nil }
         
         /// Text alignment
         let style = NSMutableParagraphStyle()

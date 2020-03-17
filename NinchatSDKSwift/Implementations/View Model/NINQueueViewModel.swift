@@ -66,12 +66,10 @@ extension NINQueueViewModelImpl {
     private func queueTextInfo(_ progress: Int) -> String? {
         switch progress {
         case 1:
-            return self.sessionManager.translate(key: Constants.kQueuePositionNext.rawValue,
-                                                 formatParams: ["audienceQueue.queue_attrs.name": "\(queue.name ?? "")"])
+            return self.sessionManager.translate(key: Constants.kQueuePositionNext.rawValue, formatParams: ["audienceQueue.queue_attrs.name": "\(queue.name)"])
         default:
-            return self.sessionManager.translate(key: Constants.kQueuePositionN.rawValue,
-                                                 formatParams: ["audienceQueue.queue_attrs.name": "\(queue.name ?? "")",
-                                                                "audienceQueue.queue_position": "\(progress)"])
+            return self.sessionManager.translate(key: Constants.kQueuePositionN.rawValue, formatParams: ["audienceQueue.queue_attrs.name": "\(queue.name)",
+                                                                                                         "audienceQueue.queue_position": "\(progress)"])
         }
     }
 }

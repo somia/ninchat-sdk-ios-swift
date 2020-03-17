@@ -27,7 +27,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     internal var backgroundChannelID: String?
     internal var myUserID: String?
     internal var realmID: String?
-    internal var messageThrottler: NINMessageThrottler?
+    internal var messageThrottler: MessageThrottler?
     
     // MARK: - NINChatSessionManagerInternalActions
     
@@ -155,7 +155,7 @@ extension NINChatSessionManagerImpl {
         }
         
         /// Create message throttler to manage inbound message order
-        self.messageThrottler = NINMessageThrottler { [weak self] message in
+        self.messageThrottler = MessageThrottler { [weak self] message in
              try? self?.didReceiveMessage(param: message.params, payload: message.payload)
         }
         

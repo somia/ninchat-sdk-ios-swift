@@ -30,7 +30,7 @@ extension UIView {
     }
     
     func hide(_ hide: Bool, withActions action: (() -> Void)? = nil, andCompletion completion: (() -> Void)? = nil) {
-        UIView.animate(withDuration: 0.3, animations: {
+        UIView.animate(withDuration: TimeConstants.kAnimationDuration.rawValue, animations: {
             action?()
             self.alpha = (hide) ? 0.0 : 1.0
         }, completion: { finished in

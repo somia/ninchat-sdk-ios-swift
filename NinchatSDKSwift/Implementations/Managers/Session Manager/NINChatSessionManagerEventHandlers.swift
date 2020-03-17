@@ -82,7 +82,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                     try self.didJoinChannel(param: param)
                 case .receivedMessage, .historyResult:
                     /// Throttle the message; it will be cached for a short while to ensure inbound message order.
-                    messageThrottler?.add(NINInboundMessage(params: param, andPayload: payload))
+                    messageThrottler?.add(message: InboundMessage(params: param, payload: payload))
                 case .queueFound:
                     try self.didRealmQueuesFind(param: param)
                 case .audienceEnqueued, .queueUpdated:

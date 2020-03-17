@@ -126,6 +126,7 @@
 		91A165F76F51AC329049D95E /* Dictionary+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1601709224C6C90482745 /* Dictionary+Extension.swift */; };
 		91A1660D52B68C507D8BB05A /* UserTypingMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16F13A0720D3E96E59373 /* UserTypingMessage.swift */; };
 		91A166157BBD01A10A8A6520 /* WebRTCServerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A166E121EFB4764BE628C8 /* WebRTCServerInfo.swift */; };
+		91A1663C925552CF95262FB8 /* InboundMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16BFFA180E7ADBDE99C8D /* InboundMessage.swift */; };
 		91A16662A64C445F2BE70776 /* AvatarConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16A31C53EAB230510289A /* AvatarConfig.swift */; };
 		91A166E41455F2CB32736453 /* NSMutableAttributedString+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1652A485CCE644E39135E /* NSMutableAttributedString+Extension.swift */; };
 		91A16731BDB6AF8672CACFF3 /* MetaMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1608187147D83945341AF /* MetaMessage.swift */; };
@@ -136,6 +137,7 @@
 		91A1688A7C316AEDFAF3BFD1 /* NinchatViewModelTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16BD6BFDA5810A0BE45F4 /* NinchatViewModelTestCase.swift */; };
 		91A168E2844E0CDE5A4D632A /* NinchatSDKSwiftServerHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16E2E2FDA2CB5D3AAA5B7 /* NinchatSDKSwiftServerHelperTests.swift */; };
 		91A16914F0B5CA995B9CD28D /* UIImageView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16A99A8F815E0C72B0AAE /* UIImageView+Extension.swift */; };
+		91A169BFE014440431FB5396 /* MessageThrottler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1642372F3668014E2579C /* MessageThrottler.swift */; };
 		91A169E910D005D05F1F283F /* NinchatSDKSwiftServerMessengerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16FEAA858008AD23DF96D /* NinchatSDKSwiftServerMessengerTests.swift */; };
 		91A16A44D119C71279197952 /* VideoThumbnailManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1604E15D212D192044A9A /* VideoThumbnailManagerTests.swift */; };
 		91A16B43A0A5F40049590528 /* Permission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A163542A73487774FB1D3C /* Permission.swift */; };
@@ -305,6 +307,7 @@
 		91A162A3A1B95DCF935DA47E /* ComposeMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposeMessage.swift; sourceTree = "<group>"; };
 		91A163542A73487774FB1D3C /* Permission.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Permission.swift; sourceTree = "<group>"; };
 		91A163B62D2DBB763D1B850A /* UIFont+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+Extension.swift"; sourceTree = "<group>"; };
+		91A1642372F3668014E2579C /* MessageThrottler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageThrottler.swift; sourceTree = "<group>"; };
 		91A164E1E7207BA353BF6418 /* SiteConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SiteConfiguration.swift; sourceTree = "<group>"; };
 		91A16501A258D1244E52AD23 /* String+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		91A1652A485CCE644E39135E /* NSMutableAttributedString+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSMutableAttributedString+Extension.swift"; sourceTree = "<group>"; };
@@ -320,6 +323,7 @@
 		91A16A31C53EAB230510289A /* AvatarConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvatarConfig.swift; sourceTree = "<group>"; };
 		91A16A99A8F815E0C72B0AAE /* UIImageView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extension.swift"; sourceTree = "<group>"; };
 		91A16BD6BFDA5810A0BE45F4 /* NinchatViewModelTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatViewModelTestCase.swift; sourceTree = "<group>"; };
+		91A16BFFA180E7ADBDE99C8D /* InboundMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboundMessage.swift; sourceTree = "<group>"; };
 		91A16D9F0168F9CAFE2BDFB2 /* NINQueueViewModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINQueueViewModelTests.swift; sourceTree = "<group>"; };
 		91A16E22A6933B9561BDF84E /* Secrets.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Secrets.plist; sourceTree = "<group>"; };
 		91A16E2E2FDA2CB5D3AAA5B7 /* NinchatSDKSwiftServerHelperTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatSDKSwiftServerHelperTests.swift; sourceTree = "<group>"; };
@@ -678,6 +682,7 @@
 				91A165370F88E5B62075CFB2 /* ChannelUser.swift */,
 				91A16120032609820A06185E /* Queue.swift */,
 				91A166E121EFB4764BE628C8 /* WebRTCServerInfo.swift */,
+				91A16BFFA180E7ADBDE99C8D /* InboundMessage.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -801,6 +806,7 @@
 			children = (
 				91A163542A73487774FB1D3C /* Permission.swift */,
 				91A16EE2919D93717F843D49 /* VideoThumbnailManager.swift */,
+				91A1642372F3668014E2579C /* MessageThrottler.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -1238,6 +1244,8 @@
 				91A161BA5B39C92B92F6B56B /* RTCSessionDescription+Extension.swift in Sources */,
 				91A164EF2633C3EEEC657848 /* RTCIceCandidate+Extension.swift in Sources */,
 				91A1634DB52849BD1F2FEEF8 /* VideoThumbnailManager.swift in Sources */,
+				91A169BFE014440431FB5396 /* MessageThrottler.swift in Sources */,
+				91A1663C925552CF95262FB8 /* InboundMessage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

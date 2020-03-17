@@ -107,6 +107,12 @@ enum NotificationConstants: String {
     case kNINQueuedNotification = "ninchatsdk.QueuedNotification"
 }
 
+enum TimeConstants: TimeInterval {
+    case kTimerTickInterval = 0.05
+    case kMessageMaxAge = 1.0
+    case kAnimationDuration = 0.3
+}
+
 enum Margins: CGFloat {
     case kButtonHeight = 45.0
     case kComposeVerticalMargin = 10.0

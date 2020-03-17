@@ -144,7 +144,7 @@ final class VideoView: UIView, VideoViewProtocol {
         
         self.currentVideoSize = size
         
-        UIView.animate(withDuration: 0.3) {
+        UIView.animate(withDuration: TimeConstants.kAnimationDuration.rawValue) {
             self.layoutIfNeeded()
         }
     }
@@ -159,7 +159,7 @@ final class VideoView: UIView, VideoViewProtocol {
         self.localViewWidthConstraint.constant = videoRect.width
         self.localViewHeightConstraint.constant = videoRect.height
         
-        UIView.animate(withDuration: 0.3) {
+        UIView.animate(withDuration: TimeConstants.kAnimationDuration.rawValue) {
             self.layoutIfNeeded()
         }
     }
