@@ -7,7 +7,7 @@
 import UIKit
 import AVKit
 import CoreServices
-import NinchatSDK
+import WebRTC
 
 protocol Coordinator: class {
     init(with session: NINChatSessionSwift)
@@ -151,7 +151,7 @@ extension NINCoordinator {
 }
 
 
-// MARK: - NINChatViewController componenets
+// MARK: - NINChatViewController components
 
 extension NINCoordinator {
     internal func chatDataSourceDelegate(_ viewModel: NINChatViewModel) -> NINChatDataSourceDelegate {

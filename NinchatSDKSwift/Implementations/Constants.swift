@@ -90,6 +90,12 @@ public enum Constants: String {
     case kRatingPositiveText = "Good"
     case kRatingNeutralText = "Okay"
     case kRatingNegativeText = "Poor"
+    
+    case RTCSessionDescriptionType = "type"
+    case RTCSessionDescriptionSDP = "sdp"
+    case RTCIceCandidateKeyCandidate = "candidate"
+    case RTCIceCandidateSDPMLineIndex = "sdpMLineIndex"
+    case RTCIceCandidateSDPMid = "sdpMid"
 }
 
 enum NotificationConstants: String {

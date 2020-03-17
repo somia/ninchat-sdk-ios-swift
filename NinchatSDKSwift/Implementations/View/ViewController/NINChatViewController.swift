@@ -48,7 +48,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
                 self?.videoView.remoteVideoTrack = remoteVideoTrack
             }
             
-            chatRTCDelegate.onLocalCapturer = { [weak self] localCapturer in
+            chatRTCDelegate.onLocalCapture = { [weak self] localCapturer in
                 self?.videoView.localCapture = localCapturer
             }
         }

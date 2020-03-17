@@ -5,7 +5,7 @@
 //
 
 import Foundation
-import NinchatSDK
+import WebRTC
 
 enum OperatingMode {
     case caller
@@ -88,8 +88,8 @@ protocol NINChatWebRTCClientDelegate {
     /** Connection state was changed. */
     var onConnectionStateChange: ((NINChatWebRTCClient, ConnectionState) -> Void)? { get set }
 
-    /** A local video capturer was created. */
-    var onLocalCapturerCreate: ((NINChatWebRTCClient, RTCCameraVideoCapturer) -> Void)? { get set }
+    /** A local video capture was created. */
+    var onLocalCaptureCreate: ((NINChatWebRTCClient, RTCCameraVideoCapturer) -> Void)? { get set }
 
     /** A new remote video track was initiated. */
     var onRemoteVideoTrackReceive: ((NINChatWebRTCClient, RTCVideoTrack) -> Void)? { get set }
