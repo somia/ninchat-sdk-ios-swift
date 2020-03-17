@@ -30,7 +30,7 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
     var isReloading: Bool! = false
     
     var session: NINChatSessionAttachment!
-    var videoThumbnailManager: NINVideoThumbnailManager?
+    var videoThumbnailManager: VideoThumbnailManager?
     var onImageTapped: ((FileInfo, UIImage?) -> Void)?
     var onComposeSendTapped: ((ComposeContentViewProtocol) -> Void)?
     var onComposeUpdateTapped: (([Bool]?) -> Void)?

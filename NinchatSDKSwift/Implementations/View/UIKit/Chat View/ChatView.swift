@@ -56,7 +56,7 @@ final class ChatView: UIView, ChatViewProtocol {
     /** Configuration for user avatar. */
     private var userAvatarConfig: AvatarConfig!
     
-    private let videoThumbnailManager = NINVideoThumbnailManager()
+    private let videoThumbnailManager = VideoThumbnailManager()
     private var cellConstraints: Array<CGSize> = []
     
     // MARK: - Outlets

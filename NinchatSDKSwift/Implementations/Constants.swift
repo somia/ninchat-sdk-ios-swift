@@ -96,6 +96,8 @@ public enum Constants: String {
     case RTCIceCandidateKeyCandidate = "candidate"
     case RTCIceCandidateSDPMLineIndex = "sdpMLineIndex"
     case RTCIceCandidateSDPMid = "sdpMid"
+    
+    case kNinchatImageCacheKey = "ninchatsdk.swift.VideoThumbnailImageCache"
 }
 
 enum NotificationConstants: String {

@@ -52,7 +52,7 @@ extension ChannelMediaCell where Self:ChatChannelCell {
         guard let thumbnailManager = self.videoThumbnailManager else { throw NINUIExceptions.noThumbnailManager }
         
         /// For video we must fetch the thumbnail image
-        thumbnailManager.getVideoThumbnail(videoURL) { [unowned self] error, fromCache, thumbnail in
+        thumbnailManager.fetchVideoThumbnail(fromURL: videoURL) { [unowned self] error, fromCache, thumbnail in
             DispatchQueue.main.async {
                 guard let image = thumbnail, error == nil else {
                     /// TODO: localize error msg
