@@ -12,7 +12,7 @@ protocol NINChatSessionManagerInternalActions {
     var onActionID: ((_ actionID: Int, Error?) -> Void)? { get set }
     var onProgress: ((_ queueID: String, _ position: Int, Events, Error?) -> Void)? { get set }
     var onChannelJoined: Completion? { get set }
-    var onActionSevers: ((_ actionID: Int, _ stunServers: [NINWebRTCServerInfo]?, _ turnServers: [NINWebRTCServerInfo]?) -> Void)? { get set }
+    var onActionSevers: ((_ actionID: Int, _ stunServers: [WebRTCServerInfo]?, _ turnServers: [WebRTCServerInfo]?) -> Void)? { get set }
     var onActionFileInfo: ((_ actionID: Int, _ fileInfo: [String:Any]?, Error?) -> Void)? { get set }
     var onActionChannel: ((_ actionID: Int, _ channelID: String) -> Void)? { get set }
     var didEndSession: (() -> Void)? { get set }
@@ -35,7 +35,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     internal var onActionID: ((Int, Error?) -> Void)?
     internal var onProgress: ((String, Int, Events, Error?) -> Void)?
     internal var onChannelJoined: Completion?
-    internal var onActionSevers: ((Int, [NINWebRTCServerInfo]?, [NINWebRTCServerInfo]?) -> Void)?
+    internal var onActionSevers: ((Int, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void)?
     internal var onActionFileInfo: ((Int, [String:Any]?, Error?) -> Void)?
     internal var onActionChannel: ((Int, String) -> Void)?
     internal var didEndSession: (() -> Void)?
@@ -272,7 +272,7 @@ extension NINChatSessionManagerImpl {
     }
     
     /// Retrieves the WebRTC ICE STUN/TURN server details
-    func beginICE(completion: @escaping ((Error?, [NINWebRTCServerInfo]?, [NINWebRTCServerInfo]?) -> Void)) throws {
+    func beginICE(completion: @escaping ((Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void)) throws {
         guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
         let param = NINLowLevelClientProps.initiate
         param.set_beginICE()

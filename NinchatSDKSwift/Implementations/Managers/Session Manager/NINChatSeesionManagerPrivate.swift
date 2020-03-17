@@ -182,8 +182,8 @@ extension NINChatSessionManagerImpl {
                 try prop.serversURLs()
             }).compactMap({ servers -> ([Int], NINLowLevelClientStrings) in
                 ([Int](0..<servers.length()), servers)
-            }).map({ (indexArray, serversArray) -> [NINWebRTCServerInfo] in
-                return indexArray.map { NINWebRTCServerInfo.server(withURL: serversArray.get($0), username: "", credential: "") }
+            }).map({ (indexArray, serversArray) -> [WebRTCServerInfo] in
+                indexArray.map { WebRTCServerInfo(url: serversArray.get($0), username: nil, credential: nil) }
             }).reduce([], +)
             
             /// Parse the TURN server list
@@ -193,8 +193,8 @@ extension NINChatSessionManagerImpl {
                 (try prop.serversURLs(), prop.turnServers_UserName(), prop.turnServers_Credential())
             }).compactMap({ (servers, userName, credential) -> ([Int], NINLowLevelClientStrings, String, String) in
                 ([Int](0..<servers.length()), servers, userName, credential)
-            }).map({ (indexArray, serversArray, userName, credential) -> [NINWebRTCServerInfo] in
-                return indexArray.map { NINWebRTCServerInfo.server(withURL: serversArray.get($0), username: userName, credential: credential) }
+            }).map({ (indexArray, serversArray, userName, credential) -> [WebRTCServerInfo] in
+                indexArray.map { WebRTCServerInfo(url: serversArray.get($0), username: userName, credential: credential) }
             }).reduce([], +)
             
             self.onActionSevers?(actionID, stunServers, turnServers)

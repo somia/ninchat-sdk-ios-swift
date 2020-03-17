@@ -40,7 +40,7 @@ protocol NINChatSessionConnectionManager {
     func leave(completion: @escaping CompletionWithError)
     
     /** Runs ICE (Interactive Connectivity Establishment) for WebRTC connection negotiations. */
-    func beginICE(completion: @escaping ((Error?, [NINWebRTCServerInfo]?, [NINWebRTCServerInfo]?) -> Void)) throws
+    func beginICE(completion: @escaping ((Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void)) throws
     
     /** Closes the chat by shutting down the session. Triggers the API delegate method -ninchatDidEndChatSession:. */
     func closeChat() throws

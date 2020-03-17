@@ -72,13 +72,13 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
         }
     }
     
-    init(sessionManager: NINChatSessionManager?, operatingMode: OperatingMode, stunServers: [NINWebRTCServerInfo]?, turnServers: [NINWebRTCServerInfo]?, delegate: NINChatWebRTCClientDelegate?) {
+    init(sessionManager: NINChatSessionManager?, operatingMode: OperatingMode, stunServers: [WebRTCServerInfo]?, turnServers: [WebRTCServerInfo]?, delegate: NINChatWebRTCClientDelegate?) {
                 
         self.delegate = delegate
         self.sessionManager = sessionManager
         self.operatingMode = operatingMode
         self.peerConnectionFactory = RTCPeerConnectionFactory(encoderFactory: RTCDefaultVideoEncoderFactory(), decoderFactory: RTCDefaultVideoDecoderFactory())
-        self.iceServers = [stunServers, turnServers].compactMap({ $0 }).reduce([], +).map({ $0.iceServer() })
+        self.iceServers = [stunServers, turnServers].compactMap({ $0 }).reduce([], +).map({ $0.iceServer })
         
         self.iceSignalingStates = SignalingState.allCases.reduce(into: [:]) { (dic: inout [Int:String], item: SignalingState) in
             dic[item.rawValue] = item.description
