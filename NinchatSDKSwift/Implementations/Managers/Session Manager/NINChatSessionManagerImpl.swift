@@ -76,12 +76,12 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     // MARK: - NINChatSessionManager
     
     weak var delegate: NINChatSessionInternalDelegate?
-    var queues: [NINQueue]! = [] {
+    var queues: [Queue]! = [] {
         didSet {
             self.audienceQueues = self.queues
         }
     }
-    var audienceQueues: [NINQueue]! = []
+    var audienceQueues: [Queue]! = []
     var siteConfiguration: SiteConfiguration!
     var appDetails: String?
     

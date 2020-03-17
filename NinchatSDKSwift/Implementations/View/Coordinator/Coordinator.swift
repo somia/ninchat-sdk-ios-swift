@@ -56,7 +56,7 @@ extension NINCoordinator {
         return joinDirectly(to: target)
     }
     
-    internal func showQueueViewController(for queue: NINQueue?) {
+    internal func showQueueViewController(for queue: Queue?) {
         guard let target = queue, let queueVC = joinDirectly(to: target) else { return }
         self.navigationController?.pushViewController(queueVC, animated: true)
     }
@@ -137,7 +137,7 @@ extension NINCoordinator {
     }
     
     @discardableResult
-    internal func joinDirectly(to queue: NINQueue) -> UIViewController? {
+    internal func joinDirectly(to queue: Queue) -> UIViewController? {
         let viewModel: NINQueueViewModel = NINQueueViewModelImpl(sessionManager: self.sessionManager, queue: queue, delegate: self.session)
         let joinViewController: NINQueueViewController = storyboard.instantiateViewController()
         joinViewController.session = session

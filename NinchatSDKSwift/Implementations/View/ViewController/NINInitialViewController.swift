@@ -11,7 +11,7 @@ final class NINInitialViewController: UIViewController, ViewController {
     
     // MARK: - Injected
     
-    var onQueueActionTapped: ((NINQueue) -> Void)?
+    var onQueueActionTapped: ((Queue) -> Void)?
     
     // MARK: - ViewController
     

@@ -10,14 +10,14 @@ protocol NINQueueViewModel {
     var onInfoTextUpdate: ((String?) -> Void)? { get set }
     var onQueueJoin: ((Error?) -> Void)? { get set }
 
-    init(sessionManager: NINChatSessionManager, queue: NINQueue, delegate: NINChatSessionInternalDelegate?)
+    init(sessionManager: NINChatSessionManager, queue: Queue, delegate: NINChatSessionInternalDelegate?)
     func connect()
 }
 
 final class NINQueueViewModelImpl: NINQueueViewModel {
     
     private unowned var sessionManager: NINChatSessionManager!
-    private unowned let queue: NINQueue
+    private let queue: Queue
     private weak var delegate: NINChatSessionInternalDelegate?
     
     // MARK: - NINQueueViewModel
@@ -25,7 +25,7 @@ final class NINQueueViewModelImpl: NINQueueViewModel {
     var onInfoTextUpdate: ((String?) -> Void)?
     var onQueueJoin: ((Error?) -> Void)?
     
-    init(sessionManager: NINChatSessionManager, queue: NINQueue, delegate: NINChatSessionInternalDelegate?) {
+    init(sessionManager: NINChatSessionManager, queue: Queue, delegate: NINChatSessionInternalDelegate?) {
         self.sessionManager = sessionManager
         self.delegate = delegate
         self.queue = queue

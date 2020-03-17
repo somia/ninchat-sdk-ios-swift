@@ -118,6 +118,7 @@
 		91A161853F64C37F1B9EFDDB /* NinchatSDKSwiftAcceptanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A168F7C3E9BB664C126805 /* NinchatSDKSwiftAcceptanceTests.swift */; };
 		91A1623678B6FA354032558D /* ChannelMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1621FC457EFE156F90335 /* ChannelMessage.swift */; };
 		91A163085E1C1FAF4BA8BEB8 /* ChatTypingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A167BAE1C0F6F9466CE1D6 /* ChatTypingCell.swift */; };
+		91A1637BC9B1BCF029EE608F /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16120032609820A06185E /* Queue.swift */; };
 		91A165EE393A8B5E007FA670 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16501A258D1244E52AD23 /* String+Extension.swift */; };
 		91A165F76F51AC329049D95E /* Dictionary+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1601709224C6C90482745 /* Dictionary+Extension.swift */; };
 		91A1660D52B68C507D8BB05A /* UserTypingMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16F13A0720D3E96E59373 /* UserTypingMessage.swift */; };
@@ -290,6 +291,7 @@
 		91A1601709224C6C90482745 /* Dictionary+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Dictionary+Extension.swift"; sourceTree = "<group>"; };
 		91A1607145A515528F6210F5 /* NinchatSDKSwiftServerHandlerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatSDKSwiftServerHandlerTests.swift; sourceTree = "<group>"; };
 		91A1608187147D83945341AF /* MetaMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetaMessage.swift; sourceTree = "<group>"; };
+		91A16120032609820A06185E /* Queue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
 		91A16127E834359A9052C80F /* NINFullScreenViewModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINFullScreenViewModelTests.swift; sourceTree = "<group>"; };
 		91A161D30D89818FBC9A0476 /* ExtensionsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionsTests.swift; sourceTree = "<group>"; };
 		91A1621FC457EFE156F90335 /* ChannelMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelMessage.swift; sourceTree = "<group>"; };
@@ -661,6 +663,7 @@
 				91A164E1E7207BA353BF6418 /* SiteConfiguration.swift */,
 				91A16A31C53EAB230510289A /* AvatarConfig.swift */,
 				91A165370F88E5B62075CFB2 /* ChannelUser.swift */,
+				91A16120032609820A06185E /* Queue.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1215,6 +1218,7 @@
 				91A1660D52B68C507D8BB05A /* UserTypingMessage.swift in Sources */,
 				91A16D46F4A792C00EC23086 /* ComposeMessage.swift in Sources */,
 				91A165F76F51AC329049D95E /* Dictionary+Extension.swift in Sources */,
+				91A1637BC9B1BCF029EE608F /* Queue.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

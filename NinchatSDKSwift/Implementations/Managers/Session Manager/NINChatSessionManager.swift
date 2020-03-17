@@ -106,10 +106,10 @@ protocol NINChatSessionManagerDelegate {
 
 protocol NINChatSessionManager: class, NINChatSessionConnectionManager, NANChatSessionMessenger, NINChatDevHelper, NINChatSessionAttachment, NINChatSessionTranslation, NINChatSessionManagerDelegate {
     /** List of available queues for the realm_id. */
-    var queues: [NINQueue]! { get set }
+    var queues: [Queue]! { get set }
     
     /** List of Audience queues. These are the queues the user gets to pick from in the UI. */
-    var audienceQueues: [NINQueue]! { get set }
+    var audienceQueues: [Queue]! { get set }
     
     /** Site configuration. */
     var siteConfiguration: SiteConfiguration! { get }
