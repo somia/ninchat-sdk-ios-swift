@@ -206,6 +206,46 @@ final class UIKitTests: XCTestCase {
         
         XCTAssertEqual(3, parent1.allSubviews.count)
     }
+
+    func test_choiceDialogue_option() {
+        let view: ChoiceDialogue = ChoiceDialogue.loadFromNib()
+        
+        let expect_option1 = self.expectation(description: "Expected to get option 1 get selected")
+        view.showDialogue(withOptions: ["1", "2"], onView: UIView(frame: .zero)) { result in
+            switch result {
+            case .select(let index):
+                XCTAssertEqual(index, 1)
+            case .cancel:
+                XCTAssertTrue(false, "Cancel options shouldn't have been tapped")
+            }
+    
+            expect_option1.fulfill()
+        }
+        XCTAssertEqual(view.stackView.subviews.count, 3)
+        (view.stackView.subviews[1] as? ChoiceDialogueRow)?.onRowButtonTapped(nil)
+        
+        waitForExpectations(timeout: 5.0)
+    }
+    
+    func test_choiceDialogue_cancel() {
+        let view: ChoiceDialogue = ChoiceDialogue.loadFromNib()
+    
+        let expect_cancel = self.expectation(description: "Expected to get canceled")
+        view.showDialogue(withOptions: ["1", "2"], cancelTitle: "Cancel", onView: UIView(frame: .zero)) { result in
+            switch result {
+            case .select:
+                XCTAssertTrue(false, "Select options shouldn't have been tapped")
+            case .cancel:
+                XCTAssertTrue(true)
+            }
+        
+            expect_cancel.fulfill()
+        }
+        XCTAssertEqual(view.stackView.subviews.count, 3)
+        (view.stackView.subviews.last as? ChoiceDialogueRow)?.onRowButtonTapped(nil)
+    
+        waitForExpectations(timeout: 5.0)
+    }
 }
 
 extension UIKitTests {

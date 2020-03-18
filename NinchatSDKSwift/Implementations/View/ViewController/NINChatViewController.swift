@@ -425,27 +425,30 @@ extension NINChatViewController {
     }
     
     private func onAttachmentTapped(with button: UIButton) {
-        guard let bundle = Bundle.SDKBundle else {
-            fatalError("Error in getting SDK Bundle")
-        }
+        guard let bundle = Bundle.SDKBundle else { fatalError("Error in getting SDK Bundle") }
         let camera = NSLocalizedString("Camera", tableName: "Localizable", bundle: bundle, value: "", comment: "")
         let photo = NSLocalizedString("Photo", tableName: "Localizable", bundle: bundle, value: "", comment: "")
-        NINChoiceDialog.show(withOptionTitles: [camera, photo]) { [weak self] canceled, index in
-            guard !canceled else { return }
         
-            let source: UIImagePickerController.SourceType = (index == 0) ? .camera : .photoLibrary
-            guard UIImagePickerController.isSourceTypeAvailable(source) else {
-                NINToast.showWithErrorMessage("That source type is not available on this device", callback: nil)
-                return
-            }
-            
-            switch source {
-            case .camera:
-                self?.openVideo()
-            case .photoLibrary:
-                self?.openGallery()
-            default:
-                fatalError("Invalid attachment type")
+        let dialogue: ChoiceDialogue = ChoiceDialogue.loadFromNib()
+        dialogue.showDialogue(withOptions: [camera, photo], onView: self.view) { [weak self] result in
+            switch result {
+            case .cancel:
+                break
+            case .select(let index):
+                let source: UIImagePickerController.SourceType = (index == 0) ? .camera : .photoLibrary
+                guard UIImagePickerController.isSourceTypeAvailable(source) else {
+                    NINToast.showWithErrorMessage("That source type is not available on this device", callback: nil)
+                    return
+                }
+    
+                switch source {
+                case .camera:
+                    self?.openVideo()
+                case .photoLibrary:
+                    self?.openGallery()
+                default:
+                    fatalError("Invalid attachment type")
+                }
             }
         }
     }
