@@ -111,6 +111,7 @@ enum TimeConstants: TimeInterval {
     case kTimerTickInterval = 0.05
     case kMessageMaxAge = 1.0
     case kAnimationDuration = 0.3
+    case kAnimationDelay = 1.5
 }
 
 enum Margins: CGFloat {

@@ -55,8 +55,7 @@ extension ChannelMediaCell where Self:ChatChannelCell {
         thumbnailManager.fetchVideoThumbnail(fromURL: videoURL) { [unowned self] error, fromCache, thumbnail in
             DispatchQueue.main.async {
                 guard let image = thumbnail, error == nil else {
-                    /// TODO: localize error msg
-                    NINToast.showWithErrorMessage("Failed to get video thumbnail", callback: nil); return
+                    Toast.show(message: .error("Failed to get video thumbnail")); return
                 }
                 
                 self.messageImageView.image = image

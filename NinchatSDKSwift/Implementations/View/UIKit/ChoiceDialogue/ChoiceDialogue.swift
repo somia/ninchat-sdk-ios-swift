@@ -20,19 +20,30 @@ final class ChoiceDialogue: UIView {
     // MARK: - ChoiceDialogue
     
     private var onCompletion: ((ChoiceDialogueResult) -> Void)?
-    
-    func showDialogue(withOptions options:[String], cancelTitle: String? = nil, onView parent: UIView, onCompletion: @escaping ((ChoiceDialogueResult) -> Void)) {
+
+    class func showDialogue(withOptions options:[String], cancelTitle: String? = nil, onCompletion: @escaping ((ChoiceDialogueResult) -> Void)) {
+        let view: ChoiceDialogue = ChoiceDialogue.loadFromNib()
+        view.showDialogue(withOptions: options, cancelTitle: cancelTitle, onCompletion: onCompletion)
+    }
+
+    internal func showDialogue(withOptions options:[String], cancelTitle: String? = nil, onCompletion: @escaping ((ChoiceDialogueResult) -> Void)) {
         self.onCompletion = onCompletion
         self.transform = CGAffineTransform(translationX: 0, y: bounds.height)
+
+        self.addView(to: UIApplication.shared.keyWindow)
+        self.addOptions(options, cancel: cancelTitle ?? NSLocalizedString("Cancel", tableName: "Localizable", bundle: Bundle.SDKBundle!, value: "", comment: ""))
+        self.animateDialogue(hide: false)
+    }
+
+    private func addView(to window: UIWindow?) {
+        guard let parent = window else { return }
+
         parent.addSubview(self)
         self
             .fix(bottom: (0, parent), toSafeArea: true)
             .fix(leading: (0, parent), trailing: (0, parent))
-        
-        self.addOptions(options, cancel: cancelTitle ?? NSLocalizedString("Cancel", tableName: "Localizable", bundle: Bundle.SDKBundle!, value: "", comment: ""))
-        self.animateDialogue(hide: false)
     }
-    
+
     private func addOptions(_ options: [String], cancel: String) {
         (options + [cancel]).forEach {
             let row: ChoiceDialogueRow = ChoiceDialogueRow.loadFromNib()

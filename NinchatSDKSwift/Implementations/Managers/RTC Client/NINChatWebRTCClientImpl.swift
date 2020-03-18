@@ -280,7 +280,7 @@ extension NINChatWebRTCClientImpl {
                 try self.sessionManager?.send(type: messageType, payload: ["sdp":sdp.toDictionary]) { error in
                     if let error = error {
                         debugger("WebRTC: Message send error - `completion`: \(error)")
-                        NINToast.showWithErrorMessage("Failed to send RTC signaling message", callback: nil)
+                        Toast.show(message: .error("Failed to send RTC signaling message"))
                     }
                 }
             } catch {

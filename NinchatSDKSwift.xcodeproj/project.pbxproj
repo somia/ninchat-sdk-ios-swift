@@ -114,6 +114,7 @@
 		85DDD22223D4CBD900E00844 /* ConfirmCloseChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DDD22123D4CBD900E00844 /* ConfirmCloseChatView.swift */; };
 		85DDD22423D4CC0800E00844 /* ConfirmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DDD22323D4CC0800E00844 /* ConfirmView.swift */; };
 		85DDD22623D4DD1200E00844 /* ConfirmCloseChatView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85DDD22523D4DD1200E00844 /* ConfirmCloseChatView.xib */; };
+		91A160407EF6C23B8001A121 /* Toast.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91A16E066CFD2B8920EEFD10 /* Toast.xib */; };
 		91A160605AB6B75C6DB8CC86 /* NinchatXCTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A166D4F9B0F6D7063479E9 /* NinchatXCTestCase.swift */; };
 		91A16097541D9C728A532EF5 /* ChoiceDialogueRow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91A1649D2A54AD0FE2875F52 /* ChoiceDialogueRow.xib */; };
 		91A161853F64C37F1B9EFDDB /* NinchatSDKSwiftAcceptanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A168F7C3E9BB664C126805 /* NinchatSDKSwiftAcceptanceTests.swift */; };
@@ -146,6 +147,7 @@
 		91A16A44D119C71279197952 /* VideoThumbnailManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1604E15D212D192044A9A /* VideoThumbnailManagerTests.swift */; };
 		91A16A7280B85CB8BD7C87F2 /* SiteConfigRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16B835075C42016E35338 /* SiteConfigRequest.swift */; };
 		91A16ACFBF8C7E4DF9373C1E /* ServiceRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A160C90332B61FB00EA8D8 /* ServiceRequest.swift */; };
+		91A16B2F768C5422B895C769 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A169A968E807A8F8D6358A /* Toast.swift */; };
 		91A16B43A0A5F40049590528 /* Permission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A163542A73487774FB1D3C /* Permission.swift */; };
 		91A16BB7B698A39F797F0030 /* NINFullScreenViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16127E834359A9052C80F /* NINFullScreenViewModelTests.swift */; };
 		91A16BB9A4B558286273F506 /* ExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A161D30D89818FBC9A0476 /* ExtensionsTests.swift */; };
@@ -332,6 +334,7 @@
 		91A168B0495C5D2BBF7733D0 /* TypingCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypingCell.swift; sourceTree = "<group>"; };
 		91A168F7C3E9BB664C126805 /* NinchatSDKSwiftAcceptanceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatSDKSwiftAcceptanceTests.swift; sourceTree = "<group>"; };
 		91A16984C5BA331DFFCB6EDA /* ChoiceDialogue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChoiceDialogue.swift; sourceTree = "<group>"; };
+		91A169A968E807A8F8D6358A /* Toast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		91A16A31C53EAB230510289A /* AvatarConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvatarConfig.swift; sourceTree = "<group>"; };
 		91A16A99A8F815E0C72B0AAE /* UIImageView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extension.swift"; sourceTree = "<group>"; };
 		91A16B835075C42016E35338 /* SiteConfigRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SiteConfigRequest.swift; sourceTree = "<group>"; };
@@ -339,6 +342,7 @@
 		91A16BFFA180E7ADBDE99C8D /* InboundMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboundMessage.swift; sourceTree = "<group>"; };
 		91A16D2D28D6ECE052A799BE /* ChoiceDialogue.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChoiceDialogue.xib; sourceTree = "<group>"; };
 		91A16D9F0168F9CAFE2BDFB2 /* NINQueueViewModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINQueueViewModelTests.swift; sourceTree = "<group>"; };
+		91A16E066CFD2B8920EEFD10 /* Toast.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Toast.xib; sourceTree = "<group>"; };
 		91A16E22A6933B9561BDF84E /* Secrets.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Secrets.plist; sourceTree = "<group>"; };
 		91A16E2E2FDA2CB5D3AAA5B7 /* NinchatSDKSwiftServerHelperTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatSDKSwiftServerHelperTests.swift; sourceTree = "<group>"; };
 		91A16EAC1C68B081618E08E9 /* NINChatClientPropsParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINChatClientPropsParser.swift; sourceTree = "<group>"; };
@@ -761,6 +765,7 @@
 				8530EC8223AD405200BAA52A /* Video View */,
 				85A6C9A623CE35A7001CED6D /* Button */,
 				91A168750AAF0A8C459FBD22 /* ChoiceDialogue */,
+				91A1649377DB3ACD23E8B7E8 /* Toast */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -825,6 +830,15 @@
 				91A1663FB98A9A66DF65F853 /* Requests */,
 			);
 			path = Network;
+			sourceTree = "<group>";
+		};
+		91A1649377DB3ACD23E8B7E8 /* Toast */ = {
+			isa = PBXGroup;
+			children = (
+				91A169A968E807A8F8D6358A /* Toast.swift */,
+				91A16E066CFD2B8920EEFD10 /* Toast.xib */,
+			);
+			path = Toast;
 			sourceTree = "<group>";
 		};
 		91A1663FB98A9A66DF65F853 /* Requests */ = {
@@ -1012,6 +1026,7 @@
 				85DD6C5723AE0CBC0023FFEF /* SourceSansPro-Regular.ttf in Resources */,
 				91A16F01F99326D2F881295A /* ChoiceDialogue.xib in Resources */,
 				91A16097541D9C728A532EF5 /* ChoiceDialogueRow.xib in Resources */,
+				91A160407EF6C23B8001A121 /* Toast.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1290,6 +1305,7 @@
 				91A16A7280B85CB8BD7C87F2 /* SiteConfigRequest.swift in Sources */,
 				91A1638816BBEC6D20425AC2 /* Empty.swift in Sources */,
 				91A1636EC2133F4BE4B586E8 /* ChoiceDialogue.swift in Sources */,
+				91A16B2F768C5422B895C769 /* Toast.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

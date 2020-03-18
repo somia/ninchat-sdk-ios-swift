@@ -30,9 +30,9 @@ final class NINFullScreenViewController: UIViewController, ViewController {
         view.onDownloadTapped = { [unowned self] in
             self.viewModel.download(image: self.image, completion: { error in
                 if error != nil {
-                    NINToast.showWithErrorMessage("Failed to save image", callback: nil)
+                    Toast.show(message: .error("Failed to save image"))
                 } else {
-                    NINToast.show(withInfoMessage: "Image saved to Photos", callback: nil)
+                    Toast.show(message: .info("Image saved to Photos"))
                 }
             })
         }
