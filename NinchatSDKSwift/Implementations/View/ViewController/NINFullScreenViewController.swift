@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import NinchatSDK
 
 final class NINFullScreenViewController: UIViewController, ViewController {
     

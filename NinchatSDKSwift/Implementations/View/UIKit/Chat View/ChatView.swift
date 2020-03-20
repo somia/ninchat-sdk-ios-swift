@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import NinchatSDK
 
 protocol ChatViewProtocol: UIView {
     /** ChatView data source. */

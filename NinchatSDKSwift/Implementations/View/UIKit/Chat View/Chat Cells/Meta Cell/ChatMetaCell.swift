@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import NinchatSDK
 import AutoLayoutSwift
 
 final class ChatMetaCell: UITableViewCell, ChatMeta {

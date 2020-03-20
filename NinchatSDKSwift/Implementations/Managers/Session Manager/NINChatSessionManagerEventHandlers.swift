@@ -5,7 +5,7 @@
 //
 
 import Foundation
-import NinchatSDK
+import NinchatLowLevelClient
 
 enum Events: String {
     case channelJoined = "channel_joined"

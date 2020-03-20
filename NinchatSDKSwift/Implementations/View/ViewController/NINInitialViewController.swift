@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import NinchatSDK
 
 final class NINInitialViewController: UIViewController, ViewController {
     

@@ -5,7 +5,6 @@
 //
 
 import XCTest
-import NinchatSDK
 @testable import NinchatSDKSwift
 
 final class NINQueueViewModelTests: NinchatViewModelTestCase {

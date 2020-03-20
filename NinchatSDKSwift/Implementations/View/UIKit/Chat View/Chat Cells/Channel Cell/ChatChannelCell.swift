@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import NinchatSDK
 
 class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
     

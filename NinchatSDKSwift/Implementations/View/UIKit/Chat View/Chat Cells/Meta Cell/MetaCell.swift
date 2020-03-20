@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import NinchatSDK
 
 protocol ChatMeta: UIView {
     var delegate: NINChatSessionInternalDelegate? { get set }

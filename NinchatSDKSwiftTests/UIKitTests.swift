@@ -6,7 +6,6 @@
 
 import UIKit
 import XCTest
-import NinchatSDK
 @testable import NinchatSDKSwift
 
 final class UIKitTests: XCTestCase {

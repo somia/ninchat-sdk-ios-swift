@@ -7,7 +7,6 @@
 import AVFoundation
 import Foundation
 import WebRTC
-import NinchatSDK
 
 final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
     
@@ -220,8 +219,8 @@ extension NINChatWebRTCClientImpl {
                                                         .sorted(by: { $0 > $1 })
                                                         .first ?? 0, 30)
             
-            self.localCapture?.startCapture(with: device, format: format, fps: Int(fps)) { [weak self] error in
-                if error != nil {
+            self.localCapture?.startCapture(with: device, format: format, fps: Int(fps)) { [weak self] (error: Error?) in
+                if let error = error {
                     self?.sessionDelegate?.log(value: "** ERROR failed to start local capture: \(error)"); return
                 }
                 debugger("Local capture started OK.")

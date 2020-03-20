@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import NinchatSDK
 
 protocol ConfirmVideoCallViewProtocol: ConfirmView {
     var user: ChannelUser! { get set }

@@ -5,7 +5,6 @@
 //
 
 import XCTest
-import NinchatSDK
 import WebRTC
 @testable import NinchatSDKSwift
 

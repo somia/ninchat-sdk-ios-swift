@@ -4,7 +4,7 @@
 // license that can be found in the LICENSE file.
 //
 
-import NinchatSDK
+import Foundation
 
 protocol NINQueueViewModel {
     var onInfoTextUpdate: ((String?) -> Void)? { get set }

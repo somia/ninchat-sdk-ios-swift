@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import NinchatSDK
 
 protocol ComposeContentViewProtocol: UIView {
     var onSendActionTapped: ComposeMessageViewProtocol.OnUIComposeSendActionTapped? { get set }

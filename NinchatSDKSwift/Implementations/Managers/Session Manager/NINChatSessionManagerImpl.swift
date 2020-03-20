@@ -5,7 +5,8 @@
 //
 
 import Foundation
-import NinchatSDK
+import UIKit
+import NinchatLowLevelClient
 
 protocol NINChatSessionManagerInternalActions {
     var onActionSessionEvent: ((Events, Error?) -> Void)? { get set }

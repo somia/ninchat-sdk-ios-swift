@@ -5,7 +5,6 @@
 //
 
 import Foundation
-import NinchatSDK
 
 struct TextMessage: ChannelMessage, Equatable {
     // MARK: - ChatMessage

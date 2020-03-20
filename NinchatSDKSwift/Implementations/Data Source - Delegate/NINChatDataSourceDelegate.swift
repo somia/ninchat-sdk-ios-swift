@@ -4,8 +4,7 @@
 // license that can be found in the LICENSE file.
 //
 
-import Foundation
-import NinchatSDK
+import UIKit
 
 /** Delegate for the chat view. */
 protocol ChatViewDelegate {

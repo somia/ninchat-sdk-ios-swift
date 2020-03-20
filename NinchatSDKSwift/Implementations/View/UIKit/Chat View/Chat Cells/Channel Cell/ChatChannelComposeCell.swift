@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import NinchatSDK
 
 class ChatChannelComposeCell: ChatChannelOthersCell {
     

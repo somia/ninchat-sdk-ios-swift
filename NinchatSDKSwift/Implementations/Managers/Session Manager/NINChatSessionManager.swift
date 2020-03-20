@@ -5,7 +5,7 @@
 //
 
 import Foundation
-import NinchatSDK
+import NinchatLowLevelClient
 
 typealias CompletionWithError = ((Error?) -> Void)
 typealias Completion = (() -> Void)

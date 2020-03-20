@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import NinchatSDK
 
 protocol ChatCell: UIView {
     var isReloading: Bool! { get set }

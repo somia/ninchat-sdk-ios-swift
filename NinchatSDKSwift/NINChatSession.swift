@@ -5,7 +5,7 @@
 //
 
 import UIKit
-import NinchatSDK
+import NinchatLowLevelClient
 
 public protocol NINChatDevHelper {
     var serverAddress: String! { get set }

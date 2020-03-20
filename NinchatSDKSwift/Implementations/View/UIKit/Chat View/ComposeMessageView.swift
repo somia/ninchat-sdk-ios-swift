@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import NinchatSDK
 
 protocol ComposeMessageViewProtocol: UIView {
     typealias OnUIComposeSendActionTapped = ((ComposeContentViewProtocol) -> Void)

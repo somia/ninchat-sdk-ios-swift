@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import NinchatSDK
 
 final class NINChatViewController: UIViewController, ViewController, KeyboardHandler {
     private var webRTCClient: NINChatWebRTCClient?

@@ -5,7 +5,6 @@
 //
 
 import XCTest
-import NinchatSDK
 @testable import NinchatSDKSwift
 
 class CoordinatorTests: XCTestCase {
