@@ -7,9 +7,6 @@
 import Foundation
 
 protocol ChannelMessage: ChatMessage {
-    /** Message ID. */
-    var messageID: String { get }
-    
     /** Whether this message is sent by the mobile user (this device). */
     var mine: Bool { get }
     

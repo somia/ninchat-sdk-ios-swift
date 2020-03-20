@@ -118,7 +118,8 @@ extension NINChatSessionManagerImpl {
         channelUsers.removeAll()
         
         /// Insert a meta message about the conversation start
-        self.add(message: MetaMessage(timestamp: Date(), text: self.translate(key: "Audience in queue {{queue}} accepted.", formatParams: ["queue": queueName]) ?? "", closeChatButtonTitle: nil))
+        /// This is the first message in the conversation with id: 0
+        self.add(message: MetaMessage(timestamp: Date(), messageID: nil, text: self.translate(key: "Audience in queue {{queue}} accepted.", formatParams: ["queue": queueName]) ?? "", closeChatButtonTitle: nil))
         
         /// Extract the channel members' data
         do {
@@ -162,7 +163,7 @@ extension NINChatSessionManagerImpl {
         if channelClosed || channelSuspended {
             let text = self.translate(key: "Conversation ended", formatParams: [:])
             let closeTitle = self.translate(key: "Close chat", formatParams: [:])
-            self.add(message: MetaMessage(timestamp: Date(), text: text ?? "", closeChatButtonTitle: closeTitle))
+            self.add(message: MetaMessage(timestamp: Date(), messageID: self.chatMessages.last?.messageID, text: text ?? "", closeChatButtonTitle: closeTitle))
             self.onChannelClosed?()
         }
     }
@@ -254,10 +255,10 @@ extension NINChatSessionManagerImpl {
                 let writingMessage = chatMessages.filter({ ($0 as? UserTypingMessage)?.user.userID == userID }).first as? UserTypingMessage
                 if isWriting, writingMessage == nil {
                     /// There's no 'typing' message for this user yet, lets create one
-                    self.add(message: UserTypingMessage(timestamp: Date(), user: messageUser))
-                } else if let msg = writingMessage {
+                    self.add(message: UserTypingMessage(timestamp: Date(), messageID: self.chatMessages.last?.messageID, user: messageUser))
+                } else if let msg = writingMessage, let index = chatMessages.firstIndex(where: { $0.asEquatable == msg.asEquatable }) {
                     /// There's a 'typing' message for this user - lets remove that.
-                    self.removeMessage(atIndex: (chatMessages as NSArray).index(of: msg))
+                    self.removeMessage(atIndex: index)
                 }
             }
             
@@ -312,12 +313,7 @@ extension NINChatSessionManagerImpl {
         }
         
         chatMessages.insert(message, at: 0)
-        chatMessages.sort {
-            if let msg1 = $0 as? ChannelMessage, let msg2 = $1 as? ChannelMessage {
-                return msg1.messageID.compare(msg2.messageID) == .orderedDescending
-            }
-            return $0.timestamp.compare($1.timestamp) == .orderedDescending
-        }
+        chatMessages.sort { $0.messageID.compare($1.messageID) == .orderedDescending }
         self.onMessageAdded?(chatMessages.firstIndex(where: { $0.asEquatable == message.asEquatable }) ?? -1)
     }
     

@@ -31,6 +31,6 @@ final class VideoThumbnailManagerTests: XCTestCase {
             }
         }
         
-        waitForExpectations(timeout: 20.0)
+        waitForExpectations(timeout: 100.0)
     }
 }
