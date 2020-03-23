@@ -9,15 +9,23 @@ import Foundation
 struct MetaMessage: ChatMessage, Equatable {
     // MARK: - ChatMessage
     let timestamp: Date
-    
+    let messageID: String
+
     // MARK: - MetaMessage
     let text: String
     let closeChatButtonTitle: String?
+
+    init(timestamp: Date, messageID: String?, text: String, closeChatButtonTitle: String?) {
+        self.timestamp = timestamp
+        self.messageID = (messageID ?? "0") + "_1"
+        self.text = text
+        self.closeChatButtonTitle = closeChatButtonTitle
+    }
 }
 
 // MARK: - Equatable
 extension MetaMessage {
     static func ==(lhs: Self, rhs: Self) -> Bool {
-        lhs.timestamp == rhs.timestamp && lhs.text == rhs.text
+        lhs.messageID == rhs.messageID
     }
 }

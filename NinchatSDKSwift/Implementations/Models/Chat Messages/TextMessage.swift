@@ -9,9 +9,9 @@ import Foundation
 struct TextMessage: ChannelMessage, Equatable {
     // MARK: - ChatMessage
     let timestamp: Date
-    
-    // MARK: - ChannelMessage
     let messageID: String
+
+    // MARK: - ChannelMessage
     let mine: Bool
     let sender: ChannelUser
     var series: Bool = false

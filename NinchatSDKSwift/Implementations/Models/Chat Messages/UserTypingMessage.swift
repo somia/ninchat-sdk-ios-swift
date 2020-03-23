@@ -9,14 +9,21 @@ import Foundation
 struct UserTypingMessage: ChatMessage, Equatable {
     // MARK: - ChatMessage
     let timestamp: Date
-    
+    let messageID: String
+
     // MARK: - UserTypingMessage
     let user: ChannelUser
+
+    init(timestamp: Date, messageID: String?, user: ChannelUser) {
+        self.timestamp = timestamp
+        self.messageID = (messageID ?? "0") + "_1"
+        self.user = user
+    }
 }
 
 // MARK: - Equatable
 extension UserTypingMessage {
     static func ==(lhs: Self, rhs: Self) -> Bool {
-        lhs.timestamp == rhs.timestamp && lhs.user == rhs.user
+        lhs.messageID == rhs.messageID
     }
 }
