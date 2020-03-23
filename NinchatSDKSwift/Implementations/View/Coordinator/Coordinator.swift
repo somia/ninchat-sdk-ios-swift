@@ -75,13 +75,15 @@ extension NINCoordinator {
         chatViewController.chatMediaPickerDelegate = mediaDelegate
         
         chatViewController.onOpenGallery = { [weak self] source in
-            let controller = UIImagePickerController()
-            controller.sourceType = source
-            controller.mediaTypes = [kUTTypeImage, kUTTypeMovie] as [String]
-            controller.allowsEditing = true
-            controller.delegate = mediaDelegate
+            DispatchQueue.main.async {
+                let controller = UIImagePickerController()
+                controller.sourceType = source
+                controller.mediaTypes = [kUTTypeImage, kUTTypeMovie] as [String]
+                controller.allowsEditing = true
+                controller.delegate = mediaDelegate
 
-            self?.navigationController?.present(controller, animated: true, completion: nil)
+                self?.navigationController?.present(controller, animated: true, completion: nil)
+            }
         }
         chatViewController.onBackToQueue = { [weak self] in
             self?.navigationController?.popViewController(animated: true)

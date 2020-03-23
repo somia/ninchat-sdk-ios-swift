@@ -42,8 +42,10 @@ final class Toast: UIView {
     private var onToastDismissed: (() -> Void)?
 
     class func show(message: ToastType, onToastTouched: (() -> Void)? = nil, onToastDismissed: (() -> Void)? = nil) {
-        let view: Toast = Toast.loadFromNib()
-        view.show(message: message, onToastTouched: onToastTouched, onToastDismissed: onToastDismissed)
+        DispatchQueue.main.async {
+            let view: Toast = Toast.loadFromNib()
+            view.show(message: message, onToastTouched: onToastTouched, onToastDismissed: onToastDismissed)
+        }
     }
 
     internal func show(message: ToastType, onToastTouched: (() -> Void)?, onToastDismissed: (() -> Void)?) {
