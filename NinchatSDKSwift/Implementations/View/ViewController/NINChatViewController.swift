@@ -419,7 +419,7 @@ extension NINChatViewController {
     
     private func onSendTapped(_ text: String) {
         self.viewModel.send(message: text) { error in
-            if error == nil { Toast.show(message: .error("Failed to send message")) }
+            if error != nil { Toast.show(message: .error("Failed to send message")) }
         }
     }
     

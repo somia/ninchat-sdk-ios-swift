@@ -163,7 +163,7 @@ extension NINChatSessionManagerImpl {
         if channelClosed || channelSuspended {
             let text = self.translate(key: "Conversation ended", formatParams: [:])
             let closeTitle = self.translate(key: "Close chat", formatParams: [:])
-            self.add(message: MetaMessage(timestamp: Date(), messageID: self.chatMessages.last?.messageID, text: text ?? "", closeChatButtonTitle: closeTitle))
+            self.add(message: MetaMessage(timestamp: Date(), messageID: self.chatMessages.first?.messageID, text: text ?? "", closeChatButtonTitle: closeTitle))
             self.onChannelClosed?()
         }
     }
@@ -255,7 +255,7 @@ extension NINChatSessionManagerImpl {
                 let writingMessage = chatMessages.filter({ ($0 as? UserTypingMessage)?.user.userID == userID }).first as? UserTypingMessage
                 if isWriting, writingMessage == nil {
                     /// There's no 'typing' message for this user yet, lets create one
-                    self.add(message: UserTypingMessage(timestamp: Date(), messageID: self.chatMessages.last?.messageID, user: messageUser))
+                    self.add(message: UserTypingMessage(timestamp: Date(), messageID: self.chatMessages.first?.messageID, user: messageUser))
                 } else if let msg = writingMessage, let index = chatMessages.firstIndex(where: { $0.asEquatable == msg.asEquatable }) {
                     /// There's a 'typing' message for this user - lets remove that.
                     self.removeMessage(atIndex: index)
@@ -287,30 +287,12 @@ extension NINChatSessionManagerImpl {
     }
     
     internal func add(message: ChatMessage) {
-        /// Check if the previous (normal) message was sent by the same user, ie. is the
-        /// message part of a series
-        if var channelMessage = message as? ChannelMessage {
-            /// Guard against the same message getting added multiple times
-            /// should only happen if the client makes extraneous load_history calls elsewhere
-            guard self.chatMessages.filter({
-                ($0 as? ChannelMessage)?.messageID == channelMessage.messageID
-            }).count == 0 else { return }
-            
-            // Find the previous channel message
-            if let prevMsg = chatMessages
-                .compactMap({ $0 as? TextMessage })
-                .sorted(by: { $0.timestamp.compare($1.timestamp) == .orderedAscending })
-                .last {
-                    channelMessage.series = (prevMsg.sender.userID == channelMessage.sender.userID)
-                    
-                    let dateDiff = channelMessage.timestamp - prevMsg.timestamp
-                    if let minDiff = dateDiff.minute {
-                        channelMessage.series = channelMessage.series && minDiff == 0
-                    }
-            } else {
-                channelMessage.series = false
-            }
-        }
+        var message = message
+
+        /// Guard against the same message getting added multiple times
+        /// should only happen if the client makes extraneous load_history calls elsewhere
+        if self.chatMessages.contains(where: { $0.messageID == message.messageID }) { return }
+        self.applySeriesStatus(to: &message)
         
         chatMessages.insert(message, at: 0)
         chatMessages.sort { $0.messageID.compare($1.messageID) == .orderedDescending }
@@ -351,6 +333,20 @@ extension NINChatSessionManagerImpl {
         
         self.session?.close()
         self.session = nil
+    }
+
+    internal func applySeriesStatus(to message: inout ChatMessage) {
+        guard var channelMessage = message as? ChannelMessage else { return }
+
+        /// Find the previous channel message
+        if let prevMsg = self.chatMessages.compactMap({ $0 as? ChannelMessage }).sorted(by: { $0.messageID.compare($1.messageID) == .orderedAscending }).last {
+            channelMessage.series = (channelMessage.sender.userID == prevMsg.sender.userID)
+
+            if let minDiff = (channelMessage.timestamp - prevMsg.timestamp).minute {
+                channelMessage.series = (channelMessage.series && minDiff == 0)
+            }
+        }
+        message = channelMessage
     }
 }
 

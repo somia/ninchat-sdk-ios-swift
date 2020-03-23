@@ -90,14 +90,10 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
 
 extension ChatChannelCell: UITextViewDelegate {
     @available(iOS 10.0, *)
-    @objc public func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-        return true
-    }
+    @objc public func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool { true }
     
     @available(iOS, deprecated: 10.0)
-    @objc public func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange) -> Bool {
-        return true
-    }
+    @objc public func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange) -> Bool { true }
 }
 
 class ChatChannelMineCell: ChatChannelCell {
