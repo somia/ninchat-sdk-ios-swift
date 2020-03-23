@@ -30,7 +30,8 @@ final class VideoThumbnailManagerTests: XCTestCase {
                 expect_cache.fulfill()
             }
         }
-        
-        waitForExpectations(timeout: 100.0)
+
+        /// Wait a long time (~ 3 min) to download the video and run tests
+        waitForExpectations(timeout: 210.0)
     }
 }

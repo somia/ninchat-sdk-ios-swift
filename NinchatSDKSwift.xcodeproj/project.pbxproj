@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7C44F1A84C25C4445CF3B955 /* Pods_NinchatSDKSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 495ADA60487CD354EDC07332 /* Pods_NinchatSDKSwift.framework */; };
 		851E359923B1214E000FA966 /* AutolayouTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851E359823B1214E000FA966 /* AutolayouTests.swift */; };
 		851ECF6423969297006D332F /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 851ECF6323969297006D332F /* README.md */; };
 		8530EC8123AD3FC300BAA52A /* NINChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8530EC8023AD3FC300BAA52A /* NINChatViewController.swift */; };
@@ -30,7 +31,6 @@
 		855B9F30238ECE650081A9C6 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855B9F2C238ECE650081A9C6 /* Constants.swift */; };
 		855B9F31238ECE650081A9C6 /* NINChatSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855B9F2D238ECE650081A9C6 /* NINChatSession.swift */; };
 		855B9F32238ECE650081A9C6 /* NINChatSessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855B9F2E238ECE650081A9C6 /* NINChatSessionDelegate.swift */; };
-		855B9F7B238ED5340081A9C6 /* Pods_NinchatSDKSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 495ADA60487CD354EDC07332 /* Pods_NinchatSDKSwift.framework */; };
 		855B9F9E238ED9DC0081A9C6 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 855B9F9D238ED9DC0081A9C6 /* Podfile */; };
 		855CBE1F2397C4F600A024A7 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855CBE1E2397C4F600A024A7 /* Coordinator.swift */; };
 		855CBE222397CCA800A024A7 /* Storyboard+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855CBE212397CCA800A024A7 /* Storyboard+Extension.swift */; };
@@ -363,7 +363,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				855B9F7B238ED5340081A9C6 /* Pods_NinchatSDKSwift.framework in Frameworks */,
+				7C44F1A84C25C4445CF3B955 /* Pods_NinchatSDKSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -893,7 +893,6 @@
 				855B9F0D238ECDB30081A9C6 /* Sources */,
 				855B9F0E238ECDB30081A9C6 /* Frameworks */,
 				855B9F0F238ECDB30081A9C6 /* Resources */,
-				F691B6388C9E036C8BC1EC9C /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -912,8 +911,7 @@
 				855B9F16238ECDB30081A9C6 /* Sources */,
 				855B9F17238ECDB30081A9C6 /* Frameworks */,
 				855B9F18238ECDB30081A9C6 /* Resources */,
-				67256981104993382D10249D /* [CP] Embed Pods Frameworks */,
-				51C55B71D9FC4FB082F818CB /* [CP] Copy Pods Resources */,
+				E0F4E74B06E12DE978BDB4C6 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -933,8 +931,7 @@
 				85B72A8F23F57ADF00D1C4BC /* Sources */,
 				85B72A9023F57ADF00D1C4BC /* Frameworks */,
 				85B72A9123F57ADF00D1C4BC /* Resources */,
-				942372C88B7C888241A52B6F /* [CP] Embed Pods Frameworks */,
-				758E049836140A0D7F78D761 /* [CP] Copy Pods Resources */,
+				F07217B1BD78BA6EAEAB6BF3 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1070,74 +1067,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		51C55B71D9FC4FB082F818CB /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		67256981104993382D10249D /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		758E049836140A0D7F78D761 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftServerTests/Pods-NinchatSDKSwiftServerTests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftServerTests/Pods-NinchatSDKSwiftServerTests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftServerTests/Pods-NinchatSDKSwiftServerTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		942372C88B7C888241A52B6F /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftServerTests/Pods-NinchatSDKSwiftServerTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftServerTests/Pods-NinchatSDKSwiftServerTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftServerTests/Pods-NinchatSDKSwiftServerTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		B479ECA229361050905B7FA9 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1182,21 +1111,38 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		F691B6388C9E036C8BC1EC9C /* [CP] Copy Pods Resources */ = {
+		E0F4E74B06E12DE978BDB4C6 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwift/Pods-NinchatSDKSwift-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			name = "[CP] Copy Pods Resources";
+			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwift/Pods-NinchatSDKSwift-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwift/Pods-NinchatSDKSwift-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F07217B1BD78BA6EAEAB6BF3 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftServerTests/Pods-NinchatSDKSwiftServerTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftServerTests/Pods-NinchatSDKSwiftServerTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NinchatSDKSwiftServerTests/Pods-NinchatSDKSwiftServerTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1509,15 +1455,11 @@
 					"$(inherited)",
 					"-ObjC",
 					"-framework",
-					"\"AFNetworking\"",
-					"-framework",
 					"\"CoreGraphics\"",
 					"-framework",
 					"\"MobileCoreServices\"",
 					"-framework",
 					"\"NinchatLowLevelClient\"",
-					"-framework",
-					"\"NinchatSDK\"",
 					"-framework",
 					"\"Security\"",
 					"-framework",
@@ -1561,15 +1503,11 @@
 					"$(inherited)",
 					"-ObjC",
 					"-framework",
-					"\"AFNetworking\"",
-					"-framework",
 					"\"CoreGraphics\"",
 					"-framework",
 					"\"MobileCoreServices\"",
 					"-framework",
 					"\"NinchatLowLevelClient\"",
-					"-framework",
-					"\"NinchatSDK\"",
 					"-framework",
 					"\"Security\"",
 					"-framework",
@@ -1596,16 +1534,19 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86P62K2K2N;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"COCOAPODS=1",
 				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = NinchatSDKSwiftTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ninchat.NinchatSDKSwiftTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1624,12 +1565,15 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86P62K2K2N;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = NinchatSDKSwiftTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ninchat.NinchatSDKSwiftTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1645,6 +1589,8 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86P62K2K2N;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = NinchatSDKSwiftServerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1652,6 +1598,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ninchat.NinchatSDKSwiftServerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1665,6 +1612,8 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86P62K2K2N;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = NinchatSDKSwiftServerTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1672,6 +1621,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ninchat.NinchatSDKSwiftServerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
