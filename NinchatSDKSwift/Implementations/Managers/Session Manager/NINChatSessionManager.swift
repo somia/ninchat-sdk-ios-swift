@@ -5,7 +5,7 @@
 //
 
 import Foundation
-import NinchatSDK
+import NinchatLowLevelClient
 
 typealias CompletionWithError = ((Error?) -> Void)
 typealias Completion = (() -> Void)
@@ -40,7 +40,7 @@ protocol NINChatSessionConnectionManager {
     func leave(completion: @escaping CompletionWithError)
     
     /** Runs ICE (Interactive Connectivity Establishment) for WebRTC connection negotiations. */
-    func beginICE(completion: @escaping ((Error?, [NINWebRTCServerInfo]?, [NINWebRTCServerInfo]?) -> Void)) throws
+    func beginICE(completion: @escaping ((Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void)) throws
     
     /** Closes the chat by shutting down the session. Triggers the API delegate method -ninchatDidEndChatSession:. */
     func closeChat() throws
@@ -54,7 +54,7 @@ protocol NANChatSessionMessenger {
     * Chronological list of messages on the current channel. The list is ordered by the message
     * timestamp in descending order (most recent first).
     */
-    var chatMessages: [NINChatMessage]! { get }
+    var chatMessages: [ChatMessage]! { get }
     
     /** Indicate whether or not the user is currently typing into the chat. */
     func update(isWriting: Bool, completion: @escaping CompletionWithError) throws
@@ -63,7 +63,7 @@ protocol NANChatSessionMessenger {
     func send(message: String, completion: @escaping CompletionWithError) throws
     
     /** Sends a ui/action response to the current channel. */
-    func send(action: NINComposeContentView, completion: @escaping CompletionWithError) throws
+    func send(action: ComposeContentViewProtocol, completion: @escaping CompletionWithError) throws
     
     /** Sends a file to the chat. */
     func send(attachment: String, data: Data, completion: @escaping CompletionWithError) throws
@@ -97,8 +97,8 @@ protocol NINChatSessionManagerDelegate {
     var onMessageAdded: ((_ index: Int) -> Void)? { get set }
     var onMessageRemoved: ((_ index: Int) -> Void)? { get set }
     var onChannelClosed: (() -> Void)? { get set }
-    var onRTCSignal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
-    var onRTCClientSignal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
+    var onRTCSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
+    var onRTCClientSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
 
     func bindQueueUpdate<T: QueueUpdateCapture>(closure: @escaping ((Events, String, Error?) -> Void), to receiver: T)
     func unbindQueueUpdateClosure<T: QueueUpdateCapture>(from receiver: T)
@@ -106,13 +106,13 @@ protocol NINChatSessionManagerDelegate {
 
 protocol NINChatSessionManager: class, NINChatSessionConnectionManager, NANChatSessionMessenger, NINChatDevHelper, NINChatSessionAttachment, NINChatSessionTranslation, NINChatSessionManagerDelegate {
     /** List of available queues for the realm_id. */
-    var queues: [NINQueue]! { get set }
+    var queues: [Queue]! { get set }
     
     /** List of Audience queues. These are the queues the user gets to pick from in the UI. */
-    var audienceQueues: [NINQueue]! { get set }
+    var audienceQueues: [Queue]! { get set }
     
     /** Site configuration. */
-    var siteConfiguration: NINSiteConfiguration! { get }
+    var siteConfiguration: SiteConfiguration! { get }
     
     /** A weak reference to internal functions declared in `NINChatSessionSwift` */
     var delegate: NINChatSessionInternalDelegate? { get }

@@ -25,12 +25,12 @@ extension UIView {
             self.hide(newValue)
         }
         get {
-            return self.alpha == 0
+            self.alpha == 0
         }
     }
     
-    func hide(_ hide: Bool, withActions action: (() -> Void)? = nil, andCompletion completion: (() -> Void)? = nil) {
-        UIView.animate(withDuration: 0.3, animations: {
+    func hide(_ hide: Bool, delay: Double = 0.0, withActions action: (() -> Void)? = nil, andCompletion completion: (() -> Void)? = nil) {
+        UIView.animate(withDuration: TimeConstants.kAnimationDuration.rawValue, delay: delay, animations: {
             action?()
             self.alpha = (hide) ? 0.0 : 1.0
         }, completion: { finished in
@@ -39,7 +39,7 @@ extension UIView {
     }
     
     @discardableResult
-    func round(radius: CGFloat? = nil, _ borderWidth: CGFloat = 0.0, _ borderColor: UIColor = .clear) -> Self {
+    func round(radius: CGFloat? = nil, borderWidth: CGFloat = 0.0, borderColor: UIColor = .clear) -> Self {
         if let radius = radius {
             self.layer.cornerRadius = radius
         } else if let heightAnchor = self.height?.constant {

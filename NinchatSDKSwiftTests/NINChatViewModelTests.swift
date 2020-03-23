@@ -5,7 +5,7 @@
 //
 
 import XCTest
-import NinchatSDK
+import WebRTC
 @testable import NinchatSDKSwift
 
 class NINChatViewModelTests: XCTestCase, NINChatWebRTCClientDelegate {
@@ -15,7 +15,7 @@ class NINChatViewModelTests: XCTestCase, NINChatWebRTCClientDelegate {
     // MARK: - NINChatWebRTCClientDelegate
     
     var onConnectionStateChange: ((NINChatWebRTCClient, ConnectionState) -> Void)?
-    var onLocalCapturerCreate: ((NINChatWebRTCClient, RTCCameraVideoCapturer) -> Void)?
+    var onLocalCaptureCreate: ((NINChatWebRTCClient, RTCCameraVideoCapturer) -> Void)?
     var onRemoteVideoTrackReceive: ((NINChatWebRTCClient, RTCVideoTrack) -> Void)?
     var onError: ((NINChatWebRTCClient, Error) -> Void)?
 

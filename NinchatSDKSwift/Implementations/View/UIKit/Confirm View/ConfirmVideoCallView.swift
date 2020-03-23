@@ -5,10 +5,9 @@
 //
 
 import UIKit
-import NinchatSDK
 
 protocol ConfirmVideoCallViewProtocol: ConfirmView {
-    var user: NINChannelUser! { get set }
+    var user: ChannelUser! { get set }
 }
 
 final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol {
@@ -26,18 +25,18 @@ final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol {
     @IBOutlet private(set) weak var infoLabel: UILabel!
     @IBOutlet private(set) weak var acceptButton: Button! {
         didSet {
-            acceptButton.round(1.0)
+            acceptButton.round(borderWidth: 1.0)
         }
     }
     @IBOutlet private(set) weak var rejectButton: Button! {
         didSet {
-            rejectButton.round(1.0, .defaultBackgroundButton)
+            rejectButton.round(borderWidth: 1.0, borderColor: .defaultBackgroundButton)
         }
     }
     
     // MARK: - ConfirmVideoCallViewProtocol
     
-    var user: NINChannelUser!
+    var user: ChannelUser!
     
     // MARK: - ConfirmView
     
@@ -64,13 +63,13 @@ final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol {
         }
 
         guard let sessionManager = session?.sessionManager else { return }
-        let agentAvatarConfig = NINAvatarConfig(avatar: sessionManager.siteConfiguration.agentAvatar ?? "", name: sessionManager.siteConfiguration.agentName ?? "")
+        let agentAvatarConfig = AvatarConfig(avatar: sessionManager.siteConfiguration.agentAvatar, name: sessionManager.siteConfiguration.agentName)
         
         /// Caller's Avatar image
-        if !agentAvatarConfig.imageOverrideUrl.isEmpty {
-            self.avatarImageView.setImageURL(agentAvatarConfig.imageOverrideUrl)
-        } else if !user.iconURL.isEmpty {
-            self.avatarImageView.setImageURL(user.iconURL)
+        if let overrideURL = agentAvatarConfig.imageOverrideURL {
+            self.avatarImageView.image(from: overrideURL)
+        } else if let iconURL = user.iconURL {
+            self.avatarImageView.image(from: iconURL)
         }
         
         /// Caller's name

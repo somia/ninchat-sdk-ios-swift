@@ -5,14 +5,13 @@
 //
 
 import XCTest
-import NinchatSDK
 @testable import NinchatSDKSwift
 
 final class NINQueueViewModelTests: NinchatViewModelTestCase {
     var viewModel: NINQueueViewModel!
     
     func test_viewModel() {
-        let queue = NINQueue(id: Session.suiteQueue, andName: "UnitTest")!
+        let queue = Queue(queueID: Session.suiteQueue, name: "UnitTest")
         viewModel = NINQueueViewModelImpl(sessionManager: super.sessionManager, queue: queue, delegate: nil)
         
         let expect_updateText = self.expectation(description: "Expected to get text updates")

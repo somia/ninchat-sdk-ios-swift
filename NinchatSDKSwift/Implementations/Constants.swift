@@ -90,6 +90,14 @@ public enum Constants: String {
     case kRatingPositiveText = "Good"
     case kRatingNeutralText = "Okay"
     case kRatingNegativeText = "Poor"
+    
+    case RTCSessionDescriptionType = "type"
+    case RTCSessionDescriptionSDP = "sdp"
+    case RTCIceCandidateKeyCandidate = "candidate"
+    case RTCIceCandidateSDPMLineIndex = "sdpMLineIndex"
+    case RTCIceCandidateSDPMid = "sdpMid"
+    
+    case kNinchatImageCacheKey = "ninchatsdk.swift.VideoThumbnailImageCache"
 }
 
 enum NotificationConstants: String {
@@ -97,4 +105,17 @@ enum NotificationConstants: String {
     case kNINWebRTCSignalNotification = "ninchatsdk.NWebRTCSignalNotification"
     case kNINChannelClosedNotification = "ninchatsdk.ChannelClosedNotification"
     case kNINQueuedNotification = "ninchatsdk.QueuedNotification"
+}
+
+enum TimeConstants: TimeInterval {
+    case kTimerTickInterval = 0.05
+    case kMessageMaxAge = 1.0
+    case kAnimationDuration = 0.3
+    case kAnimationDelay = 1.5
+}
+
+enum Margins: CGFloat {
+    case kButtonHeight = 45.0
+    case kComposeVerticalMargin = 10.0
+    case kComposeHorizontalMargin = 60.0
 }

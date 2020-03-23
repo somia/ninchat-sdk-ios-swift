@@ -5,8 +5,7 @@
 //
 
 import UIKit
-import NinchatSDK
 
 protocol TypingCell: UIView {
-    func populateTyping(message: NINUserTypingMessage, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: NINAvatarConfig)
+    func populateTyping(message: UserTypingMessage, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: AvatarConfig)
 }

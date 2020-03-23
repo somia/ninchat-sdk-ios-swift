@@ -5,12 +5,12 @@
 //
 
 import Foundation
-import NinchatSDK
+import WebRTC
 
 protocol NINWebRTCActions {
     var onActionError: ((Error) -> Void)? { get set }
     var onRemoteVideoTrack: ((RTCVideoRenderer, RTCVideoTrack) -> Void)? { get set }
-    var onLocalCapturer: ((RTCCameraVideoCapturer) -> Void)? { get set }
+    var onLocalCapture: ((RTCCameraVideoCapturer) -> Void)? { get set }
 }
 
 protocol NINWebRTCDelegate: NINChatWebRTCClientDelegate, NINWebRTCActions {
@@ -22,7 +22,7 @@ final class NINWebRTCDelegateImpl: NINWebRTCDelegate {
     // MARK: - NINChatWebRTCClientDelegate
     
     var onConnectionStateChange: ((NINChatWebRTCClient, ConnectionState) -> Void)?
-    var onLocalCapturerCreate: ((NINChatWebRTCClient, RTCCameraVideoCapturer) -> Void)?
+    var onLocalCaptureCreate: ((NINChatWebRTCClient, RTCCameraVideoCapturer) -> Void)?
     var onRemoteVideoTrackReceive: ((NINChatWebRTCClient, RTCVideoTrack) -> Void)?
     var onError: ((NINChatWebRTCClient, Error) -> Void)?
     
@@ -30,7 +30,7 @@ final class NINWebRTCDelegateImpl: NINWebRTCDelegate {
     
     var onActionError: ((Error) -> Void)?
     var onRemoteVideoTrack: ((RTCVideoRenderer, RTCVideoTrack) -> Void)?
-    var onLocalCapturer: ((RTCCameraVideoCapturer) -> Void)?
+    var onLocalCapture: ((RTCCameraVideoCapturer) -> Void)?
     
     // MARK: - NINWebRTCDelegate
     
@@ -43,9 +43,9 @@ final class NINWebRTCDelegateImpl: NINWebRTCDelegate {
             debugger("WebRTC new state: \(newState.description)")
         }
         
-        self.onLocalCapturerCreate = { [weak self] client, capturer in
+        self.onLocalCaptureCreate = { [weak self] client, capturer in
             debugger("didCreateLocalCapturer: \(String(describing: capturer))")
-            self?.onLocalCapturer?(capturer)
+            self?.onLocalCapture?(capturer)
         }
         
         /** Called when the video call is initiated and the remote video track is available. */

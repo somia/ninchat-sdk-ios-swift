@@ -5,7 +5,7 @@
 //
 
 import Foundation
-import NinchatSDK
+import WebRTC
 
 protocol NINRTCVideoActions {
     var onSizeChange: ((CGSize) -> Void)? { get set }

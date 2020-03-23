@@ -5,24 +5,23 @@
 //
 
 import UIKit
-import NinchatSDK
 
 class ChatChannelComposeCell: ChatChannelOthersCell {
     
-    override var onComposeSendTapped: ((NINComposeContentView) -> Void)? {
+    override var onComposeSendTapped: ((ComposeContentViewProtocol) -> Void)? {
         set {
-            self.composeMessageView.uiComposeSendPressedCallback = { compose in
-                newValue?(compose!)
+            self.composeMessageView.onSendActionTapped = { compose in
+                newValue?(compose)
             }
         }
         get {
-            self.composeMessageView.uiComposeSendPressedCallback
+            self.composeMessageView.onSendActionTapped
         }
     }
     
     // MARK: - Outlets
     
-    @IBOutlet private(set) weak var composeMessageView: NINComposeMessageView!
+    @IBOutlet private(set) weak var composeMessageView: ComposeMessageView!
     
     // MARK: - UITableViewCell life-cycle
     
@@ -33,10 +32,11 @@ class ChatChannelComposeCell: ChatChannelOthersCell {
         self.composeMessageView.clear()
     }
     
-    func populateCompose(message: NINUIComposeMessage, configuration: NINSiteConfiguration, colorAssets: NINColorAssetDictionary, composeStates: [Any]?) {
-        self.composeMessageView.uiComposeStateUpdateCallback = { [weak self] composeStates in
+    func populateCompose(message: ComposeMessage, configuration: SiteConfiguration, colorAssets: NINColorAssetDictionary, composeStates: [Bool]?) {
+        self.composeMessageView.clear()
+        self.composeMessageView.onStateUpdateTapped = { [weak self] composeStates in
             self?.onComposeUpdateTapped?(composeStates)
         }
-        self.composeMessageView.populate(with: message, siteConfiguration: configuration, colorAssets: Dictionary(uniqueKeysWithValues: colorAssets.map { ($0.key.rawValue, $0.value) } ), composeState: composeStates)
+        self.composeMessageView.populate(message: message, siteConfiguration: configuration, colorAssets: colorAssets, composeStates: composeStates)
     }
 }

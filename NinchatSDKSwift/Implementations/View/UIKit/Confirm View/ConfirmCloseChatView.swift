@@ -16,12 +16,12 @@ final class ConfirmCloseChatView: UIView, ConfirmView {
     @IBOutlet private(set) weak var infoTextView: UITextView!
     @IBOutlet private(set) weak var confirmButton: Button! {
         didSet {
-            confirmButton.round(1.0)
+            confirmButton.round(borderWidth: 1.0)
         }
     }
     @IBOutlet private(set) weak var cancelButton: Button! {
         didSet {
-            cancelButton.round(1.0, .defaultBackgroundButton)
+            cancelButton.round(borderWidth: 1.0, borderColor: .defaultBackgroundButton)
         }
     }
     
@@ -50,7 +50,7 @@ final class ConfirmCloseChatView: UIView, ConfirmView {
         
         guard let sessionManager = session?.sessionManager else { return }
         if let dialogTitle = sessionManager.siteConfiguration.confirmDialogTitle {
-            self.infoTextView.setFormattedText(dialogTitle)
+            self.infoTextView.setAttributed(text: dialogTitle, font: .ninchat)
         }
         
         if let confirmText = sessionManager.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) {

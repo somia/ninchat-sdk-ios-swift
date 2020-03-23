@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import NinchatSDK
 
 protocol ChannelMediaCell {
     /// Outlets
@@ -13,11 +12,11 @@ protocol ChannelMediaCell {
     var messageImageView: UIImageView! { get set }
     var videoPlayIndicator: UIImageView! { get set }
     
-    func populateText(message: NINTextMessage, attachment: NINFileInfo?)
+    func populateText(message: TextMessage, attachment: FileInfo?)
 }
 
 extension ChannelMediaCell where Self:ChatChannelCell {
-    func populateText(message: NINTextMessage, attachment: NINFileInfo?) {
+    func populateText(message: TextMessage, attachment: FileInfo?) {
         attachment?.updateInfo(session: self.session) { [unowned self] error, didRefreshNetwork in
             guard error == nil else { return }
             do {
@@ -29,7 +28,7 @@ extension ChannelMediaCell where Self:ChatChannelCell {
     }
     
     func updateAttachment(asynchronous: Bool) throws {
-        guard let message = self.message as? NINTextMessage else { throw NINUIExceptions.noMessage }
+        guard let message = self.message as? TextMessage else { throw NINUIExceptions.noMessage }
         guard let attachment = message.attachment else { throw NINUIExceptions.noAttachment }
         guard attachment.isVideo || attachment.isImage else { throw NINUIExceptions.invalidAttachment }
         
@@ -48,15 +47,14 @@ extension ChannelMediaCell where Self:ChatChannelCell {
     }
     
     /// Update constraints to match new thumbnail image size
-    private func updateVideo(from attachment: NINFileInfo, videoURL: String, _ asynchronous: Bool) throws {
+    private func updateVideo(from attachment: FileInfo, videoURL: String, _ asynchronous: Bool) throws {
         guard let thumbnailManager = self.videoThumbnailManager else { throw NINUIExceptions.noThumbnailManager }
         
         /// For video we must fetch the thumbnail image
-        thumbnailManager.getVideoThumbnail(videoURL) { [unowned self] error, fromCache, thumbnail in
+        thumbnailManager.fetchVideoThumbnail(fromURL: videoURL) { [unowned self] error, fromCache, thumbnail in
             DispatchQueue.main.async {
                 guard let image = thumbnail, error == nil else {
-                    /// TODO: localize error msg
-                    NINToast.showWithErrorMessage("Failed to get video thumbnail", callback: nil); return
+                    Toast.show(message: .error("Failed to get video thumbnail")); return
                 }
                 
                 self.messageImageView.image = image
@@ -73,10 +71,10 @@ extension ChannelMediaCell where Self:ChatChannelCell {
     
     /// asynchronous = YES implies we're calling this asynchronously from the
     /// `updateInfo(session:completion:)` completion block (meaning it did a network update)
-    private func updateImage(from attachment: NINFileInfo, imageURL: String, _ asynchronous: Bool) {
+    private func updateImage(from attachment: FileInfo, imageURL: String, _ asynchronous: Bool) {
         DispatchQueue.main.async {
             /// Load the image in message image view over HTTP or from local cache
-            self.messageImageView.setImageURL(imageURL)
+            self.messageImageView.image(from: imageURL)
             self.set(aspect: CGFloat(attachment.aspectRatio ?? 1))
             
             guard !self.isReloading && asynchronous else { return }
@@ -130,7 +128,7 @@ final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell {
     
     @objc
     func didTappedOnImage() {
-        guard let message = super.message as? NINTextMessage, let attachment = message.attachment else { return }
+        guard let message = super.message as? TextMessage, let attachment = message.attachment else { return }
         
         if attachment.isVideo {
             /// Will open video player
@@ -168,7 +166,7 @@ final class ChatChannelMediaOthersCell: ChatChannelOthersCell, ChannelMediaCell 
     
     @objc
     func didTappedOnImage() {
-        guard let message = super.message as? NINTextMessage, let attachment = message.attachment else { return }
+        guard let message = super.message as? TextMessage, let attachment = message.attachment else { return }
         
         if attachment.isVideo {
             /// Will open video player

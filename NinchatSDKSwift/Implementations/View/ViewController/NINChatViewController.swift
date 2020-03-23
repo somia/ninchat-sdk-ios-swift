@@ -5,11 +5,8 @@
 //
 
 import UIKit
-import NinchatSDK
 
 final class NINChatViewController: UIViewController, ViewController, KeyboardHandler {
-    
-    private let animationDuration: Double = 0.3
     private var webRTCClient: NINChatWebRTCClient?
     
     // MARK: - Injected
@@ -22,7 +19,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
                 self?.onCloseChatTapped()
             }
             chatDataSourceDelegate.onUIActionError = { _ in
-                NINToast.showWithErrorMessage("failed to send message", callback: nil)
+                Toast.show(message: .error("failed to send message"))
             }
         }
     }
@@ -48,7 +45,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
                 self?.videoView.remoteVideoTrack = remoteVideoTrack
             }
             
-            chatRTCDelegate.onLocalCapturer = { [weak self] localCapturer in
+            chatRTCDelegate.onLocalCapture = { [weak self] localCapturer in
                 self?.videoView.localCapture = localCapturer
             }
         }
@@ -57,7 +54,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
         didSet {
             chatMediaPickerDelegate.onMediaSent = { error in
                 if error != nil {
-                    NINToast.showWithErrorMessage("Failed to send the attachment", callback: nil)
+                    Toast.show(message: .error("Failed to send the attachment"))
                 }
             }
             chatMediaPickerDelegate.onDismissPicker = { [weak self] in
@@ -69,8 +66,8 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     var onChatClosed: (() -> Void)?
     var onBackToQueue: (() -> Void)?
     var onOpenGallery: ((UIImagePickerController.SourceType) -> Void)?
-    var onOpenPhotoAttachment: ((UIImage, NINFileInfo) -> Void)?
-    var onOpenVideoAttachment: ((NINFileInfo) -> Void)?
+    var onOpenPhotoAttachment: ((UIImage, FileInfo) -> Void)?
+    var onOpenVideoAttachment: ((FileInfo) -> Void)?
     
     // MARK: - KeyboardHandler
     
@@ -162,6 +159,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.addKeyboardListeners()
         self.setupView()
         self.setupViewModel()
         self.setupKeyboardClosure()
@@ -175,14 +173,12 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.addKeyboardListeners()
         self.addRotationListener()
         self.adjustConstraints(for: self.view.bounds.size, withAnimation: false)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        self.removeKeyboardListeners()
         self.removeRotationListener()
     }
     
@@ -193,6 +189,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     }
     
     deinit {
+        self.removeKeyboardListeners()
         self.deallocRTC()
         NotificationCenter.default.removeObserver(self,
                                                   name: UIApplication.didEnterBackgroundNotification, object: nil)
@@ -241,16 +238,16 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
             let confirmVideoDialog: ConfirmVideoCallView = ConfirmVideoCallView.loadFromNib()
             confirmVideoDialog.user = channel
             confirmVideoDialog.session = self.session
-            confirmVideoDialog.onViewAction = { [weak self] action in
+            confirmVideoDialog.onViewAction = { [unowned self] action in
                 confirmVideoDialog.hideConfirmView()
-                self?.viewModel.pickup(answer: action == .confirm) { error in
-                    if error != nil { NINToast.showWithErrorMessage("failed to send WebRTC pickup message", callback: nil) }
+                self.viewModel.pickup(answer: action == .confirm) { error in
+                    if error != nil { Toast.show(message: .error("failed to send WebRTC pickup message")) }
                 }
             }
             confirmVideoDialog.showConfirmView(on: self.view)
 
-        }, onCallInitiated: { [weak self] error, rtcClinet in
-            self?.webRTCClient = rtcClinet
+        }, onCallInitiated: { [weak self] error, rtcClient in
+            self?.webRTCClient = rtcClient
             self?.closeChatButton.hide = true
             self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
             
@@ -346,7 +343,7 @@ extension NINChatViewController {
         self.setNeedsStatusBarAppearanceUpdate()
         
         guard animation else { return }
-        UIView.animate(withDuration: animationDuration) {
+        UIView.animate(withDuration: TimeConstants.kAnimationDuration.rawValue) {
             self.view.setNeedsLayout()
             self.view.layoutIfNeeded()
         }
@@ -362,15 +359,15 @@ extension NINChatViewController {
 
 extension NINChatViewController {
     private func openGallery() {
-        checkPhotoLibraryPermission { [unowned self] error in
+        Permission.grantPermission(.devicePhotoLibrary) { [unowned self] error in
             if let _ = error {
-                NINToast.showWithErrorMessage("Photo Library access is denied.", touchedCallback: {
+                Toast.show(message: .error("Photo Library access is denied."), onToastTouched: {
                     if #available(iOS 10.0, *) {
                         UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:], completionHandler: nil)
                     } else {
                         UIApplication.shared.openURL(URL(string: UIApplication.openSettingsURLString)!)
                     }
-                }, callback: nil)
+                })
             } else {
                 self.onOpenGallery?(.photoLibrary)
             }
@@ -378,15 +375,15 @@ extension NINChatViewController {
     }
     
     private func openVideo() {
-        checkVideoPermission { [unowned self] error in
+        Permission.grantPermission(.deviceCamera) { [unowned self] error in
             if let _ = error {
-                NINToast.showWithErrorMessage("Camera access is denied", touchedCallback: {
+                Toast.show(message: .error("Camera access is denied"), onToastTouched: {
                     if #available(iOS 10.0, *) {
                         UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:], completionHandler: nil)
                     } else {
                         UIApplication.shared.openURL(URL(string: UIApplication.openSettingsURLString)!)
                     }
-                }, callback: nil)
+                })
             } else {
                 self.onOpenGallery?(.camera)
             }
@@ -422,32 +419,32 @@ extension NINChatViewController {
     
     private func onSendTapped(_ text: String) {
         self.viewModel.send(message: text) { error in
-            if error != nil { NINToast.showWithErrorMessage("failed to send message", callback: nil) }
+            if error != nil { Toast.show(message: .error("Failed to send message")) }
         }
     }
     
     private func onAttachmentTapped(with button: UIButton) {
-        guard let bundle = Bundle.SDKBundle else {
-            fatalError("Error in getting SDK Bundle")
-        }
+        guard let bundle = Bundle.SDKBundle else { fatalError("Error in getting SDK Bundle") }
         let camera = NSLocalizedString("Camera", tableName: "Localizable", bundle: bundle, value: "", comment: "")
         let photo = NSLocalizedString("Photo", tableName: "Localizable", bundle: bundle, value: "", comment: "")
-        NINChoiceDialog.show(withOptionTitles: [camera, photo]) { [weak self] canceled, index in
-            guard !canceled else { return }
-        
-            let source: UIImagePickerController.SourceType = (index == 0) ? .camera : .photoLibrary
-            guard UIImagePickerController.isSourceTypeAvailable(source) else {
-                NINToast.showWithErrorMessage("That source type is not available on this device", callback: nil)
-                return
-            }
-            
-            switch source {
-            case .camera:
-                self?.openVideo()
-            case .photoLibrary:
-                self?.openGallery()
-            default:
-                fatalError("Invalid attachment type")
+        ChoiceDialogue.showDialogue(withOptions: [camera, photo]) { [weak self] result in
+            switch result {
+            case .cancel:
+                break
+            case .select(let index):
+                let source: UIImagePickerController.SourceType = (index == 0) ? .camera : .photoLibrary
+                guard UIImagePickerController.isSourceTypeAvailable(source) else {
+                    Toast.show(message: .error("That source type is not available on this device")); return
+                }
+    
+                switch source {
+                case .camera:
+                    self?.openVideo()
+                case .photoLibrary:
+                    self?.openGallery()
+                default:
+                    fatalError("Invalid attachment type")
+                }
             }
         }
     }

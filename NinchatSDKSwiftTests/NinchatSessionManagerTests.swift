@@ -5,7 +5,6 @@
 //
 
 import XCTest
-import NinchatSDK
 @testable import NinchatSDKSwift
 
 // MARK: - Tests
@@ -67,8 +66,8 @@ class NinchatSessionManagerPrivateTests: XCTestCase {
             XCTAssertEqual(index, expectation_index)
             XCTAssertEqual(self.sessionManager.chatMessages.count, expectation_count)
 
-            XCTAssertNotNil(self.sessionManager.chatMessages.first as? NINChannelMessage)
-            XCTAssertEqual((self.sessionManager.chatMessages.first as? NINChannelMessage)?.messageID, "\(expectation_messageID)")
+            XCTAssertNotNil(self.sessionManager.chatMessages.first as? ChannelMessage)
+            XCTAssertEqual((self.sessionManager.chatMessages.first as? ChannelMessage)?.messageID, "\(expectation_messageID)")
 
             if should_fulfill_expectation {
                 expect.fulfill()
@@ -115,8 +114,8 @@ class NinchatSessionManagerPrivateTests: XCTestCase {
             XCTAssertEqual(index, 3)
             XCTAssertEqual(self.sessionManager.chatMessages.count, 4)
 
-            XCTAssertNotNil(self.sessionManager.chatMessages[3] as? NINChannelMessage)
-            XCTAssertNotEqual((self.sessionManager.chatMessages[3] as? NINChannelMessage)?.messageID, "2")
+            XCTAssertNotNil(self.sessionManager.chatMessages[3] as? ChannelMessage)
+            XCTAssertNotEqual((self.sessionManager.chatMessages[3] as? ChannelMessage)?.messageID, "2")
 
             expect.fulfill()
         }
@@ -129,9 +128,8 @@ class NinchatSessionManagerPrivateTests: XCTestCase {
 
 extension NinchatSessionManagerPrivateTests {
     private func simulateAddMessage(id: Int) {
-        let user = NINChannelUser(id: "11", realName: "Hassan Shahbazi", displayName: "Hassan", iconURL: "", guest: false)
-        let textMessage = NINTextMessage(messageID: "\(id)", textContent: "content", sender: user!, timestamp: Date(), mine: false, attachment: nil)
-        self.sessionManager.add(message: textMessage)
+        let user = ChannelUser(userID: "11", realName: "Hassan Shahbazi", displayName: "Hassan", iconURL: "", guest: false)
+        self.sessionManager.add(message: TextMessage(timestamp: Date(), messageID:  "\(id)", mine: false, sender: user, textContent: "content", attachment: nil))
     }
 
     private func simulateRemoveMessage(at index: Int) {
@@ -209,7 +207,7 @@ class NinchatSessionManagerClosureHandlersTests: XCTestCase {
         }
 
         self.simulateChatQueue()
-        waitForExpectations(timeout: 1.0)
+        waitForExpectations(timeout: 5.0)
     }
 }
 

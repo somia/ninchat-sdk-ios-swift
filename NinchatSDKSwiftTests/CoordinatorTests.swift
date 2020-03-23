@@ -5,7 +5,6 @@
 //
 
 import XCTest
-import NinchatSDK
 @testable import NinchatSDKSwift
 
 class CoordinatorTests: XCTestCase {
@@ -41,7 +40,7 @@ class CoordinatorTests: XCTestCase {
         let vcNil = coordinator.joinAutomatically(for: "")
         XCTAssertNil(vcNil)
         
-        let vc = coordinator.joinDirectly(to: NINQueue(id: "id", andName: "name"))
+        let vc = coordinator.joinDirectly(to: Queue(queueID: "id", name: "name"))
         XCTAssertNotNil(vc)
     }
 

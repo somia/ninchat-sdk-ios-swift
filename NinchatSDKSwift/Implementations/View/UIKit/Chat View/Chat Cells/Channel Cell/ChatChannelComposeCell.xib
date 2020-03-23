@@ -44,7 +44,7 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MTD-3X-5oD">
-                                <rect key="frame" x="39" y="0.0" width="723" height="183"/>
+                                <rect key="frame" x="39" y="0.0" width="688" height="183"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yTp-Ag-tWh">
                                         <rect key="frame" x="16" y="0.0" width="120" height="40"/>
@@ -79,7 +79,7 @@
                                         <rect key="frame" x="8" y="40" width="62" height="143"/>
                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </imageView>
-                                    <view contentMode="scaleToFill" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="2Qd-UC-fGA" customClass="NINComposeMessageView">
+                                    <view contentMode="scaleToFill" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="2Qd-UC-fGA" customClass="ComposeMessageView" customModule="NinchatSDKSwift">
                                         <rect key="frame" x="24" y="56" width="30" height="111"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
@@ -103,7 +103,7 @@
                         <constraints>
                             <constraint firstItem="jIM-mn-NMV" firstAttribute="top" secondItem="00N-FD-6Gi" secondAttribute="top" id="8s6-vM-zl4"/>
                             <constraint firstItem="MTD-3X-5oD" firstAttribute="top" secondItem="00N-FD-6Gi" secondAttribute="top" id="AUV-r5-iTG"/>
-                            <constraint firstAttribute="trailing" secondItem="MTD-3X-5oD" secondAttribute="trailing" constant="8" id="C6q-Fu-dag"/>
+                            <constraint firstAttribute="trailing" secondItem="MTD-3X-5oD" secondAttribute="trailing" constant="43" id="C6q-Fu-dag"/>
                             <constraint firstAttribute="bottom" secondItem="jIM-mn-NMV" secondAttribute="bottom" id="FKP-eY-JJt"/>
                             <constraint firstItem="MTD-3X-5oD" firstAttribute="leading" secondItem="jIM-mn-NMV" secondAttribute="trailing" id="HNi-Hf-cCK"/>
                             <constraint firstItem="jIM-mn-NMV" firstAttribute="leading" secondItem="00N-FD-6Gi" secondAttribute="leading" constant="4" id="PKf-gP-WUq"/>

@@ -5,11 +5,10 @@
 //
 
 import UIKit
-import NinchatSDK
 
 class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
     
-    internal var message: NINChannelMessage?
+    internal var message: ChannelMessage?
     
     // MARK: - Outlets
     
@@ -30,10 +29,10 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
     var isReloading: Bool! = false
     
     var session: NINChatSessionAttachment!
-    var videoThumbnailManager: NINVideoThumbnailManager?
-    var onImageTapped: ((NINFileInfo, UIImage?) -> Void)?
-    var onComposeSendTapped: ((NINComposeContentView) -> Void)?
-    var onComposeUpdateTapped: (([Any]?) -> Void)?
+    var videoThumbnailManager: VideoThumbnailManager?
+    var onImageTapped: ((FileInfo, UIImage?) -> Void)?
+    var onComposeSendTapped: ((ComposeContentViewProtocol) -> Void)?
+    var onComposeUpdateTapped: (([Bool]?) -> Void)?
     var onConstraintsUpdate: (() -> Void)?
         
     // MARK: - UITableViewCell
@@ -50,7 +49,7 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
     
     // MARK: - ChannelCell
     
-    func populateChannel(message: NINChannelMessage, configuration: NINSiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: NINAvatarConfig, userAvatarConfig: NINAvatarConfig, composeState: [Any]?) {
+    func populateChannel(message: ChannelMessage, configuration: SiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: AvatarConfig, userAvatarConfig: AvatarConfig, composeState: [Bool]?) {
         self.message = message
         
         self.senderNameLabel.text = (message.sender.displayName.count < 1) ? "Guest" : message.sender.displayName
@@ -61,12 +60,11 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
             $0.isHidden = message.series
         }
     
-        if let cell = self as? ChannelTextCell, let textMessage = message as? NINTextMessage {
+        if let cell = self as? ChannelTextCell, let textMessage = message as? TextMessage {
             cell.populateText(message: textMessage, attachment: textMessage.attachment)
-        } else if let cell = self as? ChannelMediaCell, let textMessage = message as? NINTextMessage {
+        } else if let cell = self as? ChannelMediaCell, let textMessage = message as? TextMessage {
             cell.populateText(message: textMessage, attachment: textMessage.attachment)
-        } else if let cell = self as? ChatChannelComposeCell, let uiComposeMessage = message as? NINUIComposeMessage {
-            cell.composeMessageView.clear()
+        } else if let cell = self as? ChatChannelComposeCell, let uiComposeMessage = message as? ComposeMessage {
             cell.populateCompose(message: uiComposeMessage, configuration: configuration, colorAssets: colorAssets, composeStates: composeState)
         }
     }
@@ -82,24 +80,20 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
         }
     }
     
-    internal func apply(avatar config: NINAvatarConfig, imageView: UIImageView) {
+    internal func apply(avatar config: AvatarConfig, imageView: UIImageView) {
         imageView.isHidden = !config.show
-        if !config.imageOverrideUrl.isEmpty {
-            imageView.setImageURL(config.imageOverrideUrl)
+        if let overrideURL = config.imageOverrideURL {
+            imageView.image(from: overrideURL)
         }
     }
 }
 
 extension ChatChannelCell: UITextViewDelegate {
     @available(iOS 10.0, *)
-    @objc public func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-        return true
-    }
+    @objc public func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool { true }
     
     @available(iOS, deprecated: 10.0)
-    @objc public func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange) -> Bool {
-        return true
-    }
+    @objc public func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange) -> Bool { true }
 }
 
 class ChatChannelMineCell: ChatChannelCell {
@@ -119,12 +113,12 @@ class ChatChannelMineCell: ChatChannelCell {
         self.bubbleImageView.width?.isActive = false
     }
     
-    override func populateChannel(message: NINChannelMessage, configuration: NINSiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: NINAvatarConfig, userAvatarConfig: NINAvatarConfig, composeState: [Any]?) {
+    override func populateChannel(message: ChannelMessage, configuration: SiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: AvatarConfig, userAvatarConfig: AvatarConfig, composeState: [Bool]?) {
         super.populateChannel(message: message, configuration: configuration, imageAssets: imageAssets, colorAssets: colorAssets, agentAvatarConfig: agentAvatarConfig, userAvatarConfig: userAvatarConfig, composeState: composeState)
         self.configureMyMessage(avatar: message.sender.iconURL, imageAssets: imageAssets, colorAssets: colorAssets, config: userAvatarConfig, series: message.series)
     }
     
-    internal func configureMyMessage(avatar url: String, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, config: NINAvatarConfig, series: Bool) {
+    internal func configureMyMessage(avatar url: String?, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, config: AvatarConfig, series: Bool) {
         self.senderNameLabel.textAlignment = .right
         self.bubbleImageView.image = (series) ? imageAssets[.chatBubbleRightRepeated] : imageAssets[.chatBubbleRight]
         
@@ -165,12 +159,12 @@ class ChatChannelOthersCell: ChatChannelCell {
         self.bubbleImageView.width?.isActive = false
     }
     
-    override func populateChannel(message: NINChannelMessage, configuration: NINSiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: NINAvatarConfig, userAvatarConfig: NINAvatarConfig, composeState: [Any]?) {
+    override func populateChannel(message: ChannelMessage, configuration: SiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: AvatarConfig, userAvatarConfig: AvatarConfig, composeState: [Bool]?) {
         super.populateChannel(message: message, configuration: configuration, imageAssets: imageAssets, colorAssets: colorAssets, agentAvatarConfig: agentAvatarConfig, userAvatarConfig: userAvatarConfig, composeState: composeState)
         self.configureOtherMessage(avatar: message.sender.iconURL, imageAssets: imageAssets, colorAssets: colorAssets, config: agentAvatarConfig, series: message.series)
     }
     
-    internal func configureOtherMessage(avatar url: String, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, config: NINAvatarConfig, series: Bool) {
+    internal func configureOtherMessage(avatar url: String?, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, config: AvatarConfig, series: Bool) {
         self.senderNameLabel.textAlignment = .left
         self.bubbleImageView.image = (series) ? imageAssets[.chatBubbleLeftRepeated] : imageAssets[.chatBubbleLeft]
         

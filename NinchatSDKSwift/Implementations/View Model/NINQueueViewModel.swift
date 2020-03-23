@@ -4,20 +4,20 @@
 // license that can be found in the LICENSE file.
 //
 
-import NinchatSDK
+import Foundation
 
 protocol NINQueueViewModel {
     var onInfoTextUpdate: ((String?) -> Void)? { get set }
     var onQueueJoin: ((Error?) -> Void)? { get set }
 
-    init(sessionManager: NINChatSessionManager, queue: NINQueue, delegate: NINChatSessionInternalDelegate?)
+    init(sessionManager: NINChatSessionManager, queue: Queue, delegate: NINChatSessionInternalDelegate?)
     func connect()
 }
 
 final class NINQueueViewModelImpl: NINQueueViewModel {
     
     private unowned var sessionManager: NINChatSessionManager!
-    private unowned let queue: NINQueue
+    private let queue: Queue
     private weak var delegate: NINChatSessionInternalDelegate?
     
     // MARK: - NINQueueViewModel
@@ -25,7 +25,7 @@ final class NINQueueViewModelImpl: NINQueueViewModel {
     var onInfoTextUpdate: ((String?) -> Void)?
     var onQueueJoin: ((Error?) -> Void)?
     
-    init(sessionManager: NINChatSessionManager, queue: NINQueue, delegate: NINChatSessionInternalDelegate?) {
+    init(sessionManager: NINChatSessionManager, queue: Queue, delegate: NINChatSessionInternalDelegate?) {
         self.sessionManager = sessionManager
         self.delegate = delegate
         self.queue = queue
@@ -66,12 +66,10 @@ extension NINQueueViewModelImpl {
     private func queueTextInfo(_ progress: Int) -> String? {
         switch progress {
         case 1:
-            return self.sessionManager.translate(key: Constants.kQueuePositionNext.rawValue,
-                                                 formatParams: ["audienceQueue.queue_attrs.name": "\(queue.name ?? "")"])
+            return self.sessionManager.translate(key: Constants.kQueuePositionNext.rawValue, formatParams: ["audienceQueue.queue_attrs.name": "\(queue.name)"])
         default:
-            return self.sessionManager.translate(key: Constants.kQueuePositionN.rawValue,
-                                                 formatParams: ["audienceQueue.queue_attrs.name": "\(queue.name ?? "")",
-                                                                "audienceQueue.queue_position": "\(progress)"])
+            return self.sessionManager.translate(key: Constants.kQueuePositionN.rawValue, formatParams: ["audienceQueue.queue_attrs.name": "\(queue.name)",
+                                                                                                         "audienceQueue.queue_position": "\(progress)"])
         }
     }
 }

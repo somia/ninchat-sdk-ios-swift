@@ -18,5 +18,11 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>SourceSansPro-Light.ttf</string>
+		<string>SourceSansPro-Regular.ttf</string>
+		<string>SourceSansPro-SemiBold.ttf</string>
+	</array>
 </dict>
 </plist>

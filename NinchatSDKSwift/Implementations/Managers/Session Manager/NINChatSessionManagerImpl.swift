@@ -5,14 +5,15 @@
 //
 
 import Foundation
-import NinchatSDK
+import UIKit
+import NinchatLowLevelClient
 
 protocol NINChatSessionManagerInternalActions {
     var onActionSessionEvent: ((Events, Error?) -> Void)? { get set }
     var onActionID: ((_ actionID: Int, Error?) -> Void)? { get set }
     var onProgress: ((_ queueID: String, _ position: Int, Events, Error?) -> Void)? { get set }
     var onChannelJoined: Completion? { get set }
-    var onActionSevers: ((_ actionID: Int, _ stunServers: [NINWebRTCServerInfo]?, _ turnServers: [NINWebRTCServerInfo]?) -> Void)? { get set }
+    var onActionSevers: ((_ actionID: Int, _ stunServers: [WebRTCServerInfo]?, _ turnServers: [WebRTCServerInfo]?) -> Void)? { get set }
     var onActionFileInfo: ((_ actionID: Int, _ fileInfo: [String:Any]?, Error?) -> Void)? { get set }
     var onActionChannel: ((_ actionID: Int, _ channelID: String) -> Void)? { get set }
     var didEndSession: (() -> Void)? { get set }
@@ -20,14 +21,14 @@ protocol NINChatSessionManagerInternalActions {
 
 final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatDevHelper, NINChatSessionManagerInternalActions {
     internal let audienceMetadata: NINLowLevelClientProps?
-    
-    internal var channelUsers: [String:NINChannelUser] = [:]
+    internal let serviceManager = ServiceManager()
+    internal var channelUsers: [String:ChannelUser] = [:]
     internal var currentQueueID: String?
     internal var currentChannelID: String?
     internal var backgroundChannelID: String?
     internal var myUserID: String?
     internal var realmID: String?
-    internal var messageThrottler: NINMessageThrottler?
+    internal var messageThrottler: MessageThrottler?
     
     // MARK: - NINChatSessionManagerInternalActions
     
@@ -35,7 +36,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     internal var onActionID: ((Int, Error?) -> Void)?
     internal var onProgress: ((String, Int, Events, Error?) -> Void)?
     internal var onChannelJoined: Completion?
-    internal var onActionSevers: ((Int, [NINWebRTCServerInfo]?, [NINWebRTCServerInfo]?) -> Void)?
+    internal var onActionSevers: ((Int, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void)?
     internal var onActionFileInfo: ((Int, [String:Any]?, Error?) -> Void)?
     internal var onActionChannel: ((Int, String) -> Void)?
     internal var didEndSession: (() -> Void)?
@@ -54,15 +55,15 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     
     // MARK: - NINChatSessionManager variables
     
-    var chatMessages: [NINChatMessage]! = []
+    var chatMessages: [ChatMessage]! = []
     
     // MARK: - NINChatSessionManagerDelegate
 
     var onMessageAdded: ((_ index: Int) -> Void)?
     var onMessageRemoved: ((_ index: Int) -> Void)?
     var onChannelClosed: (() -> Void)?
-    var onRTCSignal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)?
-    var onRTCClientSignal: ((MessageType, NINChannelUser?, _ signal: RTCSignal?) -> Void)?
+    var onRTCSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)?
+    var onRTCClientSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)?
     
     func bindQueueUpdate<T: QueueUpdateCapture>(closure: @escaping ((Events, String, Error?) -> Void), to receiver: T) {
         guard queueUpdateBoundClosures.keys.filter({ $0 == receiver.desc }).count == 0 else { return }
@@ -76,13 +77,13 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     // MARK: - NINChatSessionManager
     
     weak var delegate: NINChatSessionInternalDelegate?
-    var queues: [NINQueue]! = [] {
+    var queues: [Queue]! = [] {
         didSet {
             self.audienceQueues = self.queues
         }
     }
-    var audienceQueues: [NINQueue]! = []
-    var siteConfiguration: NINSiteConfiguration!
+    var audienceQueues: [Queue]! = []
+    var siteConfiguration: SiteConfiguration!
     var appDetails: String?
     
     // MARK: - NINChatSessionManagerDevTools
@@ -134,15 +135,16 @@ extension NINChatSessionManagerImpl {
     }
     
     func fetchSiteConfiguration(config key: String, environments: [String]?, completion: @escaping CompletionWithError) {
-        fetchSiteConfig(self.serverAddress, key) { (config, error) in
-            if let error = error {
-                completion(error); return
+        let request = SiteConfigRequest(serverAddress: self.serverAddress, configKey: key)
+        self.serviceManager.perform(request) { result in
+            switch result {
+            case .success(let config):
+                debugger("Got site config: \(String(describing: config.toDictionary))")
+                self.siteConfiguration = SiteConfigurationImpl(configuration: config.toDictionary, environments: environments)
+                completion(nil)
+            case .failure(let error):
+                completion(error)
             }
-            
-            debugger("Got site config: \(String(describing: config))")
-            self.siteConfiguration = NINSiteConfiguration(config)
-            self.siteConfiguration.environments = environments
-            completion(nil)
         }
     }
     
@@ -156,7 +158,7 @@ extension NINChatSessionManagerImpl {
         }
         
         /// Create message throttler to manage inbound message order
-        self.messageThrottler = NINMessageThrottler { [weak self] message in
+        self.messageThrottler = MessageThrottler { [weak self] message in
              try? self?.didReceiveMessage(param: message.params, payload: message.payload)
         }
         
@@ -273,7 +275,7 @@ extension NINChatSessionManagerImpl {
     }
     
     /// Retrieves the WebRTC ICE STUN/TURN server details
-    func beginICE(completion: @escaping ((Error?, [NINWebRTCServerInfo]?, [NINWebRTCServerInfo]?) -> Void)) throws {
+    func beginICE(completion: @escaping ((Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void)) throws {
         guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
         let param = NINLowLevelClientProps.initiate
         param.set_beginICE()
@@ -351,10 +353,10 @@ extension NINChatSessionManagerImpl {
     }
     
     /// Sends a ui/action response to the current channel
-    func send(action: NINComposeContentView, completion: @escaping CompletionWithError) throws {
+    func send(action: ComposeContentViewProtocol, completion: @escaping CompletionWithError) throws {
         guard self.session != nil else { throw NINSessionExceptions.noActiveSession }
         
-        try self.send(type: .uiAction, payload: ["action": "click", "target": action.composeMessageDict!], completion: completion)
+        try self.send(type: .uiAction, payload: ["action": "click", "target": action.messageDictionary], completion: completion)
     }
     
     func send(attachment: String, data: Data, completion: @escaping CompletionWithError) throws {

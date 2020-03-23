@@ -83,7 +83,7 @@ final class CloseButton: UIView, CloseButtonProtocol {
     
     private func setupView() {
         self.backgroundColor = .white
-        self.round(1.0, .defaultBackgroundButton)
+        self.round(borderWidth: 1.0, borderColor: .defaultBackgroundButton)
         
         self.addSubview(theButton)
         self.theButton
@@ -102,10 +102,10 @@ final class CloseButton: UIView, CloseButtonProtocol {
     override func updateConstraints() {
         super.updateConstraints()
         if let widthAnchor = self.width, let heightAnchor = self.height {
-            widthAnchor.constant = self.frame.width + 28.0
+            widthAnchor.constant = self.frame.width + 40.0
             heightAnchor.constant = 45.0
         } else {
-            self.fix(width: self.frame.width + 28.0, height: 45.0)
+            self.fix(width: self.frame.width + 40.0, height: 45.0)
         }
         self.setupView()
         

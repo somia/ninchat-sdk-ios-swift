@@ -6,7 +6,6 @@
 
 import UIKit
 import XCTest
-import NinchatSDK
 @testable import NinchatSDKSwift
 
 final class UIKitTests: XCTestCase {
@@ -206,16 +205,72 @@ final class UIKitTests: XCTestCase {
         
         XCTAssertEqual(3, parent1.allSubviews.count)
     }
+
+    func test_choiceDialogue_option() {
+        let view: ChoiceDialogue = ChoiceDialogue.loadFromNib()
+        
+        let expect_option = self.expectation(description: "Expected to get option get selected")
+        view.showDialogue(withOptions: ["1", "2"]) { result in
+            switch result {
+            case .select(let index):
+                XCTAssertEqual(index, 1)
+            case .cancel:
+                XCTAssertTrue(false, "Cancel options shouldn't have been tapped")
+            }
     
-    func test_font() {
-        XCTAssertNotNil(UIFont.ninchat)
+            expect_option.fulfill()
+        }
+        XCTAssertEqual(view.stackView.subviews.count, 3)
+        (view.stackView.subviews[1] as? ChoiceDialogueRow)?.onRowButtonTapped(nil)
+        
+        waitForExpectations(timeout: 5.0)
+    }
+    
+    func test_choiceDialogue_cancel() {
+        let view: ChoiceDialogue = ChoiceDialogue.loadFromNib()
+    
+        let expect_cancel = self.expectation(description: "Expected to get canceled")
+        view.showDialogue(withOptions: ["1", "2"], cancelTitle: "Cancel") { result in
+            switch result {
+            case .select:
+                XCTAssertTrue(false, "Select options shouldn't have been tapped")
+            case .cancel:
+                XCTAssertTrue(true)
+            }
+        
+            expect_cancel.fulfill()
+        }
+        XCTAssertEqual(view.stackView.subviews.count, 3)
+        (view.stackView.subviews.last as? ChoiceDialogueRow)?.onRowButtonTapped(nil)
+    
+        waitForExpectations(timeout: 5.0)
+    }
+
+    func test_toast() {
+        let view: Toast = Toast.loadFromNib()
+
+        let expect_touch = self.expectation(description: "Expected to get the toast touched")
+        let expect_dismiss = self.expectation(description: "Expected to get the toast dismissed")
+        view.show(message: .info("This is a toast"), onToastTouched: {
+            expect_touch.fulfill()
+        }, onToastDismissed: {
+            expect_dismiss.fulfill()
+        })
+        XCTAssertEqual(view.messageLabel.text, "This is a toast")
+        XCTAssertEqual(view.containerView.backgroundColor, UIColor.toastInfoBackground)
+
+        view.onViewTapped(nil)
+        waitForExpectations(timeout: 5.0)
+    }
+
+    func test_toast_dismiss() {
+
     }
 }
 
 extension UIKitTests {
     private func simulateSendMessage() {
-        let user = NINChannelUser(id: "11", realName: "Hassan Shahbazi", displayName: "Hassan", iconURL: "", guest: false)
-        let textMessage = NINTextMessage(messageID: "00", textContent: "content", sender: user!, timestamp: Date(), mine: false, attachment: nil)
-        self.sessionManager.add(message: textMessage)
+        let user = ChannelUser(userID: "11", realName: "Hassan Shahbazi", displayName: "Hassan", iconURL: "", guest: false)
+        self.sessionManager.add(message: TextMessage(timestamp: Date(), messageID:  "11", mine: false, sender: user, textContent: "content", attachment: nil))
     }
 }

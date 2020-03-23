@@ -122,7 +122,7 @@
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                         <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
                                     </textView>
-                                    <view contentMode="scaleToFill" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="fjd-1d-buR" customClass="NINComposeMessageView">
+                                    <view contentMode="scaleToFill" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="fjd-1d-buR" customClass="ComposeMessageView" customModule="NinchatSDKSwift">
                                         <rect key="frame" x="24" y="48" width="644" height="127"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>

@@ -14,7 +14,7 @@ final class NinchatSDKSwiftServerHelperTests: NinchatXCTestCase {
     
         self.sessionManager.onMessageAdded = { index in
             /// Wait to get the file added to cache
-            guard let message = self.sessionManager.chatMessages[index] as? NINTextMessage else { return }
+            guard let message = self.sessionManager.chatMessages[index] as? TextMessage else { return }
             let attachment = message.attachment
             XCTAssertNotNil(attachment)
             

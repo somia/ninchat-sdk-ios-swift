@@ -7,7 +7,7 @@
 import UIKit
 import AVKit
 import CoreServices
-import NinchatSDK
+import WebRTC
 
 protocol Coordinator: class {
     init(with session: NINChatSessionSwift)
@@ -56,7 +56,7 @@ extension NINCoordinator {
         return joinDirectly(to: target)
     }
     
-    internal func showQueueViewController(for queue: NINQueue?) {
+    internal func showQueueViewController(for queue: Queue?) {
         guard let target = queue, let queueVC = joinDirectly(to: target) else { return }
         self.navigationController?.pushViewController(queueVC, animated: true)
     }
@@ -75,13 +75,15 @@ extension NINCoordinator {
         chatViewController.chatMediaPickerDelegate = mediaDelegate
         
         chatViewController.onOpenGallery = { [weak self] source in
-            let controller = UIImagePickerController()
-            controller.sourceType = source
-            controller.mediaTypes = [kUTTypeImage, kUTTypeMovie] as [String]
-            controller.allowsEditing = true
-            controller.delegate = mediaDelegate
+            DispatchQueue.main.async {
+                let controller = UIImagePickerController()
+                controller.sourceType = source
+                controller.mediaTypes = [kUTTypeImage, kUTTypeMovie] as [String]
+                controller.allowsEditing = true
+                controller.delegate = mediaDelegate
 
-            self?.navigationController?.present(controller, animated: true, completion: nil)
+                self?.navigationController?.present(controller, animated: true, completion: nil)
+            }
         }
         chatViewController.onBackToQueue = { [weak self] in
             self?.navigationController?.popViewController(animated: true)
@@ -95,7 +97,7 @@ extension NINCoordinator {
     }
     
     @discardableResult
-    internal func showFullScreenViewController(_ image: UIImage, _ attachment: NINFileInfo) -> UIViewController? {
+    internal func showFullScreenViewController(_ image: UIImage, _ attachment: FileInfo) -> UIViewController? {
         let viewModel: NINFullScreenViewModel = NINFullScreenViewModelImpl(delegate: self.session)
         let previewViewController: NINFullScreenViewController = storyboard.instantiateViewController()
         previewViewController.viewModel = viewModel
@@ -137,7 +139,7 @@ extension NINCoordinator {
     }
     
     @discardableResult
-    internal func joinDirectly(to queue: NINQueue) -> UIViewController? {
+    internal func joinDirectly(to queue: Queue) -> UIViewController? {
         let viewModel: NINQueueViewModel = NINQueueViewModelImpl(sessionManager: self.sessionManager, queue: queue, delegate: self.session)
         let joinViewController: NINQueueViewController = storyboard.instantiateViewController()
         joinViewController.session = session
@@ -151,7 +153,7 @@ extension NINCoordinator {
 }
 
 
-// MARK: - NINChatViewController componenets
+// MARK: - NINChatViewController components
 
 extension NINCoordinator {
     internal func chatDataSourceDelegate(_ viewModel: NINChatViewModel) -> NINChatDataSourceDelegate {

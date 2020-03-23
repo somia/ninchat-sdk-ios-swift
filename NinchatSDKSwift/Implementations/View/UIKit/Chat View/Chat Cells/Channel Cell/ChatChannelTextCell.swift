@@ -5,23 +5,22 @@
 //
 
 import UIKit
-import NinchatSDK
 
 protocol ChannelTextCell {
     /// Outlets
     var messageTextView: UITextView! { get set }
     
-    func populateText(message: NINTextMessage, attachment: NINFileInfo?)
+    func populateText(message: TextMessage, attachment: FileInfo?)
 }
 
 extension ChannelTextCell {
-    func populateText(message: NINTextMessage, attachment: NINFileInfo?) {
+    func populateText(message: TextMessage, attachment: FileInfo?) {
         self.messageTextView.contentInset = (message.series) ? UIEdgeInsets(top: 3.5, left: 0.0, bottom: 0.0, right: 0.0) : .zero
         if attachment?.isPDF ?? false, let url = attachment?.url, let name = attachment?.name {
-            self.messageTextView.setFormattedText("<a href=\"\(url)\">\(name)</a>")
+            self.messageTextView.setAttributed(text: "<a href=\"\(url)\">\(name)</a>", font: .ninchat)
         } else if let text = message.textContent {
             /// remove attributed texts if any
-            self.messageTextView.setPlain(text: text, font: .ninchat, color: self.messageTextView.textColor)
+            self.messageTextView.setPlain(text: text, font: .ninchat)
         }
     }
 }
@@ -34,7 +33,7 @@ final class ChatChannelTextMineCell: ChatChannelMineCell, ChannelTextCell {
         }
     }
     
-    override func configureMyMessage(avatar url: String, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, config: NINAvatarConfig, series: Bool) {
+    override func configureMyMessage(avatar url: String?, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, config: AvatarConfig, series: Bool) {
         super.configureMyMessage(avatar: url, imageAssets: imageAssets, colorAssets: colorAssets, config: config, series: series)
     
         self.messageTextView.textColor = .white
@@ -58,7 +57,7 @@ final class ChatChannelTextOthersCell: ChatChannelOthersCell, ChannelTextCell {
         }
     }
     
-    override func configureOtherMessage(avatar url: String, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, config: NINAvatarConfig, series: Bool) {
+    override func configureOtherMessage(avatar url: String?, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, config: AvatarConfig, series: Bool) {
         super.configureOtherMessage(avatar: url, imageAssets: imageAssets, colorAssets: colorAssets, config: config, series: series)
     
         self.messageTextView.textAlignment = .left
@@ -69,6 +68,16 @@ final class ChatChannelTextOthersCell: ChatChannelOthersCell, ChannelTextCell {
         }
         if let linkColor = colorAssets[.chatBubbleLeftLink] {
             self.messageTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
+        }
+    }
+    
+    func populateText(message: TextMessage, attachment: FileInfo?) {
+        self.messageTextView.contentInset = (message.series) ? UIEdgeInsets(top: 3.5, left: 0.0, bottom: 0.0, right: 0.0) : .zero
+        if attachment?.isPDF ?? false, let url = attachment?.url, let name = attachment?.name {
+            self.messageTextView.setAttributed(text: "<a href=\"\(url)\">\(name)</a>", font: .ninchat)
+        } else if let text = message.textContent {
+            /// remove attributed texts if any
+            self.messageTextView.setPlain(text: text, font: .ninchat)
         }
     }
 }

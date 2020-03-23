@@ -6,7 +6,7 @@
 
 import AVFoundation
 import Foundation
-import NinchatSDK
+import WebRTC
 
 final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
     
@@ -33,8 +33,8 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
     /// Mapping for the ICE gathering state --> state name
     private let iceGatheringStates: [Int:String]
     
-    /// Local video capturer
-    private var localCapturer: RTCCameraVideoCapturer?
+    /// Local video capture
+    private var localCapture: RTCCameraVideoCapturer?
     /// Local media stream
     private var localStream: RTCMediaStream?
     /// Current RTC peer connection if any
@@ -72,13 +72,13 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
         }
     }
     
-    init(sessionManager: NINChatSessionManager?, operatingMode: OperatingMode, stunServers: [NINWebRTCServerInfo]?, turnServers: [NINWebRTCServerInfo]?, delegate: NINChatWebRTCClientDelegate?) {
+    init(sessionManager: NINChatSessionManager?, operatingMode: OperatingMode, stunServers: [WebRTCServerInfo]?, turnServers: [WebRTCServerInfo]?, delegate: NINChatWebRTCClientDelegate?) {
                 
         self.delegate = delegate
         self.sessionManager = sessionManager
         self.operatingMode = operatingMode
         self.peerConnectionFactory = RTCPeerConnectionFactory(encoderFactory: RTCDefaultVideoEncoderFactory(), decoderFactory: RTCDefaultVideoDecoderFactory())
-        self.iceServers = [stunServers, turnServers].compactMap({ $0 }).reduce([], +).map({ $0.iceServer() })
+        self.iceServers = [stunServers, turnServers].compactMap({ $0 }).reduce([], +).map({ $0.iceServer })
         
         self.iceSignalingStates = SignalingState.allCases.reduce(into: [:]) { (dic: inout [Int:String], item: SignalingState) in
             dic[item.rawValue] = item.description
@@ -101,9 +101,10 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
         sessionManager?.onRTCClientSignal = { [weak self] type, user, signal in
             switch type {
             case .candidate:
-                self?.peerConnection?.add(RTCIceCandidate.fromDictionary(signal?.candidate))
+                guard let iceCandidate = signal?.candidate?.toRTCIceCandidate else { return }
+                self?.peerConnection?.add(iceCandidate)
             case .answer:
-                guard let description = RTCSessionDescription.fromDictionary(signal?.sdp) else { return }
+                guard let description = signal?.sdp?.toRTCSessionDescription else { return }
                 debugger("Setting remote description from Answer with SDP: \(description)")
                 self?.peerConnection?.setRemoteDescription(description) { error in
                     self?.didSetSessionDescription(with: error)
@@ -146,7 +147,7 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
         case .callee:
             /// We are the 'callee', ie. we are answering.
             debugger("WebRTC: answering a call.")
-            if let sdp = rtc?.sdp, let description = RTCSessionDescription.fromDictionary(sdp) {
+            if let description = rtc?.sdp?.toRTCSessionDescription {
                 debugger("Setting remote description from Offer.")
                 self.peerConnection?.setRemoteDescription(description) { [weak self] error in
                     self?.didSetSessionDescription(with: error)
@@ -162,7 +163,7 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
         
         self.stopLocalCapture()
         self.localStream = nil
-        self.localCapturer = nil
+        self.localCapture = nil
         
         if self.peerConnection != nil {
             self.peerConnection?.close()
@@ -203,7 +204,7 @@ extension NINChatWebRTCClientImpl {
                     return format
                 }
                 
-                if diff == currentDiff && pixelFormat == self?.localCapturer?.preferredOutputPixelFormat() {
+                if diff == currentDiff && pixelFormat == self?.localCapture?.preferredOutputPixelFormat() {
                     return format
                 }
                 
@@ -218,8 +219,8 @@ extension NINChatWebRTCClientImpl {
                                                         .sorted(by: { $0 > $1 })
                                                         .first ?? 0, 30)
             
-            self.localCapturer?.startCapture(with: device, format: format, fps: Int(fps)) { [weak self] error in
-                if error != nil {
+            self.localCapture?.startCapture(with: device, format: format, fps: Int(fps)) { [weak self] (error: Error?) in
+                if let error = error {
                     self?.sessionDelegate?.log(value: "** ERROR failed to start local capture: \(error)"); return
                 }
                 debugger("Local capture started OK.")
@@ -230,7 +231,7 @@ extension NINChatWebRTCClientImpl {
     private func stopLocalCapture() {
         DispatchQueue.main.async {
             debugger("Stopping local video capturing..")
-            self.localCapturer?.stopCapture()
+            self.localCapture?.stopCapture()
         }
     }
     
@@ -275,10 +276,10 @@ extension NINChatWebRTCClientImpl {
             /// Send signaling message about the offer/answer
             debugger("Sending RTC signaling message of type: \(messageType)")
             do {
-                try self.sessionManager?.send(type: messageType, payload: ["sdp":sdp.dictionary()!]) { error in
+                try self.sessionManager?.send(type: messageType, payload: ["sdp":sdp.toDictionary]) { error in
                     if let error = error {
                         debugger("WebRTC: Message send error - `completion`: \(error)")
-                        NINToast.showWithErrorMessage("Failed to send RTC signaling message", callback: nil)
+                        Toast.show(message: .error("Failed to send RTC signaling message"))
                     }
                 }
             } catch {
@@ -322,8 +323,8 @@ extension NINChatWebRTCClientImpl {
         let videoSource = self.peerConnectionFactory?.videoSource()
         #if !TARGET_IPHONE_SIMULATOR
         /// Camera capture only works on the device, not the simulator
-        self.localCapturer = RTCCameraVideoCapturer(delegate: videoSource!)
-        self.delegate?.onLocalCapturerCreate?(self, self.localCapturer!)
+        self.localCapture = RTCCameraVideoCapturer(delegate: videoSource!)
+        self.delegate?.onLocalCaptureCreate?(self, self.localCapture!)
         self.startLocalCapture()
         #endif
         
@@ -351,7 +352,7 @@ extension NINChatWebRTCClientImpl {
     }
 }
 
-/// Force the auido output to Speaker. Look at issue #61 for `NinchatSDK`
+/// Force the audio output to Speaker. Look at issue #61 for `NinchatSDK`
 extension NINChatWebRTCClientImpl {
     /// `https://stackoverflow.com/questions/24595579/how-to-redirect-audio-to-speakers-in-the-apprtc-ios-example`
     private func setAudioOutputToSpeaker() {
@@ -432,7 +433,7 @@ extension NINChatWebRTCClientImpl: RTCPeerConnectionDelegate {
     
     internal func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidate: RTCIceCandidate) {
         DispatchQueue.main.async {
-            _ = try? self.sessionManager?.send(type: .candidate, payload: ["candidate":candidate.dictionary()!]) { error in
+            _ = try? self.sessionManager?.send(type: .candidate, payload: ["candidate":candidate.toDictionary]) { error in
                 if let error = error { debugger("WebRTC: ERROR: Failed to send ICE candidate: \(error)") }
             }
         }

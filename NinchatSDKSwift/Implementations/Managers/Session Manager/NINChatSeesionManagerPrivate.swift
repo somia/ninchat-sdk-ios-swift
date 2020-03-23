@@ -4,8 +4,8 @@
 // license that can be found in the LICENSE file.
 //
 
-import Foundation
-import NinchatSDK
+import UIKit
+import NinchatLowLevelClient
 
 // MARK: - Private helper functions - delegates
 
@@ -23,7 +23,7 @@ extension NINChatSessionManagerImpl {
             try realmQueues.accept(queuesParser)
         
             self.queues = queuesParser.properties.keys.compactMap({ key in
-                NINQueue(id: key, andName: try? realmQueues.getObject(key).queueAttributes_Name())
+                Queue(queueID: key, name: (try? realmQueues.getObject(key).queueAttributes_Name()) ?? "")
             })
         
             /// Form the list of audience queues; if audienceQueues is specified in siteConfig, we use those;
@@ -118,8 +118,9 @@ extension NINChatSessionManagerImpl {
         channelUsers.removeAll()
         
         /// Insert a meta message about the conversation start
-        self.add(message: NINChatMetaMessage(text: self.translate(key: "Audience in queue {{queue}} accepted.", formatParams: ["queue": queueName]), timestamp: Date(), closeChatButtonTitle: nil))
-
+        /// This is the first message in the conversation with id: 0
+        self.add(message: MetaMessage(timestamp: Date(), messageID: nil, text: self.translate(key: "Audience in queue {{queue}} accepted.", formatParams: ["queue": queueName]) ?? "", closeChatButtonTitle: nil))
+        
         /// Extract the channel members' data
         do {
             let parser = NINChatClientPropsParser()
@@ -162,7 +163,7 @@ extension NINChatSessionManagerImpl {
         if channelClosed || channelSuspended {
             let text = self.translate(key: "Conversation ended", formatParams: [:])
             let closeTitle = self.translate(key: "Close chat", formatParams: [:])
-            self.add(message: NINChatMetaMessage(text: text, timestamp: Date(), closeChatButtonTitle: closeTitle))
+            self.add(message: MetaMessage(timestamp: Date(), messageID: self.chatMessages.first?.messageID, text: text ?? "", closeChatButtonTitle: closeTitle))
             self.onChannelClosed?()
         }
     }
@@ -182,8 +183,8 @@ extension NINChatSessionManagerImpl {
                 try prop.serversURLs()
             }).compactMap({ servers -> ([Int], NINLowLevelClientStrings) in
                 ([Int](0..<servers.length()), servers)
-            }).map({ (indexArray, serversArray) -> [NINWebRTCServerInfo] in
-                return indexArray.map { NINWebRTCServerInfo.server(withURL: serversArray.get($0), username: "", credential: "") }
+            }).map({ (indexArray, serversArray) -> [WebRTCServerInfo] in
+                indexArray.map { WebRTCServerInfo(url: serversArray.get($0), username: nil, credential: nil) }
             }).reduce([], +)
             
             /// Parse the TURN server list
@@ -193,8 +194,8 @@ extension NINChatSessionManagerImpl {
                 (try prop.serversURLs(), prop.turnServers_UserName(), prop.turnServers_Credential())
             }).compactMap({ (servers, userName, credential) -> ([Int], NINLowLevelClientStrings, String, String) in
                 ([Int](0..<servers.length()), servers, userName, credential)
-            }).map({ (indexArray, serversArray, userName, credential) -> [NINWebRTCServerInfo] in
-                return indexArray.map { NINWebRTCServerInfo.server(withURL: serversArray.get($0), username: userName, credential: credential) }
+            }).map({ (indexArray, serversArray, userName, credential) -> [WebRTCServerInfo] in
+                indexArray.map { WebRTCServerInfo(url: serversArray.get($0), username: userName, credential: credential) }
             }).reduce([], +)
             
             self.onActionSevers?(actionID, stunServers, turnServers)
@@ -203,9 +204,9 @@ extension NINChatSessionManagerImpl {
         }
     }
    
-    internal func parse(userAttr: NINLowLevelClientProps, userID: String) -> NINChannelUser? {
+    internal func parse(userAttr: NINLowLevelClientProps, userID: String) -> ChannelUser? {
         do {
-            return NINChannelUser(id: userID, realName: userAttr.userAttributes_RealName(), displayName: userAttr.userAttributes_DisplayName(), iconURL: userAttr.userAttributes_IconURL(), guest: try userAttr.userAttributes_IsGuest())
+            return ChannelUser(userID: userID, realName: userAttr.userAttributes_RealName(), displayName: userAttr.userAttributes_DisplayName(), iconURL: userAttr.userAttributes_IconURL(), guest: try userAttr.userAttributes_IsGuest())
         } catch {
             return nil
         }
@@ -251,13 +252,13 @@ extension NINChatSessionManagerImpl {
                 let isWriting = try param.memberAttributes().writing()
                 
                 /// Check if that user already has a 'writing' message
-                let writingMessage = chatMessages.filter({ ($0 as? NINUserTypingMessage)?.user.userID == userID }).first as? NINUserTypingMessage
+                let writingMessage = chatMessages.filter({ ($0 as? UserTypingMessage)?.user.userID == userID }).first as? UserTypingMessage
                 if isWriting, writingMessage == nil {
                     /// There's no 'typing' message for this user yet, lets create one
-                    self.add(message: NINUserTypingMessage(user: messageUser, timestamp: Date()))
-                } else if let msg = writingMessage {
+                    self.add(message: UserTypingMessage(timestamp: Date(), messageID: self.chatMessages.first?.messageID, user: messageUser))
+                } else if let msg = writingMessage, let index = chatMessages.firstIndex(where: { $0.asEquatable == msg.asEquatable }) {
                     /// There's a 'typing' message for this user - lets remove that.
-                    self.removeMessage(atIndex: (chatMessages as NSArray).index(of: msg))
+                    self.removeMessage(atIndex: index)
                 }
             }
             
@@ -285,40 +286,17 @@ extension NINChatSessionManagerImpl {
         }
     }
     
-    internal func add(message: NINChatMessage) {
-        /// Check if the previous (normal) message was sent by the same user, ie. is the
-        /// message part of a series
-        if let channelMessage = message as? NINChannelMessage {
-            /// Guard against the same message getting added multiple times
-            /// should only happen if the client makes extraneous load_history calls elsewhere
-            guard self.chatMessages.filter({
-                ($0 as? NINChannelMessage)?.messageID == channelMessage.messageID
-            }).count == 0 else { return }
-            
-            // Find the previous channel message
-            if let prevMsg = chatMessages
-                .compactMap({ $0 as? NINTextMessage })
-                .sorted(by: { $0.timestamp.compare($1.timestamp) == .orderedAscending })
-                .last {
-                channelMessage.series = (prevMsg.sender.userID == channelMessage.sender.userID)
-                
-                let dateDiff = channelMessage.timestamp - prevMsg.timestamp
-                if let minDiff = dateDiff.minute {
-                    channelMessage.series = channelMessage.series && minDiff == 0
-                }
-            } else {
-                channelMessage.series = false
-            }
-        }
+    internal func add(message: ChatMessage) {
+        var message = message
+
+        /// Guard against the same message getting added multiple times
+        /// should only happen if the client makes extraneous load_history calls elsewhere
+        if self.chatMessages.contains(where: { $0.messageID == message.messageID }) { return }
+        self.applySeriesStatus(to: &message)
         
         chatMessages.insert(message, at: 0)
-        chatMessages.sort {
-            if let msg1 = $0 as? NINChannelMessage, let msg2 = $1 as? NINChannelMessage {
-                return msg1.messageID.compare(msg2.messageID) == .orderedDescending
-            }
-            return $0.timestamp.compare($1.timestamp) == .orderedDescending
-        }
-        self.onMessageAdded?((chatMessages as NSArray).index(of: message))
+        chatMessages.sort { $0.messageID.compare($1.messageID) == .orderedDescending }
+        self.onMessageAdded?(chatMessages.firstIndex(where: { $0.asEquatable == message.asEquatable }) ?? -1)
     }
     
     internal func removeMessage(atIndex index: Int) {
@@ -355,6 +333,20 @@ extension NINChatSessionManagerImpl {
         
         self.session?.close()
         self.session = nil
+    }
+
+    internal func applySeriesStatus(to message: inout ChatMessage) {
+        guard var channelMessage = message as? ChannelMessage else { return }
+
+        /// Find the previous channel message
+        if let prevMsg = self.chatMessages.compactMap({ $0 as? ChannelMessage }).sorted(by: { $0.messageID.compare($1.messageID) == .orderedAscending }).last {
+            channelMessage.series = (channelMessage.sender.userID == prevMsg.sender.userID)
+
+            if let minDiff = (channelMessage.timestamp - prevMsg.timestamp).minute {
+                channelMessage.series = (channelMessage.series && minDiff == 0)
+            }
+        }
+        message = channelMessage
     }
 }
 
@@ -403,7 +395,7 @@ extension NINChatSessionManagerImpl {
 
     }
     
-    internal func handleInbound(message id: String, user: NINChannelUser, time: Double, actionID: Int, payload: NINLowLevelClientPayload) throws {
+    internal func handleInbound(message id: String, user: ChannelUser, time: Double, actionID: Int, payload: NINLowLevelClientPayload) throws {
         try [Int](0..<payload.length()).forEach({ index in
             let decode: Result<ChatMessagePayload> = payload.get(index)!.decode()
             switch decode {
@@ -413,7 +405,7 @@ extension NINChatSessionManagerImpl {
                 if let files = message.files, files.count > 0 {
                     files.forEach { [unowned self] file in
                         self.delegate?.log(value: "Got file with MIME type: \(String(describing: file.attributes.type))")
-                        let fileInfo = NINFileInfo(fileID: file.id, name: file.attributes.name, mimeType: file.attributes.type, size: file.attributes.size)
+                        let fileInfo = FileInfo(fileID: file.id, name: file.attributes.name, mimeType: file.attributes.type, size: file.attributes.size)
                         hasAttachment = fileInfo.isImage || fileInfo.isVideo || fileInfo.isPDF
                         
                         // Only process certain files at this point
@@ -421,14 +413,14 @@ extension NINChatSessionManagerImpl {
                         fileInfo.updateInfo(session: self) { error, didRefreshNetwork in
                             guard error == nil else { return }
                             
-                            self.add(message: NINTextMessage(messageID: id, textContent: nil, sender: user, timestamp: Date(timeIntervalSince1970: time), mine: user.userID == self.myUserID, attachment: fileInfo))
+                            self.add(message: TextMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user.userID == self.myUserID, sender: user, textContent: nil, attachment: fileInfo))
                         }
                     }
                 }
     
                 /// Only allocate a new message now if there is text and no attachment
                 if let text = message.text, !text.isEmpty, !hasAttachment {
-                    self.add(message:  NINTextMessage(messageID: id, textContent: text, sender: user, timestamp: Date(timeIntervalSince1970: time), mine: user.userID == self.myUserID, attachment: nil))
+                    self.add(message:  TextMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user.userID == self.myUserID, sender: user, textContent: text, attachment: nil))
                 }
             case .failure(let error):
                 throw error
@@ -436,7 +428,7 @@ extension NINChatSessionManagerImpl {
         })
     }
     
-    internal func handleChannel(message id: String, user: NINChannelUser?, time: Double, actionID: Int, payload: NINLowLevelClientPayload) throws {
+    internal func handleChannel(message id: String, user: ChannelUser?, time: Double, actionID: Int, payload: NINLowLevelClientPayload) throws {
         
         try [Int](0..<payload.length()).forEach { index in
             let decode: Result<ChatChannelPayload> = payload.get(index)!.decode()
@@ -451,17 +443,17 @@ extension NINChatSessionManagerImpl {
         }
     }
     
-    internal func handleCompose(message id: String, user: NINChannelUser, time: Double, actionID: Int, payload: NINLowLevelClientPayload) throws {
+    internal func handleCompose(message id: String, user: ChannelUser, time: Double, actionID: Int, payload: NINLowLevelClientPayload) throws {
         
         try [Int](0..<payload.length()).forEach { [unowned self] index in
-            let decode: Result<[ComposeMessagePayload]> = payload.get(index)!.decode()
+            let decode: Result<[ComposeContent]> = payload.get(index)!.decode()
             switch decode {
             case .success(let compose):
                 debugger("Received Compose message with payload: \(compose)")
                 if compose.filter({ $0.element != .button && $0.element != .select }).count > 0 {
                     debugger("Found ui/compose object with unhandled element, discarding message")
-                } else if let msg = NINUIComposeMessage(id: id, sender: user, timestamp: Date(timeIntervalSince1970: time), mine: user.userID == self.myUserID, payload: compose.compactMap({ $0.toDictionary })) {
-                    self.add(message: msg)
+                } else {
+                    self.add(message: ComposeMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user.userID == self.myUserID, sender: user, content: compose))
                 }
             case .failure(let error):
                 throw error
