@@ -78,6 +78,7 @@ public enum Constants: String {
     case kQueuePositionN = "Joined audience queue {{audienceQueue.queue_attrs.name}}, you are at position {{audienceQueue.queue_position}}."
     case kQueuePositionNext = "Joined audience queue {{audienceQueue.queue_attrs.name}}, you are next."
     case kCloseChatText = "Close chat"
+    case kConversationEnded = "Conversation ended"
     case kCancelDialog = "Continue chat"
     case kAcceptDialog = "Accept"
     case kRejectDialog = "Decline"
@@ -118,4 +119,5 @@ enum Margins: CGFloat {
     case kButtonHeight = 45.0
     case kComposeVerticalMargin = 10.0
     case kComposeHorizontalMargin = 60.0
+    case kTextFieldPaddingHeight = 64.0
 }

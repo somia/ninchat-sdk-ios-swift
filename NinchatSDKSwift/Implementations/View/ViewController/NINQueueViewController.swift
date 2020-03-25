@@ -9,12 +9,13 @@ import UIKit
 final class NINQueueViewController: UIViewController, ViewController {
     
     private var sessionManager: NINChatSessionManager {
-        return session.sessionManager
+        session.sessionManager
     }
     
     // MARK: - Injected
     
     var viewModel: NINQueueViewModel!
+    var queue: Queue!
     var onQueueActionTapped: (() -> Void)?
     private var queueTransferListener: AnyHashable!
     
@@ -62,7 +63,7 @@ final class NINQueueViewController: UIViewController, ViewController {
     // MARK: - UIViewController
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .portrait
+        .portrait
     }
     
     override func viewDidLoad() {
@@ -89,13 +90,13 @@ final class NINQueueViewController: UIViewController, ViewController {
                 self?.onQueueActionTapped?()
             }
         }
-        self.viewModel.connect()
+        self.viewModel.connect(queue: self.queue)
     }
 }
 
 // MARK: - Helper methods
 
-private extension NINQueueViewController {
+extension NINQueueViewController {
     private func spin() {
         guard spinnerImageView.layer.animation(forKey: "SpinAnimation") == nil else { return }
         

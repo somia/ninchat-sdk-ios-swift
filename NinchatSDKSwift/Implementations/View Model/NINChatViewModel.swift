@@ -59,9 +59,7 @@ final class NINChatViewModelImpl: NINChatViewModel {
             self?.onChannelClosed?()
         }
         self.sessionManager.bindQueueUpdate(closure: { [weak self] _, _, error in
-            guard error == nil else {
-                try? self?.sessionManager.closeChat(); return
-            }
+            guard error == nil else { try? self?.sessionManager.closeChat(); return }
             self?.onQueueUpdated?()
         }, to: self)
         self.sessionManager.onMessageAdded = { [weak self] index in
