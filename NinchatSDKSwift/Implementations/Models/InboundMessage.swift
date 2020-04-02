@@ -17,7 +17,7 @@ struct InboundMessage: Equatable {
         self.params = params
         self.payload = payload
         self.created = Date()
-        self.messageID = params.messageID()
+        self.messageID = params.messageID.value
     }
     
     static func ==(lhs: InboundMessage, rhs: InboundMessage) -> Bool {

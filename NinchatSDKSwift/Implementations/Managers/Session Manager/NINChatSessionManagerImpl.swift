@@ -10,12 +10,12 @@ import NinchatLowLevelClient
 
 protocol NINChatSessionManagerInternalActions {
     var onActionSessionEvent: ((Events, Error?) -> Void)? { get set }
-    var onActionID: ((_ actionID: Int, Error?) -> Void)? { get set }
+    var onActionID: ((_ actionID: NINResult<Int>, Error?) -> Void)? { get set }
     var onProgress: ((_ queueID: String, _ position: Int, Events, Error?) -> Void)? { get set }
     var onChannelJoined: Completion? { get set }
-    var onActionSevers: ((_ actionID: Int, _ stunServers: [WebRTCServerInfo]?, _ turnServers: [WebRTCServerInfo]?) -> Void)? { get set }
-    var onActionFileInfo: ((_ actionID: Int, _ fileInfo: [String:Any]?, Error?) -> Void)? { get set }
-    var onActionChannel: ((_ actionID: Int, _ channelID: String) -> Void)? { get set }
+    var onActionSevers: ((_ actionID: NINResult<Int>, _ stunServers: [WebRTCServerInfo]?, _ turnServers: [WebRTCServerInfo]?) -> Void)? { get set }
+    var onActionFileInfo: ((_ actionID: NINResult<Int>, _ fileInfo: [String:Any]?, Error?) -> Void)? { get set }
+    var onActionChannel: ((_ actionID: NINResult<Int>, _ channelID: String) -> Void)? { get set }
     var didEndSession: (() -> Void)? { get set }
 }
 
@@ -33,12 +33,12 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     // MARK: - NINChatSessionManagerInternalActions
     
     internal var onActionSessionEvent: ((Events, Error?) -> Void)?
-    internal var onActionID: ((Int, Error?) -> Void)?
+    internal var onActionID: ((NINResult<Int>, Error?) -> Void)?
     internal var onProgress: ((String, Int, Events, Error?) -> Void)?
     internal var onChannelJoined: Completion?
-    internal var onActionSevers: ((Int, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void)?
-    internal var onActionFileInfo: ((Int, [String:Any]?, Error?) -> Void)?
-    internal var onActionChannel: ((Int, String) -> Void)?
+    internal var onActionSevers: ((NINResult<Int>, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void)?
+    internal var onActionFileInfo: ((NINResult<Int>, [String:Any]?, Error?) -> Void)?
+    internal var onActionChannel: ((NINResult<Int>, String) -> Void)?
     internal var didEndSession: (() -> Void)?
     
     // MARK: - NINChatSessionManagerClosureHandler
@@ -166,15 +166,13 @@ extension NINChatSessionManagerImpl {
         guard let realmId = self.siteConfiguration.audienceRealm else { throw NINSessionExceptions.invalidRealmConfiguration }
         self.realmID = realmId
         
-        let sessionParam = NINLowLevelClientProps.initiate
+        let sessionParam = NINLowLevelClientProps.initiate()
         if let secret = self.siteSecret {
-            sessionParam.setSite(secret: secret)
+            sessionParam.siteSecret = .success(secret)
         }
         
         if let userName = self.siteConfiguration.username {
-            let attr = NINLowLevelClientProps.initiate
-            attr.set(name: userName)
-            sessionParam.setUser(attributes: attr)
+            sessionParam.userAttributes = .success(NINLowLevelClientProps.initiate(name: userName))
         }
         
         let messageType = NINLowLevelClientStrings.initiate
@@ -184,7 +182,7 @@ extension NINChatSessionManagerImpl {
         messageType.append(MessageType.rtc.rawValue)
         messageType.append(MessageType.ui.rawValue)
         messageType.append(MessageType.info.rawValue)
-        sessionParam.set(messageTypes: messageType)
+        sessionParam.messageTypes = .success(messageType)
         
         self.session = NINLowLevelClientSession()
         self.session?.setAddress(self.serverAddress)
@@ -198,11 +196,11 @@ extension NINChatSessionManagerImpl {
     func list(queues ID: [String]?, completion: @escaping CompletionWithError) throws {
         guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
 
-        let param = NINLowLevelClientProps.initiate
-        param.set_realmQueues()
-        param.setRealm(id: realmID!)
+        let param = NINLowLevelClientProps.initiate(action: .describeRealmQueues)
+        param.realmID = .success(realmID!)
+
         if let queues = ID {
-            param.setQueues(id: queues.reduce(into: NINLowLevelClientStrings.initiate) { list, id in
+            param.queuesID = .success(queues.reduce(into: NINLowLevelClientStrings.initiate) { list, id in
                 list.append(id)
             })
         }
@@ -227,11 +225,11 @@ extension NINChatSessionManagerImpl {
             if self.currentQueueID == nil {
                 guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
                 
-                let param = NINLowLevelClientProps.initiate
-                param.set_requestAudience()
-                param.setQueue(id: ID)
+                let param = NINLowLevelClientProps.initiate(action: .requestAudience)
+                param.queueID = .success(ID)
+
                 if let audienceMetadata = self.audienceMetadata {
-                    param.set(metadata: audienceMetadata)
+                    param.metadata = .success(audienceMetadata)
                 }
                 do {
                     _ = try session.send(param)
@@ -277,14 +275,12 @@ extension NINChatSessionManagerImpl {
     /// Retrieves the WebRTC ICE STUN/TURN server details
     func beginICE(completion: @escaping ((Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void)) throws {
         guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
-        let param = NINLowLevelClientProps.initiate
-        param.set_beginICE()
+        let param = NINLowLevelClientProps.initiate(action: .beginICE)
         
         do {
             let actionID = try session.send(param)
-            self.onActionSevers = { id, stunServers, turnServers in
-                guard id == actionID else { return }
-                
+            self.onActionSevers = { result, stunServers, turnServers in
+                guard case let .success(id) = result, actionID == id else { return }
                 completion(nil, stunServers, turnServers)
             }
         } catch {
@@ -326,14 +322,13 @@ extension NINChatSessionManagerImpl {
         guard let currentChannel = self.currentChannelID else { throw NINSessionExceptions.noActiveQueue }
         guard let userID = self.myUserID else { throw NINSessionExceptions.noActiveUserID }
         
-        let memberAttributes = NINLowLevelClientProps.initiate
-        memberAttributes.set(isWriting: isWriting)
+        let memberAttributes = NINLowLevelClientProps.initiate()
+        memberAttributes.writing = .success(isWriting)
         
-        let param = NINLowLevelClientProps.initiate
-        param.set_updateMember()
-        param.setChannel(id: currentChannel)
-        param.setUser(id: userID)
-        param.set(member: memberAttributes)
+        let param = NINLowLevelClientProps.initiate(action: .updateMember)
+        param.channelID = .success(currentChannel)
+        param.userID = .success(userID)
+        param.channelMemberAttributes = .success(memberAttributes)
         
         do {
             let actionID = try session.send(param)
@@ -363,13 +358,10 @@ extension NINChatSessionManagerImpl {
         guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
         guard let currentChannel = self.currentChannelID else { throw NINSessionExceptions.noActiveChannel }
         
-        let fileAttributes = NINLowLevelClientProps.initiate
-        fileAttributes.set(name: attachment)
-        
-        let param = NINLowLevelClientProps.initiate
-        param.set_sendFile()
-        param.setFile(attributes: fileAttributes)
-        param.setChannel(id: currentChannel)
+        let fileAttributes = NINLowLevelClientProps.initiate(name: attachment)
+        let param = NINLowLevelClientProps.initiate(action: .sendFile)
+        param.fileAttributes = .success(fileAttributes)
+        param.channelID = .success(currentChannel)
         
         let payload = NINLowLevelClientPayload.initiate
         payload.append(data)
@@ -390,19 +382,18 @@ extension NINChatSessionManagerImpl {
         guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
         guard let currentChannel = self.currentChannelID else { throw NINSessionExceptions.noActiveChannel }
         
-        let param = NINLowLevelClientProps.initiate
-        param.set_sendMessage()
-        param.set(messageType: type.rawValue)
-        param.setChannel(id: currentChannel)
+        let param = NINLowLevelClientProps.initiate(action: .sendMessage)
+        param.messageType = .success(type)
+        param.channelID = .success(currentChannel)
         
         if type == .metadata, let _ = (payload["data"] as? [String:String])?["rating"] {
-            param.set(recipients: NINLowLevelClientStrings.initiate)
-            param.set(messageFold: false)
+            param.recipients = .success(NINLowLevelClientStrings.initiate)
+            param.messageFold = .success(false)
         }
         
         if type.isRTC {
             /// Add message_ttl to all rtc signaling messages
-            param.set(messageTTL: 10)
+            param.messageTTL = .success(10)
         }
         
         do {
@@ -426,9 +417,8 @@ extension NINChatSessionManagerImpl {
         guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
         guard let currentChannel = self.currentChannelID else { throw NINSessionExceptions.noActiveChannel }
         
-        let param = NINLowLevelClientProps.initiate
-        param.set_loadHistory()
-        param.setChannel(id: currentChannel)
+        let param = NINLowLevelClientProps.initiate(action: .loadHistory)
+        param.channelID = .success(currentChannel)
         
         do {
             let actionID = try session.send(param)
@@ -445,16 +435,13 @@ extension NINChatSessionManagerImpl {
     // Asynchronously retrieves file info
     func describe(file id: String, completion: @escaping ((Error?, [String:Any]?) -> Void)) throws {
         guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
-        
-        let param = NINLowLevelClientProps.initiate
-        param.set_describeFile()
-        param.setFile(id: id)
-        
+        let param = NINLowLevelClientProps.initiate(action: .describeFile)
+        param.fileID = .success(id)
+
         do {
             let actionID = try session.send(param)
-            self.onActionFileInfo = { id, fileInfo, error in
-                guard id == actionID else { return }
-                
+            self.onActionFileInfo = { result, fileInfo, error in
+                guard case let .success(id) = result, actionID == id else { return }
                 completion(error, fileInfo)
             }
         } catch {

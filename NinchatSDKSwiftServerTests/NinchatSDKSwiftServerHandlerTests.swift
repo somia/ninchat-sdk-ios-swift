@@ -35,7 +35,7 @@ final class NinchatSDKSwiftServerHandlerTests: XCTestCase {
 
 extension NinchatSDKSwiftServerHandlerTests: NINLowLevelClientSessionEventHandlerProtocol {
     func onSessionEvent(_ params: NINLowLevelClientProps?) {
-        let event = try? params?.event()
+        let event = params?.event.value
         XCTAssertNotNil(event)
     
         let eventType = Events(rawValue: event!)
@@ -50,7 +50,7 @@ extension NinchatSDKSwiftServerHandlerTests: NINLowLevelClientEventHandlerProtoc
         XCTAssertNotNil(params)
         XCTAssertNotNil(payload)
     
-        let event = try? params?.event()
+        let event = params?.event.value
         XCTAssertNotNil(event)
     
         let eventType = Events(rawValue: event!)
