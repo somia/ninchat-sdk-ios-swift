@@ -172,8 +172,7 @@ extension NINChatSessionManagerImpl {
         }
         
         if let userName = self.siteConfiguration.username {
-            let attr = NINLowLevelClientProps.initiate(name: userName)
-            sessionParam.setUser(attributes: attr)
+            sessionParam.userAttributes = .success(NINLowLevelClientProps.initiate(name: userName))
         }
         
         let messageType = NINLowLevelClientStrings.initiate
@@ -183,7 +182,7 @@ extension NINChatSessionManagerImpl {
         messageType.append(MessageType.rtc.rawValue)
         messageType.append(MessageType.ui.rawValue)
         messageType.append(MessageType.info.rawValue)
-        sessionParam.set(messageTypes: messageType)
+        sessionParam.messageTypes = .success(messageType)
         
         self.session = NINLowLevelClientSession()
         self.session?.setAddress(self.serverAddress)
@@ -325,11 +324,11 @@ extension NINChatSessionManagerImpl {
         guard let userID = self.myUserID else { throw NINSessionExceptions.noActiveUserID }
         
         let memberAttributes = NINLowLevelClientProps.initiate()
-        memberAttributes.set(isWriting: isWriting)
+        memberAttributes.writing = .success(isWriting)
         
         let param = NINLowLevelClientProps.initiate(action: .updateMember)
         param.channelID = .success(currentChannel)
-        param.setUser(id: userID)
+        param.userID = .success(userID)
         param.set(member: memberAttributes)
         
         do {
@@ -385,17 +384,17 @@ extension NINChatSessionManagerImpl {
         guard let currentChannel = self.currentChannelID else { throw NINSessionExceptions.noActiveChannel }
         
         let param = NINLowLevelClientProps.initiate(action: .sendMessage)
-        param.set(messageType: type.rawValue)
+        param.messageType = .success(type)
         param.channelID = .success(currentChannel)
         
         if type == .metadata, let _ = (payload["data"] as? [String:String])?["rating"] {
-            param.set(recipients: NINLowLevelClientStrings.initiate)
-            param.set(messageFold: false)
+            param.recipients = .success(NINLowLevelClientStrings.initiate)
+            param.messageFold = .success(false)
         }
         
         if type.isRTC {
             /// Add message_ttl to all rtc signaling messages
-            param.set(messageTTL: 10)
+            param.messageTTL = .success(10)
         }
         
         do {

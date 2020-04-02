@@ -91,7 +91,7 @@ extension NINLowLevelClientProps: NINLowLevelQueueProps {
     var queueName: NINResult<String> {
         switch self.queueAttributes {
         case .success(let attributes):
-             return attributes.value(forKey: "name")
+             return attributes.name
         case .failure(let error):
             return .failure(error)
         }
@@ -176,18 +176,217 @@ extension NINLowLevelClientProps: NINLowLevelChannelProps {
         get { self.value(forKey: "member_attrs") }
         set { self.set(value: newValue.value, forKey: "member_attrs") }
     }
+}
 
+protocol NINLowLevelUserProps {
+    var userAuth: NINResult<String> { get }
+    var iconURL: NINResult<String> { get }
+    var displayName: NINResult<String> { get }
+    var realName: NINResult<String> { get }
+    var isGuest: NINResult<Bool> { get }
 
+    var userID: NINResult<String> { set get }
+    var userAttributes: NINResult<NINLowLevelClientProps> { set get }
+}
+
+extension NINLowLevelClientProps: NINLowLevelUserProps {
+    var userAuth: NINResult<String> {
+        get { self.value(forKey: "user_auth") }
+    }
+
+    var iconURL: NINResult<String> {
+        get { self.value(forKey: "iconurl") }
+    }
+
+    var displayName: NINResult<String> {
+        get { self.name }
+    }
+
+    var realName: NINResult<String> {
+        get { self.value(forKey: "realname") }
+    }
+
+    var isGuest: NINResult<Bool> {
+        get { self.value(forKey: "guest") }
+    }
+
+    var userID: NINResult<String> {
+        get { self.value(forKey: "user_id") }
+        set { self.set(value: newValue.value, forKey: "user_id") }
+    }
+
+    var userAttributes: NINResult<NINLowLevelClientProps> {
+        get { self.value(forKey: "user_attrs") }
+        set { self.set(value: newValue.value, forKey: "user_attrs") }
+    }
+}
+
+protocol NINLowLevelMessageProps {
+    var messageID: NINResult<String> { get }
+    var messageUserID: NINResult<String> { get }
+    var messageTime: NINResult<Double> { get }
+
+    var messageType: NINResult<MessageType?> { set get }
+    var messageTypes: NINResult<NINLowLevelClientStrings> { set get }
+    var writing: NINResult<Bool> { set get }
+    var recipients: NINResult<NINLowLevelClientStrings> { set get }
+    var messageFold: NINResult<Bool> { set get }
+    var messageTTL: NINResult<Int> { set get }
+}
+
+extension NINLowLevelClientProps: NINLowLevelMessageProps {
+    var messageID: NINResult<String> {
+        get { self.value(forKey: "message_id") }
+    }
+
+    var messageUserID: NINResult<String> {
+        get { self.value(forKey: "message_user_id") }
+    }
+
+    var messageTime: NINResult<Double> {
+        get { self.value(forKey: "message_time") }
+    }
+
+    var messageType: NINResult<MessageType?> {
+        get {
+            let messageType: NINResult<String>? = self.value(forKey: "message_type")
+            if messageType == nil { return .success(nil) }
+            
+            switch messageType! {
+            case .success(let type):
+                return .success(MessageType(rawValue: type))
+            case .failure(let error):
+                return .failure(error)
+            }
+        }
+        set {
+            guard let type = newValue.value else { return }
+            self.set(value: type.rawValue, forKey: "message_type") 
+        }
+    }
+
+    var messageTypes: NINResult<NINLowLevelClientStrings> {
+        get { self.value(forKey: "message_types") }
+        set { self.set(value: newValue.value, forKey: "message_types") }
+    }
+
+    var writing: NINResult<Bool> {
+        get { self.value(forKey: "writing") }
+        set { self.set(value: newValue.value, forKey: "writing") }
+    }
+
+    var recipients: NINResult<NINLowLevelClientStrings> {
+        get { self.value(forKey: "message_recipient_ids") }
+        set { self.set(value: newValue.value, forKey: "message_recipient_ids") }
+    }
+
+    var messageFold: NINResult<Bool> {
+        get { self.value(forKey: "message_fold") }
+        set { self.set(value: newValue.value, forKey: "message_fold") }
+    }
+
+    var messageTTL: NINResult<Int> {
+        get { self.value(forKey: "message_ttl") }
+        set { self.set(value: newValue.value, forKey: "message_ttl") }
+    }
+}
+
+protocol NINLowLevelICEInfoProps {
+    var serversURL: NINResult<NINLowLevelClientStrings> { get }
+    var stunServers: NINResult<NINLowLevelClientObjects> { get }
+    var turnServers: NINResult<NINLowLevelClientObjects> { get }
+    var usernameTurnServer: NINResult<String> { get }
+    var credentialsTurnServer: NINResult<String> { get }
+}
+
+extension NINLowLevelClientProps: NINLowLevelICEInfoProps {
+    var serversURL: NINResult<NINLowLevelClientStrings> {
+        get { self.value(forKey: "urls") }
+    }
+
+    var stunServers: NINResult<NINLowLevelClientObjects> {
+        get { self.value(forKey: "stun_servers") }
+    }
+
+    var turnServers: NINResult<NINLowLevelClientObjects> {
+        get { self.value(forKey: "turn_servers") }
+    }
+
+    var usernameTurnServer: NINResult<String> {
+        get { self.value(forKey: "username") }
+    }
+
+    var credentialsTurnServer: NINResult<String> {
+        get { self.value(forKey: "credential") }
+    }
+}
+
+protocol NINLowLevelFileInfoProps {
+    var fileURL: NINResult<String> { get }
+    var urlExpiry: NINResult<Date> { get }
+    var thumbnail: NINResult<NINLowLevelClientProps> { get }
+    var thumbnailSize: NINResult<CGSize> { get }
+
+    var fileID: NINResult<String> { set get }
+    var fileAttributes: NINResult<NINLowLevelClientProps> { set get }
+}
+
+extension NINLowLevelClientProps: NINLowLevelFileInfoProps {
+    var fileURL: NINResult<String> {
+        get { self.value(forKey: "file_url") }
+    }
+
+    var urlExpiry: NINResult<Date> {
+        let expiry: NINResult<Double> = self.value(forKey: "url_expiry")
+        switch expiry {
+        case .success(let timeInterval):
+            return .success(Date(timeIntervalSince1970: timeInterval))
+        case .failure(let error):
+            return .failure(error)
+        }
+    }
+
+    var thumbnail: NINResult<NINLowLevelClientProps> {
+        switch self.fileAttributes {
+        case .success(let attributes):
+            return attributes.value(forKey: "thumbnail")
+        case .failure(let error):
+            return .failure(error)
+        }
+    }
+
+    var thumbnailSize: NINResult<CGSize> {
+        switch self.thumbnail {
+        case .success(let thumbnail):
+            let width: NINResult<Int> = thumbnail.value(forKey: "width")
+            let height: NINResult<Int> = thumbnail.value(forKey: "height")
+
+            switch (width, height) {
+            case (.success(let widthValue), .success(let heightValue)):
+                return .success(CGSize(width: widthValue, height: heightValue))
+            default:
+                return .success(CGSize(width: 1.0, height: 1.0))
+            }
+        case .failure(let error):
+            return .failure(error)
+        }
+    }
+
+    var fileID: NINResult<String> {
+        get { self.value(forKey: "file_id") }
+        set { self.set(value: newValue.value, forKey: "file_id") }
+    }
+
+    var fileAttributes: NINResult<NINLowLevelClientProps> {
+        get { self.value(forKey: "file_attrs") }
+        set { self.set(value: newValue.value, forKey: "file_attrs") }
+    }
 }
 
 // MARK: - Properties
 /// Fetching the values can result in a `throw`. This is why we are using functions instead of variables
 
 extension NINLowLevelClientProps {
-    func writing() throws -> Bool {
-        return try self.getBool("writing")
-    }
-    
     func error() -> Error? {
         return NinchatError(code: 1, title: self.getString("error_type"))
     }
@@ -201,92 +400,14 @@ extension NINLowLevelClientProps {
     func actionID() throws -> Int {
         return try self.getInt("action_id")
     }
-    
-    func userID() -> String {
-        return self.getString("user_id")
-    }
-    
-    func messageID() -> String {
-        return self.getString("message_id")
-    }
 
     // MARK: - User Attributes
     
     func memberAttributes() throws -> NINLowLevelClientProps {
         return try self.getObject("member_attrs")
     }
-    
-    func userAttributes() throws -> NINLowLevelClientProps {
-        return try self.getObject("user_attrs")
-    }
-    
-    func userAttributes_IconURL() -> String {
-        return self.getString("iconurl")
-    }
-    
-    func userAttributes_DisplayName() -> String {
-        return self.getString("name")
-    }
-    
-    func userAttributes_RealName() -> String {
-        return self.getString("realname")
-    }
-    
-    func userAttributes_IsGuest() throws -> Bool {
-        return try self.getBool("guest")
-    }
 
-    // MARK: - File
-    
-    func fileURL() -> String {
-        return self.getString("file_url")
-    }
-    
-    func urlExpiry() throws -> Date {
-        let expiry = try self.getDouble("url_expiry")
-        return Date(timeIntervalSince1970: expiry)
-    }
-    
-    func fileAttributes_ThumbnailSize() throws -> CGSize {
-        let thumbnail = try self.getObject("file_attrs").getObject("thumbnail")
-        return CGSize(width: try thumbnail.getInt("width"), height: try thumbnail.getInt("height"))
-    }
-    
-    // MARK: - ICE
-    
-    func serversURLs() throws -> NINLowLevelClientStrings {
-        return try self.getStringArray("urls")
-    }
-    
-    func stunServers() throws -> NINLowLevelClientObjects {
-        return try self.getObjectArray("stun_servers")
-    }
-    
-    func turnServers() throws -> NINLowLevelClientObjects {
-        return try self.getObjectArray("turn_servers")
-    }
-    
-    func turnServers_UserName() -> String {
-        return self.getString("username")
-    }
-    
-    func turnServers_Credential() -> String {
-        return self.getString("credential")
-    }
-    
     // MARK: - Messages
-    
-    func messageType() -> MessageType? {
-        return MessageType(rawValue: self.getString("message_type"))
-    }
-    
-    func messageUserID() -> String {
-        return self.getString("message_user_id")
-    }
-    
-    func messageTime() throws -> Double {
-        return try self.getDouble("message_time")
-    }
 }
 
 // MARK: - Setters
@@ -307,44 +428,8 @@ extension NINLowLevelClientProps {
     
     // MARK: - Members
     
-    func set(isWriting: Bool) {
-        self.setBool("writing", val: isWriting)
-    }
-    
-    func setUser(id: String) {
-        self.setString("user_id", val: id)
-    }
-    
     func set(member attributes: NINLowLevelClientProps) {
         self.setObject("member_attrs", ref: attributes)
-    }
-    
-    // MARK: - Message
-    
-    func set(messageType type: String) {
-        self.setString("message_type", val: type)
-    }
-    
-    func set(recipients: NINLowLevelClientStrings) {
-        self.setStringArray("message_recipient_ids", ref: recipients)
-    }
-    
-    func set(messageFold fold: Bool) {
-        self.setBool("message_fold", val: fold)
-    }
-    
-    func set(messageTTL ttl: Int) {
-        self.setInt("message_ttl", val: ttl)
-    }
-    
-    // MARK: - Session
-
-    func setUser(attributes: NINLowLevelClientProps) {
-        self.setObject("user_attrs", ref: attributes)
-    }
-    
-    func set(messageTypes types: NINLowLevelClientStrings) {
-        self.setStringArray("message_types", ref: types)
     }
 }
 

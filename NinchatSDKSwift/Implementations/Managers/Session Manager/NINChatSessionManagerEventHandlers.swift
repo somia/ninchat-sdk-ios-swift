@@ -55,7 +55,9 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                 case .error:
                     self.onActionSessionEvent?(eventType, param.error())
                 case .sessionCreated:
-                    self.myUserID = param.userID()
+                    if case let .failure(error) = param.userID { throw error }
+
+                    self.myUserID = param.userID.value
                     self.delegate?.log(value: "Session created - my user ID is: \(String(describing: self.myUserID))")
                     self.onActionSessionEvent?(eventType, nil)
                 case .userDeleted:
