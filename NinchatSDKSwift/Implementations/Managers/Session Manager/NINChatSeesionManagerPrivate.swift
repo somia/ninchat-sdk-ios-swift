@@ -16,7 +16,7 @@ extension NINChatSessionManagerImpl {
         queues.removeAll()
         
         let queuesParser = NINChatClientPropsParser()
-        let actionID = try param.actionID()
+        let actionID = param.actionID
     
         do {
             if case let .failure(error) = param.realmQueue { throw error }
@@ -48,7 +48,6 @@ extension NINChatSessionManagerImpl {
         if case let .failure(error) = param.queueID { throw error }
         let queueID = param.queueID.value
 
-
         if case let .failure(error) = param.queuePosition {
             self.queueUpdateBoundClosures.values.forEach({ $0(type, queueID, error) })
         }
@@ -60,7 +59,8 @@ extension NINChatSessionManagerImpl {
             self.queueUpdateBoundClosures.values.forEach({ $0(type, queueID, nil) })
         }
 
-        let actionID = try param.actionID()
+        if case let .failure(error) = param.actionID { throw error }
+        let actionID = param.actionID.value
         if actionID != 0 || type == .queueUpdated {
             self.onProgress?(queueID, position, type, nil)
         }
@@ -79,8 +79,7 @@ extension NINChatSessionManagerImpl {
         if case let .failure(error) = param.urlExpiry { throw error }
         if case let .failure(error) = param.thumbnailSize { throw error }
 
-        let actionID = try param.actionID()
-        self.onActionFileInfo?(actionID, ["aspectRatio": Double(param.thumbnailSize.value.width/param.thumbnailSize.value.height), "url": param.fileURL.value, "urlExpiry": param.urlExpiry.value], nil)
+        self.onActionFileInfo?(param.actionID, ["aspectRatio": Double(param.thumbnailSize.value.width/param.thumbnailSize.value.height), "url": param.fileURL.value, "urlExpiry": param.urlExpiry.value], nil)
     }
     
     internal func didDeleteUser(param: NINLowLevelClientProps) throws {
@@ -91,8 +90,7 @@ extension NINChatSessionManagerImpl {
             delegate?.log(value: "Current user deleted.")
         }
 
-        let actionID = try param.actionID()
-        self.onActionID?(actionID, nil)
+        self.onActionID?(param.actionID, nil)
     }
     
     internal func didJoinChannel(param: NINLowLevelClientProps) throws {
@@ -146,9 +144,7 @@ extension NINChatSessionManagerImpl {
     
     internal func didPartChannel(param: NINLowLevelClientProps) throws {
         if case let .failure(error) = param.channelID { throw error }
-
-        let actionID = try param.actionID()
-        self.onActionChannel?(actionID, param.channelID.value)
+        self.onActionChannel?(param.actionID, param.channelID.value)
     }
     
     internal func didUpdateChannel(param: NINLowLevelClientProps) throws {
@@ -205,8 +201,7 @@ extension NINChatSessionManagerImpl {
             indexArray.map { WebRTCServerInfo(url: serversArray.get($0), username: userName, credential: credential) }
         }).reduce([], +)
 
-        let actionID = try param.actionID()
-        self.onActionSevers?(actionID, stunServers, turnServers)
+        self.onActionSevers?(param.actionID, stunServers, turnServers)
     }
    
     internal func parse(userAttr: NINLowLevelUserProps, userID: String) {
@@ -224,20 +219,21 @@ extension NINChatSessionManagerImpl {
         }
         
         guard currentChannelID != nil || backgroundChannelID != nil else { throw NINSessionExceptions.noActiveChannel }
-        let actionID = try param.actionID()
+        if case let .failure(error) = param.actionID { throw error }
+        let actionID = param.actionID
 
         do {
-            try self.handleInbound(param: param, actionID: actionID, payload: payload)
-            if actionID != 0 { self.onActionID?(actionID, nil) }
+            try self.handleInbound(param: param, actionID: actionID.value, payload: payload)
+            if actionID.value != 0 { self.onActionID?(actionID, nil) }
         } catch {
-            if actionID != 0 { self.onActionID?(actionID, error) }
+            if actionID.value != 0 { self.onActionID?(actionID, error) }
         }
     }
     
     internal func didUpdateMember(param: NINLowLevelClientProps) throws {
         if case let .failure(error) = param.channelID { throw error }
 
-        let actionID = try param.actionID()
+        let actionID = param.actionID
         do {
             let channelID = param.channelID.value
             guard channelID == currentChannelID || channelID == backgroundChannelID else {
@@ -251,8 +247,9 @@ extension NINChatSessionManagerImpl {
             }
             
             if userID != myUserID {
-                if case let .failure(error) = try param.memberAttributes().writing { throw error }
-                let isWriting = try param.memberAttributes().writing.value
+                if case let .failure(error) = param.channelMemberAttributes { throw error }
+                if case let .failure(error) = param.channelMemberAttributes.value.writing { throw error }
+                let isWriting = param.channelMemberAttributes.value.writing.value
                 
                 /// Check if that user already has a 'writing' message
                 let writingMessage = chatMessages.filter({ ($0 as? UserTypingMessage)?.user.userID == userID }).first as? UserTypingMessage
@@ -313,8 +310,8 @@ extension NINChatSessionManagerImpl {
         
         do {
             let actionID = try session.send(param)
-            self.onActionChannel = { id, channelID in
-                guard actionID == id else { return }
+            self.onActionChannel = { result, channelID in
+                guard case let .success(id) = result, actionID == id else { return }
                 completion(nil)
             }
         } catch {
@@ -473,8 +470,6 @@ extension NINChatSessionManagerImpl {
     }
  
     internal func handlerError(param: NINLowLevelClientProps) throws {
-        let actionID = try param.actionID()
-        
-        self.onActionID?(actionID, param.error())
+        self.onActionID?(param.actionID, param.error)
     }
 }

@@ -48,12 +48,14 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
     
     func onSessionEvent(param: NINLowLevelClientProps) {
         do {
-            let event = try param.event()
+            if case let .failure(error) = param.event { throw error }
+
+            let event = param.event.value
             print("session event handler: \(event)")
             if let eventType = Events(rawValue: event) {
                 switch eventType {
                 case .error:
-                    self.onActionSessionEvent?(eventType, param.error())
+                    self.onActionSessionEvent?(eventType, param.error)
                 case .sessionCreated:
                     if case let .failure(error) = param.userID { throw error }
 
@@ -72,9 +74,10 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
     }
     
     func onEvent(param: NINLowLevelClientProps, payload: NINLowLevelClientPayload, lastReplay: Bool) {
-        
         do {
-            let event = try param.event()
+            if case let .failure(error) = param.event { throw error }
+
+            let event = param.event.value
             print("event handler: \(event)")
             if let eventType = Events(rawValue: event) {
                 switch eventType {

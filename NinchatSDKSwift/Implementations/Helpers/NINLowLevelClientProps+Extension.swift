@@ -25,11 +25,7 @@ enum NINLowLevelClientActions: String {
     case beginICE = "begin_ice"
 }
 
-// MARK: - Un-optional initializer
-
 extension NINLowLevelClientProps {
-    /// For some unknown reasons, the `NINLowLevelClientProps` initialization is optional
-    /// The following variable unwrap it
     static func initiate(action: NINLowLevelClientActions? = nil, name: String? = nil) -> NINLowLevelClientProps {
         let props = NINLowLevelClientProps()
 
@@ -46,9 +42,9 @@ extension NINLowLevelClientProps {
 
 protocol NINLowLevelSessionProps {
     var sessionID: NINResult<String> { get }
-//    var actionID: Result<Int> { get }
-//    var error: Error? { get }
-//    var event: Result<String> { get }
+    var actionID: NINResult<Int> { get }
+    var error: Error? { get }
+    var event: NINResult<String> { get }
     var siteSecret: NINResult<String> { set get }
     var name: NINResult<String> { set get }
 
@@ -58,6 +54,20 @@ protocol NINLowLevelSessionProps {
 extension NINLowLevelClientProps: NINLowLevelSessionProps {
     var sessionID: NINResult<String> {
         get { self.value(forKey: "session_id") }
+    }
+
+    var actionID: NINResult<Int> {
+        get { self.value(forKey: "action_id") }
+    }
+
+    var error: Error? {
+        let errorType: NINResult<String> = self.value(forKey: "error_type")
+        if case let .failure(error) = errorType { return error }
+        return NinchatError(code: 1, title: errorType.value)
+    }
+
+    public var event: NINResult<String> {
+        get { self.value(forKey: "event") }
     }
 
     var siteSecret: NINResult<String> {
@@ -383,56 +393,6 @@ extension NINLowLevelClientProps: NINLowLevelFileInfoProps {
     }
 }
 
-// MARK: - Properties
-/// Fetching the values can result in a `throw`. This is why we are using functions instead of variables
-
-extension NINLowLevelClientProps {
-    func error() -> Error? {
-        return NinchatError(code: 1, title: self.getString("error_type"))
-    }
-
-    public func event() throws -> String {
-        return self.getString("event")
-    }
-    
-    // MARK: - ID
-    
-    func actionID() throws -> Int {
-        return try self.getInt("action_id")
-    }
-
-    // MARK: - User Attributes
-    
-    func memberAttributes() throws -> NINLowLevelClientProps {
-        return try self.getObject("member_attrs")
-    }
-
-    // MARK: - Messages
-}
-
-// MARK: - Setters
-
-extension NINLowLevelClientProps {
-    // MARK: - Realm queues
-    
-    // MARK: - File
-    
-    func setFile(id: String) {
-        self.setString("file_id", val: id)
-    }
-    
-    func setFile(attributes: NINLowLevelClientProps) {
-        self.setObject("file_attrs", ref: attributes)
-    }
-
-    
-    // MARK: - Members
-    
-    func set(member attributes: NINLowLevelClientProps) {
-        self.setObject("member_attrs", ref: attributes)
-    }
-}
-
 // MARK: - Helper
 
 extension NINLowLevelClientProps {
@@ -446,7 +406,7 @@ extension NINLowLevelClientProps {
             case is Bool.Type:
                 return .success(try self.getBool(key) as! T)
             case is String.Type:
-                return .success(try self.getString(for: key) as! T)
+                return .success(try self.getString(key) as! T)
             case is NINLowLevelClientProps.Type:
                 return .success(try self.getObject(key) as! T)
             case is NINLowLevelClientStrings.Type:
@@ -502,15 +462,11 @@ extension NINLowLevelClientProps {
         return value.boolValue
     }
 
-    private func getString(_ key: String) -> String {
-        return self.getString(key, error: nil)
-    }
-
-    private func getString(for key: String) throws -> String {
-        var error: AutoreleasingUnsafeMutablePointer<NSError?>?
-        let value = self.getString(key, error: error)
-        if let err = error as? Error {
-            throw err
+    private func getString(_ key: String) throws -> String {
+        var error: NSError? = nil
+        let value = self.getString(key, error: &error)
+        if let err = error {
+            throw err as Error
         }
         return value
     }
