@@ -327,10 +327,7 @@ extension NINChatSessionManagerImpl {
         
         do {
             let actionID = try session.send(param)
-            self.onActionChannel = { result, channelID in
-                guard case let .success(id) = result, actionID == id else { return }
-                completion(nil)
-            }
+            self.bindChannel(action: actionID, closure: completion)
         } catch {
             completion(error)
         }

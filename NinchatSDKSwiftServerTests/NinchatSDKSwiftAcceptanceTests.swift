@@ -23,7 +23,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         }
     }
 
-    func testServer_1_fetchSiteConfigurations() {
+    func testServer_0_fetchSiteConfigurations() {
         let expect = self.expectation(description: "Expected to fetch site configurations")
         self.sessionManager.fetchSiteConfiguration(config: Session.configurationKey, environments: []) { error in
             XCTAssertNil(error)
@@ -36,7 +36,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         wait(for: [expect], timeout: 10.0)
     }
 
-    func testServer_2_openSession() {
+    func testServer_1_openSession() {
         let expect = self.expectation(description: "Expected to open a session")
         do {
             try self.sessionManager.openSession { credentials, canResume, error in
@@ -66,7 +66,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         wait(for: [expect], timeout: 10.0)
     }
 
-    func testServer_3_listQueues() {
+    func testServer_2_listQueues() {
         let expect = self.expectation(description: "Expected to get objects for queue ids")
         do {
             try self.sessionManager.list(queues: self.sessionManager.siteConfiguration.audienceQueues) { error in
@@ -83,7 +83,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         wait(for: [expect], timeout: 15.0)
     }
 
-    func testServer_4_joinQueue() {
+    func testServer_3_joinQueue() {
         let expect_join = self.expectation(description: "Expected to join the queue")
         let expect_progress = self.expectation(description: "Expected to get progress update for the first time")
     
@@ -105,7 +105,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         wait(for: [expect_join, expect_progress], timeout: 150.0)
     }
     
-    func testServer_5_startVideoChat() {
+    func testServer_4_startVideoChat() {
         let expect_call = self.expectation(description: "Expected to get a call request")
         let expect_offer = self.expectation(description: "Expected to get a call offer")
         let expect_hangup = self.expectation(description: "Expected to hangup the offer")
@@ -152,7 +152,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         waitForExpectations(timeout: 30.0)
     }
 
-    func testServer_6_leaveQueue() {
+    func testServer_5_leaveQueue() {
         let expect = self.expectation(description: "Expected to leave current queue")
         self.sessionManager.leave { error in
             XCTAssertNil(error)
@@ -162,7 +162,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         wait(for: [expect], timeout: 10.0)
     }
 
-    func testServer_7_resumeSession() {
+    func testServer_6_resumeSession() {
         let expect = self.expectation(description: "Expected to continue a session using credentials")
         expect.assertForOverFulfill = false
 
@@ -192,7 +192,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         wait(for: [expect], timeout: 10.0)
     }
 
-    func testServer_8_transferQueue() {
+    func testServer_7_transferQueue() {
         try! self.simulateTextMessage("Now transfer to another queue to continue tests")
         let expect = self.expectation(description: "Expected to get transferred to another queue")
 
@@ -222,7 +222,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         wait(for: [expect], timeout: 50.0)
     }
 
-    func testServer_9_leaveQueue() {
+    func testServer_8_leaveQueue() {
         let expect = self.expectation(description: "Expected to leave current queue")
         self.sessionManager.leave { error in
             XCTAssertNil(error)
@@ -232,7 +232,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         wait(for: [expect], timeout: 10.0)
     }
     
-    func testServer_10_deallocate() {
+    func testServer_9_deallocate() {
         let expect = self.expectation(description: "Expected to delete user and close the session")
         do {
             try self.sessionManager.deleteCurrentUser { error in

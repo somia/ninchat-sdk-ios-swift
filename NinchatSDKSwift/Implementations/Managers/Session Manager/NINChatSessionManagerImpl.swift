@@ -44,6 +44,9 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     // MARK: - NINChatSessionManagerClosureHandler
 
     internal var actionBoundClosures: [Int:((Error?) -> Void)] = [:]
+    internal var actionFileBoundClosures: [Int:((Error?, [String:Any]?) -> Void)] = [:]
+    internal var actionChannelBoundClosures: [Int:((Error?) -> Void)] = [:]
+    internal var actionICEServersBoundClosures: [Int:((Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void)] = [:]
     internal var queueUpdateBoundClosures: [String:((Events, String, Error?) -> Void)] = [:]
 
     // MARK: - NINChatSessionConnectionManager variables
@@ -302,10 +305,7 @@ extension NINChatSessionManagerImpl {
         
         do {
             let actionID = try session.send(param)
-            self.onActionSevers = { result, stunServers, turnServers in
-                guard case let .success(id) = result, actionID == id else { return }
-                completion(nil, stunServers, turnServers)
-            }
+            self.bindICEServer(action: actionID, closure: completion)
         } catch {
             completion(error, nil, nil)
         }
@@ -459,11 +459,10 @@ extension NINChatSessionManagerImpl {
         param.fileID = .success(id)
 
         do {
+            /// In case of getting multiple files to describle, the actionID points to the latest id only
+            /// This could cause to lose of previous files to be described
             let actionID = try session.send(param)
-            self.onActionFileInfo = { result, fileInfo, error in
-                guard case let .success(id) = result, actionID == id else { return }
-                completion(error, fileInfo)
-            }
+            self.bindFile(action: actionID, closure: completion)
         } catch {
             completion(error, nil)
         }

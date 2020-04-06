@@ -7,6 +7,8 @@
 import Foundation
 
 final class FileInfo {
+    private let queue: DispatchQueue
+
     var fileID: String!
     var name: String!
     var mimeType: String!
@@ -24,6 +26,8 @@ final class FileInfo {
         self.size = size
         self.url = url
         self.urlExpiry = urlExpiry
+
+        self.queue = DispatchQueue(label: "load_file_\(fileID)", qos: .background)
     }
     
     // MARK: - Getters
@@ -49,29 +53,35 @@ final class FileInfo {
     func updateInfo(session: NINChatSessionAttachment, completion: @escaping ((Error?, _ didRefreshNetwork: Bool) -> Void)) {
         /// The URL must not expire within the next 15 minutes
         let comparisonDate = Date(timeIntervalSinceNow: -(15*60))
-        
+
         guard self.url == nil || self.urlExpiry == nil || self.urlExpiry?.compare(comparisonDate) == .orderedAscending else {
             debugger("No need to update file, it is up to date.")
             completion(nil, false)
             return
         }
-        
-        debugger("Must update file info; call describe_file")
-        do {
-            try session.describe(file: self.fileID) { [weak self] error, fileInfo in
-                if let error = error {
-                    completion(error, false)
-                } else if let info = fileInfo {
-                    let file = FileInfo(json: info)
-                    
-                    self?.url = file.url
-                    self?.urlExpiry = file.urlExpiry
-                    self?.aspectRatio = file.aspectRatio
-                    completion(nil, true)
+
+        debugger("Must update file info; call describe_file with id: \(self.fileID ?? "")")
+        self.queue.async { [weak self] in
+            guard let id = self?.fileID else { return }
+
+            do {
+                try session.describe(file: id) { error, fileInfo in
+                    debugger("described file with id: \(id)")
+
+                    if let error = error {
+                        completion(error, false)
+                    } else if let info = fileInfo {
+                        let file = FileInfo(json: info)
+
+                        self?.url = file.url
+                        self?.urlExpiry = file.urlExpiry
+                        self?.aspectRatio = file.aspectRatio
+                        completion(nil, true)
+                    }
                 }
+            } catch {
+                completion(error, false)
             }
-        } catch {
-            completion(error, false)
         }
     }
     
