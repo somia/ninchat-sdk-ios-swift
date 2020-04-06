@@ -32,6 +32,7 @@ protocol NINChatMessageProtocol {
     func send(action: ComposeContentViewProtocol, completion: @escaping ((Error?) -> Void))
     func send(attachment: String, data: Data, completion: @escaping ((Error?) -> Void))
     func send(type: MessageType, payload: [String:String], completion: @escaping ((Error?) -> Void))
+    func loadHistory(completion: @escaping ((Error?) -> Void))
 }
 
 protocol NINChatViewModel: NINChatRTCProtocol, NINChatStateProtocol, NINChatMessageProtocol {
@@ -178,6 +179,14 @@ extension NINChatViewModelImpl {
     
     func updateWriting(state: Bool) {
         try? self.sessionManager.update(isWriting: state, completion: { _ in })
+    }
+
+    func loadHistory(completion: @escaping ((Error?) -> Void)) {
+        do {
+            try self.sessionManager.loadHistory(completion: completion)
+        } catch {
+            completion(error)
+        }
     }
 }
 

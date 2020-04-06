@@ -12,7 +12,17 @@ import NinchatLowLevelClient
 /// Tests are run with some configuration to run and open 'dev' environment
 class NinchatSDKSwiftAcceptanceTests: XCTestCase {
     private var sessionManager = Session.Manager
-    
+    private var credentials: NINSessionCredentials! {
+        get {
+            let dict = UserDefaults.standard.value(forKey: "test_credentials") as! [AnyHashable: Any]
+            return try! JSONDecoder().decode(NINSessionCredentials.self, from: dict.toData!)
+        }
+        set {
+            UserDefaults.standard.setValue(newValue.toDictionary, forKey: "test_credentials")
+            UserDefaults.standard.synchronize()
+        }
+    }
+
     func testServer_1_fetchSiteConfigurations() {
         let expect = self.expectation(description: "Expected to fetch site configurations")
         self.sessionManager.fetchSiteConfiguration(config: Session.configurationKey, environments: []) { error in
@@ -23,25 +33,37 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
             expect.fulfill()
         }
 
-        waitForExpectations(timeout: 5.0)
+        wait(for: [expect], timeout: 10.0)
     }
 
     func testServer_2_openSession() {
         let expect = self.expectation(description: "Expected to open a session")
         do {
-            try self.sessionManager.openSession { error in
+            try self.sessionManager.openSession { credentials, canResume, error in
                 XCTAssertNil(error)
+                XCTAssertNotNil(credentials)
+                XCTAssertTrue(canResume)
             }
-            self.sessionManager.onActionSessionEvent = { event, error in
+            self.sessionManager.onActionSessionEvent = { credentials, event, error in
                 XCTAssertNil(error)
                 XCTAssertEqual(event, Events.sessionCreated)
+
+                XCTAssertNotNil(credentials)
+                XCTAssertNotNil(credentials?.userID)
+                XCTAssertNotEqual(credentials?.userID, "")
+                XCTAssertNotNil(credentials?.userAuth)
+                XCTAssertNotEqual(credentials?.userAuth, "")
+                XCTAssertNotNil(credentials?.sessionID)
+                XCTAssertNotEqual(credentials?.sessionID, "")
+
+                self.credentials = credentials!
                 expect.fulfill()
             }
         } catch {
             XCTFail(error.localizedDescription)
         }
 
-        waitForExpectations(timeout: 5.0)
+        wait(for: [expect], timeout: 10.0)
     }
 
     func testServer_3_listQueues() {
@@ -58,7 +80,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
             XCTFail(error.localizedDescription)
         }
 
-        waitForExpectations(timeout: 15.0)
+        wait(for: [expect], timeout: 15.0)
     }
 
     func testServer_4_joinQueue() {
@@ -80,7 +102,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         }
 
         /// The test needs a manual interaction from server to fulfills all expectations
-        waitForExpectations(timeout: 150.0)
+        wait(for: [expect_join, expect_progress], timeout: 150.0)
     }
     
     func testServer_5_startVideoChat() {
@@ -129,11 +151,52 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         /// wait until supervisor initiate a call
         waitForExpectations(timeout: 30.0)
     }
-    
-    func testServer_6_transferQueue() {
+
+    func testServer_6_leaveQueue() {
+        let expect = self.expectation(description: "Expected to leave current queue")
+        self.sessionManager.leave { error in
+            XCTAssertNil(error)
+            expect.fulfill()
+        }
+
+        wait(for: [expect], timeout: 10.0)
+    }
+
+    func testServer_7_resumeSession() {
+        let expect = self.expectation(description: "Expected to continue a session using credentials")
+        expect.assertForOverFulfill = false
+
+        do {
+            self.sessionManager.onMessageAdded = { _ in
+                expect.fulfill()
+            }
+
+            try self.sessionManager.continueSession(credentials: self.credentials) { newCredentials, canResume, error in
+                XCTAssertNil(error)
+                XCTAssertNotNil(newCredentials)
+                /// The new credentials contains only the new session ID
+                XCTAssertEqual(newCredentials?.userID, self.credentials.userID, "The new credentials should come with the same user id")
+                XCTAssertEqual(newCredentials?.userAuth, "", "The new credentials should come with an empty user auth")
+                XCTAssertNotEqual(newCredentials?.sessionID, self.credentials.sessionID, "The new credentials should come with the new session id")
+
+                XCTAssertTrue(canResume)
+            }
+
+            try self.sessionManager.loadHistory { error in
+                XCTAssertNil(error)
+            }
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+
+        wait(for: [expect], timeout: 10.0)
+    }
+
+    func testServer_8_transferQueue() {
         try! self.simulateTextMessage("Now transfer to another queue to continue tests")
         let expect = self.expectation(description: "Expected to get transferred to another queue")
-        
+
+        self.sessionManager.onMessageAdded = nil
         self.sessionManager.bindQueueUpdate(closure: { events, queueID, error in
             XCTAssertNil(error)
             XCTAssertNotNil(events)
@@ -156,20 +219,20 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         }
         
         /// The test needs a manual interaction from server to fulfills all expectations
-        waitForExpectations(timeout: 50.0)
+        wait(for: [expect], timeout: 50.0)
     }
-    
-    func testServer_7_leaveQueue() {
+
+    func testServer_9_leaveQueue() {
         let expect = self.expectation(description: "Expected to leave current queue")
         self.sessionManager.leave { error in
             XCTAssertNil(error)
             expect.fulfill()
         }
-    
-        waitForExpectations(timeout: 5.0)
+
+        wait(for: [expect], timeout: 10.0)
     }
     
-    func testServer_8_deallocate() {
+    func testServer_10_deallocate() {
         let expect = self.expectation(description: "Expected to delete user and close the session")
         do {
             try self.sessionManager.deleteCurrentUser { error in
@@ -181,8 +244,8 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         } catch {
             XCTFail(error.localizedDescription)
         }
-    
-        waitForExpectations(timeout: 5.0)
+
+        wait(for: [expect], timeout: 10.0)
     }
 }
 

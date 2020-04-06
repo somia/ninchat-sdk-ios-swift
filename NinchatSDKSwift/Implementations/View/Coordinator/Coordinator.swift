@@ -11,7 +11,7 @@ import WebRTC
 
 protocol Coordinator: class {
     init(with session: NINChatSessionSwift)
-    func start(with queue: String?, within navigation: UINavigationController) -> UIViewController?
+    func start(with queue: String?, resumeSession: Bool, within navigation: UINavigationController) -> UIViewController?
 }
 
 final class NINCoordinator: Coordinator {
@@ -37,9 +37,11 @@ final class NINCoordinator: Coordinator {
         self.session = session
     }
     
-    func start(with queue: String?, within navigation: UINavigationController) -> UIViewController? {
+    func start(with queue: String?, resumeSession: Bool, within navigation: UINavigationController) -> UIViewController? {
         self.navigationController = navigation
-        if let queue = queue {
+        if resumeSession {
+            return joinChatViewController()
+        } else if let queue = queue {
             return joinAutomatically(for: queue)
         }
         return showJoinOptions()
@@ -63,39 +65,12 @@ extension NINCoordinator {
     
     @discardableResult
     internal func showChatViewController() -> UIViewController {
-        let viewModel: NINChatViewModel = NINChatViewModelImpl(sessionManager: self.sessionManager)
-        let videoDelegate: NINRTCVideoDelegate = NINRTCVideoDelegateImpl()
-        let mediaDelegate: NINPickerControllerDelegate = chatMediaPicker(viewModel)
-        let chatViewController: NINChatViewController = storyboard.instantiateViewController()
-        chatViewController.viewModel = viewModel
-        chatViewController.session = session
-        chatViewController.chatDataSourceDelegate = chatDataSourceDelegate(viewModel)
-        chatViewController.chatVideoDelegate = videoDelegate
-        chatViewController.chatRTCDelegate = chatRTCDelegate(videoDelegate)
-        chatViewController.chatMediaPickerDelegate = mediaDelegate
-        
-        chatViewController.onOpenGallery = { [weak self] source in
-            DispatchQueue.main.async {
-                let controller = UIImagePickerController()
-                controller.sourceType = source
-                controller.mediaTypes = [kUTTypeImage, kUTTypeMovie] as [String]
-                controller.allowsEditing = true
-                controller.delegate = mediaDelegate
-
-                self?.navigationController?.present(controller, animated: true, completion: nil)
-            }
-        }
-        chatViewController.onBackToQueue = { [weak self] in
-            self?.navigationController?.popViewController(animated: true)
-        }
-        chatViewController.onChatClosed = { [weak self] in
-            self?.showRatingViewController()
-        }
-        
+        let chatViewController = joinChatViewController()
         self.navigationController?.pushViewController(chatViewController, animated: true)
+
         return chatViewController
     }
-    
+
     @discardableResult
     internal func showFullScreenViewController(_ image: UIImage, _ attachment: FileInfo) -> UIViewController? {
         let viewModel: NINFullScreenViewModel = NINFullScreenViewModelImpl(delegate: self.session)
@@ -149,6 +124,40 @@ extension NINCoordinator {
         }
         
         return joinViewController
+    }
+
+    @discardableResult
+    internal func joinChatViewController() -> UIViewController {
+        let viewModel: NINChatViewModel = NINChatViewModelImpl(sessionManager: self.sessionManager)
+        let videoDelegate: NINRTCVideoDelegate = NINRTCVideoDelegateImpl()
+        let mediaDelegate: NINPickerControllerDelegate = chatMediaPicker(viewModel)
+        let chatViewController: NINChatViewController = storyboard.instantiateViewController()
+        chatViewController.viewModel = viewModel
+        chatViewController.session = session
+        chatViewController.chatDataSourceDelegate = chatDataSourceDelegate(viewModel)
+        chatViewController.chatVideoDelegate = videoDelegate
+        chatViewController.chatRTCDelegate = chatRTCDelegate(videoDelegate)
+        chatViewController.chatMediaPickerDelegate = mediaDelegate
+
+        chatViewController.onOpenGallery = { [weak self] source in
+            DispatchQueue.main.async {
+                let controller = UIImagePickerController()
+                controller.sourceType = source
+                controller.mediaTypes = [kUTTypeImage, kUTTypeMovie] as [String]
+                controller.allowsEditing = true
+                controller.delegate = mediaDelegate
+
+                self?.navigationController?.present(controller, animated: true, completion: nil)
+            }
+        }
+        chatViewController.onBackToQueue = { [weak self] in
+            self?.navigationController?.popViewController(animated: true)
+        }
+        chatViewController.onChatClosed = { [weak self] in
+            self?.showRatingViewController()
+        }
+
+        return chatViewController
     }
 }
 

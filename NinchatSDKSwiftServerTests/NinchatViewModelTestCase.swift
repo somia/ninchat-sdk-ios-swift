@@ -57,7 +57,7 @@ extension NinchatViewModelTestCase {
         }
         
         sessionManager.fetchSiteConfiguration(config: Session.configurationKey, environments: nil) { error in
-            try! sessionManager.openSession { error in
+            try! sessionManager.openSession { credentials, canResume, error in
                 completion()
             }
         }

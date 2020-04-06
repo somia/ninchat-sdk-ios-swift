@@ -8,6 +8,7 @@ import Foundation
 import NinchatLowLevelClient
 
 enum Events: String {
+    case channelFound = "channel_found"
     case channelJoined = "channel_joined"
     case channelUpdated = "channel_updated"
     case channelParted = "channel_parted"
@@ -27,6 +28,8 @@ enum Events: String {
     
     case audienceEnqueued = "audience_enqueued"
     case queueUpdated = "queue_updated"
+
+    case connectionSuperseded = "connection_superseded"
 }
 
 protocol NINChatSessionManagerEventHandlers {
@@ -55,13 +58,25 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
             if let eventType = Events(rawValue: event) {
                 switch eventType {
                 case .error:
-                    self.onActionSessionEvent?(eventType, param.error)
+                    self.onActionSessionEvent?(nil, eventType, param.error)
                 case .sessionCreated:
-                    if case let .failure(error) = param.userID { throw error }
-
-                    self.myUserID = param.userID.value
+                    let credentials = try? NINSessionCredentials(params: param)
+                    self.myUserID = credentials?.userID
                     self.delegate?.log(value: "Session created - my user ID is: \(String(describing: self.myUserID))")
-                    self.onActionSessionEvent?(eventType, nil)
+
+                    /// Checks if the session is alive to resume
+                    ///     if possible, update channel members (name, avatar, message threads, etc)
+                    ///     if not, just notify to continue normal process.
+                    if self.canResumeSession(param: param) {
+
+                        try self.describe(channel: self.currentChannelID!) { error in
+                            guard error == nil else { debugger("Error in describing the channel"); return }
+
+                            self.onActionSessionEvent?(credentials, eventType, nil)
+                        }
+                    } else {
+                        self.onActionSessionEvent?(credentials, eventType, nil)
+                    }
                 case .userDeleted:
                     try self.didDeleteUser(param: param)
                 default:
@@ -104,6 +119,8 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                     try self.didUpdateMember(param: param)
                 case .fileFound:
                     try self.didFindFile(param: param)
+                case .channelFound:
+                    try self.didFindChannel(param: param)
                 default:
                     break
                 }

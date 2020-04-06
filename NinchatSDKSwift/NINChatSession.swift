@@ -13,6 +13,8 @@ public protocol NINChatDevHelper {
 }
 
 public protocol NINChatSessionProtocol: NINChatSessionClosure {
+    typealias NinchatSessionCompletion = (NINSessionCredentials?, Error?) -> Void
+
     /**
     * Append information to the user agent string. The string should be in
     * the form "app-name/version" or "app-name/version (more; details)".
@@ -20,12 +22,13 @@ public protocol NINChatSessionProtocol: NINChatSessionClosure {
     * Set this prior to calling startWithCallback:
     */
     var appDetails: String? { get set }
+    var session: NINResult<NINLowLevelClientSession?> { get }
     var delegate: NINChatSessionDelegateSwift? { get set }
-    
+
     init(configKey: String, queueID: String?, environments: [String]?, metadata: NINLowLevelClientProps?)
-    func start(completion: @escaping (Error?) -> Void)
+    func start(completion: @escaping NinchatSessionCompletion) throws
+    func start(credentials: NINSessionCredentials, completion: @escaping NinchatSessionCompletion) throws
     func chatSession(within navigationController: UINavigationController) throws -> UIViewController?
-    func clientSession() throws -> NINLowLevelClientSession?
 }
 
 public final class NINChatSessionSwift: NINChatSessionProtocol, NINChatDevHelper {
@@ -34,7 +37,8 @@ public final class NINChatSessionSwift: NINChatSessionProtocol, NINChatDevHelper
     private var configKey: String!
     private var queueID: String?
     private var environments: [String]?
-    private var started: Bool!
+    private var started: Bool! = false
+    private var resumed: Bool! = false
     private var defaultServerAddress: String {
         #if NIN_USE_TEST_SERVER
             return Constants.kTestServerAddress.rawValue
@@ -63,16 +67,21 @@ public final class NINChatSessionSwift: NINChatSessionProtocol, NINChatDevHelper
     public var overrideImageAsset: ((NINChatSessionSwift, AssetConstants) -> UIImage?)?
     public var overrideColorAsset: ((NINChatSessionSwift, ColorConstants) -> UIColor?)?
     public var didEndSession: ((NINChatSessionSwift) -> Void)?
-    
+    public var didFailToResume: ((NINChatSessionSwift?) -> Bool)?
+
     // MARK: - NINChatSessionProtocol
     
     public weak var delegate: NINChatSessionDelegateSwift?
+    public var session: NINResult<NINLowLevelClientSession?> {
+        guard self.started else { return .failure(NINExceptions.apiNotStarted) }
+        return .success(self.sessionManager.session)
+    }
     public var appDetails: String? {
         didSet {
             sessionManager.appDetails = appDetails
         }
     }
-    
+
     public init(configKey: String, queueID: String? = nil, environments: [String]? = nil, metadata: NINLowLevelClientProps? = nil) {
         self.configKey = configKey
         self.queueID = queueID
@@ -82,73 +91,93 @@ public final class NINChatSessionSwift: NINChatSessionProtocol, NINChatDevHelper
         self.coordinator = NINCoordinator(with: self)
         self.sessionManager = NINChatSessionManagerImpl(session: self, serverAddress: defaultServerAddress, audienceMetadata: metadata)
     }
-    
-    
-    public func clientSession() throws -> NINLowLevelClientSession? {
-        guard self.started else { throw NINExceptions.apiNotStarted }
-        return self.sessionManager.session
-    }
-    
+
     /// Performs these steps:
     /// 1. Fetches the site configuration over a REST call
     /// 2. Using that configuration, starts a new chat session
     /// 3. Retrieves the queues available for this realm (realm id from site configuration)
-    public func start(completion: @escaping (Error?) -> Void) {
-        /// Fetch the site configuration
-        self.fetchSiteConfiguration(completion: completion)
+    public func start(completion: @escaping NinchatSessionCompletion) throws {
+        debugger("Starting a new chat session")
+        self.fetchSiteConfiguration { error in
+            do {
+                try self.openChatSession(completion: completion)
+            } catch { completion(nil, error) }
+        }
     }
-    
+
+    /**
+     * Starts the API engine using given credentials. Must be called before other API methods.
+     * If callback returns the error indicating invalidated credentials, the caller is responsible to decide
+     * for using `start(completion:)` and starting a new chat session.
+    */
+    public func start(credentials: NINSessionCredentials, completion: @escaping NinchatSessionCompletion) throws {
+        debugger("Trying to continue given chat session")
+        self.fetchSiteConfiguration { error in
+            do {
+                try self.openChatSession(credentials: credentials, completion: completion)
+            } catch { completion(nil, error) }
+        }
+    }
+
     public func chatSession(within navigationController: UINavigationController) throws -> UIViewController? {
         guard Thread.isMainThread else { throw NINExceptions.mainThread }
         guard self.started else { throw NINExceptions.apiNotStarted }
         
-        return coordinator.start(with: self.queueID, within: navigationController)
+        return coordinator.start(with: self.queueID, resumeSession: self.resumed, within: navigationController)
     }
 }
 
 // MARK: - Private helper methods
 
-private extension NINChatSessionSwift {
+/// Shared helper
+extension NINChatSessionSwift {
     private func fetchSiteConfiguration(completion: @escaping (Error?) -> Void) {
-        sessionManager.fetchSiteConfiguration(config: configKey, environments: environments) { [weak self] error in
-            if let error = error {
-                completion(error); return
-            }
-            
-            do {
-                // Open the chat session
-                try self?.openChatSession(completion: completion)
-            } catch {
-                completion(error)
-            }
+        sessionManager.fetchSiteConfiguration(config: configKey, environments: environments) { error in
+            completion(error)
         }
     }
-    
-    private func openChatSession(completion: @escaping (Error?) -> Void) throws {
-        try sessionManager.openSession { [weak self] error in
-            if let error = error {
-                completion(error); return
-            }
+}
+
+/// Fresh Session helpers
+extension NINChatSessionSwift {
+    private func openChatSession(completion: @escaping NinchatSessionCompletion) throws {
+        try sessionManager.openSession { [weak self] credentials, canResume, error in
+            guard error == nil else { completion(credentials, error); return }
             
             do {
                 /// Find our realm's queues
                 /// Potentially passing a nil queueIds here is intended
-                try self?.listAllQueues(completion: completion)
+                try self?.listAllQueues(credentials: credentials, completion: completion)
             } catch {
-                completion(error)
+                completion(nil, error)
             }
         }
     }
-    
-    private func listAllQueues(completion: @escaping (Error?) -> Void) throws {
+
+    private func listAllQueues(credentials: NINSessionCredentials?, completion: @escaping NinchatSessionCompletion) throws {
         var allQueues = sessionManager.siteConfiguration.audienceQueues ?? []
-        if let queue = queueID {
-            allQueues.append(queue)
-        }
+        if let queue = queueID { allQueues.append(queue) }
         
         try sessionManager.list(queues: allQueues) { [weak self] error in
             self?.started = (error == nil)
-            completion(error)
+            self?.resumed = false
+            completion(credentials, error)
+        }
+    }
+}
+
+/// Resuming Session helpers
+extension NINChatSessionSwift {
+    private func openChatSession(credentials: NINSessionCredentials, completion: @escaping NinchatSessionCompletion) throws {
+        try sessionManager.continueSession(credentials: credentials) { [weak self] newCredential, canResume, error in
+            if (error != nil || !canResume) && (self?.onResumeFailed() ?? false) {
+                try? self?.openChatSession(completion: completion); return
+            }
+
+            self?.started = true
+            self?.resumed = canResume
+            /// Keep userID and userAuth and just update sessionID
+            completion(NINSessionCredentials(userID: credentials.userID, userAuth: credentials.userAuth, sessionID: newCredential?.sessionID), error)
         }
     }
 }
