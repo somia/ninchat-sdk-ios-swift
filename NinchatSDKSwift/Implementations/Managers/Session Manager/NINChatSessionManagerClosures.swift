@@ -18,8 +18,11 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
         actionBoundClosures[id] = closure
         
         if self.onActionID == nil {
-            self.onActionID = { [weak self] id, error in
-                let targetClosure = self?.actionBoundClosures.filter({ $0.key == id }).first?.value
+            self.onActionID = { [weak self] result, error in
+                let targetClosure = self?.actionBoundClosures.filter({
+                    guard case let .success(id) = result else { return false }
+                    return $0.key == id
+                }).first?.value
                 targetClosure?(error)
             }
         }

@@ -6,13 +6,20 @@
 
 import Foundation
 
-enum Result<Value> {
+public enum NINResult<Value> {
     case success(Value)
     case failure(Error)
+
+    var value: Value {
+        if case let .success(value) = self {
+            return value
+        }
+        fatalError("Error in getting value: \(self)")
+    }
 }
 
 extension Data {
-    func decode<T: Decodable>() -> Result<T> {
+    func decode<T: Decodable>() -> NINResult<T> {
         do {
             return .success(try JSONDecoder().decode(T.self, from: self))
         } catch {

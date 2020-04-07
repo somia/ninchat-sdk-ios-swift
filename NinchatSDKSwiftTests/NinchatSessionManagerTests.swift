@@ -147,7 +147,19 @@ class NinchatSessionManagerClosureHandlersTests: XCTestCase {
         sessionSwift = NINChatSessionSwift(configKey: "")
         sessionManager = NINChatSessionManagerImpl(session: sessionSwift, serverAddress: "")
     }
-    
+
+    func testBindFailure() {
+        let expectation = self.expectation(description: "The 2nd action is called")
+        sessionManager.bind(action: 0) { _ in
+            expectation.fulfill()
+        }
+
+        /// The test will fail if both following actions call the closure (API Violation)
+        sessionManager.onActionID?(.failure(NinchatError(code: 0, title: "error")), nil)
+        sessionManager.onActionID?(.success(0), nil)
+        waitForExpectations(timeout: 2.0)
+    }
+
     func testBindErrorClosures() {
         let expectation1 = self.expectation(description: "The first action is called")
         sessionManager.bind(action: 0) { _ in
@@ -160,8 +172,8 @@ class NinchatSessionManagerClosureHandlersTests: XCTestCase {
             expectation2.fulfill()
         }
         
-        sessionManager.onActionID?(0, nil)
-        sessionManager.onActionID?(1, NinchatError(code: 0, title: "title"))
+        sessionManager.onActionID?(.success(0), nil)
+        sessionManager.onActionID?(.success(1), NinchatError(code: 0, title: "title"))
         waitForExpectations(timeout: 1.0, handler: nil)
     }
     
@@ -177,8 +189,8 @@ class NinchatSessionManagerClosureHandlersTests: XCTestCase {
         }
         
         sessionManager.unbind(action: 0)
-        sessionManager.onActionID?(0, nil)
-        sessionManager.onActionID?(1, NinchatError(code: 0, title: "title"))
+        sessionManager.onActionID?(.success(0), nil)
+        sessionManager.onActionID?(.success(1), NinchatError(code: 0, title: "title"))
         waitForExpectations(timeout: 1.0, handler: nil)
     }
 
