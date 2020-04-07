@@ -34,7 +34,7 @@ protocol NINChatSessionConnectionManager {
     func list(queues ID: [String]?, completion: @escaping CompletionWithError) throws
     
     /** Joins a chat queue. */
-    func join(queue ID: String, progress: @escaping ((Error?, Int) -> Void), completion: @escaping Completion) throws
+    func join(queue ID: String, progress: @escaping ((Queue?, Error?, Int) -> Void), completion: @escaping Completion) throws
     
     /** Leaves the current queue. */
     func leave(completion: @escaping CompletionWithError)
@@ -100,7 +100,7 @@ protocol NINChatSessionManagerDelegate {
     var onRTCSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
     var onRTCClientSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
 
-    func bindQueueUpdate<T: QueueUpdateCapture>(closure: @escaping ((Events, String, Error?) -> Void), to receiver: T)
+    func bindQueueUpdate<T: QueueUpdateCapture>(closure: @escaping ((Events, Queue, Error?) -> Void), to receiver: T)
     func unbindQueueUpdateClosure<T: QueueUpdateCapture>(from receiver: T)
 }
 

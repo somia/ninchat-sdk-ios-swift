@@ -12,6 +12,7 @@ class CoordinatorTests: XCTestCase {
     let session = NINChatSessionSwift(configKey: "")
     var coordinator: NINCoordinator!
     
+
     override func setUp() {
         coordinator = NINCoordinator(with: session)
     }
@@ -26,6 +27,12 @@ class CoordinatorTests: XCTestCase {
         XCTAssertNotNil(initialViewController)
     }
     
+    func testLazyVariables() {
+        XCTAssertNotNil(coordinator.queueViewController)
+        XCTAssertNotNil(coordinator.chatViewController)
+        XCTAssertNotNil(coordinator.ratingViewController)
+    }
+
     func testStartNINChatSessionViewController() {
         let joinOptions = coordinator.start(with: nil, within: navigationController)
         XCTAssertNotNil(coordinator.navigationController)
@@ -34,29 +41,5 @@ class CoordinatorTests: XCTestCase {
         let initialChat = coordinator.start(with: "default", within: navigationController)
         XCTAssertNotNil(coordinator.navigationController)
         XCTAssertNil(initialChat as? NINQueueViewController)
-    }
-    
-    func testInitialViewController_automaticJoin() {
-        let vcNil = coordinator.joinAutomatically(for: "")
-        XCTAssertNil(vcNil)
-        
-        let vc = coordinator.joinDirectly(to: Queue(queueID: "id", name: "name"))
-        XCTAssertNotNil(vc)
-    }
-
-    func testInitialViewController_queueOptions() {
-        let vc = coordinator.showJoinOptions() as? NINInitialViewController
-        XCTAssertNotNil(vc)
-        XCTAssertNotNil(vc?.onQueueActionTapped)
-    }
-    
-    func testChatViewController() {
-        let vc = coordinator.showChatViewController() as? NINChatViewController
-        XCTAssertNotNil(vc)
-    }
-    
-    func testRatingViewController() {
-        let vc = coordinator.showRatingViewController() as? NINRatingViewController
-        XCTAssertNotNil(vc)
     }
 }

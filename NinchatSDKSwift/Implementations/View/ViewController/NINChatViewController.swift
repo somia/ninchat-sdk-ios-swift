@@ -165,10 +165,8 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
         self.setupKeyboardClosure()
         self.connectRTC()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(didEnterBackground(notification:)),
-                                               name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(willResignActive(notification:)),
-                                               name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didEnterBackground(notification:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(willResignActive(notification:)), name: UIApplication.willResignActiveNotification, object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -184,17 +182,17 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        self.view.endEditing(true)
         self.adjustConstraints(for: size, withAnimation: true)
+        self.view.endEditing(true)
     }
     
     deinit {
         self.removeKeyboardListeners()
+        self.deallocViewModel()
         self.deallocRTC()
-        NotificationCenter.default.removeObserver(self,
-                                                  name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.removeObserver(self,
-                                                  name: UIApplication.willResignActiveNotification, object: nil)
+
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
     }
     
     // MARK: - Setup View
@@ -204,8 +202,8 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
         self.setupGestures()
         
         self.inputControlsView.onTextSizeChanged = { [weak self] height in
-            debugger("new text area height: \(height + 64)")
-            self?.updateInputContainerHeight(height + 64.0)
+            debugger("new text area height: \(height + Margins.kTextFieldPaddingHeight.rawValue)")
+            self?.updateInputContainerHeight(height + Margins.kTextFieldPaddingHeight.rawValue)
         }
     }
     
@@ -274,6 +272,14 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     /// Capturing `[weak self]` while deallocation results in a crash
     private func deallocRTC() {
         self.viewModel.disconnectRTC(self.webRTCClient, completion: nil)
+    }
+
+    private func deallocViewModel() {
+        print("** ** - deallocate view model")
+
+        self.viewModel.onChannelClosed = nil
+        self.viewModel.onQueueUpdated = nil
+        self.viewModel.onChannelMessage = nil
     }
 }
 

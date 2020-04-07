@@ -10,8 +10,8 @@ import NinchatLowLevelClient
 
 protocol NINChatSessionManagerInternalActions {
     var onActionSessionEvent: ((Events, Error?) -> Void)? { get set }
+    var onProgress: ((Queue, _ position: Int, Events, Error?) -> Void)? { get set }
     var onActionID: ((_ actionID: NINResult<Int>, Error?) -> Void)? { get set }
-    var onProgress: ((_ queueID: String, _ position: Int, Events, Error?) -> Void)? { get set }
     var onChannelJoined: Completion? { get set }
     var onActionSevers: ((_ actionID: NINResult<Int>, _ stunServers: [WebRTCServerInfo]?, _ turnServers: [WebRTCServerInfo]?) -> Void)? { get set }
     var onActionFileInfo: ((_ actionID: NINResult<Int>, _ fileInfo: [String:Any]?, Error?) -> Void)? { get set }
@@ -29,12 +29,13 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     internal var myUserID: String?
     internal var realmID: String?
     internal var messageThrottler: MessageThrottler?
-    
+    internal var channelClosed: Bool = false
+
     // MARK: - NINChatSessionManagerInternalActions
     
     internal var onActionSessionEvent: ((Events, Error?) -> Void)?
+    internal var onProgress: ((Queue, Int, Events, Error?) -> Void)?
     internal var onActionID: ((NINResult<Int>, Error?) -> Void)?
-    internal var onProgress: ((String, Int, Events, Error?) -> Void)?
     internal var onChannelJoined: Completion?
     internal var onActionSevers: ((NINResult<Int>, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void)?
     internal var onActionFileInfo: ((NINResult<Int>, [String:Any]?, Error?) -> Void)?
@@ -44,13 +45,13 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     // MARK: - NINChatSessionManagerClosureHandler
 
     internal var actionBoundClosures: [Int:((Error?) -> Void)] = [:]
-    internal var queueUpdateBoundClosures: [String:((Events, String, Error?) -> Void)] = [:]
+    internal var queueUpdateBoundClosures: [String:((Events, Queue, Error?) -> Void)] = [:]
 
     // MARK: - NINChatSessionConnectionManager variables
     
     var session: NINLowLevelClientSession?
     var connected: Bool! {
-        return self.session != nil
+        self.session != nil
     }
     
     // MARK: - NINChatSessionManager variables
@@ -65,7 +66,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     var onRTCSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)?
     var onRTCClientSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)?
     
-    func bindQueueUpdate<T: QueueUpdateCapture>(closure: @escaping ((Events, String, Error?) -> Void), to receiver: T) {
+    func bindQueueUpdate<T: QueueUpdateCapture>(closure: @escaping ((Events, Queue, Error?) -> Void), to receiver: T) {
         guard queueUpdateBoundClosures.keys.filter({ $0 == receiver.desc }).count == 0 else { return }
         queueUpdateBoundClosures[receiver.desc] = closure
     }
@@ -159,7 +160,7 @@ extension NINChatSessionManagerImpl {
         
         /// Create message throttler to manage inbound message order
         self.messageThrottler = MessageThrottler { [weak self] message in
-             try? self?.didReceiveMessage(param: message.params, payload: message.payload)
+            try? self?.didReceiveMessage(param: message.params, payload: message.payload)
         }
         
         /// Make sure our site configuration contains a realm_id
@@ -213,7 +214,7 @@ extension NINChatSessionManagerImpl {
         }
     }
     
-    func join(queue ID: String, progress: @escaping ((Error?, Int) -> Void), completion: @escaping Completion) throws {
+    func join(queue ID: String, progress: @escaping ((Queue?, Error?, Int) -> Void), completion: @escaping Completion) throws {
         
         func performJoin() throws {
             delegate?.log(value: "Joining queue \(ID)..")
@@ -234,13 +235,13 @@ extension NINChatSessionManagerImpl {
                 do {
                     _ = try session.send(param)
                 } catch {
-                    progress(error, -1)
+                    progress(nil, error, -1)
                 }
             }
 
-            self.onProgress = { [weak self] queueID, position, event, error in
-                if (event == .queueUpdated || event == .audienceEnqueued), self?.currentQueueID == queueID {
-                    progress(error, position)
+            self.onProgress = { [weak self] queue, position, event, error in
+                if (event == .queueUpdated || event == .audienceEnqueued), self?.currentQueueID == queue.queueID {
+                    progress(queue, error, position)
                 }
             }
         }
@@ -261,9 +262,8 @@ extension NINChatSessionManagerImpl {
     
     /// Leaves the current queue, if any
     func leave(completion: @escaping CompletionWithError) {
-        guard self.currentQueueID != nil else {
+        if self.currentQueueID == nil {
             delegate?.log(value: "Error: tried to leave current queue but not in queue currently!")
-            completion(nil); return
         }
         
         delegate?.log(value: "Leaving current queue.")
