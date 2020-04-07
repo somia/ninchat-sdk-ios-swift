@@ -46,24 +46,19 @@ extension NINChatSessionManagerImpl {
     /// https://github.com/ninchat/ninchat-api/blob/v2/api.md#queue_updated
     internal func didUpdateQueue(type: Events, param: NINLowLevelClientProps) throws {
         if case let .failure(error) = param.queueID { throw error }
-        let queueID = param.queueID.value
+        guard let queue = self.queues.first(where: { $0.queueID == param.queueID.value }) else { return }
 
         if case let .failure(error) = param.queuePosition {
-            self.queueUpdateBoundClosures.values.forEach({ $0(type, queueID, error) })
+            self.queueUpdateBoundClosures.values.forEach({ $0(type, queue, error) }); return
         }
         let position = param.queuePosition.value
         if type == .audienceEnqueued {
             guard self.currentQueueID == nil else { throw NINSessionExceptions.hasActiveQueue }
 
-            self.currentQueueID = queueID
-            self.queueUpdateBoundClosures.values.forEach({ $0(type, queueID, nil) })
+            self.currentQueueID = queue.queueID
+            self.queueUpdateBoundClosures.values.forEach({ $0(type, queue, nil) })
         }
-
-        if case let .failure(error) = param.actionID { throw error }
-        let actionID = param.actionID.value
-        if actionID != 0 || type == .queueUpdated {
-            self.onProgress?(queueID, position, type, nil)
-        }
+        self.onProgress?(queue, position, type, nil)
     }
     
     internal func didUpdateUser(param: NINLowLevelClientProps) throws {
@@ -113,12 +108,14 @@ extension NINChatSessionManagerImpl {
         self.currentQueueID = nil;
 
         /// Clear current list of messages and users
-        chatMessages.removeAll()
-        channelUsers.removeAll()
+        /// If only the previous channel was successfully closed.
+        if self.channelClosed {
+            chatMessages.removeAll()
+            channelUsers.removeAll()
+        }
         
         /// Insert a meta message about the conversation start
-        /// This is the first message in the conversation with id: 0
-        self.add(message: MetaMessage(timestamp: Date(), messageID: nil, text: self.translate(key: "Audience in queue {{queue}} accepted.", formatParams: ["queue": queueName]) ?? "", closeChatButtonTitle: nil))
+        self.add(message: MetaMessage(timestamp: Date(), messageID: self.chatMessages.first?.messageID, text: self.translate(key: "Audience in queue {{queue}} accepted.", formatParams: ["queue": queueName]) ?? "", closeChatButtonTitle: nil))
         
         /// Extract the channel members' data
         if case let .failure(error) = param.channelMembers { throw error }
@@ -144,6 +141,9 @@ extension NINChatSessionManagerImpl {
     
     internal func didPartChannel(param: NINLowLevelClientProps) throws {
         if case let .failure(error) = param.channelID { throw error }
+        
+        /// The channel is not actually "closed", it is parted.
+        self.channelClosed = false
         self.onActionChannel?(param.actionID, param.channelID.value)
     }
     
@@ -156,14 +156,18 @@ extension NINChatSessionManagerImpl {
             debugger("Got channel_updated for wrong channel: \(channelID)"); return
         }
 
-        if case let .failure(error) = param.channelClosed { throw error }
-        if case let .failure(error) = param.channelSuspended { throw error }
-        if param.channelClosed.value || param.channelSuspended.value {
-            let text = self.translate(key: "Conversation ended", formatParams: [:])
-            let closeTitle = self.translate(key: "Close chat", formatParams: [:])
+        self.channelClosed = param.channelClosed.value || param.channelSuspended.value
+        /// In case of "channel transfer", the corresponded function: "didPartChannel(param:)" is called after this function.
+        /// Thus, We will send meta message only if the channel was actually closed, not parted.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            guard self.channelClosed else { return }
+
+            let text = self.translate(key: Constants.kConversationEnded.rawValue, formatParams: [:])
+            let closeTitle = self.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
             self.add(message: MetaMessage(timestamp: Date(), messageID: self.chatMessages.first?.messageID, text: text ?? "", closeChatButtonTitle: closeTitle))
-            self.onChannelClosed?()
         }
+
+        self.onChannelClosed?()
     }
 
     internal func didFindChannel(param: NINLowLevelClientProps) throws {

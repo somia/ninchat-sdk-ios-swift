@@ -42,17 +42,21 @@ import UIKit
 import NinchatSDKSwift
 import NinchatLowLevelClient
 
-var ninchatSession: NINChatSessionSwift!
-ninchatSession = NINChatSessionSwift(configKey: configKey, queueID: queueID, environments: environments)
+self.ninchatSession = NINChatSessionSwift(configKey: configKey, queueID: queueID, environments: environments)
+self.ninchatSession.delegate = self
 ```
+
+##### Optional parameters
 
 * `queueID` define a valid queue ID to join the queue directly; omit the paramter to show queue selection view.
 * `environments` is optional and may not be required for your deployment
 
-Considering the optional paramters, you can initiate the session with less efforts: 
+##### User Agent Header (Optional)
+
+To append information as the user agent header to your requests, use the following format to set value to  `appDetails` prior to call `start(callBack:)` function:
 
 ```swift
-ninchatSession = NINChatSessionSwift(configKey: configKey)
+ninchatSession.appDetails = "app-name/version (more; details)"
 ```
 
 #### Starting the API client

@@ -226,7 +226,7 @@ class NinchatSessionManagerClosureHandlersTests: XCTestCase {
 extension NinchatSessionManagerClosureHandlersTests {
     private func simulateChatQueue() {
         sessionManager.queueUpdateBoundClosures.forEach {
-            $0.value(.audienceEnqueued, "queue", NINExceptions.mainThread)
+            $0.value(.audienceEnqueued, Queue(queueID: "1", name: "Name"), NINExceptions.mainThread)
         }
     }
 }

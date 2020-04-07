@@ -86,13 +86,16 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
     func testServer_3_joinQueue() {
         let expect_join = self.expectation(description: "Expected to join the queue")
         let expect_progress = self.expectation(description: "Expected to get progress update for the first time")
+        expect_progress.assertForOverFulfill = false
     
         do {
             /// Join the first time in the queue
-            try self.sessionManager.join(queue: Session.suiteQueue, progress: { error, position in
+            try self.sessionManager.join(queue: Session.suiteQueue, progress: { queue, error, position in
                 XCTAssertNil(error)
+                XCTAssertNotNil(queue)
                 XCTAssertNotNil(position)
                 XCTAssertEqual(position, 1)
+
                 expect_progress.fulfill()
             }, completion: {
                 expect_join.fulfill()
@@ -197,21 +200,21 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         let expect = self.expectation(description: "Expected to get transferred to another queue")
 
         self.sessionManager.onMessageAdded = nil
-        self.sessionManager.bindQueueUpdate(closure: { events, queueID, error in
+        self.sessionManager.bindQueueUpdate(closure: { events, queue, error in
             XCTAssertNil(error)
             XCTAssertNotNil(events)
             XCTAssertEqual(events, Events.audienceEnqueued)
-            XCTAssertNotNil(queueID)
-            XCTAssertNotEqual(queueID, Session.suiteQueue)
+            XCTAssertNotNil(queue)
+            XCTAssertNotEqual(queue.queueID, Session.suiteQueue)
         }, to: self)
-        
         XCTAssertNotNil(self.sessionManager.currentChannelID)
-        
-        sleep(10)
+
         do {
+            sleep(10)
             try self.sessionManager.part(channel: self.sessionManager.currentChannelID!) { error in
-                XCTAssertNil(error)
                 self.sessionManager.unbindQueueUpdateClosure(from: self)
+
+                XCTAssertNil(error)
                 expect.fulfill()
             }
         } catch {
@@ -235,10 +238,11 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
     func testServer_9_deallocate() {
         let expect = self.expectation(description: "Expected to delete user and close the session")
         do {
+            sleep(10)
             try self.sessionManager.deleteCurrentUser { error in
-                XCTAssertNil(error)
                 self.sessionManager.disconnect()
-                sleep(5)
+
+                XCTAssertNil(error)
                 expect.fulfill()
             }
         } catch {
