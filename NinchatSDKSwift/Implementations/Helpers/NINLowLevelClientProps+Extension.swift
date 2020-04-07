@@ -18,6 +18,7 @@ enum NINLowLevelClientActions: String {
     case requestAudience = "request_audience"
     case sendFile = "send_file"
     case describeFile = "describe_file"
+    case describeChannel = "describe_channel"
     case partChannel = "part_channel"
     case loadHistory = "load_history"
     case updateMember = "update_member"
@@ -35,6 +36,14 @@ extension NINLowLevelClientProps {
         if let name = name {
             props?.name = .success(name)
         }
+
+        return props!
+    }
+
+    static func initiate(credentials: NINSessionCredentials) -> NINLowLevelClientProps {
+        let props = NINLowLevelClientProps()
+        props?.set(value: credentials.userID, forKey: "user_id")
+        props?.set(value: credentials.userAuth, forKey: "user_auth")
 
         return props!
     }
@@ -194,6 +203,7 @@ protocol NINLowLevelUserProps {
     var displayName: NINResult<String> { get }
     var realName: NINResult<String> { get }
     var isGuest: NINResult<Bool> { get }
+    var channels: NINResult<NINLowLevelClientProps> { get }
 
     var userID: NINResult<String> { set get }
     var userAttributes: NINResult<NINLowLevelClientProps> { set get }
@@ -218,6 +228,10 @@ extension NINLowLevelClientProps: NINLowLevelUserProps {
 
     var isGuest: NINResult<Bool> {
         get { self.value(forKey: "guest") }
+    }
+
+    var channels: NINResult<NINLowLevelClientProps> {
+        get { self.value(forKey: "user_channels") }
     }
 
     var userID: NINResult<String> {

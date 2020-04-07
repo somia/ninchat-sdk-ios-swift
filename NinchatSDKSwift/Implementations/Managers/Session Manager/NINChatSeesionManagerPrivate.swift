@@ -169,7 +169,24 @@ extension NINChatSessionManagerImpl {
 
         self.onChannelClosed?()
     }
-    
+
+    internal func didFindChannel(param: NINLowLevelClientProps) throws {
+        if case let .failure(error) = param.channelID { throw error }
+        guard param.channelID.value == self.currentChannelID else { throw NINSessionExceptions.noActiveChannel }
+
+        if case let .failure(error) = param.channelMembers { throw error }
+        let memberParser = NINChatClientPropsParser()
+        try param.channelMembers.value.accept(memberParser)
+
+
+        memberParser.properties.keys.forEach { [weak self] userID in
+            if let member = memberParser.properties[userID] as? NINLowLevelClientProps, case let .success(attributes) = member.userAttributes {
+                self?.parse(userAttr: attributes, userID: userID)
+            }
+        }
+        self.onActionID?(param.actionID, nil)
+    }
+
     /// Processes the response to the WebRTC connectivity ICE query
     internal func didBeginICE(param: NINLowLevelClientProps) throws {
 
@@ -298,7 +315,7 @@ extension NINChatSessionManagerImpl {
         self.applySeriesStatus(to: &message)
         
         chatMessages.insert(message, at: 0)
-        chatMessages.sort { $0.messageID.compare($1.messageID) == .orderedDescending }
+        chatMessages.sort { $0.messageID > $1.messageID }
         self.onMessageAdded?(chatMessages.firstIndex(where: { $0.asEquatable == message.asEquatable }) ?? -1)
     }
     
@@ -314,10 +331,7 @@ extension NINChatSessionManagerImpl {
         
         do {
             let actionID = try session.send(param)
-            self.onActionChannel = { result, channelID in
-                guard case let .success(id) = result, actionID == id else { return }
-                completion(nil)
-            }
+            self.bindChannel(action: actionID, closure: completion)
         } catch {
             completion(error)
         }
@@ -349,6 +363,31 @@ extension NINChatSessionManagerImpl {
             }
         }
         message = channelMessage
+    }
+
+    /** Determines if it is possible to resume the session in case it is still alive. */
+    internal func canResumeSession(param: NINLowLevelClientProps) -> Bool {
+        if case .failure = param.channels { return false }
+        let userChannels = param.channels.value
+
+        do {
+            let channelParser = NINChatClientPropsParser()
+            try userChannels.accept(channelParser)
+
+            return channelParser.properties.keys.filter {
+                let channel: NINResult<NINLowLevelClientProps> = userChannels.value(forKey: $0)
+                if case .failure = channel { return false }
+                if case .failure = channel.value.channelClosed { return false }
+
+                if !channel.value.channelClosed.value {
+                    self.currentChannelID = $0
+                    return true
+                }
+                return false
+            }.count > 0
+        } catch {
+            return false
+        }
     }
 }
 

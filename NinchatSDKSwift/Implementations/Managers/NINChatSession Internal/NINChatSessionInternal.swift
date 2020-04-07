@@ -14,6 +14,7 @@ protocol NINChatSessionInternalDelegate: class {
     func log(format: String, _ args: CVarArg...)
     func onLowLevelEvent(event: NINLowLevelClientProps, payload: NINLowLevelClientPayload, lastReply: Bool)
     func onDidEnd()
+    func onResumeFailed() -> Bool
     func override(imageAsset key: AssetConstants) -> UIImage?
     func override(colorAsset key: ColorConstants) -> UIColor?
 }
@@ -46,7 +47,11 @@ extension NINChatSessionSwift: NINChatSessionInternalDelegate {
             self.didEndSession?(self)
         }
     }
-    
+
+    internal func onResumeFailed() -> Bool {
+        (self.delegate?.didFailToResumeSession(session: self) ?? false) || (self.didFailToResume?(self) ?? false)
+    }
+
     internal func override(imageAsset key: AssetConstants) -> UIImage? {
         if let delegate = self.delegate {
             return delegate.overrideImageAsset(session: self, forKey: key)

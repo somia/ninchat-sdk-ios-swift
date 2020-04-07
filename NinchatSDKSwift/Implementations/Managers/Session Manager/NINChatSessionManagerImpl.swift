@@ -9,7 +9,7 @@ import UIKit
 import NinchatLowLevelClient
 
 protocol NINChatSessionManagerInternalActions {
-    var onActionSessionEvent: ((Events, Error?) -> Void)? { get set }
+    var onActionSessionEvent: ((NINSessionCredentials?, Events, Error?) -> Void)? { get set }
     var onProgress: ((Queue, _ position: Int, Events, Error?) -> Void)? { get set }
     var onActionID: ((_ actionID: NINResult<Int>, Error?) -> Void)? { get set }
     var onChannelJoined: Completion? { get set }
@@ -33,7 +33,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
 
     // MARK: - NINChatSessionManagerInternalActions
     
-    internal var onActionSessionEvent: ((Events, Error?) -> Void)?
+    internal var onActionSessionEvent: ((NINSessionCredentials?, Events, Error?) -> Void)?
     internal var onProgress: ((Queue, Int, Events, Error?) -> Void)?
     internal var onActionID: ((NINResult<Int>, Error?) -> Void)?
     internal var onChannelJoined: Completion?
@@ -45,6 +45,9 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     // MARK: - NINChatSessionManagerClosureHandler
 
     internal var actionBoundClosures: [Int:((Error?) -> Void)] = [:]
+    internal var actionFileBoundClosures: [Int:((Error?, [String:Any]?) -> Void)] = [:]
+    internal var actionChannelBoundClosures: [Int:((Error?) -> Void)] = [:]
+    internal var actionICEServersBoundClosures: [Int:((Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void)] = [:]
     internal var queueUpdateBoundClosures: [String:((Events, Queue, Error?) -> Void)] = [:]
 
     // MARK: - NINChatSessionConnectionManager variables
@@ -149,33 +152,47 @@ extension NINChatSessionManagerImpl {
         }
     }
     
-    func openSession(completion: @escaping CompletionWithError) throws {
-        guard self.session == nil else { throw NINSessionExceptions.hasActiveSession }
+    func openSession(completion: @escaping CompletionWithCredentials) throws {
         delegate?.log(value: "Opening new chat session using server address: \(serverAddress!)")
-        
+        try self.initiateSession(params: NINLowLevelClientProps.initiate(), completion: completion)
+    }
+
+    func continueSession(credentials: NINSessionCredentials, completion: @escaping CompletionWithCredentials) throws {
+        delegate?.log(value: "Resume session using user ID: \(credentials.userID)")
+        try self.initiateSession(params: NINLowLevelClientProps.initiate(credentials: credentials), completion: completion)
+    }
+
+    private func initiateSession(params: NINLowLevelClientProps, completion: @escaping CompletionWithCredentials) throws {
         /// Wait for the session creation event
-        self.onActionSessionEvent = { event, error in
-            completion(error)
+        self.onActionSessionEvent = { credentials, event, error in
+            if event == .sessionCreated {
+                completion(credentials, self.currentChannelID != nil, error)
+            } else if event == .error {
+                completion(nil, false, error)
+            } else if event == .connectionSuperseded {
+                do {
+                    try self.openSession(completion: completion)
+                } catch { completion(nil, false, error) }
+            }
         }
-        
+
         /// Create message throttler to manage inbound message order
         self.messageThrottler = MessageThrottler { [weak self] message in
             try? self?.didReceiveMessage(param: message.params, payload: message.payload)
         }
-        
+
         /// Make sure our site configuration contains a realm_id
         guard let realmId = self.siteConfiguration.audienceRealm else { throw NINSessionExceptions.invalidRealmConfiguration }
         self.realmID = realmId
-        
-        let sessionParam = NINLowLevelClientProps.initiate()
+
         if let secret = self.siteSecret {
-            sessionParam.siteSecret = .success(secret)
+            params.siteSecret = .success(secret)
         }
-        
+
         if let userName = self.siteConfiguration.username {
-            sessionParam.userAttributes = .success(NINLowLevelClientProps.initiate(name: userName))
+            params.userAttributes = .success(NINLowLevelClientProps.initiate(name: userName))
         }
-        
+
         let messageType = NINLowLevelClientStrings.initiate
         messageType.append(MessageType.file.rawValue)
         messageType.append(MessageType.text.rawValue)
@@ -183,17 +200,17 @@ extension NINChatSessionManagerImpl {
         messageType.append(MessageType.rtc.rawValue)
         messageType.append(MessageType.ui.rawValue)
         messageType.append(MessageType.info.rawValue)
-        sessionParam.messageTypes = .success(messageType)
-        
+        params.messageTypes = .success(messageType)
+
         self.session = NINLowLevelClientSession()
         self.session?.setAddress(self.serverAddress)
         self.session?.setHeader("User-Agent", value: self.sdkDetails)
         self.setEventHandlers()
-        
-        try self.session?.setParams(sessionParam)
+
+        try self.session?.setParams(params)
         try self.session?.open()
     }
-    
+
     func list(queues ID: [String]?, completion: @escaping CompletionWithError) throws {
         guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
 
@@ -267,8 +284,18 @@ extension NINChatSessionManagerImpl {
         }
         
         delegate?.log(value: "Leaving current queue.")
-        self.onChannelJoined = nil
         self.onProgress = nil
+        self.onChannelJoined = nil
+        self.onActionID = nil
+        self.onActionChannel = nil
+        self.onActionFileInfo = nil
+        self.onActionSessionEvent = nil
+        self.onActionSevers = nil
+
+        self.actionBoundClosures.keys.forEach { self.unbind(action: $0) }
+        self.queueUpdateBoundClosures.keys.forEach { self.queueUpdateBoundClosures.removeValue(forKey: $0) }
+        self.chatMessages.removeAll()
+        self.channelUsers.removeAll()
         completion(nil)
     }
     
@@ -279,10 +306,7 @@ extension NINChatSessionManagerImpl {
         
         do {
             let actionID = try session.send(param)
-            self.onActionSevers = { result, stunServers, turnServers in
-                guard case let .success(id) = result, actionID == id else { return }
-                completion(nil, stunServers, turnServers)
-            }
+            self.bindICEServer(action: actionID, closure: completion)
         } catch {
             completion(error, nil, nil)
         }
@@ -398,13 +422,10 @@ extension NINChatSessionManagerImpl {
         
         do {
             let data = try JSONSerialization.data(withJSONObject: payload, options: .prettyPrinted)
-            
             let newPayload = NINLowLevelClientPayload.initiate
             newPayload.append(data)
             
             let actionID = try session.send(param, newPayload)
-            
-            /// When this action completes, trigger the completion block callback
             self.bind(action: actionID, closure: completion)
             return actionID
         } catch {
@@ -439,16 +460,29 @@ extension NINChatSessionManagerImpl {
         param.fileID = .success(id)
 
         do {
+            /// In case of getting multiple files to describle, the actionID points to the latest id only
+            /// This could cause to lose of previous files to be described
             let actionID = try session.send(param)
-            self.onActionFileInfo = { result, fileInfo, error in
-                guard case let .success(id) = result, actionID == id else { return }
-                completion(error, fileInfo)
-            }
+            self.bindFile(action: actionID, closure: completion)
         } catch {
             completion(error, nil)
         }
     }
-    
+
+    func describe(channel id: String, completion: @escaping CompletionWithError) throws {
+        guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
+
+        let param = NINLowLevelClientProps.initiate(action: .describeChannel)
+        param.channelID = .success(id)
+
+        do {
+            let actionID = try session.send(param)
+            self.bind(action: actionID, closure: completion)
+        } catch {
+            completion(error)
+        }
+    }
+
     func translate(key: String, formatParams: [String:String]) -> String? {
         /// Look for a translation. If one is not available for this key, use the key itself.
         if let translationDictionary = self.siteConfiguration.translation {

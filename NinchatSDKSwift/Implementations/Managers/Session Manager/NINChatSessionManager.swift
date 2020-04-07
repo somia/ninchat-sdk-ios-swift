@@ -8,6 +8,7 @@ import Foundation
 import NinchatLowLevelClient
 
 typealias CompletionWithError = ((Error?) -> Void)
+typealias CompletionWithCredentials = ((NINSessionCredentials?, _ willResume: Bool, Error?) -> Void)
 typealias Completion = (() -> Void)
 
 /* Available ratings and assigned status codes for finishing the chat from our end */
@@ -28,8 +29,11 @@ protocol NINChatSessionConnectionManager {
     func fetchSiteConfiguration(config key: String, environments: [String]?, completion: @escaping CompletionWithError)
     
     /** Opens the session with an asynchronous completion callback. */
-    func openSession(completion: @escaping CompletionWithError) throws
-    
+    func openSession(completion: @escaping CompletionWithCredentials) throws
+
+    /** Continues to an existing session using given user credentials. Completes with an asynchronous completion callback. */
+    func continueSession(credentials: NINSessionCredentials, completion: @escaping CompletionWithCredentials) throws
+
     /** List queues with specified ids for this realm, all available ones if queueIds is nil. */
     func list(queues ID: [String]?, completion: @escaping CompletionWithError) throws
     

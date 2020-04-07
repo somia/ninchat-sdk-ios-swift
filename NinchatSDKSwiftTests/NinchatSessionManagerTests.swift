@@ -157,7 +157,7 @@ class NinchatSessionManagerClosureHandlersTests: XCTestCase {
         /// The test will fail if both following actions call the closure (API Violation)
         sessionManager.onActionID?(.failure(NinchatError(code: 0, title: "error")), nil)
         sessionManager.onActionID?(.success(0), nil)
-        waitForExpectations(timeout: 2.0)
+        waitForExpectations(timeout: 5.0)
     }
 
     func testBindErrorClosures() {
@@ -166,7 +166,7 @@ class NinchatSessionManagerClosureHandlersTests: XCTestCase {
             expectation1.fulfill()
         }
         
-        let expectation2 = self.expectation(description: "The first action is called")
+        let expectation2 = self.expectation(description: "The second action is called")
         sessionManager.bind(action: 1) { error in
             XCTAssertNotNil(error)
             expectation2.fulfill()
@@ -174,7 +174,7 @@ class NinchatSessionManagerClosureHandlersTests: XCTestCase {
         
         sessionManager.onActionID?(.success(0), nil)
         sessionManager.onActionID?(.success(1), NinchatError(code: 0, title: "title"))
-        waitForExpectations(timeout: 1.0, handler: nil)
+        waitForExpectations(timeout: 5.0)
     }
     
     func testUnbindErrorClosures() {
@@ -191,7 +191,7 @@ class NinchatSessionManagerClosureHandlersTests: XCTestCase {
         sessionManager.unbind(action: 0)
         sessionManager.onActionID?(.success(0), nil)
         sessionManager.onActionID?(.success(1), NinchatError(code: 0, title: "title"))
-        waitForExpectations(timeout: 1.0, handler: nil)
+        waitForExpectations(timeout: 5.0)
     }
 
     func testBindQueueUpdate() {
@@ -204,7 +204,7 @@ class NinchatSessionManagerClosureHandlersTests: XCTestCase {
         }, to: self)
 
         self.simulateChatQueue()
-        waitForExpectations(timeout: 1.0)
+        waitForExpectations(timeout: 5.0)
     }
 
     func testUnbindQueueUpdate() {

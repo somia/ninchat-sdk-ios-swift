@@ -16,7 +16,7 @@ final class NinchatSDKSwiftServerHandlerTests: XCTestCase {
     func testServer_0_sessionEvents() {
         self.expect_session_event = self.expectation(description: "Expected to get session events")
         self.sessionManager.fetchSiteConfiguration(config: Session.configurationKey, environments: []) { _ in
-            try? self.sessionManager.openSession { _ in }
+            try? self.sessionManager.openSession { _,_,_ in }
             self.sessionManager.session?.setOnSessionEvent(self)
         }
         

@@ -13,4 +13,5 @@ public protocol NINChatSessionClosure {
     var overrideImageAsset: ((NINChatSessionSwift, AssetConstants) -> UIImage?)? { get set }
     var overrideColorAsset: ((NINChatSessionSwift, ColorConstants) -> UIColor?)? { get set }
     var didEndSession: ((NINChatSessionSwift) -> Void)? { get set }
+    var didFailToResume: ((NINChatSessionSwift?) -> Bool)? { get set }
 }

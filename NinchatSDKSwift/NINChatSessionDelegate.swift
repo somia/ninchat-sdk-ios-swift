@@ -54,6 +54,14 @@ public protocol NINChatSessionDelegateSwift: class {
     * its view hierarchy.
     */
     func didEndSession(session: NINChatSessionSwift)
+
+    /**
+    * The function is called when SDK cannot continue a session using provided credentials with `start(credentials:completion:)`.
+    * The function could be used to clear saved credentials
+    *
+    * The return value indicates if the SDK should initiate a new chat session or not.
+    */
+    func didFailToResumeSession(session: NINChatSessionSwift?) -> Bool
 }
 
 extension NINChatSessionDelegateSwift {
@@ -64,4 +72,6 @@ extension NINChatSessionDelegateSwift {
     func overrideImageAsset(session: NINChatSessionSwift, forKey assetKey: AssetConstants) -> UIImage? { nil }
     
     func overrideColorAsset(session: NINChatSessionSwift, forKey assetKey: ColorConstants) -> UIColor? { nil }
+
+    func didFailToResumeSession(session: NINChatSessionSwift?) -> Bool { false }
 }

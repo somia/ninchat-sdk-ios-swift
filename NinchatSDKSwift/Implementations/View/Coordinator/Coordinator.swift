@@ -11,7 +11,7 @@ import WebRTC
 
 protocol Coordinator: class {
     init(with session: NINChatSessionSwift)
-    func start(with queue: String?, within navigation: UINavigationController) -> UIViewController?
+    func start(with queue: String?, resumeSession: Bool, within navigation: UINavigationController) -> UIViewController?
 }
 
 final class NINCoordinator: Coordinator {
@@ -117,21 +117,24 @@ final class NINCoordinator: Coordinator {
         return ratingViewController
     }()
 
-
+    // MARK: - Coordinator
 
     init(with session: NINChatSessionSwift) {
         self.session = session
     }
     
-    func start(with queue: String?, within navigation: UINavigationController) -> UIViewController? {
+    func start(with queue: String?, resumeSession: Bool, within navigation: UINavigationController) -> UIViewController? {
         self.navigationController = navigation
-
-        if let queue = queue, let target = self.sessionManager.queues.filter({ $0.queueID == queue }).first {
+        if resumeSession {
+            return self.chatViewController
+        } else  if let queue = queue, let target = self.sessionManager.queues.filter({ $0.queueID == queue }).first {
             return queueViewController(queue: target)
         }
         return self.initialViewController
     }
+}
 
+extension NINCoordinator {
     internal func queueViewController(queue: Queue) -> NINQueueViewController {
         let vc = self.queueViewController
         vc.queue = queue
@@ -148,11 +151,9 @@ final class NINCoordinator: Coordinator {
     }
 }
 
-
 // MARK: - NINChatViewController components
 
 extension NINCoordinator {
-
     internal func chatDataSourceDelegate(_ viewModel: NINChatViewModel) -> NINChatDataSourceDelegate {
         var dataSourceDelegate: NINChatDataSourceDelegate = NINChatDataSourceDelegateImpl(viewModel: viewModel)
         dataSourceDelegate.onOpenPhotoAttachment = { [unowned self] image, attachment in

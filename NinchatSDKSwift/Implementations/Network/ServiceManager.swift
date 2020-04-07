@@ -17,8 +17,7 @@ struct ServiceManager {
     
     func perform<T: ServiceRequest>(_ request: T, completion: @escaping (NINResult<T.ReturnType>) -> Void) {
         guard let request = self.request(request) else {
-            completion(.failure(ServiceResultError.invalidRequest))
-            return
+            completion(.failure(ServiceResultError.invalidRequest)); return
         }
         
         let task = session.dataTask(with: request) { responseData, response, responseError in
