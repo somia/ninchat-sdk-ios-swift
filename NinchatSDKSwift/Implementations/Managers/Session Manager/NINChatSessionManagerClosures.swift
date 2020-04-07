@@ -16,7 +16,7 @@ protocol NINChatSessionManagerClosureHandler {
 
 extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
     internal func bind(action id: Int?, closure: @escaping ((Error?) -> Void)) {
-        guard let id = id, self.actionBoundClosures.keys.filter({ $0 == id }).count == 0 else { return }
+        guard let id = id, !self.actionBoundClosures.keys.contains(id) else { return }
         self.actionBoundClosures[id] = closure
         
         if self.onActionID == nil {
@@ -34,7 +34,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
     }
     
     internal func bindFile(action id: Int?, closure: @escaping ((Error?, [String:Any]?) -> Void)) {
-        guard let id = id, self.actionFileBoundClosures.keys.filter({ $0 == id }).count == 0 else { return }
+        guard let id = id, !self.actionFileBoundClosures.keys.contains(id) else { return }
         self.actionFileBoundClosures[id] = closure
         
         if self.onActionFileInfo == nil {
@@ -52,9 +52,9 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
     }
     
     internal func bindChannel(action id: Int?, closure: @escaping ((Error?) -> Void)) {
-        guard let id = id, self.actionChannelBoundClosures.keys.filter({ $0 == id }).count == 0 else { return }
+        guard let id = id, !self.actionChannelBoundClosures.keys.contains(id) else { return }
         self.actionChannelBoundClosures[id] = closure
-        
+
         if self.onActionChannel == nil {
             self.onActionChannel = { [weak self] result, channelID in
                 if let targetClosure = self?.actionChannelBoundClosures.filter({
@@ -71,9 +71,9 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
     }
     
     internal func bindICEServer(action id: Int?, closure: @escaping ((Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void)) {
-        guard let id = id, self.actionICEServersBoundClosures.keys.filter({ $0 == id }).count == 0 else { return }
+        guard let id = id, !self.actionICEServersBoundClosures.keys.contains(id) else { return }
         self.actionICEServersBoundClosures[id] = closure
-        
+
         if self.onActionSevers == nil {
             self.onActionSevers = { [weak self] result, stunServers, turnServers in
                 if let targetClosure = self?.actionICEServersBoundClosures.filter({
