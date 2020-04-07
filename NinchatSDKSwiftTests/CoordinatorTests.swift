@@ -27,13 +27,17 @@ class CoordinatorTests: XCTestCase {
     }
     
     func testStartNINChatSessionViewController() {
-        let joinOptions = coordinator.start(with: nil, within: navigationController)
+        let joinOptions = coordinator.start(with: nil, resumeSession: false, within: navigationController)
         XCTAssertNotNil(coordinator.navigationController)
         XCTAssertNotNil(joinOptions as? NINInitialViewController)
         
-        let initialChat = coordinator.start(with: "default", within: navigationController)
+        let initialChat = coordinator.start(with: "default", resumeSession: false, within: navigationController)
         XCTAssertNotNil(coordinator.navigationController)
-        XCTAssertNil(initialChat as? NINQueueViewController)
+        XCTAssertNil(initialChat as? NINQueueViewController, "The result is nil since there is not any audience queue from the server")
+
+        let chatView = coordinator.start(with: nil, resumeSession: true, within: navigationController)
+        XCTAssertNotNil(coordinator.navigationController)
+        XCTAssertNotNil(chatView as? NINChatViewController)
     }
     
     func testInitialViewController_automaticJoin() {

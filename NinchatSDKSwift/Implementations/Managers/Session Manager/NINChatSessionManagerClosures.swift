@@ -16,18 +16,17 @@ protocol NINChatSessionManagerClosureHandler {
 
 extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
     internal func bind(action id: Int?, closure: @escaping ((Error?) -> Void)) {
-        DispatchQueue.main.async {
-            guard let id = id, self.actionBoundClosures.keys.filter({ $0 == id }).count == 0 else { return }
-            self.actionBoundClosures[id] = closure
-            
-            if self.onActionID == nil {
-                self.onActionID = { [weak self] result, error in
-                    let targetClosure = self?.actionBoundClosures.filter({
-                        guard case let .success(id) = result else { return false }
-                        return $0.key == id
-                    }).first?.value
-                    targetClosure?(error)
+        guard let id = id, self.actionBoundClosures.keys.filter({ $0 == id }).count == 0 else { return }
+        self.actionBoundClosures[id] = closure
+        
+        if self.onActionID == nil {
+            self.onActionID = { [weak self] result, error in
+                if let targetClosure = self?.actionBoundClosures.filter({
+                    guard case let .success(id) = result else { return false }
+                    return $0.key == id
+                }).first?.value {
                     
+                    targetClosure(error)
                     self?.actionBoundClosures.removeValue(forKey: id)
                 }
             }
@@ -35,18 +34,17 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
     }
     
     internal func bindFile(action id: Int?, closure: @escaping ((Error?, [String:Any]?) -> Void)) {
-        DispatchQueue.main.async {
-            guard let id = id, self.actionFileBoundClosures.keys.filter({ $0 == id }).count == 0 else { return }
-            self.actionFileBoundClosures[id] = closure
-            
-            if self.onActionFileInfo == nil {
-                self.onActionFileInfo = { [weak self] result, fileInfo, error in
-                    let targetClosure = self?.actionFileBoundClosures.filter({
-                        guard case let .success(id) = result else { return false }
-                        return $0.key == id
-                    }).first?.value
-                    targetClosure?(error, fileInfo)
-                    
+        guard let id = id, self.actionFileBoundClosures.keys.filter({ $0 == id }).count == 0 else { return }
+        self.actionFileBoundClosures[id] = closure
+        
+        if self.onActionFileInfo == nil {
+            self.onActionFileInfo = { [weak self] result, fileInfo, error in
+                if let targetClosure = self?.actionFileBoundClosures.filter({
+                    guard case let .success(id) = result else { return false }
+                    return $0.key == id
+                }).first?.value {
+
+                    targetClosure(error, fileInfo)
                     self?.actionFileBoundClosures.removeValue(forKey: id)
                 }
             }
@@ -54,39 +52,39 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
     }
     
     internal func bindChannel(action id: Int?, closure: @escaping ((Error?) -> Void)) {
-        DispatchQueue.main.async {
-            guard let id = id, self.actionChannelBoundClosures.keys.filter({ $0 == id }).count == 0 else { return }
-            self.actionChannelBoundClosures[id] = closure
-            
-            if self.onActionChannel == nil {
-                self.onActionChannel = { [weak self] result, channelID in
-                    let targetClosure = self?.actionChannelBoundClosures.filter({
-                        guard case let .success(id) = result else { return false }
-                        return $0.key == id
-                    }).first?.value
-                    targetClosure?(nil)
-                    
+        guard let id = id, self.actionChannelBoundClosures.keys.filter({ $0 == id }).count == 0 else { return }
+        self.actionChannelBoundClosures[id] = closure
+        
+        if self.onActionChannel == nil {
+            self.onActionChannel = { [weak self] result, channelID in
+                if let targetClosure = self?.actionChannelBoundClosures.filter({
+                    guard case let .success(id) = result else { return false }
+                    return $0.key == id
+                }).first?.value {
+
+                    targetClosure(nil)
                     self?.actionChannelBoundClosures.removeValue(forKey: id)
                 }
+
             }
         }
     }
     
     internal func bindICEServer(action id: Int?, closure: @escaping ((Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void)) {
-        DispatchQueue.main.async {
-            guard let id = id, self.actionICEServersBoundClosures.keys.filter({ $0 == id }).count == 0 else { return }
-            self.actionICEServersBoundClosures[id] = closure
-            
-            if self.onActionSevers == nil {
-                self.onActionSevers = { [weak self] result, stunServers, turnServers in
-                    let targetClosure = self?.actionICEServersBoundClosures.filter({
-                        guard case let .success(id) = result else { return false }
-                        return $0.key == id
-                    }).first?.value
-                    targetClosure?(nil, stunServers, turnServers)
-                    
+        guard let id = id, self.actionICEServersBoundClosures.keys.filter({ $0 == id }).count == 0 else { return }
+        self.actionICEServersBoundClosures[id] = closure
+        
+        if self.onActionSevers == nil {
+            self.onActionSevers = { [weak self] result, stunServers, turnServers in
+                if let targetClosure = self?.actionICEServersBoundClosures.filter({
+                    guard case let .success(id) = result else { return false }
+                    return $0.key == id
+                }).first?.value {
+
+                    targetClosure(nil, stunServers, turnServers)
                     self?.actionICEServersBoundClosures.removeValue(forKey: id)
                 }
+
             }
         }
     }
