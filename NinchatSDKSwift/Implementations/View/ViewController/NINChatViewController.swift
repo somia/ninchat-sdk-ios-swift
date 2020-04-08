@@ -225,7 +225,9 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
                 self?.chatView.didRemoveMessage(from: index)
             }
         }
-        self.viewModel.loadHistory { _ in }
+        self.viewModel.loadHistory { [weak self] _ in
+            self?.chatView.tableView.reloadData()
+        }
     }
     
     // MARK: - Helpers

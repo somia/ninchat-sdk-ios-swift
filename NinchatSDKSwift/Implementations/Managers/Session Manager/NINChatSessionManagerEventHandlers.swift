@@ -65,13 +65,21 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                     self.delegate?.log(value: "Session created - my user ID is: \(String(describing: self.myUserID))")
 
                     /// Checks if the session is alive to resume
-                    ///     if possible, update channel members (name, avatar, message threads, etc)
-                    ///     if not, just notify to continue normal process.
+                    ///     is alive:
+                    ///         1. update channel members (name, avatar, message threads, etc)
+                    ///         2. describe channel's realm id (to get queues)
+                    ///     is not alive
+                    ///         1. notify to continue normal process.
                     if self.canResumeSession(param: param) {
                         try self.describe(channel: self.currentChannelID!) { error in
                             guard error == nil else { debugger("Error in describing the channel"); return }
 
-                            self.onActionSessionEvent?(credentials, eventType, nil)
+                            self.didJoinChannel(channelID: self.currentChannelID!)
+                            try! self.describe(realm: self.realmID!, queuesID: nil) { error in
+                                guard error == nil else { debugger("Error in describing the realm"); return }
+
+                                self.onActionSessionEvent?(credentials, eventType, nil)
+                            }
                         }
                     } else {
                         self.onActionSessionEvent?(credentials, eventType, nil)

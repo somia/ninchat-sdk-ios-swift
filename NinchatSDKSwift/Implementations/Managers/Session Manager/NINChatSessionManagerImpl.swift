@@ -212,23 +212,9 @@ extension NINChatSessionManagerImpl {
     }
 
     func list(queues ID: [String]?, completion: @escaping CompletionWithError) throws {
-        guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
+        guard let realmID = self.realmID else { return }
 
-        let param = NINLowLevelClientProps.initiate(action: .describeRealmQueues)
-        param.realmID = .success(realmID!)
-
-        if let queues = ID {
-            param.queuesID = .success(queues.reduce(into: NINLowLevelClientStrings.initiate) { list, id in
-                list.append(id)
-            })
-        }
-        
-        do {
-            let actionID = try session.send(param)
-            self.bind(action: actionID, closure: completion)
-        } catch {
-            completion(error)
-        }
+        try self.describe(realm: realmID, queuesID: ID, completion: completion)
     }
     
     func join(queue ID: String, progress: @escaping ((Queue?, Error?, Int) -> Void), completion: @escaping Completion) throws {
@@ -474,6 +460,26 @@ extension NINChatSessionManagerImpl {
 
         let param = NINLowLevelClientProps.initiate(action: .describeChannel)
         param.channelID = .success(id)
+
+        do {
+            let actionID = try session.send(param)
+            self.bind(action: actionID, closure: completion)
+        } catch {
+            completion(error)
+        }
+    }
+
+    func describe(realm id: String, queuesID: [String]?, completion: @escaping CompletionWithError) throws {
+        guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
+
+        let param = NINLowLevelClientProps.initiate(action: .describeRealmQueues)
+        param.realmID = .success(id)
+        if let queuesID = queuesID {
+            /// Parameter should be set only if there are any queues passed to the function
+            param.queuesID = .success(queuesID.reduce(into: NINLowLevelClientStrings.initiate) { list, id in
+                list.append(id)
+            })
+        }
 
         do {
             let actionID = try session.send(param)

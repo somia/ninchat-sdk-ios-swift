@@ -11,16 +11,14 @@ import NinchatLowLevelClient
 
 extension NINChatSessionManagerImpl {
     internal func didRealmQueuesFind(param: NINLowLevelClientProps) throws {
-        /// Clear existing queue list
         delegate?.log(value: "Realm queues found - flushing list of previously available queues.")
         queues.removeAll()
-        
-        let queuesParser = NINChatClientPropsParser()
+
         let actionID = param.actionID
-    
         do {
             if case let .failure(error) = param.realmQueue { throw error }
 
+            let queuesParser = NINChatClientPropsParser()
             let realmQueues = param.realmQueue.value
             try realmQueues.accept(queuesParser)
         
@@ -91,31 +89,8 @@ extension NINChatSessionManagerImpl {
     internal func didJoinChannel(param: NINLowLevelClientProps) throws {
         guard currentQueueID != nil else { throw NINSessionExceptions.noActiveQueue }
         if case let .failure(error) = param.channelID { throw error }
+        self.didJoinChannel(channelID: param.channelID.value)
 
-        let channelID = param.channelID.value
-        delegate?.log(value: "Joined channel ID: \(channelID)")
-
-        /// Set the currently active channel
-        self.currentChannelID = channelID
-        self.backgroundChannelID = nil
-
-        /// Get the queue we are joining
-        let queueName = self.queues.compactMap({ $0 }).filter({ [weak self] queue in
-            queue.queueID == self?.currentQueueID }).first?.name ?? ""
-        
-        /// We are no longer in the queue; clear the queue reference
-        self.currentQueueID = nil;
-
-        /// Clear current list of messages and users
-        /// If only the previous channel was successfully closed.
-        if self.channelClosed {
-            chatMessages.removeAll()
-            channelUsers.removeAll()
-        }
-        
-        /// Insert a meta message about the conversation start
-        self.add(message: MetaMessage(timestamp: Date(), messageID: self.chatMessages.first?.messageID, text: self.translate(key: "Audience in queue {{queue}} accepted.", formatParams: ["queue": queueName]) ?? "", closeChatButtonTitle: nil))
-        
         /// Extract the channel members' data
         if case let .failure(error) = param.channelMembers { throw error }
         do {
@@ -136,6 +111,32 @@ extension NINChatSessionManagerImpl {
         
         /// Signal channel join event to the asynchronous listener
         self.onChannelJoined?()
+    }
+
+    internal func didJoinChannel(channelID: String) {
+        delegate?.log(value: "Joined channel ID: \(channelID)")
+
+        /// Set the currently active channel
+        self.currentChannelID = channelID
+        self.backgroundChannelID = nil
+
+        /// Get the queue we are joining
+        let queueName = self.queues.compactMap({ $0 }).filter({ [weak self] queue in
+            queue.queueID == self?.currentQueueID }).first?.name ?? ""
+
+        /// We are no longer in the queue; clear the queue reference
+        self.currentQueueID = nil;
+
+        /// Clear current list of messages and users
+        /// If only the previous channel was successfully closed.
+        if self.channelClosed {
+            chatMessages.removeAll()
+            channelUsers.removeAll()
+        }
+
+        /// Insert a meta message about the conversation start
+        self.add(message: MetaMessage(timestamp: Date(), messageID: self.chatMessages.first?.messageID, text: self.translate(key: "Audience in queue {{queue}} accepted.", formatParams: ["queue": queueName]) ?? "", closeChatButtonTitle: nil))
+
     }
     
     internal func didPartChannel(param: NINLowLevelClientProps) throws {
@@ -370,20 +371,30 @@ extension NINChatSessionManagerImpl {
         let userChannels = param.channels.value
 
         do {
-            let channelParser = NINChatClientPropsParser()
-            try userChannels.accept(channelParser)
-
-            return channelParser.properties.keys.filter {
+            let parser = NINChatClientPropsParser()
+            try userChannels.accept(parser)
+            parser.properties.keys.forEach {
                 let channel: NINResult<NINLowLevelClientProps> = userChannels.value(forKey: $0)
-                if case .failure = channel { return false }
-                if case .failure = channel.value.channelClosed { return false }
+                if case .failure = channel { return }
 
+                /// Extract target channel
+                if case .failure = channel.value.channelClosed { return }
                 if !channel.value.channelClosed.value {
                     self.currentChannelID = $0
-                    return true
+
+                    /// Extract target queue
+                    if case .failure = channel.value.channelAttributes { return}
+                    if case .failure = channel.value.channelAttributes.value.queueID { return }
+                    self.currentQueueID = channel.value.channelAttributes.value.queueID.value
                 }
-                return false
-            }.count > 0
+
+                /// Extract target realm
+                if case .failure = channel.value.realmID { return }
+                self.realmID = channel.value.realmID.value
+            }
+
+            /// Check if target queue and target channels are found
+            return self.currentChannelID != nil && self.currentQueueID != nil && self.realmID != nil
         } catch {
             return false
         }

@@ -7,6 +7,7 @@
 import Foundation
 
 protocol NINQueueViewModel {
+    var resumeMode: Bool! { get set }
     var onInfoTextUpdate: ((String?) -> Void)? { get set }
     var onQueueJoin: ((Error?) -> Void)? { get set }
 
@@ -24,7 +25,8 @@ final class NINQueueViewModelImpl: NINQueueViewModel {
     
     var onInfoTextUpdate: ((String?) -> Void)?
     var onQueueJoin: ((Error?) -> Void)?
-    
+    var resumeMode: Bool!
+
     init(sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?) {
         self.sessionManager = sessionManager
         self.delegate = delegate
@@ -33,7 +35,7 @@ final class NINQueueViewModelImpl: NINQueueViewModel {
         self.sessionManager.bindQueueUpdate(closure: { [weak self] event, queue, error in
             if let _ = error { try? self?.sessionManager.closeChat(); return }
 
-            guard self?.readyToJoin ?? false else { return }
+            guard (self?.resumeMode ?? false) || (self?.readyToJoin ?? false) else { return }
             self?.connect(queue: queue)
         }, to: self)
     }
