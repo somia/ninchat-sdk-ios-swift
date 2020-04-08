@@ -134,6 +134,6 @@ class NinchatSDKSwiftServerMessengerTests: NinchatXCTestCase {
             XCTFail(error.localizedDescription)
         }
 
-        waitForExpectations(timeout: 1000.0)
+        waitForExpectations(timeout: 50.0)
     }
 }

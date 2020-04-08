@@ -90,7 +90,6 @@ extension NINChatSessionManagerImpl {
     
     internal func didJoinChannel(param: NINLowLevelClientProps) throws {
         guard currentQueueID != nil else { throw NINSessionExceptions.noActiveQueue }
-        guard currentChannelID == nil else { throw NINSessionExceptions.noActiveChannel }
         if case let .failure(error) = param.channelID { throw error }
 
         let channelID = param.channelID.value

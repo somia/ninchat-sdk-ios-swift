@@ -68,7 +68,6 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                     ///     if possible, update channel members (name, avatar, message threads, etc)
                     ///     if not, just notify to continue normal process.
                     if self.canResumeSession(param: param) {
-
                         try self.describe(channel: self.currentChannelID!) { error in
                             guard error == nil else { debugger("Error in describing the channel"); return }
 
@@ -80,7 +79,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                 case .userDeleted:
                     try self.didDeleteUser(param: param)
                 default:
-                    break
+                    self.onActionSessionEvent?(nil, eventType, nil)
                 }
             }
         } catch {
