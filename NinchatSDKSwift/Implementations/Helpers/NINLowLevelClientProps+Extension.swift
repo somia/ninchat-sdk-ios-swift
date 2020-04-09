@@ -15,6 +15,7 @@ struct NinchatError: Error {
 enum NINLowLevelClientActions: String {
     case deleteUser = "delete_user"
     case describeRealmQueues = "describe_realm_queues"
+    case describeQueue = "describe_queue"
     case requestAudience = "request_audience"
     case sendFile = "send_file"
     case describeFile = "describe_file"
@@ -258,6 +259,7 @@ protocol NINLowLevelMessageProps {
     var messageID: NINResult<String> { get }
     var messageUserID: NINResult<String> { get }
     var messageTime: NINResult<Double> { get }
+    var historyLength: NINResult<Int> { get }
 
     var messageType: NINResult<MessageType?> { set get }
     var messageTypes: NINResult<NINLowLevelClientStrings> { set get }
@@ -278,6 +280,10 @@ extension NINLowLevelClientProps: NINLowLevelMessageProps {
 
     var messageTime: NINResult<Double> {
         get { self.value(forKey: "message_time") }
+    }
+
+    var historyLength: NINResult<Int> {
+        get { self.value(forKey: "history_length") }
     }
 
     var messageType: NINResult<MessageType?> {

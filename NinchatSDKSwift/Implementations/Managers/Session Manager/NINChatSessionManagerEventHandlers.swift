@@ -21,7 +21,8 @@ enum Events: String {
     case historyResult = "history_results"
     case fileFound = "file_found"
 
-    case queueFound = "realm_queues_found"
+    case realmQueueFound = "realm_queues_found"
+    case queueFound = "queue_found"
     
     case sessionCreated = "session_created"
     case userDeleted = "user_deleted"
@@ -74,10 +75,10 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                         try self.describe(channel: self.currentChannelID!) { error in
                             guard error == nil else { debugger("Error in describing the channel"); return }
 
-                            self.didJoinChannel(channelID: self.currentChannelID!)
-                            try! self.describe(realm: self.realmID!, queuesID: nil) { error in
+                            try! self.describe(realm: self.realmID!, queuesID: self.siteConfiguration.audienceQueues) { error in
                                 guard error == nil else { debugger("Error in describing the realm"); return }
 
+                                self.didJoinChannel(channelID: self.currentChannelID!)
                                 self.onActionSessionEvent?(credentials, eventType, nil)
                             }
                         }
@@ -108,10 +109,9 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                 case .channelJoined:
                     try self.didJoinChannel(param: param)
                 case .receivedMessage, .historyResult:
-                    /// Throttle the message; it will be cached for a short while to ensure inbound message order.
-                    messageThrottler?.add(message: InboundMessage(params: param, payload: payload))
-                case .queueFound:
-                    try self.didRealmQueuesFind(param: param)
+                    try self.didReceiveMessage(param: param, payload: payload)
+                case .realmQueueFound:
+                    try self.didFindRealmQueues(param: param)
                 case .audienceEnqueued, .queueUpdated:
                     try self.didUpdateQueue(type: eventType, param: param)
                 case .channelUpdated:
