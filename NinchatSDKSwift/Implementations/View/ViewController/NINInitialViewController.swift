@@ -14,7 +14,7 @@ final class NINInitialViewController: UIViewController, ViewController {
     
     // MARK: - ViewController
     
-    var session: NINChatSessionSwift!
+    var session: NINChatSession!
     
     // MARK: - Outlets
     

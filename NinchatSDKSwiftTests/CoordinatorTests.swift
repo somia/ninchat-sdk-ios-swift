@@ -9,7 +9,7 @@ import XCTest
 
 class CoordinatorTests: XCTestCase {
     let navigationController = UINavigationController()
-    let session = NINChatSessionSwift(configKey: "")
+    let session = NINChatSession(configKey: "")
     var coordinator: NINCoordinator!
     
 

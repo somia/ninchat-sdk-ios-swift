@@ -13,7 +13,7 @@ protocol FacesViewActions {
 }
 
 protocol FacesViewProtocol: UIView, FacesViewActions {
-    var session: NINChatSessionSwift! { get set }
+    var session: NINChatSession! { get set }
     
     func overrideAssets()
 }
@@ -22,7 +22,7 @@ final class FacesView: UIView, FacesViewProtocol {
     
     // MARK: - FacesViewProtocol
     
-    var session: NINChatSessionSwift!
+    var session: NINChatSession!
     var translate: NINChatSessionTranslation!
     
     // MARK: - Outlets

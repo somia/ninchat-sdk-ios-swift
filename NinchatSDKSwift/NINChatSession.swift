@@ -12,7 +12,7 @@ public protocol NINChatDevHelper {
     var siteSecret: String? { get set }
 }
 
-public protocol NINChatSessionProtocol: NINChatSessionClosure {
+public protocol NINChatSessionProtocol {
     typealias NinchatSessionCompletion = (NINSessionCredentials?, Error?) -> Void
 
     /**
@@ -23,15 +23,15 @@ public protocol NINChatSessionProtocol: NINChatSessionClosure {
     */
     var appDetails: String? { get set }
     var session: NINResult<NINLowLevelClientSession?> { get }
-    var delegate: NINChatSessionDelegateSwift? { get set }
+    var delegate: NINChatSessionDelegate? { get set }
 
     init(configKey: String, queueID: String?, environments: [String]?, metadata: NINLowLevelClientProps?)
     func start(completion: @escaping NinchatSessionCompletion) throws
     func start(credentials: NINSessionCredentials, completion: @escaping NinchatSessionCompletion) throws
-    func chatSession(within navigationController: UINavigationController) throws -> UIViewController?
+    func chatSession(within navigationController: UINavigationController?) throws -> UIViewController?
 }
 
-public final class NINChatSessionSwift: NINChatSessionProtocol, NINChatDevHelper {
+public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
     var sessionManager: NINChatSessionManager!
     private var coordinator: Coordinator!
     private var configKey: String!
@@ -59,19 +59,10 @@ public final class NINChatSessionSwift: NINChatSessionProtocol, NINChatDevHelper
             self.sessionManager.siteSecret = siteSecret
         }
     }
-    
-    // MARK: - NINChatSessionClosure
-    
-    public var didOutputSDKLog: ((NINChatSessionSwift, String) -> Void)?
-    public var onLowLevelEvent: ((NINChatSessionSwift, NINLowLevelClientProps, NINLowLevelClientPayload, Bool) -> Void)?
-    public var overrideImageAsset: ((NINChatSessionSwift, AssetConstants) -> UIImage?)?
-    public var overrideColorAsset: ((NINChatSessionSwift, ColorConstants) -> UIColor?)?
-    public var didEndSession: ((NINChatSessionSwift) -> Void)?
-    public var didFailToResume: ((NINChatSessionSwift?) -> Bool)?
 
     // MARK: - NINChatSessionProtocol
     
-    public weak var delegate: NINChatSessionDelegateSwift?
+    public weak var delegate: NINChatSessionDelegate?
     public var session: NINResult<NINLowLevelClientSession?> {
         guard self.started else { return .failure(NINExceptions.apiNotStarted) }
         return .success(self.sessionManager.session)
@@ -119,7 +110,7 @@ public final class NINChatSessionSwift: NINChatSessionProtocol, NINChatDevHelper
         }
     }
 
-    public func chatSession(within navigationController: UINavigationController) throws -> UIViewController? {
+    public func chatSession(within navigationController: UINavigationController?) throws -> UIViewController? {
         guard Thread.isMainThread else { throw NINExceptions.mainThread }
         guard self.started else { throw NINExceptions.apiNotStarted }
         
@@ -130,7 +121,7 @@ public final class NINChatSessionSwift: NINChatSessionProtocol, NINChatDevHelper
 // MARK: - Private helper methods
 
 /// Shared helper
-extension NINChatSessionSwift {
+extension NINChatSession {
     private func fetchSiteConfiguration(completion: @escaping (Error?) -> Void) {
         sessionManager.fetchSiteConfiguration(config: configKey, environments: environments) { error in
             completion(error)
@@ -139,7 +130,7 @@ extension NINChatSessionSwift {
 }
 
 /// Fresh Session helpers
-extension NINChatSessionSwift {
+extension NINChatSession {
     private func openChatSession(completion: @escaping NinchatSessionCompletion) throws {
         try sessionManager.openSession { [weak self] credentials, canResume, error in
             guard error == nil else { completion(credentials, error); return }
@@ -167,7 +158,7 @@ extension NINChatSessionSwift {
 }
 
 /// Resuming Session helpers
-extension NINChatSessionSwift {
+extension NINChatSession {
     private func openChatSession(credentials: NINSessionCredentials, completion: @escaping NinchatSessionCompletion) throws {
         try sessionManager.continueSession(credentials: credentials) { [weak self] newCredential, canResume, error in
             if (error != nil || !canResume) && (self?.onResumeFailed() ?? false) {

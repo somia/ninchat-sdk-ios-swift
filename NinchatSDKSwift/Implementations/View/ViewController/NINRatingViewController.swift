@@ -16,7 +16,7 @@ final class NINRatingViewController: UIViewController, ViewController {
     
     // MARK: - ViewController
     
-    var session: NINChatSessionSwift!
+    var session: NINChatSession!
     
     // MARK: - Outlets
     
