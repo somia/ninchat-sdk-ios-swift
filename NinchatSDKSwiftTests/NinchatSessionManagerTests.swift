@@ -10,11 +10,11 @@ import XCTest
 // MARK: - Tests
 
 class NinchatSessionManagerTests: XCTestCase {
-    var sessionSwift: NINChatSessionSwift!
+    var sessionSwift: NINChatSession!
     var sessionManager: NINChatSessionManager!
     
     override func setUp() {
-        sessionSwift = NINChatSessionSwift(configKey: "")
+        sessionSwift = NINChatSession(configKey: "")
         sessionManager = NINChatSessionManagerImpl(session: sessionSwift, serverAddress: "")
     }
 
@@ -32,11 +32,11 @@ class NinchatSessionManagerTests: XCTestCase {
 // MARK: - PrivateTests
 
 class NinchatSessionManagerPrivateTests: XCTestCase {
-    var sessionSwift: NINChatSessionSwift!
+    var sessionSwift: NINChatSession!
     var sessionManager: NINChatSessionManagerImpl!
     
     override func setUp() {
-        sessionSwift = NINChatSessionSwift(configKey: "")
+        sessionSwift = NINChatSession(configKey: "")
         sessionManager = NINChatSessionManagerImpl(session: sessionSwift, serverAddress: "")
     }
 
@@ -140,11 +140,11 @@ extension NinchatSessionManagerPrivateTests {
 // MARK: - ClosureHandlersTests
 
 class NinchatSessionManagerClosureHandlersTests: XCTestCase {
-    var sessionSwift: NINChatSessionSwift!
+    var sessionSwift: NINChatSession!
     var sessionManager: NINChatSessionManagerImpl!
     
     override func setUp() {
-        sessionSwift = NINChatSessionSwift(configKey: "")
+        sessionSwift = NINChatSession(configKey: "")
         sessionManager = NINChatSessionManagerImpl(session: sessionSwift, serverAddress: "")
     }
 

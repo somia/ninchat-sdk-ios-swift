@@ -12,7 +12,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     // MARK: - Injected
     
     var viewModel: NINChatViewModel!    
-    var session: NINChatSessionSwift!
+    var session: NINChatSession!
     var chatDataSourceDelegate: NINChatDataSourceDelegate! {
         didSet {
             chatDataSourceDelegate.onCloseChatTapped = { [weak self] in
@@ -225,9 +225,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
                 self?.chatView.didRemoveMessage(from: index)
             }
         }
-        self.viewModel.loadHistory { [weak self] _ in
-//            self?.chatView.tableView.reloadData()
-        }
+        self.viewModel.loadHistory { _ in }
     }
     
     // MARK: - Helpers

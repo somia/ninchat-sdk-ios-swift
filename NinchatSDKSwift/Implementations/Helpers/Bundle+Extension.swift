@@ -8,7 +8,7 @@ import Foundation
 
 extension Bundle {
     static var SDKBundle: Bundle? {
-        let classBundle = Bundle(for: NINChatSessionSwift.self)
+        let classBundle = Bundle(for: NINChatSession.self)
         guard let bundleURL = classBundle.url(forResource: "NinchatSwiftSDKUI", withExtension: "bundle") else {
             return classBundle
         }

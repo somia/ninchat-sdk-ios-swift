@@ -15,7 +15,7 @@ protocol VideoViewActions {
 }
 
 protocol VideoViewProtocol: UIView, VideoViewActions {
-    var session: NINChatSessionSwift! { get set }
+    var session: NINChatSession! { get set }
     var viewModel: NINChatViewModel! { get set }
     var localCapture: RTCCameraVideoCapturer? { get set }
     var remoteCapture: RTCVideoRenderer? { get set }
@@ -34,7 +34,7 @@ final class VideoView: UIView, VideoViewProtocol {
     
     // MARK: - VideoViewProtocol
     
-    var session: NINChatSessionSwift!
+    var session: NINChatSession!
     var viewModel: NINChatViewModel!
     var onHangupTapped: Action?
     var onAudioTapped: Action?

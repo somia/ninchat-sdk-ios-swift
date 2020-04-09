@@ -14,7 +14,7 @@ protocol ChatInputActions {
 }
 
 protocol ChatInputControlsProtocol: UIView, ChatInputActions {
-    var session: NINChatSessionSwift? { get set }
+    var session: NINChatSession? { get set }
     var viewModel: NINChatViewModel! { get set }
     var isSelected: Bool! { get set }
     
@@ -41,7 +41,7 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
     
     // MARK: - ChatInputControls
     
-    var session: NINChatSessionSwift?
+    var session: NINChatSession?
     var viewModel: NINChatViewModel!
     var isSelected: Bool! = false {
         didSet {

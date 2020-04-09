@@ -10,15 +10,15 @@ import CoreServices
 import WebRTC
 
 protocol Coordinator: class {
-    init(with session: NINChatSessionSwift)
-    func start(with queue: String?, resumeSession: Bool, within navigation: UINavigationController) -> UIViewController?
+    init(with session: NINChatSession)
+    func start(with queue: String?, resumeSession: Bool, within navigation: UINavigationController?) -> UIViewController?
 }
 
 final class NINCoordinator: Coordinator {
     
     // MARK: - Coordinator
     
-    internal unowned let session: NINChatSessionSwift
+    internal unowned let session: NINChatSession
     internal weak var navigationController: UINavigationController? {
         didSet {
             if #available(iOS 13.0, *) {
@@ -119,18 +119,21 @@ final class NINCoordinator: Coordinator {
 
     // MARK: - Coordinator
 
-    init(with session: NINChatSessionSwift) {
+    init(with session: NINChatSession) {
         self.session = session
     }
     
-    func start(with queue: String?, resumeSession: Bool, within navigation: UINavigationController) -> UIViewController? {
-        self.navigationController = navigation
+    func start(with queue: String?, resumeSession: Bool, within navigation: UINavigationController?) -> UIViewController? {
+        let topViewController: UIViewController
         if resumeSession {
-            return self.chatViewController
+            topViewController = self.chatViewController
         } else  if let queue = queue, let target = self.sessionManager.queues.filter({ $0.queueID == queue }).first {
-            return queueViewController(queue: target)
+            topViewController = self.queueViewController(queue: target)
+        } else {
+            topViewController = self.initialViewController
         }
-        return self.initialViewController
+        self.navigationController = navigation ?? UINavigationController(rootViewController: topViewController)
+        return (navigation == nil) ? self.navigationController : topViewController
     }
 }
 

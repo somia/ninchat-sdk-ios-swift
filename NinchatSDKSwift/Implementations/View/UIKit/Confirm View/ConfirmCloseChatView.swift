@@ -28,7 +28,7 @@ final class ConfirmCloseChatView: UIView, ConfirmView {
     // MARK: - ConfirmView
     
     var onViewAction: OnViewAction?
-    weak var session: NINChatSessionSwift? {
+    weak var session: NINChatSession? {
         didSet {
             self.overrideAssets()
         }

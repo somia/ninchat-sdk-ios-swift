@@ -47,6 +47,15 @@ extension NINLowLevelClientProps {
 
         return props!
     }
+
+    public static func initiate(dictionary: [String:AnyHashable]) -> NINLowLevelClientProps {
+        let props = NINLowLevelClientProps()
+        for (key,value) in dictionary {
+            props?.set(value: value, forKey: key)
+        }
+
+        return props!
+    }
 }
 
 protocol NINLowLevelSessionProps {
@@ -437,20 +446,19 @@ extension NINLowLevelClientProps {
     }
 
     func set<T>(value: T, forKey key: String) {
-        switch T.self {
-        case is Int.Type:
-            self.setInt(key, val: (value as! Int))
-        case is Double.Type:
-            self.setFloat(key, val: (value as! Double))
-        case is Bool.Type:
-            self.setBool(key, val: (value as! Bool))
-        case is String.Type:
-            self.setString(key, val: (value as! String))
-        case is NINLowLevelClientProps.Type:
-            self.setObject(key, ref: (value as! NINLowLevelClientProps))
-        case is NINLowLevelClientStrings.Type:
-            self.setStringArray(key, ref: (value as! NINLowLevelClientStrings))
-        default:
+        if let value = value as? Int {
+            self.setInt(key, val: value)
+        } else if let value = value as? Double {
+            self.setFloat(key, val: value)
+        } else if let value = value as? Bool {
+            self.setBool(key, val: value)
+        } else if let value = value as? String {
+            self.setString(key, val: value)
+        } else if let value = value as? NINLowLevelClientProps {
+            self.setObject(key, ref: value)
+        } else if let value = value as? NINLowLevelClientStrings {
+            self.setStringArray(key, ref: value)
+        } else {
             fatalError("Error in requested type: \(T.self)")
         }
     }
