@@ -50,7 +50,7 @@ final class NINInitialViewController: UIViewController, ViewController {
     // MARK: - UIViewController
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .portrait
+        .portrait
     }
     
     override func viewDidLoad() {
@@ -63,7 +63,7 @@ final class NINInitialViewController: UIViewController, ViewController {
     // MARK: - User actions
     
     @IBAction private func closeWindowButtonPressed(button: UIButton) {
-        try? self.session.sessionManager.closeChat()
+        self.session.onDidEnd()
     }
 }
 
@@ -96,8 +96,8 @@ private extension NINInitialViewController {
         
         let numberOfButtons = min(3, self.session.sessionManager.audienceQueues.count)
         let buttonHeights: CGFloat = (numberOfButtons > 2) ? 40.0 : 60.0
-        for queue in self.session.sessionManager.queues.sorted(by: { $0.name > $1.name }) {
-            guard queueButtonsStackView.subviews.count <= numberOfButtons else { return }
+        for index in 0..<numberOfButtons {
+            let queue = self.session.sessionManager.audienceQueues[index]
             let button = Button(frame: .zero) { [weak self] _ in
                 self?.onQueueActionTapped?(queue)
             }
