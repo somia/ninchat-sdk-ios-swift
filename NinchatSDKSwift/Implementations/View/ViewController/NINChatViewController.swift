@@ -333,20 +333,22 @@ extension NINChatViewController {
     }
     
     private func adjustConstraints(for size: CGSize, withAnimation animation: Bool) {
-        switch UIDevice.current.orientation {
-        case .landscapeLeft, .landscapeRight:
+        if UIScreen.main.traitCollection.userInterfaceIdiom == .pad {
+            /// On iPad we won't show full-screen videos as there is enough space to chat and video in parallel
+            videoContainerHeight.constant = (self.webRTCClient != nil) ? size.height * 0.45 : 0
+            self.alignInputControlsTopToScreenBottom(false)
+        } else if UIDevice.current.orientation == .landscapeLeft || UIDevice.current.orientation == .landscapeRight {
             // In landscape we make video fullscreen ie. hide the chat view + input controls
             // If no video; get rid of the video view. the input container and video (0-height) will dictate size
             videoContainerHeight.constant = (self.webRTCClient != nil) ? size.height : 0
             self.alignInputControlsTopToScreenBottom(self.webRTCClient != nil)
-        case .portrait, .portraitUpsideDown, .faceUp, .faceDown:
+        } else if UIDevice.current.orientation == .portrait || UIDevice.current.orientation == .portraitUpsideDown {
             // In portrait we make the video cover about the top half of the screen
             // If no video; get rid of the video view
             videoContainerHeight.constant = (self.webRTCClient != nil) ? size.height * 0.45 : 0
             self.alignInputControlsTopToScreenBottom(false)
-        default:
-            break
         }
+
         videoContainerHeight.isActive = true
         chatContainerHeight.isActive = true
         self.setNeedsStatusBarAppearanceUpdate()

@@ -163,9 +163,8 @@ extension NINChatSessionManagerImpl {
             let text = self.translate(key: Constants.kConversationEnded.rawValue, formatParams: [:])
             let closeTitle = self.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
             self.add(message: MetaMessage(timestamp: Date(), messageID: self.chatMessages.first?.messageID, text: text ?? "", closeChatButtonTitle: closeTitle))
+            self.onChannelClosed?()
         }
-
-        self.onChannelClosed?()
     }
 
     internal func didFindChannel(param: NINLowLevelClientProps) throws {
@@ -193,7 +192,7 @@ extension NINChatSessionManagerImpl {
         let stunServers = try [Int](0..<stunServersParam.length()).map({ index -> NINLowLevelClientProps in
             stunServersParam.get(index)!
         }).compactMap({ prop -> NINLowLevelClientStrings in
-            if case let .failure(error) = param.serversURL { throw error }
+            if case let .failure(error) = prop.serversURL { throw error }
             return prop.serversURL.value
         }).compactMap({ servers -> ([Int], NINLowLevelClientStrings) in
             ([Int](0..<servers.length()), servers)
@@ -208,11 +207,11 @@ extension NINChatSessionManagerImpl {
         let turnServers = try [Int](0..<turnServersParam.length()).map({ index -> NINLowLevelClientProps in
             turnServersParam.get(index)!
         }).compactMap({ prop -> (NINLowLevelClientStrings, String, String) in
-            if case let .failure(error) = param.serversURL { throw error }
-            if case let .failure(error) = param.usernameTurnServer { throw error }
-            if case let .failure(error) = param.credentialsTurnServer { throw error }
+            if case let .failure(error) = prop.serversURL { throw error }
+            if case let .failure(error) = prop.usernameTurnServer { throw error }
+            if case let .failure(error) = prop.credentialsTurnServer { throw error }
 
-            return (prop.serversURL.value, param.usernameTurnServer.value, param.credentialsTurnServer.value)
+            return (prop.serversURL.value, prop.usernameTurnServer.value, prop.credentialsTurnServer.value)
         }).compactMap({ (servers, userName, credential) -> ([Int], NINLowLevelClientStrings, String, String) in
             ([Int](0..<servers.length()), servers, userName, credential)
         }).map({ (indexArray, serversArray, userName, credential) -> [WebRTCServerInfo] in
