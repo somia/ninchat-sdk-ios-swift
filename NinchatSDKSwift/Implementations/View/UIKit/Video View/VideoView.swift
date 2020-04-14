@@ -26,7 +26,6 @@ protocol VideoViewProtocol: UIView, VideoViewActions {
     func resizeRemoteVideo(to size: CGSize)
     func resizeRemoteVideo()
     func resizeLocalVideo()
-    
 }
 
 final class VideoView: UIView, VideoViewProtocol {
