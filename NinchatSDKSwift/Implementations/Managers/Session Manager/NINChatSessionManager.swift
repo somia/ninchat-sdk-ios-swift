@@ -78,6 +78,9 @@ protocol NANChatSessionMessenger {
     
     /** Load channel history. */
     func loadHistory(completion: @escaping CompletionWithError) throws
+
+    /* Close an old session using given credentials async. */
+    func closeSession(credentials: NINSessionCredentials, completion: ((NINResult<Empty>) -> Void)?)
 }
 
 protocol NINChatSessionAttachment {

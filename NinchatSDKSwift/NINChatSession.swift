@@ -161,6 +161,10 @@ extension NINChatSession {
 extension NINChatSession {
     private func openChatSession(credentials: NINSessionCredentials, completion: @escaping NinchatSessionCompletion) throws {
         try sessionManager.continueSession(credentials: credentials) { [weak self] newCredential, canResume, error in
+            if newCredential?.sessionID != credentials.sessionID {
+                self?.sessionManager.closeSession(credentials: credentials, completion: nil)
+            }
+
             if (error != nil || !canResume) && (self?.onResumeFailed() ?? false) {
                 try? self?.openChatSession(completion: completion); return
             }

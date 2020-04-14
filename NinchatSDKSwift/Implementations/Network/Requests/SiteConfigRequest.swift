@@ -13,7 +13,7 @@ struct SiteConfigRequest: ServiceRequest {
     
     private(set) var url: String
     private(set) var httpMethod: HTTPMethod = .get
-    private(set) var bodyData: Empty?
+    private(set) var bodyData: BodyType?
     
     init(serverAddress: String, configKey: String) {
         self.url = "https://\(serverAddress)/config/\(configKey)"
