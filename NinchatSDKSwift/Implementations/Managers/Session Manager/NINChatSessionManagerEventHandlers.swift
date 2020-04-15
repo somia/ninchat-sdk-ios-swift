@@ -148,11 +148,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
     }
     
     func onLogEvent(value: String) {
-        /// Nothing is here
         debugger("** GO SDK output: \(value)")
-        if value.contains(Events.connectionSuperseded.rawValue) {
-            self.onActionSessionEvent?(nil, Events.connectionSuperseded, NinchatError(code: 0, title: value))
-        }
     }
     
     func onConnStateEvent(state: String) {

@@ -170,8 +170,6 @@ extension NINChatSessionManagerImpl {
                 completion(credentials, self.currentChannelID != nil, error)
             } else if event == .error {
                 completion(nil, false, error)
-            } else if event == .connectionSuperseded {
-                completion(nil, false, error)
             }
         }
 
@@ -319,7 +317,7 @@ extension NINChatSessionManagerImpl {
 
     /// Closes the old session using the session_id. The result can be ignored.
     func closeSession(credentials: NINSessionCredentials, completion: ((NINResult<Empty>) -> Void)?) {
-        let request = CloseSession(credentials: credentials, siteSecret: self.siteSecret)
+        let request = CloseSession(url: self.serverAddress, credentials: credentials, siteSecret: self.siteSecret)
         self.serviceManager.perform(request) { result in
             completion?(result)
         }
