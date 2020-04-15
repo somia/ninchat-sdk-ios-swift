@@ -223,6 +223,8 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
                 self?.chatView.didAddMessage(at: index)
             case .remove(let index):
                 self?.chatView.didRemoveMessage(from: index)
+            case .history:
+                self?.chatView.tableView.reloadData()
             }
         }
         self.viewModel.loadHistory { _ in }
@@ -276,7 +278,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     }
 
     private func deallocViewModel() {
-        print("** ** - deallocate view model")
+        debugger("** ** - deallocate view model")
 
         self.viewModel.onChannelClosed = nil
         self.viewModel.onQueueUpdated = nil

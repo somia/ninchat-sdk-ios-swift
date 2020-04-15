@@ -28,8 +28,8 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     internal var backgroundChannelID: String?
     internal var myUserID: String?
     internal var realmID: String?
-    internal var messageThrottler: MessageThrottler?
     internal var channelClosed: Bool = false
+    internal var expectedHistoryLength = -1
 
     // MARK: - NINChatSessionManagerInternalActions
     
@@ -65,6 +65,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
 
     var onMessageAdded: ((_ index: Int) -> Void)?
     var onMessageRemoved: ((_ index: Int) -> Void)?
+    var onHistoryLoaded: ((_ length: Int) -> Void)?
     var onChannelClosed: (() -> Void)?
     var onRTCSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)?
     var onRTCClientSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)?
@@ -174,11 +175,6 @@ extension NINChatSessionManagerImpl {
             }
         }
 
-        /// Create message throttler to manage inbound message order
-        self.messageThrottler = MessageThrottler { [weak self] message in
-            try? self?.didReceiveMessage(param: message.params, payload: message.payload)
-        }
-
         /// Make sure our site configuration contains a realm_id
         guard let realmId = self.siteConfiguration.audienceRealm else { throw NINSessionExceptions.invalidRealmConfiguration }
         self.realmID = realmId
@@ -210,23 +206,9 @@ extension NINChatSessionManagerImpl {
     }
 
     func list(queues ID: [String]?, completion: @escaping CompletionWithError) throws {
-        guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
+        guard let realmID = self.realmID else { return }
 
-        let param = NINLowLevelClientProps.initiate(action: .describeRealmQueues)
-        param.realmID = .success(realmID!)
-
-        if let queues = ID {
-            param.queuesID = .success(queues.reduce(into: NINLowLevelClientStrings.initiate) { list, id in
-                list.append(id)
-            })
-        }
-        
-        do {
-            let actionID = try session.send(param)
-            self.bind(action: actionID, closure: completion)
-        } catch {
-            completion(error)
-        }
+        try self.describe(realm: realmID, queuesID: ID, completion: completion)
     }
     
     func join(queue ID: String, progress: @escaping ((Queue?, Error?, Int) -> Void), completion: @escaping Completion) throws {
@@ -446,7 +428,15 @@ extension NINChatSessionManagerImpl {
         
         let param = NINLowLevelClientProps.initiate(action: .loadHistory)
         param.channelID = .success(currentChannel)
-        
+        param.historyOrder = .success(HistoryOrder.DESC.rawValue)
+
+        /// Currently we need to just load supported message types
+        let messageType = NINLowLevelClientStrings.initiate
+        messageType.append(MessageType.file.rawValue)
+        messageType.append(MessageType.text.rawValue)
+        messageType.append(MessageType.ui.rawValue)
+        param.messageTypes = .success(messageType)
+
         do {
             let actionID = try session.send(param)
             self.bind(action: actionID, closure: completion)
@@ -480,6 +470,26 @@ extension NINChatSessionManagerImpl {
 
         let param = NINLowLevelClientProps.initiate(action: .describeChannel)
         param.channelID = .success(id)
+
+        do {
+            let actionID = try session.send(param)
+            self.bind(action: actionID, closure: completion)
+        } catch {
+            completion(error)
+        }
+    }
+
+    func describe(realm id: String, queuesID: [String]?, completion: @escaping CompletionWithError) throws {
+        guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
+
+        let param = NINLowLevelClientProps.initiate(action: .describeRealmQueues)
+        param.realmID = .success(id)
+        if let queuesID = queuesID {
+            /// Parameter should be set only if there are any queues passed to the function
+            param.queuesID = .success(queuesID.reduce(into: NINLowLevelClientStrings.initiate) { list, id in
+                list.append(id)
+            })
+        }
 
         do {
             let actionID = try session.send(param)

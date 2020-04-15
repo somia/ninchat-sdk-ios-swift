@@ -126,7 +126,7 @@ final class NINCoordinator: Coordinator {
     func start(with queue: String?, resumeSession: Bool, within navigation: UINavigationController?) -> UIViewController? {
         let topViewController: UIViewController
         if resumeSession {
-            topViewController = self.chatViewController
+            topViewController = self.queueViewController(resume: resumeSession)
         } else  if let queue = queue, let target = self.sessionManager.queues.filter({ $0.queueID == queue }).first {
             topViewController = self.queueViewController(queue: target)
         } else {
@@ -138,8 +138,16 @@ final class NINCoordinator: Coordinator {
 }
 
 extension NINCoordinator {
+    internal func queueViewController(resume: Bool) -> NINQueueViewController {
+        let vc = self.queueViewController
+        vc.resumeMode = resume
+
+        return vc
+    }
+
     internal func queueViewController(queue: Queue) -> NINQueueViewController {
         let vc = self.queueViewController
+        vc.resumeMode = false
         vc.queue = queue
 
         return vc

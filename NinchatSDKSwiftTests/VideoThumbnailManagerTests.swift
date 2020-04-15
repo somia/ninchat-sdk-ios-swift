@@ -9,11 +9,11 @@ import XCTest
 
 final class VideoThumbnailManagerTests: XCTestCase {
     /// The video file is hosted on our Github repo.
-    let videoURL = "https://github.com/somia/ninchat-sdk-ios-swift/blob/feature/model-migrations/NinchatSDKSwiftTests/test_video.mp4?raw=true"
+    let videoURL = "https://github.com/somia/ninchat-sdk-ios-swift/blob/develop/NinchatSDKSwiftTests/test_video.mp4?raw=true"
 
-    /*
+    
     func test_video_thumbnail() {
-        /*let expect_online = self.expectation(description: "Expected to get thumbnail without any errors from the URL")
+        let expect_online = self.expectation(description: "Expected to get thumbnail without any errors from the URL")
         let expect_cache = self.expectation(description: "Expected to get thumbnail without any errors from the cache")
     
         let thumbnailManager = VideoThumbnailManager()
@@ -34,7 +34,7 @@ final class VideoThumbnailManagerTests: XCTestCase {
         }
 
         /// Wait a long time (~ 3 min) to download the video and run tests
-        waitForExpectations(timeout: 210.0)*/
+        waitForExpectations(timeout: 210.0)
     }
-    */
+    
 }

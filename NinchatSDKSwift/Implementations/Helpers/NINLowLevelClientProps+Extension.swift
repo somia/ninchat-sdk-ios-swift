@@ -15,6 +15,7 @@ struct NinchatError: Error {
 enum NINLowLevelClientActions: String {
     case deleteUser = "delete_user"
     case describeRealmQueues = "describe_realm_queues"
+    case describeQueue = "describe_queue"
     case requestAudience = "request_audience"
     case sendFile = "send_file"
     case describeFile = "describe_file"
@@ -24,6 +25,13 @@ enum NINLowLevelClientActions: String {
     case updateMember = "update_member"
     case sendMessage = "send_message"
     case beginICE = "begin_ice"
+}
+
+enum HistoryOrder: Int {
+    typealias RawValue = Int
+
+    case DESC   = -1    // requests newer messages first
+    case ASC    = 1     // requests older messages first
 }
 
 extension NINLowLevelClientProps {
@@ -258,6 +266,8 @@ protocol NINLowLevelMessageProps {
     var messageID: NINResult<String> { get }
     var messageUserID: NINResult<String> { get }
     var messageTime: NINResult<Double> { get }
+    var historyLength: NINResult<Int> { get }
+    var historyOrder: NINResult<Int> { set get }
 
     var messageType: NINResult<MessageType?> { set get }
     var messageTypes: NINResult<NINLowLevelClientStrings> { set get }
@@ -278,6 +288,15 @@ extension NINLowLevelClientProps: NINLowLevelMessageProps {
 
     var messageTime: NINResult<Double> {
         get { self.value(forKey: "message_time") }
+    }
+
+    var historyLength: NINResult<Int> {
+        get { self.value(forKey: "history_length") }
+    }
+
+    var historyOrder: NINResult<Int> {
+        get { self.value(forKey: "history_order") }
+        set { self.set(value: newValue.value, forKey: "history_order") }
     }
 
     var messageType: NINResult<MessageType?> {

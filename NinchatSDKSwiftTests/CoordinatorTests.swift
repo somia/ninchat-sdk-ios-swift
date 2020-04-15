@@ -44,6 +44,6 @@ class CoordinatorTests: XCTestCase {
 
         let chatView = coordinator.start(with: nil, resumeSession: true, within: navigationController)
         XCTAssertNotNil(coordinator.navigationController)
-        XCTAssertNotNil(chatView as? NINChatViewController)
+        XCTAssertNotNil(chatView as? NINQueueViewController)
     }
 }
