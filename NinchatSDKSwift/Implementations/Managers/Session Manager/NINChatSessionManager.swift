@@ -100,6 +100,7 @@ protocol QueueUpdateCapture {
 protocol NINChatSessionManagerDelegate {
     var onMessageAdded: ((_ index: Int) -> Void)? { get set }
     var onMessageRemoved: ((_ index: Int) -> Void)? { get set }
+    var onHistoryLoaded: ((_ length: Int) -> Void)? { get set }
     var onChannelClosed: (() -> Void)? { get set }
     var onRTCSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
     var onRTCClientSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }

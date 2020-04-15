@@ -220,7 +220,14 @@ extension NINChatSessionManagerImpl {
 
         self.onActionSevers?(param.actionID, stunServers, turnServers)
     }
-    
+
+    internal func didLoadHistory(param: NINLowLevelClientProps) throws {
+        if case let .failure(error) = param.historyLength { throw error }
+        if param.historyLength.value > 0 {
+            self.expectedHistoryLength = param.historyLength.value
+        }
+    }
+
     internal func didReceiveMessage(param: NINLowLevelClientProps, payload: NINLowLevelClientPayload) throws {
         if case let .failure(error) = param.messageType { throw error }
         debugger("Received message of type \(String(describing: param.messageType.value))")
@@ -297,14 +304,21 @@ extension NINChatSessionManagerImpl {
         }
     }
     
-    internal func add(message: ChatMessage, historyIndex: NINResult<Int>? = .success(0)) {
+    internal func add(message: ChatMessage, remained: NINResult<Int>? = .success(0)) {
         /// Guard against the same message getting added multiple times
-        /// should only happen if the client makes extraneous load_history calls elsewhere
         if self.chatMessages.contains(where: { $0.messageID == message.messageID }) { return }
         chatMessages.insert(message, at: 0)
 
-        if case let .success(index) = historyIndex, index == 0 {
-            chatMessages = self.sortAndMap()
+        if self.expectedHistoryLength == self.chatMessages.filter({ $0 is ChannelMessage }).count {
+            /// We are loading a history that needs to `reload` corresponded chat view
+            self.chatMessages = self.sortAndMap()
+            self.onHistoryLoaded?(self.expectedHistoryLength)
+            self.expectedHistoryLength = -1
+
+        } else if self.expectedHistoryLength == -1, case let .success(length) = remained, length == 0 {
+            /// We are not waiting for a history result
+            /// Thus, we will update the view with the index of received message
+            self.chatMessages = self.sortAndMap()
             self.onMessageAdded?(chatMessages.firstIndex(where: { $0.asEquatable == message.asEquatable }) ?? -1)
         }
     }
@@ -329,9 +343,6 @@ extension NINChatSessionManagerImpl {
     
     internal func disconnect() {
         self.delegate?.log(value: "disconnect: Closing Ninchat session.")
-        
-        self.messageThrottler?.stop()
-        self.messageThrottler = nil
         
         self.currentChannelID = nil
         self.backgroundChannelID = nil
@@ -429,12 +440,12 @@ extension NINChatSessionManagerImpl {
             }
         case .text, .file:
             guard messageUser != nil else { return }
-            try self.handleInbound(message: messageID, user: messageUser!, time: messageTime, actionID: actionID, historyIndex: param.historyLength, payload: payload)
+            try self.handleInbound(message: messageID, user: messageUser!, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
         case .compose:
             guard messageUser != nil else { return }
-            try self.handleCompose(message: messageID, user: messageUser!, time: messageTime, actionID: actionID, historyIndex: param.historyLength, payload: payload)
+            try self.handleCompose(message: messageID, user: messageUser!, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
         case .channel:
-            try self.handleChannel(message: messageID, user: messageUser, time: messageTime, actionID: actionID, historyIndex: param.historyLength, payload: payload)
+            try self.handleChannel(message: messageID, user: messageUser, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
         default:
             debugger("Ignoring unsupported message type: \(messageType.rawValue)")
             break
@@ -442,7 +453,7 @@ extension NINChatSessionManagerImpl {
 
     }
     
-    internal func handleInbound(message id: String, user: ChannelUser, time: Double, actionID: Int, historyIndex: NINResult<Int>, payload: NINLowLevelClientPayload) throws {
+    internal func handleInbound(message id: String, user: ChannelUser, time: Double, actionID: Int, remained: NINResult<Int>, payload: NINLowLevelClientPayload) throws {
         try [Int](0..<payload.length()).forEach({ index in
             let decode: NINResult<ChatMessagePayload> = payload.get(index)!.decode()
             switch decode {
@@ -460,14 +471,14 @@ extension NINChatSessionManagerImpl {
                         fileInfo.updateInfo(session: self) { error, didRefreshNetwork in
                             guard error == nil else { return }
                             
-                            self.add(message: TextMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user.userID == self.myUserID, sender: user, textContent: nil, attachment: fileInfo), historyIndex: historyIndex)
+                            self.add(message: TextMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user.userID == self.myUserID, sender: user, textContent: nil, attachment: fileInfo), remained: remained)
                         }
                     }
                 }
     
                 /// Only allocate a new message now if there is text and no attachment
                 if let text = message.text, !text.isEmpty, !hasAttachment {
-                    self.add(message:  TextMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user.userID == self.myUserID, sender: user, textContent: text, attachment: nil), historyIndex: historyIndex)
+                    self.add(message:  TextMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user.userID == self.myUserID, sender: user, textContent: text, attachment: nil), remained: remained)
                 }
             case .failure(let error):
                 throw error
@@ -475,7 +486,7 @@ extension NINChatSessionManagerImpl {
         })
     }
     
-    internal func handleChannel(message id: String, user: ChannelUser?, time: Double, actionID: Int, historyIndex: NINResult<Int>, payload: NINLowLevelClientPayload) throws {
+    internal func handleChannel(message id: String, user: ChannelUser?, time: Double, actionID: Int, remained: NINResult<Int>, payload: NINLowLevelClientPayload) throws {
         
         try [Int](0..<payload.length()).forEach { index in
             let decode: NINResult<ChatChannelPayload> = payload.get(index)!.decode()
@@ -488,7 +499,7 @@ extension NINChatSessionManagerImpl {
         }
     }
     
-    internal func handleCompose(message id: String, user: ChannelUser, time: Double, actionID: Int, historyIndex: NINResult<Int>, payload: NINLowLevelClientPayload) throws {
+    internal func handleCompose(message id: String, user: ChannelUser, time: Double, actionID: Int, remained: NINResult<Int>, payload: NINLowLevelClientPayload) throws {
         
         try [Int](0..<payload.length()).forEach { [unowned self] index in
             let decode: NINResult<[ComposeContent]> = payload.get(index)!.decode()
@@ -498,7 +509,7 @@ extension NINChatSessionManagerImpl {
                 if compose.filter({ $0.element != .button && $0.element != .select }).count > 0 {
                     debugger("Found ui/compose object with unhandled element, discarding message")
                 } else {
-                    self.add(message: ComposeMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user.userID == self.myUserID, sender: user, content: compose), historyIndex: historyIndex)
+                    self.add(message: ComposeMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user.userID == self.myUserID, sender: user, content: compose), remained: remained)
                 }
             case .failure(let error):
                 throw error

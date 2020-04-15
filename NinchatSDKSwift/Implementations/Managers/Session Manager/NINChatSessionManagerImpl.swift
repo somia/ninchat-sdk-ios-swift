@@ -28,8 +28,8 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     internal var backgroundChannelID: String?
     internal var myUserID: String?
     internal var realmID: String?
-    internal var messageThrottler: MessageThrottler?
     internal var channelClosed: Bool = false
+    internal var expectedHistoryLength = -1
 
     // MARK: - NINChatSessionManagerInternalActions
     
@@ -65,6 +65,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
 
     var onMessageAdded: ((_ index: Int) -> Void)?
     var onMessageRemoved: ((_ index: Int) -> Void)?
+    var onHistoryLoaded: ((_ length: Int) -> Void)?
     var onChannelClosed: (() -> Void)?
     var onRTCSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)?
     var onRTCClientSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)?
@@ -174,11 +175,6 @@ extension NINChatSessionManagerImpl {
                     try self.openSession(completion: completion)
                 } catch { completion(nil, false, error) }
             }
-        }
-
-        /// Create message throttler to manage inbound message order
-        self.messageThrottler = MessageThrottler { [weak self] message in
-            try? self?.didReceiveMessage(param: message.params, payload: message.payload)
         }
 
         /// Make sure our site configuration contains a realm_id
@@ -426,7 +422,15 @@ extension NINChatSessionManagerImpl {
         
         let param = NINLowLevelClientProps.initiate(action: .loadHistory)
         param.channelID = .success(currentChannel)
-        
+        param.historyOrder = .success(HistoryOrder.DESC.rawValue)
+
+        /// Currently we need to just load supported message types
+        let messageType = NINLowLevelClientStrings.initiate
+        messageType.append(MessageType.file.rawValue)
+        messageType.append(MessageType.text.rawValue)
+        messageType.append(MessageType.ui.rawValue)
+        param.messageTypes = .success(messageType)
+
         do {
             let actionID = try session.send(param)
             self.bind(action: actionID, closure: completion)

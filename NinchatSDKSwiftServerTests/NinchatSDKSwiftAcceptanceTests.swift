@@ -177,10 +177,6 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         expect.assertForOverFulfill = false
 
         do {
-            self.sessionManager.onMessageAdded = { _ in
-                expect.fulfill()
-            }
-
             try self.sessionManager.continueSession(credentials: self.credentials) { newCredentials, canResume, error in
                 XCTAssertNil(error)
                 XCTAssertNotNil(newCredentials)
@@ -192,6 +188,9 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
                 XCTAssertTrue(canResume)
             }
 
+            self.sessionManager.onHistoryLoaded = { _ in
+                expect.fulfill()
+            }
             try self.sessionManager.loadHistory { error in
                 XCTAssertNil(error)
             }
@@ -243,22 +242,23 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
 
     func testServer_08_loadHistory() {
         let expect = self.expectation(description: "Expected to fetch all messages after the transfer")
-        expect.expectedFulfillmentCount = 3
 
         do {
             self.sessionManager.chatMessages.removeAll()
-            self.sessionManager.onMessageAdded = { _ in
+            self.sessionManager.onHistoryLoaded = { length in
+                XCTAssertEqual(length, 3)
+                XCTAssertEqual(self.sessionManager.chatMessages.count, length)
                 expect.fulfill()
             }
+
             try self.sessionManager.loadHistory { error in
                 XCTAssertNil(error)
             }
-
         } catch {
             XCTFail(error.localizedDescription)
         }
 
-        waitForExpectations(timeout: 20.0)
+        waitForExpectations(timeout: 15.0)
     }
     
     func testServer_09_leaveQueue() {

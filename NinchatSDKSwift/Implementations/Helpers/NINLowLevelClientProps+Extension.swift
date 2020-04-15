@@ -27,6 +27,13 @@ enum NINLowLevelClientActions: String {
     case beginICE = "begin_ice"
 }
 
+enum HistoryOrder: Int {
+    typealias RawValue = Int
+
+    case DESC   = -1    // requests newer messages first
+    case ASC    = 1     // requests older messages first
+}
+
 extension NINLowLevelClientProps {
     static func initiate(action: NINLowLevelClientActions? = nil, name: String? = nil) -> NINLowLevelClientProps {
         let props = NINLowLevelClientProps()
@@ -260,6 +267,7 @@ protocol NINLowLevelMessageProps {
     var messageUserID: NINResult<String> { get }
     var messageTime: NINResult<Double> { get }
     var historyLength: NINResult<Int> { get }
+    var historyOrder: NINResult<Int> { set get }
 
     var messageType: NINResult<MessageType?> { set get }
     var messageTypes: NINResult<NINLowLevelClientStrings> { set get }
@@ -284,6 +292,11 @@ extension NINLowLevelClientProps: NINLowLevelMessageProps {
 
     var historyLength: NINResult<Int> {
         get { self.value(forKey: "history_length") }
+    }
+
+    var historyOrder: NINResult<Int> {
+        get { self.value(forKey: "history_order") }
+        set { self.set(value: newValue.value, forKey: "history_order") }
     }
 
     var messageType: NINResult<MessageType?> {

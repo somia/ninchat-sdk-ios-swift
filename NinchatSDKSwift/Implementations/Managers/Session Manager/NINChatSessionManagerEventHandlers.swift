@@ -55,7 +55,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
             if case let .failure(error) = param.event { throw error }
 
             let event = param.event.value
-            print("session event handler: \(event)")
+            debugger("session event handler: \(event)")
             if let eventType = Events(rawValue: event) {
                 switch eventType {
                 case .error:
@@ -101,14 +101,17 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
             if case let .failure(error) = param.event { throw error }
 
             let event = param.event.value
-            print("event handler: \(event)")
+            debugger("event handler: \(event)")
             if let eventType = Events(rawValue: event) {
                 switch eventType {
                 case .error:
                     try self.handlerError(param: param)
                 case .channelJoined:
                     try self.didJoinChannel(param: param)
-                case .receivedMessage, .historyResult:
+                case .historyResult:
+                    try self.didLoadHistory(param: param)
+                    fallthrough
+                case .receivedMessage:
                     try self.didReceiveMessage(param: param, payload: payload)
                 case .realmQueueFound:
                     try self.didFindRealmQueues(param: param)
