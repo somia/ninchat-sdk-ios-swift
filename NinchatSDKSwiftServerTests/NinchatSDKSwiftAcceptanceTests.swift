@@ -22,8 +22,15 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
             UserDefaults.standard.synchronize()
         }
     }
+    private var onEvent: ((Events?, Error?) -> Void)?
 
-    func testServer_0_fetchSiteConfigurations() {
+    override func setUp() {
+        super.setUp()
+
+        self.sessionManager.delegate = self
+    }
+
+    func testServer_00_fetchSiteConfigurations() {
         let expect = self.expectation(description: "Expected to fetch site configurations")
         self.sessionManager.fetchSiteConfiguration(config: Session.configurationKey, environments: []) { error in
             XCTAssertNil(error)
@@ -36,7 +43,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         wait(for: [expect], timeout: 10.0)
     }
 
-    func testServer_1_openSession() {
+    func testServer_01_openSession() {
         let expect = self.expectation(description: "Expected to open a session")
         do {
             try self.sessionManager.openSession { credentials, canResume, error in
@@ -66,7 +73,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         wait(for: [expect], timeout: 10.0)
     }
 
-    func testServer_2_listQueues() {
+    func testServer_02_listQueues() {
         let expect = self.expectation(description: "Expected to get objects for queue ids")
         do {
             try self.sessionManager.list(queues: self.sessionManager.siteConfiguration.audienceQueues) { error in
@@ -83,7 +90,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         wait(for: [expect], timeout: 15.0)
     }
 
-    func testServer_3_joinQueue() {
+    func testServer_03_joinQueue() {
         let expect_join = self.expectation(description: "Expected to join the queue")
         let expect_progress = self.expectation(description: "Expected to get progress update for the first time")
         expect_progress.assertForOverFulfill = false
@@ -108,11 +115,11 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         wait(for: [expect_join, expect_progress], timeout: 150.0)
     }
     
-    func testServer_4_startVideoChat() {
+    func testServer_04_startVideoChat() {
         let expect_call = self.expectation(description: "Expected to get a call request")
         let expect_offer = self.expectation(description: "Expected to get a call offer")
         let expect_hangup = self.expectation(description: "Expected to hangup the offer")
-    
+
         try! self.simulateTextMessage("Start a new video chat to run tests")
     
         self.sessionManager.onRTCSignal = { type, user, signal in
@@ -155,7 +162,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         waitForExpectations(timeout: 30.0)
     }
 
-    func testServer_5_leaveQueue() {
+    func testServer_05_leaveQueue() {
         let expect = self.expectation(description: "Expected to leave current queue")
         self.sessionManager.leave { error in
             XCTAssertNil(error)
@@ -165,15 +172,11 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         wait(for: [expect], timeout: 10.0)
     }
 
-    func testServer_6_resumeSession() {
+    func testServer_06_resumeSession() {
         let expect = self.expectation(description: "Expected to continue a session using credentials")
         expect.assertForOverFulfill = false
 
         do {
-            self.sessionManager.onMessageAdded = { _ in
-                expect.fulfill()
-            }
-
             try self.sessionManager.continueSession(credentials: self.credentials) { newCredentials, canResume, error in
                 XCTAssertNil(error)
                 XCTAssertNotNil(newCredentials)
@@ -185,6 +188,9 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
                 XCTAssertTrue(canResume)
             }
 
+            self.sessionManager.onHistoryLoaded = { _ in
+                expect.fulfill()
+            }
             try self.sessionManager.loadHistory { error in
                 XCTAssertNil(error)
             }
@@ -195,37 +201,67 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         wait(for: [expect], timeout: 10.0)
     }
 
-    func testServer_7_transferQueue() {
+    func testServer_07_transferQueue() {
         try! self.simulateTextMessage("Now transfer to another queue to continue tests")
-        let expect = self.expectation(description: "Expected to get transferred to another queue")
+        let expect_part = self.expectation(description: "Expected to get transferred to another channel")
+        expect_part.assertForOverFulfill = false
+        let expect_join = self.expectation(description: "Expected to joint the new channel")
+        expect_join.assertForOverFulfill = false
 
         self.sessionManager.onMessageAdded = nil
-        self.sessionManager.bindQueueUpdate(closure: { events, queue, error in
+        self.sessionManager.bindQueueUpdate(closure: { event, queue, error in
             XCTAssertNil(error)
-            XCTAssertNotNil(events)
-            XCTAssertEqual(events, Events.audienceEnqueued)
+            XCTAssertNotNil(event)
+            XCTAssertEqual(event, Events.audienceEnqueued)
             XCTAssertNotNil(queue)
             XCTAssertNotEqual(queue.queueID, Session.suiteQueue)
+
+            /// Once the user is enqueued, we have to part the current channel
+            try! self.sessionManager.part(channel: self.sessionManager.currentChannelID!) { error in
+                self.sessionManager.unbindQueueUpdateClosure(from: self)
+                XCTAssertNil(error)
+            }
         }, to: self)
         XCTAssertNotNil(self.sessionManager.currentChannelID)
 
-        do {
-            sleep(10)
-            try self.sessionManager.part(channel: self.sessionManager.currentChannelID!) { error in
-                self.sessionManager.unbindQueueUpdateClosure(from: self)
+        self.onEvent = { event, error in
+            XCTAssertNil(error)
+            XCTAssertNotNil(event)
 
-                XCTAssertNil(error)
+            /// Fulfill expectation if the user has successfully transferred to a new channel
+            if event == .channelParted {
+                expect_part.fulfill()
+            } else if event == .channelJoined {
+                expect_join.fulfill()
+            }
+        }
+        
+        /// The test needs a manual interaction from server to fulfills all expectations
+        wait(for: [expect_part, expect_join], timeout: 30.0)
+    }
+
+    func testServer_08_loadHistory() {
+        let expect = self.expectation(description: "Expected to fetch all messages after the transfer")
+
+        do {
+            self.sessionManager.chatMessages.removeAll()
+            self.sessionManager.onHistoryLoaded = { length in
+                XCTAssertEqual(length, 3)
+                XCTAssertEqual(self.sessionManager.chatMessages.count, length)
                 expect.fulfill()
+            }
+
+            try self.sessionManager.loadHistory { error in
+                XCTAssertNil(error)
             }
         } catch {
             XCTFail(error.localizedDescription)
         }
-        
-        /// The test needs a manual interaction from server to fulfills all expectations
-        wait(for: [expect], timeout: 50.0)
-    }
 
-    func testServer_8_leaveQueue() {
+        waitForExpectations(timeout: 15.0)
+    }
+    
+    func testServer_09_leaveQueue() {
         let expect = self.expectation(description: "Expected to leave current queue")
         self.sessionManager.leave { error in
             XCTAssertNil(error)
@@ -235,7 +271,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         wait(for: [expect], timeout: 10.0)
     }
     
-    func testServer_9_deallocate() {
+    func testServer_10_deallocate() {
         let expect = self.expectation(description: "Expected to delete user and close the session")
         do {
             sleep(10)
@@ -250,6 +286,26 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         }
 
         wait(for: [expect], timeout: 10.0)
+    }
+    
+}
+
+extension NinchatSDKSwiftAcceptanceTests: NINChatSessionInternalDelegate {
+    func log(value: String) {}
+
+    func log(format: String, _ args: CVarArg...) {}
+
+    func onDidEnd() {}
+
+    func onResumeFailed() -> Bool { true }
+
+    func override(imageAsset key: AssetConstants) -> UIImage? { nil }
+
+    func override(colorAsset key: ColorConstants) -> UIColor? { nil }
+
+    func onLowLevelEvent(event: NINLowLevelClientProps, payload: NINLowLevelClientPayload, lastReply: Bool) {
+        if case let .failure(error) = event.event { self.onEvent?(nil, error); return }
+        self.onEvent?(Events(rawValue: event.event.value), nil)
     }
 }
 

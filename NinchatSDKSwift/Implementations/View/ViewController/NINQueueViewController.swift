@@ -16,6 +16,7 @@ final class NINQueueViewController: UIViewController, ViewController {
     
     var viewModel: NINQueueViewModel!
     var queue: Queue!
+    var resumeMode: Bool!
     var onQueueActionTapped: (() -> Void)?
     private var queueTransferListener: AnyHashable!
     
@@ -78,6 +79,7 @@ final class NINQueueViewController: UIViewController, ViewController {
     }
 
     private func setupViewModel() {
+        self.viewModel.resumeMode = self.resumeMode
         self.viewModel.onInfoTextUpdate = { [weak self] text in
             DispatchQueue.main.async {
                 self?.queueInfoTextView.setAttributed(text: text ?? "", font: .ninchat)
@@ -85,12 +87,10 @@ final class NINQueueViewController: UIViewController, ViewController {
         }
         self.viewModel.onQueueJoin = { [weak self] error in
             guard error == nil else { return }
-
-            DispatchQueue.main.async {
-                self?.onQueueActionTapped?()
-            }
+            self?.onQueueActionTapped?()
         }
-        self.viewModel.connect(queue: self.queue)
+        /// Directly open chat page if it is a session resumption condition
+        (self.resumeMode) ? self.onQueueActionTapped?() : self.viewModel.connect(queue: self.queue)
     }
 }
 

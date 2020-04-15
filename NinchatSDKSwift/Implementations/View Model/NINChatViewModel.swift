@@ -8,6 +8,7 @@ import Foundation
 
 enum MessageUpdateType {
     case insert(_ index: Int)
+    case history
     case remove(_ index: Int)
 }
 
@@ -65,6 +66,9 @@ final class NINChatViewModelImpl: NINChatViewModel {
         }, to: self)
         self.sessionManager.onMessageAdded = { [weak self] index in
             self?.onChannelMessage?(.insert(index))
+        }
+        self.sessionManager.onHistoryLoaded = { [weak self] _ in
+            self?.onChannelMessage?(.history)
         }
         self.sessionManager.onMessageRemoved = { [weak self] index in
             self?.onChannelMessage?(.remove(index))

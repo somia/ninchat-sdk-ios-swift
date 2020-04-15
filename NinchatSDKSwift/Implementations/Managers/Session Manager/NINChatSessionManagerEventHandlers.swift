@@ -21,7 +21,8 @@ enum Events: String {
     case historyResult = "history_results"
     case fileFound = "file_found"
 
-    case queueFound = "realm_queues_found"
+    case realmQueueFound = "realm_queues_found"
+    case queueFound = "queue_found"
     
     case sessionCreated = "session_created"
     case userDeleted = "user_deleted"
@@ -54,7 +55,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
             if case let .failure(error) = param.event { throw error }
 
             let event = param.event.value
-            print("session event handler: \(event)")
+            debugger("session event handler: \(event)")
             if let eventType = Events(rawValue: event) {
                 switch eventType {
                 case .error:
@@ -65,14 +66,21 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                     self.delegate?.log(value: "Session created - my user ID is: \(String(describing: self.myUserID))")
 
                     /// Checks if the session is alive to resume
-                    ///     if possible, update channel members (name, avatar, message threads, etc)
-                    ///     if not, just notify to continue normal process.
+                    ///     is alive:
+                    ///         1. update channel members (name, avatar, message threads, etc)
+                    ///         2. describe channel's realm id (to get queues)
+                    ///     is not alive
+                    ///         1. notify to continue normal process.
                     if self.canResumeSession(param: param) {
-
                         try self.describe(channel: self.currentChannelID!) { error in
                             guard error == nil else { debugger("Error in describing the channel"); return }
 
-                            self.onActionSessionEvent?(credentials, eventType, nil)
+                            try! self.describe(realm: self.realmID!, queuesID: self.siteConfiguration.audienceQueues) { error in
+                                guard error == nil else { debugger("Error in describing the realm"); return }
+
+                                self.didJoinChannel(channelID: self.currentChannelID!)
+                                self.onActionSessionEvent?(credentials, eventType, nil)
+                            }
                         }
                     } else {
                         self.onActionSessionEvent?(credentials, eventType, nil)
@@ -80,7 +88,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                 case .userDeleted:
                     try self.didDeleteUser(param: param)
                 default:
-                    break
+                    self.onActionSessionEvent?(nil, eventType, nil)
                 }
             }
         } catch {
@@ -93,18 +101,20 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
             if case let .failure(error) = param.event { throw error }
 
             let event = param.event.value
-            print("event handler: \(event)")
+            debugger("event handler: \(event)")
             if let eventType = Events(rawValue: event) {
                 switch eventType {
                 case .error:
                     try self.handlerError(param: param)
                 case .channelJoined:
                     try self.didJoinChannel(param: param)
-                case .receivedMessage, .historyResult:
-                    /// Throttle the message; it will be cached for a short while to ensure inbound message order.
-                    messageThrottler?.add(message: InboundMessage(params: param, payload: payload))
-                case .queueFound:
-                    try self.didRealmQueuesFind(param: param)
+                case .historyResult:
+                    try self.didLoadHistory(param: param)
+                    fallthrough
+                case .receivedMessage:
+                    try self.didReceiveMessage(param: param, payload: payload)
+                case .realmQueueFound:
+                    try self.didFindRealmQueues(param: param)
                 case .audienceEnqueued, .queueUpdated:
                     try self.didUpdateQueue(type: eventType, param: param)
                 case .channelUpdated:
