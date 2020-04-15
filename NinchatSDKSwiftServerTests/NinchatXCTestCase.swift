@@ -54,7 +54,7 @@ extension NinchatXCTestCase {
     
         sessionManager.fetchSiteConfiguration(config: Session.configurationKey, environments: nil) { error in
             try! sessionManager.openSession { credentials, canResume, error in
-                debugger("** ** Test debugger: credentials: \(credentials!)")
+                debugger("** ** UnitTest: credentials: \(credentials!)")
                 try! sessionManager.list(queues: sessionManager.siteConfiguration.audienceQueues) { error in
                     try! sessionManager.join(queue: Session.suiteQueue, progress: { queue, error, position in }, completion: {
                         completion()

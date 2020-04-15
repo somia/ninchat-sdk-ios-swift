@@ -148,7 +148,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
     }
     
     func onLogEvent(value: String) {
-        /// Nothing is here
+        debugger("** GO SDK output: \(value)")
     }
     
     func onConnStateEvent(state: String) {

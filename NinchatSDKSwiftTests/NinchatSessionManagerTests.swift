@@ -23,7 +23,7 @@ class NinchatSessionManagerTests: XCTestCase {
     func testProtocolConformance() {
         XCTAssertNotNil(sessionManager)
         XCTAssertNotNil(sessionManager as NINChatSessionConnectionManager)
-        XCTAssertNotNil(sessionManager as NANChatSessionMessenger)
+        XCTAssertNotNil(sessionManager as NINChatSessionMessenger)
         XCTAssertNotNil(sessionManager as NINChatSessionManagerDelegate)
         XCTAssertNotNil(sessionManager as NINChatSessionManager)
     }

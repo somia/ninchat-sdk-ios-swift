@@ -163,17 +163,13 @@ extension NINChatSessionManagerImpl {
         try self.initiateSession(params: NINLowLevelClientProps.initiate(credentials: credentials), completion: completion)
     }
 
-    private func initiateSession(params: NINLowLevelClientProps, completion: @escaping CompletionWithCredentials) throws {
+    internal func initiateSession(params: NINLowLevelClientProps, completion: @escaping CompletionWithCredentials) throws {
         /// Wait for the session creation event
         self.onActionSessionEvent = { credentials, event, error in
             if event == .sessionCreated {
                 completion(credentials, self.currentChannelID != nil, error)
             } else if event == .error {
                 completion(nil, false, error)
-            } else if event == .connectionSuperseded {
-                do {
-                    try self.openSession(completion: completion)
-                } catch { completion(nil, false, error) }
             }
         }
 
@@ -185,7 +181,7 @@ extension NINChatSessionManagerImpl {
             params.siteSecret = .success(secret)
         }
 
-        if let userName = self.siteConfiguration.username {
+        if let userName = self.siteConfiguration.userName {
             params.userAttributes = .success(NINLowLevelClientProps.initiate(name: userName))
         }
 
@@ -316,6 +312,14 @@ extension NINChatSessionManagerImpl {
             }
         } else {
             try self.closeChat()
+        }
+    }
+
+    /// Closes the old session using the session_id. The result can be ignored.
+    func closeSession(credentials: NINSessionCredentials, completion: ((NINResult<Empty>) -> Void)?) {
+        let request = CloseSession(url: self.serverAddress, credentials: credentials, siteSecret: self.siteSecret)
+        self.serviceManager.perform(request) { result in
+            completion?(result)
         }
     }
 }

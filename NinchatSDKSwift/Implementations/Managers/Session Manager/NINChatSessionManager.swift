@@ -53,7 +53,7 @@ protocol NINChatSessionConnectionManager {
     func finishChat(rating status: ChatStatus?) throws
 }
 
-protocol NANChatSessionMessenger {
+protocol NINChatSessionMessenger {
     /**
     * Chronological list of messages on the current channel. The list is ordered by the message
     * timestamp in descending order (most recent first).
@@ -78,6 +78,9 @@ protocol NANChatSessionMessenger {
     
     /** Load channel history. */
     func loadHistory(completion: @escaping CompletionWithError) throws
+
+    /* Close an old session using given credentials async. */
+    func closeSession(credentials: NINSessionCredentials, completion: ((NINResult<Empty>) -> Void)?)
 }
 
 protocol NINChatSessionAttachment {
@@ -109,7 +112,7 @@ protocol NINChatSessionManagerDelegate {
     func unbindQueueUpdateClosure<T: QueueUpdateCapture>(from receiver: T)
 }
 
-protocol NINChatSessionManager: class, NINChatSessionConnectionManager, NANChatSessionMessenger, NINChatDevHelper, NINChatSessionAttachment, NINChatSessionTranslation, NINChatSessionManagerDelegate {
+protocol NINChatSessionManager: class, NINChatSessionConnectionManager, NINChatSessionMessenger, NINChatDevHelper, NINChatSessionAttachment, NINChatSessionTranslation, NINChatSessionManagerDelegate {
     /** List of available queues for the realm_id. */
     var queues: [Queue]! { get set }
     

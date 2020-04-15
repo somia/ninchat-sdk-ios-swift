@@ -14,7 +14,6 @@ protocol SiteConfiguration  {
     var confirmDialogTitle: String? { get }
     var audienceRealm: String? { get }
     var audienceQueues: [String]? { get }
-    var username: String? { get }
     var translation: [String:String]? { get }
     var agentAvatar: AnyHashable? { get }
     var agentName: String? { get }
@@ -59,10 +58,6 @@ struct SiteConfigurationImpl: SiteConfiguration {
     
     var audienceQueues: [String]? {
         self.value(for: "audienceQueues")
-    }
-    
-    var username: String? {
-        self.value(for: "userName")
     }
     
     var translation: [String:String]? {
