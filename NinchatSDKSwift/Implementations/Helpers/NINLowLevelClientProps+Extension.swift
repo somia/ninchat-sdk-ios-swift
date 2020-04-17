@@ -109,6 +109,10 @@ extension NINLowLevelClientProps: NINLowLevelSessionProps {
         set { self.set(value: newValue.value, forKey: "name") }
     }
 
+    var closed: NINResult<Bool> {
+        get { self.value(forKey: "closed") }
+    }
+
     func setAction(_ action: NINLowLevelClientActions) {
         self.set(value: action.rawValue, forKey: "action")
     }
@@ -118,6 +122,7 @@ protocol NINLowLevelQueueProps {
     var queueName: NINResult<String> { get }
     var realmQueue: NINResult<NINLowLevelClientProps> { get }
     var queuePosition: NINResult<Int> { get }
+    var queueClosed: NINResult<Bool> { get }
     var queueAttributes: NINResult<NINLowLevelClientProps> { get }
 
     var queueID: NINResult<String> { set get }
@@ -142,6 +147,15 @@ extension NINLowLevelClientProps: NINLowLevelQueueProps {
 
     var queuePosition: NINResult<Int> {
         get { self.get(forKey: "queue_position") }
+    }
+
+    var queueClosed: NINResult<Bool> {
+        switch self.queueAttributes {
+        case .success(let attributes):
+            return attributes.closed
+        case .failure(let error):
+            return .failure(error)
+        }
     }
 
     var queueAttributes: NINResult<NINLowLevelClientProps> {

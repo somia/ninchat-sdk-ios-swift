@@ -77,6 +77,7 @@ public enum Constants: String {
     case kJoinQueueText = "Join audience queue {{audienceQueue.queue_attrs.name}}"
     case kQueuePositionN = "Joined audience queue {{audienceQueue.queue_attrs.name}}, you are at position {{audienceQueue.queue_position}}."
     case kQueuePositionNext = "Joined audience queue {{audienceQueue.queue_attrs.name}}, you are next."
+    case kNoQueueText = "noQueuesText"
     case kCloseChatText = "Close chat"
     case kConversationEnded = "Conversation ended"
     case kCancelDialog = "Continue chat"
