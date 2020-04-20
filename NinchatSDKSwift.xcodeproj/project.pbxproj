@@ -117,6 +117,7 @@
 		91A160407EF6C23B8001A121 /* Toast.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91A16E066CFD2B8920EEFD10 /* Toast.xib */; };
 		91A160605AB6B75C6DB8CC86 /* NinchatXCTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A166D4F9B0F6D7063479E9 /* NinchatXCTestCase.swift */; };
 		91A16097541D9C728A532EF5 /* ChoiceDialogueRow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91A1649D2A54AD0FE2875F52 /* ChoiceDialogueRow.xib */; };
+		91A1617091BE8D796B6C6AA6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91A16C8DB9A8204C92A7CB38 /* Localizable.strings */; };
 		91A1617A1502B89B969891D0 /* CloseSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16F8780577EFC04190614 /* CloseSession.swift */; };
 		91A161853F64C37F1B9EFDDB /* NinchatSDKSwiftAcceptanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A168F7C3E9BB664C126805 /* NinchatSDKSwiftAcceptanceTests.swift */; };
 		91A161BA5B39C92B92F6B56B /* RTCSessionDescription+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1665602ED586F1BD60785 /* RTCSessionDescription+Extension.swift */; };
@@ -163,6 +164,7 @@
 		91A16DD374E854007210494B /* UIFont+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A163B62D2DBB763D1B850A /* UIFont+Extension.swift */; };
 		91A16DE58D34AA4B9D3713AB /* ComposeContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1689894322817E8A84EE1 /* ComposeContentView.swift */; };
 		91A16F01F99326D2F881295A /* ChoiceDialogue.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91A16D2D28D6ECE052A799BE /* ChoiceDialogue.xib */; };
+		91A16F0F943EEA59D402EF50 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91A16BC6222D563B8B9252CA /* Localizable.strings */; };
 		91A16FAE023E157B1B3E5FD2 /* TypingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A168B0495C5D2BBF7733D0 /* TypingCell.swift */; };
 		9810520368704C8E3C7F2D92 /* Pods_NinchatSDKSwiftServerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6176315081A11762D37BC6C /* Pods_NinchatSDKSwiftServerTests.framework */; };
 		A9AB26D31FF8CC4A41698EB5 /* Pods_NinchatSDKSwiftTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FEAD27BEEC9ED9A48EB128E /* Pods_NinchatSDKSwiftTests.framework */; };
@@ -317,10 +319,12 @@
 		91A161D30D89818FBC9A0476 /* ExtensionsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionsTests.swift; sourceTree = "<group>"; };
 		91A1621FC457EFE156F90335 /* ChannelMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelMessage.swift; sourceTree = "<group>"; };
 		91A16241F1BD25005BE48B83 /* RTCIceCandidate+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RTCIceCandidate+Extension.swift"; sourceTree = "<group>"; };
+		91A1629E2C198B4299F8E532 /* fi */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = fi; path = Localizable.strings; sourceTree = "<group>"; };
 		91A162A3A1B95DCF935DA47E /* ComposeMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposeMessage.swift; sourceTree = "<group>"; };
 		91A163542A73487774FB1D3C /* Permission.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Permission.swift; sourceTree = "<group>"; };
 		91A163B62D2DBB763D1B850A /* UIFont+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+Extension.swift"; sourceTree = "<group>"; };
 		91A16407D8FAC5AEEDD748C9 /* ServiceManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceManager.swift; sourceTree = "<group>"; };
+		91A16468FB26B3084F03232F /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
 		91A1649D2A54AD0FE2875F52 /* ChoiceDialogueRow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChoiceDialogueRow.xib; sourceTree = "<group>"; };
 		91A164E1E7207BA353BF6418 /* SiteConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SiteConfiguration.swift; sourceTree = "<group>"; };
 		91A16501A258D1244E52AD23 /* String+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
@@ -792,6 +796,8 @@
 			children = (
 				85DD6C4823AE0CBC0023FFEF /* Fonts */,
 				85DC59D1239E7850007ABAE3 /* Media.xcassets */,
+				91A16B777FA0960B748A59CD /* en.lproj */,
+				91A1640B230BC612EC6B0C86 /* fi.lproj */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -838,6 +844,14 @@
 			path = Network;
 			sourceTree = "<group>";
 		};
+		91A1640B230BC612EC6B0C86 /* fi.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				91A16C8DB9A8204C92A7CB38 /* Localizable.strings */,
+			);
+			path = fi.lproj;
+			sourceTree = "<group>";
+		};
 		91A1649377DB3ACD23E8B7E8 /* Toast */ = {
 			isa = PBXGroup;
 			children = (
@@ -874,6 +888,14 @@
 				91A16EE2919D93717F843D49 /* VideoThumbnailManager.swift */,
 			);
 			path = Utilities;
+			sourceTree = "<group>";
+		};
+		91A16B777FA0960B748A59CD /* en.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				91A16BC6222D563B8B9252CA /* Localizable.strings */,
+			);
+			path = en.lproj;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -979,6 +1001,7 @@
 			knownRegions = (
 				en,
 				Base,
+				fi,
 			);
 			mainGroup = 855B9F07238ECDB30081A9C6;
 			productRefGroup = 855B9F12238ECDB30081A9C6 /* Products */;
@@ -1030,6 +1053,8 @@
 				91A16F01F99326D2F881295A /* ChoiceDialogue.xib in Resources */,
 				91A16097541D9C728A532EF5 /* ChoiceDialogueRow.xib in Resources */,
 				91A160407EF6C23B8001A121 /* Toast.xib in Resources */,
+				91A16F0F943EEA59D402EF50 /* Localizable.strings in Resources */,
+				91A1617091BE8D796B6C6AA6 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1308,6 +1333,25 @@
 			targetProxy = 85B72A9923F57ADF00D1C4BC /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		91A16BC6222D563B8B9252CA /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				91A16468FB26B3084F03232F /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		91A16C8DB9A8204C92A7CB38 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				91A1629E2C198B4299F8E532 /* fi */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		855B9F23238ECDB30081A9C6 /* Debug */ = {

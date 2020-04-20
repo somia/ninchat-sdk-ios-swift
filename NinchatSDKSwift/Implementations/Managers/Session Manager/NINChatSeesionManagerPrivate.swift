@@ -23,7 +23,10 @@ extension NINChatSessionManagerImpl {
             try realmQueues.accept(queuesParser)
 
             self.queues = queuesParser.properties.keys.compactMap({ key in
-                Queue(queueID: key, name: (try? realmQueues.getObject(key).queueName.value) ?? "")
+                if let queue = try? realmQueues.getObject(key), case let .success(queueName) = queue.queueName, case let .success(queueClosed) = queue.queueClosed {
+                    return Queue(queueID: key, name: queueName, isClosed: queueClosed)
+                }
+                return nil
             })
 
             /// Form the list of audience queues; if audienceQueues is specified in siteConfig, we use those;

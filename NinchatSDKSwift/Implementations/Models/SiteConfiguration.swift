@@ -19,7 +19,8 @@ protocol SiteConfiguration  {
     var agentName: String? { get }
     var userAvatar: AnyHashable? { get }
     var userName: String? { get }
-    
+    var noQueueText: String? { get }
+
     init(configuration: [AnyHashable : Any]?, environments: [String]?)
 }
 
@@ -78,6 +79,10 @@ struct SiteConfigurationImpl: SiteConfiguration {
     
     var userName: String? {
         self.value(for: "userName")
+    }
+
+    var noQueueText: String? {
+        self.value(for: "noQueuesText")
     }
 }
 

@@ -46,7 +46,12 @@ final class NINInitialViewController: UIViewController, ViewController {
             motdTextView.textAlignment = .left
         }
     }
-    
+    @IBOutlet private(set) weak var noQueueTextView: UITextView! {
+        didSet {
+            self.noQueueTextView.isHidden = true
+        }
+    }
+
     // MARK: - UIViewController
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -57,7 +62,13 @@ final class NINInitialViewController: UIViewController, ViewController {
         super.viewDidLoad()
         
         self.overrideAssets()
-        self.drawQueueButtons()
+        if self.session.sessionManager.audienceQueues.filter({ !$0.isClosed }).count > 0 {
+            /// There is at least one open queue to join
+            self.drawQueueButtons()
+        } else {
+            /// Show no queue text
+            self.drawNoQueueText()
+        }
     }
     
     // MARK: - User actions
@@ -93,11 +104,12 @@ private extension NINInitialViewController {
     
     private func drawQueueButtons() {
         self.queueButtonsStackView.subviews.forEach { $0.removeFromSuperview() }
-        
-        let numberOfButtons = min(3, self.session.sessionManager.audienceQueues.count)
+
+        let availableQueues = self.session.sessionManager.audienceQueues.filter({ !$0.isClosed })
+        let numberOfButtons = min(3, availableQueues.count)
         let buttonHeights: CGFloat = (numberOfButtons > 2) ? 40.0 : 60.0
         for index in 0..<numberOfButtons {
-            let queue = self.session.sessionManager.audienceQueues[index]
+            let queue = availableQueues[index]
             let button = Button(frame: .zero) { [weak self] _ in
                 self?.onQueueActionTapped?(queue)
             }
@@ -112,5 +124,11 @@ private extension NINInitialViewController {
             queueButtonsStackView.addArrangedSubview(button)
             button.heightAnchor.constraint(equalToConstant: buttonHeights).isActive = true
         }
+    }
+
+    private func drawNoQueueText() {
+        self.queueButtonsStackView.isHidden = true
+        self.noQueueTextView.isHidden = false
+        self.noQueueTextView.setAttributed(text: self.session.sessionManager.siteConfiguration.noQueueText ?? NSLocalizedString("NoQueueText", tableName: "Localizable", bundle: Bundle.SDKBundle!, value: "", comment: ""), font: self.noQueueTextView.font)
     }
 }

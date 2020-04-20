@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="YpM-11-QhB">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="YpM-11-QhB">
     <device id="retina4_7" orientation="portrait" appearance="dark"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -128,7 +128,7 @@ you are next.</string>
                                     <constraint firstAttribute="height" id="drK-a0-uHv"/>
                                 </constraints>
                             </view>
-                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="brw-f0-DOL" userLabel="Chat view" customClass="ChatView" customModule="NinchatSDKSwift" customModuleProvider="target">
+                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="brw-f0-DOL" userLabel="Chat view" customClass="ChatView" customModule="NinchatSwiftSDKUI" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="547"/>
                                 <subviews>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="g76-kj-vdH">
@@ -334,13 +334,13 @@ you are next.</string>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wa1-0U-Lj7" userLabel="Top container view">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="316.5"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="314.5"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wXY-o9-goJ" userLabel="Welcome text container view">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="136.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="134.5"/>
                                         <subviews>
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed " textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="sio-TM-FLm">
-                                                <rect key="frame" x="20" y="50" width="335" height="56.5"/>
+                                                <rect key="frame" x="20" y="50" width="335" height="54.5"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
@@ -357,7 +357,7 @@ you are next.</string>
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MP0-uv-PXT" userLabel="Button container view">
-                                        <rect key="frame" x="0.0" y="136.5" width="375" height="180"/>
+                                        <rect key="frame" x="0.0" y="134.5" width="375" height="180"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="kgP-Ty-5vY">
                                                 <rect key="frame" x="67.5" y="5" width="240" height="60"/>
@@ -383,6 +383,16 @@ you are next.</string>
                                                     <constraint firstAttribute="width" constant="240" id="rMt-C7-rn9"/>
                                                 </constraints>
                                             </stackView>
+                                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed " textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="JQj-hE-nDg">
+                                                <rect key="frame" x="67.5" y="5" width="240" height="60"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="240" id="mTb-oY-PF1"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
+                                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
+                                            </textView>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ign-ZR-Zu6">
                                                 <rect key="frame" x="67.5" y="80" width="240" height="60"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -403,9 +413,12 @@ you are next.</string>
                                             <constraint firstAttribute="bottom" secondItem="ign-ZR-Zu6" secondAttribute="bottom" constant="40" id="2BR-nD-ycT"/>
                                             <constraint firstItem="ign-ZR-Zu6" firstAttribute="top" secondItem="kgP-Ty-5vY" secondAttribute="bottom" constant="15" id="6eV-mB-lOO"/>
                                             <constraint firstItem="kgP-Ty-5vY" firstAttribute="top" secondItem="MP0-uv-PXT" secondAttribute="top" constant="5" id="Omj-9X-SYY"/>
+                                            <constraint firstItem="JQj-hE-nDg" firstAttribute="centerX" secondItem="MP0-uv-PXT" secondAttribute="centerX" id="OyA-3d-8a5"/>
                                             <constraint firstItem="kgP-Ty-5vY" firstAttribute="centerX" secondItem="MP0-uv-PXT" secondAttribute="centerX" id="P6s-Kh-uKE"/>
                                             <constraint firstItem="ign-ZR-Zu6" firstAttribute="width" secondItem="kgP-Ty-5vY" secondAttribute="width" id="QCe-t8-Ez4"/>
                                             <constraint firstItem="ign-ZR-Zu6" firstAttribute="centerX" secondItem="MP0-uv-PXT" secondAttribute="centerX" id="er1-fp-enb"/>
+                                            <constraint firstItem="ign-ZR-Zu6" firstAttribute="top" secondItem="JQj-hE-nDg" secondAttribute="bottom" constant="15" id="vD9-KP-GAm"/>
+                                            <constraint firstItem="JQj-hE-nDg" firstAttribute="top" secondItem="MP0-uv-PXT" secondAttribute="top" constant="5" id="yf5-PO-xHz"/>
                                         </constraints>
                                     </view>
                                 </subviews>
@@ -421,10 +434,10 @@ you are next.</string>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3xg-1C-FCR" userLabel="Bottom container view">
-                                <rect key="frame" x="0.0" y="316.5" width="375" height="350.5"/>
+                                <rect key="frame" x="0.0" y="314.5" width="375" height="352.5"/>
                                 <subviews>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="D4q-k8-gpN">
-                                        <rect key="frame" x="20" y="40" width="335" height="137"/>
+                                        <rect key="frame" x="20" y="40" width="335" height="150"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </string>
                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
@@ -461,6 +474,7 @@ you are next.</string>
                         <outlet property="bottomContainerView" destination="3xg-1C-FCR" id="bTt-tN-u3D"/>
                         <outlet property="closeWindowButton" destination="ign-ZR-Zu6" id="f6Q-HL-3e0"/>
                         <outlet property="motdTextView" destination="D4q-k8-gpN" id="mvn-0f-RPQ"/>
+                        <outlet property="noQueueTextView" destination="JQj-hE-nDg" id="FV3-gn-Fo8"/>
                         <outlet property="queueButtonsStackView" destination="kgP-Ty-5vY" id="0f1-eC-IFe"/>
                         <outlet property="topContainerView" destination="Wa1-0U-Lj7" id="o2l-78-drn"/>
                         <outlet property="welcomeTextView" destination="sio-TM-FLm" id="On2-aa-gGH"/>

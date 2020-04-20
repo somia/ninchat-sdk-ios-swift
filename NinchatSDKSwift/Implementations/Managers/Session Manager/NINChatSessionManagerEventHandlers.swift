@@ -72,14 +72,21 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                     ///     is not alive
                     ///         1. notify to continue normal process.
                     if self.canResumeSession(param: param) {
-                        try self.describe(channel: self.currentChannelID!) { error in
+                        try self.describe(channel: self.currentChannelID!) { [weak self] error in
                             guard error == nil else { debugger("Error in describing the channel"); return }
+                            guard let realmID = self?.realmID else { debugger("Error in getting current Realm ID"); return }
+                            guard let audienceQueues = self?.siteConfiguration.audienceQueues else { debugger("Error in getting audience queues"); return }
 
-                            try! self.describe(realm: self.realmID!, queuesID: self.siteConfiguration.audienceQueues) { error in
-                                guard error == nil else { debugger("Error in describing the realm"); return }
+                            try? self?.describe(realm: realmID, queuesID: audienceQueues) { error in
+                                guard error == nil else {
+                                    debugger("Error in describing the realm")
+                                    self?.onActionSessionEvent?(credentials, Events.error, error)
+                                    return
+                                }
+                                guard let channelID = self?.currentChannelID else { debugger("Error in getting current channel id"); return }
 
-                                self.didJoinChannel(channelID: self.currentChannelID!)
-                                self.onActionSessionEvent?(credentials, eventType, nil)
+                                self?.didJoinChannel(channelID: channelID)
+                                self?.onActionSessionEvent?(credentials, eventType, nil)
                             }
                         }
                     } else {

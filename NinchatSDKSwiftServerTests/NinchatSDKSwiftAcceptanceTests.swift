@@ -260,7 +260,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
 
         waitForExpectations(timeout: 15.0)
     }
-    
+
     func testServer_09_leaveQueue() {
         let expect = self.expectation(description: "Expected to leave current queue")
         self.sessionManager.leave { error in
@@ -287,7 +287,6 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
 
         wait(for: [expect], timeout: 10.0)
     }
-    
 }
 
 extension NinchatSDKSwiftAcceptanceTests: NINChatSessionInternalDelegate {
