@@ -50,16 +50,16 @@ extension NINLowLevelClientProps {
 
     static func initiate(credentials: NINSessionCredentials) -> NINLowLevelClientProps {
         let props = NINLowLevelClientProps()
-        props?.set(value: credentials.userID, forKey: "user_id", ofType: String.self)
-        props?.set(value: credentials.userAuth, forKey: "user_auth", ofType: String.self)
+        props?.set(value: credentials.userID, forKey: "user_id")
+        props?.set(value: credentials.userAuth, forKey: "user_auth")
 
         return props!
     }
 
-    public static func initiate(metadata: [String:String]) -> NINLowLevelClientProps {
+    public static func initiate<T>(metadata: [String:T]) -> NINLowLevelClientProps {
         let props = NINLowLevelClientProps()
         for (key,value) in metadata {
-            props?.set(value: value, forKey: key, ofType: String.self)
+            props?.set(value: value, forKey: key)
         }
 
         return props!
@@ -98,16 +98,16 @@ extension NINLowLevelClientProps: NINLowLevelSessionProps {
 
     var siteSecret: NINResult<String> {
         get { self.get(forKey: "site_secret") }
-        set { self.set(value: newValue.value, forKey: "site_secret", ofType: String.self) }
+        set { self.set(value: newValue.value, forKey: "site_secret") }
     }
 
     var name: NINResult<String> {
         get { self.get(forKey: "name") }
-        set { self.set(value: newValue.value, forKey: "name", ofType: String.self) }
+        set { self.set(value: newValue.value, forKey: "name") }
     }
 
     func setAction(_ action: NINLowLevelClientActions) {
-        self.set(value: action.rawValue, forKey: "action", ofType: String.self)
+        self.set(value: action.rawValue, forKey: "action")
     }
 }
 
@@ -147,22 +147,22 @@ extension NINLowLevelClientProps: NINLowLevelQueueProps {
 
     var queueID: NINResult<String> {
         get { self.get(forKey: "queue_id") }
-        set { self.set(value: newValue.value, forKey: "queue_id", ofType: String.self) }
+        set { self.set(value: newValue.value, forKey: "queue_id") }
     }
 
     var realmID: NINResult<String> {
         get { self.get(forKey: "realm_id") }
-        set { self.set(value: newValue.value, forKey: "realm_id", ofType: String.self) }
+        set { self.set(value: newValue.value, forKey: "realm_id") }
     }
 
     var queuesID: NINResult<NINLowLevelClientStrings> {
         get { self.get(forKey: "queue_ids") }
-        set { self.set(value: newValue.value, forKey: "queue_ids", ofType: NINLowLevelClientStrings.self) }
+        set { self.set(value: newValue.value, forKey: "queue_ids") }
     }
 
     var metadata: NINResult<NINLowLevelClientProps> {
         get { self.get(forKey: "audience_metadata") }
-        set { self.set(value: newValue.value, forKey: "audience_metadata", ofType: NINLowLevelClientProps.self) }
+        set { self.set(value: newValue.value, forKey: "audience_metadata") }
     }
 }
 
@@ -205,12 +205,12 @@ extension NINLowLevelClientProps: NINLowLevelChannelProps {
 
     var channelID: NINResult<String> {
         get { self.get(forKey: "channel_id") }
-        set { self.set(value: newValue.value, forKey: "channel_id", ofType: String.self) }
+        set { self.set(value: newValue.value, forKey: "channel_id") }
     }
 
     var channelMemberAttributes: NINResult<NINLowLevelClientProps> {
         get { self.get(forKey: "member_attrs") }
-        set { self.set(value: newValue.value, forKey: "member_attrs", ofType: NINLowLevelClientProps.self) }
+        set { self.set(value: newValue.value, forKey: "member_attrs") }
     }
 }
 
@@ -253,12 +253,12 @@ extension NINLowLevelClientProps: NINLowLevelUserProps {
 
     var userID: NINResult<String> {
         get { self.get(forKey: "user_id") }
-        set { self.set(value: newValue.value, forKey: "user_id", ofType: String.self) }
+        set { self.set(value: newValue.value, forKey: "user_id") }
     }
 
     var userAttributes: NINResult<NINLowLevelClientProps> {
         get { self.get(forKey: "user_attrs") }
-        set { self.set(value: newValue.value, forKey: "user_attrs", ofType: NINLowLevelClientProps.self) }
+        set { self.set(value: newValue.value, forKey: "user_attrs") }
     }
 }
 
@@ -296,7 +296,7 @@ extension NINLowLevelClientProps: NINLowLevelMessageProps {
 
     var historyOrder: NINResult<Int> {
         get { self.get(forKey: "history_order") }
-        set { self.set(value: newValue.value, forKey: "history_order", ofType: Int.self) }
+        set { self.set(value: newValue.value, forKey: "history_order") }
     }
 
     var messageType: NINResult<MessageType?> {
@@ -313,33 +313,33 @@ extension NINLowLevelClientProps: NINLowLevelMessageProps {
         }
         set {
             guard let type = newValue.value else { return }
-            self.set(value: type.rawValue, forKey: "message_type", ofType: String.self) 
+            self.set(value: type.rawValue, forKey: "message_type") 
         }
     }
 
     var messageTypes: NINResult<NINLowLevelClientStrings> {
         get { self.get(forKey: "message_types") }
-        set { self.set(value: newValue.value, forKey: "message_types", ofType: NINLowLevelClientStrings.self) }
+        set { self.set(value: newValue.value, forKey: "message_types") }
     }
 
     var writing: NINResult<Bool> {
         get { self.get(forKey: "writing") }
-        set { self.set(value: newValue.value, forKey: "writing", ofType: Bool.self) }
+        set { self.set(value: newValue.value, forKey: "writing") }
     }
 
     var recipients: NINResult<NINLowLevelClientStrings> {
         get { self.get(forKey: "message_recipient_ids") }
-        set { self.set(value: newValue.value, forKey: "message_recipient_ids", ofType: NINLowLevelClientStrings.self) }
+        set { self.set(value: newValue.value, forKey: "message_recipient_ids") }
     }
 
     var messageFold: NINResult<Bool> {
         get { self.get(forKey: "message_fold") }
-        set { self.set(value: newValue.value, forKey: "message_fold", ofType: Bool.self) }
+        set { self.set(value: newValue.value, forKey: "message_fold") }
     }
 
     var messageTTL: NINResult<Int> {
         get { self.get(forKey: "message_ttl") }
-        set { self.set(value: newValue.value, forKey: "message_ttl", ofType: Int.self) }
+        set { self.set(value: newValue.value, forKey: "message_ttl") }
     }
 }
 
@@ -426,12 +426,12 @@ extension NINLowLevelClientProps: NINLowLevelFileInfoProps {
 
     var fileID: NINResult<String> {
         get { self.get(forKey: "file_id") }
-        set { self.set(value: newValue.value, forKey: "file_id", ofType: String.self) }
+        set { self.set(value: newValue.value, forKey: "file_id") }
     }
 
     var fileAttributes: NINResult<NINLowLevelClientProps> {
         get { self.get(forKey: "file_attrs") }
-        set { self.set(value: newValue.value, forKey: "file_attrs", ofType: NINLowLevelClientProps.self) }
+        set { self.set(value: newValue.value, forKey: "file_attrs") }
     }
 }
 
@@ -464,47 +464,48 @@ extension NINLowLevelClientProps {
         }
     }
 
-    func set<T>(value: T, forKey key: String, ofType type: T.Type) {
-        switch type {
-        case is Int.Type:
-            self.setInt(key, val: (value as! Int))
-        case is Double.Type:
-            self.setFloat(key, val: (value as! Double))
-        case is Bool.Type:
-            self.setBool(key, val: (value as! Bool))
-        case is String.Type:
-            self.setString(key, val: (value as! String))
-        case is NINLowLevelClientProps.Type:
-            self.setObject(key, ref: (value as! NINLowLevelClientProps))
-        case is NINLowLevelClientStrings.Type:
-            self.setStringArray(key, ref: (value as! NINLowLevelClientStrings))
-        default:
+    func set<T>(value: T, forKey key: String) {
+        if let value = value as? Double, floor(value) == value {
+            self.setInt(key, val: Int(value))
+        } else if let value = value as? Double {
+            self.setFloat(key, val: value)
+        } else if let value = value as? Int {
+            self.setInt(key, val: value)
+        } else if let value = value as? Bool {
+            self.setBool(key, val: value)
+        } else if let value = value as? String {
+            self.setString(key, val: value)
+        } else if let value = value as? NINLowLevelClientProps {
+            self.setObject(key, ref: value)
+        } else if let value = value as? NINLowLevelClientStrings {
+            self.setStringArray(key, ref: value)
+        } else {
             fatalError("Error in requested type: \(T.self) forKey: \(key)")
         }
     }
 
-    private func getInt(_ key: String) throws -> Int {
+    internal func getInt(_ key: String) throws -> Int {
         var value: Int = 0
         try self.getInt(key, val: &value)
 
         return value
     }
 
-    private func getDouble(_ key: String) throws -> Double {
+    internal func getDouble(_ key: String) throws -> Double {
         var value: Double = 0
         try self.getFloat(key, val: &value)
 
         return value
     }
 
-    private func getBool(_ key: String) throws -> Bool {
+    internal func getBool(_ key: String) throws -> Bool {
         var value: ObjCBool = false
         try self.getBool(key, val: &value)
 
         return value.boolValue
     }
 
-    private func getString(_ key: String) throws -> String {
+    internal func getString(_ key: String) throws -> String {
         var error: NSError? = nil
         let value = self.getString(key, error: &error)
         if let err = error {
