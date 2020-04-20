@@ -56,6 +56,9 @@ extension NINLowLevelClientProps {
         return props!
     }
 
+    /**
+    * Currently supported value types: String, Int, Double, Bool, NINLowLevelClientProps, NINLowLevelClientStrings, and NINLowLevelClientJSON
+    */
     public static func initiate<T>(metadata: [String:T]) -> NINLowLevelClientProps {
         let props = NINLowLevelClientProps()
         for (key,value) in metadata {
@@ -479,6 +482,8 @@ extension NINLowLevelClientProps {
             self.setObject(key, ref: value)
         } else if let value = value as? NINLowLevelClientStrings {
             self.setStringArray(key, ref: value)
+        } else if let value = value as? NINLowLevelClientJSON {
+            self.setJSON(key, ref: value)
         } else {
             fatalError("Error in requested type: \(T.self) forKey: \(key)")
         }
