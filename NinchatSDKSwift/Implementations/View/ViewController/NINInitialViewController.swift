@@ -129,6 +129,6 @@ private extension NINInitialViewController {
     private func drawNoQueueText() {
         self.queueButtonsStackView.isHidden = true
         self.noQueueTextView.isHidden = false
-        self.noQueueTextView.text = self.session.sessionManager.translate(key: Constants.kNoQueueText.rawValue, formatParams: [:])
+        self.noQueueTextView.setAttributed(text: self.session.sessionManager.siteConfiguration.noQueueText ?? NSLocalizedString("NoQueueText", tableName: "Localizable", bundle: Bundle.SDKBundle!, value: "", comment: ""), font: self.noQueueTextView.font)
     }
 }
