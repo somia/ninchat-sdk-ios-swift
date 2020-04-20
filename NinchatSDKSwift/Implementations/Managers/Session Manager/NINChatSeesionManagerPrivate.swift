@@ -377,7 +377,7 @@ extension NINChatSessionManagerImpl {
             let parser = NINChatClientPropsParser()
             try userChannels.accept(parser)
             parser.properties.keys.forEach {
-                let channel: NINResult<NINLowLevelClientProps> = userChannels.value(forKey: $0)
+                let channel: NINResult<NINLowLevelClientProps> = userChannels.get(forKey: $0)
                 if case .failure = channel { return }
 
                 /// Extract target channel
