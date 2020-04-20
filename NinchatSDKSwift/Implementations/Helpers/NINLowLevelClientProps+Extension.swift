@@ -110,7 +110,7 @@ extension NINLowLevelClientProps: NINLowLevelSessionProps {
     }
 
     var closed: NINResult<Bool> {
-        get { self.value(forKey: "closed") }
+        get { self.get(forKey: "closed") }
     }
 
     func setAction(_ action: NINLowLevelClientActions) {
