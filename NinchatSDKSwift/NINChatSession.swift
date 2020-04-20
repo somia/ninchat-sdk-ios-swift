@@ -29,6 +29,7 @@ public protocol NINChatSessionProtocol {
     func start(completion: @escaping NinchatSessionCompletion) throws
     func start(credentials: NINSessionCredentials, completion: @escaping NinchatSessionCompletion) throws
     func chatSession(within navigationController: UINavigationController?) throws -> UIViewController?
+    func deallocate()
 }
 
 public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
@@ -115,6 +116,10 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         guard self.started else { throw NINExceptions.apiNotStarted }
         
         return coordinator.start(with: self.queueID, resumeSession: self.resumed, within: navigationController)
+    }
+
+    public func deallocate() {
+        self.sessionManager.deallocateSession()
     }
 }
 

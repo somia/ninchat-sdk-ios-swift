@@ -54,9 +54,8 @@ final class NINQueueViewController: UIViewController, ViewController {
             closeChatButton.buttonTitle = closeTitle
             closeChatButton.overrideAssets(with: self.session)
             closeChatButton.closure = { [weak self] button in
-                self?.sessionManager.leave { _ in
-                    try? self?.sessionManager.closeChat()
-                }
+                self?.sessionManager.deallocateSession()
+                try? self?.sessionManager.closeChat()
             }
         }
     }
