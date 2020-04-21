@@ -125,7 +125,7 @@ The SDK uses a delegate pattern for providing callbacks into the host applicatio
 /// the navigation bar if it uses one.
 func ninchatDidEnd(_ ninchat: NINChatSession) {
     self.navigationController?.popToViewController(self, animated: true)
-  	self.ninchatSession = nil
+  	self.ninchatSession.deallocate()
 }
 
 /// This method is called when ever loading an overrideable graphics asset;
