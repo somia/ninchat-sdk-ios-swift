@@ -271,6 +271,12 @@ extension NINChatSessionManagerImpl {
         self.queueUpdateBoundClosures.keys.forEach { self.queueUpdateBoundClosures.removeValue(forKey: $0) }
         self.chatMessages.removeAll()
         self.channelUsers.removeAll()
+        self.queues.removeAll()
+
+        self.backgroundChannelID = nil
+        self.currentChannelID = nil
+        self.currentQueueID = nil
+        self.myUserID = nil
 
         self.onSessionDeallocated?()
     }
