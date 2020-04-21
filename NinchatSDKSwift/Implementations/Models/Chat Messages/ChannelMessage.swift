@@ -17,5 +17,5 @@ protocol ChannelMessage: ChatMessage {
     var series: Bool { get set }
     
     /** The message sender. */
-    var sender: ChannelUser { get }
+    var sender: ChannelUser? { get }
 }

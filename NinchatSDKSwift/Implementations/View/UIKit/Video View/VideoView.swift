@@ -179,7 +179,7 @@ final class VideoView: UIView, VideoViewProtocol {
     }
 }
 
-// MARK: - Test Facilities
+// MARK: - Test Helpers
 
 extension VideoView {
     internal func hangupAction() {

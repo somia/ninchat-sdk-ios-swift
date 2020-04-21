@@ -51,8 +51,12 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
     
     func populateChannel(message: ChannelMessage, configuration: SiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: AvatarConfig, userAvatarConfig: AvatarConfig, composeState: [Bool]?) {
         self.message = message
-        
-        self.senderNameLabel.text = (message.sender.displayName.count < 1) ? "Guest" : message.sender.displayName
+
+        if let sender = message.sender, !sender.displayName.isEmpty {
+            self.senderNameLabel.text = sender.displayName
+        } else {
+            self.senderNameLabel.text = "Guest".localized
+        }
         self.timeLabel.text = DateFormatter.shortTime.string(from: message.timestamp)
         self.infoContainerView.height?.constant = (message.series) ? 0 : 40 /// Hide the name and timestamp if it's a part of series message chain
         self.infoContainerView.height?.priority = .defaultHigh
@@ -79,11 +83,13 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
             self.timeLabel.textColor = timeColor
         }
     }
-    
-    internal func apply(avatar config: AvatarConfig, imageView: UIImageView) {
+
+    internal func apply(avatar config: AvatarConfig, imageView: UIImageView, url: String?) {
         imageView.isHidden = !config.show
         if let overrideURL = config.imageOverrideURL {
             imageView.image(from: overrideURL)
+        } else {
+            imageView.image(from: url)
         }
     }
 }
@@ -115,7 +121,7 @@ class ChatChannelMineCell: ChatChannelCell {
     
     override func populateChannel(message: ChannelMessage, configuration: SiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: AvatarConfig, userAvatarConfig: AvatarConfig, composeState: [Bool]?) {
         super.populateChannel(message: message, configuration: configuration, imageAssets: imageAssets, colorAssets: colorAssets, agentAvatarConfig: agentAvatarConfig, userAvatarConfig: userAvatarConfig, composeState: composeState)
-        self.configureMyMessage(avatar: message.sender.iconURL, imageAssets: imageAssets, colorAssets: colorAssets, config: userAvatarConfig, series: message.series)
+        self.configureMyMessage(avatar: message.sender?.iconURL, imageAssets: imageAssets, colorAssets: colorAssets, config: userAvatarConfig, series: message.series)
     }
     
     internal func configureMyMessage(avatar url: String?, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, config: AvatarConfig, series: Bool) {
@@ -130,7 +136,7 @@ class ChatChannelMineCell: ChatChannelCell {
         
         /// Apply asset overrides
         self.applyCommon(imageAssets: imageAssets, colorAssets: colorAssets)
-        self.apply(avatar: config, imageView: self.rightAvatarImageView)
+        self.apply(avatar: config, imageView: self.rightAvatarImageView, url: url)
         
         /// Push the top label container to the left edge by toggling the constraints
         self.toggleBubbleConstraints(isMyMessage: true, isSeries: series, showByConfig: config.show)
@@ -161,7 +167,7 @@ class ChatChannelOthersCell: ChatChannelCell {
     
     override func populateChannel(message: ChannelMessage, configuration: SiteConfiguration, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: AvatarConfig, userAvatarConfig: AvatarConfig, composeState: [Bool]?) {
         super.populateChannel(message: message, configuration: configuration, imageAssets: imageAssets, colorAssets: colorAssets, agentAvatarConfig: agentAvatarConfig, userAvatarConfig: userAvatarConfig, composeState: composeState)
-        self.configureOtherMessage(avatar: message.sender.iconURL, imageAssets: imageAssets, colorAssets: colorAssets, config: agentAvatarConfig, series: message.series)
+        self.configureOtherMessage(avatar: message.sender?.iconURL, imageAssets: imageAssets, colorAssets: colorAssets, config: agentAvatarConfig, series: message.series)
     }
     
     internal func configureOtherMessage(avatar url: String?, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, config: AvatarConfig, series: Bool) {
@@ -176,7 +182,7 @@ class ChatChannelOthersCell: ChatChannelCell {
         
         /// Apply asset overrides
         self.applyCommon(imageAssets: imageAssets, colorAssets: colorAssets)
-        self.apply(avatar: config, imageView: self.leftAvatarImageView)
+        self.apply(avatar: config, imageView: self.leftAvatarImageView, url: url)
         
         /// Push the top label container to the left edge by toggling the hidden flag
         self.toggleBubbleConstraints(isMyMessage: false, isSeries: series, showByConfig: config.show)
