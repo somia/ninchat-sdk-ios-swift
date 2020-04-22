@@ -435,10 +435,7 @@ extension NINChatViewController {
     }
     
     private func onAttachmentTapped(with button: UIButton) {
-        guard let bundle = Bundle.SDKBundle else { fatalError("Error in getting SDK Bundle") }
-        let camera = NSLocalizedString("Camera", tableName: "Localizable", bundle: bundle, value: "", comment: "")
-        let photo = NSLocalizedString("Photo", tableName: "Localizable", bundle: bundle, value: "", comment: "")
-        ChoiceDialogue.showDialogue(withOptions: [camera, photo]) { [weak self] result in
+        ChoiceDialogue.showDialogue(withOptions: ["Camera".localized, "Photo".localized]) { [weak self] result in
             switch result {
             case .cancel:
                 break

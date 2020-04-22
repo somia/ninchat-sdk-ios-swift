@@ -12,7 +12,7 @@ struct UserTypingMessage: ChatMessage, Equatable {
     let messageID: String
 
     // MARK: - UserTypingMessage
-    let user: ChannelUser
+    let user: ChannelUser?
 
     init(timestamp: Date, messageID: String?, user: ChannelUser) {
         self.timestamp = timestamp
