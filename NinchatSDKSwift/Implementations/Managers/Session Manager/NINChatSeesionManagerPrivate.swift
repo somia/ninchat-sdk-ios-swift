@@ -70,10 +70,17 @@ extension NINChatSessionManagerImpl {
     
     internal func didFindFile(param: NINLowLevelClientProps) throws {
         if case let .failure(error) = param.fileURL { throw error }
-        if case let .failure(error) = param.urlExpiry { throw error }
-        if case let .failure(error) = param.thumbnailSize { throw error }
+        var fileInfoDictionary: [String:AnyHashable] = ["url": param.fileURL.value, "aspectRatio": 1, "urlExpiry": Date()]
 
-        self.onActionFileInfo?(param.actionID, ["aspectRatio": Double(param.thumbnailSize.value.width/param.thumbnailSize.value.height), "url": param.fileURL.value, "urlExpiry": param.urlExpiry.value], nil)
+        if case let .success(expire) = param.urlExpiry {
+            fileInfoDictionary["urlExpiry"] = expire
+        }
+
+        if case let .success(size) = param.thumbnailSize {
+            fileInfoDictionary["aspectRatio"] = Double(size.width/size.height)
+        }
+
+        self.onActionFileInfo?(param.actionID, fileInfoDictionary, nil)
     }
     
     internal func didDeleteUser(param: NINLowLevelClientProps) throws {
