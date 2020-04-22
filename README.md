@@ -28,7 +28,11 @@ Then, run pod commands in *Terminal*: ```pod update && pod install```
 
 #### Creating the API client
 
-The SDK's API client is to be re-created every time a new chat session is started; once it has terminated, it cannot be used any more and must be disposed of to deallocate memory.
+The SDK's API client is to be re-created every time a new chat session is started; once it has terminated, it cannot be used any more and must be disposed of to deallocate memory. To deallocate the session, you must call the following API:
+
+```swift
+self.ninchatSession.deallocate()
+```
 
 To initialize the client, you need a configuration key which will point the SDK to your organization. You obtain that from Ninchat. Optionally, you may specify a list of siteconfig environments to use over the default one. 
 
@@ -121,7 +125,7 @@ The SDK uses a delegate pattern for providing callbacks into the host applicatio
 /// the navigation bar if it uses one.
 func ninchatDidEnd(_ ninchat: NINChatSession) {
     self.navigationController?.popToViewController(self, animated: true)
-  	self.ninchatSession = nil
+  	self.ninchatSession.deallocate()
 }
 
 /// This method is called when ever loading an overrideable graphics asset;

@@ -40,8 +40,8 @@ protocol NINChatSessionConnectionManager {
     /** Joins a chat queue. */
     func join(queue ID: String, progress: @escaping ((Queue?, Error?, Int) -> Void), completion: @escaping Completion) throws
     
-    /** Leaves the current queue. */
-    func leave(completion: @escaping CompletionWithError)
+    /** Deallocate a session by resetting local variables */
+    func deallocateSession()
     
     /** Runs ICE (Interactive Connectivity Establishment) for WebRTC connection negotiations. */
     func beginICE(completion: @escaping ((Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void)) throws
@@ -104,6 +104,7 @@ protocol NINChatSessionManagerDelegate {
     var onMessageAdded: ((_ index: Int) -> Void)? { get set }
     var onMessageRemoved: ((_ index: Int) -> Void)? { get set }
     var onHistoryLoaded: ((_ length: Int) -> Void)? { get set }
+    var onSessionDeallocated: (() -> Void)? { get set }
     var onChannelClosed: (() -> Void)? { get set }
     var onRTCSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
     var onRTCClientSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }

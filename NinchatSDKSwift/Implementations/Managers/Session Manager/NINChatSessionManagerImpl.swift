@@ -66,6 +66,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     var onMessageAdded: ((_ index: Int) -> Void)?
     var onMessageRemoved: ((_ index: Int) -> Void)?
     var onHistoryLoaded: ((_ length: Int) -> Void)?
+    var onSessionDeallocated: (() -> Void)?
     var onChannelClosed: (() -> Void)?
     var onRTCSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)?
     var onRTCClientSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)?
@@ -255,13 +256,9 @@ extension NINChatSessionManagerImpl {
         }
     }
     
-    /// Leaves the current queue, if any
-    func leave(completion: @escaping CompletionWithError) {
-        if self.currentQueueID == nil {
-            delegate?.log(value: "Error: tried to leave current queue but not in queue currently!")
-        }
-        
-        delegate?.log(value: "Leaving current queue.")
+    /// Deallocate a session by resetting local variables.
+    func deallocateSession() {
+        delegate?.log(value: "Session deallocation by resetting local variable")
         self.onProgress = nil
         self.onChannelJoined = nil
         self.onActionID = nil
@@ -274,7 +271,14 @@ extension NINChatSessionManagerImpl {
         self.queueUpdateBoundClosures.keys.forEach { self.queueUpdateBoundClosures.removeValue(forKey: $0) }
         self.chatMessages.removeAll()
         self.channelUsers.removeAll()
-        completion(nil)
+        self.queues.removeAll()
+
+        self.backgroundChannelID = nil
+        self.currentChannelID = nil
+        self.currentQueueID = nil
+        self.myUserID = nil
+
+        self.onSessionDeallocated?()
     }
     
     /// Retrieves the WebRTC ICE STUN/TURN server details
