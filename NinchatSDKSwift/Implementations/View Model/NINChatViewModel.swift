@@ -10,6 +10,7 @@ enum MessageUpdateType {
     case insert(_ index: Int)
     case history
     case remove(_ index: Int)
+    case clean
 }
 
 protocol NINChatRTCProtocol {
@@ -72,6 +73,9 @@ final class NINChatViewModelImpl: NINChatViewModel {
         }
         self.sessionManager.onMessageRemoved = { [weak self] index in
             self?.onChannelMessage?(.remove(index))
+        }
+        self.sessionManager.onSessionDeallocated = { [weak self] in
+            self?.onChannelMessage?(.clean)
         }
     }
 }
