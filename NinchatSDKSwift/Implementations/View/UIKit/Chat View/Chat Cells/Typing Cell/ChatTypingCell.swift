@@ -40,7 +40,11 @@ final class ChatTypingCell: UITableViewCell, TypingCell {
     // MARK: - TypingCell
     
     func populateTyping(message: UserTypingMessage, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: AvatarConfig) {
-        self.senderNameLabel.text = (agentAvatarConfig.nameOverride.isEmpty) ? message.user.displayName : agentAvatarConfig.nameOverride
+        if let user = message.user, !user.displayName.isEmpty, agentAvatarConfig.nameOverride.isEmpty {
+            self.senderNameLabel.text = user.displayName
+        } else {
+            self.senderNameLabel.text = agentAvatarConfig.nameOverride
+        }
         self.timeLabel.text = DateFormatter.shortTime.string(from: message.timestamp)
     
         /// Make Image view background match the bubble color
@@ -53,7 +57,7 @@ final class ChatTypingCell: UITableViewCell, TypingCell {
     
         /// Apply asset overrides
         self.applyCommon(imageAssets: imageAssets, colorAssets: colorAssets)
-        self.apply(avatar: agentAvatarConfig, imageView: self.leftAvatarImageView)
+        self.apply(avatar: agentAvatarConfig, imageView: self.leftAvatarImageView, url: message.user?.iconURL)
     }
     
     /// Performs asset customizations independent of message sender
@@ -66,12 +70,13 @@ final class ChatTypingCell: UITableViewCell, TypingCell {
             self.timeLabel.textColor = timeColor
         }
     }
-    
-    /// Returns YES if the default avatar image should be applied afterwards
-    private func apply(avatar config: AvatarConfig, imageView: UIImageView) {
+
+    private func apply(avatar config: AvatarConfig, imageView: UIImageView, url: String?) {
         imageView.isHidden = !config.show
         if let overrideURL = config.imageOverrideURL {
             imageView.image(from: overrideURL)
+        } else {
+            imageView.image(from: url)
         }
     }
 }

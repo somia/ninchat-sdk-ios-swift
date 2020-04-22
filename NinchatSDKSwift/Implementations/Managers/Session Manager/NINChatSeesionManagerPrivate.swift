@@ -274,7 +274,7 @@ extension NINChatSessionManagerImpl {
                 let isWriting = param.channelMemberAttributes.value.writing.value
                 
                 /// Check if that user already has a 'writing' message
-                let writingMessage = chatMessages.filter({ ($0 as? UserTypingMessage)?.user.userID == userID }).first as? UserTypingMessage
+                let writingMessage = chatMessages.filter({ ($0 as? UserTypingMessage)?.user?.userID == userID }).first as? UserTypingMessage
                 if isWriting, writingMessage == nil {
                     /// There's no 'typing' message for this user yet, lets create one
                     self.add(message: UserTypingMessage(timestamp: Date(), messageID: self.chatMessages.first?.messageID, user: messageUser))
@@ -364,7 +364,7 @@ extension NINChatSessionManagerImpl {
         self.chatMessages.sort { $0.messageID > $1.messageID }
         return self.chatMessages.map { message in
             if var msg = message as? ChannelMessage, let msgIndex = self.chatMessages.firstIndex(where: { $0.asEquatable == msg.asEquatable }), msgIndex < self.chatMessages.count - 1, let prevMsg = self.chatMessages[msgIndex + 1] as? ChannelMessage {
-                msg.series = (msg.sender.userID == prevMsg.sender.userID) && (msg.timestamp.minute == prevMsg.timestamp.minute)
+                msg.series = (msg.sender?.userID == prevMsg.sender?.userID) && (msg.timestamp.minute == prevMsg.timestamp.minute)
                 return msg
             }
             return message
@@ -442,11 +442,9 @@ extension NINChatSessionManagerImpl {
                 }
             }
         case .text, .file:
-            guard messageUser != nil else { return }
-            try self.handleInbound(message: messageID, user: messageUser!, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
+            try self.handleInbound(message: messageID, user: messageUser, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
         case .compose:
-            guard messageUser != nil else { return }
-            try self.handleCompose(message: messageID, user: messageUser!, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
+            try self.handleCompose(message: messageID, user: messageUser, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
         case .channel:
             try self.handleChannel(message: messageID, user: messageUser, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
         default:
@@ -456,7 +454,7 @@ extension NINChatSessionManagerImpl {
 
     }
     
-    internal func handleInbound(message id: String, user: ChannelUser, time: Double, actionID: Int, remained: NINResult<Int>, payload: NINLowLevelClientPayload) throws {
+    internal func handleInbound(message id: String, user: ChannelUser?, time: Double, actionID: Int, remained: NINResult<Int>, payload: NINLowLevelClientPayload) throws {
         try [Int](0..<payload.length()).forEach({ index in
             let decode: NINResult<ChatMessagePayload> = payload.get(index)!.decode()
             switch decode {
@@ -474,14 +472,14 @@ extension NINChatSessionManagerImpl {
                         fileInfo.updateInfo(session: self) { error, didRefreshNetwork in
                             guard error == nil else { return }
                             
-                            self.add(message: TextMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user.userID == self.myUserID, sender: user, textContent: nil, attachment: fileInfo), remained: remained)
+                            self.add(message: TextMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user?.userID == self.myUserID, sender: user, textContent: nil, attachment: fileInfo), remained: remained)
                         }
                     }
                 }
     
                 /// Only allocate a new message now if there is text and no attachment
                 if let text = message.text, !text.isEmpty, !hasAttachment {
-                    self.add(message:  TextMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user.userID == self.myUserID, sender: user, textContent: text, attachment: nil), remained: remained)
+                    self.add(message:  TextMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user?.userID == self.myUserID, sender: user, textContent: text, attachment: nil), remained: remained)
                 }
             case .failure(let error):
                 throw error
@@ -502,7 +500,7 @@ extension NINChatSessionManagerImpl {
         }
     }
     
-    internal func handleCompose(message id: String, user: ChannelUser, time: Double, actionID: Int, remained: NINResult<Int>, payload: NINLowLevelClientPayload) throws {
+    internal func handleCompose(message id: String, user: ChannelUser?, time: Double, actionID: Int, remained: NINResult<Int>, payload: NINLowLevelClientPayload) throws {
         
         try [Int](0..<payload.length()).forEach { [unowned self] index in
             let decode: NINResult<[ComposeContent]> = payload.get(index)!.decode()
@@ -512,7 +510,7 @@ extension NINChatSessionManagerImpl {
                 if compose.filter({ $0.element != .button && $0.element != .select }).count > 0 {
                     debugger("Found ui/compose object with unhandled element, discarding message")
                 } else {
-                    self.add(message: ComposeMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user.userID == self.myUserID, sender: user, content: compose), remained: remained)
+                    self.add(message: ComposeMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user?.userID == self.myUserID, sender: user, content: compose), remained: remained)
                 }
             case .failure(let error):
                 throw error

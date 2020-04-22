@@ -52,4 +52,9 @@ extension String {
             return false
         }
     }
+
+    var localized: String {
+        guard let bundle = Bundle.SDKBundle else { return self }
+        return NSLocalizedString(self, tableName: "Localizable", bundle: bundle, value: "", comment: "")
+    }
 }
