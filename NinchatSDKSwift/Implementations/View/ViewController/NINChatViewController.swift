@@ -254,7 +254,9 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
             
             self?.videoView.isSelected = false
             self?.videoView.resizeLocalVideo()
+            self?.disableIdleTimer(true)
         }, onCallHangup: { [weak self] in
+            self?.disableIdleTimer(false)
             self?.disconnectRTC {
                 self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
             }
@@ -511,5 +513,13 @@ extension NINChatViewController {
         
         /// TODO: pause video - if one should be active - here?
         viewModel.appWillResignActive { _ in }
+    }
+}
+
+// MARK: - Helpers
+
+extension NINChatViewController {
+    private func disableIdleTimer(_ disable: Bool) {
+        UIApplication.shared.isIdleTimerDisabled = disable
     }
 }
