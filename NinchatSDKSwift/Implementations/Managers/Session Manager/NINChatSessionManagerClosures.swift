@@ -11,7 +11,6 @@ protocol NINChatSessionManagerClosureHandler {
     func bindFile(action id: Int?, closure: @escaping ((Error?, [String:Any]?) -> Void))
     func bindChannel(action id: Int?, closure: @escaping ((Error?) -> Void))
     func bindICEServer(action id: Int?, closure: @escaping ((Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void))
-    func unbind(action id: Int?)
 }
 
 extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
@@ -27,7 +26,6 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
                 }).first?.value {
                     
                     targetClosure(error)
-                    self?.actionBoundClosures.removeValue(forKey: id)
                 }
             }
         }
@@ -45,7 +43,6 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
                 }).first?.value {
 
                     targetClosure(error, fileInfo)
-                    self?.actionFileBoundClosures.removeValue(forKey: id)
                 }
             }
         }
@@ -63,7 +60,6 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
                 }).first?.value {
 
                     targetClosure(nil)
-                    self?.actionChannelBoundClosures.removeValue(forKey: id)
                 }
 
             }
@@ -82,23 +78,9 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
                 }).first?.value {
 
                     targetClosure(nil, stunServers, turnServers)
-                    self?.actionICEServersBoundClosures.removeValue(forKey: id)
                 }
 
             }
-        }
-    }
-    
-    internal func unbind(action id: Int?) {
-        guard let id = id else { return }
-        if actionBoundClosures.keys.filter({ $0 == id }).count > 0 {
-            actionBoundClosures.removeValue(forKey: id)
-        } else if actionFileBoundClosures.keys.filter({ $0 == id }).count > 0 {
-            actionFileBoundClosures.removeValue(forKey: id)
-        } else if actionChannelBoundClosures.keys.filter({ $0 == id }).count > 0 {
-            actionChannelBoundClosures.removeValue(forKey: id)
-        } else if actionICEServersBoundClosures.keys.filter({ $0 == id }).count > 0 {
-            actionICEServersBoundClosures.removeValue(forKey: id)
         }
     }
 }

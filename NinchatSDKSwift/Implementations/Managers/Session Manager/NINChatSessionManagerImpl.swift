@@ -267,7 +267,7 @@ extension NINChatSessionManagerImpl {
         self.onActionSessionEvent = nil
         self.onActionSevers = nil
 
-        self.actionBoundClosures.keys.forEach { self.unbind(action: $0) }
+        self.actionBoundClosures.keys.forEach { self.actionBoundClosures.removeValue(forKey: $0) }
         self.queueUpdateBoundClosures.keys.forEach { self.queueUpdateBoundClosures.removeValue(forKey: $0) }
         self.chatMessages.removeAll()
         self.channelUsers.removeAll()
@@ -458,7 +458,7 @@ extension NINChatSessionManagerImpl {
         param.fileID = .success(id)
 
         do {
-            /// In case of getting multiple files to describle, the actionID points to the latest id only
+            /// In case of getting multiple files to describe, the actionID points to the latest id only
             /// This could cause to lose of previous files to be described
             let actionID = try session.send(param)
             self.bindFile(action: actionID, closure: completion)
