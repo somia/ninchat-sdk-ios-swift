@@ -38,16 +38,16 @@ extension ChannelMediaCell where Self:ChatChannelCell {
         if attachment.isImage, let imageURL = attachment.url {
             self.videoPlayIndicator.isHidden = true
             self.messageImageView.contentMode = .scaleAspectFit
-            self.updateImage(from: attachment, imageURL: imageURL, asynchronous)
+            self.updateImage(from: attachment, imageURL: imageURL, asynchronous, message.series)
         } else if attachment.isVideo, let videoURL = attachment.url {
             self.videoPlayIndicator.isHidden = false
             self.messageImageView.contentMode = .scaleAspectFill
-            try self.updateVideo(from: attachment, videoURL: videoURL, asynchronous)
+            try self.updateVideo(from: attachment, videoURL: videoURL, asynchronous, message.series)
         }
     }
     
     /// Update constraints to match new thumbnail image size
-    private func updateVideo(from attachment: FileInfo, videoURL: String, _ asynchronous: Bool) throws {
+    private func updateVideo(from attachment: FileInfo, videoURL: String, _ asynchronous: Bool, _ isSeries: Bool) throws {
         guard let thumbnailManager = self.videoThumbnailManager else { throw NINUIExceptions.noThumbnailManager }
         
         /// For video we must fetch the thumbnail image
@@ -58,7 +58,7 @@ extension ChannelMediaCell where Self:ChatChannelCell {
                 }
                 
                 self.messageImageView.image = image
-                self.set(aspect: CGFloat(attachment.aspectRatio ?? 1))
+                self.set(aspect: CGFloat(attachment.aspectRatio ?? 1), isSeries)
                 
                 guard !self.isReloading && asynchronous else { return }
                 /// Inform the chat view that our cell might need resizing due to new constraints.
@@ -71,11 +71,11 @@ extension ChannelMediaCell where Self:ChatChannelCell {
     
     /// asynchronous = YES implies we're calling this asynchronously from the
     /// `updateInfo(session:completion:)` completion block (meaning it did a network update)
-    private func updateImage(from attachment: FileInfo, imageURL: String, _ asynchronous: Bool) {
+    private func updateImage(from attachment: FileInfo, imageURL: String, _ asynchronous: Bool, _ isSeries: Bool) {
         DispatchQueue.main.async {
             /// Load the image in message image view over HTTP or from local cache
             self.messageImageView.image(from: imageURL)
-            self.set(aspect: CGFloat(attachment.aspectRatio ?? 1))
+            self.set(aspect: CGFloat(attachment.aspectRatio ?? 1), isSeries)
             
             guard !self.isReloading && asynchronous else { return }
             /// Inform the chat view that our cell might need resizing due to new constraints.
@@ -83,7 +83,7 @@ extension ChannelMediaCell where Self:ChatChannelCell {
         }
     }
     
-    private func set(aspect ratio: CGFloat) {
+    private func set(aspect ratio: CGFloat, _ isSeries: Bool) {
         /// Return if the constraints are currently set
         if let _ = self.messageImageViewContainer.width { return }
         
@@ -91,7 +91,8 @@ extension ChannelMediaCell where Self:ChatChannelCell {
         self.messageImageViewContainer.fix(width: width, height: width * (1/ratio))
         self.messageImageViewContainer.height?.priority = .defaultHigh
         self.messageImageViewContainer.width?.priority = .defaultHigh
-    
+        self.messageImageViewContainer.top?.constant = (isSeries) ? 16 : 8
+
         self.setNeedsLayout()
         self.layoutIfNeeded()
     }
@@ -111,6 +112,7 @@ final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell {
     @IBOutlet weak var messageImageView: UIImageView! {
         didSet {
             messageImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTappedOnImage)))
+            messageImageView.contentMode = .scaleAspectFill
         }
     }
     @IBOutlet weak var videoPlayIndicator: UIImageView! {
@@ -149,6 +151,7 @@ final class ChatChannelMediaOthersCell: ChatChannelOthersCell, ChannelMediaCell 
     @IBOutlet var messageImageView: UIImageView! {
         didSet {
             messageImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTappedOnImage)))
+            messageImageView.contentMode = .scaleAspectFill
         }
     }
     @IBOutlet var videoPlayIndicator: UIImageView! {
