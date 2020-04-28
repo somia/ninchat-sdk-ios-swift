@@ -16,7 +16,7 @@ extension String {
     }
     
     private func attributedString(_ font: UIFont?, document: NSAttributedString.DocumentType) -> NSAttributedString? {
-        guard let data = self.data(using: .utf16), let font = font else { return nil }
+        guard let data = self.data(using: .utf16, allowLossyConversion: false), let font = font else { return nil }
         do {
             let attrString = try NSMutableAttributedString(data: data, options: [.documentType: document], documentAttributes: nil)
             attrString.override(font: font)
