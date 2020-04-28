@@ -7,14 +7,14 @@
 import Foundation
 
 protocol NINChatSessionManagerClosureHandler {
-    func bind(action id: Int?, closure: @escaping ((Error?) -> Void))
-    func bindFile(action id: Int?, closure: @escaping ((Error?, [String:Any]?) -> Void))
-    func bindChannel(action id: Int?, closure: @escaping ((Error?) -> Void))
-    func bindICEServer(action id: Int?, closure: @escaping ((Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void))
+    func bind(action id: Int?, closure: @escaping (Error?) -> Void)
+    func bindFile(action id: Int?, closure: @escaping (Error?, [String:Any]?) -> Void)
+    func bindChannel(action id: Int?, closure: @escaping (Error?) -> Void)
+    func bindICEServer(action id: Int?, closure: @escaping (Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void)
 }
 
 extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
-    internal func bind(action id: Int?, closure: @escaping ((Error?) -> Void)) {
+    internal func bind(action id: Int?, closure: @escaping (Error?) -> Void) {
         guard let id = id, !self.actionBoundClosures.keys.contains(id) else { return }
         self.actionBoundClosures[id] = closure
         
@@ -31,7 +31,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
         }
     }
     
-    internal func bindFile(action id: Int?, closure: @escaping ((Error?, [String:Any]?) -> Void)) {
+    internal func bindFile(action id: Int?, closure: @escaping (Error?, [String:Any]?) -> Void) {
         guard let id = id, !self.actionFileBoundClosures.keys.contains(id) else { return }
         self.actionFileBoundClosures[id] = closure
         
@@ -48,7 +48,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
         }
     }
     
-    internal func bindChannel(action id: Int?, closure: @escaping ((Error?) -> Void)) {
+    internal func bindChannel(action id: Int?, closure: @escaping (Error?) -> Void) {
         guard let id = id, !self.actionChannelBoundClosures.keys.contains(id) else { return }
         self.actionChannelBoundClosures[id] = closure
 
@@ -66,7 +66,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
         }
     }
     
-    internal func bindICEServer(action id: Int?, closure: @escaping ((Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void)) {
+    internal func bindICEServer(action id: Int?, closure: @escaping (Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void) {
         guard let id = id, !self.actionICEServersBoundClosures.keys.contains(id) else { return }
         self.actionICEServersBoundClosures[id] = closure
 
@@ -79,7 +79,6 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
 
                     targetClosure(nil, stunServers, turnServers)
                 }
-
             }
         }
     }
