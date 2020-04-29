@@ -65,7 +65,7 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
     }
     var disableLocalVideo: Bool! {
         didSet {
-            #if !TARGET_IPHONE_SIMULATOR && TARGET_OS_IPHONE
+            #if !targetEnvironment(simulator)
             /// Camera capture only works on the device, not the simulator
             self.localVideoTrack?.isEnabled = !disableLocalVideo
             #endif

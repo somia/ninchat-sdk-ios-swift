@@ -462,8 +462,8 @@ extension NINChatViewController {
     // MARK: - Video
     
     private func onVideoCameraTapped(with button: UIButton) {
-        self.webRTCClient?.disableLocalVideo = button.isSelected
-        self.session.log(value: "Video disabled: \(button.isSelected)")
+        self.webRTCClient?.disableLocalVideo = !button.isSelected
+        self.session.log(value: "Video disabled: \(!button.isSelected)")
         
         button.isSelected = !button.isSelected
     }
