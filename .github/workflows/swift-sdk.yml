@@ -11,12 +11,15 @@ on:
             - '*/*'
 
 jobs:
-    install_dependencies:
+    build_test_SDK:
         runs-on: macos-latest
         steps:
+            - name: Check out repository
+              uses: actions/checkout@v2
+
             - name: Shell Environment
               run: export SHELL=/bin/bash
-
+            
             - name: Force Xcode 11
               run: sudo xcode-select -switch /Applications/Xcode_11.4.app
 
@@ -25,34 +28,14 @@ jobs:
                 gem install ocunit2junit
                 gem install xcpretty
 
-    install_libraries:
-        runs-on: macos-latest
-        needs: install_dependencies
-        steps:
-            - name: Check out repository
-              uses: actions/checkout@v2
-
             - name: Install Cocoapods
               run: pod update
 
-    build_sdk:
-        runs-on: macos-latest
-        needs: install_libraries
-        steps:
-            - name: Check out repository
-              uses: actions/checkout@v2
+            - name: Clean-up workspace
+              run: xcodebuild clean
 
             - name: Build SDK
               run: xcodebuild -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -configuration "Release" -destination "platform=iOS Simulator,name=iPhone 8" CODE_SIGNING_ALLOWED=NO | tee raw.txt | xcpretty -c cat raw.txt | ocunit2junit
-
-    test_sdk:
-        runs-on: macos-latest
-        needs: install_libraries
-        steps:
-            - name: Check out repository
-              uses: actions/checkout@v2
-
+            
             - name: Run SDK Tests
-              run: xcodebuild clean test -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -destination "platform=iOS Simulator,name=iPhone 8" | tee rawTest.txt | xcpretty -c cat rawTest.txt | ocunit2junit
-    
-    
+              run: xcodebuild test -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -destination "platform=iOS Simulator,name=iPhone 8" | tee rawTest.txt | xcpretty -c cat rawTest.txt | ocunit2junit
