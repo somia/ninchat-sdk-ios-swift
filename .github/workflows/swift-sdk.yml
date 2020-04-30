@@ -29,31 +29,28 @@ jobs:
                 gem install ocunit2junit
                 gem install xcpretty
 
-    clean_workspace:
+            - name: Force Xcode 11
+              run: sudo xcode-select -switch /Applications/Xcode_11.4.app
+
+    install_libraries:
         runs-on: macos-latest
         needs: install_dependencies
         steps:
-            - name: Clean-up
-              run: xcodebuild clean
-
             - name: Install Cocoapods
-              run: |
-                pod setup
-                pod update
-                pod install
+              run: pod update
 
     build_sdk:
         runs-on: macos-latest
-        needs: clean_workspace
+        needs: install_libraries
         steps:
             - name: Build SDK
-              run: xcodebuild -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -configuration "Release" -destination "platform=iOS Simulator,name=iPhone 8" | tee raw.txt | xcpretty -c cat raw.txt | ocunit2junit
+              run: xcodebuild -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -configuration "Release" -destination "platform=iOS Simulator,name=iPhone 8" CODE_SIGNING_ALLOWED=NO | tee raw.txt | xcpretty -c cat raw.txt | ocunit2junit
 
     test_sdk:
         runs-on: macos-latest
-        needs: clean_workspace
+        needs: install_libraries
         steps:
             - name: Run SDK Tests
-              run: xcodebuild test -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -destination "platform=iOS Simulator,name=iPhone 8" | tee rawTest.txt | xcpretty -c cat rawTest.txt | ocunit2junit
+              run: xcodebuild clean test -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -destination "platform=iOS Simulator,name=iPhone 8" | tee rawTest.txt | xcpretty -c cat rawTest.txt | ocunit2junit
     
     
