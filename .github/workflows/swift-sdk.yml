@@ -24,13 +24,6 @@ jobs:
             - name: Shell Environment
               run: export SHELL=/bin/bash
 
-            - name: Install Cocoapods
-              run: |
-                brew install cocoapods
-                pod setup
-                pod update
-                pod install
-
             - name: Install Tools
               run: |
                 gem install ocunit2junit
@@ -42,6 +35,12 @@ jobs:
         steps:
             - name: Clean-up
               run: xcodebuild clean
+
+            - name: Install Cocoapods
+              run: |
+                pod setup
+                pod update
+                pod install
 
     build_sdk:
         runs-on: macos-latest
