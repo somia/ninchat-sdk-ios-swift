@@ -1,0 +1,41 @@
+name: Ninchat SwiftSDK
+
+on:
+    push:
+        branches:
+            - '*'
+            - '*/*'
+    pull_request:
+        branches:
+            - '*'
+            - '*/*'
+
+jobs:
+    build_test_SDK:
+        runs-on: macos-latest
+        steps:
+            - name: Check out repository
+              uses: actions/checkout@v2
+
+            - name: Shell Environment
+              run: export SHELL=/bin/bash
+            
+            - name: Force Xcode 11
+              run: sudo xcode-select -switch /Applications/Xcode_11.4.app
+
+            - name: Install Tools
+              run: |
+                gem install ocunit2junit
+                gem install xcpretty
+
+            - name: Install Cocoapods
+              run: pod update
+
+            - name: Clean-up workspace
+              run: xcodebuild clean
+
+            - name: Build SDK
+              run: xcodebuild -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -configuration "Release" -destination "platform=iOS Simulator,name=iPhone 8" CODE_SIGNING_ALLOWED=NO | tee raw.txt | xcpretty -c cat raw.txt | ocunit2junit
+            
+            - name: Run SDK Tests
+              run: xcodebuild test -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -destination "platform=iOS Simulator,name=iPhone 8" | tee rawTest.txt | xcpretty -c cat rawTest.txt | ocunit2junit
