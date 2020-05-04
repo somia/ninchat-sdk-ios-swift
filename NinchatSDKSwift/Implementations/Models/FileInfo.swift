@@ -59,7 +59,7 @@ final class FileInfo {
         debugger("Must update file info; call describe_file with id: \(self.fileID ?? "")")
         do {
             try session.describe(file: self.fileID) { [weak self] error, fileInfo in
-                debugger("described file with id: \(self?.fileID)")
+                debugger("described file with id: \(self?.fileID ?? "nil")")
 
                 if let error = error {
                     completion(error, false)
