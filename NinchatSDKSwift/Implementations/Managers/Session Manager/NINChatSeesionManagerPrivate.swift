@@ -456,7 +456,9 @@ extension NINChatSessionManagerImpl {
             try self.handleChannel(message: messageID, user: messageUser, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
         default:
             debugger("Ignoring unsupported message type: \(messageType.rawValue)")
-            break
+            if self.expectedHistoryLength > 0 {
+                self.expectedHistoryLength -= 1
+            }
         }
 
     }
