@@ -48,14 +48,16 @@ extension UIViewController {
 
     @objc
     private func keyboardDidChangeSize(notification: Notification) {
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
-           let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval {
+        if let newKeyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
+           let previousKeyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue,
+           let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
+           newKeyboardSize.height != previousKeyboardSize.height {
 
             UIView.animate(withDuration: duration, animations: {
-                self.view.transform = CGAffineTransform(translationX: 0, y: -keyboardSize.height)
+                self.view.transform = CGAffineTransform(translationX: 0, y: -newKeyboardSize.height)
             }, completion: { finished in
                 if let vc = self as? KeyboardHandler {
-                    vc.onKeyboardSizeChanged?(keyboardSize.height)
+                    vc.onKeyboardSizeChanged?(newKeyboardSize.height)
                 }
             })
         }
