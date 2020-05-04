@@ -55,12 +55,10 @@ final class NINWebRTCDelegateImpl: NINWebRTCDelegate {
             #if RTC_SUPPORTS_METAL
             let remoteView = RTCMTLVideoView(frame: .zero)
             remoteVide.delegate = remoteVideoDelegate
-            
             self.onRemoteVideoTrack?(remoteView, remoteVideoTrack)
             #else
             let remoteView = RTCEAGLVideoView(frame: .zero)
             remoteView.delegate = remoteVideoDelegate
-            
             self?.onRemoteVideoTrack?(remoteView, remoteVideoTrack)
             #endif
         }
