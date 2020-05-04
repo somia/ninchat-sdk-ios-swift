@@ -234,42 +234,49 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     
     private func connectRTC() {
         self.viewModel.listenToRTCSignaling(delegate: chatRTCDelegate, onCallReceived: { [unowned self] channel in
-            self.view.endEditing(true)
-            
-            let confirmVideoDialog: ConfirmVideoCallView = ConfirmVideoCallView.loadFromNib()
-            confirmVideoDialog.user = channel
-            confirmVideoDialog.session = self.session
-            confirmVideoDialog.onViewAction = { [unowned self] action in
-                confirmVideoDialog.hideConfirmView()
-                self.viewModel.pickup(answer: action == .confirm) { error in
-                    if error != nil { Toast.show(message: .error("failed to send WebRTC pickup message")) }
-                }
-            }
-            confirmVideoDialog.showConfirmView(on: self.view)
+            DispatchQueue.main.async {
+                self.view.endEditing(true)
 
+                let confirmVideoDialog: ConfirmVideoCallView = ConfirmVideoCallView.loadFromNib()
+                confirmVideoDialog.user = channel
+                confirmVideoDialog.session = self.session
+                confirmVideoDialog.onViewAction = { [unowned self] action in
+                    confirmVideoDialog.hideConfirmView()
+                    self.viewModel.pickup(answer: action == .confirm) { error in
+                        if error != nil { Toast.show(message: .error("failed to send WebRTC pickup message")) }
+                    }
+                }
+                confirmVideoDialog.showConfirmView(on: self.view)
+            }
         }, onCallInitiated: { [weak self] error, rtcClient in
-            self?.webRTCClient = rtcClient
-            self?.closeChatButton.hide = true
-            self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
-            
-            self?.videoView.isSelected = false
-            self?.videoView.resizeLocalVideo()
-            self?.disableIdleTimer(true)
-        }, onCallHangup: { [weak self] in
-            self?.disableIdleTimer(false)
-            self?.disconnectRTC {
+            DispatchQueue.main.async {
+                self?.webRTCClient = rtcClient
+                self?.closeChatButton.hide = true
                 self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
+
+                self?.videoView.isSelected = false
+                self?.videoView.resizeLocalVideo()
+                self?.disableIdleTimer(true)
+            }
+        }, onCallHangup: { [weak self] in
+            DispatchQueue.main.async {
+                self?.disableIdleTimer(false)
+                self?.disconnectRTC {
+                    self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
+                }
             }
         })
     }
     
     private func disconnectRTC(completion: (() -> Void)? = nil) {
         self.viewModel.disconnectRTC(self.webRTCClient) { [weak self] in
-            self?.closeChatButton.hide = false
-            self?.videoView.localCapture = nil
-            self?.videoView.remoteVideoTrack = nil
-            self?.webRTCClient = nil
-            completion?()
+            DispatchQueue.main.async {
+                self?.closeChatButton.hide = false
+                self?.videoView.localCapture = nil
+                self?.videoView.remoteVideoTrack = nil
+                self?.webRTCClient = nil
+                completion?()
+            }
         }
     }
     
