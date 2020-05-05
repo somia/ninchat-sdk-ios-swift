@@ -10,11 +10,11 @@ import XCTest
 // MARK: - Tests
 
 class NinchatSessionManagerTests: XCTestCase {
-    var sessionSwift: NINChatSessionSwift!
+    var sessionSwift: NINChatSession!
     var sessionManager: NINChatSessionManager!
     
     override func setUp() {
-        sessionSwift = NINChatSessionSwift(configKey: "")
+        sessionSwift = NINChatSession(configKey: "")
         sessionManager = NINChatSessionManagerImpl(session: sessionSwift, serverAddress: "")
     }
 
@@ -23,7 +23,7 @@ class NinchatSessionManagerTests: XCTestCase {
     func testProtocolConformance() {
         XCTAssertNotNil(sessionManager)
         XCTAssertNotNil(sessionManager as NINChatSessionConnectionManager)
-        XCTAssertNotNil(sessionManager as NANChatSessionMessenger)
+        XCTAssertNotNil(sessionManager as NINChatSessionMessenger)
         XCTAssertNotNil(sessionManager as NINChatSessionManagerDelegate)
         XCTAssertNotNil(sessionManager as NINChatSessionManager)
     }
@@ -32,11 +32,11 @@ class NinchatSessionManagerTests: XCTestCase {
 // MARK: - PrivateTests
 
 class NinchatSessionManagerPrivateTests: XCTestCase {
-    var sessionSwift: NINChatSessionSwift!
+    var sessionSwift: NINChatSession!
     var sessionManager: NINChatSessionManagerImpl!
     
     override func setUp() {
-        sessionSwift = NINChatSessionSwift(configKey: "")
+        sessionSwift = NINChatSession(configKey: "")
         sessionManager = NINChatSessionManagerImpl(session: sessionSwift, serverAddress: "")
     }
 
@@ -140,29 +140,41 @@ extension NinchatSessionManagerPrivateTests {
 // MARK: - ClosureHandlersTests
 
 class NinchatSessionManagerClosureHandlersTests: XCTestCase {
-    var sessionSwift: NINChatSessionSwift!
+    var sessionSwift: NINChatSession!
     var sessionManager: NINChatSessionManagerImpl!
     
     override func setUp() {
-        sessionSwift = NINChatSessionSwift(configKey: "")
+        sessionSwift = NINChatSession(configKey: "")
         sessionManager = NINChatSessionManagerImpl(session: sessionSwift, serverAddress: "")
     }
-    
+
+    func testBindFailure() {
+        let expectation = self.expectation(description: "The 2nd action is called")
+        sessionManager.bind(action: 0) { _ in
+            expectation.fulfill()
+        }
+
+        /// The test will fail if both following actions call the closure (API Violation)
+        sessionManager.onActionID?(.failure(NinchatError(code: 0, title: "error")), nil)
+        sessionManager.onActionID?(.success(0), nil)
+        waitForExpectations(timeout: 5.0)
+    }
+
     func testBindErrorClosures() {
         let expectation1 = self.expectation(description: "The first action is called")
         sessionManager.bind(action: 0) { _ in
             expectation1.fulfill()
         }
         
-        let expectation2 = self.expectation(description: "The first action is called")
+        let expectation2 = self.expectation(description: "The second action is called")
         sessionManager.bind(action: 1) { error in
             XCTAssertNotNil(error)
             expectation2.fulfill()
         }
         
-        sessionManager.onActionID?(0, nil)
-        sessionManager.onActionID?(1, NinchatError(code: 0, title: "title"))
-        waitForExpectations(timeout: 1.0, handler: nil)
+        sessionManager.onActionID?(.success(0), nil)
+        sessionManager.onActionID?(.success(1), NinchatError(code: 0, title: "title"))
+        waitForExpectations(timeout: 5.0)
     }
     
     func testUnbindErrorClosures() {
@@ -176,10 +188,10 @@ class NinchatSessionManagerClosureHandlersTests: XCTestCase {
             expectation.fulfill()
         }
         
-        sessionManager.unbind(action: 0)
-        sessionManager.onActionID?(0, nil)
-        sessionManager.onActionID?(1, NinchatError(code: 0, title: "title"))
-        waitForExpectations(timeout: 1.0, handler: nil)
+        sessionManager.actionBoundClosures.removeValue(forKey: 0)
+        sessionManager.onActionID?(.success(0), nil)
+        sessionManager.onActionID?(.success(1), NinchatError(code: 0, title: "title"))
+        waitForExpectations(timeout: 5.0)
     }
 
     func testBindQueueUpdate() {
@@ -192,7 +204,7 @@ class NinchatSessionManagerClosureHandlersTests: XCTestCase {
         }, to: self)
 
         self.simulateChatQueue()
-        waitForExpectations(timeout: 1.0)
+        waitForExpectations(timeout: 5.0)
     }
 
     func testUnbindQueueUpdate() {
@@ -214,7 +226,7 @@ class NinchatSessionManagerClosureHandlersTests: XCTestCase {
 extension NinchatSessionManagerClosureHandlersTests {
     private func simulateChatQueue() {
         sessionManager.queueUpdateBoundClosures.forEach {
-            $0.value(.audienceEnqueued, "queue", NINExceptions.mainThread)
+            $0.value(.audienceEnqueued, Queue(queueID: "1", name: "Name", isClosed: false), NINExceptions.mainThread)
         }
     }
 }

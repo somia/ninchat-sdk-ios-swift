@@ -8,6 +8,7 @@ import Foundation
 import NinchatLowLevelClient
 
 typealias CompletionWithError = ((Error?) -> Void)
+typealias CompletionWithCredentials = ((NINSessionCredentials?, _ willResume: Bool, Error?) -> Void)
 typealias Completion = (() -> Void)
 
 /* Available ratings and assigned status codes for finishing the chat from our end */
@@ -28,16 +29,19 @@ protocol NINChatSessionConnectionManager {
     func fetchSiteConfiguration(config key: String, environments: [String]?, completion: @escaping CompletionWithError)
     
     /** Opens the session with an asynchronous completion callback. */
-    func openSession(completion: @escaping CompletionWithError) throws
-    
+    func openSession(completion: @escaping CompletionWithCredentials) throws
+
+    /** Continues to an existing session using given user credentials. Completes with an asynchronous completion callback. */
+    func continueSession(credentials: NINSessionCredentials, completion: @escaping CompletionWithCredentials) throws
+
     /** List queues with specified ids for this realm, all available ones if queueIds is nil. */
     func list(queues ID: [String]?, completion: @escaping CompletionWithError) throws
     
     /** Joins a chat queue. */
-    func join(queue ID: String, progress: @escaping ((Error?, Int) -> Void), completion: @escaping Completion) throws
+    func join(queue ID: String, progress: @escaping ((Queue?, Error?, Int) -> Void), completion: @escaping Completion) throws
     
-    /** Leaves the current queue. */
-    func leave(completion: @escaping CompletionWithError)
+    /** Deallocate a session by resetting local variables */
+    func deallocateSession()
     
     /** Runs ICE (Interactive Connectivity Establishment) for WebRTC connection negotiations. */
     func beginICE(completion: @escaping ((Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void)) throws
@@ -49,7 +53,7 @@ protocol NINChatSessionConnectionManager {
     func finishChat(rating status: ChatStatus?) throws
 }
 
-protocol NANChatSessionMessenger {
+protocol NINChatSessionMessenger {
     /**
     * Chronological list of messages on the current channel. The list is ordered by the message
     * timestamp in descending order (most recent first).
@@ -74,6 +78,9 @@ protocol NANChatSessionMessenger {
     
     /** Load channel history. */
     func loadHistory(completion: @escaping CompletionWithError) throws
+
+    /* Close an old session using given credentials async. */
+    func closeSession(credentials: NINSessionCredentials, completion: ((NINResult<Empty>) -> Void)?)
 }
 
 protocol NINChatSessionAttachment {
@@ -96,15 +103,17 @@ protocol QueueUpdateCapture {
 protocol NINChatSessionManagerDelegate {
     var onMessageAdded: ((_ index: Int) -> Void)? { get set }
     var onMessageRemoved: ((_ index: Int) -> Void)? { get set }
+    var onHistoryLoaded: ((_ length: Int) -> Void)? { get set }
+    var onSessionDeallocated: (() -> Void)? { get set }
     var onChannelClosed: (() -> Void)? { get set }
     var onRTCSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
     var onRTCClientSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
 
-    func bindQueueUpdate<T: QueueUpdateCapture>(closure: @escaping ((Events, String, Error?) -> Void), to receiver: T)
+    func bindQueueUpdate<T: QueueUpdateCapture>(closure: @escaping ((Events, Queue, Error?) -> Void), to receiver: T)
     func unbindQueueUpdateClosure<T: QueueUpdateCapture>(from receiver: T)
 }
 
-protocol NINChatSessionManager: class, NINChatSessionConnectionManager, NANChatSessionMessenger, NINChatDevHelper, NINChatSessionAttachment, NINChatSessionTranslation, NINChatSessionManagerDelegate {
+protocol NINChatSessionManager: class, NINChatSessionConnectionManager, NINChatSessionMessenger, NINChatDevHelper, NINChatSessionAttachment, NINChatSessionTranslation, NINChatSessionManagerDelegate {
     /** List of available queues for the realm_id. */
     var queues: [Queue]! { get set }
     

@@ -9,12 +9,12 @@ import XCTest
 @testable import NinchatSDKSwift
 
 final class UIKitTests: XCTestCase {
-    var sessionSwift: NINChatSessionSwift!
+    var sessionSwift: NINChatSession!
     var sessionManager: NINChatSessionManagerImpl!
     private let superview = UIView(frame: .zero)
     
     override func setUp() {
-        sessionSwift = NINChatSessionSwift(configKey: "")
+        sessionSwift = NINChatSession(configKey: "")
         sessionManager = NINChatSessionManagerImpl(session: sessionSwift, serverAddress: "")
     }
     

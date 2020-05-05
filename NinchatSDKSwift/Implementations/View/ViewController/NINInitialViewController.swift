@@ -14,7 +14,7 @@ final class NINInitialViewController: UIViewController, ViewController {
     
     // MARK: - ViewController
     
-    var session: NINChatSessionSwift!
+    var session: NINChatSession!
     
     // MARK: - Outlets
     
@@ -46,24 +46,35 @@ final class NINInitialViewController: UIViewController, ViewController {
             motdTextView.textAlignment = .left
         }
     }
-    
+    @IBOutlet private(set) weak var noQueueTextView: UITextView! {
+        didSet {
+            self.noQueueTextView.isHidden = true
+        }
+    }
+
     // MARK: - UIViewController
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .portrait
+        .portrait
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.overrideAssets()
-        self.drawQueueButtons()
+        if self.session.sessionManager.audienceQueues.filter({ !$0.isClosed }).count > 0 {
+            /// There is at least one open queue to join
+            self.drawQueueButtons()
+        } else {
+            /// Show no queue text
+            self.drawNoQueueText()
+        }
     }
     
     // MARK: - User actions
     
     @IBAction private func closeWindowButtonPressed(button: UIButton) {
-        try? self.session.sessionManager.closeChat()
+        self.session.onDidEnd()
     }
 }
 
@@ -93,11 +104,12 @@ private extension NINInitialViewController {
     
     private func drawQueueButtons() {
         self.queueButtonsStackView.subviews.forEach { $0.removeFromSuperview() }
-        
-        let numberOfButtons = min(3, self.session.sessionManager.audienceQueues.count)
+
+        let availableQueues = self.session.sessionManager.audienceQueues.filter({ !$0.isClosed })
+        let numberOfButtons = min(3, availableQueues.count)
         let buttonHeights: CGFloat = (numberOfButtons > 2) ? 40.0 : 60.0
-        for queue in self.session.sessionManager.queues.sorted(by: { $0.name > $1.name }) {
-            guard queueButtonsStackView.subviews.count <= numberOfButtons else { return }
+        for index in 0..<numberOfButtons {
+            let queue = availableQueues[index]
             let button = Button(frame: .zero) { [weak self] _ in
                 self?.onQueueActionTapped?(queue)
             }
@@ -112,5 +124,11 @@ private extension NINInitialViewController {
             queueButtonsStackView.addArrangedSubview(button)
             button.heightAnchor.constraint(equalToConstant: buttonHeights).isActive = true
         }
+    }
+
+    private func drawNoQueueText() {
+        self.queueButtonsStackView.isHidden = true
+        self.noQueueTextView.isHidden = false
+        self.noQueueTextView.setAttributed(text: self.session.sessionManager.siteConfiguration.noQueueText ?? NSLocalizedString("NoQueueText", tableName: "Localizable", bundle: Bundle.SDKBundle!, value: "", comment: ""), font: self.noQueueTextView.font)
     }
 }

@@ -12,7 +12,7 @@ protocol TopBarAction {
 }
 
 protocol TopBarProtocol: UIView, TopBarAction {
-    var session: NINChatSessionSwift! { get set }
+    var session: NINChatSession! { get set }
     var fileName: String! { get set }
     
     func overrideAssets()
@@ -22,7 +22,7 @@ final class TopBar: UIView, TopBarProtocol {
     
     // MARK: - TopBarProtocol
     
-    var session: NINChatSessionSwift!
+    var session: NINChatSession!
     var fileName: String! {
         didSet {
             fileNameLabel.text = fileName

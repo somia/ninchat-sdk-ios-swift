@@ -32,10 +32,6 @@ class NinchatXCTestCase: XCTestCase {
             }
         }
     }
-    
-    func testServerIntegrationTests() {
-        XCTAssertTrue(true)
-    }
 }
 
 extension NinchatXCTestCase {
@@ -57,9 +53,10 @@ extension NinchatXCTestCase {
         }
     
         sessionManager.fetchSiteConfiguration(config: Session.configurationKey, environments: nil) { error in
-            try! sessionManager.openSession { error in
+            try! sessionManager.openSession { credentials, canResume, error in
+                debugger("** ** UnitTest: credentials: \(credentials!)")
                 try! sessionManager.list(queues: sessionManager.siteConfiguration.audienceQueues) { error in
-                    try! sessionManager.join(queue: Session.suiteQueue, progress: { error, position in }, completion: {
+                    try! sessionManager.join(queue: Session.suiteQueue, progress: { queue, error, position in }, completion: {
                         completion()
                     })
                 }

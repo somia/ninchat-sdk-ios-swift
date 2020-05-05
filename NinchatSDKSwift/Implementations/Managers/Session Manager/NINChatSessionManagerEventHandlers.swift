@@ -8,6 +8,7 @@ import Foundation
 import NinchatLowLevelClient
 
 enum Events: String {
+    case channelFound = "channel_found"
     case channelJoined = "channel_joined"
     case channelUpdated = "channel_updated"
     case channelParted = "channel_parted"
@@ -20,13 +21,16 @@ enum Events: String {
     case historyResult = "history_results"
     case fileFound = "file_found"
 
-    case queueFound = "realm_queues_found"
+    case realmQueueFound = "realm_queues_found"
+    case queueFound = "queue_found"
     
     case sessionCreated = "session_created"
     case userDeleted = "user_deleted"
     
     case audienceEnqueued = "audience_enqueued"
     case queueUpdated = "queue_updated"
+
+    case connectionSuperseded = "connection_superseded"
 }
 
 protocol NINChatSessionManagerEventHandlers {
@@ -48,20 +52,50 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
     
     func onSessionEvent(param: NINLowLevelClientProps) {
         do {
-            let event = try param.event()
-            print("session event handler: \(event)")
+            if case let .failure(error) = param.event { throw error }
+
+            let event = param.event.value
+            debugger("session event handler: \(event)")
             if let eventType = Events(rawValue: event) {
                 switch eventType {
                 case .error:
-                    self.onActionSessionEvent?(eventType, param.error())
+                    self.onActionSessionEvent?(nil, eventType, param.error)
                 case .sessionCreated:
-                    self.myUserID = param.userID()
+                    let credentials = try? NINSessionCredentials(params: param)
+                    self.myUserID = credentials?.userID
                     self.delegate?.log(value: "Session created - my user ID is: \(String(describing: self.myUserID))")
-                    self.onActionSessionEvent?(eventType, nil)
+
+                    /// Checks if the session is alive to resume
+                    ///     is alive:
+                    ///         1. update channel members (name, avatar, message threads, etc)
+                    ///         2. describe channel's realm id (to get queues)
+                    ///     is not alive
+                    ///         1. notify to continue normal process.
+                    if self.canResumeSession(param: param) {
+                        try self.describe(channel: self.currentChannelID!) { [weak self] error in
+                            guard error == nil else { debugger("Error in describing the channel"); return }
+                            guard let realmID = self?.realmID else { debugger("Error in getting current Realm ID"); return }
+                            guard let audienceQueues = self?.siteConfiguration.audienceQueues else { debugger("Error in getting audience queues"); return }
+
+                            try? self?.describe(realm: realmID, queuesID: audienceQueues) { error in
+                                guard error == nil else {
+                                    debugger("Error in describing the realm")
+                                    self?.onActionSessionEvent?(credentials, Events.error, error)
+                                    return
+                                }
+                                guard let channelID = self?.currentChannelID else { debugger("Error in getting current channel id"); return }
+
+                                self?.didJoinChannel(channelID: channelID)
+                                self?.onActionSessionEvent?(credentials, eventType, nil)
+                            }
+                        }
+                    } else {
+                        self.onActionSessionEvent?(credentials, eventType, nil)
+                    }
                 case .userDeleted:
                     try self.didDeleteUser(param: param)
                 default:
-                    break
+                    self.onActionSessionEvent?(nil, eventType, nil)
                 }
             }
         } catch {
@@ -70,21 +104,24 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
     }
     
     func onEvent(param: NINLowLevelClientProps, payload: NINLowLevelClientPayload, lastReplay: Bool) {
-        
         do {
-            let event = try param.event()
-            print("event handler: \(event)")
+            if case let .failure(error) = param.event { throw error }
+
+            let event = param.event.value
+            debugger("event handler: \(event)")
             if let eventType = Events(rawValue: event) {
                 switch eventType {
                 case .error:
                     try self.handlerError(param: param)
                 case .channelJoined:
                     try self.didJoinChannel(param: param)
-                case .receivedMessage, .historyResult:
-                    /// Throttle the message; it will be cached for a short while to ensure inbound message order.
-                    messageThrottler?.add(message: InboundMessage(params: param, payload: payload))
-                case .queueFound:
-                    try self.didRealmQueuesFind(param: param)
+                case .historyResult:
+                    try self.didLoadHistory(param: param)
+                    fallthrough
+                case .receivedMessage:
+                    try self.didReceiveMessage(param: param, payload: payload)
+                case .realmQueueFound:
+                    try self.didFindRealmQueues(param: param)
                 case .audienceEnqueued, .queueUpdated:
                     try self.didUpdateQueue(type: eventType, param: param)
                 case .channelUpdated:
@@ -99,6 +136,8 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                     try self.didUpdateMember(param: param)
                 case .fileFound:
                     try self.didFindFile(param: param)
+                case .channelFound:
+                    try self.didFindChannel(param: param)
                 default:
                     break
                 }
@@ -116,7 +155,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
     }
     
     func onLogEvent(value: String) {
-        /// Nothing is here
+        debugger("** GO SDK output: \(value)")
     }
     
     func onConnStateEvent(state: String) {

@@ -34,9 +34,12 @@ class NinchatSDKSwiftServerMessengerTests: NinchatXCTestCase {
     func testServer_1_sendTextMessage() {
         let expect = self.expectation(description: "Expected to send a text message")
         do {
+
+            self.sessionManager.onMessageAdded = { _ in
+                expect.fulfill()
+            }
             try self.sessionManager.send(message: "The first message from iOS SDK Swift") { error in
                 XCTAssertNil(error)
-                expect.fulfill()
             }
         } catch {
             XCTFail(error.localizedDescription)
@@ -50,10 +53,12 @@ class NinchatSDKSwiftServerMessengerTests: NinchatXCTestCase {
         do {
             let image = UIImage(named: "icon_face_happy", in: Bundle.SDKBundle, compatibleWith: nil)?.pngData()
             XCTAssertNotNil(image)
-            
+
+            self.sessionManager.onMessageAdded = { _ in
+                expect.fulfill()
+            }
             try self.sessionManager.send(attachment: "attachment", data: image!) { error in
                 XCTAssertNil(error)
-                expect.fulfill()
             }
         } catch {
             XCTFail(error.localizedDescription)
@@ -65,9 +70,12 @@ class NinchatSDKSwiftServerMessengerTests: NinchatXCTestCase {
     func testServer_3_sendExtraText() {
         let expect = self.expectation(description: "Expected to send a text message")
         do {
+
+            self.sessionManager.onMessageAdded = { _ in
+                expect.fulfill()
+            }
             try self.sessionManager.send(message: "The next message from iOS SDK Swift") { error in
                 XCTAssertNil(error)
-                expect.fulfill()
             }
         } catch {
             XCTFail(error.localizedDescription)
@@ -75,19 +83,23 @@ class NinchatSDKSwiftServerMessengerTests: NinchatXCTestCase {
     
         waitForExpectations(timeout: 5.0)
     }
-    
-    func testServer_4_loadHistory() {
-        let expect = self.expectation(description: "Expected to update writing status smoothly")
+
+    func testServer_4_loadHistory_singleMessage() {
+        let expect = self.expectation(description: "Expected to get lost message from the server")
+
         do {
             /// Clear attachment message from the cache
             self.sessionManager.chatMessages.remove(at: 1)
-            
-            /// Set listener, check that the message inserted in the right order
-            self.sessionManager.onMessageAdded = { index in
-                XCTAssertEqual(index, 1)
+
+            self.sessionManager.onMessageAdded = { _ in
+                XCTFail("Should not call this closure in case of history loading")
+            }
+            self.sessionManager.onHistoryLoaded = { length in
+                XCTAssertEqual(length, 3)
+                XCTAssertEqual(self.sessionManager.chatMessages.filter({ $0 is ChannelMessage }).count, length)
                 expect.fulfill()
             }
-            
+
             /// Load the history
             try self.sessionManager.loadHistory { error in
                 XCTAssertNil(error)
@@ -96,6 +108,47 @@ class NinchatSDKSwiftServerMessengerTests: NinchatXCTestCase {
             XCTFail(error.localizedDescription)
         }
     
+        waitForExpectations(timeout: 15.0)
+    }
+
+    func testServer_5_sendMultipleAttachments() {
+        let expect = self.expectation(description: "Expected to send images")
+        expect.expectedFulfillmentCount = 3
+
+        self.sessionManager.onMessageAdded = nil
+        self.sessionManager.onHistoryLoaded = nil
+        ["chat_bubble_right", "chat_bubble_left", "chat_bubble_right_series"].forEach { name in
+            let image = UIImage(named: name, in: .SDKBundle, compatibleWith: nil)?.pngData()
+            XCTAssertNotNil(image)
+
+            try? self.sessionManager.send(attachment: "attachment_\(name)", data: image!) { error in
+                XCTAssertNil(error)
+                expect.fulfill()
+            }
+        }
+        waitForExpectations(timeout: 5.0)
+    }
+
+    func testServer_6_loadHistory_allMessages() {
+        let expect = self.expectation(description: "Expected to fetch all messages from the server")
+
+        do {
+            /// Clear all cached messages
+            self.sessionManager.chatMessages.removeAll()
+
+            /// Load the history
+            self.sessionManager.onHistoryLoaded = { length in
+                XCTAssertEqual(length, 6)
+                XCTAssertEqual(self.sessionManager.chatMessages.filter({ $0 is ChannelMessage }).count, length)
+                expect.fulfill()
+            }
+            try self.sessionManager.loadHistory { error in
+                XCTAssertNil(error)
+            }
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+
         waitForExpectations(timeout: 15.0)
     }
 }

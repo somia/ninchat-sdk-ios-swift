@@ -65,7 +65,7 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
     }
     var disableLocalVideo: Bool! {
         didSet {
-            #if !TARGET_IPHONE_SIMULATOR && TARGET_OS_IPHONE
+            #if !targetEnvironment(simulator)
             /// Camera capture only works on the device, not the simulator
             self.localVideoTrack?.isEnabled = !disableLocalVideo
             #endif
@@ -295,17 +295,20 @@ extension NINChatWebRTCClientImpl {
     private func createMediaSenders() {
         DispatchQueue.main.async {
             debugger("WebRTC: Configuring local audio & video sources")
-            
-            self.createAudioSender()
+
             self.createVideoSender()
-            
+            self.createAudioSender()
+
             debugger("WebRTC: Local media senders configured.")
         }
     }
 
     /// Create local audio track and add it to the peer connection
     private func createAudioSender() {
-        self.localAudioTrack = self.peerConnectionFactory?.audioTrack(withTrackId: self.kAudioTrackId)
+        let constraint = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
+        let audioSource = self.peerConnectionFactory?.audioSource(with: constraint)
+        self.localAudioTrack = self.peerConnectionFactory?.audioTrack(with: audioSource!, trackId: self.kAudioTrackId)
+
         if let audioTrack = self.localAudioTrack {
             self.localStream?.addAudioTrack(audioTrack)
             
@@ -321,7 +324,7 @@ extension NINChatWebRTCClientImpl {
     /// Create local video track and add it to the peer connection
     private func createVideoSender() {
         let videoSource = self.peerConnectionFactory?.videoSource()
-        #if !TARGET_IPHONE_SIMULATOR
+        #if !targetEnvironment(simulator)
         /// Camera capture only works on the device, not the simulator
         self.localCapture = RTCCameraVideoCapturer(delegate: videoSource!)
         self.delegate?.onLocalCaptureCreate?(self, self.localCapture!)
@@ -334,7 +337,7 @@ extension NINChatWebRTCClientImpl {
             
             /// Add the local video track to the peer connection
             debugger("WebRTC: Adding video track to our peer connection")
-            self.localVideoSender = self.peerConnection?.add(videoTrack, streamIds: [self.kVideoTrackId])
+            self.localVideoSender = self.peerConnection?.add(videoTrack, streamIds: [self.kStreamId])
             if self.localVideoSender == nil {
                 debugger("** ERROR: Failed to add video track")
             }

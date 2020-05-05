@@ -12,7 +12,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     // MARK: - Injected
     
     var viewModel: NINChatViewModel!    
-    var session: NINChatSessionSwift!
+    var session: NINChatSession!
     var chatDataSourceDelegate: NINChatDataSourceDelegate! {
         didSet {
             chatDataSourceDelegate.onCloseChatTapped = { [weak self] in
@@ -165,10 +165,8 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
         self.setupKeyboardClosure()
         self.connectRTC()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(didEnterBackground(notification:)),
-                                               name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(willResignActive(notification:)),
-                                               name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didEnterBackground(notification:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(willResignActive(notification:)), name: UIApplication.willResignActiveNotification, object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -184,17 +182,17 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        self.view.endEditing(true)
         self.adjustConstraints(for: size, withAnimation: true)
+        self.view.endEditing(true)
     }
     
     deinit {
         self.removeKeyboardListeners()
+        self.deallocViewModel()
         self.deallocRTC()
-        NotificationCenter.default.removeObserver(self,
-                                                  name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.removeObserver(self,
-                                                  name: UIApplication.willResignActiveNotification, object: nil)
+
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
     }
     
     // MARK: - Setup View
@@ -204,8 +202,8 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
         self.setupGestures()
         
         self.inputControlsView.onTextSizeChanged = { [weak self] height in
-            debugger("new text area height: \(height + 64)")
-            self?.updateInputContainerHeight(height + 64.0)
+            debugger("new text area height: \(height + Margins.kTextFieldPaddingHeight.rawValue)")
+            self?.updateInputContainerHeight(height + Margins.kTextFieldPaddingHeight.rawValue)
         }
     }
     
@@ -225,48 +223,60 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
                 self?.chatView.didAddMessage(at: index)
             case .remove(let index):
                 self?.chatView.didRemoveMessage(from: index)
+            case .history, .clean:
+                self?.chatView.tableView.reloadData()
             }
         }
+        self.viewModel.loadHistory { _ in }
     }
     
     // MARK: - Helpers
     
     private func connectRTC() {
         self.viewModel.listenToRTCSignaling(delegate: chatRTCDelegate, onCallReceived: { [unowned self] channel in
-            self.view.endEditing(true)
-            
-            let confirmVideoDialog: ConfirmVideoCallView = ConfirmVideoCallView.loadFromNib()
-            confirmVideoDialog.user = channel
-            confirmVideoDialog.session = self.session
-            confirmVideoDialog.onViewAction = { [unowned self] action in
-                confirmVideoDialog.hideConfirmView()
-                self.viewModel.pickup(answer: action == .confirm) { error in
-                    if error != nil { Toast.show(message: .error("failed to send WebRTC pickup message")) }
-                }
-            }
-            confirmVideoDialog.showConfirmView(on: self.view)
+            DispatchQueue.main.async {
+                self.view.endEditing(true)
 
+                let confirmVideoDialog: ConfirmVideoCallView = ConfirmVideoCallView.loadFromNib()
+                confirmVideoDialog.user = channel
+                confirmVideoDialog.session = self.session
+                confirmVideoDialog.onViewAction = { [unowned self] action in
+                    confirmVideoDialog.hideConfirmView()
+                    self.viewModel.pickup(answer: action == .confirm) { error in
+                        if error != nil { Toast.show(message: .error("failed to send WebRTC pickup message")) }
+                    }
+                }
+                confirmVideoDialog.showConfirmView(on: self.view)
+            }
         }, onCallInitiated: { [weak self] error, rtcClient in
-            self?.webRTCClient = rtcClient
-            self?.closeChatButton.hide = true
-            self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
-            
-            self?.videoView.isSelected = false
-            self?.videoView.resizeLocalVideo()
-        }, onCallHangup: { [weak self] in
-            self?.disconnectRTC {
+            DispatchQueue.main.async {
+                self?.webRTCClient = rtcClient
+                self?.closeChatButton.hide = true
                 self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
+
+                self?.videoView.isSelected = false
+                self?.videoView.resizeLocalVideo()
+                self?.disableIdleTimer(true)
+            }
+        }, onCallHangup: { [weak self] in
+            DispatchQueue.main.async {
+                self?.disableIdleTimer(false)
+                self?.disconnectRTC {
+                    self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
+                }
             }
         })
     }
     
     private func disconnectRTC(completion: (() -> Void)? = nil) {
         self.viewModel.disconnectRTC(self.webRTCClient) { [weak self] in
-            self?.closeChatButton.hide = false
-            self?.videoView.localCapture = nil
-            self?.videoView.remoteVideoTrack = nil
-            self?.webRTCClient = nil
-            completion?()
+            DispatchQueue.main.async {
+                self?.closeChatButton.hide = false
+                self?.videoView.localCapture = nil
+                self?.videoView.remoteVideoTrack = nil
+                self?.webRTCClient = nil
+                completion?()
+            }
         }
     }
     
@@ -274,6 +284,14 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     /// Capturing `[weak self]` while deallocation results in a crash
     private func deallocRTC() {
         self.viewModel.disconnectRTC(self.webRTCClient, completion: nil)
+    }
+
+    private func deallocViewModel() {
+        debugger("** ** - deallocate view model")
+
+        self.viewModel.onChannelClosed = nil
+        self.viewModel.onQueueUpdated = nil
+        self.viewModel.onChannelMessage = nil
     }
 }
 
@@ -324,20 +342,22 @@ extension NINChatViewController {
     }
     
     private func adjustConstraints(for size: CGSize, withAnimation animation: Bool) {
-        switch UIDevice.current.orientation {
-        case .landscapeLeft, .landscapeRight:
+        if UIScreen.main.traitCollection.userInterfaceIdiom == .pad {
+            /// On iPad we won't show full-screen videos as there is enough space to chat and video in parallel
+            videoContainerHeight.constant = (self.webRTCClient != nil) ? size.height * 0.45 : 0
+            self.alignInputControlsTopToScreenBottom(false)
+        } else if UIDevice.current.orientation == .landscapeLeft || UIDevice.current.orientation == .landscapeRight {
             // In landscape we make video fullscreen ie. hide the chat view + input controls
             // If no video; get rid of the video view. the input container and video (0-height) will dictate size
             videoContainerHeight.constant = (self.webRTCClient != nil) ? size.height : 0
             self.alignInputControlsTopToScreenBottom(self.webRTCClient != nil)
-        case .portrait, .portraitUpsideDown, .faceUp, .faceDown:
+        } else if UIDevice.current.orientation == .portrait || UIDevice.current.orientation == .portraitUpsideDown {
             // In portrait we make the video cover about the top half of the screen
             // If no video; get rid of the video view
             videoContainerHeight.constant = (self.webRTCClient != nil) ? size.height * 0.45 : 0
             self.alignInputControlsTopToScreenBottom(false)
-        default:
-            break
         }
+
         videoContainerHeight.isActive = true
         chatContainerHeight.isActive = true
         self.setNeedsStatusBarAppearanceUpdate()
@@ -424,10 +444,7 @@ extension NINChatViewController {
     }
     
     private func onAttachmentTapped(with button: UIButton) {
-        guard let bundle = Bundle.SDKBundle else { fatalError("Error in getting SDK Bundle") }
-        let camera = NSLocalizedString("Camera", tableName: "Localizable", bundle: bundle, value: "", comment: "")
-        let photo = NSLocalizedString("Photo", tableName: "Localizable", bundle: bundle, value: "", comment: "")
-        ChoiceDialogue.showDialogue(withOptions: [camera, photo]) { [weak self] result in
+        ChoiceDialogue.showDialogue(withOptions: ["Camera".localized, "Photo".localized]) { [weak self] result in
             switch result {
             case .cancel:
                 break
@@ -452,15 +469,15 @@ extension NINChatViewController {
     // MARK: - Video
     
     private func onVideoCameraTapped(with button: UIButton) {
-        self.webRTCClient?.disableLocalVideo = button.isSelected
-        self.session.log(value: "Video disabled: \(button.isSelected)")
+        self.webRTCClient?.disableLocalVideo = !button.isSelected
+        self.session.log(value: "Video disabled: \(!button.isSelected)")
         
         button.isSelected = !button.isSelected
     }
     
     private func onVideoAudioTapped(with button: UIButton) {
-        self.webRTCClient?.disableLocalAudio = button.isSelected
-        self.session.log(value: "Audio disabled: \(button.isSelected)")
+        self.webRTCClient?.disableLocalAudio = !button.isSelected
+        self.session.log(value: "Audio disabled: \(!button.isSelected)")
         
         button.isSelected = !button.isSelected
     }
@@ -503,5 +520,13 @@ extension NINChatViewController {
         
         /// TODO: pause video - if one should be active - here?
         viewModel.appWillResignActive { _ in }
+    }
+}
+
+// MARK: - Helpers
+
+extension NINChatViewController {
+    private func disableIdleTimer(_ disable: Bool) {
+        UIApplication.shared.isIdleTimerDisabled = disable
     }
 }

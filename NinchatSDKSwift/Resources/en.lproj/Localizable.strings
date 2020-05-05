@@ -1,0 +1,10 @@
+//
+// Copyright (c) 11.12.2018 Somia Reality Oy. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+//
+
+"Camera" = "Camera";
+"Photo Library" = "Photo Library";
+"Guest" = "Guest";
+"NoQueueText" = "No open queues to join";

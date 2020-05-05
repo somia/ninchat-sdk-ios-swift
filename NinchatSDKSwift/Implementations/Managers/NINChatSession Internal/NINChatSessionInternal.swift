@@ -14,50 +14,45 @@ protocol NINChatSessionInternalDelegate: class {
     func log(format: String, _ args: CVarArg...)
     func onLowLevelEvent(event: NINLowLevelClientProps, payload: NINLowLevelClientPayload, lastReply: Bool)
     func onDidEnd()
+    func onResumeFailed() -> Bool
     func override(imageAsset key: AssetConstants) -> UIImage?
     func override(colorAsset key: ColorConstants) -> UIColor?
 }
 
-extension NINChatSessionSwift: NINChatSessionInternalDelegate {
+extension NINChatSession: NINChatSessionInternalDelegate {
     internal func log(value: String) {
         DispatchQueue.main.async {
-            self.delegate?.didOutputSDKLog(session: self, value: value)
-            self.didOutputSDKLog?(self, value)
+            self.delegate?.ninchat(self, didOutputSDKLog: value)
         }
     }
     
     internal func log(format: String, _ args: CVarArg...) {
         DispatchQueue.main.async {
-            self.delegate?.didOutputSDKLog(session: self, value: String(format: format, args))
-            self.didOutputSDKLog?(self, String(format: format, args))
+            self.delegate?.ninchat(self, didOutputSDKLog: String(format: format, args))
         }
     }
     
     internal func onLowLevelEvent(event: NINLowLevelClientProps, payload: NINLowLevelClientPayload, lastReply: Bool) {
         DispatchQueue.main.async {
-            self.delegate?.onLowLevelEvent(session: self, params: event, payload: payload, lastReply: lastReply)
-            self.onLowLevelEvent?(self, event, payload, lastReply)
+            self.delegate?.ninchat(self, onLowLevelEvent: event, payload: payload, lastReply: lastReply)
         }
     }
     
     internal func onDidEnd() {
         DispatchQueue.main.async {
-            self.delegate?.didEndSession(session: self)
-            self.didEndSession?(self)
+            self.delegate?.ninchatDidEnd(self)
         }
     }
-    
+
+    internal func onResumeFailed() -> Bool {
+        self.delegate?.ninchatDidFail(toResumeSession: self) ?? false
+    }
+
     internal func override(imageAsset key: AssetConstants) -> UIImage? {
-        if let delegate = self.delegate {
-            return delegate.overrideImageAsset(session: self, forKey: key)
-        }
-        return self.overrideImageAsset?(self, key)
+        delegate?.ninchat(self, overrideImageAssetForKey: key)
     }
     
     internal func override(colorAsset key: ColorConstants) -> UIColor? {
-        if let delegate = self.delegate {
-            return delegate.overrideColorAsset(session: self, forKey: key)
-        }
-        return self.overrideColorAsset?(self, key)
+        delegate?.ninchat(self, overrideColorAssetForKey: key)
     }
 }

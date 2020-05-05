@@ -29,6 +29,10 @@ extension Date {
         let diff = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: previous, to: recent)
         return DateCompare(diff: diff)
     }
+
+    var minute: Int {
+        Calendar.current.component(.minute, from: self)
+    }
 }
 
 extension DateFormatter {

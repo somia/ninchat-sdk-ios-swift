@@ -13,7 +13,7 @@ struct TextMessage: ChannelMessage, Equatable {
 
     // MARK: - ChannelMessage
     let mine: Bool
-    let sender: ChannelUser
+    let sender: ChannelUser?
     var series: Bool = false
     
     // MARK: - TextMessage

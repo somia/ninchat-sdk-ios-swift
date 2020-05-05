@@ -21,6 +21,7 @@ import Foundation
   *     - server
   *     - configKey
   *     - queue
+  *     - queue-closed
 */
 
 struct Configuration: Codable {
@@ -28,6 +29,12 @@ struct Configuration: Codable {
     let secret: String? /// Optional
     let configKey: String
     let queue: String
+    let closedQueue: String? /// Optional
+
+    enum CodingKeys: String, CodingKey {
+        case server, secret, configKey, queue
+        case closedQueue = "queue-closed"
+    }
 }
 
 final class Session {
@@ -51,5 +58,8 @@ final class Session {
     }
     static var suiteQueue: String {
         configuration.queue
+    }
+    static var closedQueue: String? {
+        configuration.closedQueue
     }
 }

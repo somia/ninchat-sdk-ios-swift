@@ -9,8 +9,5 @@ import Foundation
 struct Queue {
     let queueID: String
     let name: String
-    
-    var description: String {
-        "Queue ID: \(self.queueID), Name: \(self.name)"
-    }
+    let isClosed: Bool
 }

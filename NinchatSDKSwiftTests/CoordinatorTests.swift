@@ -9,9 +9,10 @@ import XCTest
 
 class CoordinatorTests: XCTestCase {
     let navigationController = UINavigationController()
-    let session = NINChatSessionSwift(configKey: "")
+    let session = NINChatSession(configKey: "")
     var coordinator: NINCoordinator!
     
+
     override func setUp() {
         coordinator = NINCoordinator(with: session)
     }
@@ -26,37 +27,23 @@ class CoordinatorTests: XCTestCase {
         XCTAssertNotNil(initialViewController)
     }
     
+    func testLazyVariables() {
+        XCTAssertNotNil(coordinator.queueViewController)
+        XCTAssertNotNil(coordinator.chatViewController)
+        XCTAssertNotNil(coordinator.ratingViewController)
+    }
+
     func testStartNINChatSessionViewController() {
-        let joinOptions = coordinator.start(with: nil, within: navigationController)
+        let joinOptions = coordinator.start(with: nil, resumeSession: false, within: navigationController)
         XCTAssertNotNil(coordinator.navigationController)
         XCTAssertNotNil(joinOptions as? NINInitialViewController)
         
-        let initialChat = coordinator.start(with: "default", within: navigationController)
+        let initialChat = coordinator.start(with: "default", resumeSession: false, within: navigationController)
         XCTAssertNotNil(coordinator.navigationController)
-        XCTAssertNil(initialChat as? NINQueueViewController)
-    }
-    
-    func testInitialViewController_automaticJoin() {
-        let vcNil = coordinator.joinAutomatically(for: "")
-        XCTAssertNil(vcNil)
-        
-        let vc = coordinator.joinDirectly(to: Queue(queueID: "id", name: "name"))
-        XCTAssertNotNil(vc)
-    }
+        XCTAssertNil(initialChat as? NINQueueViewController, "The result is nil since there is not any audience queue from the server")
 
-    func testInitialViewController_queueOptions() {
-        let vc = coordinator.showJoinOptions() as? NINInitialViewController
-        XCTAssertNotNil(vc)
-        XCTAssertNotNil(vc?.onQueueActionTapped)
-    }
-    
-    func testChatViewController() {
-        let vc = coordinator.showChatViewController() as? NINChatViewController
-        XCTAssertNotNil(vc)
-    }
-    
-    func testRatingViewController() {
-        let vc = coordinator.showRatingViewController() as? NINRatingViewController
-        XCTAssertNotNil(vc)
+        let chatView = coordinator.start(with: nil, resumeSession: true, within: navigationController)
+        XCTAssertNotNil(coordinator.navigationController)
+        XCTAssertNotNil(chatView as? NINQueueViewController)
     }
 }

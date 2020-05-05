@@ -66,17 +66,17 @@ final class ComposeContentView: UIView, ComposeContentViewProtocol {
     
     @objc
     private func onButtonTapped(_ sender: UIButton) {
-        if sender == self.sendButton {
+        if sender == self.sendButton, let closure = self.onSendActionTapped {
             self.applyStyle(to: sender, selected: true)
-            self.onSendActionTapped?(self)
-        } else {
+            closure(self)
+        } else if let closure = self.onStateUpdateTapped {
             guard let button = self.optionsButton.first(where: { $0 == sender }), let index = self.optionsButton.firstIndex(of: button) else { return }
             let selected = self.selectedOptions[index].selected ?? false
     
             self.applyStyle(to: sender, selected: !selected)
             self.selectedOptions[index].selected = !selected
             self.composeState[index] = !selected
-            self.onStateUpdateTapped?(self.composeState)
+            closure(self.composeState)
         }
     }
     
@@ -188,5 +188,12 @@ final class ComposeContentView: UIView, ComposeContentViewProtocol {
         
             return button
         }
+    }
+
+    deinit {
+        /// To ensure that the blocks are deallocated to prevent the following issue to happening again
+        /// https://github.com/somia/ninchat-sdk-ios/issues/100
+        self.onSendActionTapped = nil
+        self.onStateUpdateTapped = nil
     }
 }

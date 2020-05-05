@@ -8,7 +8,9 @@ import Foundation
 
 enum MessageUpdateType {
     case insert(_ index: Int)
+    case history
     case remove(_ index: Int)
+    case clean
 }
 
 protocol NINChatRTCProtocol {
@@ -32,6 +34,7 @@ protocol NINChatMessageProtocol {
     func send(action: ComposeContentViewProtocol, completion: @escaping ((Error?) -> Void))
     func send(attachment: String, data: Data, completion: @escaping ((Error?) -> Void))
     func send(type: MessageType, payload: [String:String], completion: @escaping ((Error?) -> Void))
+    func loadHistory(completion: @escaping ((Error?) -> Void))
 }
 
 protocol NINChatViewModel: NINChatRTCProtocol, NINChatStateProtocol, NINChatMessageProtocol {
@@ -59,16 +62,20 @@ final class NINChatViewModelImpl: NINChatViewModel {
             self?.onChannelClosed?()
         }
         self.sessionManager.bindQueueUpdate(closure: { [weak self] _, _, error in
-            guard error == nil else {
-                try? self?.sessionManager.closeChat(); return
-            }
+            guard error == nil else { try? self?.sessionManager.closeChat(); return }
             self?.onQueueUpdated?()
         }, to: self)
         self.sessionManager.onMessageAdded = { [weak self] index in
             self?.onChannelMessage?(.insert(index))
         }
+        self.sessionManager.onHistoryLoaded = { [weak self] _ in
+            self?.onChannelMessage?(.history)
+        }
         self.sessionManager.onMessageRemoved = { [weak self] index in
             self?.onChannelMessage?(.remove(index))
+        }
+        self.sessionManager.onSessionDeallocated = { [weak self] in
+            self?.onChannelMessage?(.clean)
         }
     }
 }
@@ -178,6 +185,14 @@ extension NINChatViewModelImpl {
     
     func updateWriting(state: Bool) {
         try? self.sessionManager.update(isWriting: state, completion: { _ in })
+    }
+
+    func loadHistory(completion: @escaping ((Error?) -> Void)) {
+        do {
+            try self.sessionManager.loadHistory(completion: completion)
+        } catch {
+            completion(error)
+        }
     }
 }
 

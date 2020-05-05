@@ -7,7 +7,7 @@
 import UIKit
 
 protocol ConfirmVideoCallViewProtocol: ConfirmView {
-    var user: ChannelUser! { get set }
+    var user: ChannelUser? { get set }
 }
 
 final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol {
@@ -36,12 +36,12 @@ final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol {
     
     // MARK: - ConfirmVideoCallViewProtocol
     
-    var user: ChannelUser!
+    var user: ChannelUser?
     
     // MARK: - ConfirmView
     
     var onViewAction: OnViewAction?
-    weak var session: NINChatSessionSwift? {
+    weak var session: NINChatSession? {
         didSet {
             self.overrideAssets()
         }
@@ -68,15 +68,19 @@ final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol {
         /// Caller's Avatar image
         if let overrideURL = agentAvatarConfig.imageOverrideURL {
             self.avatarImageView.image(from: overrideURL)
-        } else if let iconURL = user.iconURL {
+        } else if let iconURL = user?.iconURL {
             self.avatarImageView.image(from: iconURL)
+        } else if let bundle = Bundle.SDKBundle {
+            self.avatarImageView.image = UIImage(named: "icon_avatar_other", in: bundle, compatibleWith: nil)
         }
         
         /// Caller's name
         if !agentAvatarConfig.nameOverride.isEmpty {
             self.usernameLabel.text = agentAvatarConfig.nameOverride
-        } else {
+        } else if let user = user {
             self.usernameLabel.text = user.displayName
+        } else {
+            self.usernameLabel.text = "Guest".localized
         }
 
         

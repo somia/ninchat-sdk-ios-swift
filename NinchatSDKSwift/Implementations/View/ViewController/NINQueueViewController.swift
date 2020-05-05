@@ -9,18 +9,20 @@ import UIKit
 final class NINQueueViewController: UIViewController, ViewController {
     
     private var sessionManager: NINChatSessionManager {
-        return session.sessionManager
+        session.sessionManager
     }
     
     // MARK: - Injected
     
     var viewModel: NINQueueViewModel!
+    var queue: Queue!
+    var resumeMode: Bool!
     var onQueueActionTapped: (() -> Void)?
     private var queueTransferListener: AnyHashable!
     
     // MARK: - ViewController
     
-    var session: NINChatSessionSwift!
+    var session: NINChatSession!
     
     // MARK: - Outlets
     
@@ -52,9 +54,8 @@ final class NINQueueViewController: UIViewController, ViewController {
             closeChatButton.buttonTitle = closeTitle
             closeChatButton.overrideAssets(with: self.session)
             closeChatButton.closure = { [weak self] button in
-                self?.sessionManager.leave { _ in
-                    try? self?.sessionManager.closeChat()
-                }
+                self?.sessionManager.deallocateSession()
+                try? self?.sessionManager.closeChat()
             }
         }
     }
@@ -62,7 +63,7 @@ final class NINQueueViewController: UIViewController, ViewController {
     // MARK: - UIViewController
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .portrait
+        .portrait
     }
     
     override func viewDidLoad() {
@@ -77,6 +78,7 @@ final class NINQueueViewController: UIViewController, ViewController {
     }
 
     private func setupViewModel() {
+        self.viewModel.resumeMode = self.resumeMode
         self.viewModel.onInfoTextUpdate = { [weak self] text in
             DispatchQueue.main.async {
                 self?.queueInfoTextView.setAttributed(text: text ?? "", font: .ninchat)
@@ -84,18 +86,16 @@ final class NINQueueViewController: UIViewController, ViewController {
         }
         self.viewModel.onQueueJoin = { [weak self] error in
             guard error == nil else { return }
-
-            DispatchQueue.main.async {
-                self?.onQueueActionTapped?()
-            }
+            self?.onQueueActionTapped?()
         }
-        self.viewModel.connect()
+        /// Directly open chat page if it is a session resumption condition
+        (self.resumeMode) ? self.onQueueActionTapped?() : self.viewModel.connect(queue: self.queue)
     }
 }
 
 // MARK: - Helper methods
 
-private extension NINQueueViewController {
+extension NINQueueViewController {
     private func spin() {
         guard spinnerImageView.layer.animation(forKey: "SpinAnimation") == nil else { return }
         

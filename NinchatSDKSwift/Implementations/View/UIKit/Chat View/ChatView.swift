@@ -60,7 +60,7 @@ final class ChatView: UIView, ChatViewProtocol {
     
     // MARK: - Outlets
     
-    @IBOutlet private weak var tableView: UITableView! {
+    @IBOutlet private(set) weak var tableView: UITableView! {
         didSet {
             tableView.register(ChatChannelComposeCell.self)
             

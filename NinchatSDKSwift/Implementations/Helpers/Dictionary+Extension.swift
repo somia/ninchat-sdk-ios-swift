@@ -28,10 +28,10 @@ extension Dictionary where Key==String {
         guard let candidate = self[Constants.RTCIceCandidateKeyCandidate.rawValue] as? String else {
             debugger("** ERROR: missing '\(Constants.RTCIceCandidateKeyCandidate.rawValue)' key in dictionary for RTCIceCandidate"); return nil
         }
-        guard let lineIndex = self[Constants.RTCIceCandidateSDPMLineIndex.rawValue] as? Int32 else {
+        guard let lineIndex = self[Constants.RTCIceCandidateSDPMLineIndex.rawValue] as? String else {
             debugger("** ERROR: missing '\(Constants.RTCIceCandidateSDPMLineIndex.rawValue)' key in dictionary for RTCIceCandidate"); return nil
         }
         
-        return RTCIceCandidate(sdp: candidate, sdpMLineIndex: lineIndex, sdpMid: self[Constants.RTCIceCandidateSDPMid.rawValue] as? String)
+        return RTCIceCandidate(sdp: candidate, sdpMLineIndex: Int32(lineIndex)!, sdpMid: self[Constants.RTCIceCandidateSDPMid.rawValue] as? String)
     }
 }

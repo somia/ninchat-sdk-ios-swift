@@ -31,7 +31,7 @@ final class ChoiceDialogue: UIView {
         self.transform = CGAffineTransform(translationX: 0, y: bounds.height)
 
         self.addView(to: UIApplication.shared.keyWindow)
-        self.addOptions(options, cancel: cancelTitle ?? NSLocalizedString("Cancel", tableName: "Localizable", bundle: Bundle.SDKBundle!, value: "", comment: ""))
+        self.addOptions(options, cancel: cancelTitle ?? "Cancel".localized)
         self.animateDialogue(hide: false)
     }
 

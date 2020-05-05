@@ -46,24 +46,26 @@ final class FileInfo {
     
     // MARK: - Functions
     
-    func updateInfo(session: NINChatSessionAttachment, completion: @escaping ((Error?, _ didRefreshNetwork: Bool) -> Void)) {
+    func updateInfo(session: NINChatSessionAttachment, completion: @escaping (Error?, _ didRefreshNetwork: Bool) -> Void) {
         /// The URL must not expire within the next 15 minutes
         let comparisonDate = Date(timeIntervalSinceNow: -(15*60))
-        
+
         guard self.url == nil || self.urlExpiry == nil || self.urlExpiry?.compare(comparisonDate) == .orderedAscending else {
             debugger("No need to update file, it is up to date.")
             completion(nil, false)
             return
         }
-        
-        debugger("Must update file info; call describe_file")
+
+        debugger("Must update file info; call describe_file with id: \(self.fileID ?? "")")
         do {
             try session.describe(file: self.fileID) { [weak self] error, fileInfo in
+                debugger("described file with id: \(self?.fileID ?? "nil")")
+
                 if let error = error {
                     completion(error, false)
                 } else if let info = fileInfo {
                     let file = FileInfo(json: info)
-                    
+
                     self?.url = file.url
                     self?.urlExpiry = file.urlExpiry
                     self?.aspectRatio = file.aspectRatio

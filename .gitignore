@@ -5,3 +5,6 @@ NinchatSDKSwift.xcodeproj/xcuserdata/
 NinchatSDKSwift.xcworkspace/xcuserdata/
 NinchatSDKSwiftServerTests/Secrets.plist
 .idea/
+
+*.out
+*.log

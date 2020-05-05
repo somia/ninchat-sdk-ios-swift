@@ -16,6 +16,14 @@ extension UIViewController {
             name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(notification:)),
             name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardDidChangeSize(notification:)),
+                name: UIWindow.keyboardDidChangeFrameNotification, object: nil)
+    }
+
+    func removeKeyboardListeners() {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidChangeFrameNotification, object: nil)
     }
     
     @objc
@@ -37,12 +45,24 @@ extension UIViewController {
             })
         }
     }
-    
-    func removeKeyboardListeners() {
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+
+    @objc
+    private func keyboardDidChangeSize(notification: Notification) {
+        if let newKeyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
+           let previousKeyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue,
+           let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
+           newKeyboardSize.height != previousKeyboardSize.height {
+
+            UIView.animate(withDuration: duration, animations: {
+                self.view.transform = CGAffineTransform(translationX: 0, y: -newKeyboardSize.height)
+            }, completion: { finished in
+                if let vc = self as? KeyboardHandler {
+                    vc.onKeyboardSizeChanged?(newKeyboardSize.height)
+                }
+            })
+        }
     }
-    
+
     @objc
     private func keyboardWillHide(notification: Notification) {
         if let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval {

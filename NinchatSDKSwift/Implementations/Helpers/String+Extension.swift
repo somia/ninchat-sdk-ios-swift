@@ -16,7 +16,7 @@ extension String {
     }
     
     private func attributedString(_ font: UIFont?, document: NSAttributedString.DocumentType) -> NSAttributedString? {
-        guard let data = self.data(using: .utf8), let font = font else { return nil }
+        guard let data = self.data(using: .utf16, allowLossyConversion: false), let font = font else { return nil }
         do {
             let attrString = try NSMutableAttributedString(data: data, options: [.documentType: document], documentAttributes: nil)
             attrString.override(font: font)
@@ -51,5 +51,10 @@ extension String {
         } catch {
             return false
         }
+    }
+
+    var localized: String {
+        guard let bundle = Bundle.SDKBundle else { return self }
+        return NSLocalizedString(self, tableName: "Localizable", bundle: bundle, value: "", comment: "")
     }
 }

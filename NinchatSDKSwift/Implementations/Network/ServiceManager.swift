@@ -15,10 +15,9 @@ enum ServiceResultError: Error {
 struct ServiceManager {
     private let session = URLSession.shared
     
-    func perform<T: ServiceRequest>(_ request: T, completion: @escaping (Result<T.ReturnType>) -> Void) {
+    func perform<T: ServiceRequest>(_ request: T, completion: @escaping (NINResult<T.ReturnType>) -> Void) {
         guard let request = self.request(request) else {
-            completion(.failure(ServiceResultError.invalidRequest))
-            return
+            completion(.failure(ServiceResultError.invalidRequest)); return
         }
         
         let task = session.dataTask(with: request) { responseData, response, responseError in
@@ -45,7 +44,7 @@ struct ServiceManager {
         return urlRequest
     }
     
-    private func validate(_ responseData: Data?, response: URLResponse?, responseError: Error?) -> Result<Void> {
+    private func validate(_ responseData: Data?, response: URLResponse?, responseError: Error?) -> NINResult<Void> {
         if let responseError = responseError {
             return .failure(responseError)
         }
@@ -59,7 +58,7 @@ struct ServiceManager {
         return .success(())
     }
     
-    private func parse<T: Decodable>(_ data: Data?) -> Result<T> {
+    private func parse<T: Decodable>(_ data: Data?) -> NINResult<T> {
         guard let data = data else {
             return .failure(ServiceResultError.noData)
         }
