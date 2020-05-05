@@ -47,6 +47,7 @@ public enum NINSessionExceptions: Error {
     case noParamChannel
     case hasActiveQueue
     case noActiveQueue
+    case noQueueFound
     case noActiveUserID
     case invalidRealmConfiguration
     case invalidServerAddress
@@ -65,6 +66,8 @@ public enum NINSessionExceptions: Error {
             return "Already have current queue"
         case .noActiveQueue:
             return "Must have current queue"
+        case .noQueueFound:
+            return "The queue is not described yet"
         case .noActiveUserID:
             return "Must have user id"
         case .invalidRealmConfiguration:
