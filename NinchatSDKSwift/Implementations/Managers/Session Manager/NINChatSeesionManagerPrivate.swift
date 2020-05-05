@@ -11,8 +11,7 @@ import NinchatLowLevelClient
 
 extension NINChatSessionManagerImpl {
     internal func didFindRealmQueues(param: NINLowLevelClientProps) throws {
-        delegate?.log(value: "Realm queues found - flushing list of previously available queues.")
-        queues.removeAll()
+        delegate?.log(value: "Realm queues found")
 
         let actionID = param.actionID
         do {
@@ -23,6 +22,8 @@ extension NINChatSessionManagerImpl {
             try realmQueues.accept(queuesParser)
 
             self.queues = queuesParser.properties.keys.compactMap({ key in
+                /// Add the queue only if it is not already available
+                guard !self.queues.contains(where: { $0.queueID == key } ) else { return nil }
                 if let queue = try? realmQueues.getObject(key), case let .success(queueName) = queue.queueName, case let .success(queueClosed) = queue.queueClosed {
                     return Queue(queueID: key, name: queueName, isClosed: queueClosed)
                 }
@@ -45,21 +46,38 @@ extension NINChatSessionManagerImpl {
 
     internal func didUpdateQueue(type: Events, param: NINLowLevelClientProps) throws {
         if case let .failure(error) = param.queueID { throw error }
-        guard let queue = self.queues.first(where: { $0.queueID == param.queueID.value }) else { return }
 
-        if case let .failure(error) = param.queuePosition {
-            self.queueUpdateBoundClosures.values.forEach({ $0(type, queue, error) }); return
-        }
-        let position = param.queuePosition.value
-        if type == .audienceEnqueued {
-            guard self.currentQueueID == nil else { throw NINSessionExceptions.hasActiveQueue }
+        func updateQueueClosures() throws {
+            guard let queue = self.queues.first(where: { $0.queueID == param.queueID.value }) else { throw NINSessionExceptions.noQueueFound }
 
-            self.currentQueueID = queue.queueID
-            self.queueUpdateBoundClosures.values.forEach({ $0(type, queue, nil) })
+            if case let .failure(error) = param.queuePosition {
+                self.queueUpdateBoundClosures.values.forEach({ $0(type, queue, error) }); return
+            }
+            let position = param.queuePosition.value
+            if type == .audienceEnqueued {
+                guard self.currentQueueID == nil else { throw NINSessionExceptions.hasActiveQueue }
+
+                self.currentQueueID = queue.queueID
+                self.queueUpdateBoundClosures.values.forEach({ $0(type, queue, nil) })
+            }
+            self.onProgress?(queue, position, type, nil)
         }
-        self.onProgress?(queue, position, type, nil)
+
+        if self.queues.contains(where: { $0.queueID == param.queueID.value }) {
+            /// The queue is already described
+            try updateQueueClosures()
+        } else {
+            /// First, we need to describe the queue to avoid issues like `https://github.com/somia/mobile/issues/216`
+            try self.describe(realm: self.realmID!, queuesID: [param.queueID.value]) { _ in
+                do {
+                    try updateQueueClosures()
+                } catch {
+                    debugger(error.localizedDescription)
+                }
+            }
+        }
     }
-    
+
     internal func didUpdateUser(param: NINLowLevelClientProps) throws {
         guard self.currentChannelID != nil else { throw NINSessionExceptions.noActiveChannel }
         if case let .failure(error) = param.userID { throw error }
