@@ -476,8 +476,8 @@ extension NINChatViewController {
     }
     
     private func onVideoAudioTapped(with button: UIButton) {
-        self.webRTCClient?.disableLocalAudio = button.isSelected
-        self.session.log(value: "Audio disabled: \(button.isSelected)")
+        self.webRTCClient?.disableLocalAudio = !button.isSelected
+        self.session.log(value: "Audio disabled: \(!button.isSelected)")
         
         button.isSelected = !button.isSelected
     }
