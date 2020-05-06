@@ -64,7 +64,6 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
                     targetClosure(nil)
                     DispatchQueue.main.async { self?.actionChannelBoundClosures.removeValue(forKey: id) }
                 }
-
             }
         }
     }

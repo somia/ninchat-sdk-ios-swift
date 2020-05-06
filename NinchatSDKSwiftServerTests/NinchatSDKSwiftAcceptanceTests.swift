@@ -5,12 +5,13 @@
 //
 
 import XCTest
+import WebRTC
 import NinchatLowLevelClient
 @testable import NinchatSDKSwift
 
 /// Acceptance Tests.
 /// Tests are run with some configuration to run and open 'dev' environment
-class NinchatSDKSwiftAcceptanceTests: XCTestCase {
+class NinchatSDKSwiftAcceptanceTests: XCTestCase, NINChatWebRTCClientDelegate {
     private var sessionManager = Session.Manager
     private var rtcClient: NINChatWebRTCClient?
     private var credentials: NINSessionCredentials! {
@@ -24,6 +25,12 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         }
     }
     private var onEvent: ((Events?, Error?) -> Void)?
+
+    // MARK: - NINChatWebRTCClientDelegate
+    var onConnectionStateChange: ((NINChatWebRTCClient, ConnectionState) -> Void)?
+    var onLocalCaptureCreate: ((NINChatWebRTCClient, RTCCameraVideoCapturer) -> Void)?
+    var onRemoteVideoTrackReceive: ((NINChatWebRTCClient, RTCVideoTrack) -> Void)?
+    var onError: ((NINChatWebRTCClient, Error) -> Void)?
 
     override func setUp() {
         super.setUp()
@@ -125,12 +132,13 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         let expect_call = self.expectation(description: "Expected to get a call request")
         let expect_offer = self.expectation(description: "Expected to get a call offer")
         let expect_hangup = self.expectation(description: "Expected to hangup the offer")
-
+        let expect_connect = self.expectation(description: "Expected to connect to the candidates")
+        let expect_closed = self.expectation(description: "Expected to close the call")
         try! self.simulateTextMessage("Start a new video chat to run tests")
-        self.simulateVideoCall(expect_call: expect_call, expect_offer: expect_offer, expect_hangup: expect_hangup)
-    
+        self.simulateVideoCall(call: expect_call, offer: expect_offer, hangup: expect_hangup, connected: expect_connect, closed: expect_closed)
+
         /// wait until supervisor initiate a call
-        waitForExpectations(timeout: 30.0)
+        waitForExpectations(timeout: 15.0)
     }
 
     func testServer_05_transferQueue() {
@@ -202,6 +210,9 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         }
         self.sessionManager.deallocateSession()
         self.rtcClient?.disconnect()
+
+        self.sessionManager.disconnect()
+        self.sessionManager = Session.initiate()
         waitForExpectations(timeout: 15.0)
     }
 
@@ -210,7 +221,6 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
     func testServer_10_resumeSession() {
         let expect_config = self.expectation(description: "Expected to get configs for resuming the session")
         let expect_resume = self.expectation(description: "Expected to continue a session using credentials")
-
         self.sessionManager.fetchSiteConfiguration(config: Session.configurationKey, environments: []) { error in
             XCTAssertNil(error)
             expect_config.fulfill()
@@ -232,20 +242,20 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
             }
         }
 
-
         waitForExpectations(timeout: 15.0)
     }
 
     func testServer_11_retryVideoChat() {
-        let expect_call_2 = self.expectation(description: "Expected to get a call request - 2")
-        let expect_offer_2 = self.expectation(description: "Expected to get a call offer - 2")
-        let expect_hangup_2 = self.expectation(description: "Expected to hangup the offer - 2")
-
-        try! self.simulateTextMessage("Start a new video chat to run tests")
-        self.simulateVideoCall(expect_call: expect_call_2, expect_offer: expect_offer_2, expect_hangup: expect_hangup_2)
+        let expect_call = self.expectation(description: "Expected to get a call request - 2")
+        let expect_offer = self.expectation(description: "Expected to get a call offer - 2")
+        let expect_hangup = self.expectation(description: "Expected to hangup the offer - 2")
+        let expect_connect = self.expectation(description: "Expected to connect to the candidates - 2")
+        let expect_closed = self.expectation(description: "Expected to close the call - 2")
+        try! self.simulateTextMessage("Start a new video chat again to run tests")
+        self.simulateVideoCall(call: expect_call, offer: expect_offer, hangup: expect_hangup, connected: expect_connect, closed: expect_closed)
 
         /// wait until supervisor initiate a call
-        waitForExpectations(timeout: 30.0)
+        waitForExpectations(timeout: 10.0)
     }
 
     func testServer_12_reloadHistory() {
@@ -270,7 +280,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         waitForExpectations(timeout: 15.0)
     }
 
-    func testServer_12_deallocate() {
+    func testServer_13_deallocate() {
         let expect_close = self.expectation(description: "Expected to delete user and close the session")
         let expect_deallocation = self.expectation(description: "Expected to delete user and close the session")
 
@@ -300,7 +310,26 @@ extension NinchatSDKSwiftAcceptanceTests {
         try self.sessionManager.send(message: message, completion: { _ in })
     }
 
-    internal func simulateVideoCall(expect_call: XCTestExpectation, expect_offer: XCTestExpectation, expect_hangup: XCTestExpectation) {
+    internal func simulateVideoCall(call: XCTestExpectation, offer: XCTestExpectation, hangup: XCTestExpectation, connected: XCTestExpectation, closed: XCTestExpectation) {
+        call.assertForOverFulfill = false
+        offer.assertForOverFulfill = false
+        hangup.assertForOverFulfill = false
+
+        self.onConnectionStateChange = { client, state in
+            debugger("** New State: \(state)")
+            XCTAssertNotNil(client)
+            if state == .connected {
+                try! self.simulateTextMessage("Now hangup to continue running tests")
+                connected.fulfill()
+            } else if state == .closed {
+                closed.fulfill()
+            }
+        }
+        self.onError = { client, error in
+            XCTAssertNotNil(client)
+            XCTFail("Failed due to the error: \(error)")
+        }
+
         self.sessionManager.onRTCSignal = { type, user, signal in
             XCTAssertNotNil(signal)
             XCTAssertNotNil(user)
@@ -310,10 +339,9 @@ extension NinchatSDKSwiftAcceptanceTests {
                 XCTAssertNil(signal?.sdp)
 
                 try! self.sessionManager.send(type: .pickup, payload: ["answer": true]) { error in
-                    try! self.simulateTextMessage("Now hangup to continue running tests")
                     XCTAssertNil(error)
                 }
-                expect_call.fulfill()
+                call.fulfill()
             }
 
             if type == .offer {
@@ -321,22 +349,17 @@ extension NinchatSDKSwiftAcceptanceTests {
                     XCTAssertNil(error)
                     XCTAssertNotNil(stunServers)
                     XCTAssertNotNil(turnServers)
-                    self.rtcClient = NINChatWebRTCClientImpl(sessionManager: self.sessionManager, operatingMode: .callee, stunServers: stunServers, turnServers: turnServers, delegate: nil)
+                    self.rtcClient = NINChatWebRTCClientImpl(sessionManager: self.sessionManager, operatingMode: .callee, stunServers: stunServers, turnServers: turnServers, delegate: self)
                     try! self.rtcClient?.start(with: signal)
 
-                    /// Due to simulator constraints, we cannot test WebRTC by unit tests.
-                    /// Unit tests in iOS frameworks work only on simulators (not actual devices)
-                    self.sessionManager.onRTCClientSignal = { type, user, signal in
-                        XCTAssertNotNil(signal)
-                        XCTAssertNotNil(user)
-                    }
+                    offer.fulfill()
                 }
-                expect_offer.fulfill()
             }
 
             if type == .hangup {
                 self.rtcClient?.disconnect()
-                expect_hangup.fulfill()
+                self.rtcClient = nil
+                hangup.fulfill()
             }
         }
     }

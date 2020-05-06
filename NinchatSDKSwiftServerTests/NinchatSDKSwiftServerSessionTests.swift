@@ -30,23 +30,17 @@ final class NinchatSDKSwiftServerSessionTests: XCTestCase {
         let expect_leave = self.expectation(description: "Expected to close the session after the test is finished")
         expect_leave.assertForOverFulfill = false
 
-        self.sessionManager.onSessionDeallocated = {
-
-        }
         self.sessionManager.fetchSiteConfiguration(config: Session.configurationKey, environments: []) { _ in
             self.openSession { credentials1 in
                 /// A useless session, to be closed once the other is opened.
-                debugger("** Open first session: **")
                 XCTAssertNotNil(credentials1)
 
                 self.openSession { credentials2 in
-                    debugger("** Open second session: **")
                     /// The main session. Has to close the other one simultaneously
                     XCTAssertNotNil(credentials2)
 
                     /// Should now close the useless one
                     self.sessionManager.closeSession(credentials: credentials1!) { result in
-                        debugger("** Close first session: **")
                         switch result {
                         case .success:
                             expect_close_session.fulfill()
