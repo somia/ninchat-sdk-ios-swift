@@ -121,7 +121,10 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
     public func deallocate() {
         self.sessionManager?.deallocateSession()
         self.sessionManager = nil
+
+        self.coordinator?.deallocate()
         self.coordinator = nil
+
         self.started = false
     }
 }

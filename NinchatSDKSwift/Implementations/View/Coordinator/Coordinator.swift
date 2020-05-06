@@ -12,6 +12,7 @@ import WebRTC
 protocol Coordinator: class {
     init(with session: NINChatSession)
     func start(with queue: String?, resumeSession: Bool, within navigation: UINavigationController?) -> UIViewController?
+    func deallocate()
 }
 
 final class NINCoordinator: Coordinator {
@@ -134,6 +135,10 @@ final class NINCoordinator: Coordinator {
         }
         self.navigationController = navigation ?? UINavigationController(rootViewController: topViewController)
         return (navigation == nil) ? self.navigationController : topViewController
+    }
+
+    func deallocate() {
+        self.chatViewController.deallocate()
     }
 }
 

@@ -269,9 +269,14 @@ extension NINChatSessionManagerImpl {
 
         self.actionBoundClosures.keys.forEach { self.actionBoundClosures.removeValue(forKey: $0) }
         self.queueUpdateBoundClosures.keys.forEach { self.queueUpdateBoundClosures.removeValue(forKey: $0) }
+        self.actionICEServersBoundClosures.keys.forEach { self.actionICEServersBoundClosures.removeValue(forKey: $0) }
+        self.actionChannelBoundClosures.keys.forEach { self.actionChannelBoundClosures.removeValue(forKey: $0) }
         self.chatMessages.removeAll()
         self.channelUsers.removeAll()
         self.queues.removeAll()
+
+        self.onRTCClientSignal = nil
+        self.onRTCSignal = nil
 
         self.backgroundChannelID = nil
         self.currentChannelID = nil

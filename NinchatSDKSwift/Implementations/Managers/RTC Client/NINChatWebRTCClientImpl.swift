@@ -23,15 +23,15 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
     /// Operation mode; caller or callee.
     private let operatingMode: OperatingMode!
     /// Factory for creating our RTC peer connections
-    private let peerConnectionFactory: RTCPeerConnectionFactory?
+    private var peerConnectionFactory: RTCPeerConnectionFactory?
     /// List of our ICE servers (STUN, TURN)
     private var iceServers: [RTCIceServer]? = []
     /// Mapping for the ICE signaling state --> state name
-    private let iceSignalingStates: [Int:String]
+    private var iceSignalingStates: [Int:String] = [:]
     /// Mapping for the ICE connection state --> state name
-    private let iceConnectionStates: [Int:String]
+    private var iceConnectionStates: [Int:String] = [:]
     /// Mapping for the ICE gathering state --> state name
-    private let iceGatheringStates: [Int:String]
+    private var iceGatheringStates: [Int:String] = [:]
     
     /// Local video capture
     private var localCapture: RTCCameraVideoCapturer?
@@ -45,17 +45,15 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
     /// RTP senders for local audio/video tracks
     private var localAudioSender: RTCRtpSender?
     private var localVideoSender: RTCRtpSender?
-    
+
     private var sessionDelegate: NINChatSessionInternalDelegate? {
-        return self.sessionManager?.delegate
+        self.sessionManager?.delegate
     }
     private var defaultOfferOrAnswerConstraints: RTCMediaConstraints {
-        return RTCMediaConstraints(mandatoryConstraints: ["OfferToReceiveAudio": "true",
-                                                          "OfferToReceiveVideo": "true"],
-                                   optionalConstraints: nil)
+        RTCMediaConstraints(mandatoryConstraints: ["OfferToReceiveAudio": "true", "OfferToReceiveVideo": "true"], optionalConstraints: nil)
     }
     private var videoTransceiver: RTCRtpTransceiver? {
-        return self.peerConnection?.transceivers.filter({ $0.mediaType == .video }).first
+        self.peerConnection?.transceivers.filter({ $0.mediaType == .video }).first
     }
     
     var disableLocalAudio: Bool! {
@@ -147,11 +145,10 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
         case .callee:
             /// We are the 'callee', ie. we are answering.
             debugger("WebRTC: answering a call.")
-            if let description = rtc?.sdp?.toRTCSessionDescription {
-                debugger("Setting remote description from Offer.")
-                self.peerConnection?.setRemoteDescription(description) { [weak self] error in
-                    self?.didSetSessionDescription(with: error)
-                }
+            guard let description = rtc?.sdp?.toRTCSessionDescription else { return }
+            debugger("Setting remote description from Offer.")
+            self.peerConnection?.setRemoteDescription(description) { [weak self] error in
+                self?.didSetSessionDescription(with: error)
             }
         default:
             fatalError("Invalid operation mode")
@@ -162,21 +159,33 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
         self.sessionDelegate?.log(value: "WebRTC Client disconnecting.")
         
         self.stopLocalCapture()
+        self.deallocate()
+    }
+
+    private func deallocate() {
         self.localStream = nil
         self.localCapture = nil
-        
+
         if self.peerConnection != nil {
             self.peerConnection?.close()
             self.peerConnection = nil
+            self.peerConnectionFactory = nil
         }
-        
+
         self.localAudioSender = nil
         self.localVideoSender = nil
         self.localAudioTrack = nil
         self.localVideoTrack = nil
+
+        self.sessionManager?.onRTCClientSignal = nil
         self.sessionManager = nil
+
+        self.iceSignalingStates.removeAll()
+        self.iceConnectionStates.removeAll()
+        self.iceGatheringStates.removeAll()
+        self.iceServers?.removeAll()
     }
-    
+
     deinit {
         debugger("`NINChatWebRTCClient` deallocated")
     }
@@ -261,7 +270,7 @@ extension NINChatWebRTCClientImpl {
                 return
             }
             
-            guard let sdp = sdp else { return }
+            guard let sdp = sdp, self.peerConnection?.localDescription?.type != sdp.type else { return }
             debugger("Setting local description")
             self.peerConnection?.setLocalDescription(sdp) { [weak self] error in
                 self?.didSetSessionDescription(with: error)
@@ -388,7 +397,8 @@ extension NINChatWebRTCClientImpl {
     @objc
     private func didSessionRouteChange(_ notification: Notification) {
         if let userInfo = notification.userInfo, let reasonKey = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt, let reason = AVAudioSession.RouteChangeReason(rawValue: reasonKey) {
-            
+
+            RTCAudioSession.sharedInstance().lockForConfiguration()
             if reason == .categoryChange {
                 do {
                     try AVAudioSession.sharedInstance().overrideOutputAudioPort(.speaker)
@@ -397,6 +407,7 @@ extension NINChatWebRTCClientImpl {
                     debugger("WebRTC: Failed to change the output to device's speaker - `didSessionRouteChange(_:)`: \(error)")
                 }
             }
+            RTCAudioSession.sharedInstance().unlockForConfiguration()
         }
     }
 }

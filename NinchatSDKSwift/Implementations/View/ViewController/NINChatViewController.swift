@@ -187,14 +187,18 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     }
     
     deinit {
-        self.removeKeyboardListeners()
-        self.deallocViewModel()
+        self.deallocate()
+    }
+
+    func deallocate() {
         self.deallocRTC()
+        self.deallocViewModel()
+        self.removeKeyboardListeners()
 
         NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
     }
-    
+
     // MARK: - Setup View
     
     private func setupView() {
@@ -305,7 +309,6 @@ extension NINChatViewController {
     private func disableView() {
         self.view.endEditing(true)
         self.inputControlsView.isUserInteractionEnabled = false
-        self.videoView.isUserInteractionEnabled = false
     }
     
     private func overrideAssets() {
