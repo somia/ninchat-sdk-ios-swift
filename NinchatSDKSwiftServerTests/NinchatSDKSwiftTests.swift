@@ -39,7 +39,10 @@ struct Configuration: Codable {
 
 final class Session {
     static var Manager = NINChatSessionManagerImpl(session: nil, serverAddress: serverAddress, siteSecret: siteSecret)
-    
+    static func initiate() -> NINChatSessionManagerImpl {
+        NINChatSessionManagerImpl(session: nil, serverAddress: serverAddress, siteSecret: siteSecret)
+    }
+
     private static var configuration: Configuration {
         if let path = Bundle(for: self).url(forResource: "Secrets", withExtension: "plist"), let data = try? Data(contentsOf: path) {
             return try! PropertyListDecoder().decode(Configuration.self, from: data)

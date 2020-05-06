@@ -26,6 +26,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
                 }).first?.value {
                     
                     targetClosure(error)
+                    DispatchQueue.main.async { self?.actionBoundClosures.removeValue(forKey: id) }
                 }
             }
         }
@@ -43,6 +44,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
                 }).first?.value {
 
                     targetClosure(error, fileInfo)
+                    DispatchQueue.main.async { self?.actionFileBoundClosures.removeValue(forKey: id) }
                 }
             }
         }
@@ -60,6 +62,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
                 }).first?.value {
 
                     targetClosure(nil)
+                    DispatchQueue.main.async { self?.actionChannelBoundClosures.removeValue(forKey: id) }
                 }
 
             }
@@ -78,6 +81,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
                 }).first?.value {
 
                     targetClosure(nil, stunServers, turnServers)
+                    DispatchQueue.main.async { self?.actionICEServersBoundClosures.removeValue(forKey: id) }
                 }
             }
         }

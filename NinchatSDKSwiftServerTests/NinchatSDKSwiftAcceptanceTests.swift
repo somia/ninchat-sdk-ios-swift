@@ -12,6 +12,7 @@ import NinchatLowLevelClient
 /// Tests are run with some configuration to run and open 'dev' environment
 class NinchatSDKSwiftAcceptanceTests: XCTestCase {
     private var sessionManager = Session.Manager
+    private var rtcClient: NINChatWebRTCClient?
     private var credentials: NINSessionCredentials! {
         get {
             let dict = UserDefaults.standard.value(forKey: "test_credentials") as! [AnyHashable: Any]
@@ -29,6 +30,8 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
 
         self.sessionManager.delegate = self
     }
+
+    // MARK: - start
 
     func testServer_00_fetchSiteConfigurations() {
         let expect = self.expectation(description: "Expected to fetch site configurations")
@@ -75,6 +78,8 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
 
     func testServer_02_listQueues() {
         let expect = self.expectation(description: "Expected to get objects for queue ids")
+        expect.assertForOverFulfill = false
+
         do {
             try self.sessionManager.list(queues: self.sessionManager.siteConfiguration.audienceQueues) { error in
                 XCTAssertNil(error)
@@ -94,6 +99,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         let expect_join = self.expectation(description: "Expected to join the queue")
         let expect_progress = self.expectation(description: "Expected to get progress update for the first time")
         expect_progress.assertForOverFulfill = false
+        expect_join.assertForOverFulfill = false
     
         do {
             /// Join the first time in the queue
@@ -121,87 +127,13 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         let expect_hangup = self.expectation(description: "Expected to hangup the offer")
 
         try! self.simulateTextMessage("Start a new video chat to run tests")
-    
-        self.sessionManager.onRTCSignal = { type, user, signal in
-            XCTAssertNotNil(signal)
-            XCTAssertNotNil(user)
-        
-            if type == .call {
-                XCTAssertNil(signal?.candidate)
-                XCTAssertNil(signal?.sdp)
-            
-                try! self.sessionManager.send(type: .pickup, payload: ["answer": true]) { error in
-                    try! self.simulateTextMessage("Now hangup to continue running tests")
-                    XCTAssertNil(error)
-                }
-                expect_call.fulfill()
-            }
-        
-            if type == .offer {
-                try! self.sessionManager.beginICE { error, stunServers, turnServers in
-                    XCTAssertNil(error)
-                    XCTAssertNotNil(stunServers)
-                    XCTAssertNotNil(turnServers)
-                
-                    /// Due to simulator constraints, we cannot test WebRTC by unit tests.
-                    /// Unit tests in iOS frameworks work only on simulators (not actual devices)
-                    self.sessionManager.onRTCClientSignal = { type, user, signal in
-                        XCTAssertNotNil(signal)
-                        XCTAssertNotNil(user)
-                    }
-                }
-                expect_offer.fulfill()
-            }
-        
-            if type == .hangup {
-                expect_hangup.fulfill()
-            }
-        }
+        self.simulateVideoCall(expect_call: expect_call, expect_offer: expect_offer, expect_hangup: expect_hangup)
     
         /// wait until supervisor initiate a call
         waitForExpectations(timeout: 30.0)
     }
 
-    func testServer_05_leaveQueue() {
-        let expect = self.expectation(description: "Expected to leave current queue")
-        self.sessionManager.leave { error in
-            XCTAssertNil(error)
-            expect.fulfill()
-        }
-
-        wait(for: [expect], timeout: 10.0)
-    }
-
-    func testServer_06_resumeSession() {
-        let expect = self.expectation(description: "Expected to continue a session using credentials")
-        expect.assertForOverFulfill = false
-
-        do {
-            try self.sessionManager.continueSession(credentials: self.credentials) { newCredentials, canResume, error in
-                XCTAssertNil(error)
-                XCTAssertNotNil(newCredentials)
-                /// The new credentials contains only the new session ID
-                XCTAssertEqual(newCredentials?.userID, self.credentials.userID, "The new credentials should come with the same user id")
-                XCTAssertEqual(newCredentials?.userAuth, "", "The new credentials should come with an empty user auth")
-                XCTAssertNotEqual(newCredentials?.sessionID, self.credentials.sessionID, "The new credentials should come with the new session id")
-
-                XCTAssertTrue(canResume)
-            }
-
-            self.sessionManager.onHistoryLoaded = { _ in
-                expect.fulfill()
-            }
-            try self.sessionManager.loadHistory { error in
-                XCTAssertNil(error)
-            }
-        } catch {
-            XCTFail(error.localizedDescription)
-        }
-
-        wait(for: [expect], timeout: 10.0)
-    }
-
-    func testServer_07_transferQueue() {
+    func testServer_05_transferQueue() {
         try! self.simulateTextMessage("Now transfer to another queue to continue tests")
         let expect_part = self.expectation(description: "Expected to get transferred to another channel")
         expect_part.assertForOverFulfill = false
@@ -215,6 +147,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
             XCTAssertEqual(event, Events.audienceEnqueued)
             XCTAssertNotNil(queue)
             XCTAssertNotEqual(queue.queueID, Session.suiteQueue)
+
 
             /// Once the user is enqueued, we have to part the current channel
             try! self.sessionManager.part(channel: self.sessionManager.currentChannelID!) { error in
@@ -240,7 +173,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         wait(for: [expect_part, expect_join], timeout: 30.0)
     }
 
-    func testServer_08_loadHistory() {
+    func testServer_06_loadHistory() {
         let expect = self.expectation(description: "Expected to fetch all messages after the transfer")
 
         do {
@@ -261,31 +194,151 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase {
         waitForExpectations(timeout: 15.0)
     }
 
-    func testServer_09_leaveQueue() {
-        let expect = self.expectation(description: "Expected to leave current queue")
-        self.sessionManager.leave { error in
+    func testServer_07_deallocate() {
+        let expect_deallocation = self.expectation(description: "Expected to delete user and close the session")
+
+        self.sessionManager.onSessionDeallocated = {
+            expect_deallocation.fulfill()
+        }
+        self.sessionManager.deallocateSession()
+        self.rtcClient?.disconnect()
+        waitForExpectations(timeout: 15.0)
+    }
+
+    // MARK: - resume
+
+    func testServer_10_resumeSession() {
+        let expect_config = self.expectation(description: "Expected to get configs for resuming the session")
+        let expect_resume = self.expectation(description: "Expected to continue a session using credentials")
+
+        self.sessionManager.fetchSiteConfiguration(config: Session.configurationKey, environments: []) { error in
             XCTAssertNil(error)
-            expect.fulfill()
+            expect_config.fulfill()
+
+            do {
+                try self.sessionManager.continueSession(credentials: self.credentials) { newCredentials, canResume, error in
+                    XCTAssertNil(error)
+                    XCTAssertNotNil(newCredentials)
+                    /// The new credentials contains only the new session ID
+                    XCTAssertEqual(newCredentials?.userID, self.credentials.userID, "The new credentials should come with the same user id")
+                    XCTAssertEqual(newCredentials?.userAuth, "", "The new credentials should come with an empty user auth")
+                    XCTAssertNotEqual(newCredentials?.sessionID, self.credentials.sessionID, "The new credentials should come with the new session id")
+
+                    XCTAssertTrue(canResume)
+                    expect_resume.fulfill()
+                }
+            } catch {
+                XCTFail(error.localizedDescription)
+            }
         }
 
-        wait(for: [expect], timeout: 10.0)
-    }
-    
-    func testServer_10_deallocate() {
-        let expect = self.expectation(description: "Expected to delete user and close the session")
-        do {
-            sleep(10)
-            try self.sessionManager.deleteCurrentUser { error in
-                self.sessionManager.disconnect()
 
-                XCTAssertNil(error)
+        waitForExpectations(timeout: 15.0)
+    }
+
+    func testServer_11_retryVideoChat() {
+        let expect_call_2 = self.expectation(description: "Expected to get a call request - 2")
+        let expect_offer_2 = self.expectation(description: "Expected to get a call offer - 2")
+        let expect_hangup_2 = self.expectation(description: "Expected to hangup the offer - 2")
+
+        try! self.simulateTextMessage("Start a new video chat to run tests")
+        self.simulateVideoCall(expect_call: expect_call_2, expect_offer: expect_offer_2, expect_hangup: expect_hangup_2)
+
+        /// wait until supervisor initiate a call
+        waitForExpectations(timeout: 30.0)
+    }
+
+    func testServer_12_reloadHistory() {
+        let expect = self.expectation(description: "Expected to fetch all messages after the transfer")
+        expect.assertForOverFulfill = false
+
+        do {
+            self.sessionManager.chatMessages.removeAll()
+            self.sessionManager.onHistoryLoaded = { length in
+                XCTAssertEqual(length, 5)
+                XCTAssertEqual(self.sessionManager.chatMessages.count, length)
                 expect.fulfill()
+            }
+
+            try self.sessionManager.loadHistory { error in
+                XCTAssertNil(error)
             }
         } catch {
             XCTFail(error.localizedDescription)
         }
 
-        wait(for: [expect], timeout: 10.0)
+        waitForExpectations(timeout: 15.0)
+    }
+
+    func testServer_12_deallocate() {
+        let expect_close = self.expectation(description: "Expected to delete user and close the session")
+        let expect_deallocation = self.expectation(description: "Expected to delete user and close the session")
+
+        do {
+            try self.sessionManager.deleteCurrentUser { error in
+                self.sessionManager.disconnect()
+                XCTAssertNil(error)
+                expect_close.fulfill()
+
+                self.sessionManager.onSessionDeallocated = {
+                    expect_deallocation.fulfill()
+                }
+                self.sessionManager.deallocateSession()
+            }
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+
+        waitForExpectations(timeout: 15.0)
+    }
+}
+
+// MARK: - Helper functions
+
+extension NinchatSDKSwiftAcceptanceTests {
+    internal func simulateTextMessage(_ message: String) throws {
+        try self.sessionManager.send(message: message, completion: { _ in })
+    }
+
+    internal func simulateVideoCall(expect_call: XCTestExpectation, expect_offer: XCTestExpectation, expect_hangup: XCTestExpectation) {
+        self.sessionManager.onRTCSignal = { type, user, signal in
+            XCTAssertNotNil(signal)
+            XCTAssertNotNil(user)
+
+            if type == .call {
+                XCTAssertNil(signal?.candidate)
+                XCTAssertNil(signal?.sdp)
+
+                try! self.sessionManager.send(type: .pickup, payload: ["answer": true]) { error in
+                    try! self.simulateTextMessage("Now hangup to continue running tests")
+                    XCTAssertNil(error)
+                }
+                expect_call.fulfill()
+            }
+
+            if type == .offer {
+                try! self.sessionManager.beginICE { error, stunServers, turnServers in
+                    XCTAssertNil(error)
+                    XCTAssertNotNil(stunServers)
+                    XCTAssertNotNil(turnServers)
+                    self.rtcClient = NINChatWebRTCClientImpl(sessionManager: self.sessionManager, operatingMode: .callee, stunServers: stunServers, turnServers: turnServers, delegate: nil)
+                    try! self.rtcClient?.start(with: signal)
+
+                    /// Due to simulator constraints, we cannot test WebRTC by unit tests.
+                    /// Unit tests in iOS frameworks work only on simulators (not actual devices)
+                    self.sessionManager.onRTCClientSignal = { type, user, signal in
+                        XCTAssertNotNil(signal)
+                        XCTAssertNotNil(user)
+                    }
+                }
+                expect_offer.fulfill()
+            }
+
+            if type == .hangup {
+                self.rtcClient?.disconnect()
+                expect_hangup.fulfill()
+            }
+        }
     }
 }
 
@@ -309,9 +362,7 @@ extension NinchatSDKSwiftAcceptanceTests: NINChatSessionInternalDelegate {
 }
 
 extension NinchatSDKSwiftAcceptanceTests: QueueUpdateCapture {
-    internal func simulateTextMessage(_ message: String) throws {
-        try self.sessionManager.send(message: message, completion: { _ in })
-    }
+
     
     var desc: String {
         "NinchatSDKSwiftServerInternalTests"

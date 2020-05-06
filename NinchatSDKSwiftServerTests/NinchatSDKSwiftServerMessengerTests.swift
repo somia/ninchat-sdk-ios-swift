@@ -113,11 +113,11 @@ class NinchatSDKSwiftServerMessengerTests: NinchatXCTestCase {
 
     func testServer_5_sendMultipleAttachments() {
         let expect = self.expectation(description: "Expected to send images")
-        expect.expectedFulfillmentCount = 3
+        expect.expectedFulfillmentCount = 7
 
         self.sessionManager.onMessageAdded = nil
         self.sessionManager.onHistoryLoaded = nil
-        ["chat_bubble_right", "chat_bubble_left", "chat_bubble_right_series"].forEach { name in
+        ["chat_bubble_right", "chat_bubble_left", "chat_bubble_right_series", "chat_bubble_right_series", "chat_bubble_left", "chat_bubble_right", "chat_background_pattern"].forEach { name in
             let image = UIImage(named: name, in: .SDKBundle, compatibleWith: nil)?.pngData()
             XCTAssertNotNil(image)
 
@@ -138,7 +138,7 @@ class NinchatSDKSwiftServerMessengerTests: NinchatXCTestCase {
 
             /// Load the history
             self.sessionManager.onHistoryLoaded = { length in
-                XCTAssertEqual(length, 6)
+                XCTAssertEqual(length, 10)
                 XCTAssertEqual(self.sessionManager.chatMessages.filter({ $0 is ChannelMessage }).count, length)
                 expect.fulfill()
             }
