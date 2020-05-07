@@ -68,8 +68,7 @@ extension NinchatViewModelTestCase {
         sessionManager.didEndSession = {
             completion()
         }
-        sessionManager.leave { error in
-            try! sessionManager.closeChat()
-        }
+        sessionManager.deallocateSession()
+        try! sessionManager.closeChat()
     }
 }

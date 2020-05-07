@@ -102,7 +102,7 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
                 guard let iceCandidate = signal?.candidate?.toRTCIceCandidate else { return }
                 self?.peerConnection?.add(iceCandidate)
             case .answer:
-                guard let description = signal?.sdp?.toRTCSessionDescription else { return }
+                guard let sdp = signal?.sdp, sdp.values.count > 0, let description = sdp.toRTCSessionDescription else { return }
                 debugger("Setting remote description from Answer with SDP: \(description)")
                 self?.peerConnection?.setRemoteDescription(description) { error in
                     self?.didSetSessionDescription(with: error)
@@ -167,6 +167,10 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
         self.localCapture = nil
 
         if self.peerConnection != nil {
+            if let stream = self.localStream {
+                self.peerConnection?.remove(stream)
+            }
+
             self.peerConnection?.close()
             self.peerConnection = nil
             self.peerConnectionFactory = nil

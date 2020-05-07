@@ -744,11 +744,11 @@
 				91A16E22A6933B9561BDF84E /* Secrets.plist */,
 				91A166D4F9B0F6D7063479E9 /* NinchatXCTestCase.swift */,
 				85B72A9523F57ADF00D1C4BC /* NinchatSDKSwiftTests.swift */,
+				91A16BD6BFDA5810A0BE45F4 /* NinchatViewModelTestCase.swift */,
 				91A168F7C3E9BB664C126805 /* NinchatSDKSwiftAcceptanceTests.swift */,
 				91A16FEAA858008AD23DF96D /* NinchatSDKSwiftServerMessengerTests.swift */,
 				91A16E2E2FDA2CB5D3AAA5B7 /* NinchatSDKSwiftServerHelperTests.swift */,
 				91A1607145A515528F6210F5 /* NinchatSDKSwiftServerHandlerTests.swift */,
-				91A16BD6BFDA5810A0BE45F4 /* NinchatViewModelTestCase.swift */,
 				91A160629BFA8BA6D9E9C0CA /* NinchatSDKSwiftServerSessionTests.swift */,
 			);
 			path = NinchatSDKSwiftServerTests;
