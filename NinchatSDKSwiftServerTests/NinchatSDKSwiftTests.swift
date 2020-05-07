@@ -39,8 +39,8 @@ struct Configuration: Codable {
 
 final class Session {
     static var Manager = NINChatSessionManagerImpl(session: nil, serverAddress: serverAddress, siteSecret: siteSecret)
-    static func initiate() -> NINChatSessionManagerImpl {
-        NINChatSessionManagerImpl(session: nil, serverAddress: serverAddress, siteSecret: siteSecret)
+    static func initiate(_ configuration: NINSiteConfiguration? = nil) -> NINChatSessionManagerImpl {
+        NINChatSessionManagerImpl(session: nil, serverAddress: serverAddress, siteSecret: siteSecret, configuration: configuration)
     }
 
     private static var configuration: Configuration {

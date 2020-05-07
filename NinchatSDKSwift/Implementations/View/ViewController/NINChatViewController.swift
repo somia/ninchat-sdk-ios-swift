@@ -291,7 +291,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     }
 
     private func deallocViewModel() {
-        debugger("** ** - deallocate view model")
+        debugger("** ** deallocate view model")
 
         self.viewModel.onChannelClosed = nil
         self.viewModel.onQueueUpdated = nil

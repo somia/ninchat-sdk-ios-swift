@@ -22,77 +22,88 @@ protocol SiteConfiguration  {
     var noQueueText: String? { get }
 
     init(configuration: [AnyHashable : Any]?, environments: [String]?)
+    mutating func override(configuration: NINSiteConfiguration?)
 }
 
 struct SiteConfigurationImpl: SiteConfiguration {
     private let configuration: [AnyHashable : Any]?
     private let environments: [String]
 
+    // MARK: - NINSiteConfiguration
+
+    private var _userName: String?
+    var userName: String? {
+        get {
+            if _userName != nil {
+                return _userName
+            }
+            return self.value(for: "userName")
+        }
+        set {
+            _userName = newValue
+        }
+    }
+
+    // MARK: - SiteConfiguration
+
+    var welcome: String? {
+        self.value(for: "welcome")
+    }
+    var motd: String? {
+        self.value(for: "motd")
+    }
+    var inQueue: String? {
+        self.value(for: "inQueueText")
+    }
+    var sendButtonTitle: String? {
+        self.value(for: "sendButtonText")
+    }
+    var confirmDialogTitle: String? {
+        self.value(for: "closeConfirmText")
+    }
+    var audienceRealm: String? {
+        self.value(for: "audienceRealmId")
+    }
+    var audienceQueues: [String]? {
+        self.value(for: "audienceQueues")
+    }
+    var translation: [String:String]? {
+        self.value(for: "translations")
+    }
+    var agentAvatar: AnyHashable? {
+        self.value(for: "agentAvatar")
+    }
+    var agentName: String? {
+        self.value(for: "agentName")
+    }
+    var userAvatar: AnyHashable? {
+        self.value(for: "userAvatar")
+    }
+    var noQueueText: String? {
+        self.value(for: "noQueuesText")
+    }
+
     init(configuration: [AnyHashable : Any]?, environments: [String]?) {
         self.configuration = configuration ?? [:]
         self.environments = environments ?? []
     }
-    
-    var welcome: String? {
-        self.value(for: "welcome")
-    }
-    
-    var motd: String? {
-        self.value(for: "motd")
-    }
-    
-    var inQueue: String? {
-        self.value(for: "inQueueText")
-    }
-    
-    var sendButtonTitle: String? {
-        self.value(for: "sendButtonText")
-    }
-    
-    var confirmDialogTitle: String? {
-        self.value(for: "closeConfirmText")
-    }
-    
-    var audienceRealm: String? {
-        self.value(for: "audienceRealmId")
-    }
-    
-    var audienceQueues: [String]? {
-        self.value(for: "audienceQueues")
-    }
-    
-    var translation: [String:String]? {
-        self.value(for: "translations")
-    }
-    
-    var agentAvatar: AnyHashable? {
-        self.value(for: "agentAvatar")
-    }
-    
-    var agentName: String? {
-        self.value(for: "agentName")
-    }
-    
-    var userAvatar: AnyHashable? {
-        self.value(for: "userAvatar")
-    }
-    
-    var userName: String? {
-        self.value(for: "userName")
-    }
 
-    var noQueueText: String? {
-        self.value(for: "noQueuesText")
+    mutating func override(configuration: NINSiteConfiguration?) {
+        guard let configuration = configuration else { return }
+        self.userName = configuration.userName
     }
 }
 
 extension SiteConfigurationImpl {
     private func value<T>(for key: String) -> T? {
-        guard let configuration = configuration as? [String : Any] else { return nil }
-        
-        if let value = self.environments.compactMap({ (configuration[$0] as? [String : Any])?[key] }).first as? T {
+        guard let configuration = configuration as? [String:Any] else { return nil }
+
+        /// Use given environments first, if any
+        if let value = self.environments.compactMap({ (configuration[$0] as? [String:Any])?[key] }).first as? T {
             return value
         }
+
+        /// Return value from default environment
         return (configuration["default"] as? [String : Any])?[key] as? T
     }
 }
