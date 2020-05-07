@@ -6,7 +6,7 @@ source 'https://cdn.cocoapods.org/'
 source 'https://github.com/somia/ninchat-podspecs.git'
 
 def libraries
-  pod 'AnyCodable'
+  pod 'AnyCodable-FlightSchool', '~> 0.2.3'
   pod 'AutoLayoutSwift', '4.0.0'
   pod 'NinchatLowLevelClient', '~> 0.0.40'
   pod 'GoogleWebRTC'
