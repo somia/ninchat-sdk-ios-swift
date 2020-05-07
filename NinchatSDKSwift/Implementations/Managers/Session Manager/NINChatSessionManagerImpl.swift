@@ -286,6 +286,7 @@ extension NINChatSessionManagerImpl {
         self.currentQueueID = nil
         self.myUserID = nil
 
+        self.disconnect()
         self.onSessionDeallocated?()
     }
     
