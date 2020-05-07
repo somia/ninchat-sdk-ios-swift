@@ -25,11 +25,16 @@ public protocol NINChatSessionProtocol {
     var session: NINResult<NINLowLevelClientSession?> { get }
     var delegate: NINChatSessionDelegate? { get set }
 
-    init(configKey: String, queueID: String?, environments: [String]?, metadata: NINLowLevelClientProps?)
+    init(configKey: String, queueID: String?, environments: [String]?, metadata: NINLowLevelClientProps?, configuration: NINSiteConfiguration?)
     func start(completion: @escaping NinchatSessionCompletion) throws
     func start(credentials: NINSessionCredentials, completion: @escaping NinchatSessionCompletion) throws
     func chatSession(within navigationController: UINavigationController?) throws -> UIViewController?
     func deallocate()
+}
+extension NINChatSessionProtocol {
+    init(configKey: String, queueID: String?, environments: [String]?, metadata: NINLowLevelClientProps?) {
+        self.init(configKey: configKey, queueID: queueID, environments: environments, metadata: metadata, configuration: nil)
+    }
 }
 
 public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
@@ -74,14 +79,14 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         }
     }
 
-    public init(configKey: String, queueID: String? = nil, environments: [String]? = nil, metadata: NINLowLevelClientProps? = nil) {
+    public init(configKey: String, queueID: String? = nil, environments: [String]? = nil, metadata: NINLowLevelClientProps? = nil, configuration: NINSiteConfiguration? = nil) {
         self.configKey = configKey
         self.queueID = queueID
         self.environments = environments
         self.started = false
     
         self.coordinator = NINCoordinator(with: self)
-        self.sessionManager = NINChatSessionManagerImpl(session: self, serverAddress: defaultServerAddress, audienceMetadata: metadata)
+        self.sessionManager = NINChatSessionManagerImpl(session: self, serverAddress: defaultServerAddress, audienceMetadata: metadata, configuration: configuration)
     }
 
     /// Performs these steps:

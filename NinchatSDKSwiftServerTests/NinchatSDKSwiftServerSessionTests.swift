@@ -31,6 +31,8 @@ final class NinchatSDKSwiftServerSessionTests: XCTestCase {
         expect_leave.assertForOverFulfill = false
 
         self.sessionManager.fetchSiteConfiguration(config: Session.configurationKey, environments: []) { _ in
+            XCTAssertEqual(self.sessionManager.siteConfiguration.userName, "Asiakas (öäå)")
+
             self.openSession { credentials1 in
                 /// A useless session, to be closed once the other is opened.
                 XCTAssertNotNil(credentials1)
@@ -92,6 +94,29 @@ final class NinchatSDKSwiftServerSessionTests: XCTestCase {
         /// The test needs a manual interaction from server to fulfills all expectations
         waitForExpectations(timeout: 10.0)
     }
+
+    func testServer_dynamicUserName() {
+        let expect = self.expectation(description: "Expected to override configurations")
+
+        self.sessionManager = Session.initiate(NINSiteConfigurationImpl(userName: "Hassan - iPhone"))
+        XCTAssertNotNil(self.sessionManager.givenConfiguration?.userName)
+        XCTAssertEqual(self.sessionManager.givenConfiguration?.userName, "Hassan - iPhone")
+
+        self.sessionManager.fetchSiteConfiguration(config: Session.configurationKey, environments: []) { error in
+            do {
+                try self.sessionManager.openSession { _, _, error in
+                    XCTAssertNil(error)
+
+                    XCTAssertNotNil(self.sessionManager.siteConfiguration.userName)
+                    XCTAssertEqual(self.sessionManager.siteConfiguration.userName, "Hassan - iPhone")
+                    expect.fulfill()
+                }
+            } catch {
+                XCTFail(error.localizedDescription)
+            }
+        }
+        waitForExpectations(timeout: 10.0)
+    }
 }
 
 extension NinchatSDKSwiftServerSessionTests: QueueUpdateCapture {
@@ -109,16 +134,6 @@ extension NinchatSDKSwiftServerSessionTests {
                         completion(credentials)
                     })
                 }
-            }
-        } catch {
-            XCTFail(error.localizedDescription)
-        }
-    }
-
-    private func resumeSession(credentials: NINSessionCredentials, completion: @escaping (NINSessionCredentials?, Error?) -> Void) {
-        do {
-            try self.sessionManager.continueSession(credentials: credentials) { credentials, _, error in
-                completion(credentials, error)
             }
         } catch {
             XCTFail(error.localizedDescription)
