@@ -120,7 +120,7 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         guard Thread.isMainThread else { throw NINExceptions.mainThread }
         guard self.started else { throw NINExceptions.apiNotStarted }
         
-        return coordinator.start(with: self.queueID, resumeSession: self.resumed, within: navigationController)
+        return coordinator.start(with: self.queueID ?? self.sessionManager.siteConfiguration.audienceAutoQueue, resumeSession: self.resumed, within: navigationController)
     }
 
     public func deallocate() {
