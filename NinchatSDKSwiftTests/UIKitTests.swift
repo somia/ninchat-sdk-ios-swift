@@ -15,7 +15,7 @@ final class UIKitTests: XCTestCase {
     
     override func setUp() {
         sessionSwift = NINChatSession(configKey: "")
-        sessionManager = NINChatSessionManagerImpl(session: sessionSwift, serverAddress: "")
+        sessionManager = NINChatSessionManagerImpl(session: sessionSwift, serverAddress: "", configuration: nil)
     }
     
     func test_confirmView() {
