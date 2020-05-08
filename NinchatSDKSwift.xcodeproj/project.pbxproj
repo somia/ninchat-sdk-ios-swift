@@ -94,7 +94,7 @@
 		85CC096423DC66D300482956 /* Encodable+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CC096323DC66D300482956 /* Encodable+Extension.swift */; };
 		85D245352408F3470081F575 /* ChatTypingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85D245342408F3470081F575 /* ChatTypingCell.xib */; };
 		85DC59CC239E4C42007ABAE3 /* Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59CB239E4C42007ABAE3 /* Button.swift */; };
-		85DC59D0239E6A38007ABAE3 /* NINChatSessionClosure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59CF239E6A38007ABAE3 /* NINChatSessionClosure.swift */; };
+		85DC59D0239E6A38007ABAE3 /* NINSiteConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59CF239E6A38007ABAE3 /* NINSiteConfiguration.swift */; };
 		85DC59D2239E7850007ABAE3 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 85DC59D1239E7850007ABAE3 /* Media.xcassets */; };
 		85DC59D5239E7C3B007ABAE3 /* NINQueueViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59D4239E7C3B007ABAE3 /* NINQueueViewModel.swift */; };
 		85DD6C5523AE0CBC0023FFEF /* SourceSansPro-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C4923AE0CBC0023FFEF /* SourceSansPro-BlackItalic.ttf */; };
@@ -288,7 +288,7 @@
 		85CC096323DC66D300482956 /* Encodable+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Encodable+Extension.swift"; sourceTree = "<group>"; };
 		85D245342408F3470081F575 /* ChatTypingCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatTypingCell.xib; sourceTree = "<group>"; };
 		85DC59CB239E4C42007ABAE3 /* Button.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Button.swift; sourceTree = "<group>"; };
-		85DC59CF239E6A38007ABAE3 /* NINChatSessionClosure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINChatSessionClosure.swift; sourceTree = "<group>"; };
+		85DC59CF239E6A38007ABAE3 /* NINSiteConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINSiteConfiguration.swift; sourceTree = "<group>"; };
 		85DC59D1239E7850007ABAE3 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		85DC59D4239E7C3B007ABAE3 /* NINQueueViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINQueueViewModel.swift; sourceTree = "<group>"; };
 		85DD6C4923AE0CBC0023FFEF /* SourceSansPro-BlackItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-BlackItalic.ttf"; sourceTree = "<group>"; };
@@ -515,7 +515,7 @@
 			children = (
 				855B9F2D238ECE650081A9C6 /* NINChatSession.swift */,
 				91A16FA13B1F62E386352B88 /* NINSessionCredentials.swift */,
-				85DC59CF239E6A38007ABAE3 /* NINChatSessionClosure.swift */,
+				85DC59CF239E6A38007ABAE3 /* NINSiteConfiguration.swift */,
 				855B9F2E238ECE650081A9C6 /* NINChatSessionDelegate.swift */,
 				8543414B239655200078D11A /* Implementations */,
 				85DD6C4723AE0C8A0023FFEF /* Resources */,
@@ -1191,7 +1191,7 @@
 				8561EAD623C2805900943C72 /* NINChatSessionManager.swift in Sources */,
 				85DC59CC239E4C42007ABAE3 /* Button.swift in Sources */,
 				855FA2A123C735CD00A2FB41 /* MetaCell.swift in Sources */,
-				85DC59D0239E6A38007ABAE3 /* NINChatSessionClosure.swift in Sources */,
+				85DC59D0239E6A38007ABAE3 /* NINSiteConfiguration.swift in Sources */,
 				8563004923B286360098A7B0 /* NINRatingViewController.swift in Sources */,
 				8561EAD923C2805900943C72 /* NINChatSessionManagerEventHandlers.swift in Sources */,
 				8561EADE23C37C3000943C72 /* UITableView+Extension.swift in Sources */,

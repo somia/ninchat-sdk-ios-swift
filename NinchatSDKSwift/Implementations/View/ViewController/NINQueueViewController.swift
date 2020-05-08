@@ -70,11 +70,18 @@ final class NINQueueViewController: UIViewController, ViewController {
         super.viewDidLoad()
         self.setupViewModel()
         self.overrideAssets()
+
+        NotificationCenter.default.addObserver(self, selector: #selector(spin(notification:)), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.spin()
+        self.spin(notification: nil)
+    }
+
+    deinit {
+        debugger("`NINQueueViewController` deallocated")
+        NotificationCenter.default.removeObserver(self, name: UIApplication.willEnterForegroundNotification, object: nil)
     }
 
     private func setupViewModel() {
@@ -96,7 +103,8 @@ final class NINQueueViewController: UIViewController, ViewController {
 // MARK: - Helper methods
 
 extension NINQueueViewController {
-    private func spin() {
+    @objc
+    private func spin(notification: Notification?) {
         guard spinnerImageView.layer.animation(forKey: "SpinAnimation") == nil else { return }
         
         let animation = CABasicAnimation(keyPath: "transform.rotation.z")

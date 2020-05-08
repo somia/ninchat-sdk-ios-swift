@@ -44,11 +44,11 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     
     // MARK: - NINChatSessionManagerClosureHandler
 
-    internal var actionBoundClosures: [Int:((Error?) -> Void)] = [:]
-    internal var actionFileBoundClosures: [Int:((Error?, [String:Any]?) -> Void)] = [:]
-    internal var actionChannelBoundClosures: [Int:((Error?) -> Void)] = [:]
-    internal var actionICEServersBoundClosures: [Int:((Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void)] = [:]
-    internal var queueUpdateBoundClosures: [String:((Events, Queue, Error?) -> Void)] = [:]
+    internal var actionBoundClosures: [Int: (Error?) -> Void] = [:]
+    internal var actionFileBoundClosures: [Int: (Error?, [String:Any]?) -> Void] = [:]
+    internal var actionChannelBoundClosures: [Int: (Error?) -> Void] = [:]
+    internal var actionICEServersBoundClosures: [Int: (Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void] = [:]
+    internal var queueUpdateBoundClosures: [String: (Events, Queue, Error?) -> Void] = [:]
 
     // MARK: - NINChatSessionConnectionManager variables
     
@@ -71,7 +71,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     var onRTCSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)?
     var onRTCClientSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)?
     
-    func bindQueueUpdate<T: QueueUpdateCapture>(closure: @escaping ((Events, Queue, Error?) -> Void), to receiver: T) {
+    func bindQueueUpdate<T: QueueUpdateCapture>(closure: @escaping (Events, Queue, Error?) -> Void, to receiver: T) {
         guard queueUpdateBoundClosures.keys.filter({ $0 == receiver.desc }).count == 0 else { return }
         queueUpdateBoundClosures[receiver.desc] = closure
     }
@@ -90,6 +90,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     }
     var audienceQueues: [Queue]! = []
     var siteConfiguration: SiteConfiguration!
+    var givenConfiguration: NINSiteConfiguration?
     var appDetails: String?
     
     // MARK: - NINChatSessionManagerDevTools
@@ -97,15 +98,16 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     var serverAddress: String!
     var siteSecret: String?
     
-    init(session: NINChatSessionInternalDelegate?, serverAddress: String, audienceMetadata: NINLowLevelClientProps? = nil) {
+    init(session: NINChatSessionInternalDelegate?, serverAddress: String, audienceMetadata: NINLowLevelClientProps? = nil, configuration: NINSiteConfiguration?) {
         self.delegate = session
         self.serverAddress = serverAddress
         self.audienceMetadata = audienceMetadata
+        self.givenConfiguration = configuration
     }
     
     /** Designed for test and internal purposes. */
-    convenience init(session: NINChatSessionInternalDelegate?, serverAddress: String, siteSecret: String?, audienceMetadata: NINLowLevelClientProps? = nil) {
-        self.init(session: session, serverAddress: serverAddress, audienceMetadata: audienceMetadata)
+    convenience init(session: NINChatSessionInternalDelegate?, serverAddress: String, siteSecret: String?, audienceMetadata: NINLowLevelClientProps? = nil, configuration: NINSiteConfiguration? = nil) {
+        self.init(session: session, serverAddress: serverAddress, audienceMetadata: audienceMetadata, configuration: configuration)
         self.siteSecret = siteSecret
     }
     
@@ -147,6 +149,7 @@ extension NINChatSessionManagerImpl {
             case .success(let config):
                 debugger("Got site config: \(String(describing: config.toDictionary))")
                 self.siteConfiguration = SiteConfigurationImpl(configuration: config.toDictionary, environments: environments)
+                self.siteConfiguration.override(configuration: self.givenConfiguration)
                 completion(nil)
             case .failure(let error):
                 completion(error)
@@ -210,7 +213,7 @@ extension NINChatSessionManagerImpl {
         try self.describe(realm: realmID, queuesID: ID, completion: completion)
     }
     
-    func join(queue ID: String, progress: @escaping ((Queue?, Error?, Int) -> Void), completion: @escaping Completion) throws {
+    func join(queue ID: String, progress: @escaping (Queue?, Error?, Int) -> Void, completion: @escaping Completion) throws {
         
         func performJoin() throws {
             delegate?.log(value: "Joining queue \(ID)..")
@@ -283,11 +286,12 @@ extension NINChatSessionManagerImpl {
         self.currentQueueID = nil
         self.myUserID = nil
 
+        self.disconnect()
         self.onSessionDeallocated?()
     }
     
     /// Retrieves the WebRTC ICE STUN/TURN server details
-    func beginICE(completion: @escaping ((Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void)) throws {
+    func beginICE(completion: @escaping (Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void) throws {
         guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
         let param = NINLowLevelClientProps.initiate(action: .beginICE)
         
@@ -302,12 +306,23 @@ extension NINChatSessionManagerImpl {
     /// Low-level shutdown of the chat's session; invalidates session resource.
     func closeChat() throws {
         delegate?.log(value: "Shutting down chat Session..")
-        try self.deleteCurrentUser { [unowned self] error in
+
+        func endSession() {
             self.disconnect()
-            
+
             /// Signal the delegate that our session has ended
             self.delegate?.onDidEnd()
             self.didEndSession?()
+        }
+
+        if self.myUserID == nil {
+            endSession()
+        } else if let userID = self.myUserID, let user = self.channelUsers[userID], user.guest {
+            endSession()
+        } else {
+            try self.deleteCurrentUser { error in
+                endSession()
+            }
         }
     }
     
