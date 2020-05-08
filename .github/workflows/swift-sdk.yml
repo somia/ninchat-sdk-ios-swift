@@ -23,11 +23,6 @@ jobs:
             - name: Force Xcode 11
               run: sudo xcode-select -switch /Applications/Xcode_11.4.app
 
-            - name: Install Tools
-              run: |
-                gem install ocunit2junit
-                gem install xcpretty
-
             - name: Install Cocoapods
               run: pod update
 
@@ -35,7 +30,7 @@ jobs:
               run: xcodebuild clean
 
             - name: Build SDK
-              run: xcodebuild -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -configuration "Release" -destination "platform=iOS Simulator,name=iPhone 8" CODE_SIGNING_ALLOWED=NO | tee raw.txt | xcpretty -c cat raw.txt | ocunit2junit
+              run: xcodebuild -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -configuration "Release" -destination "platform=iOS Simulator,name=iPhone 8" CODE_SIGNING_ALLOWED=NO 
             
             - name: Run SDK Tests
-              run: xcodebuild test -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -destination "platform=iOS Simulator,name=iPhone 8" | tee rawTest.txt | xcpretty -c cat rawTest.txt | ocunit2junit
+              run: xcodebuild test -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -destination "platform=iOS Simulator,name=iPhone 8"
