@@ -20,6 +20,7 @@ protocol SiteConfiguration  {
     var userAvatar: AnyHashable? { get }
     var userName: String? { get }
     var noQueueText: String? { get }
+    var audienceAutoQueue: String? { get }
 
     init(configuration: [AnyHashable : Any]?, environments: [String]?)
     mutating func override(configuration: NINSiteConfiguration?)
@@ -81,6 +82,10 @@ struct SiteConfigurationImpl: SiteConfiguration {
     }
     var noQueueText: String? {
         self.value(for: "noQueuesText")
+    }
+
+    var audienceAutoQueue: String? {
+        self.value(for: "audienceAutoQueue")
     }
 
     init(configuration: [AnyHashable : Any]?, environments: [String]?) {
