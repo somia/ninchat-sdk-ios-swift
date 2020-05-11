@@ -47,6 +47,9 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase, NINChatWebRTCClientDelegate {
             XCTAssertNotNil(self.sessionManager.siteConfiguration.audienceQueues)
             XCTAssertNotNil(self.sessionManager.siteConfiguration.audienceRealm)
             XCTAssertTrue(self.sessionManager.siteConfiguration.audienceQueues?.contains(Session.suiteQueue) ?? false)
+
+            XCTAssertNotNil(self.sessionManager.siteConfiguration.preAudienceQuestionnaire)
+            XCTAssertNil(self.sessionManager.siteConfiguration.postAudienceQuestionnaire)
             expect.fulfill()
         }
 

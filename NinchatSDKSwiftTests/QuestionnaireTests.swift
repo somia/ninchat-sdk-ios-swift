@@ -10,14 +10,14 @@ import Foundation
 
 class QuestionnaireTests: XCTestCase {
     var questionnaire_raw: [String: AnyHashable]?
-    var questionnaire_preAudience: QuestionnairePreAudience?
+    var questionnaire_preAudience: AudienceQuestionnaire?
 
     override func setUp() {
         super.setUp()
 
         do {
             self.questionnaire_raw = try openTestFile()
-            self.questionnaire_preAudience = try parseTestFile()
+            self.questionnaire_preAudience = AudienceQuestionnaire(from: questionnaire_raw, for: "preAudienceQuestionnaire")
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -30,11 +30,12 @@ class QuestionnaireTests: XCTestCase {
 
     func test_01_parseConfiguration() {
         XCTAssertNotNil(self.questionnaire_preAudience)
-        XCTAssertGreaterThan(self.questionnaire_preAudience!.questionnaireConfiguration.count, 0)
+        XCTAssertNotNil(self.questionnaire_preAudience?.questionnaireConfiguration)
+        XCTAssertGreaterThan(self.questionnaire_preAudience!.questionnaireConfiguration!.count, 0)
     }
 
     func test_10_parseConfiguration_elements() {
-        if let questionnaireItem = self.questionnaire_preAudience?.questionnaireConfiguration.first(where: { $0.name == "Start" }) {
+        if let questionnaireItem = self.questionnaire_preAudience?.questionnaireConfiguration?.first(where: { $0.name == "Start" }) {
             XCTAssertNotNil(questionnaireItem.elements)
             XCTAssertGreaterThan(questionnaireItem.elements!.count, 0)
 
@@ -62,7 +63,7 @@ class QuestionnaireTests: XCTestCase {
     }
 
     func test_11_parseConfiguration_logics() {
-        if let questionnaireItem = self.questionnaire_preAudience?.questionnaireConfiguration.first(where: { $0.name == "Logic-language1" }) {
+        if let questionnaireItem = self.questionnaire_preAudience?.questionnaireConfiguration?.first(where: { $0.name == "Logic-language1" }) {
             XCTAssertNotNil(questionnaireItem.logic)
             XCTAssertNotNil(questionnaireItem.logic?.and)
             XCTAssertFalse(questionnaireItem.logic?.satisfy(["language"]) ?? true)
@@ -71,7 +72,7 @@ class QuestionnaireTests: XCTestCase {
             XCTFail("Failed to get ´Logic-language1´ questionnaire item")
         }
 
-        if let questionnaireItem = self.questionnaire_preAudience?.questionnaireConfiguration.first(where: { $0.name == "Logic-language2" }) {
+        if let questionnaireItem = self.questionnaire_preAudience?.questionnaireConfiguration?.first(where: { $0.name == "Logic-language2" }) {
             XCTAssertNotNil(questionnaireItem.logic)
             XCTAssertNotNil(questionnaireItem.logic?.or)
             XCTAssertTrue(questionnaireItem.logic?.satisfy(["language"]) ?? false)
@@ -82,7 +83,7 @@ class QuestionnaireTests: XCTestCase {
     }
 
     func test_12_parseConfiguration_regex() {
-        if let questionnaireItem = self.questionnaire_preAudience?.questionnaireConfiguration.first(where: { $0.name == "Start" }), let input = questionnaireItem.elements?.first(where: { $0.element == .input }) {
+        if let questionnaireItem = self.questionnaire_preAudience?.questionnaireConfiguration?.first(where: { $0.name == "Start" }), let input = questionnaireItem.elements?.first(where: { $0.element == .input }) {
             XCTAssertNotNil(input.pattern)
 
             do {
@@ -100,6 +101,15 @@ class QuestionnaireTests: XCTestCase {
             XCTFail("Failed to get ´input´ questionnaire item")
         }
     }
+
+    func test_20_initiateConfigurations() {
+        let preAudienceQuestionnaire = AudienceQuestionnaire(from: questionnaire_raw, for: "preAudienceQuestionnaire")
+        XCTAssertNotNil(preAudienceQuestionnaire)
+        XCTAssertGreaterThan(preAudienceQuestionnaire.questionnaireConfiguration?.count ?? 0, 0)
+
+        let postAudienceQuestionnaire = AudienceQuestionnaire(from: questionnaire_raw, for: "postAudienceQuestionnaire")
+        XCTAssertNil(postAudienceQuestionnaire.questionnaireConfiguration)
+    }
 }
 
 extension QuestionnaireTests {
@@ -111,10 +121,5 @@ extension QuestionnaireTests {
             return jsonResult as? [String:AnyHashable]
         }
         return nil
-    }
-
-    private func parseTestFile() throws -> QuestionnairePreAudience {
-        let data = try JSONSerialization.data(withJSONObject: questionnaire_raw, options: [])
-        return try JSONDecoder().decode(QuestionnairePreAudience.self, from: data)
     }
 }

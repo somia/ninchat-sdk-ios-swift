@@ -8,19 +8,15 @@ import Foundation
 import AnyCodable
 
 // MARK: - Questionnaire
-struct QuestionnairePreAudience: Codable {
-    let questionnaireConfiguration: [QuestionnaireConfiguration]
-
-    enum CodingKeys: String, CodingKey {
-        case questionnaireConfiguration = "preAudienceQuestionnaire"
-    }
-}
-
-struct QuestionnairePostAudience: Codable {
-    let questionnaireConfiguration: [QuestionnaireConfiguration]
-
-    enum CodingKeys: String, CodingKey {
-        case questionnaireConfiguration = "postAudienceQuestionnaire"
+struct AudienceQuestionnaire {
+    var questionnaireConfiguration: [QuestionnaireConfiguration]?
+    init(from configuration: [AnyHashable : Any]?, for key: String) {
+        guard let configuration = configuration, let questionnaireConfigurations = configuration[key] as? Array<[String:AnyHashable]> else { return }
+        questionnaireConfiguration = questionnaireConfigurations.reduce(into: []) { (result: inout [QuestionnaireConfiguration], dictionary: [String: AnyHashable]) in
+            if let data = try? JSONSerialization.data(withJSONObject: dictionary, options: []), let questionnaire = try? JSONDecoder().decode(QuestionnaireConfiguration.self, from: data) {
+                result.append(questionnaire)
+            }
+        }
     }
 }
 
