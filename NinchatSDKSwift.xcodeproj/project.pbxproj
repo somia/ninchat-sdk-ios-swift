@@ -116,6 +116,7 @@
 		85DDD22623D4DD1200E00844 /* ConfirmCloseChatView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85DDD22523D4DD1200E00844 /* ConfirmCloseChatView.xib */; };
 		91A160407EF6C23B8001A121 /* Toast.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91A16E066CFD2B8920EEFD10 /* Toast.xib */; };
 		91A160605AB6B75C6DB8CC86 /* NinchatXCTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A166D4F9B0F6D7063479E9 /* NinchatXCTestCase.swift */; };
+		91A160726D7FA3EBDA139492 /* QuestionnaireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A164E3B34BBC1E42464AEA /* QuestionnaireTests.swift */; };
 		91A16097541D9C728A532EF5 /* ChoiceDialogueRow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91A1649D2A54AD0FE2875F52 /* ChoiceDialogueRow.xib */; };
 		91A1617091BE8D796B6C6AA6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91A16C8DB9A8204C92A7CB38 /* Localizable.strings */; };
 		91A1617A1502B89B969891D0 /* CloseSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16F8780577EFC04190614 /* CloseSession.swift */; };
@@ -148,10 +149,12 @@
 		91A16914F0B5CA995B9CD28D /* UIImageView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16A99A8F815E0C72B0AAE /* UIImageView+Extension.swift */; };
 		91A169E910D005D05F1F283F /* NinchatSDKSwiftServerMessengerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16FEAA858008AD23DF96D /* NinchatSDKSwiftServerMessengerTests.swift */; };
 		91A16A44D119C71279197952 /* VideoThumbnailManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1604E15D212D192044A9A /* VideoThumbnailManagerTests.swift */; };
+		91A16A4FE497DEC8DFF31035 /* questionnaire.json in Resources */ = {isa = PBXBuildFile; fileRef = 91A1640908A1D7E7F34EE71E /* questionnaire.json */; };
 		91A16A7280B85CB8BD7C87F2 /* SiteConfigRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16B835075C42016E35338 /* SiteConfigRequest.swift */; };
 		91A16ACFBF8C7E4DF9373C1E /* ServiceRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A160C90332B61FB00EA8D8 /* ServiceRequest.swift */; };
 		91A16B2F768C5422B895C769 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A169A968E807A8F8D6358A /* Toast.swift */; };
 		91A16B43A0A5F40049590528 /* Permission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A163542A73487774FB1D3C /* Permission.swift */; };
+		91A16BA77083A30EFEBAA469 /* QuestionnaireConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1675E285CCC4A250D77BB /* QuestionnaireConfiguration.swift */; };
 		91A16BB7B698A39F797F0030 /* NINFullScreenViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16127E834359A9052C80F /* NINFullScreenViewModelTests.swift */; };
 		91A16BB9A4B558286273F506 /* ExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A161D30D89818FBC9A0476 /* ExtensionsTests.swift */; };
 		91A16C0683288F6ED8D0B6D8 /* NINLowLevelClientPropsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A169DEE6D533D109B83EB5 /* NINLowLevelClientPropsTests.swift */; };
@@ -324,15 +327,18 @@
 		91A163542A73487774FB1D3C /* Permission.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Permission.swift; sourceTree = "<group>"; };
 		91A163B62D2DBB763D1B850A /* UIFont+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+Extension.swift"; sourceTree = "<group>"; };
 		91A16407D8FAC5AEEDD748C9 /* ServiceManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceManager.swift; sourceTree = "<group>"; };
+		91A1640908A1D7E7F34EE71E /* questionnaire.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = questionnaire.json; sourceTree = SOURCE_ROOT; };
 		91A16468FB26B3084F03232F /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
 		91A1649D2A54AD0FE2875F52 /* ChoiceDialogueRow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChoiceDialogueRow.xib; sourceTree = "<group>"; };
 		91A164E1E7207BA353BF6418 /* SiteConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SiteConfiguration.swift; sourceTree = "<group>"; };
+		91A164E3B34BBC1E42464AEA /* QuestionnaireTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireTests.swift; sourceTree = "<group>"; };
 		91A16501A258D1244E52AD23 /* String+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		91A1652A485CCE644E39135E /* NSMutableAttributedString+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSMutableAttributedString+Extension.swift"; sourceTree = "<group>"; };
 		91A165370F88E5B62075CFB2 /* ChannelUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelUser.swift; sourceTree = "<group>"; };
 		91A1665602ED586F1BD60785 /* RTCSessionDescription+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RTCSessionDescription+Extension.swift"; sourceTree = "<group>"; };
 		91A166D4F9B0F6D7063479E9 /* NinchatXCTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatXCTestCase.swift; sourceTree = "<group>"; };
 		91A166E121EFB4764BE628C8 /* WebRTCServerInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebRTCServerInfo.swift; sourceTree = "<group>"; };
+		91A1675E285CCC4A250D77BB /* QuestionnaireConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireConfiguration.swift; sourceTree = "<group>"; };
 		91A167BAE1C0F6F9466CE1D6 /* ChatTypingCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatTypingCell.swift; sourceTree = "<group>"; };
 		91A168531329D3A76BDE1249 /* Empty.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Empty.swift; sourceTree = "<group>"; };
 		91A1689894322817E8A84EE1 /* ComposeContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposeContentView.swift; sourceTree = "<group>"; };
@@ -539,6 +545,8 @@
 				91A16F63734B3B04FB5F4ED3 /* PermissionTests.swift */,
 				91A1604E15D212D192044A9A /* VideoThumbnailManagerTests.swift */,
 				91A169DEE6D533D109B83EB5 /* NINLowLevelClientPropsTests.swift */,
+				91A164E3B34BBC1E42464AEA /* QuestionnaireTests.swift */,
+				91A1640908A1D7E7F34EE71E /* questionnaire.json */,
 			);
 			path = NinchatSDKSwiftTests;
 			sourceTree = "<group>";
@@ -711,6 +719,7 @@
 				91A16120032609820A06185E /* Queue.swift */,
 				91A166E121EFB4764BE628C8 /* WebRTCServerInfo.swift */,
 				91A16BFFA180E7ADBDE99C8D /* InboundMessage.swift */,
+				91A1675E285CCC4A250D77BB /* QuestionnaireConfiguration.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1062,6 +1071,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				91A16A4FE497DEC8DFF31035 /* questionnaire.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1284,6 +1294,7 @@
 				91A16B2F768C5422B895C769 /* Toast.swift in Sources */,
 				91A161EC840C41258CBA12A4 /* NINSessionCredentials.swift in Sources */,
 				91A1617A1502B89B969891D0 /* CloseSession.swift in Sources */,
+				91A16BA77083A30EFEBAA469 /* QuestionnaireConfiguration.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1301,6 +1312,7 @@
 				91A1679D684FC723976C6C14 /* PermissionTests.swift in Sources */,
 				91A16A44D119C71279197952 /* VideoThumbnailManagerTests.swift in Sources */,
 				91A16C0683288F6ED8D0B6D8 /* NINLowLevelClientPropsTests.swift in Sources */,
+				91A160726D7FA3EBDA139492 /* QuestionnaireTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
