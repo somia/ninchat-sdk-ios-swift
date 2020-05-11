@@ -115,7 +115,7 @@ class QuestionnaireTests: XCTestCase {
 extension QuestionnaireTests {
     private func openTestFile() throws -> [String:AnyHashable]? {
         let bundle = Bundle(for: QuestionnaireTests.self)
-        if let path = bundle.path(forResource: "questionnaire", ofType: "json") {
+        if let path = bundle.path(forResource: "questionnaire-mock", ofType: "json") {
             let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
             let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)
             return jsonResult as? [String:AnyHashable]

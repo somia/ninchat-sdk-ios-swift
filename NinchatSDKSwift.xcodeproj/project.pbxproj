@@ -149,8 +149,8 @@
 		91A16914F0B5CA995B9CD28D /* UIImageView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16A99A8F815E0C72B0AAE /* UIImageView+Extension.swift */; };
 		91A169E910D005D05F1F283F /* NinchatSDKSwiftServerMessengerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16FEAA858008AD23DF96D /* NinchatSDKSwiftServerMessengerTests.swift */; };
 		91A16A44D119C71279197952 /* VideoThumbnailManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1604E15D212D192044A9A /* VideoThumbnailManagerTests.swift */; };
-		91A16A4FE497DEC8DFF31035 /* questionnaire.json in Resources */ = {isa = PBXBuildFile; fileRef = 91A1640908A1D7E7F34EE71E /* questionnaire.json */; };
 		91A16A7280B85CB8BD7C87F2 /* SiteConfigRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16B835075C42016E35338 /* SiteConfigRequest.swift */; };
+		91A16A8DD14C214B35FC2474 /* questionnaire-mock.json in Resources */ = {isa = PBXBuildFile; fileRef = 91A16939E29E57ECFEE48815 /* questionnaire-mock.json */; };
 		91A16ACFBF8C7E4DF9373C1E /* ServiceRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A160C90332B61FB00EA8D8 /* ServiceRequest.swift */; };
 		91A16B2F768C5422B895C769 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A169A968E807A8F8D6358A /* Toast.swift */; };
 		91A16B43A0A5F40049590528 /* Permission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A163542A73487774FB1D3C /* Permission.swift */; };
@@ -327,7 +327,6 @@
 		91A163542A73487774FB1D3C /* Permission.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Permission.swift; sourceTree = "<group>"; };
 		91A163B62D2DBB763D1B850A /* UIFont+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+Extension.swift"; sourceTree = "<group>"; };
 		91A16407D8FAC5AEEDD748C9 /* ServiceManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceManager.swift; sourceTree = "<group>"; };
-		91A1640908A1D7E7F34EE71E /* questionnaire.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = questionnaire.json; sourceTree = SOURCE_ROOT; };
 		91A16468FB26B3084F03232F /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
 		91A1649D2A54AD0FE2875F52 /* ChoiceDialogueRow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChoiceDialogueRow.xib; sourceTree = "<group>"; };
 		91A164E1E7207BA353BF6418 /* SiteConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SiteConfiguration.swift; sourceTree = "<group>"; };
@@ -345,6 +344,7 @@
 		91A1689A5BDC25419D67E9BF /* ComposeMessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposeMessageView.swift; sourceTree = "<group>"; };
 		91A168B0495C5D2BBF7733D0 /* TypingCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypingCell.swift; sourceTree = "<group>"; };
 		91A168F7C3E9BB664C126805 /* NinchatSDKSwiftAcceptanceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatSDKSwiftAcceptanceTests.swift; sourceTree = "<group>"; };
+		91A16939E29E57ECFEE48815 /* questionnaire-mock.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "questionnaire-mock.json"; sourceTree = "<group>"; };
 		91A16984C5BA331DFFCB6EDA /* ChoiceDialogue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChoiceDialogue.swift; sourceTree = "<group>"; };
 		91A169A968E807A8F8D6358A /* Toast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		91A169DEE6D533D109B83EB5 /* NINLowLevelClientPropsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINLowLevelClientPropsTests.swift; sourceTree = "<group>"; };
@@ -546,7 +546,7 @@
 				91A1604E15D212D192044A9A /* VideoThumbnailManagerTests.swift */,
 				91A169DEE6D533D109B83EB5 /* NINLowLevelClientPropsTests.swift */,
 				91A164E3B34BBC1E42464AEA /* QuestionnaireTests.swift */,
-				91A1640908A1D7E7F34EE71E /* questionnaire.json */,
+				91A16C91D6DE163448C5799B /* Resources */,
 			);
 			path = NinchatSDKSwiftTests;
 			sourceTree = "<group>";
@@ -907,6 +907,14 @@
 			path = en.lproj;
 			sourceTree = "<group>";
 		};
+		91A16C91D6DE163448C5799B /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				91A16939E29E57ECFEE48815 /* questionnaire-mock.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -1071,7 +1079,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				91A16A4FE497DEC8DFF31035 /* questionnaire.json in Resources */,
+				91A16A8DD14C214B35FC2474 /* questionnaire-mock.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
