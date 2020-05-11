@@ -21,6 +21,8 @@ protocol SiteConfiguration  {
     var userName: String? { get }
     var noQueueText: String? { get }
     var audienceAutoQueue: String? { get }
+    var preAudienceQuestionnaire: [QuestionnaireConfiguration]? { get }
+    var postAudienceQuestionnaire: [QuestionnaireConfiguration]? { get }
 
     init(configuration: [AnyHashable : Any]?, environments: [String]?)
     mutating func override(configuration: NINSiteConfiguration?)
@@ -83,14 +85,18 @@ struct SiteConfigurationImpl: SiteConfiguration {
     var noQueueText: String? {
         self.value(for: "noQueuesText")
     }
-
     var audienceAutoQueue: String? {
         self.value(for: "audienceAutoQueue")
     }
+    var preAudienceQuestionnaire: [QuestionnaireConfiguration]?
+    var postAudienceQuestionnaire: [QuestionnaireConfiguration]?
 
     init(configuration: [AnyHashable : Any]?, environments: [String]?) {
         self.configuration = configuration ?? [:]
         self.environments = environments ?? []
+
+        self.preAudienceQuestionnaire = AudienceQuestionnaire(from: configuration, for: "preAudienceQuestionnaire").questionnaireConfiguration
+        self.postAudienceQuestionnaire = AudienceQuestionnaire(from: configuration, for: "postAudienceQuestionnaire").questionnaireConfiguration
     }
 
     mutating func override(configuration: NINSiteConfiguration?) {

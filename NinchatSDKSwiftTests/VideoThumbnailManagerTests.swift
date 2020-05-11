@@ -9,7 +9,7 @@ import XCTest
 
 final class VideoThumbnailManagerTests: XCTestCase {
     /// The video file is hosted on our Github repo.
-    let videoURL = "https://github.com/somia/ninchat-sdk-ios-swift/blob/develop/NinchatSDKSwiftTests/test_video.mp4?raw=true"
+    let videoURL = "https://github.com/somia/ninchat-sdk-ios-swift/blob/develop/NinchatSDKSwiftTests/Resources/test_video.mp4?raw=true"
 
     
     func test_video_thumbnail() {

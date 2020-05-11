@@ -117,6 +117,20 @@ final class NinchatSDKSwiftServerSessionTests: XCTestCase {
         }
         waitForExpectations(timeout: 10.0)
     }
+
+    func testServer_configuration() {
+        let expect = self.expectation(description: "Expected to get pre-questionnaire configurations")
+        self.sessionManager.fetchSiteConfiguration(config: Session.configurationKey, environments: ["default"]) { error in 
+            XCTAssertNil(error)
+            XCTAssertNotNil(self.sessionManager.siteConfiguration)
+            XCTAssertNotNil(self.sessionManager.siteConfiguration.preAudienceQuestionnaire)
+            XCTAssertGreaterThan(self.sessionManager.siteConfiguration.preAudienceQuestionnaire?.count ?? 0, 0)
+            XCTAssertNil(self.sessionManager.siteConfiguration.postAudienceQuestionnaire)
+            expect.fulfill()
+        }
+
+        waitForExpectations(timeout: 10.0)
+    }
 }
 
 extension NinchatSDKSwiftServerSessionTests: QueueUpdateCapture {
