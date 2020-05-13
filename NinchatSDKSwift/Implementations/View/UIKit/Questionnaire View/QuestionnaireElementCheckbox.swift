@@ -47,7 +47,7 @@ final class QuestionnaireElementCheckbox: UIButton, QuestionnaireElement {
     // MARK: - User actions
 
     @objc
-    private func onCheckboxTapped(_ sender: QuestionnaireElementSelectButton) {
+    private func onCheckboxTapped(_ sender: QuestionnaireElementRadio) {
         self.isSelected = !self.isSelected
         self.onElementFocused?(sender)
     }

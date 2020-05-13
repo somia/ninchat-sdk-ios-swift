@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementSelectButton: UIButton, QuestionnaireElement {
+final class QuestionnaireElementRadio: UIButton, QuestionnaireElement {
 
     // MARK: - QuestionnaireElement
 
@@ -54,13 +54,13 @@ final class QuestionnaireElementSelectButton: UIButton, QuestionnaireElement {
     // MARK: - User actions
 
     @objc
-    private func onButtonTapped(_ sender: QuestionnaireElementSelectButton) {
+    private func onButtonTapped(_ sender: QuestionnaireElementRadio) {
         self.isSelected = !self.isSelected
         self.onElementFocused?(sender)
     }
 }
 
-extension QuestionnaireElement where Self:QuestionnaireElementSelectButton {
+extension QuestionnaireElement where Self:QuestionnaireElementRadio {
     func shapeView() {
         self.backgroundColor = .clear
         self.titleLabel?.font = .ninchat
@@ -73,8 +73,11 @@ extension QuestionnaireElement where Self:QuestionnaireElementSelectButton {
         self.setTitle(configuration?.label, for: .selected)
         self.setTitleColor(.QBlueButtonNormal, for: .selected)
 
+        if self.width?.constant ?? 0 < self.intrinsicContentSize.width + 32.0 {
+            self.fix(width: self.intrinsicContentSize.width + 32.0)
+        }
         self
-                .fix(width: self.intrinsicContentSize.width + 32.0, height: max(45.0, self.intrinsicContentSize.height + 16.0))
-                .round(radius: 15.0, borderWidth: 1.0, borderColor: self.isSelected ? .QBlueButtonNormal : .QGrayButton)
+            .fix(height: max(45.0, self.intrinsicContentSize.height + 16.0))
+            .round(radius: 15.0, borderWidth: 1.0, borderColor: self.isSelected ? .QBlueButtonNormal : .QGrayButton)
     }
 }
