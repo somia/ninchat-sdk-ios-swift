@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementTextField: UIView, QuestionnaireElement {
+final class QuestionnaireElementTextArea: UIView, QuestionnaireElement {
 
     var isCompleted: Bool! = false {
         didSet {
@@ -31,8 +31,8 @@ final class QuestionnaireElementTextField: UIView, QuestionnaireElement {
     private(set) lazy var title: UILabel = {
         UILabel(frame: .zero)
     }()
-    private(set) lazy var input: UITextField = {
-        UITextField(frame: .zero)
+    private(set) lazy var input: UITextView = {
+        UITextView(frame: .zero)
     }()
 
     // MARK: - UIView life-cycle
@@ -48,7 +48,6 @@ final class QuestionnaireElementTextField: UIView, QuestionnaireElement {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        self.deactivate(constraints: [.height])
         title
             .fix(leading: (8.0, self), trailing: (8.0, self))
             .fix(top: (0.0, self))
@@ -57,43 +56,33 @@ final class QuestionnaireElementTextField: UIView, QuestionnaireElement {
             .fix(leading: (8.0, self), trailing: (8.0, self))
             .fix(top: (0.0, self.title), isRelative: true)
             .fix(bottom: (8.0, self))
-            .fix(height: 45.0)
     }
 }
 
-extension QuestionnaireElementTextField: UITextFieldDelegate {
-    func textFieldDidBeginEditing(_ textField: UITextField) {
+extension QuestionnaireElementTextArea: UITextViewDelegate {
+    func textViewDidBeginEditing(_ textView: UITextView) {
         self.onElementFocused?(self)
     }
 
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        if configuration?.required ?? false, textField.text?.isEmpty ?? true {
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if configuration?.required ?? false, textView.text?.isEmpty ?? true {
             self.isCompleted = false
-        } else if let pattern = configuration?.pattern, let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive), let text = textField.text {
+        } else if let pattern = configuration?.pattern, let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive), let text = textView.text {
             self.isCompleted = regex.matches(in: text, range: NSRange(location: 0, length: text.count)).count > 0
         }
         self.onElementDismissed?(self)
     }
 }
 
-extension QuestionnaireElement where Self:QuestionnaireElementTextField {
+extension QuestionnaireElement where Self:QuestionnaireElementTextArea {
     func shapeView() {
         self.title.text = self.configuration?.label
         self.title.textAlignment = .left
         self.title.font = .ninchat
 
         self.input.backgroundColor = .clear
-        self.input.borderStyle = .none
+        self.input.textAlignment = .left
         self.input.font = .ninchat
         self.input.round(radius: 6.0, borderWidth: 1.0, borderColor: self.isCompleted ? .QGrayButton : .QRedBorder)
-
-        switch self.configuration?.name.lowercased() {
-        case "phone":
-            self.input.keyboardType = .phonePad
-        case "email":
-            self.input.keyboardType = .emailAddress
-        default:
-            self.input.keyboardType = .default
-        }
     }
 }
