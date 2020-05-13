@@ -16,6 +16,9 @@ final class QuestionnaireElementCheckbox: UIButton, QuestionnaireElement {
         }
     }
     var onElementFocused: ((QuestionnaireElement) -> ())?
+    var onElementDismissed: ((QuestionnaireElement) -> Void)? {
+        didSet { fatalError("The closure won't be called on this type") }
+    }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
 
