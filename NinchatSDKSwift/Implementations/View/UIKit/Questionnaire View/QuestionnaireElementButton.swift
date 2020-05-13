@@ -42,6 +42,7 @@ final class QuestionnaireElementSelectButton: UIButton, QuestionnaireElement {
 
     override func awakeFromNib() {
         super.awakeFromNib()
+        self.tag = -1
 
         guard self.buttonType == .custom else { fatalError("Element select button should be of type `Custom`") }
         self.addTarget(self, action: #selector(self.onButtonTapped(_:)), for: .touchUpInside)
@@ -53,5 +54,24 @@ final class QuestionnaireElementSelectButton: UIButton, QuestionnaireElement {
     private func onButtonTapped(_ sender: QuestionnaireElementSelectButton) {
         self.isSelected = !self.isSelected
         self.onElementFocused?(sender)
+    }
+}
+
+extension QuestionnaireElement where Self:QuestionnaireElementSelectButton {
+    func shapeView() {
+        self.backgroundColor = .clear
+        self.titleLabel?.font = .ninchat
+        self.titleLabel?.numberOfLines = 0
+        self.titleLabel?.textAlignment = .center
+        self.titleLabel?.lineBreakMode = .byWordWrapping
+
+        self.setTitle(configuration?.label, for: .normal)
+        self.setTitleColor(.QGrayButton, for: .normal)
+        self.setTitle(configuration?.label, for: .selected)
+        self.setTitleColor(.QBlueButtonNormal, for: .selected)
+
+        self
+                .fix(width: self.intrinsicContentSize.width + 32.0, height: max(45.0, self.intrinsicContentSize.height + 16.0))
+                .round(radius: 15.0, borderWidth: 1.0, borderColor: self.isSelected ? .QBlueButtonNormal : .QGrayButton)
     }
 }
