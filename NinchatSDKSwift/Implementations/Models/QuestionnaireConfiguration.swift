@@ -24,14 +24,14 @@ struct AudienceQuestionnaire {
 struct QuestionnaireConfiguration: Codable {
     let name: String
     let type: String?
-    let buttons: Buttons?
+    let buttons: QuestionnaireButton?
     let elements: [ElementQuestionnaire]?
     let logic: LogicQuestionnaire?
 }
 
 // MARK: - Buttons
-struct Buttons: Codable {
-    let back, next: Bool
+struct QuestionnaireButton: Codable {
+    let back, next: AnyCodable
 }
 
 // MARK: - Element
@@ -39,8 +39,8 @@ struct ElementQuestionnaire: Codable {
     let name: String
     let element: ElementType
     let label: String
-    let options: [Option]?
-    let redirects: [Redirect]?
+    let options: [ElementOption]?
+    let redirects: [ElementRedirect]?
     let type: InputElementType?
     let pattern: String?
     let required: Bool?
@@ -73,12 +73,12 @@ struct LogicQuestionnaire: Codable {
 }
 
 // MARK: - Option
-struct Option: Codable {
+struct ElementOption: Codable {
     let label, value: String
 }
 
 // MARK: - Redirect
-struct Redirect: Codable {
+struct ElementRedirect: Codable {
     let pattern, target: String
 }
 
@@ -90,10 +90,17 @@ enum ElementType: String, Codable {
     case select
     case text
     case textarea
+    case checkbox
 }
 
 // MARK: - InputElementTypes
 enum InputElementType: String, Codable {
     case text
     case checkbox
+}
+
+// MARK: - QuestionnaireButtonType
+enum QuestionnaireButtonType {
+    case next
+    case back
 }

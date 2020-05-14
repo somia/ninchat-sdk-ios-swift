@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class Button: UIButton {
+class Button: UIButton {
     var closure: ((Button) -> Void)?
     
     override init(frame: CGRect) {
@@ -30,7 +30,8 @@ final class Button: UIButton {
         self.closure?(self)
     }
     
-    @objc private func touchUpInside(sender: UIButton) {
+    @objc
+    internal func touchUpInside(sender: UIButton) {
         self.closure?(self)
     }
     
@@ -43,7 +44,8 @@ final class Button: UIButton {
             self.backgroundColor = .clear
             self.layer.cornerRadius = 0
             self.layer.borderWidth = 0
-        } else if let overrideColor = delegate?.override(colorAsset: primary ? .buttonPrimaryText : .buttonSecondaryText) {
+        }
+        if let overrideColor = delegate?.override(colorAsset: primary ? .buttonPrimaryText : .buttonSecondaryText) {
             self.setTitleColor(overrideColor, for: .normal)
         }
     }

@@ -128,7 +128,7 @@ you are next.</string>
                                     <constraint firstAttribute="height" id="drK-a0-uHv"/>
                                 </constraints>
                             </view>
-                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="brw-f0-DOL" userLabel="Chat view" customClass="ChatView" customModule="NinchatSwiftSDKUI" customModuleProvider="target">
+                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="brw-f0-DOL" userLabel="Chat view" customClass="ChatView" customModule="NinchatSDKSwift" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="547"/>
                                 <subviews>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="g76-kj-vdH">
@@ -239,7 +239,7 @@ you are next.</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pyg-OC-SUZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2618" y="422"/>
+            <point key="canvasLocation" x="1638" y="892"/>
         </scene>
         <!--Rating View Controller-->
         <scene sceneID="AoA-TJ-9Dd">
@@ -316,7 +316,7 @@ you are next.</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xNA-rk-MTU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2618" y="-248"/>
+            <point key="canvasLocation" x="2538" y="149"/>
         </scene>
         <!--Initial View Controller-->
         <scene sceneID="XHh-YP-k7w">
@@ -334,13 +334,13 @@ you are next.</string>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wa1-0U-Lj7" userLabel="Top container view">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="314.5"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="316.5"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wXY-o9-goJ" userLabel="Welcome text container view">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="134.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="136.5"/>
                                         <subviews>
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed " textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="sio-TM-FLm">
-                                                <rect key="frame" x="20" y="50" width="335" height="54.5"/>
+                                                <rect key="frame" x="20" y="50" width="335" height="56.5"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
@@ -357,12 +357,12 @@ you are next.</string>
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MP0-uv-PXT" userLabel="Button container view">
-                                        <rect key="frame" x="0.0" y="134.5" width="375" height="180"/>
+                                        <rect key="frame" x="0.0" y="136.5" width="375" height="180"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="kgP-Ty-5vY">
                                                 <rect key="frame" x="67.5" y="5" width="240" height="60"/>
                                                 <subviews>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mti-Jm-Fuc">
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mti-Jm-Fuc" customClass="Button" customModule="NinchatSDKSwift">
                                                         <rect key="frame" x="0.0" y="0.0" width="240" height="60"/>
                                                         <color key="backgroundColor" red="0.28627450980392155" green="0.67450980392156867" blue="0.99215686274509807" alpha="1" colorSpace="calibratedRGB"/>
                                                         <constraints>
@@ -393,7 +393,7 @@ you are next.</string>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                 <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
                                             </textView>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ign-ZR-Zu6">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ign-ZR-Zu6" customClass="Button" customModule="NinchatSDKSwift">
                                                 <rect key="frame" x="67.5" y="80" width="240" height="60"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
@@ -434,10 +434,10 @@ you are next.</string>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3xg-1C-FCR" userLabel="Bottom container view">
-                                <rect key="frame" x="0.0" y="314.5" width="375" height="352.5"/>
+                                <rect key="frame" x="0.0" y="316.5" width="375" height="350.5"/>
                                 <subviews>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="D4q-k8-gpN">
-                                        <rect key="frame" x="20" y="40" width="335" height="150"/>
+                                        <rect key="frame" x="20" y="40" width="335" height="137"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </string>
                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
@@ -482,7 +482,22 @@ you are next.</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xXp-nn-Bc7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-182" y="149"/>
+            <point key="canvasLocation" x="-1074" y="149"/>
+        </scene>
+        <!--Questionnaire View Controller-->
+        <scene sceneID="aa4-SC-Gqp">
+            <objects>
+                <viewController storyboardIdentifier="NINQuestionnaireViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="2fr-nW-Pce" customClass="NINQuestionnaireViewController" customModule="NinchatSDKSwift" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="4SI-g6-pAy">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="rp7-qW-i5v"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="BXk-Sd-RqC" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-215.19999999999999" y="148.87556221889056"/>
         </scene>
     </scenes>
     <resources>

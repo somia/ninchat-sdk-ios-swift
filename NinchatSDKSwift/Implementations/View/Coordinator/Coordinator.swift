@@ -34,6 +34,15 @@ final class NINCoordinator: Coordinator {
         session.sessionManager
     }
 
+    // MARK: - Questionnaire helpers
+
+    private var hasPreAudienceQuestionnaire: Bool {
+        self.sessionManager.siteConfiguration.preAudienceQuestionnaire?.count ?? 0 > 0
+    }
+    private var hasPostAudienceQuestionnaire: Bool {
+        self.sessionManager.siteConfiguration.postAudienceQuestionnaire?.count ?? 0 > 0
+    }
+
     // MARK: - ViewControllers
 
     internal lazy var initialViewController: NINInitialViewController = {
@@ -41,11 +50,21 @@ final class NINCoordinator: Coordinator {
         initialViewController.session = session
         initialViewController.onQueueActionTapped = { [unowned self] queue in
             DispatchQueue.main.async {
-                self.navigationController?.pushViewController(self.queueViewController(queue: queue), animated: true)
+//                if self.hasPreAudienceQuestionnaire {
+//                    self.navigationController?.pushViewController(self.questionnaireViewController, animated: true)
+//                } else {
+                    self.navigationController?.pushViewController(self.queueViewController(queue: queue), animated: true)
+//                }
             }
         }
 
         return initialViewController
+    }()
+    internal lazy var questionnaireViewController: NINQuestionnaireViewController = {
+        let questionnaireViewController: NINQuestionnaireViewController = storyboard.instantiateViewController()
+        questionnaireViewController.session = session
+
+        return questionnaireViewController
     }()
     internal lazy var queueViewController: NINQueueViewController = {
         let joinViewController: NINQueueViewController = storyboard.instantiateViewController()
@@ -128,7 +147,7 @@ final class NINCoordinator: Coordinator {
         let topViewController: UIViewController
         if resumeSession {
             topViewController = self.queueViewController(resume: resumeSession)
-        } else  if let queue = queue, let target = self.sessionManager.queues.filter({ $0.queueID == queue }).first {
+        } else if let queue = queue, let target = self.sessionManager.queues.filter({ $0.queueID == queue }).first, !hasPreAudienceQuestionnaire {
             topViewController = self.queueViewController(queue: target)
         } else {
             topViewController = self.initialViewController
