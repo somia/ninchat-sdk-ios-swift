@@ -24,6 +24,15 @@ final class QuestionnaireElementCheckbox: UIButton, QuestionnaireElement {
 
     }
 
+    // MARK: - Subviews
+
+    private(set) lazy var imageViewContainer: UIView = {
+        UIView(frame: .zero)
+    }()
+    private(set) lazy var icon: UIImageView = {
+        UIImageView(image: nil, highlightedImage: UIImage(named: "icon_checkbox_selected", in: .SDKBundle, compatibleWith: nil))
+    }()
+
     // MARK: - UIView life-cycle
 
     override var isEnabled: Bool {
@@ -39,9 +48,25 @@ final class QuestionnaireElementCheckbox: UIButton, QuestionnaireElement {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-
         guard self.buttonType == .custom else { fatalError("Element select button should be of type `Custom`") }
+
+        self.addSubview(imageViewContainer)
+        self.imageViewContainer.addSubview(icon)
         self.addTarget(self, action: #selector(self.onCheckboxTapped(_:)), for: .touchUpInside)
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        imageViewContainer
+            .fix(width: 23.0, height: 23.0)
+            .fix(leading: (0, self))
+            .center(toY: self)
+            .round(borderWidth: 2.0, borderColor: self.isSelected ? .QBlueButtonNormal : .QGrayButton)
+
+        icon
+            .fix(top: (5.0, imageViewContainer), bottom: (5.0, imageViewContainer))
+            .fix(leading: (5.0, imageViewContainer), trailing: (5.0, imageViewContainer))
     }
 
     // MARK: - User actions
@@ -55,8 +80,6 @@ final class QuestionnaireElementCheckbox: UIButton, QuestionnaireElement {
 
 extension QuestionnaireElement where Self:QuestionnaireElementCheckbox {
     func shapeView() {
-        self.subviews.filter({ $0.tag == -2 }).forEach({ $0.removeFromSuperview() })
-
         self.backgroundColor = .clear
         self.titleLabel?.font = .ninchat
         self.titleLabel?.numberOfLines = 0
@@ -70,26 +93,11 @@ extension QuestionnaireElement where Self:QuestionnaireElementCheckbox {
         self.setTitle(options[self.tag].label, for: .selected)
         self.setTitleColor(.QBlueButtonNormal, for: .selected)
 
-        #warning("The image has to be changed")
-        let imageViewContainer = UIView(frame: .zero)
-        imageViewContainer.backgroundColor = .clear
-        imageViewContainer.isUserInteractionEnabled = false
-        imageViewContainer.isExclusiveTouch = false
-        imageViewContainer.tag = -2
+        self.imageViewContainer.backgroundColor = .clear
+        self.imageViewContainer.isUserInteractionEnabled = false
+        self.imageViewContainer.isExclusiveTouch = false
 
-        let icon = UIImageView(image: nil, highlightedImage: UIImage(named: "icon_checkbox_selected", in: .SDKBundle, compatibleWith: nil))
-        imageViewContainer.addSubview(icon)
-        icon
-            .fix(top: (5.0, imageViewContainer), bottom: (5.0, imageViewContainer))
-            .fix(leading: (5.0, imageViewContainer), trailing: (5.0, imageViewContainer))
-
-        self.addSubview(imageViewContainer)
-        imageViewContainer
-                .fix(width: 23.0, height: 23.0)
-                .fix(leading: (0, self))
-                .center(toY: self)
-                .round(borderWidth: 2.0, borderColor: self.isSelected ? .QBlueButtonNormal : .QGrayButton)
-        icon.isHighlighted = self.isSelected
+        self.icon.isHighlighted = self.isSelected
 
         self.titleEdgeInsets = UIEdgeInsets(top: 0.0, left: 32.0, bottom: 0.0, right: 0.0)
         self.fix(width: self.intrinsicContentSize.width + 32.0, height: max(30.0, self.intrinsicContentSize.height + 16.0))

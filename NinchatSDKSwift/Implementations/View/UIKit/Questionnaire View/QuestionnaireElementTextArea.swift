@@ -24,7 +24,9 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElement {
     var onElementFocused: ((QuestionnaireElement) -> Void)?
     var onElementDismissed: ((QuestionnaireElement) -> Void)?
 
-    func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) { }
+    func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
+        #warning("Override assets")
+    }
 
     // MARK: - Subviews
 
