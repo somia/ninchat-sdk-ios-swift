@@ -14,6 +14,11 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
 
     // MARK: - Outlets
 
+    @IBOutlet private(set) weak var ttl: QuestionnaireElementText! {
+        didSet {
+            ttl.delegate = self
+        }
+    }
     @IBOutlet private(set) weak var btn: QuestionnaireElementRadio! {
         didSet {
             btn.onElementFocused = { element in
@@ -67,7 +72,6 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
             }
         }
     }
-
     @IBOutlet private(set) weak var nextButton: QuestionnaireButton! {
         didSet {
             nextButton.type = .next
@@ -99,7 +103,9 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
                 nextButton.configuration = configuration
                 backButton.configuration = configuration
             }
-
+            if let configuration = audienceQuestionnaire.map({ $0.elements?.filter({ $0.element == .text }) }).first {
+                ttl.configuration = configuration?[0]
+            }
             if let configurations = audienceQuestionnaire.map({ $0.elements?.filter({ $0.element == .radio }) }).first {
                 btn.configuration = configurations?[0]
                 btn

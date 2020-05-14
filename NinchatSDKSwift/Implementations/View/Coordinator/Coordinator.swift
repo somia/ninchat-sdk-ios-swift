@@ -50,11 +50,15 @@ final class NINCoordinator: Coordinator {
         initialViewController.session = session
         initialViewController.onQueueActionTapped = { [unowned self] queue in
             DispatchQueue.main.async {
-//                if self.hasPreAudienceQuestionnaire {
-//                    self.navigationController?.pushViewController(self.questionnaireViewController, animated: true)
-//                } else {
+                #if DEBUG
+                    if self.hasPreAudienceQuestionnaire {
+                        self.navigationController?.pushViewController(self.questionnaireViewController, animated: true)
+                    } else {
+                        self.navigationController?.pushViewController(self.queueViewController(queue: queue), animated: true)
+                    }
+                #else
                     self.navigationController?.pushViewController(self.queueViewController(queue: queue), animated: true)
-//                }
+                #endif
             }
         }
 
