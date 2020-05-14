@@ -8,7 +8,7 @@ import UIKit
 
 final class QuestionnaireElementSelect: UIView, QuestionnaireElement {
 
-    var onOptionSelected: ((Option) -> Void)?
+    var onOptionSelected: ((ElementOption) -> Void)?
 
     // MARK: - QuestionnaireElement
 

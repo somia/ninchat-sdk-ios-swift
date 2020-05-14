@@ -35,11 +35,6 @@ final class QuestionnaireElementCheckbox: UIButton, QuestionnaireElement {
 
     // MARK: - UIView life-cycle
 
-    override var isEnabled: Bool {
-        didSet {
-            self.alpha = isEnabled ? 1.0 : 0.5
-        }
-    }
     override var isSelected: Bool {
         didSet {
             self.shapeView()
