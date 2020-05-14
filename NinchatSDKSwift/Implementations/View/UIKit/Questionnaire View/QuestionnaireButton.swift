@@ -7,7 +7,7 @@
 import UIKit
 import AnyCodable
 
-final class QuestionnaireElementButton: Button {
+final class QuestionnaireButton: Button {
 
     var type: QuestionnaireButtonType!
     var configuration: QuestionnaireConfiguration? {
@@ -31,7 +31,7 @@ final class QuestionnaireElementButton: Button {
     }
 }
 
-extension QuestionnaireElementButton {
+extension QuestionnaireButton {
     private func shapeView() {
         guard self.type != nil else { fatalError("`Button` type needs to be declared first") }
         guard let buttons = self.configuration?.buttons else { fatalError("There are not any defined buttons for given type: \(self.type)") }

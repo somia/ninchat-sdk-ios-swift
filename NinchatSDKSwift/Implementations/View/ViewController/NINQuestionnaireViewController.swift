@@ -68,7 +68,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
         }
     }
 
-    @IBOutlet private(set) weak var nextButton: QuestionnaireElementButton! {
+    @IBOutlet private(set) weak var nextButton: QuestionnaireButton! {
         didSet {
             nextButton.type = .next
             nextButton.closure = { button in
@@ -76,7 +76,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
             }
         }
     }
-    @IBOutlet private(set) weak var backButton: QuestionnaireElementButton! {
+    @IBOutlet private(set) weak var backButton: QuestionnaireButton! {
         didSet {
             backButton.type = .back
             backButton.closure = { button in

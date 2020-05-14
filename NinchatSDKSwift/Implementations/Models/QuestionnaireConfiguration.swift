@@ -24,13 +24,13 @@ struct AudienceQuestionnaire {
 struct QuestionnaireConfiguration: Codable {
     let name: String
     let type: String?
-    let buttons: QuestionnaireButton?
+    let buttons: ButtonQuestionnaire?
     let elements: [ElementQuestionnaire]?
     let logic: LogicQuestionnaire?
 }
 
 // MARK: - Buttons
-struct QuestionnaireButton: Codable {
+struct ButtonQuestionnaire: Codable {
     let back, next: AnyCodable
 }
 
