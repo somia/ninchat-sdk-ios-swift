@@ -14,6 +14,14 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
 
     // MARK: - Outlets
 
+    @IBOutlet private(set) weak var radio: QuestionnaireElementRadio!
+
+    /*
+    @IBOutlet private(set) weak var contentView: UITableView! {
+        didSet {
+            contentView.separatorStyle = .none
+        }
+    }
     @IBOutlet private(set) weak var ttl: QuestionnaireElementText! {
         didSet {
             ttl.delegate = self
@@ -88,6 +96,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
             }
         }
     }
+    */
 
     // MARK: - UIViewController life-cycle
 
@@ -98,6 +107,12 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
+        if let audienceQuestionnaire = session.sessionManager.siteConfiguration.preAudienceQuestionnaire {
+            if let configurations = audienceQuestionnaire.map({ $0.elements?.filter({ $0.element == .radio }) }).first {
+                radio.configuration = configurations?[0]
+            }
+        }
+        /*
         if let audienceQuestionnaire = session.sessionManager.siteConfiguration.preAudienceQuestionnaire {
             if let configuration = audienceQuestionnaire.first {
                 nextButton.configuration = configuration
@@ -132,10 +147,12 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
             }
         }
         self.overrideAssets()
+        */
     }
 }
 
 extension NINQuestionnaireViewController {
+    /*
     private func overrideAssets() {
         btn.overrideAssets(with: self.session)
         checkbox.overrideAssets(with: self.session)
@@ -144,4 +161,5 @@ extension NINQuestionnaireViewController {
         inputArea.overrideAssets(with: self.session)
         select.overrideAssets(with: self.session)
     }
+    */
 }

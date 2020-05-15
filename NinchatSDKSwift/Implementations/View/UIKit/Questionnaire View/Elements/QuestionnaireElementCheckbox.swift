@@ -20,9 +20,7 @@ final class QuestionnaireElementCheckbox: UIButton, QuestionnaireElement {
         didSet { fatalError("The closure won't be called on this type") }
     }
 
-    func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
-
-    }
+    func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {}
 
     // MARK: - Subviews
 

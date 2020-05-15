@@ -492,98 +492,39 @@ you are next.</string>
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o1t-ct-KH1" customClass="QuestionnaireElementRadio" customModule="NinchatSDKSwift">
-                                <rect key="frame" x="160.5" y="40" width="54" height="34"/>
-                                <state key="normal" title="Button"/>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZRS-GC-Xlm" customClass="QuestionnaireElementCheckbox" customModule="NinchatSDKSwift">
-                                <rect key="frame" x="259" y="104" width="54" height="34"/>
-                                <state key="normal" title="Button"/>
-                            </button>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wam-9X-1lW" customClass="QuestionnaireElementTextField" customModule="NinchatSDKSwift">
-                                <rect key="frame" x="67.5" y="164" width="240" height="120"/>
-                                <color key="backgroundColor" systemColor="systemTealColor" red="0.35294117650000001" green="0.7843137255" blue="0.98039215690000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yKS-Eq-cuw">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Npz-b6-Egr" customClass="QuestionnaireElementRadio" customModule="NinchatSDKSwift" customModuleProvider="target">
+                                        <rect key="frame" x="8" y="8" width="359" height="128"/>
+                                        <color key="backgroundColor" systemColor="systemPurpleColor" red="0.68627450980000004" green="0.32156862749999998" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="128" id="Bnj-Nn-URf"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="240" id="4ub-gF-CL4"/>
-                                    <constraint firstAttribute="height" constant="120" id="yiX-Bx-RnH"/>
+                                    <constraint firstItem="Npz-b6-Egr" firstAttribute="top" secondItem="yKS-Eq-cuw" secondAttribute="top" constant="8" id="7xY-qW-K3x"/>
+                                    <constraint firstItem="Npz-b6-Egr" firstAttribute="leading" secondItem="yKS-Eq-cuw" secondAttribute="leading" constant="8" id="Edb-8T-Ugt"/>
+                                    <constraint firstAttribute="trailing" secondItem="Npz-b6-Egr" secondAttribute="trailing" constant="8" id="aRO-2z-zJa"/>
+                                    <constraint firstAttribute="bottom" secondItem="Npz-b6-Egr" secondAttribute="bottom" constant="8" id="hLA-7C-zQo"/>
                                 </constraints>
-                            </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3ez-SX-3Zl" customClass="QuestionnaireElementTextArea" customModule="NinchatSDKSwift">
-                                <rect key="frame" x="67.5" y="316" width="240" height="120"/>
-                                <color key="backgroundColor" systemColor="systemGreenColor" red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="120" id="Njl-8s-Xaj"/>
-                                    <constraint firstAttribute="width" constant="240" id="pIf-Ew-HGm"/>
-                                </constraints>
-                            </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FON-qR-IYb" customClass="QuestionnaireElementSelect" customModule="NinchatSDKSwift">
-                                <rect key="frame" x="67" y="461" width="241" height="84"/>
-                                <color key="backgroundColor" cocoaTouchSystemColor="lightTextColor"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="241" id="5Yq-9o-10w"/>
-                                    <constraint firstAttribute="height" constant="84" id="NRa-7d-f9R"/>
-                                </constraints>
-                            </view>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QCP-Sp-2rP" customClass="QuestionnaireElementCheckbox" customModule="NinchatSDKSwift">
-                                <rect key="frame" x="62" y="104" width="54" height="34"/>
-                                <inset key="imageEdgeInsets" minX="0.0" minY="8" maxX="16" maxY="8"/>
-                                <state key="normal" title="Button"/>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wQ0-Rx-6TA" customClass="QuestionnaireButton" customModule="NinchatSDKSwift">
-                                <rect key="frame" x="263" y="577" width="46" height="30"/>
-                                <state key="normal" title="Button"/>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cKX-6j-8YP" customClass="QuestionnaireButton" customModule="NinchatSDKSwift">
-                                <rect key="frame" x="66" y="577" width="46" height="30"/>
-                                <state key="normal" title="Button"/>
-                            </button>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="6ho-Hv-Ziz" customClass="QuestionnaireElementText" customModule="NinchatSDKSwift">
-                                <rect key="frame" x="8" y="8" width="359" height="24"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="24" id="lgr-r7-dWh"/>
-                                </constraints>
-                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
-                                <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                            </textView>
+                            </scrollView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="wQ0-Rx-6TA" firstAttribute="top" secondItem="FON-qR-IYb" secondAttribute="bottom" constant="32" id="6UJ-QI-aOo"/>
-                            <constraint firstItem="QCP-Sp-2rP" firstAttribute="leading" secondItem="rp7-qW-i5v" secondAttribute="leading" constant="62" id="FUv-gk-LeM"/>
-                            <constraint firstItem="o1t-ct-KH1" firstAttribute="centerX" secondItem="rp7-qW-i5v" secondAttribute="centerX" id="JjO-k9-kR1"/>
-                            <constraint firstItem="6ho-Hv-Ziz" firstAttribute="leading" secondItem="rp7-qW-i5v" secondAttribute="leading" constant="8" id="KK4-Wv-pqN"/>
-                            <constraint firstItem="QCP-Sp-2rP" firstAttribute="centerY" secondItem="ZRS-GC-Xlm" secondAttribute="centerY" id="LAw-x9-ksE"/>
-                            <constraint firstItem="3ez-SX-3Zl" firstAttribute="top" secondItem="Wam-9X-1lW" secondAttribute="bottom" constant="32" id="O0t-dF-SW0"/>
-                            <constraint firstItem="rp7-qW-i5v" firstAttribute="trailing" secondItem="6ho-Hv-Ziz" secondAttribute="trailing" constant="8" id="SDg-Gg-Tu7"/>
-                            <constraint firstItem="rp7-qW-i5v" firstAttribute="trailing" secondItem="ZRS-GC-Xlm" secondAttribute="trailing" constant="62" id="TVt-UL-Oto"/>
-                            <constraint firstItem="cKX-6j-8YP" firstAttribute="centerX" secondItem="QCP-Sp-2rP" secondAttribute="centerX" id="Yc8-zj-9jM"/>
-                            <constraint firstItem="QCP-Sp-2rP" firstAttribute="top" secondItem="o1t-ct-KH1" secondAttribute="bottom" constant="30" id="byY-FP-G3B"/>
-                            <constraint firstItem="wQ0-Rx-6TA" firstAttribute="centerX" secondItem="ZRS-GC-Xlm" secondAttribute="centerX" id="cIY-fq-Izg"/>
-                            <constraint firstItem="o1t-ct-KH1" firstAttribute="top" secondItem="6ho-Hv-Ziz" secondAttribute="bottom" constant="8" id="cne-eN-zas"/>
-                            <constraint firstItem="Wam-9X-1lW" firstAttribute="top" secondItem="QCP-Sp-2rP" secondAttribute="bottom" constant="26" id="dL2-li-Syu"/>
-                            <constraint firstItem="cKX-6j-8YP" firstAttribute="top" secondItem="FON-qR-IYb" secondAttribute="bottom" constant="32" id="eqa-KA-lCN"/>
-                            <constraint firstItem="FON-qR-IYb" firstAttribute="top" secondItem="3ez-SX-3Zl" secondAttribute="bottom" constant="25" id="fKL-Gb-BOk"/>
-                            <constraint firstItem="FON-qR-IYb" firstAttribute="centerX" secondItem="3ez-SX-3Zl" secondAttribute="centerX" id="j4a-hL-8zQ"/>
-                            <constraint firstItem="6ho-Hv-Ziz" firstAttribute="centerX" secondItem="rp7-qW-i5v" secondAttribute="centerX" id="l75-cC-oHU"/>
-                            <constraint firstItem="Wam-9X-1lW" firstAttribute="centerX" secondItem="o1t-ct-KH1" secondAttribute="centerX" id="w9m-rs-Cba"/>
-                            <constraint firstItem="3ez-SX-3Zl" firstAttribute="centerX" secondItem="Wam-9X-1lW" secondAttribute="centerX" id="wXS-dD-iJf"/>
-                            <constraint firstItem="6ho-Hv-Ziz" firstAttribute="top" secondItem="rp7-qW-i5v" secondAttribute="top" constant="8" id="yLd-a8-5k3"/>
+                            <constraint firstItem="rp7-qW-i5v" firstAttribute="bottom" secondItem="yKS-Eq-cuw" secondAttribute="bottom" id="Bqh-tT-kiq"/>
+                            <constraint firstItem="yKS-Eq-cuw" firstAttribute="height" relation="greaterThanOrEqual" secondItem="rp7-qW-i5v" secondAttribute="height" id="HRY-Om-zf4"/>
+                            <constraint firstItem="yKS-Eq-cuw" firstAttribute="leading" secondItem="rp7-qW-i5v" secondAttribute="leading" id="MGq-J9-1ZF"/>
+                            <constraint firstItem="rp7-qW-i5v" firstAttribute="trailing" secondItem="yKS-Eq-cuw" secondAttribute="trailing" id="bfh-2b-frc"/>
+                            <constraint firstItem="Npz-b6-Egr" firstAttribute="width" secondItem="rp7-qW-i5v" secondAttribute="width" multiplier="0.957333" id="hql-hA-xuf"/>
+                            <constraint firstItem="yKS-Eq-cuw" firstAttribute="top" secondItem="rp7-qW-i5v" secondAttribute="top" id="lrG-MU-kOI"/>
+                            <constraint firstItem="yKS-Eq-cuw" firstAttribute="width" secondItem="4SI-g6-pAy" secondAttribute="width" id="s9G-6r-MLK"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="rp7-qW-i5v"/>
                     </view>
                     <connections>
-                        <outlet property="backButton" destination="cKX-6j-8YP" id="qyb-6H-CcW"/>
-                        <outlet property="btn" destination="o1t-ct-KH1" id="zva-xZ-aqc"/>
-                        <outlet property="checkbox" destination="QCP-Sp-2rP" id="kxi-RL-y1b"/>
-                        <outlet property="checkbox2" destination="ZRS-GC-Xlm" id="rnm-KF-zD3"/>
-                        <outlet property="input" destination="Wam-9X-1lW" id="Vwz-Pb-ZhW"/>
-                        <outlet property="inputArea" destination="3ez-SX-3Zl" id="hj2-v8-VUr"/>
-                        <outlet property="nextButton" destination="wQ0-Rx-6TA" id="puV-T0-4f7"/>
-                        <outlet property="select" destination="FON-qR-IYb" id="nqf-dz-Xn2"/>
-                        <outlet property="ttl" destination="6ho-Hv-Ziz" id="pWg-T0-0uR"/>
+                        <outlet property="radio" destination="Npz-b6-Egr" id="FfN-cy-Blk"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BXk-Sd-RqC" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

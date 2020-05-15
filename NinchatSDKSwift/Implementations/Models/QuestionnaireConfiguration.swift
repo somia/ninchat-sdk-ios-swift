@@ -13,7 +13,12 @@ struct AudienceQuestionnaire {
     init(from configuration: [AnyHashable : Any]?, for key: String) {
         guard let configuration = configuration, let questionnaireConfigurations = configuration[key] as? Array<[String:AnyHashable]> else { return }
         questionnaireConfiguration = questionnaireConfigurations.reduce(into: []) { (result: inout [QuestionnaireConfiguration], dictionary: [String: AnyHashable]) in
-            if let data = try? JSONSerialization.data(withJSONObject: dictionary, options: []), let questionnaire = try? JSONDecoder().decode(QuestionnaireConfiguration.self, from: data) {
+            guard let data = try? JSONSerialization.data(withJSONObject: dictionary, options: []) else { return }
+            if dictionary["element"] is String, let element = try? JSONDecoder().decode(ElementQuestionnaire.self, from: data) {
+                /// This is an `Element` object, no configuration else is embedded
+                result.append(QuestionnaireConfiguration(name: nil, type: nil, buttons: nil, elements: [element], logic: nil))
+            } else if dictionary["elements"] is Array<[String:Any]>, let questionnaire = try? JSONDecoder().decode(QuestionnaireConfiguration.self, from: data) {
+                /// This is not an `Element` object, but a configuration one with elements in it
                 result.append(questionnaire)
             }
         }
@@ -22,7 +27,7 @@ struct AudienceQuestionnaire {
 
 // MARK: - QuestionnaireConfiguration
 struct QuestionnaireConfiguration: Codable {
-    let name: String
+    let name: String?
     let type: QuestionnaireConfigurationType?
     let buttons: ButtonQuestionnaire?
     let elements: [ElementQuestionnaire]?
