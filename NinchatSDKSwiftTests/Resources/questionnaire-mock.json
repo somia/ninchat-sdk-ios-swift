@@ -1,78 +1,105 @@
 {
-    "preAudienceQuestionnaire": [
+  "preAudienceQuestionnaire": [
+    {
+      "name": "Start",
+      "type": "group",
+      "buttons": {
+        "back": false,
+        "next": "Continue"
+      },
+      "elements": [
         {
-          "name": "Start",
-          "type": "group",
-          "buttons": {
-            "back": false,
-            "next": false
-          },
-          "elements": [
+          "name": "Start-info",
+          "element": "text",
+          "label": "<p>Hi! I am Ninchat Helper Bot. <b>Let me help you to find what you're looking for.</b></p><p> Choose language / Valitse kieli <a href=https://ninchat.com/contact>https://ninchat.com/contact</a></p>"
+        },
+        {
+          "name": "temp-btn",
+          "element": "select",
+          "label": "Select ME to continue!",
+          "options": [
             {
-              "name": "Start-info",
-              "element": "text",
-              "label": "<p>Hi! I am Ninchat Helper Bot. Let me help you to find what you're looking for.</p><p> Choose language / Valitse kieli</p>"
+              "label": "Suomi - Finnish",
+              "value": "Finnish"
             },
             {
-              "element": "radio",
-              "label": "",
-              "name": "language",
-              "options": [
-                {
-                  "label": "Suomi - Finnish",
-                  "value": "Finnish"
-                },
-                {
-                  "label": "English",
-                  "value": "English"
-                }
-              ],
-              "redirects": [
-                {
-                  "pattern": "English",
-                  "target": "targetElement"
-                }
-              ]
-            },
-            {
-                "element": "input",
-                "type": "text",
-                "label": "Phone number:",
-                "name": "Phone",
-                "pattern": "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$",
-                "required": false
+              "label": "English",
+              "value": "English"
             }
           ]
         },
         {
-            "name": "Logic-language1",
-            "logic": {
-              "and": [
-                {
-                  "language": "Finnish",
-                  "translation": "Moi"
-                }
-              ],
-              "target": "FI-Customership",
-              "tags": [
-                "7d5ejcbu00cnk"
-              ]
-            }
+          "name": "tmp-radio",
+          "element": "radio",
+          "label": "This should not be selected!"
         },
         {
-            "name": "Logic-language2",
-            "logic": {
-                "or": [
-                    {
-                        "language": "English",
-                        "translation": "Hello"
-                    }
-                ],
-                "target": "Customership",
-                "tags": [
-                    "7d5ej6nq00cnk"
-                ]
+          "element": "checkbox",
+          "label": "",
+          "name": "language",
+          "options": [
+            {
+              "label": "Suomi\nFinnish",
+              "value": "Finnish"
+            },
+            {
+              "label": "English",
+              "value": "English"
             }
+          ],
+          "redirects": [
+            {
+              "pattern": "English",
+              "target": "targetElement"
+            }
+          ]
+        },
+        {
+          "element": "input",
+          "type": "text",
+          "label": "Phone number:",
+          "name": "Phone",
+          "pattern": "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$",
+          "required": false
+        },
+        {
+          "element": "textarea",
+          "label": "Comments:",
+          "name": "comments",
+          "pattern": "",
+          "required": true
         }
       ]
+    },
+    {
+      "name": "Logic-language1",
+      "logic": {
+        "and": [
+          {
+            "language": "Finnish",
+            "translation": "Moi"
+          }
+        ],
+        "target": "FI-Customership",
+        "tags": [
+          "7d5ejcbu00cnk"
+        ]
+      }
+    },
+    {
+      "name": "Logic-language2",
+      "logic": {
+        "or": [
+          {
+            "language": "English",
+            "translation": "Hello"
+          }
+        ],
+        "target": "Customership",
+        "tags": [
+          "7d5ej6nq00cnk"
+        ]
+      }
+    }
+  ]
 }

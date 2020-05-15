@@ -5,10 +5,9 @@
 //
 
 import XCTest
-import Foundation
 @testable import NinchatSDKSwift
 
-class QuestionnaireTests: XCTestCase {
+final class QuestionnaireTests: XCTestCase {
     var questionnaire_raw: [String: AnyHashable]?
     var questionnaire_preAudience: AudienceQuestionnaire?
 

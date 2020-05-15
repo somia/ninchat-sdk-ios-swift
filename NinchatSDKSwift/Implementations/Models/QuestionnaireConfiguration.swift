@@ -23,7 +23,7 @@ struct AudienceQuestionnaire {
 // MARK: - QuestionnaireConfiguration
 struct QuestionnaireConfiguration: Codable {
     let name: String
-    let type: String?
+    let type: QuestionnaireConfigurationType?
     let buttons: ButtonQuestionnaire?
     let elements: [ElementQuestionnaire]?
     let logic: LogicQuestionnaire?
@@ -35,7 +35,7 @@ struct ButtonQuestionnaire: Codable {
 }
 
 // MARK: - Element
-struct ElementQuestionnaire: Codable {
+struct ElementQuestionnaire: Codable, Equatable {
     let name: String
     let element: ElementType
     let label: String
@@ -44,6 +44,10 @@ struct ElementQuestionnaire: Codable {
     let type: InputElementType?
     let pattern: String?
     let required: Bool?
+
+    static func ==(lhs: ElementQuestionnaire, rhs: ElementQuestionnaire) -> Bool {
+        lhs.name == rhs.name
+    }
 }
 
 // MARK: - Logic
@@ -80,6 +84,11 @@ struct ElementOption: Codable {
 // MARK: - Redirect
 struct ElementRedirect: Codable {
     let pattern, target: String
+}
+
+// MARK: - QuestionnaireConfigurationTypes
+enum QuestionnaireConfigurationType: String, Codable {
+    case group
 }
 
 // MARK: - ElementTypes
