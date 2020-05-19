@@ -9,11 +9,14 @@ import AnyCodable
 
 protocol QuestionnaireElement: UIView {
     var configuration: QuestionnaireConfiguration? { get set }
+    var height: CGFloat { get }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool)
     func shapeView()
 }
 extension QuestionnaireElement {
+    var height: CGFloat { 0 }
+
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         self.overrideAssets(with: delegate, isPrimary: true)
     }
@@ -23,9 +26,8 @@ extension QuestionnaireElement {
 ///     - title
 ///     - options
 protocol QuestionnaireElementWithTitleAndOptions: QuestionnaireElement {
-    associatedtype View: UIView
     var title: UILabel { get }
-    var view: View { get }
+    var view: UIView { get }
     var scaleToParent: Bool { get set }
     var onElementOptionFocused: ((ElementOption) -> Void)? { get set }
 
@@ -35,22 +37,25 @@ protocol QuestionnaireElementWithTitleAndOptions: QuestionnaireElement {
 extension QuestionnaireElementWithTitleAndOptions {
     func addElementViews() {
         /// Must be called in `view.awakeFromNib()` function
-
         self.addSubview(title)
         self.addSubview(view)
     }
 
     func layoutElementViews() {
-        /// Must be called in `view.layoutSubviews()` function
+        /// Must be called once subviews are added
         title
             .fix(leading: (8.0, self), trailing: (8.0, self))
             .fix(top: (0.0, self))
-            .fix(height: self.title.intrinsicContentSize.height + 16.0)
-
+            .fix(height: title.intrinsicContentSize.height + 16.0)
         view
             .fix(leading: (8.0, self), trailing: (8.0, self))
-            .fix(top: (0.0, self.title), isRelative: true)
-            .fix(bottom: (8.0, self))
+            .fix(top: (0.0, title), isRelative: true)
+            .center(toX: self)
+            .fix(width: self.width?.constant ?? self.bounds.width)
+    }
+
+    var height: CGFloat {
+        CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + CGFloat(4.0 * 8.0)
     }
 }
 
@@ -80,6 +85,10 @@ extension QuestionnaireElementHasButtons where Self:QuestionnaireElementWithTitl
             .fix(leading: (8.0, self), trailing: (8.0, self))
             .fix(top: (0.0, self.view), isRelative: true)
             .fix(bottom: (8.0, self))
+    }
+
+    var height: CGFloat {
+        CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + CGFloat(self.buttons.height?.constant ?? 0) + CGFloat(5.0 * 8.0)
     }
 
     func shapeNavigationNext(button: UIButton, configuration: AnyCodable) {

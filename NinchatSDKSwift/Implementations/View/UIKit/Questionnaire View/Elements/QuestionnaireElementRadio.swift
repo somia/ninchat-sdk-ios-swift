@@ -13,8 +13,8 @@ final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitleAndO
     var configuration: QuestionnaireConfiguration? {
         didSet {
             self.shapeView()
-            self.shapeNavigationButtons()
-            self.deactivate(constraints: [.height])
+//            self.shapeNavigationButtons()
+            self.decorateView()
         }
     }
     var onElementOptionFocused: ((ElementOption) -> Void)?
@@ -31,12 +31,11 @@ final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitleAndO
 
     // MARK: - Subviews - QuestionnaireElementWithTitleAndOptions + QuestionnaireElementHasButtons
 
-    typealias View = UIView
     private(set) lazy var title: UILabel = {
         UILabel(frame: .zero)
     }()
-    private(set) lazy var view: View = {
-        View(frame: .zero)
+    private(set) lazy var view: UIView = {
+        UIView(frame: .zero)
     }()
     private(set) lazy var buttons: UIView = {
         UIView(frame: .zero)
@@ -46,23 +45,40 @@ final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitleAndO
 
     override func awakeFromNib() {
         super.awakeFromNib()
-
-        self.addElementViews()
-        self.addNavigationButtons()
+        self.initiateView()
     }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-
-        self.addElementViews()
-        self.addNavigationButtons()
+        self.initiateView()
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+        self.initiateView()
+    }
 
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        self.decorateView()
+        self.layoutIfNeeded()
+    }
+
+    // MARK: - View Setup
+
+    private func initiateView() {
         self.addElementViews()
         self.addNavigationButtons()
+    }
+
+    private func decorateView() {
+        if self.view.subviews.count > 0 {
+            self.layoutElementViews()
+        }
+        if self.buttons.subviews.count > 0 {
+            self.layoutNavigationButtons()
+        }
     }
 }
 
@@ -86,8 +102,6 @@ extension QuestionnaireElementHasButtons where Self:QuestionnaireElementRadio {
             self.shapeNavigationNext(button: view, configuration: configuration.back)
             self.buttons.addSubview(view)
         }
-
-        self.layoutNavigationButtons()
     }
 }
 
@@ -100,17 +114,13 @@ extension QuestionnaireElement where Self:QuestionnaireElementRadio {
         self.title.lineBreakMode = .byWordWrapping
         self.title.text = self.configuration?.label
 
-        if self.view.subviews.count == 0 {
-            var upperView: UIView?
-            self.configuration?.options?.forEach { [unowned self] option in
-                let button = self.generateButton(for: option, tag: self.configuration?.options?.firstIndex(of: option) ?? -1)
-                self.layoutButton(button, upperView: upperView)
-                upperView = button
-            }
-            upperView?.fix(bottom: (8.0, self.view))
+        guard self.view.subviews.count == 0 else { return }
+        var upperView: UIView?
+        self.configuration?.options?.forEach { [unowned self] option in
+            let button = self.generateButton(for: option, tag: (self.configuration?.options?.firstIndex(of: option))!)
+            self.layoutButton(button, upperView: &upperView)
+            button.updateTitleScale()
         }
-
-        self.layoutElementViews()
     }
 
     private func generateButton(for option: ElementOption, tag: Int) -> Button {
@@ -133,23 +143,27 @@ extension QuestionnaireElement where Self:QuestionnaireElementRadio {
         return view
     }
 
-    private func layoutButton(_ button: UIView, upperView: UIView?) {
+    private func layoutButton(_ button: UIView, upperView: inout UIView?) {
         self.view.addSubview(button)
 
         if self.scaleToParent {
-            button
-                .deactivate(constraints: [.width])
-                .fix(leading: (8.0, self.view), trailing: (8.0, self.view))
+            button.fix(leading: (8.0, self.view), trailing: (8.0, self.view))
         } else if self.width?.constant ?? 0 < self.intrinsicContentSize.width + 32.0 {
             button.fix(width: button.intrinsicContentSize.width + 32.0)
         }
-
         if let upperView = upperView {
             button.fix(top: (8.0, upperView), isRelative: true)
         } else {
-            button.fix(top: (8.0, self.view), isRelative: true)
+            button.fix(top: (8.0, self.view), isRelative: false)
+        }
+        button.fix(height: max(45.0, button.intrinsicContentSize.height + 16.0)).center(toX: self.view)
+
+        if let height = self.view.height {
+            height.constant += ((button.height?.constant ?? 0) + 8.0)
+        } else {
+            self.view.fix(height: (button.height?.constant ?? 0) + 16.0)
         }
 
-        button.fix(height: max(45.0, self.intrinsicContentSize.height + 16.0))
+        upperView = button
     }
 }

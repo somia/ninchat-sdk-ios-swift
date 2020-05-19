@@ -67,6 +67,7 @@ final class NINCoordinator: Coordinator {
     internal lazy var questionnaireViewController: NINQuestionnaireViewController = {
         let questionnaireViewController: NINQuestionnaireViewController = storyboard.instantiateViewController()
         questionnaireViewController.session = session
+        questionnaireViewController.pageNumber = 0
 
         return questionnaireViewController
     }()

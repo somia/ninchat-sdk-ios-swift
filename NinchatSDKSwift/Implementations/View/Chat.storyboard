@@ -492,39 +492,35 @@ you are next.</string>
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yKS-Eq-cuw">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="QL8-od-Rd0">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                                <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Npz-b6-Egr" customClass="QuestionnaireElementRadio" customModule="NinchatSDKSwift" customModuleProvider="target">
-                                        <rect key="frame" x="8" y="8" width="359" height="128"/>
-                                        <color key="backgroundColor" systemColor="systemPurpleColor" red="0.68627450980000004" green="0.32156862749999998" blue="0.87058823529999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="128" id="Bnj-Nn-URf"/>
-                                        </constraints>
-                                    </view>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="Npz-b6-Egr" firstAttribute="top" secondItem="yKS-Eq-cuw" secondAttribute="top" constant="8" id="7xY-qW-K3x"/>
-                                    <constraint firstItem="Npz-b6-Egr" firstAttribute="leading" secondItem="yKS-Eq-cuw" secondAttribute="leading" constant="8" id="Edb-8T-Ugt"/>
-                                    <constraint firstAttribute="trailing" secondItem="Npz-b6-Egr" secondAttribute="trailing" constant="8" id="aRO-2z-zJa"/>
-                                    <constraint firstAttribute="bottom" secondItem="Npz-b6-Egr" secondAttribute="bottom" constant="8" id="hLA-7C-zQo"/>
-                                </constraints>
-                            </scrollView>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell_view" id="0YP-AG-dNm">
+                                        <rect key="frame" x="0.0" y="28" width="375" height="43.5"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="0YP-AG-dNm" id="3eM-c0-xND">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="2fr-nW-Pce" id="Zpv-VI-3OR"/>
+                                </connections>
+                            </tableView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="rp7-qW-i5v" firstAttribute="bottom" secondItem="yKS-Eq-cuw" secondAttribute="bottom" id="Bqh-tT-kiq"/>
-                            <constraint firstItem="yKS-Eq-cuw" firstAttribute="height" relation="greaterThanOrEqual" secondItem="rp7-qW-i5v" secondAttribute="height" id="HRY-Om-zf4"/>
-                            <constraint firstItem="yKS-Eq-cuw" firstAttribute="leading" secondItem="rp7-qW-i5v" secondAttribute="leading" id="MGq-J9-1ZF"/>
-                            <constraint firstItem="rp7-qW-i5v" firstAttribute="trailing" secondItem="yKS-Eq-cuw" secondAttribute="trailing" id="bfh-2b-frc"/>
-                            <constraint firstItem="Npz-b6-Egr" firstAttribute="width" secondItem="rp7-qW-i5v" secondAttribute="width" multiplier="0.957333" id="hql-hA-xuf"/>
-                            <constraint firstItem="yKS-Eq-cuw" firstAttribute="top" secondItem="rp7-qW-i5v" secondAttribute="top" id="lrG-MU-kOI"/>
-                            <constraint firstItem="yKS-Eq-cuw" firstAttribute="width" secondItem="4SI-g6-pAy" secondAttribute="width" id="s9G-6r-MLK"/>
+                            <constraint firstItem="rp7-qW-i5v" firstAttribute="trailing" secondItem="QL8-od-Rd0" secondAttribute="trailing" id="7Uj-5C-Tm2"/>
+                            <constraint firstItem="QL8-od-Rd0" firstAttribute="top" secondItem="rp7-qW-i5v" secondAttribute="top" id="DyM-sl-pVA"/>
+                            <constraint firstItem="rp7-qW-i5v" firstAttribute="bottom" secondItem="QL8-od-Rd0" secondAttribute="bottom" id="Gu5-Ee-NUm"/>
+                            <constraint firstItem="QL8-od-Rd0" firstAttribute="leading" secondItem="rp7-qW-i5v" secondAttribute="leading" id="qVN-4H-nMO"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="rp7-qW-i5v"/>
                     </view>
                     <connections>
-                        <outlet property="radio" destination="Npz-b6-Egr" id="FfN-cy-Blk"/>
+                        <outlet property="contentView" destination="QL8-od-Rd0" id="H07-iI-9K5"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BXk-Sd-RqC" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
