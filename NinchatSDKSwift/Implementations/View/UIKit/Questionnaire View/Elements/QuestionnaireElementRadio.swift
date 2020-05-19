@@ -13,11 +13,11 @@ final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitleAndO
     var configuration: QuestionnaireConfiguration? {
         didSet {
             self.shapeView()
-//            self.shapeNavigationButtons()
+            self.shapeNavigationButtons()
             self.decorateView()
         }
     }
-    var onElementOptionFocused: ((ElementOption) -> Void)?
+    var onElementOptionTapped: ((ElementOption) -> Void)?
     var scaleToParent: Bool = true
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
@@ -82,29 +82,6 @@ final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitleAndO
     }
 }
 
-/// QuestionnaireElementHasButtons
-extension QuestionnaireElementHasButtons where Self:QuestionnaireElementRadio {
-    func shapeNavigationButtons() {
-        guard let configuration = self.configuration?.buttons, configuration.hasValidButtons else { return }
-        if configuration.hasValidBackButton {
-            let view = Button(frame: .zero) { [weak self] button in
-                button.isSelected = !button.isSelected
-                self?.onBackButtonTapped?(configuration)
-            }
-            self.shapeNavigationBack(button: view, configuration: configuration.next)
-            self.buttons.addSubview(view)
-        }
-        if configuration.hasValidNextButton {
-            let view = Button(frame: .zero) { [weak self] button in
-                button.isSelected = !button.isSelected
-                self?.onNextButtonTapped?(configuration)
-            }
-            self.shapeNavigationNext(button: view, configuration: configuration.back)
-            self.buttons.addSubview(view)
-        }
-    }
-}
-
 /// QuestionnaireElement
 extension QuestionnaireElement where Self:QuestionnaireElementRadio {
     func shapeView() {
@@ -131,7 +108,7 @@ extension QuestionnaireElement where Self:QuestionnaireElementRadio {
         let view = Button(frame: .zero) { [weak self] button in
             button.isSelected = !button.isSelected
             roundButton(button)
-            self?.onElementOptionFocused?(option)
+            self?.onElementOptionTapped?(option)
         }
         view.tag = tag
         view.setTitle(option.label, for: .normal)

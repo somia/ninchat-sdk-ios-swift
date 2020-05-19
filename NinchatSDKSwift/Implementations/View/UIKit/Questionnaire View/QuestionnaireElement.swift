@@ -29,12 +29,16 @@ protocol QuestionnaireElementWithTitleAndOptions: QuestionnaireElement {
     var title: UILabel { get }
     var view: UIView { get }
     var scaleToParent: Bool { get set }
-    var onElementOptionFocused: ((ElementOption) -> Void)? { get set }
+    var onElementOptionTapped: ((ElementOption) -> Void)? { get set }
 
     func addElementViews()
     func layoutElementViews()
 }
 extension QuestionnaireElementWithTitleAndOptions {
+    var height: CGFloat {
+        CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + CGFloat(4.0 * 8.0)
+    }
+
     func addElementViews() {
         /// Must be called in `view.awakeFromNib()` function
         self.addSubview(title)
@@ -53,10 +57,6 @@ extension QuestionnaireElementWithTitleAndOptions {
             .center(toX: self)
             .fix(width: self.width?.constant ?? self.bounds.width)
     }
-
-    var height: CGFloat {
-        CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + CGFloat(4.0 * 8.0)
-    }
 }
 
 /// Questionnaire buttons
@@ -66,32 +66,61 @@ protocol QuestionnaireElementHasButtons {
     var buttons: UIView { get }
 
     func addNavigationButtons()
-    func layoutNavigationButtons()
     func shapeNavigationButtons()
-    func shapeNavigationNext(button: UIButton, configuration: AnyCodable)
-    func shapeNavigationBack(button: UIButton, configuration: AnyCodable)
+    func layoutNavigationButtons()
 }
 extension QuestionnaireElementHasButtons where Self:QuestionnaireElementWithTitleAndOptions {
-    func addNavigationButtons() {
-        /// Must be called in `view.awakeFromNib()` function
-
-        self.addSubview(buttons)
-    }
-
-    func layoutNavigationButtons() {
-        view
-            .deactivate(constraints: [.bottom])
-        buttons
-            .fix(leading: (8.0, self), trailing: (8.0, self))
-            .fix(top: (0.0, self.view), isRelative: true)
-            .fix(bottom: (8.0, self))
-    }
-
     var height: CGFloat {
         CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + CGFloat(self.buttons.height?.constant ?? 0) + CGFloat(5.0 * 8.0)
     }
 
-    func shapeNavigationNext(button: UIButton, configuration: AnyCodable) {
+    func addNavigationButtons() {
+        /// Must be called in `view.awakeFromNib()` function
+        self.addSubview(buttons)
+    }
+
+    func layoutNavigationButtons() {
+        buttons
+            .fix(leading: (8.0, self), trailing: (8.0, self))
+            .fix(top: (0.0, self.view), isRelative: true)
+            .fix(height: 45.0)
+    }
+
+    func shapeNavigationButtons() {
+        guard let configuration = self.configuration?.buttons, configuration.hasValidButtons else { return }
+        if configuration.hasValidBackButton {
+            let button = Button(frame: .zero) { [weak self] button in
+                button.isSelected = !button.isSelected
+                self?.onBackButtonTapped?(configuration)
+            }
+            self.layoutButton(button, configuration: configuration, type: .back)
+        }
+        if configuration.hasValidNextButton {
+            let button = Button(frame: .zero) { [weak self] button in
+                button.isSelected = !button.isSelected
+                self?.onNextButtonTapped?(configuration)
+            }
+            self.layoutButton(button, configuration: configuration, type: .next)
+        }
+    }
+
+    private func layoutButton(_ button: UIButton, configuration: ButtonQuestionnaire, type: QuestionnaireButtonType) {
+        self.buttons.addSubview(button)
+
+        button.titleLabel?.font = .ninchat
+        button.imageEdgeInsets = UIEdgeInsets(top: 4.0, left: 4.0, bottom: 4.0, right: 4.0)
+        button
+                .fix(width: max(80.0, self.intrinsicContentSize.width + 32.0), height: 45.0)
+                .round(radius: 45.0 / 2, borderWidth: 1.0, borderColor: .QBlueButtonNormal)
+        if type == .back {
+            self.shapeNavigationBack(button: button, configuration: configuration.back)
+
+        } else if type == .next {
+            self.shapeNavigationNext(button: button, configuration: configuration.next)
+        }
+    }
+
+    private func shapeNavigationNext(button: UIButton, configuration: AnyCodable) {
         if let _ = configuration.value as? Bool {
             button.setTitle("", for: .normal)
             button.setImage(UIImage(named: "icon_select_next", in: .SDKBundle, compatibleWith: nil), for: .normal)
@@ -105,9 +134,12 @@ extension QuestionnaireElementHasButtons where Self:QuestionnaireElementWithTitl
             button.setTitleColor(.white, for: .selected)
             button.setBackgroundImage(UIColor.QBlueButtonHighlighted.toImage, for: .highlighted)
         }
+        button
+            .fix(trailing: (16.0, self.buttons))
+            .center(toY: self.buttons)
     }
 
-    func shapeNavigationBack(button: UIButton, configuration: AnyCodable) {
+    private func shapeNavigationBack(button: UIButton, configuration: AnyCodable) {
         if let _ = configuration.value as? Bool {
             button.setTitle("", for: .normal)
             button.setImage(UIImage(named: "icon_select_back", in: .SDKBundle, compatibleWith: nil), for: .normal)
@@ -121,5 +153,8 @@ extension QuestionnaireElementHasButtons where Self:QuestionnaireElementWithTitl
             button.setTitleColor(.QBlueButtonHighlighted, for: .selected)
             button.setBackgroundImage(nil, for: .selected)
         }
+        button
+            .fix(leading: (16.0, self.buttons))
+            .center(toY: self.buttons)
     }
 }
