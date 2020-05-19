@@ -13,7 +13,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
     var session: NINChatSession!
 
     // MARK: - Outlets
-
+/*
     @IBOutlet private(set) weak var ttl: QuestionnaireElementText! {
         didSet {
             ttl.delegate = self
@@ -88,7 +88,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
             }
         }
     }
-
+*/
     // MARK: - UIViewController life-cycle
 
     override func viewDidLoad() {
@@ -97,7 +97,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-
+/*
         if let audienceQuestionnaire = session.sessionManager.siteConfiguration.preAudienceQuestionnaire {
             if let configuration = audienceQuestionnaire.first {
                 nextButton.configuration = configuration
@@ -132,10 +132,12 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
             }
         }
         self.overrideAssets()
+ */
     }
 }
 
 extension NINQuestionnaireViewController {
+    /*
     private func overrideAssets() {
         btn.overrideAssets(with: self.session)
         checkbox.overrideAssets(with: self.session)
@@ -144,4 +146,5 @@ extension NINQuestionnaireViewController {
         inputArea.overrideAssets(with: self.session)
         select.overrideAssets(with: self.session)
     }
+ */
 }

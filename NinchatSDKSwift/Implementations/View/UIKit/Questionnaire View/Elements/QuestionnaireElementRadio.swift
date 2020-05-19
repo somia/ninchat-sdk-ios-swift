@@ -10,7 +10,7 @@ final class QuestionnaireElementRadio: UIButton, QuestionnaireElement {
 
     // MARK: - QuestionnaireElement
 
-    var configuration: ElementQuestionnaire? {
+    var configuration: QuestionnaireConfiguration? {
         didSet {
             self.shapeView()
         }

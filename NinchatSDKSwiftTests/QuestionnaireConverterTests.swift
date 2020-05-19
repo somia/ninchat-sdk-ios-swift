@@ -28,85 +28,111 @@ final class QuestionnaireConverterTests: XCTestCase {
     func test_01_converter_text() {
         let converter = QuestionnaireElementConverter(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
 
-        let elements = self.questionnaire_preAudience?.questionnaireConfiguration?.first?.elements?.filter({ $0.element == .text })
-        let views = converter.elements.first?.filter({ ($0 as? QuestionnaireElementText) != nil })
-        XCTAssertNotNil(elements)
-        XCTAssertNotNil(views)
-        XCTAssertEqual(elements?.count, views?.count)
+        if let elements = self.questionnaire_preAudience?.questionnaireConfiguration?.filter({ $0.type == .group }).filter({ $0.elements?.filter({ $0.element == .text }).count ?? 0 > 0 }), elements.count > 0 {
+            let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementText }) }).first(where: { $0.count > 0 })
+            XCTAssertNotNil(elements)
+            XCTAssertNotNil(views)
+            XCTAssertGreaterThanOrEqual(elements.count, views!.count)
 
-        let configuration = elements![0]
-        let view = views![0]
-        XCTAssertEqual(view.configuration, configuration)
+            let configuration = elements[0]
+            let view = views![0]
+            XCTAssertEqual(view.configuration, configuration)
+        }
+
+        if let element = self.questionnaire_preAudience?.questionnaireConfiguration?.filter({ $0.type != .group }).filter({ $0.element == .text }), element.count > 0 {
+            let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementText }) }).first(where: { $0.count > 0 })
+            XCTAssertNotNil(element)
+            XCTAssertNotNil(views)
+
+            let configuration = element[0]
+            let view = views![0]
+            XCTAssertEqual(view.configuration, configuration)
+        }
     }
 
     func test_02_converter_select() {
         let converter = QuestionnaireElementConverter(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
 
-        let elements = self.questionnaire_preAudience?.questionnaireConfiguration?.first?.elements?.filter({ $0.element == .select })
-        let views = converter.elements.first?.filter({ ($0 as? QuestionnaireElementSelect) != nil })
-        XCTAssertNotNil(elements)
-        XCTAssertNotNil(views)
-        XCTAssertEqual(elements?.count, views?.count)
+        if let elements = self.questionnaire_preAudience?.questionnaireConfiguration?.filter({ $0.type == .group }).filter({ $0.elements?.filter({ $0.element == .select }).count ?? 0 > 0 }), elements.count > 0 {
+            let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementSelect }) }).first(where: { $0.count > 0 })
+            XCTAssertNotNil(elements)
+            XCTAssertNotNil(views)
+            XCTAssertGreaterThanOrEqual(elements.count, views!.count)
+        }
 
-        let configuration = elements![0]
-        let view = views![0]
-        XCTAssertEqual(view.configuration, configuration)
+        if let element = self.questionnaire_preAudience?.questionnaireConfiguration?.filter({ $0.type != .group }).filter({ $0.element == .select }), element.count > 0 {
+            let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementSelect }) }).first(where: { $0.count > 0 })
+            XCTAssertNotNil(element)
+            XCTAssertNotNil(views)
+        }
     }
 
     func test_03_converter_radio() {
         let converter = QuestionnaireElementConverter(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
 
-        let elements = self.questionnaire_preAudience?.questionnaireConfiguration?.first?.elements?.filter({ $0.element == .radio })
-        let views = converter.elements.first?.filter({ ($0 as? QuestionnaireElementRadio) != nil })
-        XCTAssertNotNil(elements)
-        XCTAssertNotNil(views)
-        XCTAssertEqual(elements?.count, views?.count)
+        if let elements = self.questionnaire_preAudience?.questionnaireConfiguration?.filter({ $0.type == .group }).filter({ $0.elements?.filter({ $0.element == .radio }).count ?? 0 > 0 }), elements.count > 0 {
+            let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementRadio }) }).first(where: { $0.count > 0 })
+            XCTAssertNotNil(elements)
+            XCTAssertNotNil(views)
+            XCTAssertGreaterThanOrEqual(elements.count, views!.count)
+        }
 
-        let configuration = elements![0]
-        let view = views![0]
-        XCTAssertEqual(view.configuration, configuration)
+        if let element = self.questionnaire_preAudience?.questionnaireConfiguration?.filter({ $0.type != .group }).filter({ $0.element == .radio }), element.count > 0 {
+            let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementRadio }) }).first(where: { $0.count > 0 })
+            XCTAssertNotNil(element)
+            XCTAssertNotNil(views)
+        }
     }
 
     func test_04_converter_textArea() {
         let converter = QuestionnaireElementConverter(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
 
-        let elements = self.questionnaire_preAudience?.questionnaireConfiguration?.first?.elements?.filter({ $0.element == .textarea })
-        let views = converter.elements.first?.filter({ ($0 as? QuestionnaireElementTextArea) != nil })
-        XCTAssertNotNil(elements)
-        XCTAssertNotNil(views)
-        XCTAssertEqual(elements?.count, views?.count)
+        if let elements = self.questionnaire_preAudience?.questionnaireConfiguration?.filter({ $0.type == .group }).filter({ $0.elements?.filter({ $0.element == .textarea }).count ?? 0 > 0 }), elements.count > 0 {
+            let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementTextArea }) }).first(where: { $0.count > 0 })
+            XCTAssertNotNil(elements)
+            XCTAssertNotNil(views)
+            XCTAssertGreaterThanOrEqual(elements.count, views!.count)
+        }
 
-        let configuration = elements![0]
-        let view = views![0]
-        XCTAssertEqual(view.configuration, configuration)
+        if let element = self.questionnaire_preAudience?.questionnaireConfiguration?.filter({ $0.type != .group }).filter({ $0.element == .textarea }), element.count > 0 {
+            let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementTextArea }) }).first(where: { $0.count > 0 })
+            XCTAssertNotNil(element)
+            XCTAssertNotNil(views)
+        }
     }
 
     func test_05_converter_textField() {
         let converter = QuestionnaireElementConverter(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
 
-        let elements = self.questionnaire_preAudience?.questionnaireConfiguration?.first?.elements?.filter({ $0.element == .input && $0.type == .text })
-        let views = converter.elements.first?.filter({ ($0 as? QuestionnaireElementTextField) != nil })
-        XCTAssertNotNil(elements)
-        XCTAssertNotNil(views)
-        XCTAssertEqual(elements?.count, views?.count)
+        if let elements = self.questionnaire_preAudience?.questionnaireConfiguration?.filter({ $0.elements?.filter({ $0.element == .input && $0.type == .text }).count ?? 0 > 0 }), elements.count > 0 {
+            let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementTextField }) }).first(where: { $0.count > 0 })
+            XCTAssertNotNil(elements)
+            XCTAssertNotNil(views)
+            XCTAssertGreaterThanOrEqual(elements.count, views!.count)
+        }
 
-        let configuration = elements![0]
-        let view = views![0]
-        XCTAssertEqual(view.configuration, configuration)
+        if let element = self.questionnaire_preAudience?.questionnaireConfiguration?.filter({ $0.element == .input }), element.count > 0 {
+            let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementTextField }) }).first(where: { $0.count > 0 })
+            XCTAssertNotNil(element)
+            XCTAssertNotNil(views)
+        }
     }
 
     func test_06_converter_checkbox() {
         let converter = QuestionnaireElementConverter(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
 
-        let elements = self.questionnaire_preAudience?.questionnaireConfiguration?.first?.elements?.filter({ $0.element == .checkbox })
-        let views = converter.elements.first?.filter({ ($0 as? QuestionnaireElementCheckbox) != nil })
-        XCTAssertNotNil(elements)
-        XCTAssertNotNil(views)
-        XCTAssertEqual(elements?.count, views?.count)
+        if let elements = self.questionnaire_preAudience?.questionnaireConfiguration?.filter({ $0.elements?.filter({ $0.element == .checkbox }).count ?? 0 > 0 }), elements.count > 0 {
+            let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementCheckbox }) }).first(where: { $0.count > 0 })
+            XCTAssertNotNil(elements)
+            XCTAssertNotNil(views)
+            XCTAssertGreaterThanOrEqual(elements.count, views!.count)
+        }
 
-        let configuration = elements![0]
-        let view = views![0]
-        XCTAssertEqual(view.configuration, configuration)
+        if let element = self.questionnaire_preAudience?.questionnaireConfiguration?.filter({ $0.element == .checkbox }), element.count > 0 {
+            let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementCheckbox }) }).first(where: { $0.count > 0 })
+            XCTAssertNotNil(element)
+            XCTAssertNotNil(views)
+        }
     }
 }
 
