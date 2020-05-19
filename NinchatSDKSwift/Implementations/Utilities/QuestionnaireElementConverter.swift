@@ -18,40 +18,41 @@ struct QuestionnaireElementConverter {
 
     var elements: [[QuestionnaireElement]] {
         self.configurations.compactMap { configuration in
-            configuration.elements?.compactMap { element -> QuestionnaireElement? in
-                switch element.element {
+            func getView(from element: ElementType) -> QuestionnaireElement? {
+                switch element {
                 case .text:
-                    let element: QuestionnaireElementText = generate(from: element)
-                    return element
+                    return generate(from: configuration, ofType: QuestionnaireElementText.self)
                 case .select:
-                    let element: QuestionnaireElementSelect = generate(from: element)
-                    return element
+                    return generate(from: configuration, ofType: QuestionnaireElementSelect.self)
                 case .radio:
-                    let element: QuestionnaireElementRadio = generate(from: element)
-                    return element
+                    return generate(from: configuration, ofType: QuestionnaireElementRadio.self)
                 case .textarea:
-                    let element: QuestionnaireElementTextArea = generate(from: element)
-                    return element
+                    return generate(from: configuration, ofType: QuestionnaireElementTextArea.self)
                 case .checkbox:
-                    let element: QuestionnaireElementCheckbox = generate(from: element)
-                    return element
+                    return generate(from: configuration, ofType: QuestionnaireElementCheckbox.self)
                 case .input:
-                    if element.type == .text {
-                        let element: QuestionnaireElementTextField = generate(from: element)
-                        return element
-                    }
-                    return nil
+                    return generate(from: configuration, ofType: QuestionnaireElementTextField.self)
                 case .likert:
                     #warning("No view is defined yet!")
                     return nil
                 }
+            }
+
+            if let element = configuration.element, let view = getView(from: element) {
+                return [view]
+            }
+            return configuration.elements?.compactMap { element -> QuestionnaireElement? in
+                if let element = element.element {
+                    return getView(from: element)
+                }
+                return nil
             }
         }
     }
 }
 
 extension QuestionnaireElementConverter {
-    func generate<T: QuestionnaireElement>(from configuration: ElementQuestionnaire) -> T {
+    func generate<T: QuestionnaireElement>(from configuration: QuestionnaireConfiguration, ofType: T.Type) -> T {
         let element = T(frame: .zero)
         element.configuration = configuration
         return element

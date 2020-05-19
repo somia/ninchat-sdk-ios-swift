@@ -16,7 +16,7 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElement {
 
     // MARK: - QuestionnaireElement
 
-    var configuration: ElementQuestionnaire? {
+    var configuration: QuestionnaireConfiguration? {
         didSet {
             self.shapeView()
         }

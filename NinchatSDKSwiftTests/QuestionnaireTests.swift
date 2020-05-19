@@ -24,7 +24,7 @@ final class QuestionnaireTests: XCTestCase {
 
     func test_00_openFile() {
         XCTAssertNotNil(questionnaire_raw)
-        XCTAssertTrue(questionnaire_raw?["preAudienceQuestionnaire"] is Array<[String:AnyHashable]>)
+        XCTAssertTrue(questionnaire_raw?["preAudienceQuestionnaire"] is Array<[String: AnyHashable]>)
     }
 
     func test_01_parseConfiguration() {
@@ -33,55 +33,72 @@ final class QuestionnaireTests: XCTestCase {
         XCTAssertGreaterThan(self.questionnaire_preAudience!.questionnaireConfiguration!.count, 0)
     }
 
-    func test_10_parseConfiguration_elements() {
-        if let questionnaireItem = self.questionnaire_preAudience?.questionnaireConfiguration?.first(where: { $0.name == "Start" }) {
-            XCTAssertNotNil(questionnaireItem.elements)
-            XCTAssertGreaterThan(questionnaireItem.elements!.count, 0)
+    func test_02_equableConfiguration() {
+        let configuration = self.questionnaire_preAudience!.questionnaireConfiguration?.first(where: { $0.name == "Aiheet" })
+        let elements = self.questionnaire_preAudience!.questionnaireConfiguration?.first(where: { $0.name == "Aiheet" })?.elements
+        XCTAssertTrue(configuration?.elements == elements)
+    }
 
-            if let elementRadio = questionnaireItem.elements!.first(where: { $0.name == "language" }) {
-                XCTAssertNotNil(elementRadio.options)
-                XCTAssertGreaterThan(elementRadio.options!.count, 0)
-
-                XCTAssertNotNil(elementRadio.redirects)
-                XCTAssertGreaterThan(elementRadio.redirects!.count, 0)
-            } else {
-                XCTFail("Failed to get ´radio´ questionnaire elements")
-            }
-
-            if let elementInput = questionnaireItem.elements?.first(where: { $0.name == "Phone"} ) {
-                XCTAssertEqual(elementInput.element, .input)
-                XCTAssertEqual(elementInput.type, .text)
-                XCTAssertNotNil(elementInput.pattern)
-                XCTAssertFalse(elementInput.required ?? true)
-            } else {
-                XCTFail("Failed to get ´input´ questionnaire elements")
-            }
+    func test_10_parseConfiguration_element() {
+        if let questionnaireItem = self.questionnaire_preAudience?.questionnaireConfiguration?.first(where: { $0.name == "Aiheet" }) {
+            XCTAssertNil(questionnaireItem.elements)
+            XCTAssertNotNil(questionnaireItem.options)
+            XCTAssertNotNil(questionnaireItem.buttons)
+            XCTAssertNotNil(questionnaireItem.redirects)
         } else {
-            XCTFail("Failed to get ´start´ questionnaire item")
+            XCTFail("Failed to get ´Aiheet´ questionnaire item")
         }
     }
 
-    func test_11_parseConfiguration_logics() {
-        if let questionnaireItem = self.questionnaire_preAudience?.questionnaireConfiguration?.first(where: { $0.name == "Logic-language1" }) {
+    func test_11_parseConfiguration_elements() {
+        if let questionnaireItem = self.questionnaire_preAudience?.questionnaireConfiguration?.first(where: { $0.name == "Koronavirus" }) {
+            XCTAssertNotNil(questionnaireItem.elements)
+            XCTAssertNil(questionnaireItem.options)
+            XCTAssertNotNil(questionnaireItem.buttons)
+            XCTAssertNil(questionnaireItem.redirects)
+            XCTAssertEqual(questionnaireItem.type, .group)
+
+            if let textElement = questionnaireItem.elements?.first(where: { $0.element == .text }) {
+                XCTAssertNotNil(textElement.name)
+                XCTAssertNotNil(textElement.label)
+                XCTAssertNil(textElement.redirects)
+                XCTAssertNil(textElement.elements)
+            } else {
+                XCTFail("Failed to get ´Koronavirus´ text elements")
+            }
+
+            if let radioElement = questionnaireItem.elements?.first(where: { $0.element == .radio }) {
+                XCTAssertNotNil(radioElement.name)
+                XCTAssertNotNil(radioElement.label)
+                XCTAssertNotNil(radioElement.options)
+                XCTAssertTrue(radioElement.required ?? false)
+            } else {
+                XCTFail("Failed to get ´Koronavirus´ radio elements")
+            }
+        } else {
+            XCTFail("Failed to get ´Koronavirus´ questionnaire item")
+        }
+    }
+
+    func test_12_parseConfiguration_logic() {
+        if let questionnaireItem = self.questionnaire_preAudience?.questionnaireConfiguration?.first(where: { $0.name == "Koronavirus-Logic1" }) {
             XCTAssertNotNil(questionnaireItem.logic)
             XCTAssertNotNil(questionnaireItem.logic?.and)
-            XCTAssertFalse(questionnaireItem.logic?.satisfy(["language"]) ?? true)
-
+            XCTAssertFalse(questionnaireItem.logic?.satisfy(["Koronavirus-jatko"]) ?? true)
         } else {
-            XCTFail("Failed to get ´Logic-language1´ questionnaire item")
+            XCTFail("Failed to get ´Koronavirus-Logic1´ questionnaire item")
         }
 
-        if let questionnaireItem = self.questionnaire_preAudience?.questionnaireConfiguration?.first(where: { $0.name == "Logic-language2" }) {
+        if let questionnaireItem = self.questionnaire_preAudience?.questionnaireConfiguration?.first(where: { $0.name == "Koronavirus-Logic2" }) {
             XCTAssertNotNil(questionnaireItem.logic)
             XCTAssertNotNil(questionnaireItem.logic?.or)
-            XCTAssertTrue(questionnaireItem.logic?.satisfy(["language"]) ?? false)
-
+            XCTAssertTrue(questionnaireItem.logic?.satisfy(["Koronavirus-jatko"]) ?? false)
         } else {
-            XCTFail("Failed to get ´Logic-language2´ questionnaire item")
+            XCTFail("Failed to get ´Koronavirus-Logic2´ questionnaire item")
         }
     }
 
-    func test_12_parseConfiguration_regex() {
+    func test_13_parseConfiguration_regex() {
         if let questionnaireItem = self.questionnaire_preAudience?.questionnaireConfiguration?.first(where: { $0.name == "Start" }), let input = questionnaireItem.elements?.first(where: { $0.element == .input }) {
             XCTAssertNotNil(input.pattern)
 

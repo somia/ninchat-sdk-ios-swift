@@ -10,7 +10,7 @@ final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle {
 
     // MARK: - QuestionnaireElement
 
-    var configuration: ElementQuestionnaire? {
+    var configuration: QuestionnaireConfiguration? {
         didSet {
             self.shapeView()
             self.deactivate(constraints: [.height])
