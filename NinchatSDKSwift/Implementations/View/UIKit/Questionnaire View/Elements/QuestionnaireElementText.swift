@@ -10,7 +10,7 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
 
     // MARK: - QuestionnaireElement
 
-    var configuration: ElementQuestionnaire? {
+    var configuration: QuestionnaireConfiguration? {
         didSet {
             self.shapeView()
         }

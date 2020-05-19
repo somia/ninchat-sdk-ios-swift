@@ -10,7 +10,7 @@ final class QuestionnaireElementCheckbox: UIButton, QuestionnaireElement {
 
     // MARK: - QuestionnaireElement
 
-    var configuration: ElementQuestionnaire? {
+    var configuration: QuestionnaireConfiguration? {
         didSet {
             self.shapeView()
         }
@@ -81,8 +81,9 @@ extension QuestionnaireElement where Self:QuestionnaireElementCheckbox {
         self.titleLabel?.textAlignment = .left
         self.titleLabel?.lineBreakMode = .byWordWrapping
 
+        guard let checkboxConfiguration = configuration?.elements?.filter({ $0.element == .checkbox }).first else { fatalError("No `Checkbox` configuration found") }
         guard self.tag != -1 else { fatalError("`Checkbox` types need to have tag as the indicator index") }
-        guard let options = self.configuration?.options, options.count > self.tag else { fatalError("There are not any defined options for given index: \(self.tag)") }
+        guard let options = checkboxConfiguration.options, options.count > self.tag else { fatalError("There are not any defined options for given index: \(self.tag)") }
         self.setTitle(options[self.tag].label, for: .normal)
         self.setTitleColor(.QGrayButton, for: .normal)
         self.setTitle(options[self.tag].label, for: .selected)
