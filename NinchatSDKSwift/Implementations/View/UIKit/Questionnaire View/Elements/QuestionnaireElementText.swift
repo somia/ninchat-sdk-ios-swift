@@ -15,12 +15,6 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
             self.shapeView()
         }
     }
-    var onElementFocused: ((QuestionnaireElement) -> ())? {
-        didSet { fatalError("The closure won't be called on this type") }
-    }
-    var onElementDismissed: ((QuestionnaireElement) -> Void)? {
-        didSet { fatalError("The closure won't be called on this type") }
-    }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         #warning("Override assets")

@@ -109,7 +109,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
 
         if let audienceQuestionnaire = session.sessionManager.siteConfiguration.preAudienceQuestionnaire {
             if let configurations = audienceQuestionnaire.map({ $0.elements?.filter({ $0.element == .radio }) }).first {
-                radio.configuration = configurations?[0]
+                /// Set configuration for UI component
             }
         }
         /*
