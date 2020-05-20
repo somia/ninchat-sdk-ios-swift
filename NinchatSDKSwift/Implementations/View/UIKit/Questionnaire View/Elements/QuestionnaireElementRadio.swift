@@ -6,19 +6,25 @@
 
 import UIKit
 
-final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitleAndOptions, QuestionnaireElementHasButtons {
+final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithNavigationButtons {
 
     // MARK: - QuestionnaireElement
 
+    var index: Int = 0
+    var scaleToParent: Bool = true
     var configuration: QuestionnaireConfiguration? {
         didSet {
-            self.shapeView()
-            self.shapeNavigationButtons()
+            if let elements = configuration?.elements {
+                self.shapeView(elements[index])
+            } else {
+                self.shapeView(configuration)
+            }
+
+            self.shapeNavigationButtons(configuration)
             self.decorateView()
         }
     }
     var onElementOptionTapped: ((ElementOption) -> Void)?
-    var scaleToParent: Bool = true
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         self.subviews.compactMap({ $0 as? Button }).forEach({ $0.overrideAssets(with: delegate, isPrimary: isPrimary) })
@@ -84,17 +90,17 @@ final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitleAndO
 
 /// QuestionnaireElement
 extension QuestionnaireElement where Self:QuestionnaireElementRadio {
-    func shapeView() {
+    func shapeView(_ configuration: QuestionnaireConfiguration?) {
         self.title.font = .ninchat
         self.title.numberOfLines = 0
         self.title.textAlignment = .left
         self.title.lineBreakMode = .byWordWrapping
-        self.title.text = self.configuration?.label
+        self.title.text = configuration?.label
 
         guard self.view.subviews.count == 0 else { return }
         var upperView: UIView?
-        self.configuration?.options?.forEach { [unowned self] option in
-            let button = self.generateButton(for: option, tag: (self.configuration?.options?.firstIndex(of: option))!)
+        configuration?.options?.forEach { [unowned self] option in
+            let button = self.generateButton(for: option, tag: (configuration?.options?.firstIndex(of: option))!)
             self.layoutButton(button, upperView: &upperView)
             button.updateTitleScale()
         }

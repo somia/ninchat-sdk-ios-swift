@@ -8,11 +8,12 @@ import UIKit
 import AnyCodable
 
 protocol QuestionnaireElement: UIView {
-    var configuration: QuestionnaireConfiguration? { get set }
+    var index: Int { get set }
     var height: CGFloat { get }
+    var configuration: QuestionnaireConfiguration? { get set }
 
+    func shapeView(_ configuration: QuestionnaireConfiguration?)
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool)
-    func shapeView()
 }
 extension QuestionnaireElement {
     var height: CGFloat { 0 }
@@ -25,7 +26,7 @@ extension QuestionnaireElement {
 /// Questionnaire element with
 ///     - title
 ///     - options
-protocol QuestionnaireElementWithTitleAndOptions: QuestionnaireElement {
+protocol QuestionnaireElementWithTitle: QuestionnaireElement {
     var title: UILabel { get }
     var view: UIView { get }
     var scaleToParent: Bool { get set }
@@ -34,7 +35,7 @@ protocol QuestionnaireElementWithTitleAndOptions: QuestionnaireElement {
     func addElementViews()
     func layoutElementViews()
 }
-extension QuestionnaireElementWithTitleAndOptions {
+extension QuestionnaireElementWithTitle {
     var height: CGFloat {
         CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + CGFloat(4.0 * 8.0)
     }
@@ -60,16 +61,16 @@ extension QuestionnaireElementWithTitleAndOptions {
 }
 
 /// Questionnaire buttons
-protocol QuestionnaireElementHasButtons {
+protocol QuestionnaireElementWithNavigationButtons: QuestionnaireElementWithTitle {
+    var buttons: UIView { get }
     var onNextButtonTapped: ((ButtonQuestionnaire) -> Void)? { get set }
     var onBackButtonTapped: ((ButtonQuestionnaire) -> Void)? { get set }
-    var buttons: UIView { get }
 
     func addNavigationButtons()
-    func shapeNavigationButtons()
+    func shapeNavigationButtons(_ configuration: QuestionnaireConfiguration?)
     func layoutNavigationButtons()
 }
-extension QuestionnaireElementHasButtons where Self:QuestionnaireElementWithTitleAndOptions {
+extension QuestionnaireElementWithNavigationButtons {
     var height: CGFloat {
         CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + CGFloat(self.buttons.height?.constant ?? 0) + CGFloat(5.0 * 8.0)
     }
@@ -86,8 +87,8 @@ extension QuestionnaireElementHasButtons where Self:QuestionnaireElementWithTitl
             .fix(height: 45.0)
     }
 
-    func shapeNavigationButtons() {
-        guard let configuration = self.configuration?.buttons, configuration.hasValidButtons else { return }
+    func shapeNavigationButtons(_ configuration: QuestionnaireConfiguration?) {
+        guard let configuration = configuration?.buttons, configuration.hasValidButtons else { return }
         if configuration.hasValidBackButton {
             let button = Button(frame: .zero) { [weak self] button in
                 button.isSelected = !button.isSelected
@@ -129,11 +130,12 @@ extension QuestionnaireElementHasButtons where Self:QuestionnaireElementWithTitl
         } else if let title = configuration.value as? String {
             button.setTitle(title, for: .normal)
             button.setTitleColor(.white, for: .normal)
-            button.setBackgroundImage(UIColor.QBlueButtonNormal.toImage, for: .normal)
             button.setTitle(title, for: .selected)
             button.setTitleColor(.white, for: .selected)
-            button.setBackgroundImage(UIColor.QBlueButtonHighlighted.toImage, for: .highlighted)
         }
+
+        button.setBackgroundImage(UIColor.QBlueButtonNormal.toImage, for: .normal)
+        button.setBackgroundImage(UIColor.QBlueButtonHighlighted.toImage, for: .highlighted)
         button
             .fix(trailing: (16.0, self.buttons))
             .center(toY: self.buttons)
@@ -148,11 +150,11 @@ extension QuestionnaireElementHasButtons where Self:QuestionnaireElementWithTitl
         } else if let title = configuration.value as? String {
             button.setTitle(title, for: .normal)
             button.setTitleColor(.QBlueButtonNormal, for: .normal)
-            button.setBackgroundImage(nil, for: .normal)
             button.setTitle(title, for: .selected)
             button.setTitleColor(.QBlueButtonHighlighted, for: .selected)
-            button.setBackgroundImage(nil, for: .selected)
         }
+        button.setBackgroundImage(nil, for: .normal)
+        button.setBackgroundImage(nil, for: .selected)
         button
             .fix(leading: (16.0, self.buttons))
             .center(toY: self.buttons)

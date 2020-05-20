@@ -10,9 +10,10 @@ final class QuestionnaireElementCheckbox: UIButton, QuestionnaireElement {
 
     // MARK: - QuestionnaireElement
 
+    var index: Int = 0
     var configuration: QuestionnaireConfiguration? {
         didSet {
-            self.shapeView()
+            self.shapeView(configuration)
         }
     }
     var onElementFocused: ((QuestionnaireElement) -> ())?
@@ -35,7 +36,7 @@ final class QuestionnaireElementCheckbox: UIButton, QuestionnaireElement {
 
     override var isSelected: Bool {
         didSet {
-            self.shapeView()
+            self.shapeView(self.configuration)
         }
     }
 
@@ -72,7 +73,7 @@ final class QuestionnaireElementCheckbox: UIButton, QuestionnaireElement {
 }
 
 extension QuestionnaireElement where Self:QuestionnaireElementCheckbox {
-    func shapeView() {
+    func shapeView(_ configuration: QuestionnaireConfiguration?) {
         self.backgroundColor = .clear
         self.titleLabel?.font = .ninchat
         self.titleLabel?.numberOfLines = 0

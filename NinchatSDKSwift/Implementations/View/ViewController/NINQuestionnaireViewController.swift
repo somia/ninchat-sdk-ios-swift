@@ -25,16 +25,16 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
     // MARK: - Injected
 
     var pageNumber: Int!
+    var finishQuestionnaire: (() -> Void)?
 
-    // MARK: - Outlets
+    // MARK: - SubViews
 
-    @IBOutlet private(set) weak var contentView: UITableView! {
+    private var contentView: UITableView! {
         didSet {
-            contentView.separatorStyle = .none
-            contentView.allowsSelection = false
-
-            contentView.delegate = self
-            contentView.dataSource = self
+            self.view.addSubview(contentView)
+            contentView
+                    .fix(top: (0, self.view), bottom: (0, self.view), toSafeArea: true)
+                    .fix(leading: (0, self.view), trailing: (0, self.view))
         }
     }
 
@@ -42,10 +42,8 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-    }
 
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+        contentView = generateTableView(isHidden: false)
     }
 
     private func layoutSubview(_ view: UIView, parent: UIView) {
@@ -56,6 +54,31 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
             .fix(leading: (0.0, parent), trailing: (0.0, parent))
         view.leading?.priority = .required
         view.trailing?.priority = .required
+    }
+
+    private func updateLayout() {
+        contentView?.hide(true, andCompletion: { [weak self] in
+            DispatchQueue.main.async {
+                self?.contentView?.removeFromSuperview()
+                self?.contentView = self?.generateTableView(isHidden: true)
+                self?.contentView?.hide(false)
+            }
+        })
+    }
+}
+
+extension NINQuestionnaireViewController {
+    private func generateTableView(isHidden: Bool) -> UITableView {
+        let view = UITableView(frame: .zero)
+        view.register(QuestionnaireCell.self)
+
+        view.separatorStyle = .none
+        view.allowsSelection = false
+        view.alpha = isHidden ? 0.0 : 1.0
+        view.delegate = self
+        view.dataSource = self
+
+        return view
     }
 }
 
@@ -69,11 +92,18 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
         let view = self.elements[indexPath.row]
         view.overrideAssets(with: self.session, isPrimary: false)
-
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell_view")!
-        self.layoutSubview(view, parent: cell.contentView)
+        (view as? QuestionnaireElementWithNavigationButtons)?.onNextButtonTapped = { [weak self] questionnaire in
+            self?.pageNumber += 1
+            self?.updateLayout()
+        }
+        (view as? QuestionnaireElementWithNavigationButtons)?.onBackButtonTapped = { [weak self] questionnaire in
+            self?.pageNumber -= 1
+            self?.updateLayout()
+        }
+        self.layoutSubview(view, parent: cell.content)
 
         return cell
     }

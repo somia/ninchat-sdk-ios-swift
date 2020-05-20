@@ -10,15 +10,16 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElement {
 
     var isCompleted: Bool! = false {
         didSet {
-            self.shapeView()
+            self.shapeView(configuration)
         }
     }
 
     // MARK: - QuestionnaireElement
 
+    var index: Int = 0
     var configuration: QuestionnaireConfiguration? {
         didSet {
-            self.shapeView()
+            self.shapeView(configuration)
         }
     }
     var onElementFocused: ((QuestionnaireElement) -> Void)?
@@ -77,7 +78,7 @@ extension QuestionnaireElementTextArea: UITextViewDelegate {
 }
 
 extension QuestionnaireElement where Self:QuestionnaireElementTextArea {
-    func shapeView() {
+    func shapeView(_ configuration: QuestionnaireConfiguration?) {
         self.title.text = self.configuration?.label
         self.title.textAlignment = .left
         self.title.font = .ninchat
