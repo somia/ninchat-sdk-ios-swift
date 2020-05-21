@@ -8,143 +8,103 @@ import UIKit
 
 final class NINQuestionnaireViewController: UIViewController, ViewController {
 
+    private var elements: [QuestionnaireElement] {
+        if let audienceQuestionnaire = session.sessionManager.siteConfiguration.preAudienceQuestionnaire {
+            let views = QuestionnaireElementConverter(configurations: audienceQuestionnaire).elements
+            guard views.count > self.pageNumber else { fatalError("Invalid number of questionnaires") }
+
+            return views[self.pageNumber]
+        }
+        return []
+    }
+
     // MARK: - ViewController
 
     var session: NINChatSession!
 
-    // MARK: - Outlets
-/*
-    @IBOutlet private(set) weak var ttl: QuestionnaireElementText! {
+    // MARK: - Injected
+
+    var pageNumber: Int!
+    var finishQuestionnaire: (() -> Void)?
+
+    // MARK: - SubViews
+
+    private var contentView: UITableView! {
         didSet {
-            ttl.delegate = self
+            self.view.addSubview(contentView)
+            contentView
+                    .fix(top: (0, self.view), bottom: (0, self.view), toSafeArea: true)
+                    .fix(leading: (0, self.view), trailing: (0, self.view))
         }
     }
-    @IBOutlet private(set) weak var btn: QuestionnaireElementRadio! {
-        didSet {
-            btn.onElementFocused = { element in
-                print(element.self)
-            }
-        }
-    }
-    @IBOutlet private(set) weak var checkbox: QuestionnaireElementCheckbox! {
-        didSet {
-            checkbox.tag = 0
-            checkbox.onElementFocused = { element in
-                print(element.self)
-            }
-        }
-    }
-    @IBOutlet private(set) weak var checkbox2: QuestionnaireElementCheckbox! {
-        didSet {
-            checkbox2.tag = 1
-            checkbox2.onElementFocused = { element in
-                print(element.self)
-            }
-        }
-    }
-    @IBOutlet private(set) weak var input: QuestionnaireElementTextField! {
-        didSet {
-            input.onElementFocused = { element in
-                print("\(element.self) Focused")
-            }
-            input.onElementDismissed = { element in
-                print("\(element.self) Dismissed")
-            }
-        }
-    }
-    @IBOutlet private(set) weak var inputArea: QuestionnaireElementTextArea! {
-        didSet {
-            inputArea.onElementFocused = { element in
-                print("\(element.self) Focused")
-            }
-            inputArea.onElementDismissed = { element in
-                print("\(element.self) Dismissed")
-            }
-        }
-    }
-    @IBOutlet private(set) weak var select: QuestionnaireElementSelect! {
-        didSet {
-            select.onElementFocused = { element in
-                print(element.self)
-            }
-            select.onOptionSelected = { option in
-                print("\(option.label): \(option.value)")
-            }
-        }
-    }
-    @IBOutlet private(set) weak var nextButton: QuestionnaireButton! {
-        didSet {
-            nextButton.type = .next
-            nextButton.closure = { button in
-                print("On next: \(button)")
-            }
-        }
-    }
-    @IBOutlet private(set) weak var backButton: QuestionnaireButton! {
-        didSet {
-            backButton.type = .back
-            backButton.closure = { button in
-                print("On back: \(button)")
-            }
-        }
-    }
-*/
+
     // MARK: - UIViewController life-cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        contentView = generateTableView(isHidden: false)
     }
 
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-/*
-        if let audienceQuestionnaire = session.sessionManager.siteConfiguration.preAudienceQuestionnaire {
-            if let configuration = audienceQuestionnaire.first {
-                nextButton.configuration = configuration
-                backButton.configuration = configuration
-            }
-            if let configuration = audienceQuestionnaire.map({ $0.elements?.filter({ $0.element == .text }) }).first {
-                ttl.configuration = configuration?[0]
-            }
-            if let configurations = audienceQuestionnaire.map({ $0.elements?.filter({ $0.element == .radio }) }).first {
-                btn.configuration = configurations?[0]
-                btn
-                    .deactivate(constraints: [.width])
-                    .fix(width: self.view.bounds.width - 16.0)
-            }
-            if let configurations = audienceQuestionnaire.map({ $0.elements?.filter({ $0.element == .checkbox }) }).first {
-                checkbox.configuration = configurations?[0]
-                checkbox2.configuration = configurations?[0]
+    private func layoutSubview(_ view: UIView, parent: UIView) {
+        parent.addSubview(view)
 
-                checkbox
-                        .fix(leading: (16.0, self.view))
-                checkbox2
-                        .fix(leading: (16.0, self.view))
+        view
+            .fix(top: (0.0, parent), bottom: (0.0, parent))
+            .fix(leading: (0.0, parent), trailing: (0.0, parent))
+        view.leading?.priority = .required
+        view.trailing?.priority = .required
+    }
+
+    private func updateLayout() {
+        contentView?.hide(true, andCompletion: { [weak self] in
+            DispatchQueue.main.async {
+                self?.contentView?.removeFromSuperview()
+                self?.contentView = self?.generateTableView(isHidden: true)
+                self?.contentView?.hide(false)
             }
-            if let configurations = audienceQuestionnaire.map({ $0.elements?.filter({ $0.element == .input && $0.type == .text }) }).first {
-                input.configuration = configurations?[0]
-            }
-            if let configurations = audienceQuestionnaire.map({ $0.elements?.filter({ $0.element == .textarea }) }).first {
-                inputArea.configuration = configurations?[0]
-            }
-            if let configurations = audienceQuestionnaire.map({ $0.elements?.filter({ $0.element == .select }) }).first {
-                select.configuration = configurations?[0]
-            }
-        }
-        self.overrideAssets()
- */
+        })
     }
 }
 
 extension NINQuestionnaireViewController {
-    /*
-    private func overrideAssets() {
-        btn.overrideAssets(with: self.session)
-        checkbox.overrideAssets(with: self.session)
-        checkbox2.overrideAssets(with: self.session)
-        input.overrideAssets(with: self.session)
-        inputArea.overrideAssets(with: self.session)
-        select.overrideAssets(with: self.session)
+    private func generateTableView(isHidden: Bool) -> UITableView {
+        let view = UITableView(frame: .zero)
+        view.register(QuestionnaireCell.self)
+
+        view.separatorStyle = .none
+        view.allowsSelection = false
+        view.alpha = isHidden ? 0.0 : 1.0
+        view.delegate = self
+        view.dataSource = self
+
+        return view
     }
- */
+}
+
+extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        self.elements[indexPath.row].height
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        elements.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
+        let view = self.elements[indexPath.row]
+        view.overrideAssets(with: self.session, isPrimary: false)
+        (view as? QuestionnaireElementWithNavigationButtons)?.onNextButtonTapped = { [weak self] questionnaire in
+            self?.pageNumber += 1
+            self?.updateLayout()
+        }
+        (view as? QuestionnaireElementWithNavigationButtons)?.onBackButtonTapped = { [weak self] questionnaire in
+            self?.pageNumber -= 1
+            self?.updateLayout()
+        }
+        self.layoutSubview(view, parent: cell.content)
+
+        return cell
+    }
 }

@@ -6,78 +6,147 @@
 
 import UIKit
 
-final class QuestionnaireElementRadio: UIButton, QuestionnaireElement {
+final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithNavigationButtons {
 
     // MARK: - QuestionnaireElement
 
+    var index: Int = 0
+    var scaleToParent: Bool = true
     var configuration: QuestionnaireConfiguration? {
         didSet {
-            self.shapeView()
+            if let elements = configuration?.elements {
+                self.shapeView(elements[index])
+            } else {
+                self.shapeView(configuration)
+            }
+
+            self.shapeNavigationButtons(configuration)
+            self.decorateView()
         }
     }
-    var onElementFocused: ((QuestionnaireElement) -> ())?
-    var onElementDismissed: ((QuestionnaireElement) -> Void)? {
-        didSet { fatalError("The closure won't be called on this type") }
-    }
+    var onElementOptionTapped: ((ElementOption) -> Void)?
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
-        if let overrideImage = delegate?.override(imageAsset: isPrimary ? .primaryButton : .secondaryButton) {
-            self.setBackgroundImage(overrideImage, for: .normal)
-            self.layer.borderWidth = 0
-        }
-        if let overrideColor = delegate?.override(colorAsset: isPrimary ? .buttonPrimaryText : .buttonSecondaryText) {
-            self.setTitleColor(overrideColor, for: .normal)
-        }
+        self.subviews.compactMap({ $0 as? Button }).forEach({ $0.overrideAssets(with: delegate, isPrimary: isPrimary) })
     }
+
+    // MARK: - QuestionnaireElementHasButtons
+
+    var onNextButtonTapped: ((ButtonQuestionnaire) -> Void)?
+    var onBackButtonTapped: ((ButtonQuestionnaire) -> Void)?
+
+    // MARK: - Subviews - QuestionnaireElementWithTitleAndOptions + QuestionnaireElementHasButtons
+
+    private(set) lazy var title: UILabel = {
+        UILabel(frame: .zero)
+    }()
+    private(set) lazy var view: UIView = {
+        UIView(frame: .zero)
+    }()
+    private(set) lazy var buttons: UIView = {
+        UIView(frame: .zero)
+    }()
 
     // MARK: - UIView life-cycle
 
-    override var isEnabled: Bool {
-        didSet {
-            self.alpha = isEnabled ? 1.0 : 0.5
-        }
-    }
-    override var isSelected: Bool {
-        didSet {
-            self.shapeView()
-        }
-    }
-
     override func awakeFromNib() {
         super.awakeFromNib()
-        self.tag = -1
-
-        guard self.buttonType == .custom else { fatalError("Element select button should be of type `Custom`") }
-        self.addTarget(self, action: #selector(self.onButtonTapped(_:)), for: .touchUpInside)
+        self.initiateView()
     }
 
-    // MARK: - User actions
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.initiateView()
+    }
 
-    @objc
-    private func onButtonTapped(_ sender: QuestionnaireElementRadio) {
-        self.isSelected = !self.isSelected
-        self.onElementFocused?(sender)
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.initiateView()
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        self.decorateView()
+        self.layoutIfNeeded()
+    }
+
+    // MARK: - View Setup
+
+    private func initiateView() {
+        self.addElementViews()
+        self.addNavigationButtons()
+    }
+
+    private func decorateView() {
+        if self.view.subviews.count > 0 {
+            self.layoutElementViews()
+        }
+        if self.buttons.subviews.count > 0 {
+            self.layoutNavigationButtons()
+        }
     }
 }
 
+/// QuestionnaireElement
 extension QuestionnaireElement where Self:QuestionnaireElementRadio {
-    func shapeView() {
-        self.backgroundColor = .clear
-        self.titleLabel?.font = .ninchat
-        self.titleLabel?.numberOfLines = 0
-        self.titleLabel?.textAlignment = .center
-        self.titleLabel?.lineBreakMode = .byWordWrapping
+    func shapeView(_ configuration: QuestionnaireConfiguration?) {
+        self.title.font = .ninchat
+        self.title.numberOfLines = 0
+        self.title.textAlignment = .left
+        self.title.lineBreakMode = .byWordWrapping
+        self.title.text = configuration?.label
 
-        self.setTitle(configuration?.label, for: .normal)
-        self.setTitleColor(.QGrayButton, for: .normal)
-        self.setTitle(configuration?.label, for: .selected)
-        self.setTitleColor(.QBlueButtonNormal, for: .selected)
-
-        if self.width?.constant ?? 0 < self.intrinsicContentSize.width + 32.0 {
-            self.fix(width: self.intrinsicContentSize.width + 32.0)
+        guard self.view.subviews.count == 0 else { return }
+        var upperView: UIView?
+        configuration?.options?.forEach { [unowned self] option in
+            let button = self.generateButton(for: option, tag: (configuration?.options?.firstIndex(of: option))!)
+            self.layoutButton(button, upperView: &upperView)
+            button.updateTitleScale()
         }
-        self
-            .fix(height: max(45.0, self.intrinsicContentSize.height + 16.0))
-            .round(radius: 15.0, borderWidth: 1.0, borderColor: self.isSelected ? .QBlueButtonNormal : .QGrayButton)
+    }
+
+    private func generateButton(for option: ElementOption, tag: Int) -> Button {
+        func roundButton(_ button: UIButton) {
+            button.round(radius: 15.0, borderWidth: 1.0, borderColor: button.isSelected ? .QBlueButtonNormal : .QGrayButton)
+        }
+
+        let view = Button(frame: .zero) { [weak self] button in
+            button.isSelected = !button.isSelected
+            roundButton(button)
+            self?.onElementOptionTapped?(option)
+        }
+        view.tag = tag
+        view.setTitle(option.label, for: .normal)
+        view.setTitleColor(.QGrayButton, for: .normal)
+        view.setTitle(option.label, for: .selected)
+        view.setTitleColor(.QBlueButtonNormal, for: .selected)
+        roundButton(view)
+
+        return view
+    }
+
+    private func layoutButton(_ button: UIView, upperView: inout UIView?) {
+        self.view.addSubview(button)
+
+        if self.scaleToParent {
+            button.fix(leading: (8.0, self.view), trailing: (8.0, self.view))
+        } else if self.width?.constant ?? 0 < self.intrinsicContentSize.width + 32.0 {
+            button.fix(width: button.intrinsicContentSize.width + 32.0)
+        }
+        if let upperView = upperView {
+            button.fix(top: (8.0, upperView), isRelative: true)
+        } else {
+            button.fix(top: (8.0, self.view), isRelative: false)
+        }
+        button.fix(height: max(45.0, button.intrinsicContentSize.height + 16.0)).center(toX: self.view)
+
+        if let height = self.view.height {
+            height.constant += ((button.height?.constant ?? 0) + 8.0)
+        } else {
+            self.view.fix(height: (button.height?.constant ?? 0) + 16.0)
+        }
+
+        upperView = button
     }
 }

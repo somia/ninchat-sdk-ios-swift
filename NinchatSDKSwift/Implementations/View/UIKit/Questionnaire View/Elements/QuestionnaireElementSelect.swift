@@ -12,9 +12,10 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElement {
 
     // MARK: - QuestionnaireElement
 
+    var index: Int = 0
     var configuration: QuestionnaireConfiguration? {
         didSet {
-            self.shapeView()
+            self.shapeView(configuration)
         }
     }
     var onElementFocused: ((QuestionnaireElement) -> Void)?
@@ -105,7 +106,7 @@ extension QuestionnaireElementSelect {
 }
 
 extension QuestionnaireElement where Self:QuestionnaireElementSelect {
-    func shapeView() {
+    func shapeView(_ configuration: QuestionnaireConfiguration?) {
         self.title.text = self.configuration?.label
         self.title.textAlignment = .left
         self.title.font = .ninchat

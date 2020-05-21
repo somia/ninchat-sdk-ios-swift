@@ -10,16 +10,11 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
 
     // MARK: - QuestionnaireElement
 
+    var index: Int = 0
     var configuration: QuestionnaireConfiguration? {
         didSet {
-            self.shapeView()
+            self.shapeView(configuration)
         }
-    }
-    var onElementFocused: ((QuestionnaireElement) -> ())? {
-        didSet { fatalError("The closure won't be called on this type") }
-    }
-    var onElementDismissed: ((QuestionnaireElement) -> Void)? {
-        didSet { fatalError("The closure won't be called on this type") }
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
@@ -38,7 +33,7 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
 }
 
 extension QuestionnaireElement where Self:QuestionnaireElementText {
-    func shapeView() {
+    func shapeView(_ configuration: QuestionnaireConfiguration?) {
         self.textAlignment = .left
         self.setAttributed(text: self.configuration?.label ?? "", font: .ninchat)
 
