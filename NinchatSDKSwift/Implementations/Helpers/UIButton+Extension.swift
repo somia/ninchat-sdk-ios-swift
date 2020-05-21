@@ -17,6 +17,5 @@ extension UIButton {
         self.titleLabel?.minimumScaleFactor = 0.7
         self.titleLabel?.adjustsFontSizeToFitWidth = true
         self.titleLabel?.lineBreakMode = .byTruncatingTail
-        self.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 2, right: 8)
     }
 }

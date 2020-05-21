@@ -57,6 +57,7 @@ final class ComposeContentView: UIView, ComposeContentViewProtocol {
     /// `https://github.com/somia/ninchat-sdk-ios/issues/84`
     private func updateTitleScale(for button: UIButton?) {
         button?.updateTitleScale()
+        button?.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 2, right: 8)
     }
     
     // MARK: - User actions

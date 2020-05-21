@@ -102,7 +102,6 @@ extension QuestionnaireElement where Self:QuestionnaireElementRadio {
         configuration?.options?.forEach { [unowned self] option in
             let button = self.generateButton(for: option, tag: (configuration?.options?.firstIndex(of: option))!)
             self.layoutButton(button, upperView: &upperView)
-            button.updateTitleScale()
         }
     }
 
@@ -116,6 +115,8 @@ extension QuestionnaireElement where Self:QuestionnaireElementRadio {
             roundButton(button)
             self?.onElementOptionTapped?(option)
         }
+        view.updateTitleScale()
+
         view.tag = tag
         view.setTitle(option.label, for: .normal)
         view.setTitleColor(.QGrayButton, for: .normal)
@@ -139,7 +140,9 @@ extension QuestionnaireElement where Self:QuestionnaireElementRadio {
         } else {
             button.fix(top: (8.0, self.view), isRelative: false)
         }
-        button.fix(height: max(45.0, button.intrinsicContentSize.height + 16.0)).center(toX: self.view)
+        button
+            .fix(height: max(45.0, button.intrinsicContentSize.height + 16.0))
+            .center(toX: self.view)
 
         if let height = self.view.height {
             height.constant += ((button.height?.constant ?? 0) + 8.0)
