@@ -24,7 +24,10 @@ extension UITextView {
     
     func setAttributed(text: String, font: UIFont?, color: UIColor? = nil) {
         if text.containsTags {
-            self.attributedText = text.htmlAttributedString(withFont: font, alignment: self.textAlignment, color: color ?? self.textColor)
+            self.attributedText = text.replacingOccurrences(of: "ä", with: "ä")
+                                        .replacingOccurrences(of: "ö", with: "ö")
+                                        .replacingOccurrences(of: "å", with: "å")
+                                        .htmlAttributedString(withFont: font, alignment: self.textAlignment, color: color ?? self.textColor)
         } else {
             self.setPlain(text: text, font: font)
         }

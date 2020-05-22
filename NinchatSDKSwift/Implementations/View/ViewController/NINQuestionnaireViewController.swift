@@ -9,7 +9,7 @@ import UIKit
 final class NINQuestionnaireViewController: UIViewController, ViewController {
 
     private var _configuration: QuestionnaireConfiguration {
-        if let audienceQuestionnaire = session.sessionManager.siteConfiguration.preAudienceQuestionnaire {
+        if let audienceQuestionnaire = session.sessionManager.siteConfiguration.preAudienceQuestionnaire?.filter({ $0.element != nil || $0.elements != nil }) {
             guard audienceQuestionnaire.count > self.pageNumber else { fatalError("Invalid number of questionnaires configurations") }
 
             return audienceQuestionnaire[self.pageNumber]
@@ -102,7 +102,7 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
         if indexPath.row == self.elements.count {
             return 65.0
         }
-        return self.elements[indexPath.row].height
+        return self.elements[indexPath.row].elementHeight
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

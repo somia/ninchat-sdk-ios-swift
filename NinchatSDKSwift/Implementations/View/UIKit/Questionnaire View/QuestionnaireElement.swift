@@ -9,14 +9,14 @@ import AnyCodable
 
 protocol QuestionnaireElement: UIView {
     var index: Int { get set }
-    var height: CGFloat { get }
+    var elementHeight: CGFloat { get }
     var configuration: QuestionnaireConfiguration? { get set }
 
     func shapeView(_ configuration: QuestionnaireConfiguration?)
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool)
 }
 extension QuestionnaireElement {
-    var height: CGFloat { 0 }
+    var elementHeight: CGFloat { 0 }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         self.overrideAssets(with: delegate, isPrimary: true)
@@ -36,7 +36,7 @@ protocol QuestionnaireElementWithTitle: QuestionnaireElement {
     func layoutElementViews()
 }
 extension QuestionnaireElementWithTitle {
-    var height: CGFloat {
+    var elementHeight: CGFloat {
         CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + CGFloat(4.0 * 8.0)
     }
 
