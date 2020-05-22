@@ -127,8 +127,7 @@ extension QuestionnaireElement where Self:QuestionnaireElementCheckbox {
         imgViewContainer.isExclusiveTouch = false
         imgViewContainer.tag = tag
 
-        let imgView = UIImageView(image: nil, highlightedImage: UIImage(named: "icon_checkbox_selected", in: .SDKBundle, compatibleWith: nil))
-        return (imgViewContainer, imgView)
+        return (imgViewContainer, UIImageView(image: nil, highlightedImage: UIImage(named: "icon_checkbox_selected", in: .SDKBundle, compatibleWith: nil)))
     }
 
     private func layout(icon: UIImageView, within view: UIView) {
@@ -150,6 +149,8 @@ extension QuestionnaireElement where Self:QuestionnaireElementCheckbox {
             .center(toY: button)
             .round(radius: 23.0 / 2, borderWidth: 2.0, borderColor: .QGrayButton)
         icon.leading?.priority = .required
+        icon.width?.priority = .required
+        icon.height?.priority = .required
 
         /// Layout button
         if let upperView = upperView {
@@ -159,7 +160,7 @@ extension QuestionnaireElement where Self:QuestionnaireElementCheckbox {
         }
         button
             .fix(trailing: (8.0, self.view), relation: .greaterThan)
-            .fix(leading: (0.0, icon))
+            .fix(leading: (0.0, icon), isRelative: true)
             .fix(width: button.intrinsicContentSize.width + 32.0)
             .fix(height: max(32.0, button.intrinsicContentSize.height + 16.0))
         button.leading?.priority = .required
