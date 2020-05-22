@@ -10,7 +10,7 @@ import AnyCodable
 protocol QuestionnaireElement: UIView {
     var index: Int { get set }
     var elementHeight: CGFloat { get }
-    var configuration: QuestionnaireConfiguration? { get set }
+    var questionnaireConfiguration: QuestionnaireConfiguration? { get set }
 
     func shapeView(_ configuration: QuestionnaireConfiguration?)
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool)

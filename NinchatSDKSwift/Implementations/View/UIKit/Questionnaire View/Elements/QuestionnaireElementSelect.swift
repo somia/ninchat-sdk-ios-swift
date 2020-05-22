@@ -13,9 +13,9 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElement {
     // MARK: - QuestionnaireElement
 
     var index: Int = 0
-    var configuration: QuestionnaireConfiguration? {
+    var questionnaireConfiguration: QuestionnaireConfiguration? {
         didSet {
-            self.shapeView(configuration)
+            self.shapeView(questionnaireConfiguration)
         }
     }
     var onElementFocused: ((QuestionnaireElement) -> Void)?
@@ -87,7 +87,7 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElement {
 
 extension QuestionnaireElementSelect {
     private func showOptions() {
-        guard let options = self.configuration?.options?.compactMap({ $0.label }), options.count > 0 else { fatalError("There is no option to be shown!") }
+        guard let options = self.questionnaireConfiguration?.options?.compactMap({ $0.label }), options.count > 0 else { fatalError("There is no option to be shown!") }
         if dialogueIsShown { return }
 
         self.dialogueIsShown = true
@@ -98,7 +98,7 @@ extension QuestionnaireElementSelect {
             case .cancel:
                 self.onElementDismissed?(self)
             case .select(let index):
-                guard let option = self.configuration?.options?[index] else { fatalError("Unable to pick selected option") }
+                guard let option = self.questionnaireConfiguration?.options?[index] else { fatalError("Unable to pick selected option") }
                 self.onOptionSelected?(option)
             }
         }
@@ -107,7 +107,7 @@ extension QuestionnaireElementSelect {
 
 extension QuestionnaireElement where Self:QuestionnaireElementSelect {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
-        self.title.text = self.configuration?.label
+        self.title.text = self.questionnaireConfiguration?.label
         self.title.textAlignment = .left
         self.title.font = .ninchat
 

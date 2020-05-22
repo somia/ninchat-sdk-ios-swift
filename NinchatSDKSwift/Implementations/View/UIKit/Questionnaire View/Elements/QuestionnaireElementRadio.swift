@@ -12,12 +12,12 @@ final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle {
 
     var index: Int = 0
     var scaleToParent: Bool = true
-    var configuration: QuestionnaireConfiguration? {
+    var questionnaireConfiguration: QuestionnaireConfiguration? {
         didSet {
-            if let elements = configuration?.elements {
+            if let elements = questionnaireConfiguration?.elements {
                 self.shapeView(elements[index])
             } else {
-                self.shapeView(configuration)
+                self.shapeView(questionnaireConfiguration)
             }
 
             self.decorateView()

@@ -5,18 +5,19 @@
 //
 
 import UIKit
+import WebKit
 
-final class QuestionnaireElementText: UITextView, QuestionnaireElement {
+final class QuestionnaireElementText: WKWebView, QuestionnaireElement {
 
     // MARK: - QuestionnaireElement
 
     var index: Int = 0
-    var configuration: QuestionnaireConfiguration? {
+    var questionnaireConfiguration: QuestionnaireConfiguration? {
         didSet {
-            if let elements = configuration?.elements {
+            if let elements = questionnaireConfiguration?.elements {
                 self.shapeView(elements[index])
             } else {
-                self.shapeView(configuration)
+                self.shapeView(questionnaireConfiguration)
             }
         }
     }
@@ -36,8 +37,8 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
         self.initiateView()
     }
 
-    override init(frame: CGRect, textContainer: NSTextContainer?) {
-        super.init(frame: frame, textContainer: textContainer)
+    override init(frame: CGRect, configuration: WKWebViewConfiguration) {
+        super.init(frame: frame, configuration: configuration)
         self.initiateView()
     }
 
@@ -49,23 +50,21 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
     // MARK: - View Setup
 
     private func initiateView() {
-        self.isEditable = false
-        self.isScrollEnabled = false
+        self.scrollView.bounces = false
+        self.scrollView.isScrollEnabled = false
     }
 }
 
 extension QuestionnaireElement where Self:QuestionnaireElementText {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
-        self.textAlignment = .left
-        self.setAttributed(text: configuration?.label ?? "", font: .ninchat)
-
+        self.loadHTML(content: configuration?.label ?? "", font: UIFont.ninchat!)
         self.fix(height: max(32,0, self.estimateHeight(for: configuration?.label ?? "")))
     }
 
     private func estimateHeight(for text: String) -> CGFloat {
         if text.containsTags, let regex = try? NSRegularExpression(pattern: "</p>", options: .caseInsensitive), regex.numberOfMatches(in: text, range: NSRange(text.startIndex..., in: text)) > 0 {
             /// Using `intrinsicContentSize` for attributed strings with <p> tag results in incorrect height
-            return self.intrinsicContentSize.height + 20.0
+            return self.intrinsicContentSize.height + 90.0
         }
         /// Could be calculated using regular `intrinsicContentSize` API
         return self.intrinsicContentSize.height

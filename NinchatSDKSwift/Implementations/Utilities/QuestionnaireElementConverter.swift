@@ -55,7 +55,7 @@ extension QuestionnaireElementConverter {
     func generate<T: QuestionnaireElement>(from configuration: QuestionnaireConfiguration, index: Int, ofType: T.Type) -> T {
         let view = T(frame: .zero)
         view.index = index
-        view.configuration = configuration
+        view.questionnaireConfiguration = configuration
 
         return view
     }

@@ -131,6 +131,7 @@
 		91A1624977615DA2282774D2 /* NINQuestionnaireViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1611EF0E38FD4DEB8B4AC /* NINQuestionnaireViewController.swift */; };
 		91A162F44FFF3C88CEF947B2 /* NINQuestionnaireDataSourceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A163373718710F36380A03 /* NINQuestionnaireDataSourceDelegate.swift */; };
 		91A163085E1C1FAF4BA8BEB8 /* ChatTypingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A167BAE1C0F6F9466CE1D6 /* ChatTypingCell.swift */; };
+		91A1631CB9FB0E611E88DD99 /* WKWebView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A168DEF02D4EED4F01B97E /* WKWebView+Extension.swift */; };
 		91A1634DB52849BD1F2FEEF8 /* VideoThumbnailManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16EE2919D93717F843D49 /* VideoThumbnailManager.swift */; };
 		91A1636EC2133F4BE4B586E8 /* ChoiceDialogue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16984C5BA331DFFCB6EDA /* ChoiceDialogue.swift */; };
 		91A1637BC9B1BCF029EE608F /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16120032609820A06185E /* Queue.swift */; };
@@ -368,6 +369,7 @@
 		91A1689894322817E8A84EE1 /* ComposeContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposeContentView.swift; sourceTree = "<group>"; };
 		91A1689A5BDC25419D67E9BF /* ComposeMessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposeMessageView.swift; sourceTree = "<group>"; };
 		91A168B0495C5D2BBF7733D0 /* TypingCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypingCell.swift; sourceTree = "<group>"; };
+		91A168DEF02D4EED4F01B97E /* WKWebView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "WKWebView+Extension.swift"; sourceTree = "<group>"; };
 		91A168F7C3E9BB664C126805 /* NinchatSDKSwiftAcceptanceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatSDKSwiftAcceptanceTests.swift; sourceTree = "<group>"; };
 		91A16939E29E57ECFEE48815 /* questionnaire-mock.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "questionnaire-mock.json"; sourceTree = "<group>"; };
 		91A16984C5BA331DFFCB6EDA /* ChoiceDialogue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChoiceDialogue.swift; sourceTree = "<group>"; };
@@ -630,6 +632,7 @@
 				91A1665602ED586F1BD60785 /* RTCSessionDescription+Extension.swift */,
 				91A16241F1BD25005BE48B83 /* RTCIceCandidate+Extension.swift */,
 				91A16E65EA02A328F488F74C /* UIApplication+Extension.swift */,
+				91A168DEF02D4EED4F01B97E /* WKWebView+Extension.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -930,8 +933,8 @@
 				91A16F6AB5D678663E586FD1 /* QuestionnaireElement.swift */,
 				857F12C024752CA400337F7A /* QuestionnaireCell.swift */,
 				857F12BE24752C9000337F7A /* QuestionnaireCell.xib */,
-				91A16E8BF2B65EFB8166959F /* Elements */,
 				91A1648B47113F8332CE820C /* QuestionnaireNavigationCell.swift */,
+				91A16E8BF2B65EFB8166959F /* Elements */,
 			);
 			path = "Questionnaire View";
 			sourceTree = "<group>";
@@ -1378,6 +1381,7 @@
 				91A161646D9A0C769F0BA24B /* QuestionnaireElementTextField.swift in Sources */,
 				91A16D8F59D6DC431464E959 /* QuestionnaireElementCheckbox.swift in Sources */,
 				91A16ECAF6CDA6AA355A4D98 /* QuestionnaireNavigationCell.swift in Sources */,
+				91A1631CB9FB0E611E88DD99 /* WKWebView+Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
