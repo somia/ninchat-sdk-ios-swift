@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithNavigationButtons {
+final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle {
 
     // MARK: - QuestionnaireElement
 
@@ -20,7 +20,6 @@ final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithNavigatio
                 self.shapeView(configuration)
             }
 
-            self.shapeNavigationButtons(configuration)
             self.decorateView()
         }
     }
@@ -41,9 +40,6 @@ final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithNavigatio
         UILabel(frame: .zero)
     }()
     private(set) lazy var view: UIView = {
-        UIView(frame: .zero)
-    }()
-    private(set) lazy var buttons: UIView = {
         UIView(frame: .zero)
     }()
 
@@ -75,15 +71,11 @@ final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithNavigatio
 
     private func initiateView() {
         self.addElementViews()
-        self.addNavigationButtons()
     }
 
     private func decorateView() {
         if self.view.subviews.count > 0 {
             self.layoutElementViews()
-        }
-        if self.buttons.subviews.count > 0 {
-            self.layoutNavigationButtons()
         }
     }
 }

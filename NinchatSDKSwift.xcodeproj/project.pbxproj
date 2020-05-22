@@ -179,6 +179,7 @@
 		91A16DD374E854007210494B /* UIFont+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A163B62D2DBB763D1B850A /* UIFont+Extension.swift */; };
 		91A16DE58D34AA4B9D3713AB /* ComposeContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1689894322817E8A84EE1 /* ComposeContentView.swift */; };
 		91A16E653E0301454E26065E /* QuestionnaireElementText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16AE14079CD3F38C9E09D /* QuestionnaireElementText.swift */; };
+		91A16ECAF6CDA6AA355A4D98 /* QuestionnaireNavigationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1648B47113F8332CE820C /* QuestionnaireNavigationCell.swift */; };
 		91A16F01F99326D2F881295A /* ChoiceDialogue.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91A16D2D28D6ECE052A799BE /* ChoiceDialogue.xib */; };
 		91A16F0F943EEA59D402EF50 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91A16BC6222D563B8B9252CA /* Localizable.strings */; };
 		91A16F59BEB1430268AEB02C /* QuestionnaireElementRadio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A161EE9C9467CBC886D9B1 /* QuestionnaireElementRadio.swift */; };
@@ -350,6 +351,7 @@
 		91A163B62D2DBB763D1B850A /* UIFont+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+Extension.swift"; sourceTree = "<group>"; };
 		91A16407D8FAC5AEEDD748C9 /* ServiceManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceManager.swift; sourceTree = "<group>"; };
 		91A16468FB26B3084F03232F /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
+		91A1648B47113F8332CE820C /* QuestionnaireNavigationCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireNavigationCell.swift; sourceTree = "<group>"; };
 		91A1649D2A54AD0FE2875F52 /* ChoiceDialogueRow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChoiceDialogueRow.xib; sourceTree = "<group>"; };
 		91A164E1E7207BA353BF6418 /* SiteConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SiteConfiguration.swift; sourceTree = "<group>"; };
 		91A164E3B34BBC1E42464AEA /* QuestionnaireTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireTests.swift; sourceTree = "<group>"; };
@@ -929,6 +931,7 @@
 				857F12C024752CA400337F7A /* QuestionnaireCell.swift */,
 				857F12BE24752C9000337F7A /* QuestionnaireCell.xib */,
 				91A16E8BF2B65EFB8166959F /* Elements */,
+				91A1648B47113F8332CE820C /* QuestionnaireNavigationCell.swift */,
 			);
 			path = "Questionnaire View";
 			sourceTree = "<group>";
@@ -1374,6 +1377,7 @@
 				91A16AC6366F692190CB7D0D /* QuestionnaireElementTextArea.swift in Sources */,
 				91A161646D9A0C769F0BA24B /* QuestionnaireElementTextField.swift in Sources */,
 				91A16D8F59D6DC431464E959 /* QuestionnaireElementCheckbox.swift in Sources */,
+				91A16ECAF6CDA6AA355A4D98 /* QuestionnaireNavigationCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

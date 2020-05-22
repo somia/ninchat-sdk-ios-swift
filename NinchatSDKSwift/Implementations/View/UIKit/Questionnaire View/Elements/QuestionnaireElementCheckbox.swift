@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithNavigationButtons {
+final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle {
 
     // MARK: - QuestionnaireElement
 
@@ -20,7 +20,6 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithNaviga
                 self.shapeView(configuration)
             }
 
-            self.shapeNavigationButtons(configuration)
             self.decorateView()
         }
     }
@@ -43,10 +42,7 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithNaviga
     private(set) lazy var view: UIView = {
         UIView(frame: .zero)
     }()
-    private(set) lazy var buttons: UIView = {
-        UIView(frame: .zero)
-    }()
-
+    
     // MARK: - UIView life-cycle
 
     override func awakeFromNib() {
@@ -75,15 +71,11 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithNaviga
 
     private func initiateView() {
         self.addElementViews()
-        self.addNavigationButtons()
     }
 
     private func decorateView() {
         if self.view.subviews.count > 0 {
             self.layoutElementViews()
-        }
-        if self.buttons.subviews.count > 0 {
-            self.layoutNavigationButtons()
         }
     }
 }
