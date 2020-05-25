@@ -6,35 +6,47 @@
 
 import UIKit
 
-final class QuestionnaireElementTextArea: UIView, QuestionnaireElement {
+final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle, QuestionnaireFocusableElement {
 
-    var isCompleted: Bool! = false {
+    internal var config: QuestionnaireConfiguration!
+    var isCompleted: Bool! {
         didSet {
-            self.shapeView(questionnaireConfiguration)
+            self.updateBorder()
         }
     }
 
     // MARK: - QuestionnaireElement
 
     var index: Int = 0
-    var questionnaireConfiguration: QuestionnaireConfiguration? {
+    var scaleToParent: Bool = true
+    var configuration: QuestionnaireConfiguration? {
         didSet {
-            self.shapeView(questionnaireConfiguration)
+            if let elements = configuration?.elements {
+                self.shapeView(elements[index])
+            } else {
+                self.shapeView(configuration)
+            }
         }
     }
-    var onElementFocused: ((QuestionnaireElement) -> Void)?
-    var onElementDismissed: ((QuestionnaireElement) -> Void)?
+    var elementHeight: CGFloat {
+        CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + CGFloat(5.0 * 8.0)
+    }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         #warning("Override assets")
     }
+
+    // MARK: - QuestionnaireFocusableElement
+
+    var onElementFocused: ((QuestionnaireElement) -> Void)?
+    var onElementDismissed: ((QuestionnaireElement) -> Void)?
 
     // MARK: - Subviews
 
     private(set) lazy var title: UILabel = {
         UILabel(frame: .zero)
     }()
-    private(set) lazy var input: UITextView = {
+    private(set) lazy var view: UITextView = {
         UITextView(frame: .zero)
     }()
 
@@ -42,23 +54,47 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElement {
 
     override func awakeFromNib() {
         super.awakeFromNib()
+        self.initiateView()
+    }
 
-        self.addSubview(title)
-        self.addSubview(input)
-        self.input.delegate = self
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.initiateView()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.initiateView()
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
 
-//        title
-//            .fix(leading: (8.0, self), trailing: (8.0, self))
-//            .fix(top: (0.0, self))
-//            .fix(height: self.title.intrinsicContentSize.height + 16.0)
-//        input
-//            .fix(leading: (8.0, self), trailing: (8.0, self))
-//            .fix(top: (0.0, self.title), isRelative: true)
-//            .fix(bottom: (8.0, self))
+        self.decorateView()
+        self.layoutIfNeeded()
+    }
+
+    // MARK: - View Setup
+
+    private func initiateView() {
+        self.view.delegate = self
+        self.addElementViews()
+    }
+
+    private func decorateView() {
+        if self.view.subviews.count > 0 {
+            self.layoutElementViews()
+        }
+    }
+}
+
+extension QuestionnaireElementTextArea {
+    internal func updateBorder() {
+        if self.config.required ?? false {
+            self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: self.isCompleted ? .QGrayButton : .QRedBorder)
+        } else {
+            self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: .QGrayButton)
+        }
     }
 }
 
@@ -68,9 +104,7 @@ extension QuestionnaireElementTextArea: UITextViewDelegate {
     }
 
     func textViewDidEndEditing(_ textView: UITextView) {
-        if questionnaireConfiguration?.required ?? false, textView.text?.isEmpty ?? true {
-            self.isCompleted = false
-        } else if let pattern = questionnaireConfiguration?.pattern, let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive), let text = textView.text {
+        if let text = textView.text, !text.isEmpty, let pattern = self.config.pattern, let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) {
             self.isCompleted = regex.matches(in: text, range: NSRange(location: 0, length: text.count)).count > 0
         }
         self.onElementDismissed?(self)
@@ -79,13 +113,21 @@ extension QuestionnaireElementTextArea: UITextViewDelegate {
 
 extension QuestionnaireElement where Self:QuestionnaireElementTextArea {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
-        self.title.text = self.questionnaireConfiguration?.label
-        self.title.textAlignment = .left
         self.title.font = .ninchat
+        self.title.numberOfLines = 0
+        self.title.textAlignment = .left
+        self.title.lineBreakMode = .byWordWrapping
+        self.title.text = configuration?.label
 
-        self.input.backgroundColor = .clear
-        self.input.textAlignment = .left
-        self.input.font = .ninchat
-        self.input.round(radius: 6.0, borderWidth: 1.0, borderColor: self.isCompleted ? .QGrayButton : .QRedBorder)
+        self.view.backgroundColor = .clear
+        self.view.textAlignment = .left
+        self.view.font = .ninchat
+        self.view.fix(height: 98.0)
+
+        self.config = configuration
+        if self.isCompleted == nil {
+            self.isCompleted = !(self.config.required ?? true)
+        }
+        self.updateBorder()
     }
 }

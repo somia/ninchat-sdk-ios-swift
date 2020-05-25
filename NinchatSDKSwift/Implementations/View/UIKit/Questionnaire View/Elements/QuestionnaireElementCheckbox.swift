@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle {
+final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle, QuestionnaireOptionSelectableElement {
 
     // MARK: - QuestionnaireElement
 
@@ -23,16 +23,15 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle 
             self.decorateView()
         }
     }
-    var onElementOptionTapped: ((ElementOption) -> Void)?
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         self.subviews.compactMap({ $0 as? Button }).forEach({ $0.overrideAssets(with: delegate, isPrimary: isPrimary) })
     }
 
-    // MARK: - QuestionnaireElementHasButtons
+    // MARK: - QuestionnaireOptionSelectableElement
 
-    var onNextButtonTapped: ((ButtonQuestionnaire) -> Void)?
-    var onBackButtonTapped: ((ButtonQuestionnaire) -> Void)?
+    var onElementOptionSelected: ((ElementOption) -> ())?
+    var onElementOptionDeselected: ((ElementOption) -> ())?
 
     // MARK: - Subviews - QuestionnaireElementWithTitleAndOptions + QuestionnaireElementHasButtons
 
@@ -103,7 +102,7 @@ extension QuestionnaireElement where Self:QuestionnaireElementCheckbox {
             button.isSelected = !button.isSelected
             icon.0.round(radius: 23.0 / 2, borderWidth: 2.0, borderColor: button.isSelected ? .QBlueButtonNormal : .QGrayButton)
             icon.1.isHighlighted = button.isSelected
-            self?.onElementOptionTapped?(option)
+            button.isSelected ? self?.onElementOptionSelected?(option) : self?.onElementOptionDeselected?(option)
         }
         view.updateTitleScale()
 

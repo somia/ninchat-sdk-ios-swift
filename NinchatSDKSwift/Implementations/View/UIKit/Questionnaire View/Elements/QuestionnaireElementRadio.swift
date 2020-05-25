@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle {
+final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, QuestionnaireOptionSelectableElement {
 
     // MARK: - QuestionnaireElement
 
@@ -23,16 +23,15 @@ final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle {
             self.decorateView()
         }
     }
-    var onElementOptionTapped: ((ElementOption) -> Void)?
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         self.subviews.compactMap({ $0 as? Button }).forEach({ $0.overrideAssets(with: delegate, isPrimary: isPrimary) })
     }
 
-    // MARK: - QuestionnaireElementHasButtons
+    // MARK: - QuestionnaireOptionSelectableElement
 
-    var onNextButtonTapped: ((ButtonQuestionnaire) -> Void)?
-    var onBackButtonTapped: ((ButtonQuestionnaire) -> Void)?
+    var onElementOptionSelected: ((ElementOption) -> ())?
+    var onElementOptionDeselected: ((ElementOption) -> ())?
 
     // MARK: - Subviews - QuestionnaireElementWithTitleAndOptions + QuestionnaireElementHasButtons
 
@@ -105,7 +104,7 @@ extension QuestionnaireElement where Self:QuestionnaireElementRadio {
         let view = Button(frame: .zero) { [weak self] button in
             button.isSelected = !button.isSelected
             roundButton(button)
-            self?.onElementOptionTapped?(option)
+            button.isSelected ? self?.onElementOptionSelected?(option) : self?.onElementOptionDeselected?(option)
         }
         view.updateTitleScale()
 

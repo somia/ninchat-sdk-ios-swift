@@ -27,10 +27,10 @@ extension QuestionnaireElement {
 ///     - title
 ///     - options
 protocol QuestionnaireElementWithTitle: QuestionnaireElement {
+    associatedtype View: UIView
     var title: UILabel { get }
-    var view: UIView { get }
+    var view: View { get }
     var scaleToParent: Bool { get set }
-    var onElementOptionTapped: ((ElementOption) -> Void)? { get set }
 
     func addElementViews()
     func layoutElementViews()
@@ -58,6 +58,18 @@ extension QuestionnaireElementWithTitle {
             .center(toX: self)
             .fix(width: self.width?.constant ?? self.bounds.width)
     }
+}
+
+/// Add focus/dismiss closure for applicable elements (e.g. textarea, inout)
+protocol QuestionnaireFocusableElement {
+    var onElementFocused: ((QuestionnaireElement) -> Void)? { get set }
+    var onElementDismissed: ((QuestionnaireElement) -> Void)? { get set }
+}
+
+/// Add select/deselect closure for applicable elements (e.g. radio, checkbox)
+protocol QuestionnaireOptionSelectableElement {
+    var onElementOptionSelected: ((ElementOption) -> Void)? { get set }
+    var onElementOptionDeselected: ((ElementOption) -> Void)? { get set }
 }
 
 /// Questionnaire buttons

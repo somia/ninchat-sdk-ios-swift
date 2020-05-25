@@ -138,8 +138,25 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
 
         /// Show questionnaire items
         let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
-        let view = self.elements[indexPath.row]
+        var view = self.elements[indexPath.row]
+        if var view = view as? QuestionnaireOptionSelectableElement {
+            view.onElementOptionSelected = { option in
+                print("option selected: \(option)")
+            }
+            view.onElementOptionDeselected = { option in
+                print("option deselected: \(option)")
+            }
+        }
+        if var view = view as? QuestionnaireFocusableElement {
+            view.onElementFocused = { questionnaire in
+                print("focused on: \(questionnaire)")
+            }
+            view.onElementDismissed = { option in
+                print("dismissed: \(option)")
+            }
+        }
         view.overrideAssets(with: self.session, isPrimary: false)
+
         self.layoutSubview(view, parent: cell.content)
 
         return cell
