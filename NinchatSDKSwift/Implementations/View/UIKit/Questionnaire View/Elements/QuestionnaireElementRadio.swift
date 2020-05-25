@@ -23,6 +23,9 @@ final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Qu
             self.decorateView()
         }
     }
+    var elementHeight: CGFloat {
+        CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + 8
+    }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         self.subviews.compactMap({ $0 as? Button }).forEach({ $0.overrideAssets(with: delegate, isPrimary: isPrimary) })
@@ -136,7 +139,7 @@ extension QuestionnaireElement where Self:QuestionnaireElementRadio {
             .center(toX: self.view)
 
         if let height = self.view.height {
-            height.constant += ((button.height?.constant ?? 0) + 8.0)
+            height.constant += button.height?.constant ?? 0
         } else {
             self.view.fix(height: (button.height?.constant ?? 0) + 16.0)
         }

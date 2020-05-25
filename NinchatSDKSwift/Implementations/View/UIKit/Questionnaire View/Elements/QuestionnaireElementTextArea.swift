@@ -8,7 +8,7 @@ import UIKit
 
 final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle, QuestionnaireFocusableElement {
 
-    internal var config: QuestionnaireConfiguration!
+    internal var configuration: QuestionnaireConfiguration!
     var isCompleted: Bool! {
         didSet {
             self.updateBorder()
@@ -19,12 +19,12 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
 
     var index: Int = 0
     var scaleToParent: Bool = true
-    var configuration: QuestionnaireConfiguration? {
+    var questionnaireConfiguration: QuestionnaireConfiguration? {
         didSet {
-            if let elements = configuration?.elements {
+            if let elements = questionnaireConfiguration?.elements {
                 self.shapeView(elements[index])
             } else {
-                self.shapeView(configuration)
+                self.shapeView(questionnaireConfiguration)
             }
         }
     }
@@ -90,7 +90,7 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
 
 extension QuestionnaireElementTextArea {
     internal func updateBorder() {
-        if self.config.required ?? false {
+        if self.configuration.required ?? false {
             self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: self.isCompleted ? .QGrayButton : .QRedBorder)
         } else {
             self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: .QGrayButton)
@@ -104,7 +104,7 @@ extension QuestionnaireElementTextArea: UITextViewDelegate {
     }
 
     func textViewDidEndEditing(_ textView: UITextView) {
-        if let text = textView.text, !text.isEmpty, let pattern = self.config.pattern, let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) {
+        if let text = textView.text, !text.isEmpty, let pattern = self.configuration.pattern, let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) {
             self.isCompleted = regex.matches(in: text, range: NSRange(location: 0, length: text.count)).count > 0
         }
         self.onElementDismissed?(self)
@@ -124,9 +124,9 @@ extension QuestionnaireElement where Self:QuestionnaireElementTextArea {
         self.view.font = .ninchat
         self.view.fix(height: 98.0)
 
-        self.config = configuration
+        self.configuration = configuration
         if self.isCompleted == nil {
-            self.isCompleted = !(self.config.required ?? true)
+            self.isCompleted = !(configuration?.required ?? true)
         }
         self.updateBorder()
     }
