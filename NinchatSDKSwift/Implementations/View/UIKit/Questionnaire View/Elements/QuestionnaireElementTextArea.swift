@@ -10,16 +10,16 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElement {
 
     var isCompleted: Bool! = false {
         didSet {
-            self.shapeView(configuration)
+            self.shapeView(questionnaireConfiguration)
         }
     }
 
     // MARK: - QuestionnaireElement
 
     var index: Int = 0
-    var configuration: QuestionnaireConfiguration? {
+    var questionnaireConfiguration: QuestionnaireConfiguration? {
         didSet {
-            self.shapeView(configuration)
+            self.shapeView(questionnaireConfiguration)
         }
     }
     var onElementFocused: ((QuestionnaireElement) -> Void)?
@@ -68,9 +68,9 @@ extension QuestionnaireElementTextArea: UITextViewDelegate {
     }
 
     func textViewDidEndEditing(_ textView: UITextView) {
-        if configuration?.required ?? false, textView.text?.isEmpty ?? true {
+        if questionnaireConfiguration?.required ?? false, textView.text?.isEmpty ?? true {
             self.isCompleted = false
-        } else if let pattern = configuration?.pattern, let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive), let text = textView.text {
+        } else if let pattern = questionnaireConfiguration?.pattern, let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive), let text = textView.text {
             self.isCompleted = regex.matches(in: text, range: NSRange(location: 0, length: text.count)).count > 0
         }
         self.onElementDismissed?(self)
@@ -79,7 +79,7 @@ extension QuestionnaireElementTextArea: UITextViewDelegate {
 
 extension QuestionnaireElement where Self:QuestionnaireElementTextArea {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
-        self.title.text = self.configuration?.label
+        self.title.text = self.questionnaireConfiguration?.label
         self.title.textAlignment = .left
         self.title.font = .ninchat
 

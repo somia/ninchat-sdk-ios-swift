@@ -172,7 +172,6 @@ final class NINCoordinator: Coordinator {
 }
 
 extension NINCoordinator {
-
     internal func queueViewController(resume: Bool) -> NINQueueViewController {
         let vc = self.queueViewController
         vc.resumeMode = resume

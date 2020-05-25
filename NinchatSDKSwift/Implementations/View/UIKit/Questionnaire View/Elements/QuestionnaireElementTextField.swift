@@ -10,16 +10,16 @@ final class QuestionnaireElementTextField: UIView, QuestionnaireElement {
 
     var isCompleted: Bool! = false {
         didSet {
-            self.shapeView(configuration)
+            self.shapeView(questionnaireConfiguration)
         }
     }
 
     // MARK: - QuestionnaireElement
 
     var index: Int = 0
-    var configuration: QuestionnaireConfiguration? {
+    var questionnaireConfiguration: QuestionnaireConfiguration? {
         didSet {
-            self.shapeView(configuration)
+            self.shapeView(questionnaireConfiguration)
         }
     }
     var onElementFocused: ((QuestionnaireElement) -> Void)?
@@ -70,9 +70,9 @@ extension QuestionnaireElementTextField: UITextFieldDelegate {
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {
-        if configuration?.required ?? false, textField.text?.isEmpty ?? true {
+        if questionnaireConfiguration?.required ?? false, textField.text?.isEmpty ?? true {
             self.isCompleted = false
-        } else if let pattern = configuration?.pattern, let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive), let text = textField.text {
+        } else if let pattern = questionnaireConfiguration?.pattern, let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive), let text = textField.text {
             self.isCompleted = regex.matches(in: text, range: NSRange(location: 0, length: text.count)).count > 0
         }
         self.onElementDismissed?(self)
@@ -81,7 +81,7 @@ extension QuestionnaireElementTextField: UITextFieldDelegate {
 
 extension QuestionnaireElement where Self:QuestionnaireElementTextField {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
-        self.title.text = self.configuration?.label
+        self.title.text = self.questionnaireConfiguration?.label
         self.title.textAlignment = .left
         self.title.font = .ninchat
 
@@ -90,7 +90,7 @@ extension QuestionnaireElement where Self:QuestionnaireElementTextField {
         self.input.font = .ninchat
         self.input.round(radius: 6.0, borderWidth: 1.0, borderColor: self.isCompleted ? .QGrayButton : .QRedBorder)
 
-        switch self.configuration?.name.lowercased() {
+        switch self.questionnaireConfiguration?.name.lowercased() {
         case "phone":
             self.input.keyboardType = .phonePad
         case "email":
