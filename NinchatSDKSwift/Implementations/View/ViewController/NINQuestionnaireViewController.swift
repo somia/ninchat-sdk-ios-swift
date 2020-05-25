@@ -8,25 +8,21 @@ import UIKit
 
 final class NINQuestionnaireViewController: UIViewController, ViewController {
 
-    private var _configuration: QuestionnaireConfiguration {
+    private lazy var views: [[QuestionnaireElement]] = {
+        QuestionnaireElementConverter(configurations: self.session.sessionManager.siteConfiguration.preAudienceQuestionnaire!).elements
+    }()
+    private var configuration: QuestionnaireConfiguration {
         if let audienceQuestionnaire = session.sessionManager.siteConfiguration.preAudienceQuestionnaire?.filter({ $0.element != nil || $0.elements != nil }) {
             guard audienceQuestionnaire.count > self.pageNumber else { fatalError("Invalid number of questionnaires configurations") }
 
             return audienceQuestionnaire[self.pageNumber]
         }
-        fatalError("Configuration for the page number: \(self.pageNumber ?? nil) is not exits")
+        fatalError("Configuration for the page number: \(self.pageNumber) is not exits")
     }
-    private var _elements: [QuestionnaireElement] {
-        if let audienceQuestionnaire = session.sessionManager.siteConfiguration.preAudienceQuestionnaire {
-            let views = QuestionnaireElementConverter(configurations: audienceQuestionnaire).elements
-            guard views.count > self.pageNumber else { fatalError("Invalid number of questionnaires views") }
-
-            return views[self.pageNumber]
-        }
-        return []
+    private var elements: [QuestionnaireElement] {
+        guard self.views.count > self.pageNumber else { fatalError("Invalid number of questionnaires views") }
+        return self.views[self.pageNumber]
     }
-    private var configuration: QuestionnaireConfiguration!
-    private var elements: [QuestionnaireElement] = []
 
     // MARK: - ViewController
 
@@ -47,15 +43,16 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
                     .fix(leading: (0, self.view), trailing: (0, self.view))
         }
     }
+    private lazy var loadingIndicator: UIActivityIndicatorView = {
+        UIActivityIndicatorView(style: .gray)
+    }()
 
     // MARK: - UIViewController life-cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        elements = _elements
-        configuration = _configuration
-        contentView = generateTableView(isHidden: false)
+        self.initiateIndicatorView()
+        self.initiateContentView(0.5) /// let elements be loaded for a few seconds
     }
 
     private func layoutSubview(_ view: UIView, parent: UIView) {
@@ -68,16 +65,30 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
         view.trailing?.priority = .required
     }
 
-    private func updateLayout() {
-        elements = _elements
-        configuration = _configuration
+    private func updateContentView(_ interval: TimeInterval = 0.0) {
+        self.loadingIndicator.startAnimating()
         contentView?.hide(true, andCompletion: { [weak self] in
-            DispatchQueue.main.async {
-                self?.contentView?.removeFromSuperview()
-                self?.contentView = self?.generateTableView(isHidden: true)
-                self?.contentView?.hide(false)
-            }
+            self?.contentView?.removeFromSuperview()
+            self?.initiateContentView(interval)
         })
+    }
+
+    private func initiateContentView(_ interval: TimeInterval) {
+        self.loadingIndicator.startAnimating()
+        DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
+            self.contentView = self.generateTableView(isHidden: true)
+            self.contentView?.hide(false, andCompletion: { [weak self] in
+                self?.loadingIndicator.stopAnimating()
+            })
+        }
+    }
+
+    private func initiateIndicatorView() {
+        self.loadingIndicator.hidesWhenStopped = true
+        self.loadingIndicator.stopAnimating()
+
+        self.view.addSubview(self.loadingIndicator)
+        self.loadingIndicator.center(toX: self.view, toY: self.view)
     }
 }
 
@@ -116,11 +127,11 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
             cell.configuration = self.configuration
             cell.onNextButtonTapped = { [weak self] questionnaire in
                 self?.pageNumber += 1
-                self?.updateLayout()
+                self?.updateContentView()
             }
             cell.onBackButtonTapped = { [weak self] questionnaire in
                 self?.pageNumber -= 1
-                self?.updateLayout()
+                self?.updateContentView()
             }
             return cell
         }

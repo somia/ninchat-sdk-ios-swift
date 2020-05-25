@@ -22,7 +22,7 @@ final class QuestionnaireElementText: WKWebView, QuestionnaireElement {
         }
     }
     var elementHeight: CGFloat {
-        self.height?.constant ?? 0
+        self.height?.constant ?? self.scrollView.contentSize.height
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
@@ -33,7 +33,6 @@ final class QuestionnaireElementText: WKWebView, QuestionnaireElement {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-
         self.initiateView()
     }
 
@@ -58,15 +57,19 @@ final class QuestionnaireElementText: WKWebView, QuestionnaireElement {
 extension QuestionnaireElement where Self:QuestionnaireElementText {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
         self.loadHTML(content: configuration?.label ?? "", font: UIFont.ninchat!)
-        self.fix(height: max(32,0, self.estimateHeight(for: configuration?.label ?? "")))
+        self.fix(height: self.estimateHeight(for: configuration?.label ?? ""))
     }
 
     private func estimateHeight(for text: String) -> CGFloat {
+        /// Apparently Swift is unable to correctly calculate HTML string's bounds
+        /// This is why we have to adjust it by adding padding values manually
+        var height = text.htmlAttributedString(withFont: UIFont.ninchat, alignment: .left, color: .black)?.boundSize(maxSize: CGSize(width: UIScreen.main.bounds.width - 20.0, height: .greatestFiniteMagnitude)).height ?? 0 + 30.0
+        height += 10 /// a new line at the end of the view
+
         if text.containsTags, let regex = try? NSRegularExpression(pattern: "</p>", options: .caseInsensitive), regex.numberOfMatches(in: text, range: NSRange(text.startIndex..., in: text)) > 0 {
-            /// Using `intrinsicContentSize` for attributed strings with <p> tag results in incorrect height
-            return self.intrinsicContentSize.height + 90.0
+            height += CGFloat(regex.numberOfMatches(in: text, range: NSRange(text.startIndex..., in: text)) * 8) /// add 8pt extra space for every <p> tag
         }
-        /// Could be calculated using regular `intrinsicContentSize` API
-        return self.intrinsicContentSize.height
+
+        return height
     }
 }

@@ -13,22 +13,22 @@ extension WKWebView {
         """
         <html>
             <head>
-                <meta charset='utf-16'>
+                <meta charset='utf-8'>
+                <meta name='viewport' content='viewport-fit=cover width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no shrink-to-fit=no'/>
                 <style type="text/css">
                     @font-face {
                         font-family: 'SourceSansPro';
                         src: url('\(font.fontName).ttf')  format('truetype')
                     }
-                    h1 {
+                    body {
                         font-family: 'SourceSansPro';
                         font-size: \(font.pointSize)px;
                         font-weight: normal;
                     }
                 </style>
-                <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'/>
             </head>
             <body>
-                <h1>\(content)</h1>
+                \(content)
             </body>
         </html>
         """
