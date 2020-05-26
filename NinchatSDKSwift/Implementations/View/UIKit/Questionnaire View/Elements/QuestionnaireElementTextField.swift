@@ -6,35 +6,46 @@
 
 import UIKit
 
-final class QuestionnaireElementTextField: UIView, QuestionnaireElement {
+final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle, QuestionnaireFocusableElement {
 
-    var isCompleted: Bool! = false {
+    internal var configuration: QuestionnaireConfiguration!
+    var isCompleted: Bool! {
         didSet {
-            self.shapeView(questionnaireConfiguration)
+            self.updateBorder()
         }
     }
 
     // MARK: - QuestionnaireElement
 
     var index: Int = 0
+    var scaleToParent: Bool = true
     var questionnaireConfiguration: QuestionnaireConfiguration? {
         didSet {
-            self.shapeView(questionnaireConfiguration)
+            if let elements = questionnaireConfiguration?.elements {
+                self.shapeView(elements[index])
+            } else {
+                self.shapeView(questionnaireConfiguration)
+            }
         }
     }
-    var onElementFocused: ((QuestionnaireElement) -> Void)?
-    var onElementDismissed: ((QuestionnaireElement) -> Void)?
-
+    var elementHeight: CGFloat {
+        CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + CGFloat(5.0 * 8.0)
+    }
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         #warning("Override assets")
     }
+
+    // MARK: - QuestionnaireFocusableElement
+
+    var onElementFocused: ((QuestionnaireElement) -> Void)?
+    var onElementDismissed: ((QuestionnaireElement) -> Void)?
 
     // MARK: - Subviews
 
     private(set) lazy var title: UILabel = {
         UILabel(frame: .zero)
     }()
-    private(set) lazy var input: UITextField = {
+    private(set) lazy var view: UITextField = {
         UITextField(frame: .zero)
     }()
 
@@ -42,25 +53,47 @@ final class QuestionnaireElementTextField: UIView, QuestionnaireElement {
 
     override func awakeFromNib() {
         super.awakeFromNib()
+        self.initiateView()
+    }
 
-        self.addSubview(title)
-        self.addSubview(input)
-        self.input.delegate = self
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.initiateView()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.initiateView()
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        self.deactivate(constraints: [.height])
-//        title
-//            .fix(leading: (8.0, self), trailing: (8.0, self))
-//            .fix(top: (0.0, self))
-//            .fix(height: self.title.intrinsicContentSize.height + 16.0)
-//        input
-//            .fix(leading: (8.0, self), trailing: (8.0, self))
-//            .fix(top: (0.0, self.title), isRelative: true)
-//            .fix(bottom: (8.0, self))
-//            .fix(height: 45.0)
+        self.decorateView()
+        self.layoutIfNeeded()
+    }
+
+    // MARK: - View Setup
+
+    private func initiateView() {
+        self.addElementViews()
+        self.view.delegate = self
+    }
+
+    private func decorateView() {
+        if self.view.subviews.count > 0 {
+            self.layoutElementViews()
+        }
+    }
+}
+
+extension QuestionnaireElementTextField {
+    internal func updateBorder() {
+        if self.configuration.required ?? false {
+            self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: self.isCompleted ? .QGrayButton : .QRedBorder)
+        } else {
+            self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: .QGrayButton)
+        }
     }
 }
 
@@ -70,9 +103,7 @@ extension QuestionnaireElementTextField: UITextFieldDelegate {
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {
-        if questionnaireConfiguration?.required ?? false, textField.text?.isEmpty ?? true {
-            self.isCompleted = false
-        } else if let pattern = questionnaireConfiguration?.pattern, let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive), let text = textField.text {
+        if let text = textField.text, !text.isEmpty, let pattern = self.configuration.pattern, let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) {
             self.isCompleted = regex.matches(in: text, range: NSRange(location: 0, length: text.count)).count > 0
         }
         self.onElementDismissed?(self)
@@ -81,22 +112,19 @@ extension QuestionnaireElementTextField: UITextFieldDelegate {
 
 extension QuestionnaireElement where Self:QuestionnaireElementTextField {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
-        self.title.text = self.questionnaireConfiguration?.label
-        self.title.textAlignment = .left
         self.title.font = .ninchat
+        self.title.numberOfLines = 0
+        self.title.textAlignment = .left
+        self.title.lineBreakMode = .byWordWrapping
+        self.title.text = configuration?.label
 
-        self.input.backgroundColor = .clear
-        self.input.borderStyle = .none
-        self.input.font = .ninchat
-        self.input.round(radius: 6.0, borderWidth: 1.0, borderColor: self.isCompleted ? .QGrayButton : .QRedBorder)
+        self.view.backgroundColor = .clear
+        self.view.textAlignment = .left
+        self.view.borderStyle = .none
+        self.view.font = .ninchat
+        self.view.fix(height: 45.0)
 
-        switch self.questionnaireConfiguration?.name.lowercased() {
-        case "phone":
-            self.input.keyboardType = .phonePad
-        case "email":
-            self.input.keyboardType = .emailAddress
-        default:
-            self.input.keyboardType = .default
-        }
+        self.configuration = configuration
+        self.updateBorder()
     }
 }

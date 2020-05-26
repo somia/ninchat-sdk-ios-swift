@@ -77,8 +77,8 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
     // MARK: - View Setup
 
     private func initiateView() {
-        self.view.delegate = self
         self.addElementViews()
+        self.view.delegate = self
     }
 
     private func decorateView() {
