@@ -126,12 +126,16 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
             let cell: QuestionnaireNavigationCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
             cell.configuration = self.configuration
             cell.onNextButtonTapped = { [weak self] questionnaire in
-                self?.pageNumber += 1
-                self?.updateContentView()
+                if (self?.views.count ?? 0) > (self?.pageNumber ?? 0) + 1 {
+                    self?.pageNumber += 1
+                    self?.updateContentView()
+                }
             }
             cell.onBackButtonTapped = { [weak self] questionnaire in
-                self?.pageNumber -= 1
-                self?.updateContentView()
+                if (self?.pageNumber ?? 0) > 1 {
+                    self?.pageNumber -= 1
+                    self?.updateContentView()
+                }
             }
             return cell
         }

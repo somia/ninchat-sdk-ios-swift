@@ -14,7 +14,7 @@ extension WKWebView {
         <html>
             <head>
                 <meta charset='utf-8'>
-                <meta name='viewport' content='viewport-fit=cover width=device-width, initial-scale=0.9, maximum-scale=1.0, user-scalable=no shrink-to-fit=yes'/>
+                <meta name='viewport' content='viewport-fit=cover width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no shrink-to-fit=yes'/>
                 <style type="text/css">
                     @font-face {
                         font-family: 'SourceSansPro';
