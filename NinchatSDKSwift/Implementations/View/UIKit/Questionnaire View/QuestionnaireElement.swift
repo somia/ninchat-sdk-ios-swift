@@ -64,7 +64,7 @@ extension QuestionnaireElementWithTitle {
     }
 }
 
-/// Add focus/dismiss closure for applicable elements (e.g. textarea, inout)
+/// Add focus/dismiss closure for applicable elements (e.g. textarea, input)
 protocol QuestionnaireFocusableElement {
     var onElementFocused: ((QuestionnaireElement) -> Void)? { get set }
     var onElementDismissed: ((QuestionnaireElement) -> Void)? { get set }
@@ -89,4 +89,19 @@ protocol QuestionnaireNavigationButtons {
     func addNavigationButtons()
     func shapeNavigationButtons(_ configuration: QuestionnaireConfiguration?)
     func layoutNavigationButtons()
+}
+
+/// Add 'Done' button to keyboards to dismiss applicable elements (e.g. textarea, input)
+protocol QuestionnaireHasDoneButton {
+    func doneButton(selector: Selector) -> UIToolbar
+}
+extension QuestionnaireHasDoneButton {
+    func doneButton(selector: Selector) -> UIToolbar {
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let doneBtn = UIBarButtonItem(title: "Done".localized, style: .done, target: self, action: selector)
+        let doneToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 320, height: 50))
+        doneToolbar.items = [flexSpace, doneBtn]
+        doneToolbar.barStyle = .default
+        return doneToolbar
+    }
 }

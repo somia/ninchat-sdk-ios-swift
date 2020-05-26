@@ -78,6 +78,7 @@ final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle
     private func initiateView() {
         self.addElementViews()
         self.view.delegate = self
+        self.view.inputAccessoryView = self.doneButton(selector: #selector(self.onDoneButtonTapped(_:)))
     }
 
     private func decorateView() {
@@ -107,6 +108,13 @@ extension QuestionnaireElementTextField: UITextFieldDelegate {
             self.isCompleted = regex.matches(in: text, range: NSRange(location: 0, length: text.count)).count > 0
         }
         self.onElementDismissed?(self)
+    }
+}
+
+extension QuestionnaireElementTextField: QuestionnaireHasDoneButton {
+    @objc
+    private func onDoneButtonTapped(_ sender: Any) {
+        self.view.endEditing(true)
     }
 }
 
