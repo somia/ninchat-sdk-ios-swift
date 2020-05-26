@@ -36,7 +36,7 @@ final class QuestionnaireConverterTests: XCTestCase {
 
             let configuration = elements[0]
             let view = views![0]
-            XCTAssertEqual(view.configuration, configuration)
+            XCTAssertEqual(view.questionnaireConfiguration, configuration)
         }
 
         if let element = self.questionnaire_preAudience?.questionnaireConfiguration?.filter({ $0.type != .group }).filter({ $0.element == .text }), element.count > 0 {
@@ -46,7 +46,7 @@ final class QuestionnaireConverterTests: XCTestCase {
 
             let configuration = element[0]
             let view = views![0]
-            XCTAssertEqual(view.configuration, configuration)
+            XCTAssertEqual(view.questionnaireConfiguration, configuration)
         }
     }
 
