@@ -147,11 +147,7 @@ extension QuestionnaireElementSelect {
 
 extension QuestionnaireElement where Self:QuestionnaireElementSelect {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
-        self.title.font = .ninchat
-        self.title.numberOfLines = 0
-        self.title.textAlignment = .left
-        self.title.lineBreakMode = .byWordWrapping
-        self.title.text = configuration?.label
+        self.shapeTitle(configuration)
 
         self.view.backgroundColor = .clear
         self.view.fix(height: 45.0)

@@ -112,18 +112,8 @@ extension QuestionnaireElementTextField: UITextFieldDelegate {
 
 extension QuestionnaireElement where Self:QuestionnaireElementTextField {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
-        self.title.font = .ninchat
-        self.title.numberOfLines = 0
-        self.title.textAlignment = .left
-        self.title.lineBreakMode = .byWordWrapping
-        self.title.text = configuration?.label
-
-        self.view.backgroundColor = .clear
-        self.view.textAlignment = .left
-        self.view.borderStyle = .none
-        self.view.font = .ninchat
-        self.view.fix(height: 45.0)
-
+        self.shapeTitle(configuration)
+        self.shapeTextField(configuration)
         self.configuration = configuration
         self.updateBorder()
     }

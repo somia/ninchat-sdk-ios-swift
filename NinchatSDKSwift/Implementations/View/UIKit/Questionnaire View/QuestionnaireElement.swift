@@ -36,10 +36,6 @@ protocol QuestionnaireElementWithTitle: QuestionnaireElement {
     func layoutElementViews()
 }
 extension QuestionnaireElementWithTitle {
-    var elementHeight: CGFloat {
-        CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + CGFloat(4.0 * 8.0)
-    }
-
     func addElementViews() {
         /// Must be called in `view.awakeFromNib()` function
         self.addSubview(title)
@@ -57,6 +53,14 @@ extension QuestionnaireElementWithTitle {
             .fix(top: (0.0, title), isRelative: true)
             .center(toX: self)
             .fix(width: self.width?.constant ?? self.bounds.width)
+    }
+
+    func shapeTitle(_ configuration: QuestionnaireConfiguration?) {
+        self.title.font = .ninchat
+        self.title.numberOfLines = 0
+        self.title.textAlignment = .left
+        self.title.lineBreakMode = .byWordWrapping
+        self.title.text = configuration?.label
     }
 }
 

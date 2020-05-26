@@ -84,11 +84,7 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle,
 
 extension QuestionnaireElement where Self:QuestionnaireElementCheckbox {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
-        self.title.font = .ninchat
-        self.title.numberOfLines = 0
-        self.title.textAlignment = .left
-        self.title.lineBreakMode = .byWordWrapping
-        self.title.text = configuration?.label
+        self.shapeTitle(configuration)
 
         guard self.view.subviews.count == 0 else { return }
         var upperView: UIView?

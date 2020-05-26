@@ -10,6 +10,7 @@
 		7C44F1A84C25C4445CF3B955 /* Pods_NinchatSDKSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 495ADA60487CD354EDC07332 /* Pods_NinchatSDKSwift.framework */; };
 		851E359923B1214E000FA966 /* AutolayouTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851E359823B1214E000FA966 /* AutolayouTests.swift */; };
 		851ECF6423969297006D332F /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 851ECF6323969297006D332F /* README.md */; };
+		852DB4DD247D3746001EAC2C /* QuestionnaireElement+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852DB4DC247D3746001EAC2C /* QuestionnaireElement+Extension.swift */; };
 		8530EC8123AD3FC300BAA52A /* NINChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8530EC8023AD3FC300BAA52A /* NINChatViewController.swift */; };
 		8530EC8523AD405200BAA52A /* VideoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8530EC8323AD405200BAA52A /* VideoView.xib */; };
 		8530EC8623AD405200BAA52A /* VideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8530EC8423AD405200BAA52A /* VideoView.swift */; };
@@ -220,6 +221,7 @@
 		851ECF6323969297006D332F /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		852751D8238EE67000B6A44A /* NinchatSDKSwift.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = NinchatSDKSwift.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		852751DA238EE67800B6A44A /* BUILDING.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = BUILDING.md; path = "../ninchat-sdk-ios/BUILDING.md"; sourceTree = "<group>"; };
+		852DB4DC247D3746001EAC2C /* QuestionnaireElement+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QuestionnaireElement+Extension.swift"; sourceTree = "<group>"; };
 		8530EC8023AD3FC300BAA52A /* NINChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINChatViewController.swift; sourceTree = "<group>"; };
 		8530EC8323AD405200BAA52A /* VideoView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VideoView.xib; sourceTree = "<group>"; };
 		8530EC8423AD405200BAA52A /* VideoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoView.swift; sourceTree = "<group>"; };
@@ -460,6 +462,16 @@
 				7B50C1E321841F3749D5D05A /* Pods-NinchatSDKSwiftServerTests.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		852DB4DB247D370B001EAC2C /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				91A1648B47113F8332CE820C /* QuestionnaireNavigationCell.swift */,
+				857F12C024752CA400337F7A /* QuestionnaireCell.swift */,
+				857F12BE24752C9000337F7A /* QuestionnaireCell.xib */,
+			);
+			path = Cells;
 			sourceTree = "<group>";
 		};
 		8530EC8223AD405200BAA52A /* Video View */ = {
@@ -934,9 +946,8 @@
 			isa = PBXGroup;
 			children = (
 				91A16F6AB5D678663E586FD1 /* QuestionnaireElement.swift */,
-				857F12C024752CA400337F7A /* QuestionnaireCell.swift */,
-				857F12BE24752C9000337F7A /* QuestionnaireCell.xib */,
-				91A1648B47113F8332CE820C /* QuestionnaireNavigationCell.swift */,
+				852DB4DC247D3746001EAC2C /* QuestionnaireElement+Extension.swift */,
+				852DB4DB247D370B001EAC2C /* Cells */,
 				91A16E8BF2B65EFB8166959F /* Elements */,
 			);
 			path = "Questionnaire View";
@@ -1383,6 +1394,7 @@
 				91A16AC6366F692190CB7D0D /* QuestionnaireElementTextArea.swift in Sources */,
 				91A161646D9A0C769F0BA24B /* QuestionnaireElementTextField.swift in Sources */,
 				91A16D8F59D6DC431464E959 /* QuestionnaireElementCheckbox.swift in Sources */,
+				852DB4DD247D3746001EAC2C /* QuestionnaireElement+Extension.swift in Sources */,
 				91A16ECAF6CDA6AA355A4D98 /* QuestionnaireNavigationCell.swift in Sources */,
 				91A1631CB9FB0E611E88DD99 /* WKWebView+Extension.swift in Sources */,
 				91A1621313714ACDFE35E97C /* NSAttributedString+Extension.swift in Sources */,

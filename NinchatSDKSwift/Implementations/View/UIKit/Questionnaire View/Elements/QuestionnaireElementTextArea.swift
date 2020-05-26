@@ -113,11 +113,7 @@ extension QuestionnaireElementTextArea: UITextViewDelegate {
 
 extension QuestionnaireElement where Self:QuestionnaireElementTextArea {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
-        self.title.font = .ninchat
-        self.title.numberOfLines = 0
-        self.title.textAlignment = .left
-        self.title.lineBreakMode = .byWordWrapping
-        self.title.text = configuration?.label
+        self.shapeTitle(configuration)
 
         self.view.backgroundColor = .clear
         self.view.textAlignment = .left
