@@ -51,8 +51,14 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        self.addKeyboardListeners()
         self.initiateIndicatorView()
         self.initiateContentView(0.5) /// let elements be loaded for a few seconds
+    }
+
+    deinit {
+        self.removeKeyboardListeners()
     }
 
     private func layoutSubview(_ view: UIView, parent: UIView) {
