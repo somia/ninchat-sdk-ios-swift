@@ -139,7 +139,7 @@ extension QuestionnaireElement where Self:QuestionnaireElementRadio {
             .center(toX: self.view)
 
         if let height = self.view.height {
-            height.constant += button.height?.constant ?? 0
+            height.constant += ((button.height?.constant ?? 0) + 8.0)
         } else {
             self.view.fix(height: (button.height?.constant ?? 0) + 16.0)
         }

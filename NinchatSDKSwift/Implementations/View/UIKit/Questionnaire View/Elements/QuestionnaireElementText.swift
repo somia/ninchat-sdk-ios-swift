@@ -63,9 +63,7 @@ extension QuestionnaireElement where Self:QuestionnaireElementText {
     private func estimateHeight(for text: String) -> CGFloat {
         /// Apparently Swift is unable to correctly calculate HTML string's bounds
         /// This is why we have to adjust it by adding padding values manually
-        var height = text.htmlAttributedString(withFont: UIFont.ninchat, alignment: .left, color: .black)?.boundSize(maxSize: CGSize(width: UIScreen.main.bounds.width - 20.0, height: .greatestFiniteMagnitude)).height ?? 0 + 30.0
-        height += 10 /// a new line at the end of the view
-
+        var height = text.htmlAttributedString(withFont: UIFont.ninchat, alignment: .left, color: .black)?.boundSize(maxSize: CGSize(width: UIScreen.main.bounds.width, height: .greatestFiniteMagnitude)).height ?? 0
         if text.containsTags, let regex = try? NSRegularExpression(pattern: "</p>", options: .caseInsensitive), regex.numberOfMatches(in: text, range: NSRange(text.startIndex..., in: text)) > 0 {
             height += CGFloat(regex.numberOfMatches(in: text, range: NSRange(text.startIndex..., in: text)) * 8) /// add 8pt extra space for every <p> tag
         }

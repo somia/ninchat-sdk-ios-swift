@@ -9,6 +9,6 @@ import Foundation
 
 extension NSAttributedString {
     func boundSize(maxSize: CGSize) -> CGSize {
-        self.boundingRect(with: maxSize, options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).integral.size
+        self.boundingRect(with: maxSize, options: [.usesLineFragmentOrigin, .usesFontLeading, .usesDeviceMetrics], context: nil).integral.size
     }
 }
