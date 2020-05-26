@@ -11,8 +11,22 @@ extension QuestionnaireElementWithTitle where View:UITextField {
         self.view.backgroundColor = .clear
         self.view.textAlignment = .left
         self.view.borderStyle = .none
+        self.view.keyboardType = keyboardType(configuration)
         self.view.font = .ninchat
         self.view.fix(height: 45.0)
+    }
+
+    private func keyboardType(_ configuration: QuestionnaireConfiguration?) -> UIKeyboardType {
+        switch configuration?.pattern ?? "" {
+        case "^(1[0-9]|[0-9])$":
+            return .numberPad
+        case "^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$":
+            return .emailAddress
+        case "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$":
+            return .phonePad
+        default:
+            return .default
+        }
     }
 }
 
