@@ -28,8 +28,8 @@ extension QuestionnaireElement {
 ///     - options
 protocol QuestionnaireElementWithTitle: QuestionnaireElement {
     associatedtype View: UIView
-    var title: UILabel { get }
     var view: View { get }
+    var title: UILabel { get }
     var scaleToParent: Bool { get set }
 
     func addElementViews()
