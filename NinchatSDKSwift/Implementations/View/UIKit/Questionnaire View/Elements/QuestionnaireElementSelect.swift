@@ -148,15 +148,12 @@ extension QuestionnaireElementSelect {
 extension QuestionnaireElement where Self:QuestionnaireElementSelect {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
         self.shapeTitle(configuration)
-
-        self.view.backgroundColor = .clear
-        self.view.fix(height: 45.0)
+        self.shapeSelect()
 
         self.selectedOption.font = .ninchat
         self.selectedOption.textAlignment = .left
         self.selectedOption.textColor = .QBlueButtonNormal
         self.selectedOption.highlightedTextColor = .QGrayButton
-
         self.selectionIndicator.contentMode = .scaleAspectFit
 
         self.configuration = configuration
