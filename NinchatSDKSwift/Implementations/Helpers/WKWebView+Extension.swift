@@ -24,6 +24,10 @@ extension WKWebView {
                         font-family: 'SourceSansPro';
                         font-size: \(font.pointSize)px;
                         font-weight: normal;
+                        line-height: 18px;
+                    }
+                    p {
+                        padding-bottom: 4px;
                     }
                 </style>
             </head>

@@ -138,7 +138,7 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
                 }
             }
             cell.onBackButtonTapped = { [weak self] questionnaire in
-                if (self?.pageNumber ?? 0) > 1 {
+                if (self?.pageNumber ?? 0) > 0 {
                     self?.pageNumber -= 1
                     self?.updateContentView()
                 }
