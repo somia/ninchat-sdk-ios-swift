@@ -6,37 +6,50 @@
 
 import UIKit
 
-final class QuestionnaireElementSelect: UIView, QuestionnaireElement {
+final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle {
 
+    internal var configuration: QuestionnaireConfiguration?
     var onOptionSelected: ((ElementOption) -> Void)?
 
     // MARK: - QuestionnaireElement
 
-    var configuration: QuestionnaireConfiguration? {
+    var index: Int = 0
+    var scaleToParent: Bool = false
+    var questionnaireConfiguration: QuestionnaireConfiguration? {
         didSet {
-            self.shapeView()
+            if let elements = questionnaireConfiguration?.elements {
+                self.shapeView(elements[index])
+            } else {
+                self.shapeView(questionnaireConfiguration)
+            }
+
+            self.decorateView()
         }
     }
+    var onElementOptionTapped: ((ElementOption) -> Void)?
     var onElementFocused: ((QuestionnaireElement) -> Void)?
     var onElementDismissed: ((QuestionnaireElement) -> Void)?
+    var elementHeight: CGFloat {
+        CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + 8
+    }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         #warning("Override assets")
     }
 
-    // MARK: - Subviews
+    // MARK: - Subviews - QuestionnaireElementWithTitleAndOptions
 
     private(set) lazy var title: UILabel = {
         UILabel(frame: .zero)
     }()
-    private(set) lazy var menu: UIView = {
+    private(set) lazy var view: UIView = {
         UIView(frame: .zero)
     }()
     private(set) lazy var selectedOption: UILabel = {
         UILabel(frame: .zero)
     }()
     private(set) lazy var selectionIndicator: UIImageView = {
-        UIImageView(image: UIImage(named: "icon_select_option", in: .SDKBundle, compatibleWith: nil))
+        UIImageView(image: UIImage(named: "icon_select_option", in: .SDKBundle, compatibleWith: nil), highlightedImage: UIImage(named: "icon_selected_option", in: .SDKBundle, compatibleWith: nil))
     }()
     private var dialogueIsShown = false
 
@@ -44,35 +57,48 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElement {
 
     override func awakeFromNib() {
         super.awakeFromNib()
+        self.initiateView()
+    }
 
-        self.addSubview(title)
-        self.addSubview(menu)
-        self.menu.addSubview(selectedOption)
-        self.menu.addSubview(selectionIndicator)
-        self.selectedOption.text = "Select".localized
-        self.menu.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.onMenuTapped(_:))))
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.initiateView()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.initiateView()
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        self.deactivate(constraints: [.height])
-        title
-            .fix(leading: (8.0, self), trailing: (8.0, self))
-            .fix(top: (0.0, self))
-            .fix(height: self.title.intrinsicContentSize.height + 16.0)
-        menu
-            .fix(leading: (8.0, self), trailing: (8.0, self))
-            .fix(top: (0.0, self.title), isRelative: true)
-            .fix(bottom: (8.0, self))
-            .fix(height: 45.0)
-        selectedOption
-            .fix(leading: (8.0, self.menu), trailing: (8.0, self.menu))
-            .fix(top: (0.0, self.menu), bottom: (0.0, self.menu))
-        selectionIndicator
-            .fix(width: 15.0, height: 15.0)
-            .fix(trailing: (15.0, self.menu))
-            .center(toY: self.menu)
+        self.decorateView()
+        self.layoutIfNeeded()
+    }
+
+    // MARK: - View Setup
+
+    private func initiateView() {
+        self.addElementViews()
+        self.view.addSubview(selectedOption)
+        self.view.addSubview(selectionIndicator)
+        self.selectedOption.text = "Select".localized
+        self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.onMenuTapped(_:))))
+    }
+
+    private func decorateView() {
+        if self.view.subviews.count > 0 {
+            self.layoutElementViews()
+
+            selectedOption
+                .fix(leading: (8.0, self.view), trailing: (8.0, self.view))
+                .fix(top: (0.0, self.view), bottom: (0.0, self.view))
+            selectionIndicator
+                .fix(width: 15.0, height: 15.0)
+                .fix(trailing: (15.0, self.view))
+                .center(toY: self.view)
+        }
     }
 
     // MARK: - User actions
@@ -81,6 +107,13 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElement {
     private func onMenuTapped(_ sender: UITapGestureRecognizer) {
         self.showOptions()
         self.onElementFocused?(self)
+    }
+}
+
+extension QuestionnaireElementSelect {
+    internal func updateSelectView() {
+        self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: self.selectedOption.isHighlighted ? .QGrayButton : .QBlueButtonNormal)
+        self.selectionIndicator.tintColor = self.selectedOption.isHighlighted ? .QGrayButton : .QBlueButtonNormal
     }
 }
 
@@ -95,28 +128,35 @@ extension QuestionnaireElementSelect {
 
             switch result {
             case .cancel:
+                self.selectedOption.isHighlighted = false
+                self.selectionIndicator.isHighlighted = false
+                self.selectedOption.text = "Select".localized
                 self.onElementDismissed?(self)
             case .select(let index):
                 guard let option = self.configuration?.options?[index] else { fatalError("Unable to pick selected option") }
+                self.selectedOption.isHighlighted = true
+                self.selectionIndicator.isHighlighted = true
+                self.selectedOption.text = option.label
                 self.onOptionSelected?(option)
             }
+
+            self.updateSelectView()
         }
     }
 }
 
 extension QuestionnaireElement where Self:QuestionnaireElementSelect {
-    func shapeView() {
-        self.title.text = self.configuration?.label
-        self.title.textAlignment = .left
-        self.title.font = .ninchat
+    func shapeView(_ configuration: QuestionnaireConfiguration?) {
+        self.shapeTitle(configuration)
+        self.shapeSelect()
 
-        self.menu.backgroundColor = .clear
-        self.menu.round(radius: 6.0, borderWidth: 1.0, borderColor: .QBlueButtonNormal)
-
-        self.selectedOption.textAlignment = .left
         self.selectedOption.font = .ninchat
+        self.selectedOption.textAlignment = .left
         self.selectedOption.textColor = .QBlueButtonNormal
-
+        self.selectedOption.highlightedTextColor = .QGrayButton
         self.selectionIndicator.contentMode = .scaleAspectFit
+
+        self.configuration = configuration
+        self.updateSelectView()
     }
 }

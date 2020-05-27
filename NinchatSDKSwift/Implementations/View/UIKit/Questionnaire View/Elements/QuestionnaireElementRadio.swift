@@ -6,78 +6,88 @@
 
 import UIKit
 
-final class QuestionnaireElementRadio: UIButton, QuestionnaireElement {
+final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, QuestionnaireOptionSelectableElement {
 
     // MARK: - QuestionnaireElement
 
-    var configuration: QuestionnaireConfiguration? {
+    var index: Int = 0
+    var scaleToParent: Bool = true
+    var questionnaireConfiguration: QuestionnaireConfiguration? {
         didSet {
-            self.shapeView()
+            if let elements = questionnaireConfiguration?.elements {
+                self.shapeView(elements[index])
+            } else {
+                self.shapeView(questionnaireConfiguration)
+            }
+
+            self.decorateView()
         }
     }
-    var onElementFocused: ((QuestionnaireElement) -> ())?
-    var onElementDismissed: ((QuestionnaireElement) -> Void)? {
-        didSet { fatalError("The closure won't be called on this type") }
+    var elementHeight: CGFloat {
+        CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + (2 * 8.0)
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
-        if let overrideImage = delegate?.override(imageAsset: isPrimary ? .primaryButton : .secondaryButton) {
-            self.setBackgroundImage(overrideImage, for: .normal)
-            self.layer.borderWidth = 0
-        }
-        if let overrideColor = delegate?.override(colorAsset: isPrimary ? .buttonPrimaryText : .buttonSecondaryText) {
-            self.setTitleColor(overrideColor, for: .normal)
-        }
+        self.subviews.compactMap({ $0 as? Button }).forEach({ $0.overrideAssets(with: delegate, isPrimary: isPrimary) })
     }
+
+    // MARK: - QuestionnaireOptionSelectableElement
+
+    var onElementOptionSelected: ((ElementOption) -> ())?
+    var onElementOptionDeselected: ((ElementOption) -> ())?
+
+    // MARK: - Subviews - QuestionnaireElementWithTitleAndOptions + QuestionnaireElementHasButtons
+
+    private(set) lazy var title: UILabel = {
+        UILabel(frame: .zero)
+    }()
+    private(set) lazy var view: UIView = {
+        UIView(frame: .zero)
+    }()
 
     // MARK: - UIView life-cycle
 
-    override var isEnabled: Bool {
-        didSet {
-            self.alpha = isEnabled ? 1.0 : 0.5
-        }
-    }
-    override var isSelected: Bool {
-        didSet {
-            self.shapeView()
-        }
-    }
-
     override func awakeFromNib() {
         super.awakeFromNib()
-        self.tag = -1
-
-        guard self.buttonType == .custom else { fatalError("Element select button should be of type `Custom`") }
-        self.addTarget(self, action: #selector(self.onButtonTapped(_:)), for: .touchUpInside)
+        self.initiateView()
     }
 
-    // MARK: - User actions
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.initiateView()
+    }
 
-    @objc
-    private func onButtonTapped(_ sender: QuestionnaireElementRadio) {
-        self.isSelected = !self.isSelected
-        self.onElementFocused?(sender)
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.initiateView()
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        self.decorateView()
+        self.layoutIfNeeded()
+    }
+
+    // MARK: - View Setup
+
+    private func initiateView() {
+        self.addElementViews()
+    }
+
+    private func decorateView() {
+        if self.view.subviews.count > 0 {
+            self.layoutElementViews()
+        }
     }
 }
 
+/// QuestionnaireElement
 extension QuestionnaireElement where Self:QuestionnaireElementRadio {
-    func shapeView() {
-        self.backgroundColor = .clear
-        self.titleLabel?.font = .ninchat
-        self.titleLabel?.numberOfLines = 0
-        self.titleLabel?.textAlignment = .center
-        self.titleLabel?.lineBreakMode = .byWordWrapping
+    func shapeView(_ configuration: QuestionnaireConfiguration?) {
+        self.shapeTitle(configuration)
 
-        self.setTitle(configuration?.label, for: .normal)
-        self.setTitleColor(.QGrayButton, for: .normal)
-        self.setTitle(configuration?.label, for: .selected)
-        self.setTitleColor(.QBlueButtonNormal, for: .selected)
-
-        if self.width?.constant ?? 0 < self.intrinsicContentSize.width + 32.0 {
-            self.fix(width: self.intrinsicContentSize.width + 32.0)
-        }
-        self
-            .fix(height: max(45.0, self.intrinsicContentSize.height + 16.0))
-            .round(radius: 15.0, borderWidth: 1.0, borderColor: self.isSelected ? .QBlueButtonNormal : .QGrayButton)
+        guard self.view.subviews.count == 0 else { return }
+        self.shapeRadioView(configuration)
     }
 }

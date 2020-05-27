@@ -18,32 +18,32 @@ struct QuestionnaireElementConverter {
 
     var elements: [[QuestionnaireElement]] {
         self.configurations.compactMap { configuration in
-            func getView(from element: ElementType) -> QuestionnaireElement? {
+            func getView(from element: ElementType, index: Int) -> QuestionnaireElement? {
                 switch element {
                 case .text:
-                    return generate(from: configuration, ofType: QuestionnaireElementText.self)
+                    return generate(from: configuration, index: index, ofType: QuestionnaireElementText.self)
                 case .select:
-                    return generate(from: configuration, ofType: QuestionnaireElementSelect.self)
+                    return generate(from: configuration, index: index, ofType: QuestionnaireElementSelect.self)
                 case .radio:
-                    return generate(from: configuration, ofType: QuestionnaireElementRadio.self)
+                    return generate(from: configuration, index: index, ofType: QuestionnaireElementRadio.self)
                 case .textarea:
-                    return generate(from: configuration, ofType: QuestionnaireElementTextArea.self)
+                    return generate(from: configuration, index: index, ofType: QuestionnaireElementTextArea.self)
                 case .checkbox:
-                    return generate(from: configuration, ofType: QuestionnaireElementCheckbox.self)
+                    return generate(from: configuration, index: index, ofType: QuestionnaireElementCheckbox.self)
                 case .input:
-                    return generate(from: configuration, ofType: QuestionnaireElementTextField.self)
+                    return generate(from: configuration, index: index, ofType: QuestionnaireElementTextField.self)
                 case .likert:
                     #warning("No view is defined yet!")
                     return nil
                 }
             }
 
-            if let element = configuration.element, let view = getView(from: element) {
+            if let element = configuration.element, let view = getView(from: element, index: 0) {
                 return [view]
             }
             return configuration.elements?.compactMap { element -> QuestionnaireElement? in
-                if let element = element.element {
-                    return getView(from: element)
+                if let type = element.element, let index = configuration.elements?.firstIndex(of: element) {
+                    return getView(from: type, index: index)
                 }
                 return nil
             }
@@ -52,9 +52,11 @@ struct QuestionnaireElementConverter {
 }
 
 extension QuestionnaireElementConverter {
-    func generate<T: QuestionnaireElement>(from configuration: QuestionnaireConfiguration, ofType: T.Type) -> T {
-        let element = T(frame: .zero)
-        element.configuration = configuration
-        return element
+    func generate<T: QuestionnaireElement>(from configuration: QuestionnaireConfiguration, index: Int, ofType: T.Type) -> T {
+        let view = T(frame: .zero)
+        view.index = index
+        view.questionnaireConfiguration = configuration
+
+        return view
     }
 }
