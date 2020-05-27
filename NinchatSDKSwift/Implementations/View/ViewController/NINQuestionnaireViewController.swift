@@ -133,44 +133,52 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == self.elements.count {
-            /// Show navigation buttons
-            let cell: QuestionnaireNavigationCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
-            cell.configuration = self.configuration
-            cell.onNextButtonTapped = { [weak self] questionnaire in
-                if (self?.views.count ?? 0) > (self?.pageNumber ?? 0) + 1 {
-                    self?.previousPage = self?.pageNumber
-                    self?.pageNumber += 1
-                    self?.updateContentView()
-                }
-            }
-            cell.onBackButtonTapped = { [weak self] questionnaire in
-                if (self?.pageNumber ?? 0) > 0 {
-                    self?.pageNumber = self?.previousPage
-                    self?.updateContentView()
-                }
-            }
-            return cell
+            return navigation(tableView, cellForRowAt: indexPath)
         }
+        return questionnaire(tableView, cellForRowAt: indexPath)
+    }
 
-        /// Show questionnaire items
+    private func navigation(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        /// Show navigation buttons
+        let cell: QuestionnaireNavigationCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
+        cell.configuration = self.configuration
+        cell.onNextButtonTapped = { [weak self] questionnaire in
+            if (self?.views.count ?? 0) > (self?.pageNumber ?? 0) + 1 {
+                self?.previousPage = self?.pageNumber
+                self?.pageNumber += 1
+                self?.updateContentView()
+            }
+        }
+        cell.onBackButtonTapped = { [weak self] questionnaire in
+            if (self?.pageNumber ?? 0) > 0 {
+                self?.pageNumber = self?.previousPage
+                self?.updateContentView()
+            }
+        }
+        return cell
+    }
+
+    private func questionnaire(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
-        var view = self.elements[indexPath.row]
-        if var view = view as? QuestionnaireOptionSelectableElement {
+        var element = self.elements[indexPath.row]
+        if var view = element as? QuestionnaireOptionSelectableElement {
             view.onElementOptionSelected = { [weak self] option in
                 if let configuration = self?.configuration, let targetElement = self?.connector.findElementAndPage(for: option.value, in: configuration), let targetPage = targetElement.1 {
                     self?.previousPage = self?.pageNumber
                     self?.pageNumber = targetPage
+
+                    view.deselect(option: option)
                     self?.updateContentView()
                 }
             }
             view.onElementOptionDeselected = { option in }
         }
-        if var view = view as? QuestionnaireFocusableElement {
+        if var view = element as? QuestionnaireFocusableElement {
             view.onElementFocused = { questionnaire in }
             view.onElementDismissed = { option in }
         }
-        view.overrideAssets(with: self.session, isPrimary: false)
-        self.layoutSubview(view, parent: cell.content)
+        element.overrideAssets(with: self.session, isPrimary: false)
+        self.layoutSubview(element, parent: cell.content)
 
         return cell
     }

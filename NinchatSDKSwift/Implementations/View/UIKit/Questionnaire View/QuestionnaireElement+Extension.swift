@@ -49,23 +49,18 @@ extension QuestionnaireElementWithTitle where View:UIView, Self:QuestionnaireOpt
     }
 
     private func generateButton(for option: ElementOption, tag: Int) -> Button {
-        func roundButton(_ button: UIButton) {
-            button.round(radius: 15.0, borderWidth: 1.0, borderColor: button.isSelected ? .QBlueButtonNormal : .QGrayButton)
-        }
-
         let view = Button(frame: .zero) { [weak self] button in
-            button.isSelected = !button.isSelected
-            roundButton(button)
+            self?.applySelection(to: button)
             button.isSelected ? self?.onElementOptionSelected?(option) : self?.onElementOptionDeselected?(option)
         }
 
-        view.tag = tag
+        view.tag = tag + 1
         view.setTitle(option.label, for: .normal)
         view.setTitleColor(.QGrayButton, for: .normal)
         view.setTitle(option.label, for: .selected)
         view.setTitleColor(.QBlueButtonNormal, for: .selected)
         view.updateTitleScale()
-        roundButton(view)
+        view.roundButton()
 
         return view
     }
@@ -97,6 +92,15 @@ extension QuestionnaireElementWithTitle where View:UIView, Self:QuestionnaireOpt
 
         upperView = button
     }
+
+    private func applySelection(to button: UIButton) {
+        self.view.subviews.compactMap({ $0 as? Button }).forEach { [weak self] button in
+            button.isSelected = false
+            (button as? Button)?.roundButton()
+        }
+        button.isSelected = true
+        (button as? Button)?.roundButton()
+    }
 }
 
 extension QuestionnaireElementWithTitle where View:UIView, Self:QuestionnaireOptionSelectableElement {
@@ -117,9 +121,8 @@ extension QuestionnaireElementWithTitle where View:UIView, Self:QuestionnaireOpt
             icon.1.isHighlighted = button.isSelected
             button.isSelected ? self?.onElementOptionSelected?(option) : self?.onElementOptionDeselected?(option)
         }
-        view.updateTitleScale()
 
-        view.tag = tag
+        view.tag = tag + 100
         view.setTitle(option.label, for: .normal)
         view.setTitleColor(.QGrayButton, for: .normal)
         view.setTitle(option.label, for: .selected)
@@ -137,17 +140,19 @@ extension QuestionnaireElementWithTitle where View:UIView, Self:QuestionnaireOpt
         imgViewContainer.backgroundColor = .clear
         imgViewContainer.isUserInteractionEnabled = false
         imgViewContainer.isExclusiveTouch = false
-        imgViewContainer.tag = tag
 
-        return (imgViewContainer, UIImageView(image: nil, highlightedImage: UIImage(named: "icon_checkbox_selected", in: .SDKBundle, compatibleWith: nil)))
+        let image = UIImageView(image: nil, highlightedImage: UIImage(named: "icon_checkbox_selected", in: .SDKBundle, compatibleWith: nil))
+        image.tag = tag + 200
+
+        return (imgViewContainer, image)
     }
 
     private func layout(icon: UIImageView, within view: UIView) {
         view.addSubview(icon)
 
         icon
-                .fix(top: (5.0, view), bottom: (5.0, view))
-                .fix(leading: (5.0, view), trailing: (5.0, view))
+            .fix(top: (5.0, view), bottom: (5.0, view))
+            .fix(leading: (5.0, view), trailing: (5.0, view))
     }
 
     private func layout(button: Button, icon: UIView, upperView: inout UIView?) {
