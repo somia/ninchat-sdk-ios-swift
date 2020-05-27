@@ -68,20 +68,6 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
 }
 
 extension NINQuestionnaireViewController {
-    private func generateTableView(isHidden: Bool) -> UITableView {
-        let view = UITableView(frame: .zero)
-        view.register(QuestionnaireCell.self)
-        view.registerClass(QuestionnaireNavigationCell.self)
-
-        view.separatorStyle = .none
-        view.allowsSelection = false
-        view.alpha = isHidden ? 0.0 : 1.0
-        view.delegate = self
-        view.dataSource = self
-
-        return view
-    }
-
     private func layoutSubview(_ view: UIView, parent: UIView) {
         parent.addSubview(view)
 
@@ -116,6 +102,20 @@ extension NINQuestionnaireViewController {
 
         self.view.addSubview(self.loadingIndicator)
         self.loadingIndicator.center(toX: self.view, toY: self.view)
+    }
+
+    private func generateTableView(isHidden: Bool) -> UITableView {
+        let view = UITableView(frame: .zero)
+        view.register(QuestionnaireCell.self)
+        view.registerClass(QuestionnaireNavigationCell.self)
+
+        view.separatorStyle = .none
+        view.allowsSelection = false
+        view.alpha = isHidden ? 0.0 : 1.0
+        view.delegate = self
+        view.dataSource = self
+
+        return view
     }
 }
 

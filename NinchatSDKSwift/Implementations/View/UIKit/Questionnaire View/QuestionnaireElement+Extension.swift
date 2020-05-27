@@ -58,13 +58,13 @@ extension QuestionnaireElementWithTitle where View:UIView, Self:QuestionnaireOpt
             roundButton(button)
             button.isSelected ? self?.onElementOptionSelected?(option) : self?.onElementOptionDeselected?(option)
         }
-        view.updateTitleScale()
 
         view.tag = tag
         view.setTitle(option.label, for: .normal)
         view.setTitleColor(.QGrayButton, for: .normal)
         view.setTitle(option.label, for: .selected)
         view.setTitleColor(.QBlueButtonNormal, for: .selected)
+        view.updateTitleScale()
         roundButton(view)
 
         return view
@@ -75,6 +75,8 @@ extension QuestionnaireElementWithTitle where View:UIView, Self:QuestionnaireOpt
 
         if self.scaleToParent {
             button.fix(leading: (8.0, self.view), trailing: (8.0, self.view))
+            button.leading?.priority = .required
+            button.trailing?.priority = .required
         } else if self.width?.constant ?? 0 < self.intrinsicContentSize.width + 32.0 {
             button.fix(width: button.intrinsicContentSize.width + 32.0)
         }
@@ -84,8 +86,8 @@ extension QuestionnaireElementWithTitle where View:UIView, Self:QuestionnaireOpt
             button.fix(top: (8.0, self.view), isRelative: false)
         }
         button
-                .fix(height: max(45.0, button.intrinsicContentSize.height + 16.0))
-                .center(toX: self.view)
+            .fix(height: max(45.0, button.intrinsicContentSize.height + 16.0))
+            .center(toX: self.view)
 
         if let height = self.view.height {
             height.constant += ((button.height?.constant ?? 0) + 8.0)
