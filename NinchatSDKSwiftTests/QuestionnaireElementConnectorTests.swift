@@ -8,7 +8,10 @@ import XCTest
 @testable import NinchatSDKSwift
 
 final class QuestionnaireElementConnectorTests: XCTestCase {
-    var questionnaire_preAudience: AudienceQuestionnaire?
+    private var questionnaire_preAudience: AudienceQuestionnaire?
+    private lazy var configuration: QuestionnaireConfiguration? = {
+        self.questionnaire_preAudience?.questionnaireConfiguration?.first(where: { $0.name == "Aiheet" })
+    }()
     private lazy var elementRedirect1: ElementRedirect = {
         ElementRedirect(pattern: "Mikä on koronavirus", target: "Koronavirus")
     }()
@@ -28,31 +31,32 @@ final class QuestionnaireElementConnectorTests: XCTestCase {
 
     func test_00_initiate() {
         XCTAssertNotNil(questionnaire_preAudience)
-        XCTAssertNotNil(questionnaire_preAudience?.questionnaireConfiguration!)
+        XCTAssertNotNil(questionnaire_preAudience?.questionnaireConfiguration)
+        XCTAssertNotNil(configuration)
     }
 
     func test_10_find_redirect() {
-        let connector = QuestionnaireElementConnector(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
-        let target = connector.findAssociatedRedirect(for: "Mikä on koronavirus")
+        let connector = QuestionnaireElementConnectorImpl(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
+        let target = connector.findAssociatedRedirect(for: "Mikä on koronavirus", in: self.configuration!)
         XCTAssertNotNil(target)
         XCTAssertEqual(target?.target, elementRedirect1.target)
     }
 
     func test_11_find_redirect() {
-        let connector = QuestionnaireElementConnector(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
-        let target = connector.findAssociatedRedirect(for: "Huolen tai epävarmuuden sietäminen")
+        let connector = QuestionnaireElementConnectorImpl(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
+        let target = connector.findAssociatedRedirect(for: "Huolen tai epävarmuuden sietäminen", in: self.configuration!)
         XCTAssertNotNil(target)
         XCTAssertEqual(target?.target, elementRedirect2.target)
     }
 
     func test_12_find_redirect() {
-        let connector = QuestionnaireElementConnector(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
-        let target = connector.findAssociatedRedirect(for: "Sovitut")
+        let connector = QuestionnaireElementConnectorImpl(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
+        let target = connector.findAssociatedRedirect(for: "Sovitut", in: self.configuration!)
         XCTAssertNil(target)
     }
 
     func test_13_find_configuration() {
-        let connector = QuestionnaireElementConnector(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
+        let connector = QuestionnaireElementConnectorImpl(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
         let target = connector.findTargetConfiguration(from: self.elementRedirect1)
         XCTAssertNotNil(target.0)
         XCTAssertNotNil(target.1)
@@ -60,7 +64,7 @@ final class QuestionnaireElementConnectorTests: XCTestCase {
     }
 
     func test_14_find_configuration() {
-        let connector = QuestionnaireElementConnector(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
+        let connector = QuestionnaireElementConnectorImpl(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
         let target = connector.findTargetConfiguration(from: self.elementRedirect2)
         XCTAssertNotNil(target.0)
         XCTAssertNotNil(target.1)
@@ -68,7 +72,7 @@ final class QuestionnaireElementConnectorTests: XCTestCase {
     }
 
     func test_15_find_element() {
-        let connector = QuestionnaireElementConnector(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
+        let connector = QuestionnaireElementConnectorImpl(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
         let targetQuestionnaire = connector.findTargetConfiguration(from: self.elementRedirect1).0
         let targetView = connector.findTargetElement(for: targetQuestionnaire!)
         XCTAssertNotNil(targetView.0)
@@ -77,7 +81,7 @@ final class QuestionnaireElementConnectorTests: XCTestCase {
     }
 
     func test_16_find_element() {
-        let connector = QuestionnaireElementConnector(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
+        let connector = QuestionnaireElementConnectorImpl(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
         let targetQuestionnaire = connector.findTargetConfiguration(from: self.elementRedirect2).0
         let targetView = connector.findTargetElement(for: targetQuestionnaire!)
         XCTAssertNotNil(targetView.0)
@@ -87,8 +91,8 @@ final class QuestionnaireElementConnectorTests: XCTestCase {
 
     // Acceptance
     func test_20_acceptance() {
-        let connector = QuestionnaireElementConnector(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
-        let targetElement = connector.findElementAndPage(for: "Mikä on koronavirus")
+        let connector = QuestionnaireElementConnectorImpl(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
+        let targetElement = connector.findElementAndPage(for: "Mikä on koronavirus", in: self.configuration!)
         XCTAssertNotNil(targetElement.0)
         XCTAssertNotNil(targetElement.1)
 

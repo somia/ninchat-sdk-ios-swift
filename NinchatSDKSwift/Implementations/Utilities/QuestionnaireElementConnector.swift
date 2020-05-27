@@ -6,7 +6,12 @@
 
 import UIKit
 
-struct QuestionnaireElementConnector {
+protocol QuestionnaireElementConnector {
+    init(configurations: [QuestionnaireConfiguration])
+    func findElementAndPage(for input: String, in configuration: QuestionnaireConfiguration) -> ([QuestionnaireElement]?, Int?)
+}
+
+struct QuestionnaireElementConnectorImpl: QuestionnaireElementConnector {
     private let elements: [[QuestionnaireElement]]
     private let configurations: [QuestionnaireConfiguration]
 
@@ -15,8 +20,8 @@ struct QuestionnaireElementConnector {
         self.elements = QuestionnaireElementConverter(configurations: configurations).elements
     }
 
-    func findElementAndPage(for input: String) -> ([QuestionnaireElement]?, Int?) {
-        if let redirect = self.findAssociatedRedirect(for: input) {
+    func findElementAndPage(for input: String, in configuration: QuestionnaireConfiguration) -> ([QuestionnaireElement]?, Int?) {
+        if let redirect = self.findAssociatedRedirect(for: input, in: configuration) {
             if let configuration = self.findTargetConfiguration(from: redirect).0 {
                 if let element = self.findTargetElement(for: configuration).0, let page = self.findTargetElement(for: configuration).1 {
                     return (element, page)
@@ -29,9 +34,9 @@ struct QuestionnaireElementConnector {
     /// Returns associated 'redirect' object for the given string
     /// The input could be either the 'name' variable in QuestionnaireConfiguration object
     /// Or 'value' in ElementOption object
-    internal func findAssociatedRedirect(for input: String) -> ElementRedirect? {
-        if let redirect = self.configurations.map({ $0.redirects }).first(where: { $0?.filter({ $0.pattern == input }).count != 0 }) {
-            return redirect?.first(where: { $0.pattern == input })
+    internal func findAssociatedRedirect(for input: String, in configuration: QuestionnaireConfiguration) -> ElementRedirect? {
+        if let redirect = configuration.redirects?.first(where: { $0.pattern == input }) {
+            return redirect
         }
         return nil
     }

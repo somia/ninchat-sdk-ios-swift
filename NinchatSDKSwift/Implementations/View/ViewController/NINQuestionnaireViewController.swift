@@ -11,6 +11,9 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
     private lazy var views: [[QuestionnaireElement]] = {
         QuestionnaireElementConverter(configurations: self.session.sessionManager.siteConfiguration.preAudienceQuestionnaire!).elements
     }()
+    private lazy var connector: QuestionnaireElementConnector = {
+        QuestionnaireElementConnectorImpl(configurations: self.session.sessionManager.siteConfiguration.preAudienceQuestionnaire!)
+    }()
     private var configuration: QuestionnaireConfiguration {
         if let audienceQuestionnaire = session.sessionManager.siteConfiguration.preAudienceQuestionnaire?.filter({ $0.element != nil || $0.elements != nil }) {
             guard audienceQuestionnaire.count > self.pageNumber else { fatalError("Invalid number of questionnaires configurations") }
@@ -23,6 +26,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
         guard self.views.count > self.pageNumber else { fatalError("Invalid number of questionnaires views") }
         return self.views[self.pageNumber]
     }
+    private var previousPage: Int!
 
     // MARK: - ViewController
 
@@ -52,6 +56,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.previousPage = self.pageNumber
         self.addKeyboardListeners()
         self.initiateIndicatorView()
         self.initiateContentView(0.5) /// let elements be loaded for a few seconds
@@ -59,6 +64,22 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
 
     deinit {
         self.removeKeyboardListeners()
+    }
+}
+
+extension NINQuestionnaireViewController {
+    private func generateTableView(isHidden: Bool) -> UITableView {
+        let view = UITableView(frame: .zero)
+        view.register(QuestionnaireCell.self)
+        view.registerClass(QuestionnaireNavigationCell.self)
+
+        view.separatorStyle = .none
+        view.allowsSelection = false
+        view.alpha = isHidden ? 0.0 : 1.0
+        view.delegate = self
+        view.dataSource = self
+
+        return view
     }
 
     private func layoutSubview(_ view: UIView, parent: UIView) {
@@ -98,22 +119,6 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
     }
 }
 
-extension NINQuestionnaireViewController {
-    private func generateTableView(isHidden: Bool) -> UITableView {
-        let view = UITableView(frame: .zero)
-        view.register(QuestionnaireCell.self)
-        view.registerClass(QuestionnaireNavigationCell.self)
-
-        view.separatorStyle = .none
-        view.allowsSelection = false
-        view.alpha = isHidden ? 0.0 : 1.0
-        view.delegate = self
-        view.dataSource = self
-
-        return view
-    }
-}
-
 extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.row == self.elements.count {
@@ -133,13 +138,14 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
             cell.configuration = self.configuration
             cell.onNextButtonTapped = { [weak self] questionnaire in
                 if (self?.views.count ?? 0) > (self?.pageNumber ?? 0) + 1 {
+                    self?.previousPage = self?.pageNumber
                     self?.pageNumber += 1
                     self?.updateContentView()
                 }
             }
             cell.onBackButtonTapped = { [weak self] questionnaire in
                 if (self?.pageNumber ?? 0) > 0 {
-                    self?.pageNumber -= 1
+                    self?.pageNumber = self?.previousPage
                     self?.updateContentView()
                 }
             }
@@ -150,23 +156,20 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
         let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
         var view = self.elements[indexPath.row]
         if var view = view as? QuestionnaireOptionSelectableElement {
-            view.onElementOptionSelected = { option in
-                print("option selected: \(option)")
+            view.onElementOptionSelected = { [weak self] option in
+                if let configuration = self?.configuration, let targetElement = self?.connector.findElementAndPage(for: option.value, in: configuration), let targetPage = targetElement.1 {
+                    self?.previousPage = self?.pageNumber
+                    self?.pageNumber = targetPage
+                    self?.updateContentView()
+                }
             }
-            view.onElementOptionDeselected = { option in
-                print("option deselected: \(option)")
-            }
+            view.onElementOptionDeselected = { option in }
         }
         if var view = view as? QuestionnaireFocusableElement {
-            view.onElementFocused = { questionnaire in
-                print("focused on: \(questionnaire)")
-            }
-            view.onElementDismissed = { option in
-                print("dismissed: \(option)")
-            }
+            view.onElementFocused = { questionnaire in }
+            view.onElementDismissed = { option in }
         }
         view.overrideAssets(with: self.session, isPrimary: false)
-
         self.layoutSubview(view, parent: cell.content)
 
         return cell
