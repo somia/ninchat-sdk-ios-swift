@@ -4,6 +4,7 @@
 // license that can be found in the LICENSE file.
 //
 
+
 import XCTest
 @testable import NinchatSDKSwift
 

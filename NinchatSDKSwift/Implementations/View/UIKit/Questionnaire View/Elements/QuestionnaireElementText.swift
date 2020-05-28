@@ -21,6 +21,7 @@ final class QuestionnaireElementText: WKWebView, QuestionnaireElement {
             }
         }
     }
+    var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
         self.height?.constant ?? self.scrollView.contentSize.height
     }

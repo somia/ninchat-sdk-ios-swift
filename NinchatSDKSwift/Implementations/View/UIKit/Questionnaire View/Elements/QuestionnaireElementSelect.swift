@@ -8,7 +8,6 @@ import UIKit
 
 final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle {
 
-    internal var configuration: QuestionnaireConfiguration?
     var onOptionSelected: ((ElementOption) -> Void)?
 
     // MARK: - QuestionnaireElement
@@ -26,6 +25,7 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle {
             self.decorateView()
         }
     }
+    var elementConfiguration: QuestionnaireConfiguration?
     var onElementOptionTapped: ((ElementOption) -> Void)?
     var onElementFocused: ((QuestionnaireElement) -> Void)?
     var onElementDismissed: ((QuestionnaireElement) -> Void)?
@@ -119,7 +119,7 @@ extension QuestionnaireElementSelect {
 
 extension QuestionnaireElementSelect {
     private func showOptions() {
-        guard let options = self.configuration?.options?.compactMap({ $0.label }), options.count > 0 else { fatalError("There is no option to be shown!") }
+        guard let options = self.elementConfiguration?.options?.compactMap({ $0.label }), options.count > 0 else { fatalError("There is no option to be shown!") }
         if dialogueIsShown { return }
 
         self.dialogueIsShown = true
@@ -133,7 +133,7 @@ extension QuestionnaireElementSelect {
                 self.selectedOption.text = "Select".localized
                 self.onElementDismissed?(self)
             case .select(let index):
-                guard let option = self.configuration?.options?[index] else { fatalError("Unable to pick selected option") }
+                guard let option = self.elementConfiguration?.options?[index] else { fatalError("Unable to pick selected option") }
                 self.selectedOption.isHighlighted = true
                 self.selectionIndicator.isHighlighted = true
                 self.selectedOption.text = option.label
@@ -156,7 +156,7 @@ extension QuestionnaireElement where Self:QuestionnaireElementSelect {
         self.selectedOption.highlightedTextColor = .QGrayButton
         self.selectionIndicator.contentMode = .scaleAspectFit
 
-        self.configuration = configuration
+        self.elementConfiguration = configuration
         self.updateSelectView()
     }
 }

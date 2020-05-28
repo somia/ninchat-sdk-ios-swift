@@ -11,6 +11,7 @@ protocol QuestionnaireElement: UIView {
     var index: Int { get set }
     var elementHeight: CGFloat { get }
     var questionnaireConfiguration: QuestionnaireConfiguration? { get set }
+    var elementConfiguration: QuestionnaireConfiguration? { get }
 
     func shapeView(_ configuration: QuestionnaireConfiguration?)
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool)

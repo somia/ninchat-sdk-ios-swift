@@ -8,8 +8,6 @@ import UIKit
 
 final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, QuestionnaireOptionSelectableElement {
 
-    internal var configuration: QuestionnaireConfiguration!
-
     // MARK: - QuestionnaireElement
 
     var index: Int = 0
@@ -25,6 +23,7 @@ final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Qu
             self.decorateView()
         }
     }
+    var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
         CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + (2 * 8.0)
     }
@@ -39,7 +38,7 @@ final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Qu
     var onElementOptionDeselected: ((ElementOption) -> ())?
 
     func deselect(option: ElementOption) {
-        guard let tag = self.configuration.options?.firstIndex(where: { $0.label == option.label }) else { return }
+        guard let tag = self.elementConfiguration?.options?.firstIndex(where: { $0.label == option.label }) else { return }
         (self.view.viewWithTag(tag + 1) as? Button)?.isSelected = false
         (self.view.viewWithTag(tag + 1) as? Button)?.roundButton()
     }
@@ -93,7 +92,7 @@ final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Qu
 /// QuestionnaireElement
 extension QuestionnaireElement where Self:QuestionnaireElementRadio {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
-        self.configuration = configuration
+        self.elementConfiguration = configuration
 
         self.shapeTitle(configuration)
         guard self.view.subviews.count == 0 else { return }

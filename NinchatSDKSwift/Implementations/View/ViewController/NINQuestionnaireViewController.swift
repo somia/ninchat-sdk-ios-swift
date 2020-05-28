@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import AnyCodable
 
 final class NINQuestionnaireViewController: UIViewController, ViewController {
 
@@ -163,12 +164,17 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
         let element = self.elements[indexPath.row]
         if var view = element as? QuestionnaireOptionSelectableElement {
             view.onElementOptionSelected = { [weak self] option in
-                if let configuration = self?.configuration, let targetElement = self?.connector.findElementAndPageRedirect(for: option.value, in: configuration), let targetPage = targetElement.1 {
+                func showTargetPage(_ page: Int) {
                     self?.previousPage = self?.pageNumber
-                    self?.pageNumber = targetPage
-
+                    self?.pageNumber = page
                     view.deselect(option: option)
                     self?.updateContentView()
+                }
+
+                if let configuration = self?.configuration, let targetElement = self?.connector.findElementAndPageRedirect(for: option.value, in: configuration), let targetPage = targetElement.1 {
+                    showTargetPage(targetPage)
+                } else if let configuration = element.elementConfiguration, let targetElement = self?.connector.findElementAndPageLogic(for: [configuration.name:AnyCodable(option.value)]), let targetPage = targetElement.1 {
+                    showTargetPage(targetPage)
                 }
             }
             view.onElementOptionDeselected = { option in }
