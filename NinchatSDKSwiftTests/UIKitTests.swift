@@ -53,7 +53,7 @@ final class UIKitTests: XCTestCase {
             }
         }
         
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: 30.0)
     }
     
     func test_faceView() {
