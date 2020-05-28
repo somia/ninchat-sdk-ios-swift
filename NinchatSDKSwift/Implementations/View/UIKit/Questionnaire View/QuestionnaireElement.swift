@@ -74,6 +74,8 @@ protocol QuestionnaireFocusableElement {
 protocol QuestionnaireOptionSelectableElement {
     var onElementOptionSelected: ((ElementOption) -> Void)? { get set }
     var onElementOptionDeselected: ((ElementOption) -> Void)? { get set }
+
+    func deselect(option: ElementOption)
 }
 
 /// Questionnaire buttons

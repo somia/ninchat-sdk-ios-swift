@@ -50,3 +50,11 @@ class Button: UIButton {
         }
     }
 }
+
+/// Helper for questionnaire items
+
+extension Button {
+    func roundButton() {
+        self.round(radius: 15.0, borderWidth: 1.0, borderColor: self.isSelected ? .QBlueButtonNormal : .QGrayButton)
+    }
+}

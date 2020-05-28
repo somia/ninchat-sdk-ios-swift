@@ -8,6 +8,8 @@ import UIKit
 
 final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle, QuestionnaireOptionSelectableElement {
 
+    internal var configuration: QuestionnaireConfiguration!
+
     // MARK: - QuestionnaireElement
 
     var index: Int = 0
@@ -35,6 +37,12 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle,
 
     var onElementOptionSelected: ((ElementOption) -> ())?
     var onElementOptionDeselected: ((ElementOption) -> ())?
+
+    func deselect(option: ElementOption) {
+        guard let tag = self.configuration.options?.firstIndex(where: { $0.label == option.label }) else { return }
+        (self.view.viewWithTag(tag + 100) as? Button)?.isSelected = false
+        (self.view.viewWithTag(tag + 200) as? UIImageView)?.isHighlighted = false
+    }
 
     // MARK: - Subviews - QuestionnaireElementWithTitleAndOptions + QuestionnaireElementHasButtons
 
@@ -84,8 +92,9 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle,
 
 extension QuestionnaireElement where Self:QuestionnaireElementCheckbox {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
-        self.shapeTitle(configuration)
+        self.configuration = configuration
 
+        self.shapeTitle(configuration)
         guard self.view.subviews.count == 0 else { return }
         self.shapeCheckbox(configuration)
     }
