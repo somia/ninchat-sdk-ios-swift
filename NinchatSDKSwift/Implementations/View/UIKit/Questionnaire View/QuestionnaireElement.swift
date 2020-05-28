@@ -108,3 +108,20 @@ extension QuestionnaireHasDoneButton {
         return doneToolbar
     }
 }
+
+/// Shape border for applicable elements (e.g. textarea, input)
+protocol QuestionnaireHasBorder: QuestionnaireElementWithTitle {
+    var isCompleted: Bool! { get }
+    func updateBorder()
+}
+extension QuestionnaireHasBorder {
+    func updateBorder() {
+        guard self.view is UITextField || self.view is UITextView else { fatalError("Call only on `UITextView` and `UITextField` types") }
+
+        if self.elementConfiguration?.required ?? false {
+            self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: self.isCompleted ? .QGrayButton : .QRedBorder)
+        } else {
+            self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: .QGrayButton)
+        }
+    }
+}

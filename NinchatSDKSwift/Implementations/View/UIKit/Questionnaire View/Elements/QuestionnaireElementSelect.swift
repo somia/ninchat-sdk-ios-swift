@@ -111,13 +111,6 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle {
 }
 
 extension QuestionnaireElementSelect {
-    internal func updateSelectView() {
-        self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: self.selectedOption.isHighlighted ? .QGrayButton : .QBlueButtonNormal)
-        self.selectionIndicator.tintColor = self.selectedOption.isHighlighted ? .QGrayButton : .QBlueButtonNormal
-    }
-}
-
-extension QuestionnaireElementSelect {
     private func showOptions() {
         guard let options = self.elementConfiguration?.options?.compactMap({ $0.label }), options.count > 0 else { fatalError("There is no option to be shown!") }
         if dialogueIsShown { return }
@@ -140,16 +133,17 @@ extension QuestionnaireElementSelect {
                 self.onOptionSelected?(option)
             }
 
-            self.updateSelectView()
+            self.updateBorder()
         }
     }
 }
 
-extension QuestionnaireElement where Self:QuestionnaireElementSelect {
+extension QuestionnaireElementSelect: QuestionnaireElement {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
         self.shapeTitle(configuration)
-        self.shapeSelect()
 
+        self.view.backgroundColor = .clear
+        self.view.fix(height: 45.0)
         self.selectedOption.font = .ninchat
         self.selectedOption.textAlignment = .left
         self.selectedOption.textColor = .QBlueButtonNormal
@@ -157,6 +151,17 @@ extension QuestionnaireElement where Self:QuestionnaireElementSelect {
         self.selectionIndicator.contentMode = .scaleAspectFit
 
         self.elementConfiguration = configuration
-        self.updateSelectView()
+        self.updateBorder()
+    }
+}
+
+extension QuestionnaireElementSelect: QuestionnaireHasBorder {
+    var isCompleted: Bool! {
+        self.selectedOption.text != "Select".localized
+    }
+
+    func updateBorder() {
+        self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: self.selectedOption.isHighlighted ? .QGrayButton : .QBlueButtonNormal)
+        self.selectionIndicator.tintColor = self.selectedOption.isHighlighted ? .QGrayButton : .QBlueButtonNormal
     }
 }

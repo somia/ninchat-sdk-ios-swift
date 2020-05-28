@@ -192,10 +192,3 @@ extension QuestionnaireElementWithTitle where View:UIView, Self:QuestionnaireOpt
         upperView = button
     }
 }
-
-extension QuestionnaireElementWithTitle where View:UIView {
-    func shapeSelect() {
-        self.view.backgroundColor = .clear
-        self.view.fix(height: 45.0)
-    }
-}

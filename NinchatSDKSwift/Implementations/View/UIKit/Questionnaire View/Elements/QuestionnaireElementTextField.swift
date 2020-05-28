@@ -6,13 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle, QuestionnaireFocusableElement {
-
-    var isCompleted: Bool! {
-        didSet {
-            self.updateBorder()
-        }
-    }
+final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle, QuestionnaireHasBorder, QuestionnaireFocusableElement {
 
     // MARK: - QuestionnaireElement
 
@@ -33,6 +27,14 @@ final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle
     }
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         #warning("Override assets")
+    }
+
+    // MARK: - QuestionnaireHasBorder
+
+    var isCompleted: Bool! {
+        didSet {
+            self.updateBorder()
+        }
     }
 
     // MARK: - QuestionnaireFocusableElement
@@ -84,16 +86,6 @@ final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle
     private func decorateView() {
         if self.view.subviews.count > 0 {
             self.layoutElementViews()
-        }
-    }
-}
-
-extension QuestionnaireElementTextField {
-    internal func updateBorder() {
-        if self.elementConfiguration?.required ?? false {
-            self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: self.isCompleted ? .QGrayButton : .QRedBorder)
-        } else {
-            self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: .QGrayButton)
         }
     }
 }
