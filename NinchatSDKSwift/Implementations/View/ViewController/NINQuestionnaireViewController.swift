@@ -160,10 +160,10 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
 
     private func questionnaire(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
-        var element = self.elements[indexPath.row]
+        let element = self.elements[indexPath.row]
         if var view = element as? QuestionnaireOptionSelectableElement {
             view.onElementOptionSelected = { [weak self] option in
-                if let configuration = self?.configuration, let targetElement = self?.connector.findElementAndPage(for: option.value, in: configuration), let targetPage = targetElement.1 {
+                if let configuration = self?.configuration, let targetElement = self?.connector.findElementAndPageRedirect(for: option.value, in: configuration), let targetPage = targetElement.1 {
                     self?.previousPage = self?.pageNumber
                     self?.pageNumber = targetPage
 

@@ -5,10 +5,12 @@
 //
 
 import UIKit
+import AnyCodable
 
 protocol QuestionnaireElementConnector {
     init(configurations: [QuestionnaireConfiguration])
-    func findElementAndPage(for input: String, in configuration: QuestionnaireConfiguration) -> ([QuestionnaireElement]?, Int?)
+    func findElementAndPageRedirect(for input: String, in configuration: QuestionnaireConfiguration) -> ([QuestionnaireElement]?, Int?)
+    func findElementAndPageLogic(for dictionary: [String:AnyCodable]) -> ([QuestionnaireElement]?, Int?)
 }
 
 struct QuestionnaireElementConnectorImpl: QuestionnaireElementConnector {
@@ -20,9 +22,19 @@ struct QuestionnaireElementConnectorImpl: QuestionnaireElementConnector {
         self.elements = QuestionnaireElementConverter(configurations: configurations).elements
     }
 
-    func findElementAndPage(for input: String, in configuration: QuestionnaireConfiguration) -> ([QuestionnaireElement]?, Int?) {
+    /// Returns the element the given configuration associated to
+    /// The function is called if the `findTargetRedirectConfiguration(from:)` or `findTargetLogicConfiguration(from:)` returns valid configuration
+    internal func findTargetElement(for configuration: QuestionnaireConfiguration) -> ([QuestionnaireElement]?, Int?) {
+        (self.elements.first { $0.filter { $0.questionnaireConfiguration == configuration }.count != 0 }, self.elements.firstIndex { $0.filter { $0.questionnaireConfiguration == configuration }.count != 0 })
+    }
+}
+
+// MARK: - QuestionnaireElementConnector 'redirect'
+
+extension QuestionnaireElementConnectorImpl {
+    func findElementAndPageRedirect(for input: String, in configuration: QuestionnaireConfiguration) -> ([QuestionnaireElement]?, Int?) {
         if let redirect = self.findAssociatedRedirect(for: input, in: configuration) {
-            if let configuration = self.findTargetConfiguration(from: redirect).0 {
+            if let configuration = self.findTargetRedirectConfiguration(from: redirect).0 {
                 if let element = self.findTargetElement(for: configuration).0, let page = self.findTargetElement(for: configuration).1 {
                     return (element, page)
                 }
@@ -43,13 +55,64 @@ struct QuestionnaireElementConnectorImpl: QuestionnaireElementConnector {
 
     /// Returns the configuration the given 'redirect' points to.
     /// The function's input is derived from `findAssociatedRedirect(for:)` output
-    internal func findTargetConfiguration(from element: ElementRedirect) -> (QuestionnaireConfiguration?, Int?) {
+    internal func findTargetRedirectConfiguration(from element: ElementRedirect) -> (QuestionnaireConfiguration?, Int?) {
         (self.configurations.first { $0.name == element.target }, self.configurations.firstIndex { $0.name == element.target })
     }
+}
 
-    /// Returns the element the given configuration associated to
-    /// The function is called if the `findTargetConfiguration(from:)` returns valid configuration
-    internal func findTargetElement(for configuration: QuestionnaireConfiguration) -> ([QuestionnaireElement]?, Int?) {
-        (self.elements.first { $0.filter { $0.questionnaireConfiguration == configuration }.count != 0 }, self.elements.firstIndex { $0.filter { $0.questionnaireConfiguration == configuration }.count != 0 })
+// MARK: - QuestionnaireElementConnector 'logic'
+
+extension QuestionnaireElementConnectorImpl {
+    internal var logicList: [LogicQuestionnaire] {
+        self.configurations.compactMap({ $0.logic })
+    }
+
+    func findElementAndPageLogic(for dictionary: [String:AnyCodable]) -> ([QuestionnaireElement]?, Int?) {
+        if let blocks = self.findLogicBlocks(for: Array(dictionary.keys)), blocks.count > 0 {
+            if let logic = areSatisfied(logic: blocks, forKeyValue: dictionary).1 {
+                if let configuration = self.findTargetLogicConfiguration(from: logic).0 {
+                    if let element = self.findTargetElement(for: configuration).0, let page = self.findTargetElement(for: configuration).1 {
+                        return (element, page)
+                    }
+                }
+            }
+        }
+        return (nil, nil)
+    }
+
+    /// Returns corresponded 'logic' blocks for given input
+    /// The input is the 'key' in the object's dictionary
+    internal func findLogicBlocks(for keys: [String]) -> [LogicQuestionnaire]? {
+        let findInAnds = self.logicList.filter({ $0.andKeys?.filter({ keys.contains($0) }).count ?? 0 > 0 })
+        let findInOrs = self.logicList.filter({ $0.orKeys?.filter({ keys.contains($0) }).count ?? 0 > 0 })
+
+        let results = findInAnds + findInOrs
+        return (results.count > 0) ? results : nil
+    }
+
+    /// Determines if the derived 'logic' blocks from the `findLogicBlocks(for:)` API are satisfied
+    /// Returns corresponded 'logic' block for given key:value
+    internal func areSatisfied(logic blocks: [LogicQuestionnaire], forKeyValue dictionary: [String:AnyCodable]) -> (Bool, LogicQuestionnaire?) {
+        let satisfiedBlocks = blocks.filter({ $0.satisfy(Array(dictionary.keys)) })
+        if let theBlock = satisfiedBlocks
+                .first(where: {
+                    let dictionaryValues: Array<AnyCodable> = Array(dictionary.values)
+                    if let andValuesFiltered = $0.andValues?.filter({ dictionaryValues.contains($0) }) {
+                        return andValuesFiltered.count > 0
+                    }
+                    if let orValuesFiltered = $0.orValues?.filter({ dictionaryValues.contains($0) }) {
+                        return orValuesFiltered.count > 0
+                    }
+                    return false
+                }) {
+            return (true, theBlock)
+        }
+        return (false, nil)
+    }
+
+    /// Returns the configuration the given 'logic' points to.
+    /// The function is called if the `areSatisfied(logic:values:)` returns the satisfied logic
+    internal func findTargetLogicConfiguration(from logic: LogicQuestionnaire) -> (QuestionnaireConfiguration?, Int?) {
+        (self.configurations.first { $0.name == logic.target }, self.configurations.firstIndex { $0.name == logic.target })
     }
 }

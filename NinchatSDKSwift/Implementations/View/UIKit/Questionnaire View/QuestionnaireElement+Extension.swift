@@ -94,9 +94,9 @@ extension QuestionnaireElementWithTitle where View:UIView, Self:QuestionnaireOpt
     }
 
     private func applySelection(to button: UIButton) {
-        self.view.subviews.compactMap({ $0 as? Button }).forEach { [weak self] button in
+        self.view.subviews.compactMap({ $0 as? Button }).forEach { button in
             button.isSelected = false
-            (button as? Button)?.roundButton()
+            (button as Button).roundButton()
         }
         button.isSelected = true
         (button as? Button)?.roundButton()
