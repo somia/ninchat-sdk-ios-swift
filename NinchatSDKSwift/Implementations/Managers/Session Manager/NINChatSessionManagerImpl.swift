@@ -4,8 +4,9 @@
 // license that can be found in the LICENSE file.
 //
 
-import Foundation
 import UIKit
+import Foundation
+import AnyCodable
 import NinchatLowLevelClient
 
 protocol NINChatSessionManagerInternalActions {
@@ -20,8 +21,8 @@ protocol NINChatSessionManagerInternalActions {
 }
 
 final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatDevHelper, NINChatSessionManagerInternalActions {
-    internal let audienceMetadata: NINLowLevelClientProps?
     internal let serviceManager = ServiceManager()
+    internal var audienceMetadata: NINLowLevelClientProps?
     internal var channelUsers: [String:ChannelUser] = [:]
     internal var currentQueueID: String?
     internal var currentChannelID: String?
@@ -91,6 +92,16 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     var audienceQueues: [Queue]! = []
     var siteConfiguration: SiteConfiguration!
     var givenConfiguration: NINSiteConfiguration?
+    var preAudienceQuestionnaireMetadata: NINLowLevelClientProps! {
+        didSet {
+            if let audienceMetadata = self.audienceMetadata {
+                self.audienceMetadata?.set(value: preAudienceQuestionnaireMetadata, forKey: "pre_answers")
+            } else {
+                self.audienceMetadata = NINLowLevelClientProps.initiate(metadata: ["pre_answers": preAudienceQuestionnaireMetadata])
+            }
+
+        }
+    }
     var appDetails: String?
     
     // MARK: - NINChatSessionManagerDevTools
@@ -101,8 +112,8 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     init(session: NINChatSessionInternalDelegate?, serverAddress: String, audienceMetadata: NINLowLevelClientProps? = nil, configuration: NINSiteConfiguration?) {
         self.delegate = session
         self.serverAddress = serverAddress
-        self.audienceMetadata = audienceMetadata
         self.givenConfiguration = configuration
+        self.audienceMetadata = audienceMetadata
     }
     
     /** Designed for test and internal purposes. */

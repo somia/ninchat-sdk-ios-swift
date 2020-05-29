@@ -14,7 +14,15 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
         QuestionnaireElementConverter(configurations: self.session.sessionManager.siteConfiguration.preAudienceQuestionnaire!).elements
     }()
     private lazy var connector: QuestionnaireElementConnector = {
-        QuestionnaireElementConnectorImpl(configurations: self.session.sessionManager.siteConfiguration.preAudienceQuestionnaire!)
+        var connector = QuestionnaireElementConnectorImpl(configurations: self.session.sessionManager.siteConfiguration.preAudienceQuestionnaire!)
+        connector.onCompleteTargetReached = { [unowned self] logic in
+            self.completeQuestionnaire?(NINLowLevelClientProps.initiate(metadata: self.answers))
+        }
+        connector.onRegisterTargetReached = { [unowned self] logic in
+            self.registerQuestionnaire?(NINLowLevelClientProps.initiate(metadata: self.answers))
+        }
+
+        return connector
     }()
     private var configuration: QuestionnaireConfiguration {
         if let audienceQuestionnaire = session.sessionManager.siteConfiguration.preAudienceQuestionnaire?.filter({ $0.element != nil || $0.elements != nil }) {
@@ -29,6 +37,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
         return self.views[self.pageNumber]
     }
     private var previousPage: Int!
+    private var answers: [String:AnyCodable] = [:]
 
     // MARK: - ViewController
 
@@ -37,7 +46,8 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
     // MARK: - Injected
 
     var pageNumber: Int!
-    var finishQuestionnaire: (() -> Void)?
+    var registerQuestionnaire: ((_ answers: NINLowLevelClientProps) -> Void)?
+    var completeQuestionnaire: ((_ answers: NINLowLevelClientProps) -> Void)?
 
     // MARK: - SubViews
 
@@ -164,6 +174,15 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
         let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
         let element = self.elements[indexPath.row]
         if var view = element as? QuestionnaireOptionSelectableElement {
+            func submitAnswer(key: String, value: AnyCodable) {
+                self.answers[key] = value
+            }
+            func removeAnswer(key: String, value: AnyCodable) {
+                if let answer = self.answers[key], answer == value {
+                    self.answers.removeValue(forKey: key)
+                }
+            }
+
             view.onElementOptionSelected = { [weak self] option in
                 func showTargetPage(_ page: Int) {
                     self?.previousPage = self?.pageNumber
@@ -172,13 +191,20 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
                     self?.updateContentView()
                 }
 
-                if let configuration = self?.configuration, let targetElement = self?.connector.findElementAndPageRedirect(for: option.value, in: configuration), let targetPage = targetElement.1 {
+                guard let elementConfiguration = element.elementConfiguration else { return }
+                if let configuration = self?.configuration,
+                   let targetElement = self?.connector.findElementAndPageRedirect(for: option.value, in: configuration), let targetPage = targetElement.1 {
                     showTargetPage(targetPage)
-                } else if let configuration = element.elementConfiguration, let targetElement = self?.connector.findElementAndPageLogic(for: [configuration.name:AnyCodable(option.value)]), let targetPage = targetElement.1 {
+                } else if let targetElement = self?.connector.findElementAndPageLogic(for: [elementConfiguration.name:AnyCodable(option.value)]), let targetPage = targetElement.1 {
                     showTargetPage(targetPage)
                 }
+                submitAnswer(key: elementConfiguration.name, value: AnyCodable(option.value))
             }
-            view.onElementOptionDeselected = { option in }
+            view.onElementOptionDeselected = { option in
+                if let configuration = element.elementConfiguration {
+                    removeAnswer(key: configuration.name, value: AnyCodable(option.value))
+                }
+            }
         }
         if var view = element as? QuestionnaireFocusableElement {
             view.onElementFocused = { questionnaire in }

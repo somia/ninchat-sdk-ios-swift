@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -30,7 +30,7 @@
                             </constraints>
                         </view>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Closing chat" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0nQ-9L-Y2f">
-                            <rect key="frame" x="163" y="25.5" width="89.5" height="19"/>
+                            <rect key="frame" x="166.5" y="25" width="82" height="20.5"/>
                             <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
@@ -49,7 +49,7 @@
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ewf-LJ-wGT" userLabel="Lower container view">
                     <rect key="frame" x="0.0" y="70" width="415" height="250"/>
                     <subviews>
-                        <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cuy-7D-mjZ" customClass="Button" customModule="NinchatSwiftSDKUI">
+                        <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cuy-7D-mjZ" customClass="Button" customModule="NinchatSDKSwift">
                             <rect key="frame" x="117.5" y="80" width="180" height="45"/>
                             <color key="backgroundColor" red="0.0" green="0.54117647059999996" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             <constraints>
@@ -64,7 +64,7 @@
                                 <action selector="onConfirmButtonTappedWithSender:" destination="iN0-l3-epB" eventType="touchUpInside" id="ap1-zI-EB8"/>
                             </connections>
                         </button>
-                        <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="czk-7j-Ffx" customClass="Button" customModule="NinchatSwiftSDKUI">
+                        <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="czk-7j-Ffx" customClass="Button" customModule="NinchatSDKSwift">
                             <rect key="frame" x="117.5" y="145" width="180" height="45"/>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
@@ -113,14 +113,14 @@
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <connections>
-                <outlet property="bottomContainerView" destination="Ewf-LJ-wGT" id="UZn-5s-tmn"/>
-                <outlet property="cancelButton" destination="czk-7j-Ffx" id="SPT-YN-Par"/>
-                <outlet property="confirmButton" destination="cuy-7D-mjZ" id="0fc-dZ-EzS"/>
-                <outlet property="headerContainerView" destination="kYc-bV-nLF" id="bRC-Yn-a32"/>
-                <outlet property="infoTextView" destination="SUk-yI-aTx" id="s8X-vk-9uo"/>
-                <outlet property="titleLabel" destination="0nQ-9L-Y2f" id="VBw-a1-7rc"/>
+                <outlet property="bottomContainerView" destination="Ewf-LJ-wGT" id="o89-Zr-gX8"/>
+                <outlet property="cancelButton" destination="czk-7j-Ffx" id="J9W-JG-ffS"/>
+                <outlet property="confirmButton" destination="cuy-7D-mjZ" id="Mqt-w5-lMy"/>
+                <outlet property="headerContainerView" destination="kYc-bV-nLF" id="25j-eM-ejw"/>
+                <outlet property="infoTextView" destination="SUk-yI-aTx" id="Ffv-b9-nBM"/>
+                <outlet property="titleLabel" destination="0nQ-9L-Y2f" id="Ewc-Js-9MC"/>
             </connections>
-            <point key="canvasLocation" x="-41" y="16"/>
+            <point key="canvasLocation" x="-284" y="13.493253373313344"/>
         </view>
     </objects>
 </document>

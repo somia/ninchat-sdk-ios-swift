@@ -5,6 +5,7 @@
 //
 
 import Foundation
+import AnyCodable
 import NinchatLowLevelClient
 
 typealias CompletionWithError = (Error?) -> Void
@@ -119,7 +120,10 @@ protocol NINChatSessionManager: class, NINChatSessionConnectionManager, NINChatS
     
     /** List of Audience queues. These are the queues the user gets to pick from in the UI. */
     var audienceQueues: [Queue]! { get set }
-    
+
+    /** Submitted answers for "preAudienceQuestionnaire" configurations. */
+    var preAudienceQuestionnaireMetadata: NINLowLevelClientProps! { get set }
+
     /** Site configuration. */
     var siteConfiguration: SiteConfiguration! { get }
     

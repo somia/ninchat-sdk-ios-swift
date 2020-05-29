@@ -68,10 +68,14 @@ final class NINCoordinator: Coordinator {
         let questionnaireViewController: NINQuestionnaireViewController = storyboard.instantiateViewController()
         questionnaireViewController.session = session
         questionnaireViewController.pageNumber = 0
-        questionnaireViewController.finishQuestionnaire = {
+        questionnaireViewController.registerQuestionnaire = { [unowned self] answers in
+            self.sessionManager.preAudienceQuestionnaireMetadata = answers
             DispatchQueue.main.async {
-                #warning("Finish the questionnaire")
+                self.navigationController?.pushViewController(self.queueViewController(queue: Queue(queueID: "706rc4gq00ib8", name: "default", isClosed: false)), animated: true)
             }
+        }
+        questionnaireViewController.completeQuestionnaire = { [weak self] answers in
+            self?.sessionManager.preAudienceQuestionnaireMetadata = answers
         }
 
         return questionnaireViewController

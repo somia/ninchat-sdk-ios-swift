@@ -68,12 +68,9 @@ extension NINLowLevelClientProps {
     * Currently supported value types: String, Int, Double, Bool, NINLowLevelClientProps, NINLowLevelClientStrings, and NINLowLevelClientJSON
     */
     public static func initiate<T>(metadata: [String:T]) -> NINLowLevelClientProps {
-        let props = NINLowLevelClientProps()
-        for (key,value) in metadata {
-            props?.set(value: value, forKey: key)
+        metadata.reduce(into: NINLowLevelClientProps()!) { (props: inout NINLowLevelClientProps, tuple: (key: String, value: T)) in
+            props.set(value: tuple.value, forKey: tuple.key)
         }
-
-        return props!
     }
 }
 
