@@ -79,20 +79,43 @@ struct LogicQuestionnaire: Codable {
     let target: String
     let tags: [String]?
 
-    func satisfy(_ keys: [String]) -> Bool {
-        if self.and != nil {
-            return self.and?
-                    .compactMap({ $0 })
-                    .reduce(into: []) { (result: inout [String], dictionary: [String:AnyCodable]) in
-                        result.append(contentsOf: dictionary.keys.compactMap({ $0 }))
-                    }
-                    .filter({ !keys.contains($0) })
-                    .count == 0
-        }
-        return self.or?.compactMap({ $0 })
+    var andKeys: [String]? {
+        self.and?
+                .compactMap({ $0 })
                 .reduce(into: []) { (result: inout [String], dictionary: [String:AnyCodable]) in
                     result.append(contentsOf: dictionary.keys.compactMap({ $0 }))
                 }
+    }
+    var andValues: [AnyCodable]? {
+        self.and?
+                .compactMap({ $0 })
+                .reduce(into: []) { (result: inout [AnyCodable], dictionary: [String:AnyCodable]) in
+                    result.append(contentsOf: dictionary.values.compactMap({ $0 }))
+                }
+    }
+
+    var orKeys: [String]? {
+        self.or?
+                .compactMap({ $0 })
+                .reduce(into: []) { (result: inout [String], dictionary: [String:AnyCodable]) in
+                    result.append(contentsOf: dictionary.keys.compactMap({ $0 }))
+                }
+    }
+    var orValues: [AnyCodable]? {
+        self.or?
+                .compactMap({ $0 })
+                .reduce(into: []) { (result: inout [AnyCodable], dictionary: [String:AnyCodable]) in
+                    result.append(contentsOf: dictionary.values.compactMap({ $0 }))
+                }
+    }
+
+    func satisfy(_ keys: [String]) -> Bool {
+        if self.and != nil {
+            return self.andKeys?
+                    .filter({ !keys.contains($0) })
+                    .count == 0
+        }
+        return self.orKeys?
                 .filter({ keys.contains($0) })
                 .count != 0
     }

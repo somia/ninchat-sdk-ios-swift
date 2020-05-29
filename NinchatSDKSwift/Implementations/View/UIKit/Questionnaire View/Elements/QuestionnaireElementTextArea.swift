@@ -6,14 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle, QuestionnaireFocusableElement {
-
-    internal var configuration: QuestionnaireConfiguration!
-    var isCompleted: Bool! {
-        didSet {
-            self.updateBorder()
-        }
-    }
+final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle, QuestionnaireHasBorder, QuestionnaireFocusableElement {
 
     // MARK: - QuestionnaireElement
 
@@ -28,12 +21,21 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
             }
         }
     }
+    var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
         CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + CGFloat(3.0 * 8.0)
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         #warning("Override assets")
+    }
+
+    // MARK: - QuestionnaireHasBorder
+
+    var isCompleted: Bool! {
+        didSet {
+            self.updateBorder()
+        }
     }
 
     // MARK: - QuestionnaireFocusableElement
@@ -89,23 +91,13 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
     }
 }
 
-extension QuestionnaireElementTextArea {
-    internal func updateBorder() {
-        if self.configuration.required ?? false {
-            self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: self.isCompleted ? .QGrayButton : .QRedBorder)
-        } else {
-            self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: .QGrayButton)
-        }
-    }
-}
-
 extension QuestionnaireElementTextArea: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         self.onElementFocused?(self)
     }
 
     func textViewDidEndEditing(_ textView: UITextView) {
-        if let text = textView.text, !text.isEmpty, let pattern = self.configuration.pattern, let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) {
+        if let text = textView.text, !text.isEmpty, let pattern = self.elementConfiguration?.pattern, let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) {
             self.isCompleted = regex.matches(in: text, range: NSRange(location: 0, length: text.count)).count > 0
         }
         self.onElementDismissed?(self)
@@ -128,7 +120,7 @@ extension QuestionnaireElement where Self:QuestionnaireElementTextArea {
         self.view.font = .ninchat
         self.view.fix(height: 98.0)
 
-        self.configuration = configuration
+        self.elementConfiguration = configuration
         if self.isCompleted == nil {
             self.isCompleted = !(configuration?.required ?? true)
         }

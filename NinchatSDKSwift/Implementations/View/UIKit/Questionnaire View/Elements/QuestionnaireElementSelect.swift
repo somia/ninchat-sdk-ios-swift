@@ -8,7 +8,6 @@ import UIKit
 
 final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle {
 
-    internal var configuration: QuestionnaireConfiguration?
     var onOptionSelected: ((ElementOption) -> Void)?
 
     // MARK: - QuestionnaireElement
@@ -26,6 +25,7 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle {
             self.decorateView()
         }
     }
+    var elementConfiguration: QuestionnaireConfiguration?
     var onElementOptionTapped: ((ElementOption) -> Void)?
     var onElementFocused: ((QuestionnaireElement) -> Void)?
     var onElementDismissed: ((QuestionnaireElement) -> Void)?
@@ -111,15 +111,8 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle {
 }
 
 extension QuestionnaireElementSelect {
-    internal func updateSelectView() {
-        self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: self.selectedOption.isHighlighted ? .QGrayButton : .QBlueButtonNormal)
-        self.selectionIndicator.tintColor = self.selectedOption.isHighlighted ? .QGrayButton : .QBlueButtonNormal
-    }
-}
-
-extension QuestionnaireElementSelect {
     private func showOptions() {
-        guard let options = self.configuration?.options?.compactMap({ $0.label }), options.count > 0 else { fatalError("There is no option to be shown!") }
+        guard let options = self.elementConfiguration?.options?.compactMap({ $0.label }), options.count > 0 else { fatalError("There is no option to be shown!") }
         if dialogueIsShown { return }
 
         self.dialogueIsShown = true
@@ -133,30 +126,42 @@ extension QuestionnaireElementSelect {
                 self.selectedOption.text = "Select".localized
                 self.onElementDismissed?(self)
             case .select(let index):
-                guard let option = self.configuration?.options?[index] else { fatalError("Unable to pick selected option") }
+                guard let option = self.elementConfiguration?.options?[index] else { fatalError("Unable to pick selected option") }
                 self.selectedOption.isHighlighted = true
                 self.selectionIndicator.isHighlighted = true
                 self.selectedOption.text = option.label
                 self.onOptionSelected?(option)
             }
 
-            self.updateSelectView()
+            self.updateBorder()
         }
     }
 }
 
-extension QuestionnaireElement where Self:QuestionnaireElementSelect {
+extension QuestionnaireElementSelect: QuestionnaireElement {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
         self.shapeTitle(configuration)
-        self.shapeSelect()
 
+        self.view.backgroundColor = .clear
+        self.view.fix(height: 45.0)
         self.selectedOption.font = .ninchat
         self.selectedOption.textAlignment = .left
         self.selectedOption.textColor = .QBlueButtonNormal
         self.selectedOption.highlightedTextColor = .QGrayButton
         self.selectionIndicator.contentMode = .scaleAspectFit
 
-        self.configuration = configuration
-        self.updateSelectView()
+        self.elementConfiguration = configuration
+        self.updateBorder()
+    }
+}
+
+extension QuestionnaireElementSelect: QuestionnaireHasBorder {
+    var isCompleted: Bool! {
+        self.selectedOption.text != "Select".localized
+    }
+
+    func updateBorder() {
+        self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: self.selectedOption.isHighlighted ? .QGrayButton : .QBlueButtonNormal)
+        self.selectionIndicator.tintColor = self.selectedOption.isHighlighted ? .QGrayButton : .QBlueButtonNormal
     }
 }
