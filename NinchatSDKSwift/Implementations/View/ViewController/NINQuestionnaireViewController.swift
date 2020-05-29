@@ -6,6 +6,7 @@
 
 import UIKit
 import AnyCodable
+import NinchatLowLevelClient
 
 final class NINQuestionnaireViewController: UIViewController, ViewController {
 

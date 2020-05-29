@@ -5,6 +5,7 @@
 //
 
 import XCTest
+import AnyCodable
 import NinchatLowLevelClient
 @testable import NinchatSDKSwift
 
@@ -56,6 +57,21 @@ final class NINLowLevelClientPropsTests: XCTestCase {
 
         let value6: NINResult<Double> = props2.get(forKey: "key6", ofType: Double.self)
         XCTAssertEqual(value6.value, 6.8)
+    }
+
+    func test_initializer_preQuestionnaire() {
+        let answers: [String:AnyCodable] = ["Koronavirus-jatko": "Näytä muut aiheet", "language": "English", "number-of-messages": 3.2]
+        let props = NINLowLevelClientProps.initiate(preQuestionnaireAnswers: answers)
+        XCTAssertNotNil(props)
+
+        let metadata: NINResult<NINLowLevelClientProps> = props.get(forKey: "pre_answers")
+        XCTAssertNotNil(metadata.value)
+
+        let value1: NINResult<String> = metadata.value.get(forKey: "Koronavirus-jatko")
+        XCTAssertEqual(value1.value, "Näytä muut aiheet")
+
+        let value2: NINResult<Double> = metadata.value.get(forKey: "number-of-messages")
+        XCTAssertEqual(value2.value, 3.2)
     }
 
     func test_simple_binding() {

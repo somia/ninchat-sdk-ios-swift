@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import AnyCodable
 import NinchatLowLevelClient
 
 struct NinchatError: Error {
@@ -54,6 +55,13 @@ extension NINLowLevelClientProps {
         props?.set(value: credentials.userAuth, forKey: "user_auth")
 
         return props!
+    }
+
+    static func initiate(preQuestionnaireAnswers dictionary: [String:AnyCodable]) -> NINLowLevelClientProps {
+        let metadata = dictionary.reduce(into: NINLowLevelClientProps()!) { (metadata: inout NINLowLevelClientProps, tuple: (key: String, value: AnyCodable)) in
+            metadata.set(value: tuple.value, forKey: tuple.key)
+        }
+        return NINLowLevelClientProps.initiate(metadata: ["pre_answers": metadata])
     }
 
     /**
@@ -473,7 +481,7 @@ extension NINLowLevelClientProps {
             case is NINLowLevelClientObjects.Type:
                 return .success(try self.getObjectArray(key) as! T)
             default:
-                fatalError("Error in requested type: \(T.self) forKey: \(key)")
+                fatalError("Error in getting requested type: \(T.self) forKey: \(key)")
             }
 
         } catch {
@@ -482,7 +490,9 @@ extension NINLowLevelClientProps {
     }
 
     func set<T>(value: T, forKey key: String) {
-        if let value = value as? Double, floor(value) == value {
+        if let value = value as? AnyCodable {
+            self.set(value: value.value as! AnyHashable, forKey: key)
+        } else if let value = value as? Double, floor(value) == value {
             self.setInt(key, val: Int(value))
         } else if let value = value as? Double {
             self.setFloat(key, val: value)
@@ -499,7 +509,7 @@ extension NINLowLevelClientProps {
         } else if let value = value as? NINLowLevelClientJSON {
             self.setJSON(key, ref: value)
         } else {
-            fatalError("Error in requested type: \(T.self) forKey: \(key)")
+            fatalError("Error in setting requested type: \(T.self) forKey: \(key)")
         }
     }
 
