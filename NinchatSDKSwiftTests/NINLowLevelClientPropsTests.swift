@@ -60,7 +60,7 @@ final class NINLowLevelClientPropsTests: XCTestCase {
     }
 
     func test_initializer_preQuestionnaire() {
-        let answers: [String:AnyCodable] = ["Koronavirus-jatko": "Näytä muut aiheet", "language": "English", "number-of-messages": 3.2]
+        let answers: [String:AnyHashable] = ["Koronavirus-jatko": "Näytä muut aiheet", "language": "English", "number-of-messages": 3.2]
         let props = NINLowLevelClientProps.initiate(preQuestionnaireAnswers: answers)
         XCTAssertNotNil(props)
 
