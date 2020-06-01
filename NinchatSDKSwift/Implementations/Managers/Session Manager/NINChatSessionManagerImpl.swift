@@ -95,7 +95,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     var preAudienceQuestionnaireMetadata: NINLowLevelClientProps! {
         didSet {
             if let audienceMetadata = self.audienceMetadata {
-                self.audienceMetadata?.set(value: preAudienceQuestionnaireMetadata, forKey: "pre_answers")
+                audienceMetadata.set(value: preAudienceQuestionnaireMetadata, forKey: "pre_answers")
             } else {
                 self.audienceMetadata = NINLowLevelClientProps.initiate(metadata: ["pre_answers": preAudienceQuestionnaireMetadata])
             }
@@ -314,6 +314,22 @@ extension NINChatSessionManagerImpl {
         }
     }
     
+    /// Register audience questionnaire answers
+    func registerQuestionnaire(queue ID: String, answers: NINLowLevelClientProps, completion: @escaping CompletionWithError) throws {
+        guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
+
+        let param = NINLowLevelClientProps.initiate(action: .registerAudience)
+        param.queueID = .success(ID)
+        param.metadata = .success(answers)
+
+        do {
+            let actionID = try session.send(param)
+            self.bind(action: actionID, closure: completion)
+        } catch {
+            completion(error)
+        }
+    }
+
     /// Low-level shutdown of the chat's session; invalidates session resource.
     func closeChat() throws {
         delegate?.log(value: "Shutting down chat Session..")

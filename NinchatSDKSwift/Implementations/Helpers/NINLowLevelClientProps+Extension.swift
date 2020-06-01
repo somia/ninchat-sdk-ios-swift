@@ -26,6 +26,7 @@ enum NINLowLevelClientActions: String {
     case updateMember = "update_member"
     case sendMessage = "send_message"
     case beginICE = "begin_ice"
+    case registerAudience = "register_audience"
 }
 
 enum HistoryOrder: Int {
@@ -97,7 +98,7 @@ extension NINLowLevelClientProps: NINLowLevelSessionProps {
     var error: Error? {
         let errorType: NINResult<String> = self.get(forKey: "error_type")
         if case let .failure(error) = errorType { return error }
-        return NinchatError(code: 1, title: errorType.value)
+        return (errorType.value.isEmpty) ? nil : NinchatError(code: 1, title: errorType.value)
     }
 
     public var event: NINResult<String> {

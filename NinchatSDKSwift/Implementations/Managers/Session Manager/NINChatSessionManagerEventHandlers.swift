@@ -28,6 +28,7 @@ enum Events: String {
     case userDeleted = "user_deleted"
     
     case audienceEnqueued = "audience_enqueued"
+    case audienceRegistered = "audience_registered"
     case queueUpdated = "queue_updated"
 
     case connectionSuperseded = "connection_superseded"
@@ -138,6 +139,8 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                     try self.didFindFile(param: param)
                 case .channelFound:
                     try self.didFindChannel(param: param)
+                case .audienceRegistered:
+                    try self.didRegisterAudience(param: param)
                 default:
                     break
                 }

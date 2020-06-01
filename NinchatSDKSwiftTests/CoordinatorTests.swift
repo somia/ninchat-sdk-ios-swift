@@ -28,7 +28,6 @@ class CoordinatorTests: XCTestCase {
     }
     
     func testLazyVariables() {
-        XCTAssertNotNil(coordinator.questionnaireViewController)
         XCTAssertNotNil(coordinator.queueViewController)
         XCTAssertNotNil(coordinator.chatViewController)
         XCTAssertNotNil(coordinator.ratingViewController)

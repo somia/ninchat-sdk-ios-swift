@@ -52,7 +52,7 @@ final class NINCoordinator: Coordinator {
             DispatchQueue.main.async {
                 #if DEBUG
                     if self.hasPreAudienceQuestionnaire {
-                        self.navigationController?.pushViewController(self.questionnaireViewController, animated: true)
+                        self.navigationController?.pushViewController(self.questionnaireViewController(queue: queue), animated: true)
                     } else {
                         self.navigationController?.pushViewController(self.queueViewController(queue: queue), animated: true)
                     }
@@ -66,16 +66,12 @@ final class NINCoordinator: Coordinator {
     }()
     internal lazy var questionnaireViewController: NINQuestionnaireViewController = {
         let questionnaireViewController: NINQuestionnaireViewController = storyboard.instantiateViewController()
+        questionnaireViewController.viewModel = NINQuestionnaireViewModelImpl(sessionManager: self.sessionManager)
         questionnaireViewController.session = session
-        questionnaireViewController.pageNumber = 0
-        questionnaireViewController.registerQuestionnaire = { [unowned self] answers in
-            self.sessionManager.preAudienceQuestionnaireMetadata = answers
+        questionnaireViewController.completeQuestionnaire = {
             DispatchQueue.main.async {
-                self.navigationController?.pushViewController(self.queueViewController(queue: Queue(queueID: "706rc4gq00ib8", name: "default", isClosed: false)), animated: true)
+                self.navigationController?.pushViewController(self.queueViewController(queue: questionnaireViewController.queue), animated: true)
             }
-        }
-        questionnaireViewController.completeQuestionnaire = { [weak self] answers in
-            self?.sessionManager.preAudienceQuestionnaireMetadata = answers
         }
 
         return questionnaireViewController
@@ -176,6 +172,13 @@ final class NINCoordinator: Coordinator {
 }
 
 extension NINCoordinator {
+    internal func questionnaireViewController(queue: Queue) -> NINQuestionnaireViewController {
+        let vc = self.questionnaireViewController
+        vc.queue = queue
+
+        return vc
+    }
+
     internal func queueViewController(resume: Bool) -> NINQueueViewController {
         let vc = self.queueViewController
         vc.resumeMode = resume

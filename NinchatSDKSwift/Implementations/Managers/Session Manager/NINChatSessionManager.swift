@@ -47,6 +47,11 @@ protocol NINChatSessionConnectionManager {
     /** Runs ICE (Interactive Connectivity Establishment) for WebRTC connection negotiations. */
     func beginICE(completion: @escaping (Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void) throws
     
+    /** Register audience questionnaire answers in some the given queue's statistics
+      * More info: `https://github.com/somia/customer/wiki/Questionnaires#pseudo-targets-register-complete`
+     */
+    func registerQuestionnaire(queue ID: String, answers: NINLowLevelClientProps, completion: @escaping CompletionWithError) throws
+
     /** Closes the chat by shutting down the session. Triggers the API delegate method -ninchatDidEndChatSession:. */
     func closeChat() throws
     
