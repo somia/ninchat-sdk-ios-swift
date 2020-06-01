@@ -68,9 +68,9 @@ final class NINCoordinator: Coordinator {
         let questionnaireViewController: NINQuestionnaireViewController = storyboard.instantiateViewController()
         questionnaireViewController.viewModel = NINQuestionnaireViewModelImpl(sessionManager: self.sessionManager)
         questionnaireViewController.session = session
-        questionnaireViewController.completeQuestionnaire = {
+        questionnaireViewController.completeQuestionnaire = { [unowned self] queueID in
             DispatchQueue.main.async {
-                self.navigationController?.pushViewController(self.queueViewController(queue: questionnaireViewController.queue), animated: true)
+                self.navigationController?.pushViewController(self.queueViewController(queue: self.sessionManager.queues.first(where: { $0.queueID == queueID })!), animated: true)
             }
         }
 

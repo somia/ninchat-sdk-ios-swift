@@ -14,10 +14,10 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
         var connector = QuestionnaireElementConnectorImpl(configurations: self.session.sessionManager.siteConfiguration.preAudienceQuestionnaire!)
         connector.onCompleteTargetReached = { [weak self] logic in
             self?.viewModel.finishQuestionnaire()
-            self?.completeQuestionnaire?()
+            self?.completeQuestionnaire?(logic?.queue ?? self?.queue.queueID ?? "")
         }
         connector.onRegisterTargetReached = { [weak self] logic in
-            self?.viewModel.registerAudience(queueID: self?.queue.queueID ?? "") { error in
+            self?.viewModel.registerAudience(queueID: logic?.queue ?? self?.queue.queueID ?? "") { error in
                 if let error = error {
                     debugger("** ** SDK: error in registering audience: \(error)")
                     Toast.show(message: .error("Error is submitting the answers")) {
@@ -40,7 +40,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
     // MARK: - Injected
 
     var viewModel: NINQuestionnaireViewModel!
-    var completeQuestionnaire: (() -> Void)?
+    var completeQuestionnaire: ((_ queueID: String) -> Void)?
 
     // MARK: - SubViews
 

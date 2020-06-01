@@ -44,7 +44,7 @@ struct NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
         self.views = QuestionnaireElementConverter(configurations: sessionManager.siteConfiguration.preAudienceQuestionnaire!).elements
     }
 
-    func registerAudience(queueID: String, completion: @escaping ((Error?) -> Void)) {
+    func registerAudience(queueID: String, completion: @escaping (Error?) -> Void) {
         do {
             try self.sessionManager.registerQuestionnaire(queue: queueID, answers: NINLowLevelClientProps.initiate(preQuestionnaireAnswers: self.answers), completion: completion)
         } catch {
