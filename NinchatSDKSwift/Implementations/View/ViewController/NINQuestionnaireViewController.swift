@@ -12,6 +12,9 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
 
     private lazy var connector: QuestionnaireElementConnector = {
         var connector = QuestionnaireElementConnectorImpl(configurations: self.session.sessionManager.siteConfiguration.preAudienceQuestionnaire!)
+        connector.logicContainsTags = { [weak self] logic in
+            self?.viewModel.submitTags(logic?.tags! ?? [])
+        }
         connector.onCompleteTargetReached = { [unowned self] logic in
             let queue: (canJoin: Bool, target: Queue?) = self.viewModel.canJoinGivenQueue(withID: logic?.queue ?? self.queue.queueID)
             if !queue.canJoin {

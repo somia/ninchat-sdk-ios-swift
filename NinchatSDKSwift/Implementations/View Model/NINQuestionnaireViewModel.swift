@@ -15,22 +15,23 @@ protocol NINQuestionnaireViewModel {
 
     init(sessionManager: NINChatSessionManager)
     func canJoinGivenQueue(withID id: String) -> (Bool, Queue?)
-    func registerAudience(queueID: String, completion: @escaping ((Error?) -> Void))
+    func registerAudience(queueID: String, completion: @escaping (Error?) -> Void)
     func finishQuestionnaire()
     func getConfiguration() throws -> QuestionnaireConfiguration
     func getElements() throws -> [QuestionnaireElement]
     mutating func goToNextPage() -> Bool
     mutating func goToPreviousPage() -> Bool
     mutating func goToPage(_ page: Int)
-    mutating func submitAnswer(key: QuestionnaireElement?, value: Any)
-    mutating func removeAnswer(key: QuestionnaireElement?, value: Any)
+    mutating func submitTags(_ tags: [String])
+    mutating func submitAnswer(key: QuestionnaireElement?, value: AnyHashable)
+    mutating func removeAnswer(key: QuestionnaireElement?, value: AnyHashable)
 }
 
 struct NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 
     private unowned let sessionManager: NINChatSessionManager
     private let views: [[QuestionnaireElement]]
-    private var answers: [String:AnyCodable] = [:]
+    private var answers: [String:AnyHashable] = [:]
 
     // MARK: - NINQuestionnaireViewModel
 
@@ -110,14 +111,22 @@ extension NINQuestionnaireViewModelImpl {
 }
 
 extension NINQuestionnaireViewModelImpl {
-    mutating func submitAnswer(key: QuestionnaireElement?, value: Any) {
-        if let configuration = key?.elementConfiguration {
-            self.answers[configuration.name] = AnyCodable(value)
+    mutating func submitTags(_ tags: [String]) {
+        guard !tags.isEmpty else { return }
+
+        self.answers["tags"] = tags.reduce(into: NINLowLevelClientStrings.initiate) { (result: inout NINLowLevelClientStrings, tag: String) in
+            result.append(tag)
         }
     }
 
-    mutating func removeAnswer(key: QuestionnaireElement?, value: Any) {
-        if let configuration = key?.elementConfiguration, let answer = self.answers[configuration.name], answer == AnyCodable(value) {
+    mutating func submitAnswer(key: QuestionnaireElement?, value: AnyHashable) {
+        if let configuration = key?.elementConfiguration {
+            self.answers[configuration.name] = value
+        }
+    }
+
+    mutating func removeAnswer(key: QuestionnaireElement?, value: AnyHashable) {
+        if let configuration = key?.elementConfiguration, let answer = self.answers[configuration.name], answer == value {
             self.answers.removeValue(forKey: configuration.name)
         }
     }

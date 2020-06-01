@@ -58,8 +58,8 @@ extension NINLowLevelClientProps {
         return props!
     }
 
-    static func initiate(preQuestionnaireAnswers dictionary: [String:AnyCodable]) -> NINLowLevelClientProps {
-        let metadata = dictionary.reduce(into: NINLowLevelClientProps()!) { (metadata: inout NINLowLevelClientProps, tuple: (key: String, value: AnyCodable)) in
+    static func initiate(preQuestionnaireAnswers dictionary: [String:AnyHashable]) -> NINLowLevelClientProps {
+        let metadata = dictionary.reduce(into: NINLowLevelClientProps()!) { (metadata: inout NINLowLevelClientProps, tuple: (key: String, value: Any)) in
             metadata.set(value: tuple.value, forKey: tuple.key)
         }
         return NINLowLevelClientProps.initiate(metadata: ["pre_answers": metadata])

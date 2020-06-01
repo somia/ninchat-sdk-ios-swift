@@ -8,6 +8,7 @@ import UIKit
 import AnyCodable
 
 protocol QuestionnaireElementConnector {
+    var logicContainsTags: ((LogicQuestionnaire?) -> Void)? { get set }
     var onRegisterTargetReached: ((LogicQuestionnaire?) -> Void)? { get set }
     var onCompleteTargetReached: ((LogicQuestionnaire?) -> Void)? { get set }
 
@@ -25,6 +26,7 @@ struct QuestionnaireElementConnectorImpl: QuestionnaireElementConnector {
         self.elements = QuestionnaireElementConverter(configurations: configurations).elements
     }
 
+    var logicContainsTags: ((LogicQuestionnaire?) -> Void)?
     var onRegisterTargetReached: ((LogicQuestionnaire?) -> Void)?
     var onCompleteTargetReached: ((LogicQuestionnaire?) -> Void)?
 
@@ -77,6 +79,10 @@ extension QuestionnaireElementConnectorImpl {
         if let blocks = self.findLogicBlocks(for: Array(dictionary.keys)), blocks.count > 0 {
             let satisfied: (bool: Bool, logic: LogicQuestionnaire?) = areSatisfied(logic: blocks, forKeyValue: dictionary)
             if satisfied.bool, let logic = satisfied.logic {
+                if let tags = logic.tags, tags.count > 0 {
+                    self.logicContainsTags?(logic)
+                }
+                
                 if logic.target == "_register" {
                     self.onRegisterTargetReached?(logic)
                 } else if logic.target == "_complete" {
