@@ -12,19 +12,23 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
 
     private lazy var connector: QuestionnaireElementConnector = {
         var connector = QuestionnaireElementConnectorImpl(configurations: self.session.sessionManager.siteConfiguration.preAudienceQuestionnaire!)
-        connector.onCompleteTargetReached = { [weak self] logic in
-            self?.viewModel.finishQuestionnaire()
-            self?.completeQuestionnaire?(logic?.queue ?? self?.queue.queueID ?? "")
+        connector.onCompleteTargetReached = { [unowned self] logic in
+            let queue: (canJoin: Bool, target: Queue?) = self.viewModel.canJoinGivenQueue(withID: logic?.queue ?? self.queue.queueID)
+            if !queue.canJoin {
+                connector.onRegisterTargetReached?(logic); return
+            }
+            self.viewModel.finishQuestionnaire()
+            self.completeQuestionnaire?(queue.target!)
         }
-        connector.onRegisterTargetReached = { [weak self] logic in
-            self?.viewModel.registerAudience(queueID: logic?.queue ?? self?.queue.queueID ?? "") { error in
+        connector.onRegisterTargetReached = { [unowned self] logic in
+            self.viewModel.registerAudience(queueID: logic?.queue ?? self.queue.queueID) { error in
                 if let error = error {
                     debugger("** ** SDK: error in registering audience: \(error)")
                     Toast.show(message: .error("Error is submitting the answers")) {
-                        self?.session.onDidEnd()
+                        self.session.onDidEnd()
                     }
                 } else {
-                    self?.session.onDidEnd()
+                    self.session.onDidEnd()
                 }
             }
         }
@@ -40,7 +44,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
     // MARK: - Injected
 
     var viewModel: NINQuestionnaireViewModel!
-    var completeQuestionnaire: ((_ queueID: String) -> Void)?
+    var completeQuestionnaire: ((_ queue: Queue) -> Void)?
 
     // MARK: - SubViews
 

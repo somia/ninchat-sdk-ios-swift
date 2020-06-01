@@ -11,19 +11,17 @@ import NinchatLowLevelClient
 protocol NINQuestionnaireViewModel {
     var pageNumber: Int { get set }
     var previousPage: Int { get set }
+    var questionnaireAnswers: NINLowLevelClientProps { get }
 
     init(sessionManager: NINChatSessionManager)
+    func canJoinGivenQueue(withID id: String) -> (Bool, Queue?)
     func registerAudience(queueID: String, completion: @escaping ((Error?) -> Void))
     func finishQuestionnaire()
-
-    var questionnaireAnswers: NINLowLevelClientProps { get }
     func getConfiguration() throws -> QuestionnaireConfiguration
     func getElements() throws -> [QuestionnaireElement]
-
     mutating func goToNextPage() -> Bool
     mutating func goToPreviousPage() -> Bool
     mutating func goToPage(_ page: Int)
-
     mutating func submitAnswer(key: QuestionnaireElement?, value: Any)
     mutating func removeAnswer(key: QuestionnaireElement?, value: Any)
 }
@@ -44,6 +42,15 @@ struct NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
         self.views = QuestionnaireElementConverter(configurations: sessionManager.siteConfiguration.preAudienceQuestionnaire!).elements
     }
 
+    func canJoinGivenQueue(withID id: String) -> (Bool, Queue?) {
+        if let targetQueue = self.sessionManager.queues.first(where: { $0.queueID == id }) {
+            return (!targetQueue.isClosed, targetQueue)
+        }
+        return (false, nil)
+    }
+}
+
+extension NINQuestionnaireViewModelImpl {
     func registerAudience(queueID: String, completion: @escaping (Error?) -> Void) {
         do {
             try self.sessionManager.registerQuestionnaire(queue: queueID, answers: NINLowLevelClientProps.initiate(preQuestionnaireAnswers: self.answers), completion: completion)
