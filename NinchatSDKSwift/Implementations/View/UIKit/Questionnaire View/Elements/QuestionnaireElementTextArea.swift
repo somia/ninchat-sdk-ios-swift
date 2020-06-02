@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle, QuestionnaireHasBorder, QuestionnaireFocusableElement {
+final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireHasBorder, QuestionnaireFocusableElement {
 
     // MARK: - QuestionnaireElement
 
@@ -28,6 +28,17 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         #warning("Override assets")
+    }
+
+    // MARK: - QuestionnaireSettable
+
+    var presetAnswer: AnyHashable? {
+        didSet {
+            if let answer = self.presetAnswer as? String {
+                self.view.text = answer
+                self.textViewDidEndEditing(self.view)
+            }
+        }
     }
 
     // MARK: - QuestionnaireHasBorder

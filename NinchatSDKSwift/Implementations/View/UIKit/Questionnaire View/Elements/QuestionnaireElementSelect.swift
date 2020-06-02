@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, QuestionnaireOptionSelectableElement {
+final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireOptionSelectableElement {
 
     // MARK: - QuestionnaireElement
 
@@ -24,9 +24,6 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
         }
     }
     var elementConfiguration: QuestionnaireConfiguration?
-    var onElementOptionTapped: ((ElementOption) -> Void)?
-    var onElementFocused: ((QuestionnaireElement) -> Void)?
-    var onElementDismissed: ((QuestionnaireElement) -> Void)?
     var elementHeight: CGFloat {
         CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + 8
     }
@@ -35,12 +32,21 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
         #warning("Override assets")
     }
 
+    // MARK: - QuestionnaireSettable
+
+    var presetAnswer: AnyHashable? {
+        didSet {
+            if let answer = self.presetAnswer as? String, let option = self.elementConfiguration?.options?.first(where: { $0.label == answer }) {
+                self.select(option: option)
+            }
+            self.updateBorder()
+        }
+    }
+
     // MARK: - QuestionnaireOptionSelectableElement
 
     var onElementOptionSelected: ((ElementOption) -> ())?
     var onElementOptionDeselected: ((ElementOption) -> ())?
-
-    func deselect(option: ElementOption) {}
 
     // MARK: - Subviews - QuestionnaireElementWithTitleAndOptions
 
@@ -110,8 +116,8 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
 
     @objc
     private func onMenuTapped(_ sender: UITapGestureRecognizer) {
+        self.endEditing(true)
         self.showOptions()
-        self.onElementFocused?(self)
     }
 }
 
@@ -127,20 +133,27 @@ extension QuestionnaireElementSelect {
             switch result {
             case .cancel:
                 guard let option = self.elementConfiguration?.options?.first(where: { $0.label == self.selectedOption.text }) else { fatalError("Unable to deselect the option") }
-                self.selectedOption.isHighlighted = false
-                self.selectionIndicator.isHighlighted = false
-                self.selectedOption.text = "Select".localized
-                self.onElementOptionDeselected?(option)
+                self.deselect(option: option)
             case .select(let index):
                 guard let option = self.elementConfiguration?.options?[index] else { fatalError("Unable to pick selected option") }
-                self.selectedOption.isHighlighted = true
-                self.selectionIndicator.isHighlighted = true
-                self.selectedOption.text = option.label
-                self.onElementOptionSelected?(option)
+                self.select(option: option)
             }
-
             self.updateBorder()
         }
+    }
+
+    private func select(option: ElementOption) {
+        self.selectedOption.isHighlighted = true
+        self.selectionIndicator.isHighlighted = true
+        self.selectedOption.text = option.label
+        self.onElementOptionSelected?(option)
+    }
+
+    func deselect(option: ElementOption) {
+        self.selectedOption.isHighlighted = false
+        self.selectionIndicator.isHighlighted = false
+        self.selectedOption.text = "Select".localized
+        self.onElementOptionDeselected?(option)
     }
 }
 

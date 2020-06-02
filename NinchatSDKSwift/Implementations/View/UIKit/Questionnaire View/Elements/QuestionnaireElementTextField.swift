@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle, QuestionnaireHasBorder, QuestionnaireFocusableElement {
+final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireHasBorder, QuestionnaireFocusableElement {
 
     // MARK: - QuestionnaireElement
 
@@ -25,8 +25,20 @@ final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle
     var elementHeight: CGFloat {
         CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + CGFloat(5.0 * 8.0)
     }
+
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         #warning("Override assets")
+    }
+
+    // MARK: - QuestionnaireSettable
+
+    var presetAnswer: AnyHashable? {
+        didSet {
+            if let answer = self.presetAnswer as? String {
+                self.view.text = answer
+                self.textFieldDidEndEditing(self.view)
+            }
+        }
     }
 
     // MARK: - QuestionnaireHasBorder
