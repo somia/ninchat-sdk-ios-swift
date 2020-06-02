@@ -6,9 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle {
-
-    var onOptionSelected: ((ElementOption) -> Void)?
+final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, QuestionnaireOptionSelectableElement {
 
     // MARK: - QuestionnaireElement
 
@@ -36,6 +34,13 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle {
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         #warning("Override assets")
     }
+
+    // MARK: - QuestionnaireOptionSelectableElement
+
+    var onElementOptionSelected: ((ElementOption) -> ())?
+    var onElementOptionDeselected: ((ElementOption) -> ())?
+
+    func deselect(option: ElementOption) {}
 
     // MARK: - Subviews - QuestionnaireElementWithTitleAndOptions
 
@@ -121,16 +126,17 @@ extension QuestionnaireElementSelect {
 
             switch result {
             case .cancel:
+                guard let option = self.elementConfiguration?.options?.first(where: { $0.label == self.selectedOption.text }) else { fatalError("Unable to deselect the option") }
                 self.selectedOption.isHighlighted = false
                 self.selectionIndicator.isHighlighted = false
                 self.selectedOption.text = "Select".localized
-                self.onElementDismissed?(self)
+                self.onElementOptionDeselected?(option)
             case .select(let index):
                 guard let option = self.elementConfiguration?.options?[index] else { fatalError("Unable to pick selected option") }
                 self.selectedOption.isHighlighted = true
                 self.selectionIndicator.isHighlighted = true
                 self.selectedOption.text = option.label
-                self.onOptionSelected?(option)
+                self.onElementOptionSelected?(option)
             }
 
             self.updateBorder()
