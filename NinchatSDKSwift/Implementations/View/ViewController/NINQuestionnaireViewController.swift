@@ -202,8 +202,14 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
                 }
             }
             if var view = element as? QuestionnaireFocusableElement {
-                view.onElementFocused = { questionnaire in }
-                view.onElementDismissed = { option in }
+                view.onElementFocused = { _ in }
+                view.onElementDismissed = { [weak self] element in
+                    if let textView = element as? QuestionnaireElementTextArea {
+                        self?.viewModel.submitAnswer(key: element, value: textView.view.text)
+                    } else if let textField = element as? QuestionnaireElementTextField {
+                        self?.viewModel.submitAnswer(key: element, value: textField.view.text)
+                    }
+                }
             }
             element.overrideAssets(with: self.session, isPrimary: false)
             self.layoutSubview(element, parent: cell.content)
