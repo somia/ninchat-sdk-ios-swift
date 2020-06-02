@@ -670,9 +670,6 @@
       }
     }
   ],
-  "pre_answers": {
-    "Phone": "+358123456789"
-  },
   "default": {
     "agentAvatar": true,
     "audienceRating": true,

@@ -28,14 +28,5 @@ final class SiteConfigurationTests: XCTestCase {
         XCTAssertNotNil(siteConfiguration?.preAudienceQuestionnaire)
         XCTAssertGreaterThan(siteConfiguration?.preAudienceQuestionnaire?.count ?? 0, 0)
     }
-
-    func test_11_preAnswers() {
-        let preAnswers = siteConfiguration?.preAnswers
-        XCTAssertNotNil(preAnswers)
-
-        let answer1 = preAnswers?["Phone"]
-        XCTAssertNotNil(answer1)
-        XCTAssertEqual(answer1, "+358123456789")
-    }
 }
 
