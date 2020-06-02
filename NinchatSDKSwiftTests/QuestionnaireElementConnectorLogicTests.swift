@@ -22,7 +22,7 @@ final class QuestionnaireElementConnectorLogicTests: XCTestCase {
         super.setUp()
 
         do {
-            self.questionnaire_preAudience = AudienceQuestionnaire(from: try openTestFile(), for: "preAudienceQuestionnaire")
+            self.questionnaire_preAudience = AudienceQuestionnaire(from: try openAsset(forResource: "questionnaire-mock"), for: "preAudienceQuestionnaire")
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -96,17 +96,5 @@ final class QuestionnaireElementConnectorLogicTests: XCTestCase {
         XCTAssertEqual(targetElement.0?.count, 1)
         XCTAssertNotNil(targetElement.0?.first as? QuestionnaireElementRadio)
         XCTAssertEqual(targetElement.1, 0)
-    }
-}
-
-extension QuestionnaireElementConnectorLogicTests {
-    private func openTestFile() throws -> [String:AnyHashable]? {
-        let bundle = Bundle(for: QuestionnaireConverterTests.self)
-        if let path = bundle.path(forResource: "questionnaire-mock", ofType: "json") {
-            let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
-            let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)
-            return jsonResult as? [String:AnyHashable]
-        }
-        return nil
     }
 }

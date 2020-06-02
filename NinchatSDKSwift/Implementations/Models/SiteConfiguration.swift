@@ -21,6 +21,7 @@ protocol SiteConfiguration  {
     var userName: String? { get }
     var noQueueText: String? { get }
     var audienceAutoQueue: String? { get }
+    var preAnswers: [String:AnyHashable]? { get }
     var preAudienceQuestionnaire: [QuestionnaireConfiguration]? { get }
     var postAudienceQuestionnaire: [QuestionnaireConfiguration]? { get }
 
@@ -87,6 +88,10 @@ struct SiteConfigurationImpl: SiteConfiguration {
     }
     var audienceAutoQueue: String? {
         self.value(for: "audienceAutoQueue")
+    }
+    var preAnswers: [String:AnyHashable]? {
+        guard let configuration = configuration as? [String:Any] else { return nil }
+        return configuration["pre_answers"] as? [String:AnyHashable]
     }
     var preAudienceQuestionnaire: [QuestionnaireConfiguration]?
     var postAudienceQuestionnaire: [QuestionnaireConfiguration]?

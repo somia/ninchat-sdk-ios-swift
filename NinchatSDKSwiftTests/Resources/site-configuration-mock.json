@@ -1,0 +1,722 @@
+{
+  "description": "__NinchatCom Hassan Mock Org",
+  "preAudienceQuestionnaire": [
+    {
+      "element": "radio",
+      "name": "Aiheet",
+      "label": "Hei. Voin auttaa sinua koronavirusta (COVID-19) koskevissa kysymyksissä. Mitä tietoa etsit?",
+      "required": true,
+      "options": [
+        {
+          "label": "Mikä on koronavirus?",
+          "value": "Mikä on koronavirus"
+        },
+        {
+          "label": "Mitä teen, jos epäilen koronavirusta?",
+          "value": "Mitä teen jos epäilen koronavirusta"
+        },
+        {
+          "label": "Minulla on sovittuja vastaanottoja, miten toimin?",
+          "value": "Minulla on sovittuja vastaanottoja miten toimin"
+        },
+        {
+          "label": "Voinko saada tartuntatautipäivärahaa?",
+          "value": "Voinko saada tartuntatautipäivärahaa"
+        },
+        {
+          "label": "Kuulunko riskiryhmään?",
+          "value": "Kuulunko riskiryhmään"
+        },
+        {
+          "label": "Voinko saada koronavirustestin?",
+          "value": "Voinko saada koronavirustestin"
+        },
+        {
+          "label": "Miten suojaudun koronavirustaudilta?",
+          "value": "Miten suojaudun koronavirustaudilt"
+        },
+        {
+          "label": "Lue lisää karanteenista",
+          "value": "Karanteeni"
+        },
+        {
+          "label": "Huolen tai epävarmuuden sietäminen",
+          "value": "Huolen tai epävarmuuden sietäminen"
+        }
+      ],
+      "buttons": {
+        "back": false,
+        "next": "Continue"
+      },
+      "redirects": [
+        {
+          "pattern": "Mikä on koronavirus",
+          "target": "Koronavirus"
+        },
+        {
+          "pattern": "Mitä teen jos epäilen koronavirusta",
+          "target": "Epäilys"
+        },
+        {
+          "pattern": "Minulla on sovittuja vastaanottoja miten toimin",
+          "target": "Sovitut"
+        },
+        {
+          "pattern": "Voinko saada tartuntatautipäivärahaa",
+          "target": "Tartuntatautipäiväraha"
+        },
+        {
+          "pattern": "Kuulunko riskiryhmään",
+          "target": "Riskiryhmät"
+        },
+        {
+          "pattern": "Voinko saada koronavirustestin",
+          "target": "Koronavirustesti"
+        },
+        {
+          "pattern": "Miten suojaudun koronavirustaudilt",
+          "target": "Suojautuminen"
+        },
+        {
+          "pattern": "Karanteeni",
+          "target": "Karanteeni"
+        },
+        {
+          "pattern": "Huolen tai epävarmuuden sietäminen",
+          "target": "Huolet"
+        }
+      ]
+    },
+    {
+      "name": "Koronavirus",
+      "type": "group",
+      "buttons": {
+        "back": true,
+        "next": true
+      },
+      "elements": [
+        {
+          "element": "text",
+          "name": "Koronavirus-tietoa",
+          "label": "Tietoa koronaviruksesta <b><i>(COVID-19)</i></b> löydät linkin takaa.<a href='https://thl.fi/fi/web/infektiotaudit-ja-rokotukset/taudit-ja-torjunta/taudit-ja-taudinaiheuttajat-a-o/koronavirus-covid-19?ref=ninchat' class='btn' target='_blank'>Lue koronaviruksesta</a><p><img src=\"https://www.arctictoday.com/wp-content/uploads/2019/10/republic_of_santa_claus-1068x580.jpg\" alt=\"Flowers in Chania\" width=\"330\" height=\"200\"></p>"
+        },
+        {
+          "element": "radio",
+          "name": "Koronavirus-jatko",
+          "label": "Oliko ohjeesta apua?",
+          "required": true,
+          "options": [
+            {
+              "label": "Kiitos, sulje chat",
+              "value": "Sulje"
+            },
+            {
+              "label": "Näytä muut aiheet",
+              "value": "Muut aiheet"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Koronavirus-Logic1",
+      "logic": {
+        "and": [
+          {
+            "Koronavirus-jatko": "Sulje"
+          }
+        ],
+        "target": "_complete",
+        "queue": "76nr0l4m00t5",
+        "tags": [
+          "7fvo5p8700eao"
+        ]
+      }
+    },
+    {
+      "name": "Koronavirus-Logic2",
+      "logic": {
+        "and": [
+          {
+            "Koronavirus-jatko": "Muut aiheet"
+          }
+        ],
+        "target": "Aiheet"
+      }
+    },
+    {
+      "name": "Epäilys",
+      "type": "group",
+      "buttons": {
+        "back": true,
+        "next": true
+      },
+      "elements": [
+        {
+          "element": "text",
+          "name": "Epäilys-tietoa",
+          "label": "<p>Epäiletkö</p><p> koronavirusta?</p><p>Tee</p> <p>testi.</p><a href='http://www.omaolo.fi/?ref=ninchat' class='btn' target='_blank'>Omaolon testi</a><a href='https://www.terveyskyla.fi/koronabotti/?ref=ninchat' class='btn' target='_blank'>Terveyskylän koronabotti</a><a href='https://thl.fi/fi/web/infektiotaudit-ja-rokotukset/taudit-ja-torjunta/taudit-ja-taudinaiheuttajat-a-o/koronavirus-covid-19/koronavirustauti-milloin-on-hakeuduttava-hoitoon?ref=ninchat' class='btn' target='_blank'>THL - Milloin hakeuduttava hoitoon?</a>"
+        },
+        {
+          "element": "radio",
+          "name": "Epäilys-jatko",
+          "label": "Oliko ohjeesta apua?",
+          "required": true,
+          "options": [
+            {
+              "label": "Kiitos, sulje chat",
+              "value": "Sulje"
+            },
+            {
+              "label": "Näytä muut aiheet",
+              "value": "Muut aiheet"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Epäilys-Logic1",
+      "logic": {
+        "and": [
+          {
+            "Epäilys-jatko": "Sulje"
+          }
+        ],
+        "target": "_complete",
+        "queue": "76i9c6am000a"
+      }
+    },
+    {
+      "name": "Epäilys-Logic2",
+      "logic": {
+        "and": [
+          {
+            "Epäilys-jatko": "Muut aiheet"
+          }
+        ],
+        "target": "Aiheet"
+      }
+    },
+    {
+      "name": "Sovitut",
+      "type": "group",
+      "buttons": {
+        "back": true,
+        "next": true
+      },
+      "elements": [
+        {
+          "element": "text",
+          "name": "Sovitut-tietoa",
+          "label": "<p>Miten toimia sovittujen vastaanottojen kanssa (lääkäri, hoitaja, hammaslääkäri yms)</p><a href='https://www.ouka.fi/usein-kysyttya-korona?ref=ninchat#terveyskeskus' class='btn' target='_blank'>Lue miten tilanne vaikuttaa terveyskeskusten toimintaan</a>(Ks. kohta Miten tilanne vaikuttaa terveyskeskusten toimintaan?) This is an extra description to enlarge the text height even more to test the sdk and how it would resize based on the given text. This is an extra line embeded to check the height of the text element again. Wanna some more text to increase the height again and again? Seems the <i>height-line</i> property worked fine"
+        },
+        {
+          "element": "radio",
+          "name": "Sovitut-jatko",
+          "label": "Oliko ohjeesta apua?",
+          "required": true,
+          "options": [
+            {
+              "label": "Kiitos, sulje chat",
+              "value": "Sulje"
+            },
+            {
+              "label": "Näytä muut aiheet",
+              "value": "Muut aiheet"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Sovitut-Logic1",
+      "logic": {
+        "and": [
+          {
+            "Sovitut-jatko": "Sulje"
+          }
+        ],
+        "target": "_complete",
+        "tags": [
+          "7fvo5p8700eao",
+          "7fvo5qv400eao"
+        ]
+      }
+    },
+    {
+      "name": "Sovitut-Logic2",
+      "logic": {
+        "and": [
+          {
+            "Sovitut-jatko": "Muut aiheet"
+          }
+        ],
+        "target": "Aiheet"
+      }
+    },
+    {
+      "name": "Tartuntatautipäiväraha",
+      "type": "group",
+      "buttons": {
+        "back": false,
+        "next": false
+      },
+      "elements": [
+        {
+          "element": "text",
+          "name": "Tartuntatautipäiväraha-tietoa",
+          "label": "<p>Tartuntapäivärahan saaminen</p><a href='https://www.kela.fi/tartuntatauti?ref=ninchat' class='btn' target='_blank'>Lue tartuntapäivärahasta</a>"
+        },
+        {
+          "element": "radio",
+          "name": "Tartuntatautipäiväraha-jatko",
+          "label": "Oliko ohjeesta apua?",
+          "required": true,
+          "options": [
+            {
+              "label": "Kiitos, sulje chat",
+              "value": "Sulje"
+            },
+            {
+              "label": "Näytä muut aiheet",
+              "value": "Muut aiheet"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Tartuntatautipäiväraha-Logic1",
+      "logic": {
+        "and": [
+          {
+            "Tartuntatautipäiväraha-jatko": "Sulje"
+          }
+        ],
+        "target": "_register"
+      }
+    },
+    {
+      "name": "Tartuntatautipäiväraha-Logic2",
+      "logic": {
+        "and": [
+          {
+            "Tartuntatautipäiväraha-jatko": "Muut aiheet"
+          }
+        ],
+        "target": "Aiheet"
+      }
+    },
+    {
+      "name": "Riskiryhmät",
+      "type": "group",
+      "buttons": {
+        "back": false,
+        "next": false
+      },
+      "elements": [
+        {
+          "element": "text",
+          "name": "Riskiryhmät-tietoa",
+          "label": "<p>Mitkä ovat koronavirustaudin riskiryhmät?</p><a href='https://thl.fi/fi/web/infektiotaudit-ja-rokotukset/ajankohtaista/ajankohtaista-koronaviruksesta-covid-19/usein-kysyttya-koronaviruksesta-covid-19?ref=ninchat#tauti' class='btn' target='_blank'>Lue täältä</a>"
+        },
+        {
+          "element": "radio",
+          "name": "Riskiryhmät-jatko",
+          "label": "Oliko ohjeesta apua?",
+          "required": true,
+          "options": [
+            {
+              "label": "Kiitos, sulje chat",
+              "value": "Sulje"
+            },
+            {
+              "label": "Näytä muut aiheet",
+              "value": "Muut aiheet"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Riskiryhmät-Logic1",
+      "logic": {
+        "and": [
+          {
+            "Riskiryhmät-jatko": "Sulje"
+          }
+        ],
+        "target": "_register"
+      }
+    },
+    {
+      "name": "Riskiryhmät-Logic2",
+      "logic": {
+        "and": [
+          {
+            "Riskiryhmät-jatko": "Muut aiheet"
+          }
+        ],
+        "target": "Aiheet"
+      }
+    },
+    {
+      "name": "Koronavirustesti",
+      "type": "group",
+      "buttons": {
+        "back": false,
+        "next": false
+      },
+      "elements": [
+        {
+          "element": "text",
+          "name": "Koronavirustesti-tietoa",
+          "label": "<p>Koronavirustestit</p><a href='https://thl.fi/fi/web/infektiotaudit-ja-rokotukset/ajankohtaista/ajankohtaista-koronaviruksesta-covid-19/usein-kysyttya-koronaviruksesta-covid-19?ref=ninchat' class='btn' target='_blank'>Lue keitä testataan viruksen varalta</a> (Ks. kohta Keitä testataan viruksen varalta?)"
+        },
+        {
+          "element": "radio",
+          "name": "Koronavirustesti-jatko",
+          "label": "Oliko ohjeesta apua?",
+          "required": true,
+          "options": [
+            {
+              "label": "Kiitos, sulje chat",
+              "value": "Sulje"
+            },
+            {
+              "label": "Näytä muut aiheet",
+              "value": "Muut aiheet"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Koronavirustesti-Logic1",
+      "logic": {
+        "and": [
+          {
+            "Koronavirustesti-jatko": "Sulje"
+          }
+        ],
+        "target": "_register"
+      }
+    },
+    {
+      "name": "Koronavirustesti-Logic2",
+      "logic": {
+        "and": [
+          {
+            "Koronavirustesti-jatko": "Muut aiheet"
+          }
+        ],
+        "target": "Aiheet"
+      }
+    },
+    {
+      "name": "Suojautuminen",
+      "type": "group",
+      "buttons": {
+        "back": false,
+        "next": false
+      },
+      "elements": [
+        {
+          "element": "text",
+          "name": "Suojautuminen-tietoa",
+          "label": "<p>Suojautuminen koronavirustaudilta</p><a href='https://thl.fi/fi/web/infektiotaudit-ja-rokotukset/ajankohtaista/ajankohtaista-koronaviruksesta-covid-19/ohjeita-kansalaisille-koronaviruksesta?ref=ninchat' class='btn' target='_blank'>Ohjeita-kansalaisille</a>"
+        },
+        {
+          "element": "radio",
+          "name": "Suojautuminen-jatko",
+          "label": "Oliko ohjeesta apua?",
+          "required": true,
+          "options": [
+            {
+              "label": "Kiitos, sulje chat",
+              "value": "Sulje"
+            },
+            {
+              "label": "Näytä muut aiheet",
+              "value": "Muut aiheet"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Suojautuminen-Logic1",
+      "logic": {
+        "and": [
+          {
+            "Suojautuminen-jatko": "Sulje"
+          }
+        ],
+        "target": "_register"
+      }
+    },
+    {
+      "name": "Suojautuminen-Logic2",
+      "logic": {
+        "and": [
+          {
+            "Suojautuminen-jatko": "Muut aiheet"
+          }
+        ],
+        "target": "Aiheet"
+      }
+    },
+    {
+      "name": "Karanteeni",
+      "type": "group",
+      "buttons": {
+        "back": false,
+        "next": false
+      },
+      "elements": [
+        {
+          "element": "text",
+          "name": "Karanteeni-tietoa",
+          "label": "<p>Katso tietoa karanteenista</p><a href='https://thl.fi/fi/web/infektiotaudit-ja-rokotukset/ajankohtaista/ajankohtaista-koronaviruksesta-covid-19/usein-kysyttya-koronaviruksesta-covid-19?ref=ninchat#karanteeni' class='btn' target='_blank'>Lue  karanteenista</a>"
+        },
+        {
+          "element": "radio",
+          "name": "Karanteeni-jatko",
+          "label": "Oliko ohjeesta apua?",
+          "required": true,
+          "options": [
+            {
+              "label": "Kiitos, sulje chat",
+              "value": "Sulje"
+            },
+            {
+              "label": "Näytä muut aiheet",
+              "value": "Muut aiheet"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Karanteeni-Logic1",
+      "logic": {
+        "and": [
+          {
+            "Karanteeni-jatko": "Sulje"
+          }
+        ],
+        "target": "_register"
+      }
+    },
+    {
+      "name": "Karanteeni-Logic2",
+      "logic": {
+        "and": [
+          {
+            "Karanteeni-jatko": "Muut aiheet"
+          }
+        ],
+        "target": "Aiheet"
+      }
+    },
+    {
+      "name": "Huolet",
+      "type": "group",
+      "buttons": {
+        "back": false,
+        "next": false
+      },
+      "elements": [
+        {
+          "element": "text",
+          "name": "Huolet-tietoa",
+          "label": "<p>Huolen tai epävarmuuden sietäminen</p><a href='https://www.mielenterveystalo.fi/aikuiset/itsehoito-ja-oppaat/itsehoito/koronavirukseen_liittyva_huolen_ja_epavarmuuden_sietaminen/Pages/default.aspx' class='btn' target='_blank'>Lue täältä</a>"
+        },
+        {
+          "element": "radio",
+          "name": "Huolet-jatko",
+          "label": "Oliko ohjeesta apua?",
+          "required": true,
+          "options": [
+            {
+              "label": "Kiitos, sulje chat",
+              "value": "Sulje"
+            },
+            {
+              "label": "Näytä muut aiheet",
+              "value": "Muut aiheet"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Huolet-Logic1",
+      "logic": {
+        "and": [
+          {
+            "Huolet-jatko": "Sulje"
+          }
+        ],
+        "target": "_register"
+      }
+    },
+    {
+      "name": "Huolet-Logic2",
+      "logic": {
+        "and": [
+          {
+            "Huolet-jatko": "Muut aiheet"
+          }
+        ],
+        "target": "Aiheet"
+      }
+    },
+    {
+      "name": "Start",
+      "type": "group",
+      "buttons": {
+        "back": false,
+        "next": "Continue"
+      },
+      "elements": [
+        {
+          "name": "Start-info",
+          "element": "text",
+          "label": "<p>Hi! I am Ninchat Helper Bot. <b>Let me help you to find what you're looking for.</b></p> Choose language / Valitse kieli <a href=https://ninchat.com/contact>https://ninchat.com/contact</a>"
+        },
+        {
+          "name": "temp-btn",
+          "element": "radio",
+          "label": "Select ME to continue!",
+          "options": [
+            {
+              "label": "Suomi - Finnish",
+              "value": "Finnish"
+            },
+            {
+              "label": "English",
+              "value": "English"
+            }
+          ]
+        },
+        {
+          "name": "temp-btn2",
+          "element": "select",
+          "label": "Select ME to continue!",
+          "options": [
+            {
+              "label": "Suomi - Finnish",
+              "value": "Finnish"
+            },
+            {
+              "label": "English",
+              "value": "English"
+            }
+          ]
+        },
+        {
+          "element": "checkbox",
+          "label": "Select ME to continue!",
+          "name": "language",
+          "options": [
+            {
+              "label": "Suomi\nFinnish",
+              "value": "Finnish"
+            },
+            {
+              "label": "English",
+              "value": "English"
+            }
+          ],
+          "redirects": [
+            {
+              "pattern": "English",
+              "target": "targetElement"
+            }
+          ]
+        },
+        {
+          "element": "input",
+          "type": "text",
+          "label": "Phone number:",
+          "name": "Phone",
+          "pattern": "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$",
+          "required": false
+        },
+        {
+          "element": "textarea",
+          "label": "Comments:",
+          "name": "comments",
+          "pattern": "^.{0,500}$",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "start-Logic",
+      "logic": {
+        "and": [
+          {
+            "temp-btn2": "Finnish"
+          }
+        ],
+        "target": "_complete",
+        "tags": [
+          "7fvo5p8700eao",
+          "7fvo5qv400eao"
+        ]
+      }
+    }
+  ],
+  "pre_answers": {
+    "Phone": "+358123456789"
+  },
+  "default": {
+    "agentAvatar": true,
+    "audienceRating": true,
+    "audienceRealmId": "706r98nk00ib8",
+    "audienceAutoQueue": "706rc4gq00ib8",
+    "audienceQueues": [
+      "706rc4gq00ib8",
+      "76i9c6am000a",
+      "76nr0l4m00t5",
+      "7770qjt60029o"
+    ],
+    "closeConfirmText": "Haluatko sulkea keskustelun? öäå",
+    "inQueueText": "Olet jonossa öäå (inQueueText)",
+    "noQueuesText": "Liittymiseen ei ole avoimia jonoja (noQueuesText)",
+    "motd": "Hieno meno öäå <br>https://ninchat.com/contact",
+    "newUI": true,
+    "sendButtonText": "Lähetä",
+    "supportFiles": false,
+    "supportVideo": false,
+    "translations": {
+      "Join audience queue {{audienceQueue.queue_attrs.name}}": "Mene jonoon {{audienceQueue.queue_attrs.name}}",
+      "Close window": "Sulje ikkuna",
+      "Join audience queue {{audienceQueue.queue_attrs.name}} (closed)": "Mene jonoon {{audienceQueue.queue_attrs.name}} (suljettu)",
+      "Joined audience queue {{audienceQueue.queue_attrs.name}}, you are next.": "Jonotat jonossa {{audienceQueue.queue_attrs.name}} seuraavana vuorossa.",
+      "Joined audience queue {{audienceQueue.queue_attrs.name}}, you are at position {{audienceQueue.queue_position}}.": "Olet jonossa {{audienceQueue.queue_attrs.name}} sijalla #{{audienceQueue.queue_position}}.",
+      "Audience in queue {{queue}} accepted.": "Keskustelu aloitettu jonosta {{queue}}",
+      "Enter your message": "Kirjoita viestisi.",
+      "Skip": "Ohita",
+      "Conversation ended": "Keskustelu on päättynyt. Paina x:ää antaaksesi arvostelun",
+      "How was our customer service?": "Kuinka onnistuimme? Anna arvostelu.",
+      "Submit": "Lähetä",
+      "Next": "Jatka",
+      "Close chat": "Sulje keskustelu",
+      "Continue chat": "Jatka keskustelua",
+      "Good": "Hyvin",
+      "Okay": "Ok",
+      "Poor": "Huonosti",
+      "Accept": "Hyväksy",
+      "Decline": "Hylkää",
+      "You are invited to a video chat": "Sinut on kutsuttu videokeskusteluun",
+      "wants to video chat with you": "haluaa aloittaa videokeskustelun"
+    },
+    "userAvatar": false,
+    "userName": "Asiakas (öäå)",
+    "welcome": "Tervetuloa keskusteluun öäå (welcome)"
+  }
+}
