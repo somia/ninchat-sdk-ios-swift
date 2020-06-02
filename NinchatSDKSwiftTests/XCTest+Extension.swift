@@ -5,6 +5,7 @@
 //
 
 import XCTest
+@testable import NinchatSDKSwift
 
 extension XCTest {
     func openAsset(forResource name: String, ofType type: String = "json") throws -> [String:AnyHashable]? {
@@ -15,5 +16,11 @@ extension XCTest {
             return jsonResult as? [String:AnyHashable]
         }
         return nil
+    }
+}
+
+extension NINChatSessionManagerImpl {
+    func setSiteConfiguration(_ config: SiteConfiguration) {
+        self.siteConfiguration = config
     }
 }

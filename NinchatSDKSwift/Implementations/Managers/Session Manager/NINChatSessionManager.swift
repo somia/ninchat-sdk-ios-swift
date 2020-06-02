@@ -126,6 +126,9 @@ protocol NINChatSessionManager: class, NINChatSessionConnectionManager, NINChatS
     /** List of Audience queues. These are the queues the user gets to pick from in the UI. */
     var audienceQueues: [Queue]! { get set }
 
+    /** Initiated metadata for the current session. */
+    var audienceMetadata: NINLowLevelClientProps? { get }
+
     /** Submitted answers for "preAudienceQuestionnaire" configurations. */
     var preAudienceQuestionnaireMetadata: NINLowLevelClientProps! { get set }
 
