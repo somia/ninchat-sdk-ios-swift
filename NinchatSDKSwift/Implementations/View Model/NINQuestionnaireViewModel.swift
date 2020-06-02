@@ -19,6 +19,7 @@ protocol NINQuestionnaireViewModel {
     func finishQuestionnaire()
     func getConfiguration() throws -> QuestionnaireConfiguration
     func getElements() throws -> [QuestionnaireElement]
+    func getAnswersForElement(_ element: QuestionnaireElement) -> AnyHashable?
     mutating func goToNextPage() -> Bool
     mutating func goToPreviousPage() -> Bool
     mutating func goToPage(_ page: Int)
@@ -95,6 +96,13 @@ extension NINQuestionnaireViewModelImpl {
     func getElements() throws -> [QuestionnaireElement] {
         guard self.views.count > self.pageNumber else { throw NINQuestionnaireException.invalidNumberOfViews }
         return self.views[self.pageNumber]
+    }
+
+    func getAnswersForElement(_ element: QuestionnaireElement) -> AnyHashable? {
+        if let configuration = element.elementConfiguration, let value = self.answers[configuration.name] {
+            return value
+        }
+        return nil
     }
 }
 
