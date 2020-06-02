@@ -52,7 +52,7 @@ final class NINCoordinator: Coordinator {
             DispatchQueue.main.async {
                 #if DEBUG
                     if self.hasPreAudienceQuestionnaire {
-                        self.navigationController?.pushViewController(self.questionnaireViewController, animated: true)
+                        self.navigationController?.pushViewController(self.questionnaireViewController(queue: queue), animated: true)
                     } else {
                         self.navigationController?.pushViewController(self.queueViewController(queue: queue), animated: true)
                     }
@@ -66,11 +66,11 @@ final class NINCoordinator: Coordinator {
     }()
     internal lazy var questionnaireViewController: NINQuestionnaireViewController = {
         let questionnaireViewController: NINQuestionnaireViewController = storyboard.instantiateViewController()
+        questionnaireViewController.viewModel = NINQuestionnaireViewModelImpl(sessionManager: self.sessionManager)
         questionnaireViewController.session = session
-        questionnaireViewController.pageNumber = 0
-        questionnaireViewController.finishQuestionnaire = {
+        questionnaireViewController.completeQuestionnaire = { [unowned self] queue in
             DispatchQueue.main.async {
-                #warning("Finish the questionnaire")
+                self.navigationController?.pushViewController(self.queueViewController(queue: queue), animated: true)
             }
         }
 
@@ -172,6 +172,13 @@ final class NINCoordinator: Coordinator {
 }
 
 extension NINCoordinator {
+    internal func questionnaireViewController(queue: Queue) -> NINQuestionnaireViewController {
+        let vc = self.questionnaireViewController
+        vc.queue = queue
+
+        return vc
+    }
+
     internal func queueViewController(resume: Bool) -> NINQueueViewController {
         let vc = self.queueViewController
         vc.resumeMode = resume

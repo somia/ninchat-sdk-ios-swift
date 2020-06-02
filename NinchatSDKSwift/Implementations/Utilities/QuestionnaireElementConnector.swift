@@ -8,6 +8,10 @@ import UIKit
 import AnyCodable
 
 protocol QuestionnaireElementConnector {
+    var logicContainsTags: ((LogicQuestionnaire?) -> Void)? { get set }
+    var onRegisterTargetReached: ((LogicQuestionnaire?) -> Void)? { get set }
+    var onCompleteTargetReached: ((LogicQuestionnaire?) -> Void)? { get set }
+
     init(configurations: [QuestionnaireConfiguration])
     func findElementAndPageRedirect(for input: String, in configuration: QuestionnaireConfiguration) -> ([QuestionnaireElement]?, Int?)
     func findElementAndPageLogic(for dictionary: [String:AnyCodable]) -> ([QuestionnaireElement]?, Int?)
@@ -21,6 +25,10 @@ struct QuestionnaireElementConnectorImpl: QuestionnaireElementConnector {
         self.configurations = configurations
         self.elements = QuestionnaireElementConverter(configurations: configurations).elements
     }
+
+    var logicContainsTags: ((LogicQuestionnaire?) -> Void)?
+    var onRegisterTargetReached: ((LogicQuestionnaire?) -> Void)?
+    var onCompleteTargetReached: ((LogicQuestionnaire?) -> Void)?
 
     /// Returns the element the given configuration associated to
     /// The function is called if the `findTargetRedirectConfiguration(from:)` or `findTargetLogicConfiguration(from:)` returns valid configuration
@@ -69,8 +77,17 @@ extension QuestionnaireElementConnectorImpl {
 
     func findElementAndPageLogic(for dictionary: [String:AnyCodable]) -> ([QuestionnaireElement]?, Int?) {
         if let blocks = self.findLogicBlocks(for: Array(dictionary.keys)), blocks.count > 0 {
-            if let logic = areSatisfied(logic: blocks, forKeyValue: dictionary).1 {
-                if let configuration = self.findTargetLogicConfiguration(from: logic).0 {
+            let satisfied: (bool: Bool, logic: LogicQuestionnaire?) = areSatisfied(logic: blocks, forKeyValue: dictionary)
+            if satisfied.bool, let logic = satisfied.logic {
+                if let tags = logic.tags, tags.count > 0 {
+                    self.logicContainsTags?(logic)
+                }
+                
+                if logic.target == "_register" {
+                    self.onRegisterTargetReached?(logic)
+                } else if logic.target == "_complete" {
+                    self.onCompleteTargetReached?(logic)
+                } else if let configuration = self.findTargetLogicConfiguration(from: logic).0 {
                     if let element = self.findTargetElement(for: configuration).0, let page = self.findTargetElement(for: configuration).1 {
                         return (element, page)
                     }

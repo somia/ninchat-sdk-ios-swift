@@ -6,37 +6,48 @@
 
 import UIKit
 import AnyCodable
+import NinchatLowLevelClient
 
 final class NINQuestionnaireViewController: UIViewController, ViewController {
 
-    private lazy var views: [[QuestionnaireElement]] = {
-        QuestionnaireElementConverter(configurations: self.session.sessionManager.siteConfiguration.preAudienceQuestionnaire!).elements
-    }()
     private lazy var connector: QuestionnaireElementConnector = {
-        QuestionnaireElementConnectorImpl(configurations: self.session.sessionManager.siteConfiguration.preAudienceQuestionnaire!)
-    }()
-    private var configuration: QuestionnaireConfiguration {
-        if let audienceQuestionnaire = session.sessionManager.siteConfiguration.preAudienceQuestionnaire?.filter({ $0.element != nil || $0.elements != nil }) {
-            guard audienceQuestionnaire.count > self.pageNumber else { fatalError("Invalid number of questionnaires configurations") }
-
-            return audienceQuestionnaire[self.pageNumber]
+        var connector = QuestionnaireElementConnectorImpl(configurations: self.session.sessionManager.siteConfiguration.preAudienceQuestionnaire!)
+        connector.logicContainsTags = { [weak self] logic in
+            self?.viewModel.submitTags(logic?.tags! ?? [])
         }
-        fatalError("Configuration for the page number: \(self.pageNumber) is not exits")
-    }
-    private var elements: [QuestionnaireElement] {
-        guard self.views.count > self.pageNumber else { fatalError("Invalid number of questionnaires views") }
-        return self.views[self.pageNumber]
-    }
-    private var previousPage: Int!
+        connector.onCompleteTargetReached = { [unowned self] logic in
+            let queue: (canJoin: Bool, target: Queue?) = self.viewModel.canJoinGivenQueue(withID: logic?.queue ?? self.queue.queueID)
+            if !queue.canJoin {
+                connector.onRegisterTargetReached?(logic); return
+            }
+            self.viewModel.finishQuestionnaire()
+            self.completeQuestionnaire?(queue.target!)
+        }
+        connector.onRegisterTargetReached = { [unowned self] logic in
+            self.viewModel.registerAudience(queueID: logic?.queue ?? self.queue.queueID) { error in
+                if let error = error {
+                    debugger("** ** SDK: error in registering audience: \(error)")
+                    Toast.show(message: .error("Error is submitting the answers")) {
+                        self.session.onDidEnd()
+                    }
+                } else {
+                    self.session.onDidEnd()
+                }
+            }
+        }
+
+        return connector
+    }()
 
     // MARK: - ViewController
 
     var session: NINChatSession!
+    var queue: Queue!
 
     // MARK: - Injected
 
-    var pageNumber: Int!
-    var finishQuestionnaire: (() -> Void)?
+    var viewModel: NINQuestionnaireViewModel!
+    var completeQuestionnaire: ((_ queue: Queue) -> Void)?
 
     // MARK: - SubViews
 
@@ -57,7 +68,6 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.previousPage = self.pageNumber
         self.addKeyboardListeners()
         self.initiateIndicatorView()
         self.initiateContentView(0.5) /// let elements be loaded for a few seconds
@@ -122,70 +132,85 @@ extension NINQuestionnaireViewController {
 
 extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.row == self.elements.count {
-            return 65.0
+        do {
+            let elements = try self.viewModel.getElements()
+            return (indexPath.row == elements.count) ? 65.0 : elements[indexPath.row].elementHeight
+        } catch {
+            fatalError(error.localizedDescription)
         }
-        return self.elements[indexPath.row].elementHeight
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        self.elements.count + 1
+        do {
+            return try self.viewModel.getElements().count + 1
+        } catch {
+            fatalError(error.localizedDescription)
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.row == self.elements.count {
-            return navigation(tableView, cellForRowAt: indexPath)
+        do {
+            let elements = try self.viewModel.getElements()
+            return (indexPath.row == elements.count) ? navigation(tableView, cellForRowAt: indexPath) : questionnaire(tableView, cellForRowAt: indexPath)
+        } catch {
+            fatalError(error.localizedDescription)
         }
-        return questionnaire(tableView, cellForRowAt: indexPath)
     }
 
     private func navigation(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         /// Show navigation buttons
-        let cell: QuestionnaireNavigationCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
-        cell.configuration = self.configuration
-        cell.onNextButtonTapped = { [weak self] questionnaire in
-            if (self?.views.count ?? 0) > (self?.pageNumber ?? 0) + 1 {
-                self?.previousPage = self?.pageNumber
-                self?.pageNumber += 1
-                self?.updateContentView()
+        do {
+            let cell: QuestionnaireNavigationCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
+            cell.configuration = try self.viewModel.getConfiguration()
+            cell.onNextButtonTapped = { [weak self] questionnaire in
+                if self?.viewModel.goToNextPage() ?? false {
+                    self?.updateContentView()
+                }
             }
-        }
-        cell.onBackButtonTapped = { [weak self] questionnaire in
-            if (self?.pageNumber ?? 0) > 0 {
-                self?.pageNumber = self?.previousPage
-                self?.updateContentView()
+            cell.onBackButtonTapped = { [weak self] questionnaire in
+                if self?.viewModel.goToPreviousPage() ?? false {
+                    self?.updateContentView()
+                }
             }
+            return cell
+        } catch {
+            fatalError(error.localizedDescription)
         }
-        return cell
     }
 
     private func questionnaire(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
-        let element = self.elements[indexPath.row]
-        if var view = element as? QuestionnaireOptionSelectableElement {
-            view.onElementOptionSelected = { [weak self] option in
-                func showTargetPage(_ page: Int) {
-                    self?.previousPage = self?.pageNumber
-                    self?.pageNumber = page
-                    view.deselect(option: option)
-                    self?.updateContentView()
-                }
+        do {
+            let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
+            let element = try self.viewModel.getElements()[indexPath.row]
+            if var view = element as? QuestionnaireOptionSelectableElement {
+                view.onElementOptionSelected = { [weak self] option in
+                    func showTargetPage(_ page: Int) {
+                        self?.viewModel.goToPage(page)
+                        view.deselect(option: option)
+                        self?.updateContentView()
+                    }
 
-                if let configuration = self?.configuration, let targetElement = self?.connector.findElementAndPageRedirect(for: option.value, in: configuration), let targetPage = targetElement.1 {
-                    showTargetPage(targetPage)
-                } else if let configuration = element.elementConfiguration, let targetElement = self?.connector.findElementAndPageLogic(for: [configuration.name:AnyCodable(option.value)]), let targetPage = targetElement.1 {
-                    showTargetPage(targetPage)
+                    self?.viewModel.submitAnswer(key: element, value: option.value)
+                    if let configuration = try! self?.viewModel.getConfiguration(), let targetElement = self?.connector.findElementAndPageRedirect(for: option.value, in: configuration), let targetPage = targetElement.1 {
+                        showTargetPage(targetPage)
+                    } else if let targetElement = self?.connector.findElementAndPageLogic(for: [element.elementConfiguration?.name ?? "":AnyCodable(option.value)]), let targetPage = targetElement.1 {
+                        showTargetPage(targetPage)
+                    }
+                }
+                view.onElementOptionDeselected = { option in
+                    self.viewModel.removeAnswer(key: element, value: option.value)
                 }
             }
-            view.onElementOptionDeselected = { option in }
-        }
-        if var view = element as? QuestionnaireFocusableElement {
-            view.onElementFocused = { questionnaire in }
-            view.onElementDismissed = { option in }
-        }
-        element.overrideAssets(with: self.session, isPrimary: false)
-        self.layoutSubview(element, parent: cell.content)
+            if var view = element as? QuestionnaireFocusableElement {
+                view.onElementFocused = { questionnaire in }
+                view.onElementDismissed = { option in }
+            }
+            element.overrideAssets(with: self.session, isPrimary: false)
+            self.layoutSubview(element, parent: cell.content)
 
-        return cell
+            return cell
+        } catch {
+            fatalError(error.localizedDescription)
+        }
     }
 }

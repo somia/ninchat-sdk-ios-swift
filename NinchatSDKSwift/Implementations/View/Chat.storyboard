@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="YpM-11-QhB">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="YpM-11-QhB">
     <device id="retina4_7" orientation="portrait" appearance="dark"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -16,18 +16,11 @@
         <!--Queue View Controller-->
         <scene sceneID="KNa-t7-ctL">
             <objects>
-                <viewController storyboardIdentifier="NINQueueViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="XUt-Du-Jff" customClass="NINQueueViewController" customModule="NinchatSDKSwift" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NINQueueViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="XUt-Du-Jff" customClass="NINQueueViewController" customModule="NinchatSDKSwift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Uao-Kk-UXV">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pn8-ui-9zD" customClass="NINEmbeddableNavigationBar">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="0.0"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" id="VkV-Uq-cNP"/>
-                                </constraints>
-                            </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cVi-ux-Foo" userLabel="Top content view">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="256.5"/>
                                 <subviews>
@@ -70,7 +63,7 @@ you are next.</string>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                         <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
                                     </textView>
-                                    <view contentMode="scaleToFill" placeholderIntrinsicWidth="135" placeholderIntrinsicHeight="45" translatesAutoresizingMaskIntoConstraints="NO" id="8zZ-5c-Lgm" customClass="CloseButton" customModule="NinchatSDKSwift">
+                                    <view contentMode="scaleToFill" placeholderIntrinsicWidth="135" placeholderIntrinsicHeight="45" translatesAutoresizingMaskIntoConstraints="NO" id="8zZ-5c-Lgm" customClass="CloseButton" customModule="NinchatSDKSwift" customModuleProvider="target">
                                         <rect key="frame" x="120" y="146.5" width="135" height="45"/>
                                         <color key="backgroundColor" red="1" green="0.0" blue="0.2431916516" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </view>
@@ -89,12 +82,9 @@ you are next.</string>
                         <constraints>
                             <constraint firstItem="dkT-tD-Ztq" firstAttribute="top" secondItem="cVi-ux-Foo" secondAttribute="bottom" id="9Hy-8X-Qf5"/>
                             <constraint firstItem="yzb-y7-ihz" firstAttribute="trailing" secondItem="dkT-tD-Ztq" secondAttribute="trailing" id="DfQ-9P-pYT"/>
-                            <constraint firstItem="Pn8-ui-9zD" firstAttribute="top" secondItem="yzb-y7-ihz" secondAttribute="top" id="TzC-Jn-w32"/>
-                            <constraint firstItem="cVi-ux-Foo" firstAttribute="top" secondItem="Pn8-ui-9zD" secondAttribute="bottom" id="UNi-57-Pgd"/>
-                            <constraint firstItem="Pn8-ui-9zD" firstAttribute="leading" secondItem="yzb-y7-ihz" secondAttribute="leading" id="VV5-E1-e0S"/>
                             <constraint firstItem="cVi-ux-Foo" firstAttribute="leading" secondItem="yzb-y7-ihz" secondAttribute="leading" id="X7w-6Q-z6Z"/>
                             <constraint firstItem="cVi-ux-Foo" firstAttribute="trailing" secondItem="yzb-y7-ihz" secondAttribute="trailing" id="dR2-V7-RCJ"/>
-                            <constraint firstItem="Pn8-ui-9zD" firstAttribute="trailing" secondItem="yzb-y7-ihz" secondAttribute="trailing" id="hQX-Hr-XOM"/>
+                            <constraint firstItem="cVi-ux-Foo" firstAttribute="top" secondItem="yzb-y7-ihz" secondAttribute="top" id="gFe-DM-y7a"/>
                             <constraint firstItem="yzb-y7-ihz" firstAttribute="bottom" secondItem="dkT-tD-Ztq" secondAttribute="bottom" id="sHY-xV-w09"/>
                             <constraint firstItem="dkT-tD-Ztq" firstAttribute="leading" secondItem="yzb-y7-ihz" secondAttribute="leading" id="wWz-ed-3zZ"/>
                         </constraints>
@@ -116,7 +106,7 @@ you are next.</string>
         <!--Chat View Controller-->
         <scene sceneID="5s0-Qq-Gee">
             <objects>
-                <viewController storyboardIdentifier="NINChatViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="bZ9-oP-wEd" customClass="NINChatViewController" customModule="NinchatSDKSwift" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NINChatViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="bZ9-oP-wEd" customClass="NINChatViewController" customModule="NinchatSDKSwift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="wrn-IT-ZNh">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -157,7 +147,7 @@ you are next.</string>
                                     <constraint firstAttribute="height" constant="120" id="53e-gu-L9H"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" placeholderIntrinsicWidth="132" placeholderIntrinsicHeight="45" translatesAutoresizingMaskIntoConstraints="NO" id="Sle-hz-0wC" customClass="CloseButton" customModule="NinchatSDKSwift">
+                            <view contentMode="scaleToFill" placeholderIntrinsicWidth="132" placeholderIntrinsicHeight="45" translatesAutoresizingMaskIntoConstraints="NO" id="Sle-hz-0wC" customClass="CloseButton" customModule="NinchatSDKSwift" customModuleProvider="target">
                                 <rect key="frame" x="233" y="10" width="132" height="45"/>
                                 <color key="backgroundColor" red="0.69019607839999997" green="0.20000000000000001" blue="0.20392156859999999" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
@@ -244,7 +234,7 @@ you are next.</string>
         <!--Rating View Controller-->
         <scene sceneID="AoA-TJ-9Dd">
             <objects>
-                <viewController storyboardIdentifier="NINRatingViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="sVb-C5-GLO" customClass="NINRatingViewController" customModule="NinchatSDKSwift" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NINRatingViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="sVb-C5-GLO" customClass="NINRatingViewController" customModule="NinchatSDKSwift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="YOl-0M-h20">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -262,7 +252,7 @@ you are next.</string>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                 <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
                                             </textView>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B6F-ML-XSh" customClass="FacesView" customModule="NinchatSDKSwift">
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B6F-ML-XSh" customClass="FacesView" customModule="NinchatSDKSwift" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="170.5" width="343" height="154.5"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </view>
@@ -321,18 +311,11 @@ you are next.</string>
         <!--Initial View Controller-->
         <scene sceneID="XHh-YP-k7w">
             <objects>
-                <viewController storyboardIdentifier="NINInitialViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="YpM-11-QhB" customClass="NINInitialViewController" customModule="NinchatSDKSwift" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NINInitialViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="YpM-11-QhB" customClass="NINInitialViewController" customModule="NinchatSDKSwift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="w6e-s4-vNx">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="W4D-ft-8zg" customClass="NINEmbeddableNavigationBar">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="0.0"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" id="qfh-00-Oy7"/>
-                                </constraints>
-                            </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wa1-0U-Lj7" userLabel="Top container view">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="316.5"/>
                                 <subviews>
@@ -362,7 +345,7 @@ you are next.</string>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="kgP-Ty-5vY">
                                                 <rect key="frame" x="67.5" y="5" width="240" height="60"/>
                                                 <subviews>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mti-Jm-Fuc" customClass="Button" customModule="NinchatSDKSwift">
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mti-Jm-Fuc" customClass="Button" customModule="NinchatSDKSwift" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="0.0" width="240" height="60"/>
                                                         <color key="backgroundColor" red="0.28627450980392155" green="0.67450980392156867" blue="0.99215686274509807" alpha="1" colorSpace="calibratedRGB"/>
                                                         <constraints>
@@ -393,7 +376,7 @@ you are next.</string>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                 <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
                                             </textView>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ign-ZR-Zu6" customClass="Button" customModule="NinchatSDKSwift">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ign-ZR-Zu6" customClass="Button" customModule="NinchatSDKSwift" customModuleProvider="target">
                                                 <rect key="frame" x="67.5" y="80" width="240" height="60"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
@@ -460,11 +443,8 @@ you are next.</string>
                             <constraint firstItem="R8Q-s8-woL" firstAttribute="trailing" secondItem="Wa1-0U-Lj7" secondAttribute="trailing" id="BA9-zs-Y4m"/>
                             <constraint firstItem="Wa1-0U-Lj7" firstAttribute="leading" secondItem="R8Q-s8-woL" secondAttribute="leading" id="Dmp-X2-LC5"/>
                             <constraint firstItem="R8Q-s8-woL" firstAttribute="bottom" secondItem="3xg-1C-FCR" secondAttribute="bottom" id="GQU-M6-6le"/>
-                            <constraint firstItem="W4D-ft-8zg" firstAttribute="leading" secondItem="R8Q-s8-woL" secondAttribute="leading" id="Gdr-Bo-LLR"/>
-                            <constraint firstItem="W4D-ft-8zg" firstAttribute="trailing" secondItem="R8Q-s8-woL" secondAttribute="trailing" id="JJ5-MW-Oeu"/>
+                            <constraint firstItem="Wa1-0U-Lj7" firstAttribute="top" secondItem="R8Q-s8-woL" secondAttribute="top" id="TBb-F8-hd4"/>
                             <constraint firstItem="R8Q-s8-woL" firstAttribute="trailing" secondItem="3xg-1C-FCR" secondAttribute="trailing" id="drz-l5-mNW"/>
-                            <constraint firstItem="W4D-ft-8zg" firstAttribute="top" secondItem="R8Q-s8-woL" secondAttribute="top" id="nCC-gg-FPn"/>
-                            <constraint firstItem="Wa1-0U-Lj7" firstAttribute="top" secondItem="W4D-ft-8zg" secondAttribute="bottom" id="p88-lq-fVW"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="R8Q-s8-woL"/>
                     </view>

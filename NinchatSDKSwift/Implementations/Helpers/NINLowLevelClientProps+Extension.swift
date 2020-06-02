@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import AnyCodable
 import NinchatLowLevelClient
 
 struct NinchatError: Error {
@@ -25,6 +26,7 @@ enum NINLowLevelClientActions: String {
     case updateMember = "update_member"
     case sendMessage = "send_message"
     case beginICE = "begin_ice"
+    case registerAudience = "register_audience"
 }
 
 enum HistoryOrder: Int {
@@ -56,16 +58,20 @@ extension NINLowLevelClientProps {
         return props!
     }
 
+    static func initiate(preQuestionnaireAnswers dictionary: [String:AnyHashable]) -> NINLowLevelClientProps {
+        let metadata = dictionary.reduce(into: NINLowLevelClientProps()!) { (metadata: inout NINLowLevelClientProps, tuple: (key: String, value: Any)) in
+            metadata.set(value: tuple.value, forKey: tuple.key)
+        }
+        return NINLowLevelClientProps.initiate(metadata: ["pre_answers": metadata])
+    }
+
     /**
     * Currently supported value types: String, Int, Double, Bool, NINLowLevelClientProps, NINLowLevelClientStrings, and NINLowLevelClientJSON
     */
     public static func initiate<T>(metadata: [String:T]) -> NINLowLevelClientProps {
-        let props = NINLowLevelClientProps()
-        for (key,value) in metadata {
-            props?.set(value: value, forKey: key)
+        metadata.reduce(into: NINLowLevelClientProps()!) { (props: inout NINLowLevelClientProps, tuple: (key: String, value: T)) in
+            props.set(value: tuple.value, forKey: tuple.key)
         }
-
-        return props!
     }
 }
 
@@ -92,7 +98,7 @@ extension NINLowLevelClientProps: NINLowLevelSessionProps {
     var error: Error? {
         let errorType: NINResult<String> = self.get(forKey: "error_type")
         if case let .failure(error) = errorType { return error }
-        return NinchatError(code: 1, title: errorType.value)
+        return (errorType.value.isEmpty) ? nil : NinchatError(code: 1, title: errorType.value)
     }
 
     public var event: NINResult<String> {
@@ -473,7 +479,7 @@ extension NINLowLevelClientProps {
             case is NINLowLevelClientObjects.Type:
                 return .success(try self.getObjectArray(key) as! T)
             default:
-                fatalError("Error in requested type: \(T.self) forKey: \(key)")
+                fatalError("Error in getting requested type: \(T.self) forKey: \(key)")
             }
 
         } catch {
@@ -482,7 +488,9 @@ extension NINLowLevelClientProps {
     }
 
     func set<T>(value: T, forKey key: String) {
-        if let value = value as? Double, floor(value) == value {
+        if let value = value as? AnyCodable {
+            self.set(value: value.value as! AnyHashable, forKey: key)
+        } else if let value = value as? Double, floor(value) == value {
             self.setInt(key, val: Int(value))
         } else if let value = value as? Double {
             self.setFloat(key, val: value)
@@ -499,7 +507,7 @@ extension NINLowLevelClientProps {
         } else if let value = value as? NINLowLevelClientJSON {
             self.setJSON(key, ref: value)
         } else {
-            fatalError("Error in requested type: \(T.self) forKey: \(key)")
+            fatalError("Error in setting requested type: \(T.self) forKey: \(key)")
         }
     }
 

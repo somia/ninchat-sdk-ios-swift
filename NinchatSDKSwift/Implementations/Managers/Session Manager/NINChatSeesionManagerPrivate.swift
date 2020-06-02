@@ -314,6 +314,10 @@ extension NINChatSessionManagerImpl {
             self.onActionID?(actionID, error)
         }
     }
+
+    internal func didRegisterAudience(param: NINLowLevelClientProps) throws {
+        self.onActionID?(param.actionID, param.error)
+    }
 }
 
 // MARK: - Private helper functions - actions

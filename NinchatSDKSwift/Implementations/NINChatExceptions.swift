@@ -88,3 +88,20 @@ public enum NINWebRTCExceptions: Error {
         }
     }
 }
+
+public enum NINQuestionnaireException: Error {
+    case invalidNumberOfQuestionnaires
+    case invalidNumberOfViews
+    case invalidPage(Int)
+
+    public var localizedDescription: String {
+        switch self {
+        case .invalidNumberOfQuestionnaires:
+            return "Invalid number of questionnaires configurations"
+        case .invalidNumberOfViews:
+            return "Invalid number of questionnaires views"
+        case .invalidPage(let page):
+            return "Configuration for the page number: \(page) does not exits"
+        }
+    }
+}

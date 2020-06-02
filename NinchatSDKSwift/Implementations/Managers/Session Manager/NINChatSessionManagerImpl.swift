@@ -4,8 +4,9 @@
 // license that can be found in the LICENSE file.
 //
 
-import Foundation
 import UIKit
+import Foundation
+import AnyCodable
 import NinchatLowLevelClient
 
 protocol NINChatSessionManagerInternalActions {
@@ -20,8 +21,8 @@ protocol NINChatSessionManagerInternalActions {
 }
 
 final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatDevHelper, NINChatSessionManagerInternalActions {
-    internal let audienceMetadata: NINLowLevelClientProps?
     internal let serviceManager = ServiceManager()
+    internal var audienceMetadata: NINLowLevelClientProps?
     internal var channelUsers: [String:ChannelUser] = [:]
     internal var currentQueueID: String?
     internal var currentChannelID: String?
@@ -91,6 +92,16 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     var audienceQueues: [Queue]! = []
     var siteConfiguration: SiteConfiguration!
     var givenConfiguration: NINSiteConfiguration?
+    var preAudienceQuestionnaireMetadata: NINLowLevelClientProps! {
+        didSet {
+            if let audienceMetadata = self.audienceMetadata {
+                audienceMetadata.set(value: preAudienceQuestionnaireMetadata, forKey: "pre_answers")
+            } else {
+                self.audienceMetadata = NINLowLevelClientProps.initiate(metadata: ["pre_answers": preAudienceQuestionnaireMetadata])
+            }
+
+        }
+    }
     var appDetails: String?
     
     // MARK: - NINChatSessionManagerDevTools
@@ -101,8 +112,8 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     init(session: NINChatSessionInternalDelegate?, serverAddress: String, audienceMetadata: NINLowLevelClientProps? = nil, configuration: NINSiteConfiguration?) {
         self.delegate = session
         self.serverAddress = serverAddress
-        self.audienceMetadata = audienceMetadata
         self.givenConfiguration = configuration
+        self.audienceMetadata = audienceMetadata
     }
     
     /** Designed for test and internal purposes. */
@@ -303,6 +314,22 @@ extension NINChatSessionManagerImpl {
         }
     }
     
+    /// Register audience questionnaire answers
+    func registerQuestionnaire(queue ID: String, answers: NINLowLevelClientProps, completion: @escaping CompletionWithError) throws {
+        guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
+
+        let param = NINLowLevelClientProps.initiate(action: .registerAudience)
+        param.queueID = .success(ID)
+        param.metadata = .success(answers)
+
+        do {
+            let actionID = try session.send(param)
+            self.bind(action: actionID, closure: completion)
+        } catch {
+            completion(error)
+        }
+    }
+
     /// Low-level shutdown of the chat's session; invalidates session resource.
     func closeChat() throws {
         delegate?.log(value: "Shutting down chat Session..")
