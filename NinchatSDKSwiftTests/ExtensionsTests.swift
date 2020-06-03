@@ -58,7 +58,7 @@ final class ExtensionsTests: XCTestCase {
                         XCTAssertEqual((value as! URL).absoluteString, url)
                         expect_url.fulfill()
                     case NSAttributedString.Key.paragraphStyle:
-                        XCTAssertEqual((value as! NSParagraphStyle).alignment, .natural)
+                        XCTAssertEqual((value as! NSParagraphStyle).alignment, .left)
                         expect_style.fulfill()
                     default:
                         break
@@ -81,7 +81,7 @@ final class ExtensionsTests: XCTestCase {
                         XCTAssertEqual((value as! URL).absoluteString, url)
                         expect_url.fulfill()
                     case NSAttributedString.Key.paragraphStyle:
-                        XCTAssertEqual((value as! NSParagraphStyle).alignment, .natural)
+                        XCTAssertEqual((value as! NSParagraphStyle).alignment, .left)
                         expect_style.fulfill()
                     default:
                         break
