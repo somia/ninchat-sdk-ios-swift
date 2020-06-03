@@ -14,9 +14,8 @@ final class ExtensionsTests: XCTestCase {
     }
     
     func test_mutableString_font() {
-        let str = NSMutableAttributedString(string: "The test string")
-        str.override(font: UIFont.ninchat!)
-        XCTAssertTrue(true)
+        let str = NSMutableAttributedString(string: "The test string").override(font: UIFont.ninchat!)
+        XCTAssertNotNil(str)
     }
 
     func test_plain_string() {
@@ -99,6 +98,14 @@ final class ExtensionsTests: XCTestCase {
     func test_dictionary_to_data() {
         let dic: [AnyHashable:Any] = ["Key": 1, "Key2": "Key", "2": "Key"]
         XCTAssertNotNil(dic.toData)
+    }
+
+    func test_dictionary_filter() {
+        let keys = ["key1", "key2"]
+        let dictionary = ["key1":"value1", "invalid1":"value1", "key2":"value2", "invalid2":"value2"]
+
+        let filtered = dictionary.filter(based: keys)
+        XCTAssertEqual(filtered, ["key1":"value1", "key2":"value2"])
     }
 
     func test_color_to_image() {

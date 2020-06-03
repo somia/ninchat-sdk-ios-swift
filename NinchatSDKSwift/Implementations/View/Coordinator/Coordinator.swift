@@ -66,7 +66,6 @@ final class NINCoordinator: Coordinator {
     }()
     internal lazy var questionnaireViewController: NINQuestionnaireViewController = {
         let questionnaireViewController: NINQuestionnaireViewController = storyboard.instantiateViewController()
-        questionnaireViewController.viewModel = NINQuestionnaireViewModelImpl(sessionManager: self.sessionManager)
         questionnaireViewController.session = session
         questionnaireViewController.completeQuestionnaire = { [unowned self] queue in
             DispatchQueue.main.async {
@@ -174,6 +173,7 @@ final class NINCoordinator: Coordinator {
 extension NINCoordinator {
     internal func questionnaireViewController(queue: Queue) -> NINQuestionnaireViewController {
         let vc = self.questionnaireViewController
+        vc.viewModel = NINQuestionnaireViewModelImpl(sessionManager: self.sessionManager, queue: queue)
         vc.queue = queue
 
         return vc

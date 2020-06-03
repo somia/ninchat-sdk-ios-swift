@@ -577,8 +577,8 @@
       "name": "Start",
       "type": "group",
       "buttons": {
-        "back": false,
-        "next": "Continue"
+        "back": true,
+        "next": false
       },
       "elements": [
         {
@@ -659,6 +659,7 @@
       "logic": {
         "and": [
           {
+            "temp-btn": "Finnish",
             "temp-btn2": "Finnish"
           }
         ],

@@ -110,15 +110,11 @@ struct LogicQuestionnaire: Codable {
                 }
     }
 
-    func satisfy(_ keys: [String]) -> Bool {
+    func satisfy(dictionary: [String:AnyCodable]) -> Bool {
         if self.and != nil {
-            return self.andKeys?
-                    .filter({ !keys.contains($0) })
-                    .count == 0
+            return self.and?.first(where: { $0 != dictionary.filter(based: self.andKeys ?? []) }) == nil
         }
-        return self.orKeys?
-                .filter({ keys.contains($0) })
-                .count != 0
+        return self.or?.first(where: { $0 == dictionary.filter(based: self.orKeys ?? []) }) != nil
     }
 }
 

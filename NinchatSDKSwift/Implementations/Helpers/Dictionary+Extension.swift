@@ -34,4 +34,8 @@ extension Dictionary where Key==String {
         
         return RTCIceCandidate(sdp: candidate, sdpMLineIndex: Int32(lineIndex)!, sdpMid: self[Constants.RTCIceCandidateSDPMid.rawValue] as? String)
     }
+
+    func filter(based keys: [String]) -> Dictionary {
+        self.filter({ keys.contains($0.key) ?? false })
+    }
 }

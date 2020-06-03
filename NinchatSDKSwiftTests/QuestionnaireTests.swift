@@ -89,7 +89,7 @@ final class QuestionnaireTests: XCTestCase {
             XCTAssertNotNil(questionnaireItem.logic?.andValues)
             XCTAssertEqual(questionnaireItem.logic?.andKeys?.sorted(), ["fake", "Koronavirus-jatko"].sorted())
             XCTAssertEqual(questionnaireItem.logic?.andValues?.compactMap({ $0.value as? String }).sorted(), ["fake", "Sulje"].sorted())
-            XCTAssertFalse(questionnaireItem.logic?.satisfy(["Koronavirus-jatko"]) ?? true)
+            XCTAssertFalse(questionnaireItem.logic?.satisfy(dictionary: ["Koronavirus-jatko": "Sulje"]) ?? true)
         } else {
             XCTFail("Failed to get ´Koronavirus-Logic1´ questionnaire item")
         }
@@ -101,7 +101,7 @@ final class QuestionnaireTests: XCTestCase {
             XCTAssertNotNil(questionnaireItem.logic?.orValues)
             XCTAssertEqual(questionnaireItem.logic?.orKeys?.sorted(), ["fake", "Koronavirus-jatko"].sorted())
             XCTAssertEqual(questionnaireItem.logic?.orValues?.compactMap({ $0.value as? String }).sorted(), ["fake", "Muut aiheet"].sorted())
-            XCTAssertTrue(questionnaireItem.logic?.satisfy(["Koronavirus-jatko"]) ?? false)
+            XCTAssertTrue(questionnaireItem.logic?.satisfy(dictionary: ["fake": "fake", "Koronavirus-jatko": "Muut aiheet"]) ?? false)
         } else {
             XCTFail("Failed to get ´Koronavirus-Logic2´ questionnaire item")
         }
