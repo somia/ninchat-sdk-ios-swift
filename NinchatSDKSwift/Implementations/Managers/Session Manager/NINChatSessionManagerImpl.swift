@@ -344,7 +344,7 @@ extension NINChatSessionManagerImpl {
 
         if self.myUserID == nil {
             endSession()
-        } else if let userID = self.myUserID, let user = self.channelUsers[userID], user.guest {
+        } else if let userID = self.myUserID, let user = self.channelUsers[userID], !user.guest {
             endSession()
         } else {
             try self.deleteCurrentUser { error in
