@@ -182,6 +182,9 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
         do {
             let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
             let element = try self.viewModel.getElements()[indexPath.row]
+            if var view = element as? QuestionnaireSettable {
+                view.presetAnswer = self.viewModel.getAnswersForElement(element)
+            }
             if var view = element as? QuestionnaireOptionSelectableElement {
                 view.onElementOptionSelected = { [weak self] option in
                     func showTargetPage(_ page: Int) {

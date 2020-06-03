@@ -19,6 +19,7 @@ protocol NINQuestionnaireViewModel {
     func finishQuestionnaire()
     func getConfiguration() throws -> QuestionnaireConfiguration
     func getElements() throws -> [QuestionnaireElement]
+    func getAnswersForElement(_ element: QuestionnaireElement) -> AnyHashable?
     mutating func goToNextPage() -> Bool
     mutating func goToPreviousPage() -> Bool
     mutating func goToPage(_ page: Int)
@@ -29,10 +30,10 @@ protocol NINQuestionnaireViewModel {
 
 struct NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 
-    private unowned let sessionManager: NINChatSessionManager
+    private let sessionManager: NINChatSessionManager
     private let views: [[QuestionnaireElement]]
-    private var answers: [String:AnyHashable] = [:]
-
+    private(set) var answers: [String:AnyHashable]!
+    
     // MARK: - NINQuestionnaireViewModel
 
     var pageNumber: Int = 0
@@ -41,17 +42,30 @@ struct NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     init(sessionManager: NINChatSessionManager) {
         self.sessionManager = sessionManager
         self.views = QuestionnaireElementConverter(configurations: sessionManager.siteConfiguration.preAudienceQuestionnaire!).elements
+        self.answers = (try? self.extractGivenPreAnswers()) ?? [:]
     }
 
+    mutating func extractGivenPreAnswers() throws -> [String:AnyHashable] {
+        if let answersMetadata: NINResult<NINLowLevelClientProps> = sessionManager.audienceMetadata?.get(forKey: "pre_answers"), case let .success(pre_answers) = answersMetadata {
+            let parser = NINChatClientPropsParser()
+            try pre_answers.accept(parser)
+
+            return parser.properties.compactMap({ ($0.key, $0.value) as? (String, AnyHashable) }).reduce(into: [:]) { (result: inout [String:AnyHashable], tuple: (key: String, value: AnyHashable)) in
+                result[tuple.key] = tuple.value
+            }
+        }
+        return [:]
+    }
+}
+
+extension NINQuestionnaireViewModelImpl {
     func canJoinGivenQueue(withID id: String) -> (Bool, Queue?) {
         if let targetQueue = self.sessionManager.queues.first(where: { $0.queueID == id }) {
             return (!targetQueue.isClosed, targetQueue)
         }
         return (false, nil)
     }
-}
 
-extension NINQuestionnaireViewModelImpl {
     func registerAudience(queueID: String, completion: @escaping (Error?) -> Void) {
         do {
             try self.sessionManager.registerQuestionnaire(queue: queueID, answers: NINLowLevelClientProps.initiate(preQuestionnaireAnswers: self.answers), completion: completion)
@@ -82,6 +96,13 @@ extension NINQuestionnaireViewModelImpl {
     func getElements() throws -> [QuestionnaireElement] {
         guard self.views.count > self.pageNumber else { throw NINQuestionnaireException.invalidNumberOfViews }
         return self.views[self.pageNumber]
+    }
+
+    func getAnswersForElement(_ element: QuestionnaireElement) -> AnyHashable? {
+        if let configuration = element.elementConfiguration, let value = self.answers[configuration.name] {
+            return value
+        }
+        return nil
     }
 }
 

@@ -22,7 +22,6 @@ protocol NINChatSessionManagerInternalActions {
 
 final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatDevHelper, NINChatSessionManagerInternalActions {
     internal let serviceManager = ServiceManager()
-    internal var audienceMetadata: NINLowLevelClientProps?
     internal var channelUsers: [String:ChannelUser] = [:]
     internal var currentQueueID: String?
     internal var currentChannelID: String?
@@ -84,6 +83,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     // MARK: - NINChatSessionManager
     
     weak var delegate: NINChatSessionInternalDelegate?
+    private(set) var audienceMetadata: NINLowLevelClientProps?
     var queues: [Queue]! = [] {
         didSet {
             self.audienceQueues = self.queues

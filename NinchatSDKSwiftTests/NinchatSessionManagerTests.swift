@@ -5,6 +5,7 @@
 //
 
 import XCTest
+import NinchatLowLevelClient
 @testable import NinchatSDKSwift
 
 // MARK: - Tests
@@ -15,7 +16,7 @@ class NinchatSessionManagerTests: XCTestCase {
     
     override func setUp() {
         sessionSwift = NINChatSession(configKey: "")
-        sessionManager = NINChatSessionManagerImpl(session: sessionSwift, serverAddress: "", configuration: nil)
+        sessionManager = NINChatSessionManagerImpl(session: sessionSwift, serverAddress: "", audienceMetadata: NINLowLevelClientProps.initiate(metadata: ["metadata":"value"]) ,configuration: nil)
     }
 
     override func tearDown() { }
@@ -26,6 +27,14 @@ class NinchatSessionManagerTests: XCTestCase {
         XCTAssertNotNil(sessionManager as NINChatSessionMessenger)
         XCTAssertNotNil(sessionManager as NINChatSessionManagerDelegate)
         XCTAssertNotNil(sessionManager as NINChatSessionManager)
+    }
+
+    func testMetadata() {
+        XCTAssertNotNil(sessionManager.audienceMetadata)
+
+        let metadata: NINResult<String> = sessionManager.audienceMetadata!.get(forKey: "metadata")
+        XCTAssertNotNil(metadata.value)
+        XCTAssertEqual(metadata.value, "value")
     }
 }
 

@@ -125,3 +125,8 @@ extension QuestionnaireHasBorder {
         }
     }
 }
+
+/// Make the applicable questionnaire item able to get pre-set answers
+protocol QuestionnaireSettable {
+    var presetAnswer: AnyHashable? { get set }
+}

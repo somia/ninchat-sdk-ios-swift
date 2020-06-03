@@ -16,7 +16,7 @@ final class QuestionnaireTests: XCTestCase {
         super.setUp()
 
         do {
-            self.questionnaire_raw = try openTestFile()
+            self.questionnaire_raw = try openAsset(forResource: "questionnaire-mock")
             self.questionnaire_preAudience = AudienceQuestionnaire(from: questionnaire_raw, for: "preAudienceQuestionnaire")
         } catch {
             XCTFail(error.localizedDescription)
@@ -134,17 +134,5 @@ final class QuestionnaireTests: XCTestCase {
 
         let postAudienceQuestionnaire = AudienceQuestionnaire(from: questionnaire_raw, for: "postAudienceQuestionnaire")
         XCTAssertNil(postAudienceQuestionnaire.questionnaireConfiguration)
-    }
-}
-
-extension QuestionnaireTests {
-    private func openTestFile() throws -> [String:AnyHashable]? {
-        let bundle = Bundle(for: QuestionnaireTests.self)
-        if let path = bundle.path(forResource: "questionnaire-mock", ofType: "json") {
-            let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
-            let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)
-            return jsonResult as? [String:AnyHashable]
-        }
-        return nil
     }
 }

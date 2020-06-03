@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle, QuestionnaireOptionSelectableElement {
+final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireOptionSelectableElement {
 
 
     // MARK: - QuestionnaireElement
@@ -31,6 +31,18 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle,
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         self.subviews.compactMap({ $0 as? Button }).forEach({ $0.overrideAssets(with: delegate, isPrimary: isPrimary) })
+    }
+
+    // MARK: - QuestionnaireSettable
+
+    var presetAnswer: AnyHashable? {
+        didSet {
+            if let answer = self.presetAnswer as? String,
+               let option = self.elementConfiguration?.options?.first(where: { $0.label == answer }),
+               let button = self.view.subviews.compactMap({ $0 as? Button }).first(where: { $0.titleLabel?.text == option.label }) {
+                button.closure?(button)
+            }
+        }
     }
 
     // MARK: - QuestionnaireOptionSelectableElement
