@@ -26,6 +26,9 @@ jobs:
             - name: Install Cocoapods
               run: pod update
 
+            - name: Install zld
+              run: brew install michaeleisel/zld/zld
+
             - name: Clean-up workspace
               run: xcodebuild clean
 
@@ -33,4 +36,4 @@ jobs:
               run: xcodebuild -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -configuration "Release" -destination "platform=iOS Simulator,name=iPhone 8" CODE_SIGNING_ALLOWED=NO 
             
             - name: Run SDK Tests
-              run: xcodebuild test -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -destination "platform=iOS Simulator,name=iPhone 8"
+              run: xcodebuild test -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift "OTHER_LDFLAGS=\$(OTHER_LDFLAGS) -fuse-ld=$(which zld)" -configuration "Debug" -destination "platform=iOS Simulator,name=iPhone 8"
