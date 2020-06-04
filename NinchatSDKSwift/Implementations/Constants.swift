@@ -97,6 +97,12 @@ public enum QuestionnaireColorConstants {
     case selectNormalText   /// Text, indicator, and border color for normal state
     case selectSelectedBackground   /// Background color for selected state
     case selectDeselectedBackground /// Background color for deselected state
+
+    /// Navigation
+    case navigationNextText     /// Text and border color for the next button
+    case navigationBackText     /// Text and border color for the back button
+    case navigationNextBackground   /// Background color for the next button
+    case navigationBackBackground   /// Background color for the back button
 }
 
 

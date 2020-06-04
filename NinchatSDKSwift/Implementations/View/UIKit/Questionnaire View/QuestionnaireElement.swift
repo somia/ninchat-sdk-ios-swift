@@ -97,6 +97,7 @@ protocol QuestionnaireNavigationButtons {
     func addNavigationButtons()
     func shapeNavigationButtons(_ configuration: QuestionnaireConfiguration?)
     func layoutNavigationButtons()
+    func overrideAssets(with delegate: NINChatSessionInternalDelegate?)
 }
 
 /// Add 'Done' button to keyboards to dismiss applicable elements (e.g. textarea, input)

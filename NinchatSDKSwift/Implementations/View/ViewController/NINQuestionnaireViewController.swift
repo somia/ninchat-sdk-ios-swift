@@ -148,6 +148,8 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
         do {
             let cell: QuestionnaireNavigationCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
             cell.configuration = try self.viewModel.getConfiguration()
+            cell.overrideAssets(with: self.session)
+
             cell.onNextButtonTapped = { [weak self] questionnaire in
                 if self?.viewModel.goToNextPage() ?? false {
                     self?.updateContentView()

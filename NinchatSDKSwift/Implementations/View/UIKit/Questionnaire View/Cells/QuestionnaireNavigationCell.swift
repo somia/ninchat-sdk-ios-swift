@@ -24,6 +24,29 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
         UIView(frame: .zero)
     }()
 
+    func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
+        if let nextButton = self.buttons.subviews.first(where: { $0.trailing != nil }) as? Button {
+            if nextButton.titleLabel?.text?.isEmpty ?? true {
+                nextButton.imageView?.tint = delegate?.override(questionnaireAsset: .navigationNextText) ?? .QBlueButtonNormal
+            } else {
+                nextButton.setTitleColor(delegate?.override(questionnaireAsset: .navigationNextText) ?? .QBlueButtonNormal, for: .normal)
+                nextButton.setTitleColor(delegate?.override(questionnaireAsset: .navigationNextText) ?? .QBlueButtonNormal, for: .selected)
+            }
+            nextButton.layer.borderColor = delegate?.override(questionnaireAsset: .navigationNextText)?.cgColor ?? UIColor.QBlueButtonNormal.cgColor
+            nextButton.backgroundColor = delegate?.override(questionnaireAsset: .navigationNextBackground) ?? .white
+        }
+        if let backButton = self.buttons.subviews.first(where: { $0.leading != nil }) as? Button {
+            if backButton.titleLabel?.text?.isEmpty ?? true {
+                backButton.imageView?.tint = delegate?.override(questionnaireAsset: .navigationBackText) ?? .QBlueButtonNormal
+            } else {
+                backButton.setTitleColor(delegate?.override(questionnaireAsset: .navigationBackText) ?? .QBlueButtonNormal, for: .normal)
+                backButton.setTitleColor(delegate?.override(questionnaireAsset: .navigationBackText) ?? .QBlueButtonNormal, for: .selected)
+            }
+            backButton.layer.borderColor = delegate?.override(questionnaireAsset: .navigationBackText)?.cgColor ?? UIColor.QBlueButtonNormal.cgColor
+            backButton.backgroundColor = delegate?.override(questionnaireAsset: .navigationBackBackground) ?? .white
+        }
+    }
+
     // MARK: - UIView life-cycle
 
     override func awakeFromNib() {
@@ -69,9 +92,9 @@ extension QuestionnaireNavigationButtons where Self:UITableViewCell {
 
     func layoutNavigationButtons() {
         buttons
-                .fix(leading: (8.0, self.contentView), trailing: (8.0, self.contentView))
-                .fix(height: 45.0)
-                .center(toY: self.contentView)
+            .fix(leading: (8.0, self.contentView), trailing: (8.0, self.contentView))
+            .fix(height: 45.0)
+            .center(toY: self.contentView)
     }
 
     func shapeNavigationButtons(_ configuration: QuestionnaireConfiguration?) {
@@ -98,11 +121,10 @@ extension QuestionnaireNavigationButtons where Self:UITableViewCell {
         button.titleLabel?.font = .ninchat
         button.imageEdgeInsets = UIEdgeInsets(top: 4.0, left: 4.0, bottom: 4.0, right: 4.0)
         button
-                .fix(width: max(80.0, self.intrinsicContentSize.width + 32.0), height: 45.0)
-                .round(radius: 45.0 / 2, borderWidth: 1.0, borderColor: .QBlueButtonNormal)
+            .fix(width: max(80.0, self.intrinsicContentSize.width + 32.0), height: 45.0)
+            .round(radius: 45.0 / 2, borderWidth: 1.0, borderColor: .QBlueButtonNormal)
         if type == .back {
             self.shapeNavigationBack(button: button, configuration: configuration.back)
-
         } else if type == .next {
             self.shapeNavigationNext(button: button, configuration: configuration.next)
         }
@@ -121,11 +143,9 @@ extension QuestionnaireNavigationButtons where Self:UITableViewCell {
             button.setTitleColor(.white, for: .selected)
         }
 
-        button.setBackgroundImage(UIColor.QBlueButtonNormal.toImage, for: .normal)
-        button.setBackgroundImage(UIColor.QBlueButtonHighlighted.toImage, for: .highlighted)
         button
-                .fix(trailing: (16.0, self.buttons))
-                .center(toY: self.buttons)
+            .fix(trailing: (16.0, self.buttons))
+            .center(toY: self.buttons)
     }
 
     private func shapeNavigationBack(button: UIButton, configuration: AnyCodable) {
@@ -140,10 +160,8 @@ extension QuestionnaireNavigationButtons where Self:UITableViewCell {
             button.setTitle(title, for: .selected)
             button.setTitleColor(.QBlueButtonHighlighted, for: .selected)
         }
-        button.setBackgroundImage(nil, for: .normal)
-        button.setBackgroundImage(nil, for: .selected)
         button
-                .fix(leading: (16.0, self.buttons))
-                .center(toY: self.buttons)
+            .fix(leading: (16.0, self.buttons))
+            .center(toY: self.buttons)
     }
 }
