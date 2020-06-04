@@ -25,7 +25,7 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
         self.height?.constant ?? 0
     }
 
-    func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
+    func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         if let overriddenColor = delegate?.override(questionnaireAsset: .titleTextColor) {
             self.setAttributed(text: self.elementConfiguration?.label ?? "", font: .ninchat, color: overriddenColor)
         }

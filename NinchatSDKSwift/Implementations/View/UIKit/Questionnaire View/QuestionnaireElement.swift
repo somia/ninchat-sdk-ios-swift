@@ -14,14 +14,10 @@ protocol QuestionnaireElement: UIView {
     var elementConfiguration: QuestionnaireConfiguration? { get }
 
     func shapeView(_ configuration: QuestionnaireConfiguration?)
-    func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool)
+    func overrideAssets(with delegate: NINChatSessionInternalDelegate?)
 }
 extension QuestionnaireElement {
     var elementHeight: CGFloat { 0 }
-
-    func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
-        self.overrideAssets(with: delegate, isPrimary: true)
-    }
 }
 
 /// Questionnaire element with

@@ -31,7 +31,7 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
         CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + 8
     }
 
-    func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
+    func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         self.overrideTitle(delegate: delegate)
 
         normalBackgroundColor = delegate?.override(questionnaireAsset: .selectDeselectedBackground) ?? .white

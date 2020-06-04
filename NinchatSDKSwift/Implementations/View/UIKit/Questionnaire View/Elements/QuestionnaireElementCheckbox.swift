@@ -31,7 +31,7 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle,
         CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0)
     }
 
-    func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
+    func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         self.overrideTitle(delegate: delegate)
         self.view.subviews.compactMap({ $0 as? Button }).forEach({ $0.overrideQuestionnaireAsset(with: delegate, isPrimary: $0.isSelected) })
         self.view.allSubviews.compactMap({ $0 as? UIImageView }).forEach({ $0.tint = delegate?.override(questionnaireAsset: .checkboxSelectedIndicator) ?? UIColor.QBlueButtonHighlighted })

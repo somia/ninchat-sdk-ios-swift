@@ -26,7 +26,7 @@ final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle
         CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + CGFloat(5.0 * 8.0)
     }
 
-    func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
+    func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         self.overrideTitle(delegate: delegate)
         self.view.textColor = delegate?.override(questionnaireAsset: .textInputColor) ?? .black
     }

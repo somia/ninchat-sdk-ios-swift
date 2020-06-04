@@ -170,7 +170,7 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
         do {
             let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
             let element = try self.viewModel.getElements()[indexPath.row]
-            element.overrideAssets(with: self.session, isPrimary: false)
+            element.overrideAssets(with: self.session)
 
             if var view = element as? QuestionnaireSettable {
                 view.presetAnswer = self.viewModel.getAnswersForElement(element)
