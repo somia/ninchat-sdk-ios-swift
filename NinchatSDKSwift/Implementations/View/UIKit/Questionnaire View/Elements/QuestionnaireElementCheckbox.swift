@@ -34,7 +34,7 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle,
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         self.overrideTitle(delegate: delegate)
         self.view.subviews.compactMap({ $0 as? Button }).forEach({ $0.overrideQuestionnaireAsset(with: delegate, isPrimary: $0.isSelected) })
-        self.view.allSubviews.filter({ $0 is UIImageView }).forEach({ $0.tintColor = delegate?.override(questionnaireAsset: .checkboxSelectedIndicator) ?? UIColor.QBlueButtonHighlighted })
+        self.view.allSubviews.compactMap({ $0 as? UIImageView }).forEach({ $0.tint = delegate?.override(questionnaireAsset: .checkboxSelectedIndicator) ?? UIColor.QBlueButtonHighlighted })
 
         self.iconBorderNormalColor = delegate?.override(questionnaireAsset: .checkboxDeselectedIndicator) ?? UIColor.QGrayButton
         self.iconBorderSelectedColor = delegate?.override(questionnaireAsset: .checkboxSelectedIndicator) ?? UIColor.QBlueButtonNormal
@@ -168,7 +168,7 @@ extension QuestionnaireElementCheckbox {
         imgViewContainer.isUserInteractionEnabled = false
         imgViewContainer.isExclusiveTouch = false
 
-        let image = UIImageView(image: nil, highlightedImage: UIImage(named: "icon_checkbox_selected", in: .SDKBundle, compatibleWith: nil)?.withRenderingMode(.alwaysTemplate))
+        let image = UIImageView(image: nil, highlightedImage: UIImage(named: "icon_checkbox_selected", in: .SDKBundle, compatibleWith: nil))
         image.tag = tag + 200
 
         return (imgViewContainer, image)

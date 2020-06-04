@@ -55,6 +55,6 @@ class Button: UIButton {
 
 extension Button {
     func roundButton() {
-        self.round(radius: 15.0, borderWidth: 1.0, borderColor: self.isSelected ? .QBlueButtonHighlighted : .QGrayButton)
+        self.round(radius: 15.0, borderWidth: 1.0, borderColor: (self.isSelected ? self.titleColor(for: .selected) : self.titleColor(for: .normal)) ?? .QGrayButton)
     }
 }

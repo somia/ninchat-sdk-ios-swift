@@ -107,11 +107,11 @@ extension Button {
     fileprivate func overrideQuestionnaireAsset(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         self.titleLabel?.font = .ninchat
 
-        self.setBackgroundImage((delegate?.override(questionnaireAsset: .radioSecondaryBackground) ?? UIColor.clear).toImage, for: .normal)
-        self.setTitleColor(delegate?.override(questionnaireAsset: .radioSecondaryText) ?? UIColor.QGrayButton, for: .normal)
+        self.setBackgroundImage((delegate?.override(questionnaireAsset: .radioSecondaryBackground) ?? .white).toImage, for: .normal)
+        self.setTitleColor(delegate?.override(questionnaireAsset: .radioSecondaryText) ?? .QGrayButton, for: .normal)
 
-        self.setBackgroundImage((delegate?.override(questionnaireAsset: .radioPrimaryBackground) ?? UIColor.clear).toImage, for: .selected)
-        self.setTitleColor(delegate?.override(questionnaireAsset: .radioPrimaryText) ?? UIColor.QBlueButtonNormal, for: .selected)
+        self.setBackgroundImage((delegate?.override(questionnaireAsset: .radioPrimaryBackground) ?? .white).toImage, for: .selected)
+        self.setTitleColor(delegate?.override(questionnaireAsset: .radioPrimaryText) ?? .QBlueButtonNormal, for: .selected)
 
         self.roundButton()
     }

@@ -28,4 +28,14 @@ extension UIImageView {
             }
         }.resume()
     }
+
+    var tint: UIColor? {
+        set {
+            self.image = self.image?.withRenderingMode(.alwaysTemplate)
+            self.tintColor = newValue
+        }
+        get {
+            self.tintColor
+        }
+    }
 }
