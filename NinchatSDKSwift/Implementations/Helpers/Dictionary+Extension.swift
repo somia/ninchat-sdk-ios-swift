@@ -36,6 +36,6 @@ extension Dictionary where Key==String {
     }
 
     func filter(based keys: [String]) -> Dictionary {
-        self.filter({ keys.contains($0.key) ?? false })
+        self.filter({ keys.contains($0.key) })
     }
 }

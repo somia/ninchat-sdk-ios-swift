@@ -90,7 +90,7 @@ public enum QuestionnaireColorConstants {
     case checkboxPrimaryText    /// Text color for selected elements
     case checkboxSecondaryText  /// Text color for deselected elements
     case checkboxSelectedIndicator      /// Tint and border color for selected element's indicator
-    case checkboxDeselectedIndicator    /// Border color for deselected element's indicator
+    case checkboxDeselectedIndicator    /// Tint and border color for deselected element's indicator
 
     /// Select
     case selectSelectedText /// Text, indicator, and border color for selected state
