@@ -102,6 +102,21 @@ final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Qu
     }
 }
 
+/// Subviews assets override
+extension Button {
+    fileprivate func overrideQuestionnaireAsset(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
+        self.titleLabel?.font = .ninchat
+
+        self.setBackgroundImage((delegate?.override(questionnaireAsset: .radioSecondaryBackground) ?? UIColor.clear).toImage, for: .normal)
+        self.setTitleColor(delegate?.override(questionnaireAsset: .radioSecondaryText) ?? UIColor.QGrayButton, for: .normal)
+
+        self.setBackgroundImage((delegate?.override(questionnaireAsset: .radioPrimaryBackground) ?? UIColor.clear).toImage, for: .selected)
+        self.setTitleColor(delegate?.override(questionnaireAsset: .radioPrimaryText) ?? UIColor.QBlueButtonNormal, for: .selected)
+
+        self.roundButton()
+    }
+}
+
 /// QuestionnaireElement
 extension QuestionnaireElement where Self:QuestionnaireElementRadio {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {

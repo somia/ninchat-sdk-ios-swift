@@ -54,18 +54,6 @@ class Button: UIButton {
 /// Helper for questionnaire items
 
 extension Button {
-    func overrideQuestionnaireAsset(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
-        self.titleLabel?.font = .ninchat
-
-        self.setBackgroundImage((delegate?.override(questionnaireAsset: .radioSecondaryBackground) ?? UIColor.clear).toImage, for: .normal)
-        self.setTitleColor(delegate?.override(questionnaireAsset: .radioSecondaryText) ?? UIColor.QGrayButton, for: .normal)
-
-        self.setBackgroundImage((delegate?.override(questionnaireAsset: .radioPrimaryBackground) ?? UIColor.clear).toImage, for: .selected)
-        self.setTitleColor(delegate?.override(questionnaireAsset: .radioPrimaryText) ?? UIColor.QBlueButtonNormal, for: .selected)
-
-        self.roundButton()
-    }
-
     func roundButton() {
         self.round(radius: 15.0, borderWidth: 1.0, borderColor: self.isSelected ? .QBlueButtonHighlighted : .QGrayButton)
     }
