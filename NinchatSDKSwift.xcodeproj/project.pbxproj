@@ -1642,6 +1642,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 4;
+				DEAD_CODE_STRIPPING = NO;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1673,6 +1674,10 @@
 					"\"WebRTC\"",
 					"-read_only_relocs",
 					suppress,
+					"-fuse-ld=/usr/local/bin/zld",
+					"-Wl,-no_uuid",
+					"-Wl,-no_deduplicate",
+					"-Wl,-no_compact_unwind",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ninchat.NinchatSDKSwift;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -1691,6 +1696,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 4;
+				DEAD_CODE_STRIPPING = NO;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1722,6 +1728,10 @@
 					"\"WebRTC\"",
 					"-read_only_relocs",
 					suppress,
+					"-fuse-ld=/usr/local/bin/zld",
+					"-Wl,-no_uuid",
+					"-Wl,-no_deduplicate",
+					"-Wl,-no_compact_unwind",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ninchat.NinchatSDKSwift;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
