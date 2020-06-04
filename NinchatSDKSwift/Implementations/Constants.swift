@@ -71,6 +71,19 @@ public enum ColorConstants {
     case ratingNegativeText
 }
 
+/// Questionnaire override keys
+public typealias NINQuestionnaireDictionary = [QuestionnaireColorConstants:String]
+public enum QuestionnaireColorConstants {
+    /// Title
+    case titleTextColor
+
+    /// Radio
+    case radioPrimaryText   /// Text color for selected elements
+    case radioSecondaryText /// Text color for deselected elements
+    case radioPrimaryBackground     /// Background color for selected elements
+    case radioSecondaryBackground   /// Background color for deselected elements
+}
+
 
 // MARK: - Constants used within the SDK
 
