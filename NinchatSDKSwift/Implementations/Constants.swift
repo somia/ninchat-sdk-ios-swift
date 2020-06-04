@@ -77,6 +77,9 @@ public enum QuestionnaireColorConstants {
     /// Title
     case titleTextColor
 
+    /// Input
+    case textInputColor     /// Text color for all inputs
+
     /// Radio
     case radioPrimaryText   /// Text color for selected elements
     case radioSecondaryText /// Text color for deselected elements

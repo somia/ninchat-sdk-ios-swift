@@ -32,9 +32,10 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
+        self.overrideTitle(delegate: delegate)
+
         normalBackgroundColor = delegate?.override(questionnaireAsset: .selectDeselectedBackground) ?? .white
         selectedBackgroundColor = delegate?.override(questionnaireAsset: .selectSelectedBackground) ?? .white
-
         selectedOption.textColor = delegate?.override(questionnaireAsset: .selectNormalText) ?? .QGrayButton
         selectedOption.highlightedTextColor = delegate?.override(questionnaireAsset: .selectSelectedText) ?? .QBlueButtonNormal
     }
