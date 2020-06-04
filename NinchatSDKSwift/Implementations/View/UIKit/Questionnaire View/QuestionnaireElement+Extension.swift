@@ -56,9 +56,7 @@ extension QuestionnaireElementWithTitle where View:UIView, Self:QuestionnaireOpt
 
         view.tag = tag + 1
         view.setTitle(option.label, for: .normal)
-        view.setTitleColor(.QGrayButton, for: .normal)
         view.setTitle(option.label, for: .selected)
-        view.setTitleColor(.QBlueButtonNormal, for: .selected)
         view.updateTitleScale()
         view.roundButton()
 

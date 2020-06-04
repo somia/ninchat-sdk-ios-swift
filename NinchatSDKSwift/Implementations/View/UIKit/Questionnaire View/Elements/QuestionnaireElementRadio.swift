@@ -29,7 +29,7 @@ final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Qu
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
-        self.subviews.compactMap({ $0 as? Button }).forEach({ $0.overrideAssets(with: delegate, isPrimary: isPrimary) })
+        self.view.subviews.compactMap({ $0 as? Button }).forEach({ $0.overrideQuestionnaireAsset(with: delegate, isPrimary: $0.isSelected) })
     }
 
     // MARK: - QuestionnaireSettable
