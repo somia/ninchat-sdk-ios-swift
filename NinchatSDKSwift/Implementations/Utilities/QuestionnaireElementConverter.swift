@@ -33,8 +33,7 @@ struct QuestionnaireElementConverter {
                 case .input:
                     return generate(from: configuration, index: index, ofType: QuestionnaireElementTextField.self)
                 case .likert:
-                    #warning("No view is defined yet!")
-                    return nil
+                    return generate(from: configuration, index: index, ofType: QuestionnaireElementLikert.self)
                 }
             }
 
