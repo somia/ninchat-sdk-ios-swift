@@ -35,6 +35,7 @@ protocol QuestionnaireElementWithTitle: QuestionnaireElement {
 
     func addElementViews()
     func layoutElementViews()
+    func overrideTitle(delegate: NINChatSessionInternalDelegate?)
 }
 extension QuestionnaireElementWithTitle {
     func addElementViews() {
@@ -54,6 +55,10 @@ extension QuestionnaireElementWithTitle {
             .fix(top: (0.0, title), isRelative: true)
             .center(toX: self)
             .fix(width: self.width?.constant ?? self.bounds.width)
+    }
+
+    func overrideTitle(delegate: NINChatSessionInternalDelegate?) {
+        self.title.textColor = delegate?.override(questionnaireAsset: .titleTextColor) ?? UIColor.black
     }
 
     func shapeTitle(_ configuration: QuestionnaireConfiguration?) {
