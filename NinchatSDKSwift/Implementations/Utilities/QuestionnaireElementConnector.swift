@@ -14,7 +14,7 @@ protocol QuestionnaireElementConnector {
 
     init(configurations: [QuestionnaireConfiguration])
     func findElementAndPageRedirect(for input: String, in configuration: QuestionnaireConfiguration) -> ([QuestionnaireElement]?, Int?)
-    func findElementAndPageLogic(for dictionary: [String:AnyCodable]) -> ([QuestionnaireElement]?, Int?)
+    func findElementAndPageLogic(for dictionary: [String:AnyCodable], in answers: [String:AnyHashable]) -> ([QuestionnaireElement]?, Int?)
 }
 
 struct QuestionnaireElementConnectorImpl: QuestionnaireElementConnector {
@@ -75,9 +75,9 @@ extension QuestionnaireElementConnectorImpl {
         self.configurations.compactMap({ $0.logic })
     }
 
-    func findElementAndPageLogic(for dictionary: [String:AnyCodable]) -> ([QuestionnaireElement]?, Int?) {
+    func findElementAndPageLogic(for dictionary: [String:AnyCodable], in answers: [String:AnyHashable]) -> ([QuestionnaireElement]?, Int?) {
         if let blocks = self.findLogicBlocks(for: Array(dictionary.keys)), blocks.count > 0 {
-            let satisfied: (bool: Bool, logic: LogicQuestionnaire?) = areSatisfied(logic: blocks, forKeyValue: dictionary)
+            let satisfied: (bool: Bool, logic: LogicQuestionnaire?) = areSatisfied(logic: blocks, forKeyValue: dictionary, in: answers)
             if satisfied.bool, let logic = satisfied.logic {
                 if let tags = logic.tags, tags.count > 0 {
                     self.logicContainsTags?(logic)
@@ -109,8 +109,8 @@ extension QuestionnaireElementConnectorImpl {
 
     /// Determines if the derived 'logic' blocks from the `findLogicBlocks(for:)` API are satisfied
     /// Returns corresponded 'logic' block for given key:value
-    internal func areSatisfied(logic blocks: [LogicQuestionnaire], forKeyValue dictionary: [String:AnyCodable]) -> (Bool, LogicQuestionnaire?) {
-        let satisfiedBlocks = blocks.filter({ $0.satisfy(Array(dictionary.keys)) })
+    internal func areSatisfied(logic blocks: [LogicQuestionnaire], forKeyValue dictionary: [String:AnyCodable], in answers: [String:AnyHashable]) -> (Bool, LogicQuestionnaire?) {
+        let satisfiedBlocks = blocks.filter({ $0.satisfy(dictionary: answers.reduce(into: [:]) { $0[$1.key] = AnyCodable($1.value) } ) })
         if let theBlock = satisfiedBlocks
                 .first(where: {
                     let dictionaryValues: Array<AnyCodable> = Array(dictionary.values)

@@ -10,35 +10,6 @@ import NinchatLowLevelClient
 
 final class NINQuestionnaireViewController: UIViewController, ViewController {
 
-    private lazy var connector: QuestionnaireElementConnector = {
-        var connector = QuestionnaireElementConnectorImpl(configurations: self.session.sessionManager.siteConfiguration.preAudienceQuestionnaire!)
-        connector.logicContainsTags = { [weak self] logic in
-            self?.viewModel.submitTags(logic?.tags! ?? [])
-        }
-        connector.onCompleteTargetReached = { [unowned self] logic in
-            let queue: (canJoin: Bool, target: Queue?) = self.viewModel.canJoinGivenQueue(withID: logic?.queue ?? self.queue.queueID)
-            if !queue.canJoin {
-                connector.onRegisterTargetReached?(logic); return
-            }
-            self.viewModel.finishQuestionnaire()
-            self.completeQuestionnaire?(queue.target!)
-        }
-        connector.onRegisterTargetReached = { [unowned self] logic in
-            self.viewModel.registerAudience(queueID: logic?.queue ?? self.queue.queueID) { error in
-                if let error = error {
-                    debugger("** ** SDK: error in registering audience: \(error)")
-                    Toast.show(message: .error("Error is submitting the answers")) {
-                        self.session.onDidEnd()
-                    }
-                } else {
-                    self.session.onDidEnd()
-                }
-            }
-        }
-
-        return connector
-    }()
-
     // MARK: - ViewController
 
     var session: NINChatSession!
@@ -46,7 +17,22 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
 
     // MARK: - Injected
 
-    var viewModel: NINQuestionnaireViewModel!
+    var viewModel: NINQuestionnaireViewModel! {
+        didSet {
+            viewModel.onErrorOccurred = { error in
+                debugger("** ** SDK: error in registering audience: \(error)")
+                Toast.show(message: .error("Error is submitting the answers")) { [weak self] in
+                    self?.session.onDidEnd()
+                }
+            }
+            viewModel.onQuestionnaireFinished = { [weak self] queue in
+                self?.completeQuestionnaire?(queue)
+            }
+            viewModel.onSessionFinished = { [weak self] in
+                self?.session.onDidEnd()
+            }
+        }
+    }
     var completeQuestionnaire: ((_ queue: Queue) -> Void)?
 
     // MARK: - SubViews
@@ -194,10 +180,10 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
                     }
 
                     self?.viewModel.submitAnswer(key: element, value: option.value)
-                    if let configuration = try! self?.viewModel.getConfiguration(), let targetElement = self?.connector.findElementAndPageRedirect(for: option.value, in: configuration), let targetPage = targetElement.1 {
-                        showTargetPage(targetPage)
-                    } else if let targetElement = self?.connector.findElementAndPageLogic(for: [element.elementConfiguration?.name ?? "":AnyCodable(option.value)]), let targetPage = targetElement.1 {
-                        showTargetPage(targetPage)
+                    if let page = self?.viewModel.redirectTargetPage(for: option) {
+                        showTargetPage(page)
+                    } else if let page = self?.viewModel.logicTargetPage(for: option, name: element.elementConfiguration?.name ?? "") {
+                        showTargetPage(page)
                     }
                 }
                 view.onElementOptionDeselected = { option in

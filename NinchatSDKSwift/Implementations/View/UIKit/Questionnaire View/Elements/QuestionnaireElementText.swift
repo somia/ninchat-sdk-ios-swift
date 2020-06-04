@@ -5,9 +5,8 @@
 //
 
 import UIKit
-import WebKit
 
-final class QuestionnaireElementText: WKWebView, QuestionnaireElement {
+final class QuestionnaireElementText: UITextView, QuestionnaireElement {
 
     // MARK: - QuestionnaireElement
 
@@ -23,7 +22,7 @@ final class QuestionnaireElementText: WKWebView, QuestionnaireElement {
     }
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
-        self.height?.constant ?? self.scrollView.contentSize.height
+        self.height?.constant ?? 0
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
@@ -37,8 +36,8 @@ final class QuestionnaireElementText: WKWebView, QuestionnaireElement {
         self.initiateView()
     }
 
-    override init(frame: CGRect, configuration: WKWebViewConfiguration) {
-        super.init(frame: frame, configuration: configuration)
+    override init(frame: CGRect, textContainer: NSTextContainer?) {
+        super.init(frame: frame, textContainer: textContainer)
         self.initiateView()
     }
 
@@ -50,25 +49,25 @@ final class QuestionnaireElementText: WKWebView, QuestionnaireElement {
     // MARK: - View Setup
 
     private func initiateView() {
-        self.scrollView.bounces = false
-        self.scrollView.isScrollEnabled = false
+        self.isEditable = false
+        self.isScrollEnabled = false
     }
 }
 
 extension QuestionnaireElement where Self:QuestionnaireElementText {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
-        self.loadHTML(content: configuration?.label ?? "", font: UIFont.ninchat!)
-        self.fix(height: self.estimateHeight(for: configuration?.label ?? ""))
+        self.textAlignment = .left
+        self.setAttributed(text: configuration?.label ?? "", font: .ninchat)
+
+        self.fix(height: max(32,0, self.estimateHeight(for: configuration?.label ?? "")))
     }
 
     private func estimateHeight(for text: String) -> CGFloat {
-        /// Apparently Swift is unable to correctly calculate HTML string's bounds
-        /// This is why we have to adjust it by adding padding values manually
-        var height = text.htmlAttributedString(withFont: UIFont.ninchat, alignment: .left, color: .black)?.boundSize(maxSize: CGSize(width: UIScreen.main.bounds.width, height: .greatestFiniteMagnitude)).height ?? 0
-        if text.containsTags, let regex = try? NSRegularExpression(pattern: "</p>", options: .caseInsensitive), regex.numberOfMatches(in: text, range: NSRange(text.startIndex..., in: text)) > 0 {
-            height += CGFloat(regex.numberOfMatches(in: text, range: NSRange(text.startIndex..., in: text)) * 8) /// add 8pt extra space for every <p> tag
-        }
+        let size = self.sizeThatFits(CGSize(width: self.superview?.bounds.width ?? UIScreen.main.bounds.width, height: .greatestFiniteMagnitude))
 
-        return height
+        if text.containsTags, let regex = try? NSRegularExpression(pattern: "</p>", options: .caseInsensitive), regex.numberOfMatches(in: text, range: NSRange(text.startIndex..., in: text)) > 0 {
+            return size.height + 20.0
+        }
+        return size.height
     }
 }

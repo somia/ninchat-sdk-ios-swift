@@ -4,24 +4,22 @@
 // license that can be found in the LICENSE file.
 //
 
+import Foundation
 import UIKit
 
 extension String {
     func htmlAttributedString(withFont font: UIFont?, alignment: NSTextAlignment, color: UIColor?) -> NSAttributedString? {
-        attributedString(font, document: .html)
+        applyStyle(attrString: attributedString(font, document: .html), alignment, color)
     }
     
     func plainString(withFont font: UIFont?, alignment: NSTextAlignment, color: UIColor?) -> NSAttributedString? {
         applyStyle(attrString: attributedString(font, document: .plain), alignment, color)
     }
     
-    private func attributedString(_ font: UIFont?, document: NSAttributedString.DocumentType) -> NSAttributedString? {
+    private func attributedString(_ font: UIFont?, document: NSAttributedString.DocumentType) -> NSMutableAttributedString? {
         guard let data = self.data(using: .utf16, allowLossyConversion: false), let font = font else { return nil }
         do {
-            let attrString = try NSMutableAttributedString(data: data, options: [.documentType: document], documentAttributes: nil)
-            attrString.override(font: font)
-        
-            return attrString
+            return try NSMutableAttributedString(data: data, options: [.documentType: document], documentAttributes: nil).override(font: font)
         } catch {
             debugger("error in string conversion. \(error.localizedDescription)")
             return nil
@@ -34,11 +32,11 @@ extension String {
         /// Text alignment
         let style = NSMutableParagraphStyle()
         style.alignment = alignment
-        attrString.addAttribute(NSAttributedString.Key.paragraphStyle, value: style, range: NSRange(location: 0, length: self.count))
+        attrString.addAttribute(NSAttributedString.Key.paragraphStyle, value: style, range: NSRange(location: 0, length: attrString.length))
     
         /// Text color
         if let color = color {
-            attrString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange(location: 0, length: self.count))
+            attrString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange(location: 0, length: attrString.length))
         }
         
         return attrString
