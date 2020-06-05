@@ -17,6 +17,7 @@ protocol NINChatSessionInternalDelegate: class {
     func onResumeFailed() -> Bool
     func override(imageAsset key: AssetConstants) -> UIImage?
     func override(colorAsset key: ColorConstants) -> UIColor?
+    func override(questionnaireAsset key: QuestionnaireColorConstants) -> UIColor?
 }
 
 extension NINChatSession: NINChatSessionInternalDelegate {
@@ -54,5 +55,9 @@ extension NINChatSession: NINChatSessionInternalDelegate {
     
     internal func override(colorAsset key: ColorConstants) -> UIColor? {
         delegate?.ninchat(self, overrideColorAssetForKey: key)
+    }
+
+    internal func override(questionnaireAsset key: QuestionnaireColorConstants) -> UIColor? {
+        delegate?.ninchat(self, overrideQuestionnaireColorAssetKey: key)
     }
 }

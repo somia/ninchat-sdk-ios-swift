@@ -25,8 +25,10 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
         self.height?.constant ?? 0
     }
 
-    func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
-        #warning("Override assets")
+    func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
+        if let overriddenColor = delegate?.override(questionnaireAsset: .titleTextColor) {
+            self.setAttributed(text: self.elementConfiguration?.label ?? "", font: .ninchat, color: overriddenColor)
+        }
     }
 
     // MARK: - UIView life-cycle
@@ -58,6 +60,7 @@ extension QuestionnaireElement where Self:QuestionnaireElementText {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
         self.textAlignment = .left
         self.setAttributed(text: configuration?.label ?? "", font: .ninchat)
+        self.elementConfiguration = configuration
 
         self.fix(height: max(32,0, self.estimateHeight(for: configuration?.label ?? "")))
     }

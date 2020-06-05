@@ -148,6 +148,8 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
         do {
             let cell: QuestionnaireNavigationCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
             cell.configuration = try self.viewModel.getConfiguration()
+            cell.overrideAssets(with: self.session)
+
             cell.onNextButtonTapped = { [weak self] questionnaire in
                 if self?.viewModel.goToNextPage() ?? false {
                     self?.updateContentView()
@@ -168,6 +170,8 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
         do {
             let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
             let element = try self.viewModel.getElements()[indexPath.row]
+            element.overrideAssets(with: self.session)
+
             if var view = element as? QuestionnaireSettable {
                 view.presetAnswer = self.viewModel.getAnswersForElement(element)
             }
@@ -200,7 +204,6 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
                     }
                 }
             }
-            element.overrideAssets(with: self.session, isPrimary: false)
             self.layoutSubview(element, parent: cell.content)
 
             return cell

@@ -8,6 +8,9 @@ import UIKit
 
 final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireOptionSelectableElement {
 
+    var normalBackgroundColor: UIColor! = .white
+    var selectedBackgroundColor: UIColor! = .white
+
     // MARK: - QuestionnaireElement
 
     var index: Int = 0
@@ -28,8 +31,13 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
         CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + 8
     }
 
-    func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
-        #warning("Override assets")
+    func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
+        self.overrideTitle(delegate: delegate)
+
+        normalBackgroundColor = delegate?.override(questionnaireAsset: .selectDeselectedBackground) ?? .white
+        selectedBackgroundColor = delegate?.override(questionnaireAsset: .selectSelectedBackground) ?? .white
+        selectedOption.textColor = delegate?.override(questionnaireAsset: .selectNormalText) ?? .QGrayButton
+        selectedOption.highlightedTextColor = delegate?.override(questionnaireAsset: .selectSelectedText) ?? .QBlueButtonNormal
     }
 
     // MARK: - QuestionnaireSettable
@@ -60,7 +68,7 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
         UILabel(frame: .zero)
     }()
     private(set) lazy var selectionIndicator: UIImageView = {
-        UIImageView(image: UIImage(named: "icon_select_option", in: .SDKBundle, compatibleWith: nil), highlightedImage: UIImage(named: "icon_selected_option", in: .SDKBundle, compatibleWith: nil))
+        UIImageView(image: UIImage(named: "icon_select_option", in: .SDKBundle, compatibleWith: nil))
     }()
     private var dialogueIsShown = false
 
@@ -132,7 +140,7 @@ extension QuestionnaireElementSelect {
 
             switch result {
             case .cancel:
-                guard let option = self.elementConfiguration?.options?.first(where: { $0.label == self.selectedOption.text }) else { fatalError("Unable to deselect the option") }
+                guard let option = self.elementConfiguration?.options?.first(where: { $0.label == self.selectedOption.text }) else { return }
                 self.deselect(option: option)
             case .select(let index):
                 guard let option = self.elementConfiguration?.options?[index] else { fatalError("Unable to pick selected option") }
@@ -144,15 +152,15 @@ extension QuestionnaireElementSelect {
 
     private func select(option: ElementOption) {
         self.selectedOption.isHighlighted = true
-        self.selectionIndicator.isHighlighted = true
         self.selectedOption.text = option.label
+        self.view.backgroundColor = selectedBackgroundColor
         self.onElementOptionSelected?(option)
     }
 
     func deselect(option: ElementOption) {
         self.selectedOption.isHighlighted = false
-        self.selectionIndicator.isHighlighted = false
         self.selectedOption.text = "Select".localized
+        self.view.backgroundColor = normalBackgroundColor
         self.onElementOptionDeselected?(option)
     }
 }
@@ -180,7 +188,7 @@ extension QuestionnaireElementSelect: QuestionnaireHasBorder {
     }
 
     func updateBorder() {
-        self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: self.selectedOption.isHighlighted ? .QGrayButton : .QBlueButtonNormal)
-        self.selectionIndicator.tintColor = self.selectedOption.isHighlighted ? .QGrayButton : .QBlueButtonNormal
+        self.selectionIndicator.tint = self.selectedOption.isHighlighted ? self.selectedOption.highlightedTextColor : self.selectedOption.textColor
+        self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: self.selectionIndicator.tint ?? .QGrayButton)
     }
 }

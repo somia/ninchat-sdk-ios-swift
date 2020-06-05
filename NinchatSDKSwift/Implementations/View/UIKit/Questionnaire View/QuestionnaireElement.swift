@@ -14,14 +14,10 @@ protocol QuestionnaireElement: UIView {
     var elementConfiguration: QuestionnaireConfiguration? { get }
 
     func shapeView(_ configuration: QuestionnaireConfiguration?)
-    func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool)
+    func overrideAssets(with delegate: NINChatSessionInternalDelegate?)
 }
 extension QuestionnaireElement {
     var elementHeight: CGFloat { 0 }
-
-    func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
-        self.overrideAssets(with: delegate, isPrimary: true)
-    }
 }
 
 /// Questionnaire element with
@@ -35,6 +31,7 @@ protocol QuestionnaireElementWithTitle: QuestionnaireElement {
 
     func addElementViews()
     func layoutElementViews()
+    func overrideTitle(delegate: NINChatSessionInternalDelegate?)
 }
 extension QuestionnaireElementWithTitle {
     func addElementViews() {
@@ -54,6 +51,10 @@ extension QuestionnaireElementWithTitle {
             .fix(top: (0.0, title), isRelative: true)
             .center(toX: self)
             .fix(width: self.width?.constant ?? self.bounds.width)
+    }
+
+    func overrideTitle(delegate: NINChatSessionInternalDelegate?) {
+        self.title.textColor = delegate?.override(questionnaireAsset: .titleTextColor) ?? UIColor.black
     }
 
     func shapeTitle(_ configuration: QuestionnaireConfiguration?) {
@@ -92,6 +93,7 @@ protocol QuestionnaireNavigationButtons {
     func addNavigationButtons()
     func shapeNavigationButtons(_ configuration: QuestionnaireConfiguration?)
     func layoutNavigationButtons()
+    func overrideAssets(with delegate: NINChatSessionInternalDelegate?)
 }
 
 /// Add 'Done' button to keyboards to dismiss applicable elements (e.g. textarea, input)

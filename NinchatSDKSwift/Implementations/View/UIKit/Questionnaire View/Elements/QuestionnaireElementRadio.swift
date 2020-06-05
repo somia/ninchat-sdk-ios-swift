@@ -28,8 +28,9 @@ final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Qu
         CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + (2 * 8.0)
     }
 
-    func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
-        self.subviews.compactMap({ $0 as? Button }).forEach({ $0.overrideAssets(with: delegate, isPrimary: isPrimary) })
+    func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
+        self.overrideTitle(delegate: delegate)
+        self.view.subviews.compactMap({ $0 as? Button }).forEach({ $0.overrideQuestionnaireAsset(with: delegate, isPrimary: $0.isSelected) })
     }
 
     // MARK: - QuestionnaireSettable
@@ -98,6 +99,21 @@ final class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Qu
         if self.view.subviews.count > 0 {
             self.layoutElementViews()
         }
+    }
+}
+
+/// Subviews assets override
+extension Button {
+    fileprivate func overrideQuestionnaireAsset(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
+        self.titleLabel?.font = .ninchat
+
+        self.setBackgroundImage((delegate?.override(questionnaireAsset: .radioSecondaryBackground) ?? .white).toImage, for: .normal)
+        self.setTitleColor(delegate?.override(questionnaireAsset: .radioSecondaryText) ?? .QGrayButton, for: .normal)
+
+        self.setBackgroundImage((delegate?.override(questionnaireAsset: .radioPrimaryBackground) ?? .white).toImage, for: .selected)
+        self.setTitleColor(delegate?.override(questionnaireAsset: .radioPrimaryText) ?? .QBlueButtonNormal, for: .selected)
+
+        self.roundButton()
     }
 }
 

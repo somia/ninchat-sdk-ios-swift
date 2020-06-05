@@ -23,11 +23,12 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
     }
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
-        CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + CGFloat(3.0 * 8.0)
+        CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + CGFloat(4.0 * 8.0)
     }
 
-    func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
-        #warning("Override assets")
+    func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
+        self.overrideTitle(delegate: delegate)
+        self.view.textColor = delegate?.override(questionnaireAsset: .textInputColor) ?? .black
     }
 
     // MARK: - QuestionnaireSettable

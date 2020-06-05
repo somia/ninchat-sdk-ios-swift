@@ -47,7 +47,18 @@ public protocol NINChatSessionDelegate: class {
     * Optional method.
     */
     func ninchat(_ session: NINChatSession, overrideColorAssetForKey assetKey: ColorConstants) -> UIColor?
-    
+
+    /**
+    * This method allows the SDK user to override color assets for questionnaires used in the SDK UI.
+    * If the implementation does not wish to override a specific asset, nil should
+    * be returned for that key.
+    *
+    * For available asset key constants, see documentation.
+    *
+    * Optional method.
+    */
+    func ninchat(_ session: NINChatSession, overrideQuestionnaireColorAssetKey assetKey: QuestionnaireColorConstants) -> UIColor?
+
     /**
     * Indicates that the Ninchat SDK UI has completed its chat. and would like
     * to be closed. The API caller should remove the Ninchat SDK UI from
@@ -72,6 +83,8 @@ extension NINChatSessionDelegate {
     func ninchat(_ session: NINChatSession, overrideImageAssetForKey assetKey: AssetConstants) -> UIImage? { nil }
 
     func ninchat(_ session: NINChatSession, overrideColorAssetForKey assetKey: ColorConstants) -> UIColor? { nil }
+
+    func ninchat(_ session: NINChatSession, overrideQuestionnaireColorAssetKey assetKey: QuestionnaireColorConstants) -> UIColor? { nil }
 
     func ninchatDidFail(toResumeSession session: NINChatSession) -> Bool { false }
 }

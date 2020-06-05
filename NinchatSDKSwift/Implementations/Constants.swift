@@ -7,67 +7,106 @@
 import Foundation
 import UIKit
 
+// MARK: - Override Keys
+
+/// Assets override keys
 public typealias NINImageAssetDictionary = [AssetConstants:UIImage]
-public enum AssetConstants: String {
-    case iconLoader = "NINImageAssetKeyQueueViewProgressIndicator"
-    case iconChatCloseButton = "NINImageAssetKeyIconChatCloseButton"
-    case iconRatingPositive = "NINImageAssetKeyIconRatingPositive"
-    case iconRatingNeutral = "NINImageAssetKeyIconRatingNeutral"
-    case iconRatingNegative = "NINImageAssetKeyIconRatingNegative"
-    case iconTextareaCamera = "NINImageAssetKeyIconTextareaCamera"
-    case iconTextareaAttachment = "NINImageAssetKeyIconTextareaAttachment"
-    case iconDownload = "NINImageAssetKeyIconDownload"
-    case iconTextareaSubmitButtonIcon = "NINImageAssetKeyIconTextareaSubmitButtonIcon"
-    case iconVideoToggleFull = "NINImageAssetKeyIconVideoToggleFull"
-    case iconVideoToggleNormal = "NINImageAssetKeyIconVideoToggleNormal"
-    case iconVideoSoundOn = "NINImageAssetKeyIconVideoSoundOn"
-    case iconVideoSoundOff = "NINImageAssetKeyIconVideoSoundOff"
-    case iconVideoMicrophoneOn = "NINImageAssetKeyIconVideoMicrophoneOn"
-    case iconVideoMicrophoneOff = "NINImageAssetKeyIconVideoMicrophoneOff"
-    case iconVideoCameraOn = "NINImageAssetKeyIconVideoCameraOn"
-    case iconVideoCameraOff = "NINImageAssetKeyIconVideoCameraOff"
-    case iconVideoHangup = "NINImageAssetKeyIconVideoHangup"
-
-    case chatWritingIndicator = "NINImageAssetKeyChatWritingIndicator"
-    case chatBackground = "NINImageAssetKeyChatBackground"
-    case chatCloseButton = "NINImageAssetKeyChatCloseButton"
-    case chatBubbleLeft = "NINImageAssetKeyChatBubbleLeft"
-    case chatBubbleLeftRepeated = "NINImageAssetKeyChatBubbleLeftRepeated"
-    case chatBubbleRight = "NINImageAssetKeyChatBubbleRight"
-    case chatBubbleRightRepeated = "NINImageAssetKeyChatBubbleRightRepeated"
-    case chatAvatarRight = "NINImageAssetKeyChatAvatarRight"
-    case chatAvatarLeft = "NINImageAssetKeyChatAvatarLeft"
-    case chatPlayVideo = "NINImageAssetKeyChatPlayVideo"
-    
-    case textareaSubmitButton = "NINImageAssetKeyTextareaSubmitButton"
-    case primaryButton = "NINImageAssetKeyPrimaryButton"
-    case secondaryButton = "NINImageAssetKeySecondaryButton"
+public enum AssetConstants {
+    case iconLoader
+    case iconChatCloseButton
+    case iconRatingPositive
+    case iconRatingNeutral
+    case iconRatingNegative
+    case iconTextareaCamera
+    case iconTextareaAttachment
+    case iconDownload
+    case iconTextareaSubmitButtonIcon
+    case iconVideoToggleFull
+    case iconVideoToggleNormal
+    case iconVideoSoundOn
+    case iconVideoSoundOff
+    case iconVideoMicrophoneOn
+    case iconVideoMicrophoneOff
+    case iconVideoCameraOn
+    case iconVideoCameraOff
+    case iconVideoHangup
+    case chatWritingIndicator
+    case chatBackground
+    case chatCloseButton
+    case chatBubbleLeft
+    case chatBubbleLeftRepeated
+    case chatBubbleRight
+    case chatBubbleRightRepeated
+    case chatAvatarRight
+    case chatAvatarLeft
+    case chatPlayVideo
+    case textareaSubmitButton
+    case primaryButton
+    case secondaryButton
 }
 
+/// Color override keys
 public typealias NINColorAssetDictionary = [ColorConstants:UIColor]
-public enum ColorConstants: String {
-    case buttonPrimaryText = "NINColorAssetKeyButtonPrimaryText"
-    case buttonSecondaryText = "NINColorAssetKeyButtonSecondaryText"
-    case infoText = "NINColorAssetKeyInfoText"
-    case chatName = "NINColorAssetKeyChatName"
-    case chatTimestamp = "NINColorAssetKeyChatTimestamp"
-    case chatBubbleLeftText = "NINColorAssetKeyChatBubbleLeftText"
-    case chatBubbleRightText = "NINColorAssetKeyChatBubbleRightText"
-    case textareaText = "NINColorAssetKeyTextareaText"
-    case textareaSubmitText = "NINColorAssetKeyTextareaSubmitText"
-    case chatBubbleLeftLink = "NINColorAssetKeyChatBubbleLeftLink"
-    case chatBubbleRightLink = "NINColorAssetKeyChatBubbleRightLink"
-    case modalText = "NINColorAssetKeyModalText"
-    case modalBackground = "NINColorAssetKeyModalBackground"
-    case backgroundTop = "NINColorAssetBackgroundTop"
-    case textTop = "NINColorAssetTextTop"
-    case textBottom = "NINColorAssetTextBottom"
-    case link = "NINColorAssetLink"
-    case backgroundBottom = "NINColorAssetBackgroundBottom"
-    case ratingPositiveText = "NINColorAssetRatingPositiveText"
-    case ratingNeutralText = "NINColorAssetRatingNeutralText"
-    case ratingNegativeText = "NINColorAssetRatingNegativeText"
+public enum ColorConstants {
+    case buttonPrimaryText
+    case buttonSecondaryText
+    case infoText
+    case chatName
+    case chatTimestamp
+    case chatBubbleLeftText
+    case chatBubbleRightText
+    case textareaText
+    case textareaSubmitText
+    case chatBubbleLeftLink
+    case chatBubbleRightLink
+    case modalText
+    case modalBackground
+    case backgroundTop
+    case textTop
+    case textBottom
+    case link
+    case backgroundBottom
+    case ratingPositiveText
+    case ratingNeutralText
+    case ratingNegativeText
 }
+
+/// Questionnaire override keys
+public typealias NINQuestionnaireDictionary = [QuestionnaireColorConstants:String]
+public enum QuestionnaireColorConstants {
+    /// Title
+    case titleTextColor
+
+    /// Input
+    case textInputColor     /// Text color for all inputs
+
+    /// Radio
+    case radioPrimaryText   /// Text color for selected elements
+    case radioSecondaryText /// Text color for deselected elements
+    case radioPrimaryBackground     /// Background color for selected elements
+    case radioSecondaryBackground   /// Background color for deselected elements
+
+    /// Checkbox
+    case checkboxPrimaryText    /// Text color for selected elements
+    case checkboxSecondaryText  /// Text color for deselected elements
+    case checkboxSelectedIndicator      /// Tint and border color for selected element's indicator
+    case checkboxDeselectedIndicator    /// Tint and border color for deselected element's indicator
+
+    /// Select
+    case selectSelectedText /// Text, indicator, and border color for selected state
+    case selectNormalText   /// Text, indicator, and border color for normal state
+    case selectSelectedBackground   /// Background color for selected state
+    case selectDeselectedBackground /// Background color for deselected state
+
+    /// Navigation
+    case navigationNextText     /// Text and border color for the next button
+    case navigationBackText     /// Text and border color for the back button
+    case navigationNextBackground   /// Background color for the next button
+    case navigationBackBackground   /// Background color for the back button
+}
+
+
+// MARK: - Constants used within the SDK
 
 public enum Constants: String {
     case kTestServerAddress = "api.luupi.net"
