@@ -570,7 +570,7 @@
             "Huolet-jatko": "Muut aiheet"
           }
         ],
-        "target": "Aiheet"
+        "target": "Start"
       }
     },
     {
@@ -663,7 +663,7 @@
             "temp-btn2": "Finnish"
           }
         ],
-        "target": "_complete",
+        "target": "wouldRecommendService",
         "tags": [
           "7fvo5p8700eao",
           "7fvo5qv400eao"
@@ -680,19 +680,7 @@
       "logic": {
         "or": [
           {
-            "wouldRecommendService": "1"
-          },
-          {
-            "wouldRecommendService": "2"
-          },
-          {
-            "wouldRecommendService": "3"
-          },
-          {
-            "wouldRecommendService": "4"
-          },
-          {
-            "wouldRecommendService": "5"
+            "wouldRecommendService": "^[1-5]$"
           }
         ],
         "target": "_complete"

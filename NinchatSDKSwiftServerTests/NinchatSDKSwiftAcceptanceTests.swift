@@ -381,6 +381,8 @@ extension NinchatSDKSwiftAcceptanceTests: NINChatSessionInternalDelegate {
 
     func override(colorAsset key: ColorConstants) -> UIColor? { nil }
 
+    func override(questionnaireAsset key: QuestionnaireColorConstants) -> UIColor? { nil }
+
     func onLowLevelEvent(event: NINLowLevelClientProps, payload: NINLowLevelClientPayload, lastReply: Bool) {
         if case let .failure(error) = event.event { self.onEvent?(nil, error); return }
         self.onEvent?(Events(rawValue: event.event.value), nil)

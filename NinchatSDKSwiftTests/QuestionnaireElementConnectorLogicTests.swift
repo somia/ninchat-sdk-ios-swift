@@ -6,6 +6,7 @@
 
 
 import XCTest
+import AnyCodable
 @testable import NinchatSDKSwift
 
 final class QuestionnaireElementConnectorLogicTests: XCTestCase {
@@ -46,35 +47,50 @@ final class QuestionnaireElementConnectorLogicTests: XCTestCase {
     }
 
     func test_12_satisfyLogic() {
-        let answers: [String:AnyHashable] = ["Epäilys-jatko": "Muut aiheet", "arbitrary":"option"]
         let blocks = connector.findLogicBlocks(for: ["Epäilys-jatko"])
 
-        let satisfied_0 = connector.areSatisfied(logic: blocks!, forKeyValue: [:], in: answers)
+        let satisfied_0 = connector.areSatisfied(logic: blocks!, forAnswers: [:])
         XCTAssertFalse(satisfied_0.0)
         XCTAssertNil(satisfied_0.1)
 
-        let satisfied_1 = connector.areSatisfied(logic: blocks!, forKeyValue: ["Epäilys-jatko":""], in: answers)
+        let satisfied_1 = connector.areSatisfied(logic: blocks!, forAnswers: ["Epäilys-jatko":""])
         XCTAssertFalse(satisfied_1.0)
         XCTAssertNil(satisfied_1.1)
 
-        let satisfied_2 = connector.areSatisfied(logic: blocks!, forKeyValue: ["Epäilys-jatko": "Muut aiheet"], in: answers)
+        let satisfied_2 = connector.areSatisfied(logic: blocks!, forAnswers: ["Epäilys-jatko": "Muut aiheet"])
         XCTAssertTrue(satisfied_2.0)
         XCTAssertNotNil(satisfied_2.1)
         XCTAssertEqual(satisfied_2.1?.target, "Aiheet")
     }
 
     func test_13_satisfyLogic_regex() {
-        let answers: [String:AnyHashable] = ["wouldRecommendService": "1"]
         let blocks = connector.findLogicBlocks(for: ["wouldRecommendService"])
-        let satisfied = connector.areSatisfied(logic: blocks!, forKeyValue: ["wouldRecommendService": "1"], in: answers)
+        let satisfied = connector.areSatisfied(logic: blocks!, forAnswers: ["wouldRecommendService": "1"])
         XCTAssertTrue(satisfied.0)
         XCTAssertNotNil(satisfied.1)
         XCTAssertEqual(satisfied.1?.target, "_complete")
     }
 
+    func test_14_satisfyLogic_complex() {
+        let blocks = connector.findLogicBlocks(for: ["temp-btn"])
+
+        let satisfied_1 = connector.areSatisfied(logic: blocks!, forAnswers: ["temp-btn":"Finnish"])
+        XCTAssertFalse(satisfied_1.0)
+        XCTAssertNil(satisfied_1.1)
+
+        let satisfied_2 = connector.areSatisfied(logic: blocks!, forAnswers: ["temp-btn2":"Finnish"])
+        XCTAssertFalse(satisfied_2.0)
+        XCTAssertNil(satisfied_2.1)
+
+        let satisfied_3 = connector.areSatisfied(logic: blocks!, forAnswers: ["temp-btn":"Finnish", "temp-btn2":"Finnish"])
+        XCTAssertTrue(satisfied_3.0)
+        XCTAssertNotNil(satisfied_3.1)
+        XCTAssertEqual(satisfied_3.1?.target, "_complete")
+    }
+
     func test_14_find_configuration() {
         let blocks = connector.findLogicBlocks(for: ["fake"])
-        let logic = connector.areSatisfied(logic: blocks!, forKeyValue: ["fake": "fake", "Koronavirus-jatko": "Muut aiheet"], in: ["Koronavirus-jatko": "Muut aiheet", "fake": "fake"]).1
+        let logic = connector.areSatisfied(logic: blocks!, forAnswers: ["fake": "fake", "Koronavirus-jatko": "Muut aiheet"]).1
         let configuration = connector.findTargetLogicConfiguration(from: logic!)
         XCTAssertNotNil(configuration.0)
         XCTAssertNotNil(configuration.1)
@@ -83,7 +99,7 @@ final class QuestionnaireElementConnectorLogicTests: XCTestCase {
 
     func test_15_find_element() {
         let blocks = connector.findLogicBlocks(for: ["fake"])
-        let logic = connector.areSatisfied(logic: blocks!, forKeyValue: ["fake": "fake", "Koronavirus-jatko": "Muut aiheet"], in: ["fake": "fake", "Koronavirus-jatko": "Muut aiheet"]).1
+        let logic = connector.areSatisfied(logic: blocks!, forAnswers: ["fake": "fake", "Koronavirus-jatko": "Muut aiheet"]).1
         let configuration = connector.findTargetLogicConfiguration(from: logic!).0
         let targetView = connector.findTargetElement(for: configuration!)
         XCTAssertNotNil(targetView.0)
@@ -93,7 +109,7 @@ final class QuestionnaireElementConnectorLogicTests: XCTestCase {
 
     func test_16_find_element() {
         let blocks = connector.findLogicBlocks(for: ["Epäilys-jatko"])
-        let logic = connector.areSatisfied(logic: blocks!, forKeyValue: ["Epäilys-jatko": "Muut aiheet"], in: ["Epäilys-jatko": "Muut aiheet"]).1
+        let logic = connector.areSatisfied(logic: blocks!, forAnswers: ["Epäilys-jatko": "Muut aiheet"]).1
         let configuration = connector.findTargetLogicConfiguration(from: logic!).0
         let targetView = connector.findTargetElement(for: configuration!)
         XCTAssertNotNil(targetView.0)
@@ -103,7 +119,7 @@ final class QuestionnaireElementConnectorLogicTests: XCTestCase {
 
     /// Acceptance test
     func test_20_acceptance() {
-        let targetElement = connector.findElementAndPageLogic(for: ["Epäilys-jatko": "Muut aiheet"], in: ["Epäilys-jatko": "Muut aiheet"])
+        let targetElement = connector.findElementAndPageLogic(for: ["Riskiryhmät-jatko": "Muut aiheet", "condition1": "satisfied"], in: ["Riskiryhmät-jatko": "Muut aiheet", "condition1": "satisfied"])
         XCTAssertNotNil(targetElement.0)
         XCTAssertNotNil(targetElement.1)
 
@@ -112,4 +128,17 @@ final class QuestionnaireElementConnectorLogicTests: XCTestCase {
         XCTAssertEqual(targetElement.1, 0)
     }
 
+    func test_21_acceptance() {
+        let expect = self.expectation(description: "Expected to reach `_complete` target")
+        expect.assertForOverFulfill = false
+
+        connector.onCompleteTargetReached = { logic in
+            expect.fulfill()
+        }
+        let targetElement = connector.findElementAndPageLogic(for: ["temp-btn":"Finnish"], in: ["Riskiryhmät-jatko": "Muut aiheet", "condition1": "satisfied", "temp-btn":"Finnish", "temp-btn2":"Finnish"])
+        XCTAssertNil(targetElement.0)
+        XCTAssertNil(targetElement.1)
+
+        waitForExpectations(timeout: 2.0)
+    }
 }

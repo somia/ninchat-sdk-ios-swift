@@ -77,7 +77,7 @@ extension QuestionnaireElementConnectorImpl {
 
     func findElementAndPageLogic(for dictionary: [String:AnyCodable], in answers: [String:AnyHashable]) -> ([QuestionnaireElement]?, Int?) {
         if let blocks = self.findLogicBlocks(for: Array(dictionary.keys)), blocks.count > 0 {
-            let satisfied: (bool: Bool, logic: LogicQuestionnaire?) = areSatisfied(logic: blocks, forKeyValue: dictionary, in: answers)
+            let satisfied: (bool: Bool, logic: LogicQuestionnaire?) = areSatisfied(logic: blocks, forAnswers: answers)
             if satisfied.bool, let logic = satisfied.logic {
                 if let tags = logic.tags, tags.count > 0 {
                     self.logicContainsTags?(logic)
@@ -109,8 +109,8 @@ extension QuestionnaireElementConnectorImpl {
 
     /// Determines if the derived 'logic' blocks from the `findLogicBlocks(for:)` API are satisfied
     /// Returns corresponded 'logic' block for given key:value
-    internal func areSatisfied(logic blocks: [LogicQuestionnaire], forKeyValue dictionary: [String:AnyCodable], in answers: [String:AnyHashable]) -> (Bool, LogicQuestionnaire?) {
-        if let theBlock = blocks.first(where: { $0.satisfy(dictionary: dictionary) }) {
+    internal func areSatisfied(logic blocks: [LogicQuestionnaire], forAnswers answers: [String:AnyHashable]) -> (Bool, LogicQuestionnaire?) {
+        if let theBlock = blocks.first(where: { $0.satisfy(dictionary: answers.reduce(into: [:]) { $0[$1.key] = AnyCodable($1.value) }) }) {
             return (true, theBlock)
         }
         return (false, nil)
