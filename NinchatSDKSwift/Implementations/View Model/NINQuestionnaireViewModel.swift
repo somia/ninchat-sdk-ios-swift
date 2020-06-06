@@ -11,6 +11,7 @@ import NinchatLowLevelClient
 protocol NINQuestionnaireViewModel {
     var pageNumber: Int { get set }
     var previousPage: Int { get set }
+    var requirementsSatisfied: Bool { get }
     var questionnaireAnswers: NINLowLevelClientProps { get }
 
     var onErrorOccurred: ((Error) -> Void)? { get set }
@@ -126,6 +127,18 @@ extension NINQuestionnaireViewModelImpl {
 extension NINQuestionnaireViewModelImpl {
     var questionnaireAnswers: NINLowLevelClientProps {
         NINLowLevelClientProps.initiate(metadata: self.answers)
+    }
+
+    var requirementsSatisfied: Bool {
+        guard self.views.count > self.pageNumber else { return false }
+        return self.views[self.pageNumber].filter({
+                if let required = $0.elementConfiguration?.required {
+                    return required
+                } else if let required = $0.questionnaireConfiguration?.required {
+                    return required
+                }
+                return false
+            }).filter({ self.getAnswersForElement($0) == nil }).count == 0
     }
 
     func getConfiguration() throws -> QuestionnaireConfiguration {

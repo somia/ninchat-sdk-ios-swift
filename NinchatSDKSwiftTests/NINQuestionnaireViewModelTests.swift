@@ -50,4 +50,29 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
             XCTFail(error.localizedDescription)
         }
     }
+
+    func test_30_getRequirementsStatus() {
+        self.viewModel?.goToPage(8)
+        XCTAssertTrue(self.viewModel?.requirementsSatisfied ?? false)
+
+        self.viewModel?.goToPage(0)
+        XCTAssertFalse(self.viewModel?.requirementsSatisfied ?? true)
+
+        let element = try? self.viewModel?.getElements().first
+        self.viewModel?.submitAnswer(key: element!, value: "Mikä on koronavirus")
+        XCTAssertTrue(self.viewModel?.requirementsSatisfied ?? false)
+    }
+
+    func test_31_getRequirementsStatus() {
+        self.viewModel?.goToPage(10)
+        XCTAssertFalse(self.viewModel?.requirementsSatisfied ?? false)
+
+        let textField = try? self.viewModel?.getElements().first(where: { $0 is QuestionnaireElementTextField })
+        self.viewModel?.submitAnswer(key: textField!, value: "+358123456789")
+        XCTAssertFalse(self.viewModel?.requirementsSatisfied ?? false)
+
+        let textView = try? self.viewModel?.getElements().first(where: { $0 is QuestionnaireElementTextArea })
+        self.viewModel?.submitAnswer(key: textView!, value: "This is a sample input")
+        XCTAssertTrue(self.viewModel?.requirementsSatisfied ?? false)
+    }
 }
