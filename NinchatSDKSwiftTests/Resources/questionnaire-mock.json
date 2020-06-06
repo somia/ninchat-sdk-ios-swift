@@ -635,6 +635,11 @@
           "required": true
         }
       ]
+    },
+    {
+      "name": "wouldRecommendService",
+      "element": "likert",
+      "label": "I would recommend service to a friend"
     }
   ]
 }

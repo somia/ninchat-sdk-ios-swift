@@ -40,7 +40,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 
     // MARK: - NINQuestionnaireViewModel
 
-    var pageNumber: Int = 0
+    var pageNumber: Int = 11
     var previousPage: Int = 0
     var onErrorOccurred: ((Error) -> Void)?
     var onQuestionnaireFinished: ((Queue) -> Void)?

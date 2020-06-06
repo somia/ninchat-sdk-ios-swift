@@ -669,6 +669,34 @@
           "7fvo5qv400eao"
         ]
       }
+    },
+    {
+      "name": "wouldRecommendService",
+      "element": "likert",
+      "label": "I would recommend service to a friend"
+    },
+    {
+        "name": "recommend-logic",
+        "logic": {
+          "or": [
+            {
+                "wouldRecommendService": "1"
+            },
+            {
+                "wouldRecommendService": "2"
+            },
+            {
+                "wouldRecommendService": "3"
+            },
+            {
+                "wouldRecommendService": "4"
+            },
+            {
+                "wouldRecommendService": "5"
+            }
+          ],
+          "target": "_complete"
+        }
     }
   ],
   "default": {

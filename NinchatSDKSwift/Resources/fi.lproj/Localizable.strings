@@ -9,3 +9,8 @@
 "Guest" = "Vieras";
 "NoQueueText" = "Ei avoimia jonoja liittymiseen";
 "Select" = "Valita";
+"Strongly agree" = "Täysin samaa mieltä";
+"Agree" = "Jokseenkin samaa mieltä";
+"OK" = "Ei samaa eikä eri mieltä";
+"Disagree" = "Jokseenkin eri mieltä";
+"Strongly disagree" = "Täysin eri mieltä";
