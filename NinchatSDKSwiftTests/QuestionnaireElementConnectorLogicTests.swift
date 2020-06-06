@@ -49,6 +49,10 @@ final class QuestionnaireElementConnectorLogicTests: XCTestCase {
         let answers: [String:AnyHashable] = ["Epäilys-jatko": "Muut aiheet", "arbitrary":"option"]
         let blocks = connector.findLogicBlocks(for: ["Epäilys-jatko"])
 
+        let satisfied_0 = connector.areSatisfied(logic: blocks!, forKeyValue: [:], in: answers)
+        XCTAssertFalse(satisfied_0.0)
+        XCTAssertNil(satisfied_0.1)
+
         let satisfied_1 = connector.areSatisfied(logic: blocks!, forKeyValue: ["Epäilys-jatko":""], in: answers)
         XCTAssertFalse(satisfied_1.0)
         XCTAssertNil(satisfied_1.1)
@@ -59,7 +63,16 @@ final class QuestionnaireElementConnectorLogicTests: XCTestCase {
         XCTAssertEqual(satisfied_2.1?.target, "Aiheet")
     }
 
-    func test_13_find_configuration() {
+    func test_13_satisfyLogic_regex() {
+        let answers: [String:AnyHashable] = ["wouldRecommendService": "1"]
+        let blocks = connector.findLogicBlocks(for: ["wouldRecommendService"])
+        let satisfied = connector.areSatisfied(logic: blocks!, forKeyValue: ["wouldRecommendService": "1"], in: answers)
+        XCTAssertTrue(satisfied.0)
+        XCTAssertNotNil(satisfied.1)
+        XCTAssertEqual(satisfied.1?.target, "_complete")
+    }
+
+    func test_14_find_configuration() {
         let blocks = connector.findLogicBlocks(for: ["fake"])
         let logic = connector.areSatisfied(logic: blocks!, forKeyValue: ["fake": "fake", "Koronavirus-jatko": "Muut aiheet"], in: ["Koronavirus-jatko": "Muut aiheet", "fake": "fake"]).1
         let configuration = connector.findTargetLogicConfiguration(from: logic!)
@@ -68,7 +81,7 @@ final class QuestionnaireElementConnectorLogicTests: XCTestCase {
         XCTAssertEqual(configuration.1, 0)
     }
 
-    func test_14_find_element() {
+    func test_15_find_element() {
         let blocks = connector.findLogicBlocks(for: ["fake"])
         let logic = connector.areSatisfied(logic: blocks!, forKeyValue: ["fake": "fake", "Koronavirus-jatko": "Muut aiheet"], in: ["fake": "fake", "Koronavirus-jatko": "Muut aiheet"]).1
         let configuration = connector.findTargetLogicConfiguration(from: logic!).0
@@ -78,7 +91,7 @@ final class QuestionnaireElementConnectorLogicTests: XCTestCase {
         XCTAssertEqual(targetView.1, 0)
     }
 
-    func test_15_find_element() {
+    func test_16_find_element() {
         let blocks = connector.findLogicBlocks(for: ["Epäilys-jatko"])
         let logic = connector.areSatisfied(logic: blocks!, forKeyValue: ["Epäilys-jatko": "Muut aiheet"], in: ["Epäilys-jatko": "Muut aiheet"]).1
         let configuration = connector.findTargetLogicConfiguration(from: logic!).0

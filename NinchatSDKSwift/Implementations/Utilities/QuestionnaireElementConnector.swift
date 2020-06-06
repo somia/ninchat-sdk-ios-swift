@@ -110,18 +110,7 @@ extension QuestionnaireElementConnectorImpl {
     /// Determines if the derived 'logic' blocks from the `findLogicBlocks(for:)` API are satisfied
     /// Returns corresponded 'logic' block for given key:value
     internal func areSatisfied(logic blocks: [LogicQuestionnaire], forKeyValue dictionary: [String:AnyCodable], in answers: [String:AnyHashable]) -> (Bool, LogicQuestionnaire?) {
-        let satisfiedBlocks = blocks.filter({ $0.satisfy(dictionary: answers.reduce(into: [:]) { $0[$1.key] = AnyCodable($1.value) } ) })
-        if let theBlock = satisfiedBlocks
-                .first(where: {
-                    let dictionaryValues: Array<AnyCodable> = Array(dictionary.values)
-                    if let andValuesFiltered = $0.andValues?.filter({ dictionaryValues.contains($0) }) {
-                        return andValuesFiltered.count > 0
-                    }
-                    if let orValuesFiltered = $0.orValues?.filter({ dictionaryValues.contains($0) }) {
-                        return orValuesFiltered.count > 0
-                    }
-                    return false
-                }) {
+        if let theBlock = blocks.first(where: { $0.satisfy(dictionary: dictionary) }) {
             return (true, theBlock)
         }
         return (false, nil)

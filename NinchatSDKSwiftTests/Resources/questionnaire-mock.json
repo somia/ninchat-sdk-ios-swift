@@ -122,7 +122,7 @@
       "logic": {
         "and": [
           {
-            "fake": "fake",
+            "fake": "fake-1",
             "Koronavirus-jatko": "Sulje"
           }
         ],
@@ -134,7 +134,7 @@
       "logic": {
         "or": [
           {
-            "fake": "fake",
+            "fake": "fake-2",
             "Koronavirus-jatko": "Muut aiheet"
           }
         ],
@@ -637,9 +637,36 @@
       ]
     },
     {
+      "name": "start-Logic",
+      "logic": {
+        "and": [
+          {
+            "temp-btn": "Finnish",
+            "temp-btn2": "Finnish"
+          }
+        ],
+        "target": "_complete",
+        "tags": [
+          "7fvo5p8700eao",
+          "7fvo5qv400eao"
+        ]
+      }
+    },
+    {
       "name": "wouldRecommendService",
       "element": "likert",
       "label": "I would recommend service to a friend"
+    },
+    {
+      "name": "recommend-logic",
+      "logic": {
+        "or": [
+          {
+            "wouldRecommendService": "^[1-5]$"
+          }
+        ],
+        "target": "_complete"
+      }
     }
   ]
 }
