@@ -11,11 +11,13 @@ import NinchatLowLevelClient
 protocol NINQuestionnaireViewModel {
     var pageNumber: Int { get set }
     var previousPage: Int { get set }
+    var requirementsSatisfied: Bool { get }
     var questionnaireAnswers: NINLowLevelClientProps { get }
 
     var onErrorOccurred: ((Error) -> Void)? { get set }
     var onQuestionnaireFinished: ((Queue) -> Void)? { get set }
     var onSessionFinished: (() -> Void)? { get set }
+    var requirementSatisfactionUpdater: ((Bool) -> Void)? { get set }
 
     init(sessionManager: NINChatSessionManager, queue: Queue)
     func getConfiguration() throws -> QuestionnaireConfiguration
@@ -25,9 +27,9 @@ protocol NINQuestionnaireViewModel {
     func logicTargetPage(for option: ElementOption, name: String) -> Int?
     func goToNextPage() -> Bool
     func goToPreviousPage() -> Bool
-    func goToPage(_ page: Int)
+    func goToPage(_ page: Int) -> Bool
     func submitAnswer(key: QuestionnaireElement?, value: AnyHashable)
-    func removeAnswer(key: QuestionnaireElement?, value: AnyHashable)
+    func removeAnswer(key: QuestionnaireElement?)
 }
 
 final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
@@ -45,6 +47,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     var onErrorOccurred: ((Error) -> Void)?
     var onQuestionnaireFinished: ((Queue) -> Void)?
     var onSessionFinished: (() -> Void)?
+    var requirementSatisfactionUpdater: ((Bool) -> Void)?
 
     init(sessionManager: NINChatSessionManager, queue: Queue) {
         self.queue = queue
@@ -128,6 +131,18 @@ extension NINQuestionnaireViewModelImpl {
         NINLowLevelClientProps.initiate(metadata: self.answers)
     }
 
+    var requirementsSatisfied: Bool {
+        guard self.views.count > self.pageNumber else { return false }
+        return self.views[self.pageNumber].filter({
+                if let required = $0.elementConfiguration?.required {
+                    return required
+                } else if let required = $0.questionnaireConfiguration?.required {
+                    return required
+                }
+                return false
+            }).filter({ self.getAnswersForElement($0) == nil }).count == 0
+    }
+
     func getConfiguration() throws -> QuestionnaireConfiguration {
         if let audienceQuestionnaire = self.sessionManager.siteConfiguration.preAudienceQuestionnaire?.filter({ $0.element != nil || $0.elements != nil }) {
             guard audienceQuestionnaire.count > self.pageNumber else { throw NINQuestionnaireException.invalidNumberOfQuestionnaires }
@@ -165,15 +180,19 @@ extension NINQuestionnaireViewModelImpl {
         if let configuration = key?.elementConfiguration {
             self.answers[configuration.name] = value
         }
+        self.requirementSatisfactionUpdater?(self.requirementsSatisfied)
     }
 
-    func removeAnswer(key: QuestionnaireElement?, value: AnyHashable) {
-        if let configuration = key?.elementConfiguration, let answer = self.answers[configuration.name], answer == value {
+    func removeAnswer(key: QuestionnaireElement?) {
+        if let configuration = key?.elementConfiguration {
             self.answers.removeValue(forKey: configuration.name)
         }
+        self.requirementSatisfactionUpdater?(self.requirementsSatisfied)
     }
 
     func goToNextPage() -> Bool {
+        guard self.requirementsSatisfied else { return false }
+
         if self.views.count > self.pageNumber + 1 {
             self.previousPage = self.pageNumber
             self.pageNumber += 1
@@ -191,8 +210,11 @@ extension NINQuestionnaireViewModelImpl {
         return false
     }
 
-    func goToPage(_ page: Int) {
+    func goToPage(_ page: Int) -> Bool {
+        guard self.requirementsSatisfied else { return false }
+
         self.previousPage = self.pageNumber
         self.pageNumber = page
+        return true
     }
 }

@@ -484,7 +484,7 @@
           "element": "radio",
           "name": "Karanteeni-jatko",
           "label": "Oliko ohjeesta apua?",
-          "required": true,
+          "required": false,
           "options": [
             {
               "label": "Kiitos, sulje chat",
