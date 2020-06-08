@@ -75,4 +75,12 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         self.viewModel?.submitAnswer(key: textView!, value: "This is a sample input")
         XCTAssertTrue(self.viewModel?.requirementsSatisfied ?? false)
     }
+
+    func test_40_pageNavigation() {
+        XCTAssertFalse(self.viewModel?.goToPage(8) ?? true)
+
+        let element = try? self.viewModel?.getElements().first
+        self.viewModel?.submitAnswer(key: element!, value: "Mikä on koronavirus")
+        XCTAssertTrue(self.viewModel?.goToPage(8) ?? false)
+    }
 }
