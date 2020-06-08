@@ -157,8 +157,7 @@ extension QuestionnaireElementCheckbox {
 
     private func generateButton(for option: ElementOption, icon: (UIView, UIImageView), tag: Int) -> Button {
         let view = Button(frame: .zero) { [weak self] button in
-            button.isSelected = !button.isSelected
-            button.isSelected ? self?.select(option: option) : self?.deselect(option: option)
+            self?.applySelection(to: option)
             button.isSelected ? self?.onElementOptionSelected?(option) : self?.onElementOptionDeselected?(option)
         }
 
@@ -189,8 +188,8 @@ extension QuestionnaireElementCheckbox {
         view.addSubview(icon)
 
         icon
-                .fix(top: (5.0, view), bottom: (5.0, view))
-                .fix(leading: (5.0, view), trailing: (5.0, view))
+            .fix(top: (5.0, view), bottom: (5.0, view))
+            .fix(leading: (5.0, view), trailing: (5.0, view))
     }
 
     private func layout(button: Button, icon: UIView, upperView: inout UIView?) {
@@ -227,5 +226,12 @@ extension QuestionnaireElementCheckbox {
         }
 
         upperView = button
+    }
+
+    private func applySelection(to option: ElementOption) {
+        self.elementConfiguration?.options?.forEach({ option in
+            self.deselect(option: option)
+        })
+        self.select(option: option)
     }
 }
