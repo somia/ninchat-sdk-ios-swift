@@ -23,7 +23,7 @@ final class NinchatSDKSwiftServerQuestionnaireTests: XCTestCase {
                 try! self.sessionManager.list(queues: self.sessionManager.siteConfiguration.audienceQueues) { error in
                     XCTAssertNil(error)
 
-                    try! self.sessionManager.registerQuestionnaire(toQueue: Session.suiteQueue, answers: NINLowLevelClientProps.initiate(preQuestionnaireAnswers: ["question":"answer"])) { error in
+                    try! self.sessionManager.registerQuestionnaire(queue: Session.suiteQueue, answers: NINLowLevelClientProps.initiate(preQuestionnaireAnswers: ["question":"answer"])) { error in
                         XCTAssertNil(error)
                         expect.fulfill()
                     }

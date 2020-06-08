@@ -6,6 +6,7 @@
 
 import UIKit
 import XCTest
+import AnyCodable
 @testable import NinchatSDKSwift
 
 final class ExtensionsTests: XCTestCase {
@@ -34,6 +35,16 @@ final class ExtensionsTests: XCTestCase {
         
         XCTAssertFalse("Foo. No tags here.".containsTags)
         XCTAssertFalse("Well, this is <not > a valid tag.".containsTags)
+    }
+
+    func test_string_regex() {
+        let string_1 = "🇩🇪€4€9"
+        XCTAssertNotNil(string_1.extractRegex(withPattern: "[0-9]"))
+        XCTAssertEqual(string_1.extractRegex(withPattern: "[0-9]"), ["4", "9"])
+
+        let string_2 = "2"
+        XCTAssertNotNil(string_2.extractRegex(withPattern: "^[1-5]$"))
+        XCTAssertEqual(string_2.extractRegex(withPattern: "^[1-5]$"), ["2"])
     }
 
     func test_html_string_utf16() {
@@ -100,12 +111,32 @@ final class ExtensionsTests: XCTestCase {
         XCTAssertNotNil(dic.toData)
     }
 
-    func test_dictionary_filter() {
+    func test_dictionary_filter_keys() {
         let keys = ["key1", "key2"]
         let dictionary = ["key1":"value1", "invalid1":"value1", "key2":"value2", "invalid2":"value2"]
 
         let filtered = dictionary.filter(based: keys)
         XCTAssertEqual(filtered, ["key1":"value1", "key2":"value2"])
+    }
+
+    func test_dictionary_filter_dictionary() {
+        let keys = ["key1", "key2"]
+        let target: [String:AnyCodable] = ["key1":"value1", "key2":"^[1-5]$"]
+
+        let dictionary_1: [String:AnyCodable] = ["key1":"value1", "invalid1":"value1", "key2":"value2", "invalid2":"value2"]
+        XCTAssertEqual(dictionary_1.filter(based: target, keys: keys), ["key1":"value1"])
+
+        let dictionary_2: [String:AnyCodable] = ["key1":"value1", "invalid1":"value1", "key2":"2", "invalid2":"value2"]
+        XCTAssertEqual(dictionary_2.filter(based: target, keys: keys), ["key1":"value1", "key2":"2"])
+
+        let dictionary_3: [String:AnyCodable] = [:]
+        XCTAssertNil(dictionary_3.filter(based: target, keys: keys))
+
+        let dictionary_4: [String:AnyCodable] = ["key2":"2"]
+        XCTAssertEqual(dictionary_4.filter(based: target, keys: keys), ["key2":"2"])
+
+        let dictionary_5: [String:AnyCodable] = ["key2":"invalid"]
+        XCTAssertNil(dictionary_5.filter(based: target, keys: keys))
     }
 
     func test_color_to_image() {

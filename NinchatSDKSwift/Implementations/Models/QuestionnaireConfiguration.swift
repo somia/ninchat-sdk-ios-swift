@@ -111,10 +111,12 @@ struct LogicQuestionnaire: Codable {
     }
 
     func satisfy(dictionary: [String:AnyCodable]) -> Bool {
-        if self.and != nil {
-            return self.and?.first(where: { $0 != dictionary.filter(based: self.andKeys ?? []) }) == nil
+        if let ands = self.and, ands.count > 0 {
+            return ands.first(where: { dictionary.filter(based: $0, keys: self.andKeys ?? [])?.count == $0.keys.count }) != nil
+        } else if let ors = self.or, ors.count > 0 {
+            return ors.first(where: { dictionary.filter(based: $0, keys: self.orKeys ?? [])?.count != 0 }) != nil
         }
-        return self.or?.first(where: { $0 == dictionary.filter(based: self.orKeys ?? []) }) != nil
+        return false
     }
 }
 

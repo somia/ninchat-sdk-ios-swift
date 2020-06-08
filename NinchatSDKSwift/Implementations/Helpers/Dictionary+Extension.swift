@@ -4,6 +4,7 @@
 // license that can be found in the LICENSE file.
 //
 
+import AnyCodable
 import Foundation
 import WebRTC
 
@@ -37,5 +38,19 @@ extension Dictionary where Key==String {
 
     func filter(based keys: [String]) -> Dictionary {
         self.filter({ keys.contains($0.key) })
+    }
+}
+
+extension Dictionary where Key==String, Value==AnyCodable {
+    func filter(based dictionary: [String:AnyCodable], keys: [String]) -> Self? {
+        guard dictionary.keys.count > 0, self.keys.count > 0 else { return nil }
+        let result = self.filter(based: keys).filter { (key: String, value: AnyCodable) in
+            if let regexPattern = dictionary[key]?.value as? String, let selfValue = value.value as? String, let regexResult = selfValue.extractRegex(withPattern: regexPattern), regexResult.count > 0 {
+                return true
+            }
+            return dictionary[key] == value
+        }
+
+        return (result.count > 0) ? result : nil
     }
 }

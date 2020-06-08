@@ -56,3 +56,17 @@ extension String {
         return NSLocalizedString(self, tableName: "Localizable", bundle: bundle, value: "", comment: "")
     }
 }
+
+extension String {
+    func extractRegex(withPattern pattern: String) -> [String]? {
+        do {
+            let regex = try NSRegularExpression(pattern: pattern)
+            let results = regex.matches(in: self, range: NSRange(self.startIndex..., in: self))
+            return results.map {
+                String(self[Range($0.range, in: self)!])
+            }
+        } catch {
+            debugger("Error in extracting regex with pattern: \(pattern): \(error)"); return nil
+        }
+    }
+}
