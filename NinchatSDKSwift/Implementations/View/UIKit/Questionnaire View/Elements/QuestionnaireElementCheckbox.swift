@@ -45,10 +45,8 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle,
 
     var presetAnswer: AnyHashable? {
         didSet {
-            if let answer = self.presetAnswer as? String,
-               let option = self.elementConfiguration?.options?.first(where: { $0.label == answer }),
-               let button = self.view.subviews.compactMap({ $0 as? Button }).first(where: { $0.titleLabel?.text == option.label }) {
-                button.closure?(button)
+            if let answer = self.presetAnswer as? String, let option = self.elementConfiguration?.options?.first(where: { $0.value == answer }) {
+                self.select(option: option)
             }
         }
     }
@@ -58,10 +56,26 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle,
     var onElementOptionSelected: ((ElementOption) -> ())?
     var onElementOptionDeselected: ((ElementOption) -> ())?
 
+    private func select(option: ElementOption) {
+        guard let index = self.elementConfiguration?.options?.firstIndex(where: { $0.label == option.label }) else { return }
+        if let button = self.view.subviews.compactMap({ $0 as? Button }).first(where: { $0.tag == index + 100 }) {
+            button.isSelected = true
+        }
+        if let icon = self.view.subviews.first(where: { $0.tag == index + 200 }) {
+            icon.round(radius: 23.0 / 2, borderWidth: 2.0, borderColor: self.iconBorderSelectedColor)
+            (icon.subviews.first(where: { $0 is UIImageView }) as? UIImageView)?.isHighlighted = true
+        }
+    }
+
     func deselect(option: ElementOption) {
-        guard let tag = self.elementConfiguration?.options?.firstIndex(where: { $0.label == option.label }) else { return }
-        (self.view.viewWithTag(tag + 100) as? Button)?.isSelected = false
-        (self.view.viewWithTag(tag + 200) as? UIImageView)?.isHighlighted = false
+        guard let index = self.elementConfiguration?.options?.firstIndex(where: { $0.label == option.label }) else { return }
+        if let button = self.view.subviews.compactMap({ $0 as? Button }).first(where: { $0.tag == index + 100 }) {
+            button.isSelected = false
+        }
+        if let icon = self.view.subviews.first(where: { $0.tag == index + 200 }) {
+            icon.round(radius: 23.0 / 2, borderWidth: 2.0, borderColor: self.iconBorderNormalColor)
+            (icon.subviews.first(where: { $0 is UIImageView }) as? UIImageView)?.isHighlighted = false
+        }
     }
 
     // MARK: - Subviews - QuestionnaireElementWithTitleAndOptions + QuestionnaireElementHasButtons
@@ -122,10 +136,10 @@ extension Button {
 /// QuestionnaireElement
 extension QuestionnaireElement where Self:QuestionnaireElementCheckbox {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
-        self.elementConfiguration = configuration
+        if self.didShapedView { return }
 
+        self.elementConfiguration = configuration
         self.shapeTitle(configuration)
-        guard self.view.subviews.count == 0 else { return }
         self.shapeCheckbox(configuration)
     }
 }
@@ -144,8 +158,7 @@ extension QuestionnaireElementCheckbox {
     private func generateButton(for option: ElementOption, icon: (UIView, UIImageView), tag: Int) -> Button {
         let view = Button(frame: .zero) { [weak self] button in
             button.isSelected = !button.isSelected
-            icon.0.round(radius: 23.0 / 2, borderWidth: 2.0, borderColor: (button.isSelected ? self?.iconBorderSelectedColor : self?.iconBorderNormalColor) ?? .QGrayButton)
-            icon.1.isHighlighted = button.isSelected
+            button.isSelected ? self?.select(option: option) : self?.deselect(option: option)
             button.isSelected ? self?.onElementOptionSelected?(option) : self?.onElementOptionDeselected?(option)
         }
 
@@ -167,11 +180,9 @@ extension QuestionnaireElementCheckbox {
         imgViewContainer.backgroundColor = .clear
         imgViewContainer.isUserInteractionEnabled = false
         imgViewContainer.isExclusiveTouch = false
+        imgViewContainer.tag = tag + 200
 
-        let image = UIImageView(image: nil, highlightedImage: UIImage(named: "icon_checkbox_selected", in: .SDKBundle, compatibleWith: nil))
-        image.tag = tag + 200
-
-        return (imgViewContainer, image)
+        return (imgViewContainer, UIImageView(image: nil, highlightedImage: UIImage(named: "icon_checkbox_selected", in: .SDKBundle, compatibleWith: nil)))
     }
 
     private func layout(icon: UIImageView, within view: UIView) {

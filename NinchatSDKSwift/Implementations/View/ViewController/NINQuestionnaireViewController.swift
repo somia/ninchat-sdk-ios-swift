@@ -66,6 +66,9 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
 
 extension NINQuestionnaireViewController {
     private func layoutSubview(_ view: UIView, parent: UIView) {
+        if parent.subviews.filter({ $0 is QuestionnaireElement }).count > 0 {
+            parent.subviews.filter({ $0 is QuestionnaireElement }).forEach({ $0.removeFromSuperview() })
+        }
         parent.addSubview(view)
 
         view

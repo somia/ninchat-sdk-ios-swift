@@ -147,7 +147,7 @@ extension QuestionnaireElementRadio {
         self.view.addSubview(button)
 
         if self.scaleToParent {
-            button.fix(leading: (8.0, self.view), trailing: (8.0, self.view))
+            button.fix(leading: (0.0, self.view), trailing: (0.0, self.view))
             button.leading?.priority = .required
             button.trailing?.priority = .required
         } else if self.width?.constant ?? 0 < self.intrinsicContentSize.width + 32.0 {
@@ -181,14 +181,13 @@ extension QuestionnaireElementRadio {
     }
 }
 
-
 /// QuestionnaireElement
 extension QuestionnaireElement where Self:QuestionnaireElementRadio {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
-        self.elementConfiguration = configuration
+        if self.didShapedView { return }
 
+        self.elementConfiguration = configuration
         self.shapeTitle(configuration)
-        guard self.view.subviews.count == 0 else { return }
         self.shapeRadioView(configuration)
     }
 }

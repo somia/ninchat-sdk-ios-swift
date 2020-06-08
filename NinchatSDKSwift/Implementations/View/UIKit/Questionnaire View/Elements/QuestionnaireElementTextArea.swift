@@ -127,14 +127,14 @@ extension QuestionnaireElementTextArea: QuestionnaireHasDoneButton {
 
 extension QuestionnaireElement where Self:QuestionnaireElementTextArea {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
-        self.shapeTitle(configuration)
+        if self.didShapedView { return }
 
+        self.elementConfiguration = configuration
+        self.shapeTitle(configuration)
         self.view.backgroundColor = .clear
         self.view.textAlignment = .left
         self.view.font = .ninchat
         self.view.fix(height: 98.0)
-
-        self.elementConfiguration = configuration
         if self.isCompleted == nil {
             self.isCompleted = !(configuration?.required ?? true)
         }
