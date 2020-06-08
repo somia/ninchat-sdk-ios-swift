@@ -38,8 +38,6 @@ extension QuestionnaireElementLikert {
 
 extension QuestionnaireElement where Self:QuestionnaireElementLikert {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
-        if self.didShapedView { return }
-
         self.elementConfiguration = configuration
         self.shapeTitle(configuration)
         self.shapeLikertView()
