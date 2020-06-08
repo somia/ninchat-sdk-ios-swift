@@ -136,20 +136,22 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         do {
-            let elements = try self.viewModel.getElements()
-            return (indexPath.row == elements.count) ? navigation(tableView, cellForRowAt: indexPath) : questionnaire(tableView, cellForRowAt: indexPath)
+            return (indexPath.row == (try self.viewModel.getElements()).count) ? navigation(tableView, cellForRowAt: indexPath) : questionnaire(tableView, cellForRowAt: indexPath)
         } catch {
             fatalError(error.localizedDescription)
         }
     }
 
     private func navigation(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        /// Show navigation buttons
         do {
             let cell: QuestionnaireNavigationCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
             cell.configuration = try self.viewModel.getConfiguration()
+            cell.requirementsSatisfied = self.viewModel.requirementsSatisfied
             cell.overrideAssets(with: self.session)
 
+            self.viewModel.requirementSatisfactionUpdater = { [weak self] satisfied in
+                cell.requirementSatisfactionUpdater?(satisfied)
+            }
             cell.onNextButtonTapped = { [weak self] questionnaire in
                 if self?.viewModel.goToNextPage() ?? false {
                     self?.updateContentView()
@@ -178,9 +180,10 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
             if var view = element as? QuestionnaireOptionSelectableElement {
                 view.onElementOptionSelected = { [weak self] option in
                     func showTargetPage(_ page: Int) {
-                        self?.viewModel.goToPage(page)
-                        view.deselect(option: option)
-                        self?.updateContentView()
+                        if self?.viewModel.goToPage(page) ?? false {
+                            view.deselect(option: option)
+                            self?.updateContentView()
+                        }
                     }
 
                     self?.viewModel.submitAnswer(key: element, value: option.value)
@@ -190,17 +193,19 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
                         showTargetPage(page)
                     }
                 }
-                view.onElementOptionDeselected = { option in
-                    self.viewModel.removeAnswer(key: element, value: option.value)
+                view.onElementOptionDeselected = { _ in
+                    self.viewModel.removeAnswer(key: element)
                 }
             }
             if var view = element as? QuestionnaireFocusableElement {
                 view.onElementFocused = { _ in }
                 view.onElementDismissed = { [weak self] element in
-                    if let textView = element as? QuestionnaireElementTextArea {
+                    if let textView = element as? QuestionnaireElementTextArea, let text = textView.view.text, !text.isEmpty, textView.isCompleted {
                         self?.viewModel.submitAnswer(key: element, value: textView.view.text)
-                    } else if let textField = element as? QuestionnaireElementTextField {
+                    } else if let textField = element as? QuestionnaireElementTextField, let text = textField.view.text, !text.isEmpty, textField.isCompleted {
                         self?.viewModel.submitAnswer(key: element, value: textField.view.text)
+                    } else {
+                        self?.viewModel.removeAnswer(key: element)
                     }
                 }
             }

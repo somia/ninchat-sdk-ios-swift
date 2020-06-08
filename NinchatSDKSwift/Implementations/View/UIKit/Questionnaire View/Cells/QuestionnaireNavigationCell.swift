@@ -17,6 +17,16 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
             self.decorateView()
         }
     }
+    var requirementsSatisfied: Bool = true {
+        didSet {
+            if let nextButton = self.buttons.subviews.compactMap({ $0 as? UIButton }).first(where: { $0.trailing != nil }) {
+                nextButton.isEnabled = requirementsSatisfied
+                nextButton.alpha = (requirementsSatisfied) ? 1.0 : 0.5
+            }
+        }
+    }
+
+    var requirementSatisfactionUpdater: ((Bool) -> Void)?
     var onNextButtonTapped: ((ButtonQuestionnaire) -> Void)?
     var onBackButtonTapped: ((ButtonQuestionnaire) -> Void)?
 
@@ -81,10 +91,20 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
         if self.buttons.subviews.count > 0 {
             self.layoutNavigationButtons()
         }
+        self.setupUpdater()
+    }
+
+    private func setupUpdater() {
+        self.requirementSatisfactionUpdater = { [weak self] satisfied in
+            if let nextButton = self?.buttons.subviews.compactMap({ $0 as? UIButton }).first(where: { $0.trailing != nil }) {
+                nextButton.isEnabled = satisfied
+                nextButton.alpha = (satisfied) ? 1.0 : 0.5
+            }
+        }
     }
 }
 
-extension QuestionnaireNavigationButtons where Self:UITableViewCell {
+extension QuestionnaireNavigationCell {
     func addNavigationButtons() {
         /// Must be called in `view.awakeFromNib()` function
         self.contentView.addSubview(buttons)
