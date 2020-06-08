@@ -37,13 +37,13 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         if let nextButton = self.buttons.subviews.first(where: { $0.trailing != nil }) as? Button {
             if nextButton.titleLabel?.text?.isEmpty ?? true {
-                nextButton.imageView?.tint = delegate?.override(questionnaireAsset: .navigationNextText) ?? .QBlueButtonNormal
+                nextButton.imageView?.tint = delegate?.override(questionnaireAsset: .navigationNextText) ?? .white
             } else {
-                nextButton.setTitleColor(delegate?.override(questionnaireAsset: .navigationNextText) ?? .QBlueButtonNormal, for: .normal)
-                nextButton.setTitleColor(delegate?.override(questionnaireAsset: .navigationNextText) ?? .QBlueButtonNormal, for: .selected)
+                nextButton.setTitleColor(delegate?.override(questionnaireAsset: .navigationNextText) ?? .white, for: .normal)
+                nextButton.setTitleColor(delegate?.override(questionnaireAsset: .navigationNextText) ?? .white, for: .selected)
             }
             nextButton.layer.borderColor = delegate?.override(questionnaireAsset: .navigationNextText)?.cgColor ?? UIColor.QBlueButtonNormal.cgColor
-            nextButton.backgroundColor = delegate?.override(questionnaireAsset: .navigationNextBackground) ?? .white
+            nextButton.backgroundColor = delegate?.override(questionnaireAsset: .navigationNextBackground) ?? .QBlueButtonNormal
         }
         if let backButton = self.buttons.subviews.first(where: { $0.leading != nil }) as? Button {
             if backButton.titleLabel?.text?.isEmpty ?? true {

@@ -6,7 +6,7 @@
 
 import UIKit
 
-enum FontWeight: String {
+enum FontWeight: String, CaseIterable {
     case light      = "Light"
     case regular    = "Regular"
     case semiBold   = "SemiBold"
@@ -19,8 +19,8 @@ extension UIFont {
     }
     
     static var ninchat: UIFont? {
+        FontWeight.allCases.forEach({ register(font: "SourceSansPro-\($0.rawValue)") })
         guard let font = UIFont(name: fontName, size: 16.0) else {
-            register(font: fontName)
             return UIFont(name: fontName, size: 16.0)
         }
         

@@ -646,6 +646,47 @@
           "required": false
         },
         {
+            "element": "input",
+            "type": "text",
+            "label": "Phone number:",
+            "name": "Phone-1",
+            "pattern": "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$",
+            "required": false
+        },
+        {
+            "element": "input",
+            "type": "text",
+            "label": "Phone number:",
+            "name": "Phone-2",
+            "pattern": "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$",
+            "required": false
+        },
+        {
+            "element": "input",
+            "type": "text",
+            "label": "Phone number:",
+            "name": "Phone-3",
+            "pattern": "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$",
+            "required": false
+        },
+        {
+            "element": "input",
+            "type": "text",
+            "label": "Phone number:",
+            "name": "Phone-4",
+            "pattern": "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$",
+            "required": false
+        },
+        {
+            "element": "input",
+            "type": "text",
+            "label": "Phone number:",
+            "name": "Phone-5",
+            "pattern": "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$",
+            "required": false
+        },
+          
+        {
           "element": "textarea",
           "label": "Comments:",
           "name": "comments",

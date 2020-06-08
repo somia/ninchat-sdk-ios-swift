@@ -28,7 +28,7 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
     }
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
-        CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + 8
+        CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + (2.0 * 8)
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
@@ -44,7 +44,7 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
 
     var presetAnswer: AnyHashable? {
         didSet {
-            if let answer = self.presetAnswer as? String, let option = self.elementConfiguration?.options?.first(where: { $0.label == answer }) {
+            if let answer = self.presetAnswer as? String, let option = self.elementConfiguration?.options?.first(where: { $0.value == answer }) {
                 self.select(option: option)
             }
             self.updateBorder()
@@ -167,8 +167,10 @@ extension QuestionnaireElementSelect {
 
 extension QuestionnaireElementSelect: QuestionnaireElement {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
-        self.shapeTitle(configuration)
+        if self.didShapedView { return }
 
+        self.elementConfiguration = configuration
+        self.shapeTitle(configuration)
         self.view.backgroundColor = .clear
         self.view.fix(height: 45.0)
         self.selectedOption.font = .ninchat
@@ -176,8 +178,6 @@ extension QuestionnaireElementSelect: QuestionnaireElement {
         self.selectedOption.textColor = .QBlueButtonNormal
         self.selectedOption.highlightedTextColor = .QGrayButton
         self.selectionIndicator.contentMode = .scaleAspectFit
-
-        self.elementConfiguration = configuration
         self.updateBorder()
     }
 }

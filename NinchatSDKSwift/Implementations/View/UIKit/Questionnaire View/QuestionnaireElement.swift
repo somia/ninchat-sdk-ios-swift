@@ -28,12 +28,18 @@ protocol QuestionnaireElementWithTitle: QuestionnaireElement {
     var view: View { get }
     var title: UILabel { get }
     var scaleToParent: Bool { get set }
+    var didShapedView: Bool { get }
 
     func addElementViews()
     func layoutElementViews()
     func overrideTitle(delegate: NINChatSessionInternalDelegate?)
 }
 extension QuestionnaireElementWithTitle {
+    /// To prevent duplicate shaping functions
+    var didShapedView: Bool {
+        self.elementConfiguration != nil
+    }
+
     func addElementViews() {
         /// Must be called in `view.awakeFromNib()` function
         self.addSubview(title)
@@ -51,6 +57,8 @@ extension QuestionnaireElementWithTitle {
             .fix(top: (0.0, title), isRelative: true)
             .center(toX: self)
             .fix(width: self.width?.constant ?? self.bounds.width)
+        view.leading?.priority = .required
+        view.trailing?.priority = .required
     }
 
     func overrideTitle(delegate: NINChatSessionInternalDelegate?) {
