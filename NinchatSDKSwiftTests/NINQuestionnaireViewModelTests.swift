@@ -52,10 +52,10 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
     }
 
     func test_30_getRequirementsStatus() {
-        self.viewModel?.goToPage(8)
+        self.viewModel?.pageNumber = 8
         XCTAssertTrue(self.viewModel?.requirementsSatisfied ?? false)
 
-        self.viewModel?.goToPage(0)
+        self.viewModel?.pageNumber = 0
         XCTAssertFalse(self.viewModel?.requirementsSatisfied ?? true)
 
         let element = try? self.viewModel?.getElements().first
@@ -64,7 +64,7 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
     }
 
     func test_31_getRequirementsStatus() {
-        self.viewModel?.goToPage(10)
+        self.viewModel?.pageNumber = 10
         XCTAssertFalse(self.viewModel?.requirementsSatisfied ?? false)
 
         let textField = try? self.viewModel?.getElements().first(where: { $0 is QuestionnaireElementTextField })
