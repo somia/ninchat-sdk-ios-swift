@@ -21,7 +21,7 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         self.session = NINChatSessionManagerImpl(session: nil, serverAddress: "", audienceMetadata: self.answers, configuration: nil)
         self.session.setSiteConfiguration(siteConfiguration)
 
-        self.viewModel = NINQuestionnaireViewModelImpl(sessionManager: session, queue: Queue(queueID: "", name: "", isClosed: false))
+        self.viewModel = NINQuestionnaireViewModelImpl(sessionManager: session, queue: Queue(queueID: "", name: "", isClosed: false), questionnaireType: .pre)
     }
 
     func test_00_initialization() {

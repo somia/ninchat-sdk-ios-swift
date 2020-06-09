@@ -19,7 +19,7 @@ protocol NINQuestionnaireViewModel {
     var onSessionFinished: (() -> Void)? { get set }
     var requirementSatisfactionUpdater: ((Bool) -> Void)? { get set }
 
-    init(sessionManager: NINChatSessionManager, queue: Queue)
+    init(sessionManager: NINChatSessionManager, queue: Queue?, questionnaireType: AudienceQuestionnaireType)
     func getConfiguration() throws -> QuestionnaireConfiguration
     func getElements() throws -> [QuestionnaireElement]
     func getAnswersForElement(_ element: QuestionnaireElement) -> AnyHashable?
@@ -35,8 +35,8 @@ protocol NINQuestionnaireViewModel {
 final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 
     private let sessionManager: NINChatSessionManager
-    private let queue: Queue
     private let views: [[QuestionnaireElement]]
+    private let configurations: [QuestionnaireConfiguration]
     private var connector: QuestionnaireElementConnector!
     private(set) var answers: [String:AnyHashable]!
 
@@ -49,17 +49,21 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     var onSessionFinished: (() -> Void)?
     var requirementSatisfactionUpdater: ((Bool) -> Void)?
 
-    init(sessionManager: NINChatSessionManager, queue: Queue) {
-        self.queue = queue
+    init(sessionManager: NINChatSessionManager, queue: Queue?, questionnaireType: AudienceQuestionnaireType) {
         self.sessionManager = sessionManager
-        self.views = QuestionnaireElementConverter(configurations: sessionManager.siteConfiguration.preAudienceQuestionnaire!).elements
-        self.connector = QuestionnaireElementConnectorImpl(configurations: sessionManager.siteConfiguration.preAudienceQuestionnaire!)
+        self.configurations = (questionnaireType == .pre) ? sessionManager.siteConfiguration.preAudienceQuestionnaire! : sessionManager.siteConfiguration.postAudienceQuestionnaire!
+        self.views = QuestionnaireElementConverter(configurations: configurations).elements
+        self.connector = QuestionnaireElementConnectorImpl(configurations: configurations)
         self.answers = (try? self.extractGivenPreAnswers()) ?? [:]
 
-        self.setupConnector(queue: queue)
+        if let queue = queue, questionnaireType == .pre {
+            self.setupPreConnector(queue: queue)
+        } else if questionnaireType == .post {
+            self.setupPostConnector()
+        }
     }
 
-    private func setupConnector(queue: Queue) {
+    private func setupPreConnector(queue: Queue) {
         self.connector.logicContainsTags = { [weak self] logic in
             self?.submitTags(logic?.tags ?? [])
         }
@@ -79,6 +83,13 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
                     self?.onSessionFinished?()
                 }
             }
+        }
+    }
+
+    private func setupPostConnector() {
+        self.connector.onRegisterTargetReached = { [weak self] _ in
+            /// Call `send_metadata` action here
+            self?.onSessionFinished?()
         }
     }
 
@@ -144,12 +155,10 @@ extension NINQuestionnaireViewModelImpl {
     }
 
     func getConfiguration() throws -> QuestionnaireConfiguration {
-        if let audienceQuestionnaire = self.sessionManager.siteConfiguration.preAudienceQuestionnaire?.filter({ $0.element != nil || $0.elements != nil }) {
-            guard audienceQuestionnaire.count > self.pageNumber else { throw NINQuestionnaireException.invalidNumberOfQuestionnaires }
+        let audienceQuestionnaire = self.configurations.filter({ $0.element != nil || $0.elements != nil })
+        guard audienceQuestionnaire.count > self.pageNumber else { throw NINQuestionnaireException.invalidPage(self.pageNumber) }
 
-            return audienceQuestionnaire[self.pageNumber]
-        }
-        throw NINQuestionnaireException.invalidPage(self.pageNumber)
+        return audienceQuestionnaire[self.pageNumber]
     }
 
     func getElements() throws -> [QuestionnaireElement] {

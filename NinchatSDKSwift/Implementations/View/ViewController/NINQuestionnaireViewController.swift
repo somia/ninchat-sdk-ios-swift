@@ -13,7 +13,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
     // MARK: - ViewController
 
     var session: NINChatSession!
-    var queue: Queue!
+    var queue: Queue?
 
     // MARK: - Injected
 
@@ -28,11 +28,16 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
             viewModel.onQuestionnaireFinished = { [weak self] queue in
                 self?.completeQuestionnaire?(queue)
             }
-            viewModel.onSessionFinished = { [weak self] in
-                self?.session.onDidEnd()
+            viewModel.onSessionFinished = { [unowned self] in
+                if let ratingViewModel = self.ratingViewModel {
+                    (self.rating != nil) ? ratingViewModel.rateChat(with: self.rating!) : ratingViewModel.skipRating()
+                }
+                self.session.onDidEnd()
             }
         }
     }
+    var ratingViewModel: NINRatingViewModel?
+    var rating: ChatStatus?
     var completeQuestionnaire: ((_ queue: Queue) -> Void)?
 
     // MARK: - SubViews
@@ -152,7 +157,7 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
             cell.requirementsSatisfied = self.viewModel.requirementsSatisfied
             cell.overrideAssets(with: self.session)
 
-            self.viewModel.requirementSatisfactionUpdater = { [weak self] satisfied in
+            self.viewModel.requirementSatisfactionUpdater = { satisfied in
                 cell.requirementSatisfactionUpdater?(satisfied)
             }
             cell.onNextButtonTapped = { [weak self] questionnaire in

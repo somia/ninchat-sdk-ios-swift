@@ -7,6 +7,11 @@
 import Foundation
 import AnyCodable
 
+enum AudienceQuestionnaireType {
+    case pre
+    case post
+}
+
 // MARK: - Questionnaire
 struct AudienceQuestionnaire {
     var questionnaireConfiguration: [QuestionnaireConfiguration]?
