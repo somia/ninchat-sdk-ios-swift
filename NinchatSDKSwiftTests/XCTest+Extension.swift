@@ -19,6 +19,23 @@ extension XCTest {
     }
 }
 
+extension AudienceQuestionnaire {
+    init(from configuration: [AnyHashable : Any]?, for key: String) {
+        self.init(from: nil)
+
+        guard let configuration = configuration, let questionnaireConfigurations = configuration[key] as? Array<[String:AnyHashable]> else { return }
+        questionnaireConfiguration = questionnaireConfigurations.reduce(into: []) { (result: inout [QuestionnaireConfiguration], dictionary: [String: AnyHashable]) in
+            guard let data = try? JSONSerialization.data(withJSONObject: dictionary, options: []) else { return }
+            do {
+                let questionnaire = try JSONDecoder().decode(QuestionnaireConfiguration.self, from: data)
+                result.append(questionnaire)
+            } catch {
+                fatalError(error.localizedDescription)
+            }
+        }
+    }
+}
+
 extension NINChatSessionManagerImpl {
     func setSiteConfiguration(_ config: SiteConfiguration) {
         self.siteConfiguration = config

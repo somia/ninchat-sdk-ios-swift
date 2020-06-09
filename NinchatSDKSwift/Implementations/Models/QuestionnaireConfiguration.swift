@@ -10,17 +10,14 @@ import AnyCodable
 // MARK: - Questionnaire
 struct AudienceQuestionnaire {
     var questionnaireConfiguration: [QuestionnaireConfiguration]?
-    init(from configuration: [AnyHashable : Any]?, for key: String) {
-        guard let configuration = configuration, let questionnaireConfigurations = configuration[key] as? Array<[String:AnyHashable]> else { return }
-        questionnaireConfiguration = questionnaireConfigurations.reduce(into: []) { (result: inout [QuestionnaireConfiguration], dictionary: [String: AnyHashable]) in
+    init(from questionnaireConfigurations: Array<[String:AnyHashable]>?) {
+        questionnaireConfiguration = questionnaireConfigurations?.reduce(into: []) { (result: inout [QuestionnaireConfiguration], dictionary: [String: AnyHashable]) in
             guard let data = try? JSONSerialization.data(withJSONObject: dictionary, options: []) else { return }
             do {
                 let questionnaire = try JSONDecoder().decode(QuestionnaireConfiguration.self, from: data)
                 result.append(questionnaire)
             } catch {
-                #if DEBUG
-                    fatalError(error.localizedDescription)
-                #endif
+                fatalError(error.localizedDescription)
             }
         }
     }
