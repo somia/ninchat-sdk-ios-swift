@@ -88,15 +88,22 @@ struct SiteConfigurationImpl: SiteConfiguration {
     var audienceAutoQueue: String? {
         self.value(for: "audienceAutoQueue")
     }
-    var preAudienceQuestionnaire: [QuestionnaireConfiguration]?
-    var postAudienceQuestionnaire: [QuestionnaireConfiguration]?
+    var preAudienceQuestionnaire: [QuestionnaireConfiguration]? {
+        if let questionnaire = self.value(for: "preAudienceQuestionnaire", ofType: Array<[String: AnyHashable]>.self) {
+            return AudienceQuestionnaire(from: questionnaire).questionnaireConfiguration
+        }
+        return nil
+    }
+    var postAudienceQuestionnaire: [QuestionnaireConfiguration]? {
+        if let questionnaire = self.value(for: "postAudienceQuestionnaire", ofType: Array<[String: AnyHashable]>.self) {
+            return AudienceQuestionnaire(from: questionnaire).questionnaireConfiguration
+        }
+        return nil
+    }
 
     init(configuration: [AnyHashable : Any]?, environments: [String]?) {
         self.configuration = configuration ?? [:]
         self.environments = environments ?? []
-
-        self.preAudienceQuestionnaire = AudienceQuestionnaire(from: configuration, for: "preAudienceQuestionnaire").questionnaireConfiguration
-        self.postAudienceQuestionnaire = AudienceQuestionnaire(from: configuration, for: "postAudienceQuestionnaire").questionnaireConfiguration
     }
 
     mutating func override(configuration: NINSiteConfiguration?) {
@@ -106,7 +113,7 @@ struct SiteConfigurationImpl: SiteConfiguration {
 }
 
 extension SiteConfigurationImpl {
-    private func value<T>(for key: String) -> T? {
+    private func value<T>(for key: String, ofType type: T.Type = T.self) -> T? {
         guard let configuration = configuration as? [String:Any] else { return nil }
 
         /// Use given environments first, if any
