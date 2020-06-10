@@ -38,7 +38,7 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         do {
             self.viewModel?.pageNumber = 10
             let elements = try self.viewModel?.getElements()
-            XCTAssertEqual(elements?.count ?? 0, 11)
+            XCTAssertEqual(elements?.count ?? 0, 6)
 
             let startElement = elements?.first(where: { $0.elementConfiguration?.name == "Phone" })
             XCTAssertNotNil(startElement)

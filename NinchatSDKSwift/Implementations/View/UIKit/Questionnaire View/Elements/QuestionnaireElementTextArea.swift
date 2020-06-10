@@ -112,7 +112,7 @@ extension QuestionnaireElementTextArea: UITextViewDelegate {
         if let text = textView.text, let pattern = self.elementConfiguration?.pattern, let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) {
             self.isCompleted = regex.matches(in: text, range: NSRange(location: 0, length: text.count)).count > 0
         } else {
-            self.isCompleted = false
+            self.isCompleted = !(self.elementConfiguration?.required ?? false)
         }
         self.onElementDismissed?(self)
     }
@@ -136,7 +136,7 @@ extension QuestionnaireElement where Self:QuestionnaireElementTextArea {
         self.view.font = .ninchat
         self.view.fix(height: 98.0)
         if self.isCompleted == nil {
-            self.isCompleted = !(configuration?.required ?? true)
+            self.isCompleted = !(configuration?.required ?? false)
         }
         self.updateBorder()
     }

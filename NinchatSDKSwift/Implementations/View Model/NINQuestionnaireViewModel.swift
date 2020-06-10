@@ -38,7 +38,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     private let views: [[QuestionnaireElement]]
     private let configurations: [QuestionnaireConfiguration]
     private var connector: QuestionnaireElementConnector!
-    private(set) var answers: [String:AnyHashable]!
+    private(set) var answers: [String:AnyHashable]! = [:]
 
     // MARK: - NINQuestionnaireViewModel
 
@@ -54,10 +54,11 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
         self.configurations = (questionnaireType == .pre) ? sessionManager.siteConfiguration.preAudienceQuestionnaire! : sessionManager.siteConfiguration.postAudienceQuestionnaire!
         self.views = QuestionnaireElementConverter(configurations: configurations).elements
         self.connector = QuestionnaireElementConnectorImpl(configurations: configurations)
-        self.answers = (try? self.extractGivenPreAnswers()) ?? [:]
 
-        if let queue = queue, questionnaireType == .pre {
-            self.setupPreConnector(queue: queue)
+
+        if questionnaireType == .pre {
+            self.answers = (try? self.extractGivenPreAnswers()) ?? [:]
+            self.setupPreConnector(queue: queue!)
         } else if questionnaireType == .post {
             self.setupPostConnector()
         }
@@ -88,8 +89,17 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 
     private func setupPostConnector() {
         self.connector.onRegisterTargetReached = { [weak self] _ in
-            /// Call `send_metadata` action here
-            self?.onSessionFinished?()
+            do {
+                try self?.sessionManager.send(type: .metadata, payload: ["data": ["post_answers": self?.answers ?? [:]], "time": Date().timeIntervalSince1970]) { error in
+                    if let error = error {
+                        self?.onErrorOccurred?(error)
+                    } else {
+                        self?.onSessionFinished?()
+                    }
+                }
+            } catch {
+                self?.onErrorOccurred?(error)
+            }
         }
     }
 

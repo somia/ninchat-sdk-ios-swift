@@ -31,8 +31,9 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
             viewModel.onSessionFinished = { [unowned self] in
                 if let ratingViewModel = self.ratingViewModel {
                     (self.rating != nil) ? ratingViewModel.rateChat(with: self.rating!) : ratingViewModel.skipRating()
+                } else {
+                    self.session.onDidEnd()
                 }
-                self.session.onDidEnd()
             }
         }
     }
