@@ -143,4 +143,14 @@ final class ExtensionsTests: XCTestCase {
         XCTAssertNotNil(UIColor.blueButton.toImage)
         XCTAssertNotNil(UIColor.white.toImage)
     }
+
+    func test_date_time() {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+
+        let date = formatter.date(from: "2020-06-10 12:30:45")
+        XCTAssertNotNil(date)
+        XCTAssertNotNil(date?.time)
+        XCTAssertEqual(date?.time, "12:30:45")
+    }
 }

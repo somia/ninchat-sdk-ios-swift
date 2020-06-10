@@ -111,6 +111,8 @@ extension QuestionnaireElementTextField: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         if let text = textField.text, !text.isEmpty, let pattern = self.elementConfiguration?.pattern, let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) {
             self.isCompleted = regex.matches(in: text, range: NSRange(location: 0, length: text.count)).count > 0
+        } else {
+            self.isCompleted = !(self.elementConfiguration?.required ?? false)
         }
         self.onElementDismissed?(self)
     }

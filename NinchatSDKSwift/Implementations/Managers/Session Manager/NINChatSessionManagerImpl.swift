@@ -448,11 +448,9 @@ extension NINChatSessionManagerImpl {
         param.channelID = .success(currentChannel)
         
         if type == .metadata, let _ = (payload["data"] as? [String:String])?["rating"] {
+            /// Add an empty message_recipient to the rating metadata message
             param.recipients = .success(NINLowLevelClientStrings.initiate)
-            param.messageFold = .success(false)
-        }
-        
-        if type.isRTC {
+        } else if type.isRTC {
             /// Add message_ttl to all rtc signaling messages
             param.messageTTL = .success(10)
         }

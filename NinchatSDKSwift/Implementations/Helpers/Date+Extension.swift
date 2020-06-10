@@ -33,6 +33,12 @@ extension Date {
     var minute: Int {
         Calendar.current.component(.minute, from: self)
     }
+
+    var time: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss"
+        return formatter.string(from: self)
+    }
 }
 
 extension DateFormatter {

@@ -691,47 +691,6 @@
             "required": false
           },
           {
-            "element": "input",
-            "type": "text",
-            "label": "Phone number:",
-            "name": "Phone-1",
-            "pattern": "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$",
-            "required": false
-          },
-          {
-            "element": "input",
-            "type": "text",
-            "label": "Phone number:",
-            "name": "Phone-2",
-            "pattern": "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$",
-            "required": false
-          },
-          {
-            "element": "input",
-            "type": "text",
-            "label": "Phone number:",
-            "name": "Phone-3",
-            "pattern": "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$",
-            "required": false
-          },
-          {
-            "element": "input",
-            "type": "text",
-            "label": "Phone number:",
-            "name": "Phone-4",
-            "pattern": "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$",
-            "required": false
-          },
-          {
-            "element": "input",
-            "type": "text",
-            "label": "Phone number:",
-            "name": "Phone-5",
-            "pattern": "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$",
-            "required": false
-          },
-
-          {
             "element": "textarea",
             "label": "Comments:",
             "name": "comments",
@@ -774,31 +733,55 @@
       }
     ],
     "postAudienceQuestionnaire": [
-      {
-        "element": "text",
-        "label": "Thank you. Would you like to leave feedback?",
-        "name": "end-description"
-      },
-      {
-        "element": "select",
-        "label": "Was your issue solved?",
-        "name": "Issue solved",
-        "options": [
-          {
-            "label": "Yes",
-            "value": "Yes"
-          },
-          {
-            "label": "No",
-            "value": "No"
-          }
-        ]
-      },
-      {
-        "element": "textarea",
-        "label": "What could we improve?",
-        "name": "Feedback"
-      }
+        {
+            "name": "feedback",
+            "type": "group",
+            "buttons": {
+                "back": false,
+                "next": false
+            },
+            "elements": [
+                {
+                    "element": "text",
+                    "label": "Thank you. Would you like to leave feedback?",
+                    "name": "end-description"
+                  },
+                  {
+                    "element": "select",
+                    "label": "Was your issue solved?",
+                    "name": "Issue solved",
+                    "options": [
+                      {
+                        "label": "Yes",
+                        "value": "Yes"
+                      },
+                      {
+                        "label": "No",
+                        "value": "No"
+                      }
+                    ]
+                  },
+                  {
+                    "element": "textarea",
+                    "label": "What could we improve?",
+                    "name": "Feedback"
+                  }
+            ]
+        },
+        {
+            "name": "feedback-Logic",
+            "logic": {
+              "or": [
+                {
+                  "Issue solved": "yes"
+                },
+                {
+                  "Issue solved": "no"
+                }
+              ],
+              "target": "_register"
+            }
+        }
     ]
   }
 }

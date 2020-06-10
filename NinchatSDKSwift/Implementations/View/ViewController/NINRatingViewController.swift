@@ -15,8 +15,9 @@ final class NINRatingViewController: UIViewController, ViewController {
     var translate: NINChatSessionTranslation!
     
     // MARK: - ViewController
-    
+
     var session: NINChatSession!
+    var onRatingFinished: ((ChatStatus?) -> Bool)!
     
     // MARK: - Outlets
     
@@ -98,18 +99,26 @@ final class NINRatingViewController: UIViewController, ViewController {
 
 extension NINRatingViewController {
     private func onPositiveButtonTapped(sender: UIButton) {
-        viewModel.rateChat(with: .happy)
+        if self.onRatingFinished(.happy) {
+            viewModel.rateChat(with: .happy)
+        }
     }
     
     private func onNeutralButtonTapped(sender: UIButton) {
-        viewModel.rateChat(with: .neutral)
+        if self.onRatingFinished(.neutral) {
+            viewModel.rateChat(with: .neutral)
+        }
     }
     
     private func onNegativeButtonTapped(sender: UIButton) {
-        viewModel.rateChat(with: .sad)
+        if self.onRatingFinished(.sad) {
+            viewModel.rateChat(with: .sad)
+        }
     }
         
     @IBAction private func onSkipButtonTapped(sender: UIButton) {
-        viewModel.skipRating()
+        if self.onRatingFinished(nil) {
+            viewModel.skipRating()
+        }
     }
 }

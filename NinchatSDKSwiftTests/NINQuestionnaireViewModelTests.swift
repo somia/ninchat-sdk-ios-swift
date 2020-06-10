@@ -21,7 +21,7 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         self.session = NINChatSessionManagerImpl(session: nil, serverAddress: "", audienceMetadata: self.answers, configuration: nil)
         self.session.setSiteConfiguration(siteConfiguration)
 
-        self.viewModel = NINQuestionnaireViewModelImpl(sessionManager: session, queue: Queue(queueID: "", name: "", isClosed: false))
+        self.viewModel = NINQuestionnaireViewModelImpl(sessionManager: session, queue: Queue(queueID: "", name: "", isClosed: false), questionnaireType: .pre)
     }
 
     func test_00_initialization() {
@@ -38,7 +38,7 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         do {
             self.viewModel?.pageNumber = 10
             let elements = try self.viewModel?.getElements()
-            XCTAssertEqual(elements?.count ?? 0, 11)
+            XCTAssertEqual(elements?.count ?? 0, 6)
 
             let startElement = elements?.first(where: { $0.elementConfiguration?.name == "Phone" })
             XCTAssertNotNil(startElement)

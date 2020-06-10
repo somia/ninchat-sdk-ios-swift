@@ -50,31 +50,16 @@ final class NINCoordinator: Coordinator {
         initialViewController.session = session
         initialViewController.onQueueActionTapped = { [unowned self] queue in
             DispatchQueue.main.async {
-                #if DEBUG
-                    if self.hasPreAudienceQuestionnaire {
-                        self.navigationController?.pushViewController(self.questionnaireViewController(queue: queue), animated: true)
-                    } else {
-                        self.navigationController?.pushViewController(self.queueViewController(queue: queue), animated: true)
-                    }
-                #else
-                    self.navigationController?.pushViewController(self.queueViewController(queue: queue), animated: true)
-                #endif
+                self.navigationController?.pushViewController((self.hasPreAudienceQuestionnaire) ? self.questionnaireViewController(queue: queue, questionnaireType: .pre) : self.queueViewController(queue: queue), animated: true)
             }
         }
 
         return initialViewController
     }()
-    internal lazy var questionnaireViewController: NINQuestionnaireViewController = {
-        let questionnaireViewController: NINQuestionnaireViewController = storyboard.instantiateViewController()
-        questionnaireViewController.session = session
-        questionnaireViewController.completeQuestionnaire = { [unowned self] queue in
-            DispatchQueue.main.async {
-                self.navigationController?.pushViewController(self.queueViewController(queue: queue), animated: true)
-            }
-        }
-
-        return questionnaireViewController
-    }()
+    /// Since it is pushed more than once, it cannot be defined as `lazy`
+    internal var questionnaireViewController: NINQuestionnaireViewController {
+        storyboard.instantiateViewController()
+    }
     internal lazy var queueViewController: NINQueueViewController = {
         let joinViewController: NINQueueViewController = storyboard.instantiateViewController()
         joinViewController.viewModel = NINQueueViewModelImpl(sessionManager: self.sessionManager, delegate: self.session)
@@ -142,6 +127,13 @@ final class NINCoordinator: Coordinator {
         ratingViewController.session = session
         ratingViewController.viewModel = viewModel
         ratingViewController.translate = sessionManager
+        ratingViewController.onRatingFinished = { [unowned self] (status: ChatStatus?) -> Bool in
+            if !self.hasPostAudienceQuestionnaire { return true }
+            DispatchQueue.main.async {
+                self.navigationController?.pushViewController(self.questionnaireViewController(ratingViewModel: viewModel, rating: status, questionnaireType: .post), animated: true)
+            }
+            return false
+        }
 
         return ratingViewController
     }()
@@ -171,10 +163,20 @@ final class NINCoordinator: Coordinator {
 }
 
 extension NINCoordinator {
-    internal func questionnaireViewController(queue: Queue) -> NINQuestionnaireViewController {
+    internal func questionnaireViewController(queue: Queue? = nil, ratingViewModel: NINRatingViewModel? = nil, rating: ChatStatus? = nil, questionnaireType: AudienceQuestionnaireType) -> NINQuestionnaireViewController {
         let vc = self.questionnaireViewController
-        vc.viewModel = NINQuestionnaireViewModelImpl(sessionManager: self.sessionManager, queue: queue)
         vc.queue = queue
+        vc.session = session
+        vc.rating = rating
+        vc.ratingViewModel = ratingViewModel
+        vc.viewModel = NINQuestionnaireViewModelImpl(sessionManager: self.sessionManager, queue: queue, questionnaireType: questionnaireType)
+        vc.completeQuestionnaire = { [unowned self] queue in
+            DispatchQueue.main.async {
+                if questionnaireType == .pre {
+                    self.navigationController?.pushViewController(self.queueViewController(queue: queue), animated: true)
+                }
+            }
+        }
 
         return vc
     }

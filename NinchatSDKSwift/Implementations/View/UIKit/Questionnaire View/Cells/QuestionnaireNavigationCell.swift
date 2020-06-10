@@ -19,10 +19,7 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
     }
     var requirementsSatisfied: Bool = true {
         didSet {
-            if let nextButton = self.buttons.subviews.compactMap({ $0 as? UIButton }).first(where: { $0.trailing != nil }) {
-                nextButton.isEnabled = requirementsSatisfied
-                nextButton.alpha = (requirementsSatisfied) ? 1.0 : 0.5
-            }
+            self.setSatisfaction(requirementsSatisfied)
         }
     }
 
@@ -91,15 +88,15 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
         if self.buttons.subviews.count > 0 {
             self.layoutNavigationButtons()
         }
-        self.setupUpdater()
+        self.requirementSatisfactionUpdater = { [weak self] satisfied in
+            self?.setSatisfaction(satisfied)
+        }
     }
 
-    private func setupUpdater() {
-        self.requirementSatisfactionUpdater = { [weak self] satisfied in
-            if let nextButton = self?.buttons.subviews.compactMap({ $0 as? UIButton }).first(where: { $0.trailing != nil }) {
-                nextButton.isEnabled = satisfied
-                nextButton.alpha = (satisfied) ? 1.0 : 0.5
-            }
+    private func setSatisfaction(_ satisfied: Bool) {
+        if let nextButton = self.buttons.subviews.compactMap({ $0 as? UIButton }).first(where: { $0.trailing != nil }) {
+            nextButton.isEnabled = satisfied
+            nextButton.alpha = (satisfied) ? 1.0 : 0.5
         }
     }
 }
