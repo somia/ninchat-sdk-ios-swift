@@ -161,12 +161,12 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
             self.viewModel.requirementSatisfactionUpdater = { satisfied in
                 cell.requirementSatisfactionUpdater?(satisfied)
             }
-            cell.onNextButtonTapped = { [weak self] questionnaire in
+            cell.onNextButtonTapped = { [weak self] in
                 if self?.viewModel.goToNextPage() ?? false {
                     self?.updateContentView()
                 }
             }
-            cell.onBackButtonTapped = { [weak self] questionnaire in
+            cell.onBackButtonTapped = { [weak self] in
                 if self?.viewModel.goToPreviousPage() ?? false {
                     self?.updateContentView()
                 }
@@ -189,6 +189,7 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
             if var view = element as? QuestionnaireOptionSelectableElement {
                 view.onElementOptionSelected = { [weak self] option in
                     func showTargetPage(_ page: Int) {
+                        guard (self?.viewModel.canGoToPage(page) ?? false), !(self?.viewModel.shouldWaitForNextButton ?? false) else { return }
                         if self?.viewModel.goToPage(page) ?? false {
                             view.deselect(option: option)
                             self?.updateContentView()

@@ -83,4 +83,12 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         self.viewModel?.submitAnswer(key: element!, value: "Mikä on koronavirus")
         XCTAssertTrue(self.viewModel?.goToPage(8) ?? false)
     }
+
+    func test_41_waitForNextButton() {
+        self.viewModel?.pageNumber = 0
+        XCTAssertTrue(self.viewModel?.shouldWaitForNextButton ?? false)
+
+        self.viewModel?.pageNumber = 4
+        XCTAssertFalse(self.viewModel?.shouldWaitForNextButton ?? true)
+    }
 }

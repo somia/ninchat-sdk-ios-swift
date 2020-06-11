@@ -95,8 +95,8 @@ protocol QuestionnaireOptionSelectableElement {
 protocol QuestionnaireNavigationButtons {
     var buttons: UIView { get }
     var configuration: QuestionnaireConfiguration? { get set }
-    var onNextButtonTapped: ((ButtonQuestionnaire) -> Void)? { get set }
-    var onBackButtonTapped: ((ButtonQuestionnaire) -> Void)? { get set }
+    var onNextButtonTapped: (() -> Void)? { get set }
+    var onBackButtonTapped: (() -> Void)? { get set }
 
     func addNavigationButtons()
     func shapeNavigationButtons(_ configuration: QuestionnaireConfiguration?)
