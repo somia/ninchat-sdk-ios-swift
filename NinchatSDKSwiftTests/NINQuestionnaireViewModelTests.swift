@@ -51,6 +51,23 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         }
     }
 
+    func test_21_setPreAnswers() throws {
+        self.viewModel?.pageNumber = 0
+        XCTAssertNil(self.viewModel?.tempPageNumber)
+
+        do {
+            self.viewModel?.answers = ["Aiheet": "Mikä on koronavirus"]
+            let element = try self.viewModel?.getElements()[0]
+
+            self.viewModel?.resetAnswer(for: element!)
+            XCTAssertNotNil(self.viewModel?.tempPageNumber)
+            XCTAssertEqual(self.viewModel?.tempPageNumber ?? 0, 1)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+
+    }
+
     func test_30_getRequirementsStatus() {
         self.viewModel?.pageNumber = 8
         XCTAssertTrue(self.viewModel?.requirementsSatisfied ?? false)
@@ -190,5 +207,15 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         self.viewModel?.finishQuestionnaire(for: nil, autoApply: false)
 
         waitForExpectations(timeout: 2.0)
+    }
+
+    func test_60_clearAnswers() {
+        self.viewModel?.pageNumber = 0
+        self.viewModel?.answers = [:]
+        XCTAssertFalse(self.viewModel?.clearAnswersForCurrentPage() ?? true)
+
+        self.viewModel?.answers = ["Aiheet": "Mikä on koronavirus", "arbitraryAnswer": "answer"]
+        XCTAssertTrue(self.viewModel?.clearAnswersForCurrentPage() ?? false)
+        XCTAssertEqual(self.viewModel?.answers, ["arbitraryAnswer": "answer"])
     }
 }

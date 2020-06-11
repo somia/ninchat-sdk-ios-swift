@@ -166,6 +166,7 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
                 (nextPage) ? self?.updateContentView() : self?.viewModel.finishQuestionnaire(for: nil, autoApply: false)
             }
             cell.onBackButtonTapped = { [weak self] in
+                _ = self?.viewModel.clearAnswersForCurrentPage()
                 if self?.viewModel.goToPreviousPage() ?? false {
                     self?.updateContentView()
                 }
@@ -184,6 +185,7 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
 
             if var view = element as? QuestionnaireSettable {
                 view.presetAnswer = self.viewModel.getAnswersForElement(element)
+                self.viewModel.resetAnswer(for: element)
             }
             if var view = element as? QuestionnaireOptionSelectableElement {
                 view.onElementOptionSelected = { [weak self] option in

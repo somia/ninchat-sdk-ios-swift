@@ -23,6 +23,8 @@ protocol NINQuestionnaireViewModel {
     func getConfiguration() throws -> QuestionnaireConfiguration
     func getElements() throws -> [QuestionnaireElement]
     func getAnswersForElement(_ element: QuestionnaireElement) -> AnyHashable?
+    func resetAnswer(for element: QuestionnaireElement)
+    func clearAnswersForCurrentPage() -> Bool
     func redirectTargetPage(for value: String) -> Int?
     func logicTargetPage(key: String, value: String) -> Int?
     func goToNextPage() -> Bool?
@@ -130,7 +132,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
         return [:]
     }
 
-    private func canJoinGivenQueue(withID id: String) -> (Bool, Queue?) {
+    private func canJoinGivenQueue(withID id: String) -> (Bool, Queue?)? {
         if let targetQueue = self.sessionManager.queues.first(where: { $0.queueID == id }) {
             return (!targetQueue.isClosed, targetQueue)
         }
@@ -198,6 +200,12 @@ extension NINQuestionnaireViewModelImpl {
         }
         self.requirementSatisfactionUpdater?(self.requirementsSatisfied)
     }
+
+    func clearAnswersForCurrentPage() -> Bool {
+        guard self.views.count > self.pageNumber, !self.answers.isEmpty else { return false }
+        self.views[self.pageNumber].filter({ $0.questionnaireConfiguration != nil || $0.elementConfiguration != nil }).forEach({ self.removeAnswer(key: $0) })
+        return true
+    }
 }
 
 // MARK :- Configuration and Element handlers
@@ -219,6 +227,15 @@ extension NINQuestionnaireViewModelImpl {
             return value
         }
         return nil
+    }
+
+    func resetAnswer(for element: QuestionnaireElement) {
+        guard let value = self.getAnswersForElement(element) as? String else { return }
+        if let page = self.redirectTargetPage(for: value) {
+            self.tempPageNumber = page
+        } else if let page = self.logicTargetPage(key: element.elementConfiguration?.name ?? "", value: value) {
+            self.tempPageNumber = page
+        }
     }
 }
 
