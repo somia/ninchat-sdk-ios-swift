@@ -245,12 +245,21 @@ extension NINQuestionnaireViewModelImpl {
     }
 
     func goToNextPage() -> Bool? {
-        guard self.requirementsSatisfied, let targetPage = tempPageNumber else { return nil }
+        guard self.requirementsSatisfied else { return nil }
 
         /// To navigate to a page saved during element selection
-        if self.views.count >= targetPage {
+        if let targetPage = tempPageNumber {
+            guard self.views.count >= targetPage else { return false }
+
             self.previousPage = self.pageNumber
             self.pageNumber = targetPage
+            self.tempPageNumber = nil
+            return true
+        }
+
+        if self.views.count > self.pageNumber + 1 {
+            self.previousPage = self.pageNumber
+            self.pageNumber += 1
             self.tempPageNumber = nil
             return true
         }
