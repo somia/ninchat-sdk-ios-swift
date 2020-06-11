@@ -132,7 +132,9 @@ final class QuestionnaireElementConnectorLogicTests: XCTestCase {
         let expect = self.expectation(description: "Expected to reach `_complete` target")
         expect.assertForOverFulfill = false
 
-        connector.onCompleteTargetReached = { logic in
+        connector.onCompleteTargetReached = { logic, autoApply in
+            XCTAssertTrue(autoApply)
+            XCTAssertNotNil(logic)
             expect.fulfill()
         }
         let targetElement = connector.findElementAndPageLogic(for: ["temp-btn":"Finnish"], in: ["Riskiryhmät-jatko": "Muut aiheet", "condition1": "satisfied", "temp-btn":"Finnish", "temp-btn2":"Finnish"])

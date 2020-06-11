@@ -91,4 +91,104 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         self.viewModel?.pageNumber = 4
         XCTAssertFalse(self.viewModel?.shouldWaitForNextButton ?? true)
     }
+
+    func test_50_simpleNavigation() {
+        self.viewModel?.pageNumber = 10
+        XCTAssertFalse(self.viewModel?.canGoToPage(11) ?? true)
+
+        self.viewModel?.answers = ["temp-btn": "Finnish", "temp-btn2": "Finnish"]
+        XCTAssertFalse(self.viewModel?.canGoToPage(11) ?? true)
+
+        self.viewModel?.answers = ["temp-btn": "Finnish", "temp-btn2": "Finnish", "comments": "This is unit test"]
+        XCTAssertTrue(self.viewModel?.canGoToPage(11) ?? false)
+    }
+
+    func test_51_navigationWithRedirects() {
+        self.viewModel?.pageNumber = 0
+        XCTAssertTrue(self.viewModel?.shouldWaitForNextButton ?? false)
+
+        self.viewModel?.answers = ["Aiheet": "Mikä on koronavirus"]
+        let page = self.viewModel?.redirectTargetPage(for: "Mikä on koronavirus")
+        XCTAssertNotNil(page)
+        XCTAssertEqual(page ?? 0, 1)
+
+        XCTAssertTrue(self.viewModel?.canGoToPage(page!) ?? false)
+        XCTAssertTrue(self.viewModel?.goToPage(page!) ?? false)
+    }
+
+    func test_52_navigationWithLogic_Complete() {
+        let expect = self.expectation(description: "Expected to reach _complete logic")
+
+        self.viewModel?.connector.onCompleteTargetReached = { logic, autoApply in
+            XCTAssertTrue(autoApply)
+            XCTAssertNotNil(logic)
+            expect.fulfill()
+        }
+        self.viewModel?.pageNumber = 11
+        self.viewModel?.answers = ["wouldRecommendService": "1"]
+
+        let page = self.viewModel?.logicTargetPage(key: "wouldRecommendService", value: "1")
+        XCTAssertNil(page)
+
+        waitForExpectations(timeout: 2.0)
+    }
+
+    func test_52_navigationWithLogic_Register() {
+        let expect = self.expectation(description: "Expected to reach _register logic")
+
+        self.viewModel?.connector.onRegisterTargetReached = { logic, autoApply in
+            XCTAssertTrue(autoApply)
+            XCTAssertNotNil(logic)
+            expect.fulfill()
+        }
+        self.viewModel?.pageNumber = 9
+        self.viewModel?.answers = ["Huolet-jatko": "Sulje"]
+
+        let page = self.viewModel?.logicTargetPage(key: "Huolet-jatko", value: "Sulje")
+        XCTAssertNil(page)
+
+        waitForExpectations(timeout: 2.0)
+    }
+
+    func test_53_navigationAutoApply_Complete() {
+        var expectedResult: Bool!
+        let expect = self.expectation(description: "Expected to reach _complete logic")
+        expect.assertForOverFulfill = false
+
+        self.viewModel?.connector.onCompleteTargetReached = { _, autoApply in
+            XCTAssertEqual(self.viewModel!.hasToWaitForUserConfirmation(autoApply), expectedResult)
+            expect.fulfill()
+        }
+        self.viewModel?.pageNumber = 11
+        self.viewModel?.answers = ["wouldRecommendService": "1"]
+
+        expectedResult = true
+        _ = self.viewModel?.logicTargetPage(key: "wouldRecommendService", value: "1")
+
+        expectedResult = false
+        self.viewModel?.finishQuestionnaire(for: nil, autoApply: false)
+
+        waitForExpectations(timeout: 2.0)
+    }
+
+    func test_54_navigationAutoApply_Register() {
+        var expectedResult: Bool!
+        let expect = self.expectation(description: "Expected to reach _register logic")
+        expect.assertForOverFulfill = false
+
+        self.viewModel?.connector.onRegisterTargetReached = { _, autoApply in
+            XCTAssertEqual(self.viewModel!.hasToWaitForUserConfirmation(autoApply), expectedResult)
+            expect.fulfill()
+        }
+        self.viewModel?.pageNumber = 9
+        self.viewModel?.answers = ["Huolet-jatko": "Sulje"]
+
+        expectedResult = true
+        _ = self.viewModel?.logicTargetPage(key: "Huolet-jatko", value: "Sulje")
+
+        expectedResult = false
+        self.viewModel?.finishQuestionnaire(for: nil, autoApply: false)
+
+        waitForExpectations(timeout: 2.0)
+    }
 }

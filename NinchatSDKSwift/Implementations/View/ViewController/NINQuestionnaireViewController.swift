@@ -162,9 +162,8 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
                 cell.requirementSatisfactionUpdater?(satisfied)
             }
             cell.onNextButtonTapped = { [weak self] in
-                if self?.viewModel.goToNextPage() ?? false {
-                    self?.updateContentView()
-                }
+                guard let nextPage = self?.viewModel.goToNextPage() else { return }
+                (nextPage) ? self?.updateContentView() : self?.viewModel.finishQuestionnaire(for: nil, autoApply: false)
             }
             cell.onBackButtonTapped = { [weak self] in
                 if self?.viewModel.goToPreviousPage() ?? false {
@@ -197,9 +196,9 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
                     }
 
                     self?.viewModel.submitAnswer(key: element, value: option.value)
-                    if let page = self?.viewModel.redirectTargetPage(for: option) {
+                    if let page = self?.viewModel.redirectTargetPage(for: option.value) {
                         showTargetPage(page)
-                    } else if let page = self?.viewModel.logicTargetPage(for: option, name: element.elementConfiguration?.name ?? "") {
+                    } else if let page = self?.viewModel.logicTargetPage(key: element.elementConfiguration?.name ?? "", value: option.value) {
                         showTargetPage(page)
                     }
                 }

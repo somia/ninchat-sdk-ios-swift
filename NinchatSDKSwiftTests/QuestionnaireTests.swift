@@ -86,9 +86,7 @@ final class QuestionnaireTests: XCTestCase {
             XCTAssertNotNil(questionnaireItem.logic)
             XCTAssertNotNil(questionnaireItem.logic?.and)
             XCTAssertNotNil(questionnaireItem.logic?.andKeys)
-            XCTAssertNotNil(questionnaireItem.logic?.andValues)
             XCTAssertEqual(questionnaireItem.logic?.andKeys?.sorted(), ["fake", "Koronavirus-jatko"].sorted())
-            XCTAssertEqual(questionnaireItem.logic?.andValues?.compactMap({ $0.value as? String }).sorted(), ["fake-1", "Sulje"].sorted())
             XCTAssertFalse(questionnaireItem.logic?.satisfy(dictionary: ["Koronavirus-jatko": "Sulje"]) ?? true)
         } else {
             XCTFail("Failed to get ´Koronavirus-Logic1´ questionnaire item")
@@ -98,9 +96,7 @@ final class QuestionnaireTests: XCTestCase {
             XCTAssertNotNil(questionnaireItem.logic)
             XCTAssertNotNil(questionnaireItem.logic?.or)
             XCTAssertNotNil(questionnaireItem.logic?.orKeys)
-            XCTAssertNotNil(questionnaireItem.logic?.orValues)
             XCTAssertEqual(questionnaireItem.logic?.orKeys?.sorted(), ["fake", "Koronavirus-jatko"].sorted())
-            XCTAssertEqual(questionnaireItem.logic?.orValues?.compactMap({ $0.value as? String }).sorted(), ["fake-2", "Muut aiheet"].sorted())
             XCTAssertTrue(questionnaireItem.logic?.satisfy(dictionary: ["fake": "fake", "Koronavirus-jatko": "Muut aiheet"]) ?? false)
         } else {
             XCTFail("Failed to get ´Koronavirus-Logic2´ questionnaire item")

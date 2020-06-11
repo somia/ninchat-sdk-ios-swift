@@ -5,7 +5,6 @@
 //
 
 import Foundation
-import AnyCodable
 import NinchatLowLevelClient
 
 protocol NINQuestionnaireViewModel {
@@ -24,23 +23,25 @@ protocol NINQuestionnaireViewModel {
     func getConfiguration() throws -> QuestionnaireConfiguration
     func getElements() throws -> [QuestionnaireElement]
     func getAnswersForElement(_ element: QuestionnaireElement) -> AnyHashable?
-    func redirectTargetPage(for option: ElementOption) -> Int?
-    func logicTargetPage(for option: ElementOption, name: String) -> Int?
-    func goToNextPage() -> Bool
+    func redirectTargetPage(for value: String) -> Int?
+    func logicTargetPage(key: String, value: String) -> Int?
+    func goToNextPage() -> Bool?
     func goToPreviousPage() -> Bool
     func goToPage(_ page: Int) -> Bool
     func canGoToPage(_ page: Int) -> Bool
     func submitAnswer(key: QuestionnaireElement?, value: AnyHashable)
     func removeAnswer(key: QuestionnaireElement?)
+    func finishQuestionnaire(for logic: LogicQuestionnaire?, autoApply: Bool)
 }
 
 final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 
     private let sessionManager: NINChatSessionManager
     private let configurations: [QuestionnaireConfiguration]
-    private var connector: QuestionnaireElementConnector!
+    internal var connector: QuestionnaireElementConnector!
     private let views: [[QuestionnaireElement]]
-    private(set) var answers: [String:AnyHashable]! = [:]
+    private let queue: Queue?
+    internal var answers: [String:AnyHashable]! = [:]
 
     // MARK: - NINQuestionnaireViewModel
 
@@ -53,14 +54,15 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     var requirementSatisfactionUpdater: ((Bool) -> Void)?
 
     init(sessionManager: NINChatSessionManager, queue: Queue?, questionnaireType: AudienceQuestionnaireType) {
+        self.queue = queue
         self.sessionManager = sessionManager
         self.configurations = (questionnaireType == .pre) ? sessionManager.siteConfiguration.preAudienceQuestionnaire! : sessionManager.siteConfiguration.postAudienceQuestionnaire!
         self.views = QuestionnaireElementConverter(configurations: configurations).elements
         self.connector = QuestionnaireElementConnectorImpl(configurations: configurations)
 
-        if questionnaireType == .pre {
+        if let queue = queue, questionnaireType == .pre {
             self.answers = (try? self.extractGivenPreAnswers()) ?? [:]
-            self.setupPreConnector(queue: queue!)
+            self.setupPreConnector(queue: queue)
         } else if questionnaireType == .post {
             self.setupPostConnector()
         }
@@ -70,10 +72,16 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
         self.connector.logicContainsTags = { [weak self] logic in
             self?.submitTags(logic?.tags ?? [])
         }
-        self.connector.onCompleteTargetReached = { [weak self] logic in
-            self?.finishQuestionnaire(for: logic, queue: queue)
+        self.connector.onCompleteTargetReached = { [weak self] logic, autoApply in
+            if self?.hasToWaitForUserConfirmation(autoApply) ?? false {
+                self?.tempPageNumber = (self?.views.count ?? 0) + 1; return
+            }
+            self?.finishQuestionnaire(for: logic, autoApply: autoApply)
         }
-        self.connector.onRegisterTargetReached = { [weak self] logic in
+        self.connector.onRegisterTargetReached = { [weak self] logic, autoApply in
+            if self?.hasToWaitForUserConfirmation(autoApply) ?? false {
+                self?.tempPageNumber = (self?.views.count ?? 0) + 1; return
+            }
             self?.registerAudience(queueID: logic?.queue ?? queue.queueID) { error in
                 if let error = error {
                     self?.onErrorOccurred?(error)
@@ -85,8 +93,11 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     }
 
     private func setupPostConnector() {
-        self.connector.onRegisterTargetReached = { [weak self] _ in
+        self.connector.onRegisterTargetReached = { [weak self] _, autoApply in
             do {
+                if self?.hasToWaitForUserConfirmation(autoApply) ?? false {
+                    self?.tempPageNumber = (self?.views.count ?? 0) + 1; return
+                }
                 try self?.sessionManager.send(type: .metadata, payload: ["data": ["post_answers": self?.answers ?? [:]], "time": Date().timeIntervalSince1970]) { error in
                     if let error = error {
                         self?.onErrorOccurred?(error)
@@ -98,6 +109,13 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
                 self?.onErrorOccurred?(error)
             }
         }
+    }
+
+    internal func hasToWaitForUserConfirmation(_ autoApply: Bool) -> Bool {
+        if autoApply {
+            return !(self.requirementsSatisfied) || self.shouldWaitForNextButton
+        }
+        return !self.requirementsSatisfied
     }
 
     private func extractGivenPreAnswers() throws -> [String:AnyHashable] {
@@ -139,9 +157,9 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 // MARK: - NINQuestionnaireViewModel
 
 extension NINQuestionnaireViewModelImpl {
-    func finishQuestionnaire(for logic: LogicQuestionnaire?, queue: Queue) {
-        guard let target: (canJoin: Bool, queue: Queue?) = self.canJoinGivenQueue(withID: logic?.queue ?? queue.queueID), let targetQueue = target.queue, target.canJoin else {
-            self.connector.onRegisterTargetReached?(logic); return
+    func finishQuestionnaire(for logic: LogicQuestionnaire?, autoApply: Bool) {
+        guard let queue = self.queue, let target: (canJoin: Bool, queue: Queue?) = self.canJoinGivenQueue(withID: logic?.queue ?? queue.queueID), let targetQueue = target.queue, target.canJoin else {
+            self.connector.onRegisterTargetReached?(logic, autoApply); return
         }
 
         self.sessionManager.preAudienceQuestionnaireMetadata = self.questionnaireAnswers
@@ -156,7 +174,7 @@ extension NINQuestionnaireViewModelImpl {
     }
 
     var requirementsSatisfied: Bool {
-        guard self.views.count > self.pageNumber else { return false }
+        guard self.views.count > self.pageNumber, !self.answers.isEmpty else { return false }
         return self.views[self.pageNumber].filter({
             if let required = $0.elementConfiguration?.required {
                 return required
@@ -214,33 +232,26 @@ extension NINQuestionnaireViewModelImpl {
         }
     }
 
-    func redirectTargetPage(for option: ElementOption) -> Int? {
+    func redirectTargetPage(for value: String) -> Int? {
         do {
-            return self.connector.findElementAndPageRedirect(for: option.value, in: try getConfiguration()).1
+            return self.connector.findElementAndPageRedirect(for: value, in: try getConfiguration()).1
         } catch {
             return nil
         }
     }
 
-    func logicTargetPage(for option: ElementOption, name: String) -> Int? {
-        self.connector.findElementAndPageLogic(for: [name:AnyCodable(option.value)], in: self.answers).1
+    func logicTargetPage(key: String, value: String) -> Int? {
+        self.connector.findElementAndPageLogic(for: [key:value], in: self.answers).1
     }
 
-    func goToNextPage() -> Bool {
-        guard self.requirementsSatisfied else { return false }
+    func goToNextPage() -> Bool? {
+        guard self.requirementsSatisfied, let targetPage = tempPageNumber else { return nil }
 
         /// To navigate to a page saved during element selection
-        if let targetPage = tempPageNumber, self.views.count >= targetPage {
+        if self.views.count >= targetPage {
             self.previousPage = self.pageNumber
             self.pageNumber = targetPage
-            tempPageNumber = nil
-            return true
-        }
-
-        /// To navigate to the next page
-        if self.views.count > self.pageNumber + 1 {
-            self.previousPage = self.pageNumber
-            self.pageNumber += 1
+            self.tempPageNumber = nil
             return true
         }
 
@@ -260,13 +271,12 @@ extension NINQuestionnaireViewModelImpl {
 
         self.previousPage = self.pageNumber
         self.pageNumber = page
+        self.tempPageNumber = nil
         return true
     }
 
     func canGoToPage(_ page: Int) -> Bool {
-        guard self.requirementsSatisfied else { return false }
-
         tempPageNumber = page
-        return true
+        return self.requirementsSatisfied
     }
 }
