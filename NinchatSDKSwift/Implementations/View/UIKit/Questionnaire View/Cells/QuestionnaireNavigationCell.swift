@@ -24,8 +24,8 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
     }
 
     var requirementSatisfactionUpdater: ((Bool) -> Void)?
-    var onNextButtonTapped: ((ButtonQuestionnaire) -> Void)?
-    var onBackButtonTapped: ((ButtonQuestionnaire) -> Void)?
+    var onNextButtonTapped: (() -> Void)?
+    var onBackButtonTapped: (() -> Void)?
 
     private(set) lazy var buttons: UIView = {
         UIView(frame: .zero)
@@ -115,24 +115,33 @@ extension QuestionnaireNavigationCell {
     }
 
     func shapeNavigationButtons(_ configuration: QuestionnaireConfiguration?) {
-        guard let configuration = configuration?.buttons, configuration.hasValidButtons else { return }
-        if configuration.hasValidBackButton {
+        func drawBackButton() {
             let button = Button(frame: .zero) { [weak self] button in
                 button.isSelected = !button.isSelected
-                self?.onBackButtonTapped?(configuration)
+                self?.onBackButtonTapped?()
             }
-            self.layoutButton(button, configuration: configuration, type: .back)
+            self.layoutButton(button, configuration: configuration?.buttons, type: .back)
         }
-        if configuration.hasValidNextButton {
+        func drawNextButton() {
             let button = Button(frame: .zero) { [weak self] button in
                 button.isSelected = !button.isSelected
-                self?.onNextButtonTapped?(configuration)
+                self?.onNextButtonTapped?()
             }
-            self.layoutButton(button, configuration: configuration, type: .next)
+            self.layoutButton(button, configuration: configuration?.buttons, type: .next)
+        }
+
+        /// According to `https://github.com/somia/mobile/issues/238`
+        /// " Basically you have buttons always displayed unless they are removed in config. "
+        if configuration?.buttons == nil {
+            drawBackButton()
+            drawNextButton()
+        } else if let configuration = configuration?.buttons, configuration.hasValidButtons {
+            if configuration.hasValidBackButton { drawBackButton() }
+            if configuration.hasValidNextButton { drawNextButton() }
         }
     }
 
-    private func layoutButton(_ button: UIButton, configuration: ButtonQuestionnaire, type: QuestionnaireButtonType) {
+    private func layoutButton(_ button: UIButton, configuration: ButtonQuestionnaire?, type: QuestionnaireButtonType) {
         self.buttons.addSubview(button)
 
         button.titleLabel?.font = .ninchat
@@ -141,23 +150,23 @@ extension QuestionnaireNavigationCell {
             .fix(width: max(80.0, self.intrinsicContentSize.width + 32.0), height: 45.0)
             .round(radius: 45.0 / 2, borderWidth: 1.0, borderColor: .QBlueButtonNormal)
         if type == .back {
-            self.shapeNavigationBack(button: button, configuration: configuration.back)
+            self.shapeNavigationBack(button: button, configuration: configuration?.back)
         } else if type == .next {
-            self.shapeNavigationNext(button: button, configuration: configuration.next)
+            self.shapeNavigationNext(button: button, configuration: configuration?.next)
         }
     }
 
-    private func shapeNavigationNext(button: UIButton, configuration: AnyCodable) {
-        if let _ = configuration.value as? Bool {
-            button.setTitle("", for: .normal)
-            button.setImage(UIImage(named: "icon_select_next", in: .SDKBundle, compatibleWith: nil), for: .normal)
-            button.setTitle("", for: .selected)
-            button.setImage(UIImage(named: "icon_select_next", in: .SDKBundle, compatibleWith: nil), for: .highlighted)
-        } else if let title = configuration.value as? String {
+    private func shapeNavigationNext(button: UIButton, configuration: AnyCodable?) {
+        if let title = configuration?.value as? String {
             button.setTitle(title, for: .normal)
             button.setTitleColor(.white, for: .normal)
             button.setTitle(title, for: .selected)
             button.setTitleColor(.white, for: .selected)
+        } else {
+            button.setTitle("", for: .normal)
+            button.setImage(UIImage(named: "icon_select_next", in: .SDKBundle, compatibleWith: nil), for: .normal)
+            button.setTitle("", for: .selected)
+            button.setImage(UIImage(named: "icon_select_next", in: .SDKBundle, compatibleWith: nil), for: .highlighted)
         }
 
         button
@@ -165,17 +174,17 @@ extension QuestionnaireNavigationCell {
             .center(toY: self.buttons)
     }
 
-    private func shapeNavigationBack(button: UIButton, configuration: AnyCodable) {
-        if let _ = configuration.value as? Bool {
-            button.setTitle("", for: .normal)
-            button.setImage(UIImage(named: "icon_select_back", in: .SDKBundle, compatibleWith: nil), for: .normal)
-            button.setTitle("", for: .selected)
-            button.setImage(UIImage(named: "icon_select_back", in: .SDKBundle, compatibleWith: nil), for: .selected)
-        } else if let title = configuration.value as? String {
+    private func shapeNavigationBack(button: UIButton, configuration: AnyCodable?) {
+        if let title = configuration?.value as? String {
             button.setTitle(title, for: .normal)
             button.setTitleColor(.QBlueButtonNormal, for: .normal)
             button.setTitle(title, for: .selected)
             button.setTitleColor(.QBlueButtonHighlighted, for: .selected)
+        } else {
+            button.setTitle("", for: .normal)
+            button.setImage(UIImage(named: "icon_select_back", in: .SDKBundle, compatibleWith: nil), for: .normal)
+            button.setTitle("", for: .selected)
+            button.setImage(UIImage(named: "icon_select_back", in: .SDKBundle, compatibleWith: nil), for: .selected)
         }
         button
             .fix(leading: (16.0, self.buttons))

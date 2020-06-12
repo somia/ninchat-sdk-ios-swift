@@ -76,8 +76,8 @@ struct ButtonQuestionnaire: Codable {
 
 // MARK: - Logic
 struct LogicQuestionnaire: Codable {
-    let and: Array<[String:AnyCodable]>?
-    let or: Array<[String:AnyCodable]>?
+    let and: Array<[String:String]>?
+    let or: Array<[String:String]>?
     let target: String
     let queue: String?
     let tags: [String]?
@@ -85,34 +85,19 @@ struct LogicQuestionnaire: Codable {
     var andKeys: [String]? {
         self.and?
                 .compactMap({ $0 })
-                .reduce(into: []) { (result: inout [String], dictionary: [String:AnyCodable]) in
+                .reduce(into: []) { (result: inout [String], dictionary: [String:String]) in
                     result.append(contentsOf: dictionary.keys.compactMap({ $0 }))
                 }
     }
-    var andValues: [AnyCodable]? {
-        self.and?
-                .compactMap({ $0 })
-                .reduce(into: []) { (result: inout [AnyCodable], dictionary: [String:AnyCodable]) in
-                    result.append(contentsOf: dictionary.values.compactMap({ $0 }))
-                }
-    }
-
     var orKeys: [String]? {
         self.or?
                 .compactMap({ $0 })
-                .reduce(into: []) { (result: inout [String], dictionary: [String:AnyCodable]) in
+                .reduce(into: []) { (result: inout [String], dictionary: [String:String]) in
                     result.append(contentsOf: dictionary.keys.compactMap({ $0 }))
                 }
     }
-    var orValues: [AnyCodable]? {
-        self.or?
-                .compactMap({ $0 })
-                .reduce(into: []) { (result: inout [AnyCodable], dictionary: [String:AnyCodable]) in
-                    result.append(contentsOf: dictionary.values.compactMap({ $0 }))
-                }
-    }
 
-    func satisfy(dictionary: [String:AnyCodable]) -> Bool {
+    func satisfy(dictionary: [String:String]) -> Bool {
         if let ands = self.and, ands.count > 0 {
             return ands.first(where: { dictionary.filter(based: $0, keys: self.andKeys ?? [])?.count == $0.keys.count }) != nil
         } else if let ors = self.or, ors.count > 0 {

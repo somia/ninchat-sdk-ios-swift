@@ -41,11 +41,11 @@ extension Dictionary where Key==String {
     }
 }
 
-extension Dictionary where Key==String, Value==AnyCodable {
-    func filter(based dictionary: [String:AnyCodable], keys: [String]) -> Self? {
+extension Dictionary where Key==String, Value==String {
+    func filter(based dictionary: [String:String], keys: [String]) -> Self? {
         guard dictionary.keys.count > 0, self.keys.count > 0 else { return nil }
-        let result = self.filter(based: keys).filter { (key: String, value: AnyCodable) in
-            if let regexPattern = dictionary[key]?.value as? String, let selfValue = value.value as? String, let regexResult = selfValue.extractRegex(withPattern: regexPattern), regexResult.count > 0 {
+        let result = self.filter(based: keys).filter { (key: String, value: String) in
+            if let regexPattern = dictionary[key], let regexResult = value.extractRegex(withPattern: regexPattern), regexResult.count > 0 {
                 return true
             }
             return dictionary[key] == value

@@ -161,12 +161,12 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
             self.viewModel.requirementSatisfactionUpdater = { satisfied in
                 cell.requirementSatisfactionUpdater?(satisfied)
             }
-            cell.onNextButtonTapped = { [weak self] questionnaire in
-                if self?.viewModel.goToNextPage() ?? false {
-                    self?.updateContentView()
-                }
+            cell.onNextButtonTapped = { [weak self] in
+                guard let nextPage = self?.viewModel.goToNextPage() else { return }
+                (nextPage) ? self?.updateContentView() : self?.viewModel.finishQuestionnaire(for: nil, autoApply: false)
             }
-            cell.onBackButtonTapped = { [weak self] questionnaire in
+            cell.onBackButtonTapped = { [weak self] in
+                _ = self?.viewModel.clearAnswersForCurrentPage()
                 if self?.viewModel.goToPreviousPage() ?? false {
                     self?.updateContentView()
                 }
@@ -185,10 +185,12 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
 
             if var view = element as? QuestionnaireSettable {
                 view.presetAnswer = self.viewModel.getAnswersForElement(element)
+                self.viewModel.resetAnswer(for: element)
             }
             if var view = element as? QuestionnaireOptionSelectableElement {
                 view.onElementOptionSelected = { [weak self] option in
                     func showTargetPage(_ page: Int) {
+                        guard (self?.viewModel.canGoToPage(page) ?? false), !(self?.viewModel.shouldWaitForNextButton ?? false) else { return }
                         if self?.viewModel.goToPage(page) ?? false {
                             view.deselect(option: option)
                             self?.updateContentView()
@@ -196,9 +198,9 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
                     }
 
                     self?.viewModel.submitAnswer(key: element, value: option.value)
-                    if let page = self?.viewModel.redirectTargetPage(for: option) {
+                    if let page = self?.viewModel.redirectTargetPage(for: option.value) {
                         showTargetPage(page)
-                    } else if let page = self?.viewModel.logicTargetPage(for: option, name: element.elementConfiguration?.name ?? "") {
+                    } else if let page = self?.viewModel.logicTargetPage(key: element.elementConfiguration?.name ?? "", value: option.value) {
                         showTargetPage(page)
                     }
                 }

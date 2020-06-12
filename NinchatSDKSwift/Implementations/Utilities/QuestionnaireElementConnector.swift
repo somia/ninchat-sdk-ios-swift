@@ -5,16 +5,15 @@
 //
 
 import UIKit
-import AnyCodable
 
 protocol QuestionnaireElementConnector {
     var logicContainsTags: ((LogicQuestionnaire?) -> Void)? { get set }
-    var onRegisterTargetReached: ((LogicQuestionnaire?) -> Void)? { get set }
-    var onCompleteTargetReached: ((LogicQuestionnaire?) -> Void)? { get set }
+    var onRegisterTargetReached: ((LogicQuestionnaire?, _ autoApply: Bool) -> Void)? { get set }
+    var onCompleteTargetReached: ((LogicQuestionnaire?, _ autoApply: Bool) -> Void)? { get set }
 
     init(configurations: [QuestionnaireConfiguration])
     func findElementAndPageRedirect(for input: String, in configuration: QuestionnaireConfiguration) -> ([QuestionnaireElement]?, Int?)
-    func findElementAndPageLogic(for dictionary: [String:AnyCodable], in answers: [String:AnyHashable]) -> ([QuestionnaireElement]?, Int?)
+    func findElementAndPageLogic(for dictionary: [String:String], in answers: [String:AnyHashable]) -> ([QuestionnaireElement]?, Int?)
 }
 
 struct QuestionnaireElementConnectorImpl: QuestionnaireElementConnector {
@@ -27,8 +26,8 @@ struct QuestionnaireElementConnectorImpl: QuestionnaireElementConnector {
     }
 
     var logicContainsTags: ((LogicQuestionnaire?) -> Void)?
-    var onRegisterTargetReached: ((LogicQuestionnaire?) -> Void)?
-    var onCompleteTargetReached: ((LogicQuestionnaire?) -> Void)?
+    var onRegisterTargetReached: ((LogicQuestionnaire?, _ autoApply: Bool) -> Void)?
+    var onCompleteTargetReached: ((LogicQuestionnaire?, _ autoApply: Bool) -> Void)?
 
     /// Returns the element the given configuration associated to
     /// The function is called if the `findTargetRedirectConfiguration(from:)` or `findTargetLogicConfiguration(from:)` returns valid configuration
@@ -75,18 +74,18 @@ extension QuestionnaireElementConnectorImpl {
         self.configurations.compactMap({ $0.logic })
     }
 
-    func findElementAndPageLogic(for dictionary: [String:AnyCodable], in answers: [String:AnyHashable]) -> ([QuestionnaireElement]?, Int?) {
+    func findElementAndPageLogic(for dictionary: [String:String], in answers: [String:AnyHashable]) -> ([QuestionnaireElement]?, Int?) {
         if let blocks = self.findLogicBlocks(for: Array(dictionary.keys)), blocks.count > 0 {
             let satisfied: (bool: Bool, logic: LogicQuestionnaire?) = areSatisfied(logic: blocks, forAnswers: answers)
             if satisfied.bool, let logic = satisfied.logic {
                 if let tags = logic.tags, tags.count > 0 {
                     self.logicContainsTags?(logic)
                 }
-                
+
                 if logic.target == "_register" {
-                    self.onRegisterTargetReached?(logic)
+                    self.onRegisterTargetReached?(logic, true)
                 } else if logic.target == "_complete" {
-                    self.onCompleteTargetReached?(logic)
+                    self.onCompleteTargetReached?(logic, true)
                 } else if let configuration = self.findTargetLogicConfiguration(from: logic).0 {
                     if let element = self.findTargetElement(for: configuration).0, let page = self.findTargetElement(for: configuration).1 {
                         return (element, page)
@@ -110,7 +109,7 @@ extension QuestionnaireElementConnectorImpl {
     /// Determines if the derived 'logic' blocks from the `findLogicBlocks(for:)` API are satisfied
     /// Returns corresponded 'logic' block for given key:value
     internal func areSatisfied(logic blocks: [LogicQuestionnaire], forAnswers answers: [String:AnyHashable]) -> (Bool, LogicQuestionnaire?) {
-        if let theBlock = blocks.first(where: { $0.satisfy(dictionary: answers.reduce(into: [:]) { $0[$1.key] = AnyCodable($1.value) }) }) {
+        if let theBlock = blocks.first(where: { $0.satisfy(dictionary: answers.filter({ $0.value is String }) as! [String:String] ) }) {
             return (true, theBlock)
         }
         return (false, nil)

@@ -6,7 +6,6 @@
 
 import UIKit
 import XCTest
-import AnyCodable
 @testable import NinchatSDKSwift
 
 final class ExtensionsTests: XCTestCase {
@@ -121,21 +120,21 @@ final class ExtensionsTests: XCTestCase {
 
     func test_dictionary_filter_dictionary() {
         let keys = ["key1", "key2"]
-        let target: [String:AnyCodable] = ["key1":"value1", "key2":"^[1-5]$"]
+        let target: [String:String] = ["key1":"value1", "key2":"^[1-5]$"]
 
-        let dictionary_1: [String:AnyCodable] = ["key1":"value1", "invalid1":"value1", "key2":"value2", "invalid2":"value2"]
+        let dictionary_1: [String:String] = ["key1":"value1", "invalid1":"value1", "key2":"value2", "invalid2":"value2"]
         XCTAssertEqual(dictionary_1.filter(based: target, keys: keys), ["key1":"value1"])
 
-        let dictionary_2: [String:AnyCodable] = ["key1":"value1", "invalid1":"value1", "key2":"2", "invalid2":"value2"]
+        let dictionary_2: [String:String] = ["key1":"value1", "invalid1":"value1", "key2":"2", "invalid2":"value2"]
         XCTAssertEqual(dictionary_2.filter(based: target, keys: keys), ["key1":"value1", "key2":"2"])
 
-        let dictionary_3: [String:AnyCodable] = [:]
+        let dictionary_3: [String:String] = [:]
         XCTAssertNil(dictionary_3.filter(based: target, keys: keys))
 
-        let dictionary_4: [String:AnyCodable] = ["key2":"2"]
+        let dictionary_4: [String:String] = ["key2":"2"]
         XCTAssertEqual(dictionary_4.filter(based: target, keys: keys), ["key2":"2"])
 
-        let dictionary_5: [String:AnyCodable] = ["key2":"invalid"]
+        let dictionary_5: [String:String] = ["key2":"invalid"]
         XCTAssertNil(dictionary_5.filter(based: target, keys: keys))
     }
 

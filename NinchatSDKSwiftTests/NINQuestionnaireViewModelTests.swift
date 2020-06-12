@@ -51,6 +51,23 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         }
     }
 
+    func test_21_setPreAnswers() throws {
+        self.viewModel?.pageNumber = 0
+        XCTAssertNil(self.viewModel?.tempPageNumber)
+
+        do {
+            self.viewModel?.answers = ["Aiheet": "Mikä on koronavirus"]
+            let element = try self.viewModel?.getElements()[0]
+
+            self.viewModel?.resetAnswer(for: element!)
+            XCTAssertNotNil(self.viewModel?.tempPageNumber)
+            XCTAssertEqual(self.viewModel?.tempPageNumber ?? 0, 1)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+
+    }
+
     func test_30_getRequirementsStatus() {
         self.viewModel?.pageNumber = 8
         XCTAssertTrue(self.viewModel?.requirementsSatisfied ?? false)
@@ -82,5 +99,123 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         let element = try? self.viewModel?.getElements().first
         self.viewModel?.submitAnswer(key: element!, value: "Mikä on koronavirus")
         XCTAssertTrue(self.viewModel?.goToPage(8) ?? false)
+    }
+
+    func test_41_waitForNextButton() {
+        self.viewModel?.pageNumber = 0
+        XCTAssertTrue(self.viewModel?.shouldWaitForNextButton ?? false)
+
+        self.viewModel?.pageNumber = 4
+        XCTAssertFalse(self.viewModel?.shouldWaitForNextButton ?? true)
+    }
+
+    func test_50_simpleNavigation() {
+        self.viewModel?.pageNumber = 10
+        XCTAssertFalse(self.viewModel?.canGoToPage(11) ?? true)
+
+        self.viewModel?.answers = ["temp-btn": "Finnish", "temp-btn2": "Finnish"]
+        XCTAssertFalse(self.viewModel?.canGoToPage(11) ?? true)
+
+        self.viewModel?.answers = ["temp-btn": "Finnish", "temp-btn2": "Finnish", "comments": "This is unit test"]
+        XCTAssertTrue(self.viewModel?.canGoToPage(11) ?? false)
+    }
+
+    func test_51_navigationWithRedirects() {
+        self.viewModel?.pageNumber = 0
+        XCTAssertTrue(self.viewModel?.shouldWaitForNextButton ?? false)
+
+        self.viewModel?.answers = ["Aiheet": "Mikä on koronavirus"]
+        let page = self.viewModel?.redirectTargetPage(for: "Mikä on koronavirus")
+        XCTAssertNotNil(page)
+        XCTAssertEqual(page ?? 0, 1)
+
+        XCTAssertTrue(self.viewModel?.canGoToPage(page!) ?? false)
+        XCTAssertTrue(self.viewModel?.goToPage(page!) ?? false)
+    }
+
+    func test_52_navigationWithLogic_Complete() {
+        let expect = self.expectation(description: "Expected to reach _complete logic")
+
+        self.viewModel?.connector.onCompleteTargetReached = { logic, autoApply in
+            XCTAssertTrue(autoApply)
+            XCTAssertNotNil(logic)
+            expect.fulfill()
+        }
+        self.viewModel?.pageNumber = 11
+        self.viewModel?.answers = ["wouldRecommendService": "1"]
+
+        let page = self.viewModel?.logicTargetPage(key: "wouldRecommendService", value: "1")
+        XCTAssertNil(page)
+
+        waitForExpectations(timeout: 2.0)
+    }
+
+    func test_52_navigationWithLogic_Register() {
+        let expect = self.expectation(description: "Expected to reach _register logic")
+
+        self.viewModel?.connector.onRegisterTargetReached = { logic, autoApply in
+            XCTAssertTrue(autoApply)
+            XCTAssertNotNil(logic)
+            expect.fulfill()
+        }
+        self.viewModel?.pageNumber = 9
+        self.viewModel?.answers = ["Huolet-jatko": "Sulje"]
+
+        let page = self.viewModel?.logicTargetPage(key: "Huolet-jatko", value: "Sulje")
+        XCTAssertNil(page)
+
+        waitForExpectations(timeout: 2.0)
+    }
+
+    func test_53_navigationAutoApply_Complete() {
+        var expectedResult: Bool!
+        let expect = self.expectation(description: "Expected to reach _complete logic")
+        expect.assertForOverFulfill = false
+
+        self.viewModel?.connector.onCompleteTargetReached = { _, autoApply in
+            XCTAssertEqual(self.viewModel!.hasToWaitForUserConfirmation(autoApply), expectedResult)
+            expect.fulfill()
+        }
+        self.viewModel?.pageNumber = 11
+        self.viewModel?.answers = ["wouldRecommendService": "1"]
+
+        expectedResult = true
+        _ = self.viewModel?.logicTargetPage(key: "wouldRecommendService", value: "1")
+
+        expectedResult = false
+        self.viewModel?.finishQuestionnaire(for: nil, autoApply: false)
+
+        waitForExpectations(timeout: 2.0)
+    }
+
+    func test_54_navigationAutoApply_Register() {
+        var expectedResult: Bool!
+        let expect = self.expectation(description: "Expected to reach _register logic")
+        expect.assertForOverFulfill = false
+
+        self.viewModel?.connector.onRegisterTargetReached = { _, autoApply in
+            XCTAssertEqual(self.viewModel!.hasToWaitForUserConfirmation(autoApply), expectedResult)
+            expect.fulfill()
+        }
+        self.viewModel?.pageNumber = 9
+        self.viewModel?.answers = ["Huolet-jatko": "Sulje"]
+
+        expectedResult = true
+        _ = self.viewModel?.logicTargetPage(key: "Huolet-jatko", value: "Sulje")
+
+        expectedResult = false
+        self.viewModel?.finishQuestionnaire(for: nil, autoApply: false)
+
+        waitForExpectations(timeout: 2.0)
+    }
+
+    func test_60_clearAnswers() {
+        self.viewModel?.pageNumber = 0
+        self.viewModel?.answers = [:]
+        XCTAssertFalse(self.viewModel?.clearAnswersForCurrentPage() ?? true)
+
+        self.viewModel?.answers = ["Aiheet": "Mikä on koronavirus", "arbitraryAnswer": "answer"]
+        XCTAssertTrue(self.viewModel?.clearAnswersForCurrentPage() ?? false)
+        XCTAssertEqual(self.viewModel?.answers, ["arbitraryAnswer": "answer"])
     }
 }
