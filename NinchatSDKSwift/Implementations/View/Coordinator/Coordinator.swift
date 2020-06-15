@@ -169,7 +169,10 @@ extension NINCoordinator {
         vc.session = session
         vc.rating = rating
         vc.ratingViewModel = ratingViewModel
-        vc.viewModel = NINQuestionnaireViewModelImpl(sessionManager: self.sessionManager, queue: queue, questionnaireType: questionnaireType)
+
+        let viewModel = NINQuestionnaireViewModelImpl(sessionManager: self.sessionManager, queue: queue, questionnaireType: questionnaireType)
+        vc.dataSourceDelegate = NINQuestionnaireFormDataSourceDelegateImpl(viewModel: viewModel, session: self.session)
+        vc.viewModel = viewModel
         vc.completeQuestionnaire = { [unowned self] queue in
             DispatchQueue.main.async {
                 if questionnaireType == .pre {
