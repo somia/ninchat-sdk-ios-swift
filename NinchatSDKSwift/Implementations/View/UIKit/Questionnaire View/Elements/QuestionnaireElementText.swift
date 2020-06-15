@@ -59,6 +59,7 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
 extension QuestionnaireElement where Self:QuestionnaireElementText {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
         self.textAlignment = .left
+        self.backgroundColor = .clear
         self.setAttributed(text: configuration?.label ?? "", font: .ninchat)
         self.elementConfiguration = configuration
 

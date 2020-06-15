@@ -43,6 +43,7 @@ public enum AssetConstants {
     case textareaSubmitButton
     case primaryButton
     case secondaryButton
+    case questionnaireBackground
 }
 
 /// Color override keys

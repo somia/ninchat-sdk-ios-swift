@@ -45,6 +45,8 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
 
     private var contentView: UITableView! {
         didSet {
+            contentView.backgroundColor = .clear
+
             self.view.addSubview(contentView)
             contentView
                     .fix(top: (0, self.view), bottom: (0, self.view), toSafeArea: true)
@@ -60,6 +62,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.overrideAssets()
         self.addKeyboardListeners()
         self.initiateIndicatorView()
         self.initiateContentView(0.5) /// let elements be loaded for a few seconds
@@ -67,6 +70,14 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
 
     deinit {
         self.removeKeyboardListeners()
+    }
+
+    private func overrideAssets() {
+        if let backgroundImage = self.session.override(imageAsset: .questionnaireBackground) {
+            self.view.backgroundColor = UIColor(patternImage: backgroundImage)
+        } else if let bundleImage = UIImage(named: "chat_background_pattern", in: .SDKBundle, compatibleWith: nil) {
+            self.view.backgroundColor = UIColor(patternImage: bundleImage)
+        }
     }
 }
 
@@ -171,6 +182,8 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
                     self?.updateContentView()
                 }
             }
+            cell.backgroundColor = .clear
+
             return cell
         } catch {
             fatalError(error.localizedDescription)
@@ -220,6 +233,7 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
                     }
                 }
             }
+            cell.backgroundColor = .clear
             self.layoutSubview(element, parent: cell.content)
 
             return cell
