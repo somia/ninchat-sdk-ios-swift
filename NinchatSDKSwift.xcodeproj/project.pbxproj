@@ -129,10 +129,8 @@
 		91A161DB68CC555F5D24B454 /* NINQuestionnaireViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16A4BAAD9D6ED4337842F /* NINQuestionnaireViewModelTests.swift */; };
 		91A161EC840C41258CBA12A4 /* NINSessionCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16FA13B1F62E386352B88 /* NINSessionCredentials.swift */; };
 		91A1621313714ACDFE35E97C /* NSAttributedString+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16EDB1E05655FA925BCCB /* NSAttributedString+Extension.swift */; };
-		91A1622C29E366B0D6B4A518 /* QuestionnaireDataSourceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1664F9CC2C8437549F3EB /* QuestionnaireDataSourceDelegate.swift */; };
 		91A1623678B6FA354032558D /* ChannelMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1621FC457EFE156F90335 /* ChannelMessage.swift */; };
 		91A1624977615DA2282774D2 /* NINQuestionnaireViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1611EF0E38FD4DEB8B4AC /* NINQuestionnaireViewController.swift */; };
-		91A162F44FFF3C88CEF947B2 /* NINQuestionnaireFormDataSourceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A163373718710F36380A03 /* NINQuestionnaireFormDataSourceDelegate.swift */; };
 		91A163085E1C1FAF4BA8BEB8 /* ChatTypingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A167BAE1C0F6F9466CE1D6 /* ChatTypingCell.swift */; };
 		91A1631CB9FB0E611E88DD99 /* WKWebView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A168DEF02D4EED4F01B97E /* WKWebView+Extension.swift */; };
 		91A1634DB52849BD1F2FEEF8 /* VideoThumbnailManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16EE2919D93717F843D49 /* VideoThumbnailManager.swift */; };
@@ -152,6 +150,7 @@
 		91A16662A64C445F2BE70776 /* AvatarConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16A31C53EAB230510289A /* AvatarConfig.swift */; };
 		91A166E41455F2CB32736453 /* NSMutableAttributedString+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1652A485CCE644E39135E /* NSMutableAttributedString+Extension.swift */; };
 		91A16731BDB6AF8672CACFF3 /* MetaMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1608187147D83945341AF /* MetaMessage.swift */; };
+		91A1674CD64ED14E91D77851 /* QuestionnaireDataSourceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A169DF3F0EF74990AD7036 /* QuestionnaireDataSourceDelegate.swift */; };
 		91A1676834C91BDD430EB752 /* NinchatSDKSwiftServerHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1607145A515528F6210F5 /* NinchatSDKSwiftServerHandlerTests.swift */; };
 		91A1678E01EA8B9A92F95B56 /* site-configuration-mock.json in Resources */ = {isa = PBXBuildFile; fileRef = 91A16C64D29D2D2F1D8E2C02 /* site-configuration-mock.json */; };
 		91A1679D684FC723976C6C14 /* PermissionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16F63734B3B04FB5F4ED3 /* PermissionTests.swift */; };
@@ -159,6 +158,7 @@
 		91A167A8436C7DEA859E45C9 /* UIKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16F6CAA073C2B72C58FBF /* UIKitTests.swift */; };
 		91A167D5B0BD96D3FD190F94 /* ComposeMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1689A5BDC25419D67E9BF /* ComposeMessageView.swift */; };
 		91A167F485DBCDFEEA0261F6 /* QuestionnaireElementLikert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16ED021E7CDE32491AE5D /* QuestionnaireElementLikert.swift */; };
+		91A1685BFB39CDD931E5FCAC /* NINQuestionnaireConversationDataSourceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16F08D697EA1A1125CC1E /* NINQuestionnaireConversationDataSourceDelegate.swift */; };
 		91A1686AC0F93B6707C55930 /* QuestionnaireConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16D113215A7C879D84505 /* QuestionnaireConverterTests.swift */; };
 		91A1688A7C316AEDFAF3BFD1 /* NinchatViewModelTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16BD6BFDA5810A0BE45F4 /* NinchatViewModelTestCase.swift */; };
 		91A168E2844E0CDE5A4D632A /* NinchatSDKSwiftServerHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16E2E2FDA2CB5D3AAA5B7 /* NinchatSDKSwiftServerHelperTests.swift */; };
@@ -190,6 +190,7 @@
 		91A16DE58D34AA4B9D3713AB /* ComposeContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1689894322817E8A84EE1 /* ComposeContentView.swift */; };
 		91A16DF9052A891F1EE2F157 /* SiteConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1679E294ED34564BC455D /* SiteConfigurationTests.swift */; };
 		91A16E653E0301454E26065E /* QuestionnaireElementText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16AE14079CD3F38C9E09D /* QuestionnaireElementText.swift */; };
+		91A16EBD69F3BE407AACAFF4 /* NINQuestionnaireFormDataSourceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1601A471AB9D2A4F94CA4 /* NINQuestionnaireFormDataSourceDelegate.swift */; };
 		91A16ECAF6CDA6AA355A4D98 /* QuestionnaireNavigationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1648B47113F8332CE820C /* QuestionnaireNavigationCell.swift */; };
 		91A16F01F99326D2F881295A /* ChoiceDialogue.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91A16D2D28D6ECE052A799BE /* ChoiceDialogue.xib */; };
 		91A16F0F943EEA59D402EF50 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91A16BC6222D563B8B9252CA /* Localizable.strings */; };
@@ -343,6 +344,7 @@
 		85DDD22523D4DD1200E00844 /* ConfirmCloseChatView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ConfirmCloseChatView.xib; sourceTree = "<group>"; };
 		91A16009B294E8960F6094D5 /* QuestionnaireElementCheckbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireElementCheckbox.swift; sourceTree = "<group>"; };
 		91A1601709224C6C90482745 /* Dictionary+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Dictionary+Extension.swift"; sourceTree = "<group>"; };
+		91A1601A471AB9D2A4F94CA4 /* NINQuestionnaireFormDataSourceDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINQuestionnaireFormDataSourceDelegate.swift; sourceTree = "<group>"; };
 		91A1604E15D212D192044A9A /* VideoThumbnailManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoThumbnailManagerTests.swift; sourceTree = "<group>"; };
 		91A160629BFA8BA6D9E9C0CA /* NinchatSDKSwiftServerSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatSDKSwiftServerSessionTests.swift; sourceTree = "<group>"; };
 		91A1607145A515528F6210F5 /* NinchatSDKSwiftServerHandlerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatSDKSwiftServerHandlerTests.swift; sourceTree = "<group>"; };
@@ -360,7 +362,6 @@
 		91A162A3A1B95DCF935DA47E /* ComposeMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposeMessage.swift; sourceTree = "<group>"; };
 		91A162DE1B788E9D39518E5B /* QuestionnaireElementConnector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireElementConnector.swift; sourceTree = "<group>"; };
 		91A1633706071B64D349FD72 /* QuestionnaireElementConnectorLogicTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireElementConnectorLogicTests.swift; sourceTree = "<group>"; };
-		91A163373718710F36380A03 /* NINQuestionnaireFormDataSourceDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINQuestionnaireFormDataSourceDelegate.swift; sourceTree = "<group>"; };
 		91A163540D74E87CE6247C06 /* QuestionnaireElementSelect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireElementSelect.swift; sourceTree = "<group>"; };
 		91A163542A73487774FB1D3C /* Permission.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Permission.swift; sourceTree = "<group>"; };
 		91A163B62D2DBB763D1B850A /* UIFont+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+Extension.swift"; sourceTree = "<group>"; };
@@ -375,7 +376,6 @@
 		91A1652A485CCE644E39135E /* NSMutableAttributedString+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSMutableAttributedString+Extension.swift"; sourceTree = "<group>"; };
 		91A165370F88E5B62075CFB2 /* ChannelUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelUser.swift; sourceTree = "<group>"; };
 		91A1660AC336314992BDC930 /* QuestionnaireElementTextArea.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireElementTextArea.swift; sourceTree = "<group>"; };
-		91A1664F9CC2C8437549F3EB /* QuestionnaireDataSourceDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireDataSourceDelegate.swift; sourceTree = "<group>"; };
 		91A1665602ED586F1BD60785 /* RTCSessionDescription+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RTCSessionDescription+Extension.swift"; sourceTree = "<group>"; };
 		91A166D4F9B0F6D7063479E9 /* NinchatXCTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatXCTestCase.swift; sourceTree = "<group>"; };
 		91A166E121EFB4764BE628C8 /* WebRTCServerInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebRTCServerInfo.swift; sourceTree = "<group>"; };
@@ -393,6 +393,7 @@
 		91A16984C5BA331DFFCB6EDA /* ChoiceDialogue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChoiceDialogue.swift; sourceTree = "<group>"; };
 		91A169A968E807A8F8D6358A /* Toast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		91A169DEE6D533D109B83EB5 /* NINLowLevelClientPropsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINLowLevelClientPropsTests.swift; sourceTree = "<group>"; };
+		91A169DF3F0EF74990AD7036 /* QuestionnaireDataSourceDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireDataSourceDelegate.swift; sourceTree = "<group>"; };
 		91A16A31C53EAB230510289A /* AvatarConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvatarConfig.swift; sourceTree = "<group>"; };
 		91A16A4BAAD9D6ED4337842F /* NINQuestionnaireViewModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINQuestionnaireViewModelTests.swift; sourceTree = "<group>"; };
 		91A16A99A8F815E0C72B0AAE /* UIImageView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extension.swift"; sourceTree = "<group>"; };
@@ -415,6 +416,7 @@
 		91A16EDB1E05655FA925BCCB /* NSAttributedString+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+Extension.swift"; sourceTree = "<group>"; };
 		91A16EE2919D93717F843D49 /* VideoThumbnailManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoThumbnailManager.swift; sourceTree = "<group>"; };
 		91A16EF006023D3561854D8B /* ChatMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
+		91A16F08D697EA1A1125CC1E /* NINQuestionnaireConversationDataSourceDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINQuestionnaireConversationDataSourceDelegate.swift; sourceTree = "<group>"; };
 		91A16F13A0720D3E96E59373 /* UserTypingMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTypingMessage.swift; sourceTree = "<group>"; };
 		91A16F63734B3B04FB5F4ED3 /* PermissionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PermissionTests.swift; sourceTree = "<group>"; };
 		91A16F6AB5D678663E586FD1 /* QuestionnaireElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireElement.swift; sourceTree = "<group>"; };
@@ -774,11 +776,10 @@
 			isa = PBXGroup;
 			children = (
 				8563007A23B3846B0098A7B0 /* NINChatDataSourceDelegate.swift */,
-				91A163373718710F36380A03 /* NINQuestionnaireFormDataSourceDelegate.swift */,
 				8563007C23B391840098A7B0 /* NINWebRTCDelegate.swift */,
 				8563007E23B393D00098A7B0 /* NINRTCVideoDelegate.swift */,
 				8563008023B398AB0098A7B0 /* NINPickerControllerDelegate.swift */,
-				91A1664F9CC2C8437549F3EB /* QuestionnaireDataSourceDelegate.swift */,
+				91A16D00F957CB7BDD6A23DC /* Questionnaire */,
 			);
 			path = "Data Source - Delegate";
 			sourceTree = "<group>";
@@ -1007,6 +1008,16 @@
 				91A16C64D29D2D2F1D8E2C02 /* site-configuration-mock.json */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		91A16D00F957CB7BDD6A23DC /* Questionnaire */ = {
+			isa = PBXGroup;
+			children = (
+				91A169DF3F0EF74990AD7036 /* QuestionnaireDataSourceDelegate.swift */,
+				91A1601A471AB9D2A4F94CA4 /* NINQuestionnaireFormDataSourceDelegate.swift */,
+				91A16F08D697EA1A1125CC1E /* NINQuestionnaireConversationDataSourceDelegate.swift */,
+			);
+			path = Questionnaire;
 			sourceTree = "<group>";
 		};
 		91A16E8BF2B65EFB8166959F /* Elements */ = {
@@ -1417,7 +1428,6 @@
 				91A1624977615DA2282774D2 /* NINQuestionnaireViewController.swift in Sources */,
 				91A1608136659B4888D49A37 /* UIApplication+Extension.swift in Sources */,
 				91A16B2672A4B1509A627A02 /* QuestionnaireElementConverter.swift in Sources */,
-				91A162F44FFF3C88CEF947B2 /* NINQuestionnaireFormDataSourceDelegate.swift in Sources */,
 				91A16AE391177C5A9CE32812 /* QuestionnaireElement.swift in Sources */,
 				91A16E653E0301454E26065E /* QuestionnaireElementText.swift in Sources */,
 				91A165A1E6CD5658530CECCB /* QuestionnaireElementSelect.swift in Sources */,
@@ -1431,7 +1441,9 @@
 				91A165F1E03C8A728D1EEF12 /* QuestionnaireElementConnector.swift in Sources */,
 				91A1658F97223291E9FBBD4B /* NINQuestionnaireViewModel.swift in Sources */,
 				91A167F485DBCDFEEA0261F6 /* QuestionnaireElementLikert.swift in Sources */,
-				91A1622C29E366B0D6B4A518 /* QuestionnaireDataSourceDelegate.swift in Sources */,
+				91A1674CD64ED14E91D77851 /* QuestionnaireDataSourceDelegate.swift in Sources */,
+				91A16EBD69F3BE407AACAFF4 /* NINQuestionnaireFormDataSourceDelegate.swift in Sources */,
+				91A1685BFB39CDD931E5FCAC /* NINQuestionnaireConversationDataSourceDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

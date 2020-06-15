@@ -8,6 +8,15 @@ import UIKit
 import AnyCodable
 import NinchatLowLevelClient
 
+protocol QuestionnaireFormViewController {
+    func initiateFormContentView(_ interval: TimeInterval)
+    func updateFormContentView(_ interval: TimeInterval)
+}
+protocol QuestionnaireConversationController {
+    func initiateConversationContentView(_ interval: TimeInterval)
+    func updateConversationContentView(_ interval: TimeInterval)
+}
+
 final class NINQuestionnaireViewController: UIViewController, ViewController {
 
     // MARK: - ViewController
@@ -19,8 +28,13 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
     var queue: Queue?
     var dataSourceDelegate: QuestionnaireDataSourceDelegate! {
         didSet {
-            dataSourceDelegate.onUpdateCellContent = { [weak self] in
-                self?.updateContentView()
+            dataSourceDelegate.onUpdateCellContent = { [weak self] style in
+                switch style {
+                case .form:
+                    self?.updateFormContentView()
+                case .conversation:
+                    self?.updateConversationContentView()
+                }
             }
         }
     }
@@ -72,7 +86,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
         self.overrideAssets()
         self.addKeyboardListeners()
         self.initiateIndicatorView()
-        self.initiateContentView(0.5) /// let elements be loaded for a few seconds
+        self.initiateFormContentView(0.5) /// let elements be loaded for a few seconds
     }
 
     deinit {
@@ -86,18 +100,33 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
             self.view.backgroundColor = UIColor(patternImage: bundleImage)
         }
     }
+
+    private func generateTableView(isHidden: Bool) -> UITableView {
+        let view = UITableView(frame: .zero)
+        view.register(QuestionnaireCell.self)
+        view.registerClass(QuestionnaireNavigationCell.self)
+
+        view.separatorStyle = .none
+        view.allowsSelection = false
+        view.alpha = isHidden ? 0.0 : 1.0
+        view.delegate = self
+        view.dataSource = self
+
+        return view
+    }
 }
 
-extension NINQuestionnaireViewController {
-    private func updateContentView(_ interval: TimeInterval = 0.0) {
+// MARK: - 'Form Like' questionnaires
+extension NINQuestionnaireViewController: QuestionnaireFormViewController {
+    func updateFormContentView(_ interval: TimeInterval = 0.0) {
         self.loadingIndicator.startAnimating()
         contentView?.hide(true, andCompletion: { [weak self] in
             self?.contentView?.removeFromSuperview()
-            self?.initiateContentView(interval)
+            self?.initiateFormContentView(interval)
         })
     }
 
-    private func initiateContentView(_ interval: TimeInterval) {
+    func initiateFormContentView(_ interval: TimeInterval) {
         self.loadingIndicator.startAnimating()
         DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
             self.contentView = self.generateTableView(isHidden: true)
@@ -114,19 +143,12 @@ extension NINQuestionnaireViewController {
         self.view.addSubview(self.loadingIndicator)
         self.loadingIndicator.center(toX: self.view, toY: self.view)
     }
+}
 
-    private func generateTableView(isHidden: Bool) -> UITableView {
-        let view = UITableView(frame: .zero)
-        view.register(QuestionnaireCell.self)
-        view.registerClass(QuestionnaireNavigationCell.self)
-
-        view.separatorStyle = .none
-        view.allowsSelection = false
-        view.alpha = isHidden ? 0.0 : 1.0
-        view.delegate = self
-        view.dataSource = self
-
-        return view
+extension NINQuestionnaireViewController: QuestionnaireConversationController {
+    func initiateConversationContentView(_ interval: TimeInterval) {
+    }
+    func updateConversationContentView(_ interval: TimeInterval = 0.0) {
     }
 }
 
