@@ -61,3 +61,28 @@ extension NINChatSession: NINChatSessionInternalDelegate {
         delegate?.ninchat(self, overrideQuestionnaireColorAssetKey: key)
     }
 }
+
+/// Dictionaries for typing/loading cells
+extension NINChatSessionInternalDelegate {
+    var imageAssetsDictionary: NINImageAssetDictionary {
+        let userTypingIndicator = self.override(imageAsset: .chatWritingIndicator) ?? UIImage.animatedImage(with: [Int](0...23).compactMap({ UIImage(named: "icon_writing_\($0)", in: .SDKBundle, compatibleWith: nil) }), duration: 1.0)
+        let leftSideBubble = self.override(imageAsset: .chatBubbleLeft) ?? UIImage(named: "chat_bubble_left", in: .SDKBundle, compatibleWith: nil)
+        let leftSideBubbleSeries = self.override(imageAsset: .chatBubbleLeftRepeated) ?? UIImage(named: "chat_bubble_left_series", in: .SDKBundle, compatibleWith: nil)
+        let rightSideBubble = self.override(imageAsset: .chatBubbleRight) ?? UIImage(named: "chat_bubble_right", in: .SDKBundle, compatibleWith: nil)
+        let rightSideBubbleSeries = self.override(imageAsset: .chatBubbleRightRepeated) ?? UIImage(named: "chat_bubble_right_series", in: .SDKBundle, compatibleWith: nil)
+        let leftSideAvatar = self.override(imageAsset: .chatAvatarLeft) ?? UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)
+        let rightSideAvatar = self.override(imageAsset: .chatAvatarRight) ?? UIImage(named: "icon_avatar_mine", in: .SDKBundle, compatibleWith: nil)
+        let playVideoIcon = self.override(imageAsset: .chatPlayVideo) ?? UIImage(named: "icon_play", in: .SDKBundle, compatibleWith: nil)
+
+        return [.chatWritingIndicator: userTypingIndicator!, .chatBubbleLeft: leftSideBubble!, .chatBubbleLeftRepeated: leftSideBubbleSeries!,
+                .chatBubbleRight: rightSideBubble!, .chatBubbleRightRepeated: rightSideBubbleSeries!, .chatAvatarLeft: leftSideAvatar!,
+                .chatAvatarRight: rightSideAvatar!, .chatPlayVideo: playVideoIcon!]
+    }
+
+    var colorAssetsDictionary: [ColorConstants:UIColor] {
+        let colorKeys: [ColorConstants] = [.infoText, .chatName, .chatTimestamp, .chatBubbleLeftText, .chatBubbleRightText, .chatBubbleLeftLink, .chatBubbleRightLink]
+        return colorKeys.compactMap({ ($0, self.override(colorAsset: $0)) }).reduce(into: [:]) { (colorAsset: inout [ColorConstants:UIColor], tuple: (key: ColorConstants, color: UIColor?)) in
+            colorAsset[tuple.key] = tuple.color
+        }
+    }
+}

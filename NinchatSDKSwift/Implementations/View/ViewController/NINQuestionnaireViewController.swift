@@ -26,14 +26,16 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
     // MARK: - Injected
 
     var queue: Queue?
+    var style: QuestionnaireStyle!
     var dataSourceDelegate: QuestionnaireDataSourceDelegate! {
         didSet {
-            dataSourceDelegate.onUpdateCellContent = { [weak self] style in
+            dataSourceDelegate.onUpdateCellContent = { [weak self] in
+                guard let style = self?.style else { return }
                 switch style {
                 case .form:
                     self?.updateFormContentView()
                 case .conversation:
-                    self?.updateConversationContentView()
+                    self?.updateConversationContentView(1.0)
                 }
             }
         }
@@ -86,7 +88,10 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
         self.overrideAssets()
         self.addKeyboardListeners()
         self.initiateIndicatorView()
-        self.initiateFormContentView(0.5) /// let elements be loaded for a few seconds
+
+        /// let elements be loaded for a few seconds
+        if self.style == .form { self.initiateFormContentView(0.5) }
+        else if self.style == .conversation { self.initiateConversationContentView(0.5) }
     }
 
     deinit {
@@ -101,8 +106,9 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
         }
     }
 
-    private func generateTableView(isHidden: Bool) -> UITableView {
+    private func generateTableView(isHidden: Bool) -> UITableView  {
         let view = UITableView(frame: .zero)
+        view.register(ChatTypingCell.self)
         view.register(QuestionnaireCell.self)
         view.registerClass(QuestionnaireNavigationCell.self)
 
@@ -146,19 +152,49 @@ extension NINQuestionnaireViewController: QuestionnaireFormViewController {
 }
 
 extension NINQuestionnaireViewController: QuestionnaireConversationController {
-    func initiateConversationContentView(_ interval: TimeInterval) {
-    }
     func updateConversationContentView(_ interval: TimeInterval = 0.0) {
+        guard var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("Not conformed") }
+        let section = conversationDataSource.insertSection()
+        self.contentView.insertSections(IndexSet(integer: section), with: .left)
+
+        conversationDataSource.isLoadingNewElements = true
+        self.contentView.insertRows(at: [IndexPath(row: 0, section: section)], with: .left)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
+            conversationDataSource.isLoadingNewElements = false
+            self.contentView.deleteRows(at: [IndexPath(row: 0, section: section)], with: .right)
+
+            /// Questionnaires
+            self.contentView.beginUpdates()
+            let elements = try! self.viewModel.getElements()
+            elements.forEach { element in
+                self.contentView.insertRows(at: [IndexPath(row: elements.firstIndex(where: { $0 == element })!, section: section)], with: .left)
+                _ = conversationDataSource.insertRow()
+            }
+
+            /// Navigation
+            conversationDataSource.insertRow()
+            self.contentView.insertRows(at: [IndexPath(row: elements.count, section: section)], with: .left)
+            self.contentView.endUpdates()
+        }
+    }
+    func initiateConversationContentView(_ interval: TimeInterval) {
+        self.contentView = self.generateTableView(isHidden: false)
+        self.updateConversationContentView(interval)
     }
 }
 
 extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDelegate {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        self.dataSourceDelegate.numberOfPages()
+    }
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         self.dataSourceDelegate.height(at: indexPath)
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        self.dataSourceDelegate.numberOfMessages()
+        self.dataSourceDelegate.numberOfMessages(in: section)
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

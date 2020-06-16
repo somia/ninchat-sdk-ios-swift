@@ -99,8 +99,8 @@ final class ChatView: UIView, ChatViewProtocol {
     var delegate: ChatViewDelegate!
     var sessionManager: NINChatSessionManager! {
         didSet {
-            self.imageAssets = self.imageAssetsDictionary
-            self.colorAssets = self.colorAssetsDictionary
+            self.imageAssets = self.sessionManager.delegate?.imageAssetsDictionary
+            self.colorAssets = self.sessionManager.delegate?.colorAssetsDictionary
             
             self.agentAvatarConfig = AvatarConfig(avatar: sessionManager.siteConfiguration.agentAvatar, name: sessionManager.siteConfiguration.agentName)
             self.userAvatarConfig = AvatarConfig(avatar: sessionManager.siteConfiguration.userAvatar, name: sessionManager.siteConfiguration.userName)
@@ -123,90 +123,6 @@ final class ChatView: UIView, ChatViewProtocol {
     
     deinit {
         debugger("`ChatView` deallocated")
-    }
-}
-
-// MARK: - Helper methods for assets
-
-extension ChatView {
-    var imageAssetsDictionary: NINImageAssetDictionary {
-        let delegate = self.sessionManager.delegate
-        
-        /// User typing indicator
-        var userTypingIcon = delegate?.override(imageAsset: .chatWritingIndicator)
-        if userTypingIcon == nil {
-            userTypingIcon = UIImage.animatedImage(with: [Int](0...23).compactMap({
-                UIImage(named: "icon_writing_\($0)", in: .SDKBundle, compatibleWith: nil)
-            }), duration: 1.0)
-        }
-        
-        /// Left side bubble
-        var leftSideBubble = delegate?.override(imageAsset: .chatBubbleLeft)
-        if leftSideBubble == nil {
-            leftSideBubble = UIImage(named: "chat_bubble_left", in: .SDKBundle, compatibleWith: nil)
-        }
-        
-        /// Left side bubble (series)
-        var leftSideBubbleSeries = delegate?.override(imageAsset: .chatBubbleLeftRepeated)
-        if leftSideBubbleSeries == nil {
-            leftSideBubbleSeries = UIImage(named: "chat_bubble_left_series", in: .SDKBundle, compatibleWith: nil)
-        }
-        
-        /// Right side bubble
-        var rightSideBubble = delegate?.override(imageAsset: .chatBubbleRight)
-        if rightSideBubble == nil {
-            rightSideBubble = UIImage(named: "chat_bubble_right", in: .SDKBundle, compatibleWith: nil)
-        }
-        
-        /// Left side bubble (series)
-        var rightSideBubbleSeries = delegate?.override(imageAsset: .chatBubbleRightRepeated)
-        if rightSideBubbleSeries == nil {
-            rightSideBubbleSeries = UIImage(named: "chat_bubble_right_series", in: .SDKBundle, compatibleWith: nil)
-        }
-        
-        /// Left side avatar
-        var leftSideAvatar = delegate?.override(imageAsset: .chatAvatarLeft)
-        if leftSideAvatar == nil {
-            leftSideAvatar = UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)
-        }
-        
-        /// Right side avatar
-        var rightSideAvatar = delegate?.override(imageAsset: .chatAvatarRight)
-        if rightSideAvatar == nil {
-            rightSideAvatar = UIImage(named: "icon_avatar_mine", in: .SDKBundle, compatibleWith: nil)
-        }
-        
-        /// Play video icon
-        var playVideoIcon = delegate?.override(imageAsset: .chatPlayVideo)
-        if playVideoIcon == nil {
-            playVideoIcon = UIImage(named: "icon_play", in: .SDKBundle, compatibleWith: nil)
-        }
-        
-        return [.chatWritingIndicator: userTypingIcon!,
-                .chatBubbleLeft: leftSideBubble!,
-                .chatBubbleLeftRepeated: leftSideBubbleSeries!,
-                .chatBubbleRight: rightSideBubble!,
-                .chatBubbleRightRepeated: rightSideBubbleSeries!,
-                .chatAvatarLeft: leftSideAvatar!,
-                .chatAvatarRight: rightSideAvatar!,
-                .chatPlayVideo: playVideoIcon!]
-    }
-    
-    var colorAssetsDictionary: [ColorConstants:UIColor] {
-        let delegate = self.sessionManager.delegate
-        let colorKeys: [ColorConstants] = [.infoText,
-                                           .chatName,
-                                           .chatTimestamp,
-                                           .chatBubbleLeftText,
-                                           .chatBubbleRightText,
-                                           .chatBubbleLeftLink,
-                                           .chatBubbleRightLink]
-        
-        return colorKeys.reduce(into: [:]) { (colorAsset: inout [ColorConstants:UIColor], key) in
-            if let color = delegate?.override(colorAsset: key) {
-                colorAsset[key] = color
-            }
-        }
     }
 }
 
