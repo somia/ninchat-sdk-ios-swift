@@ -91,7 +91,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
 
         /// let elements be loaded for a few seconds
         if self.style == .form { self.initiateFormContentView(0.5) }
-        else if self.style == .conversation { self.initiateConversationContentView(0.5) }
+        else if self.style == .conversation { self.initiateConversationContentView(1.0) }
     }
 
     deinit {
@@ -153,34 +153,65 @@ extension NINQuestionnaireViewController: QuestionnaireFormViewController {
 
 extension NINQuestionnaireViewController: QuestionnaireConversationController {
     func updateConversationContentView(_ interval: TimeInterval = 0.0) {
-        guard var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("Not conformed") }
-        let section = conversationDataSource.insertSection()
-        self.contentView.insertSections(IndexSet(integer: section), with: .left)
-
-        conversationDataSource.isLoadingNewElements = true
-        self.contentView.insertRows(at: [IndexPath(row: 0, section: section)], with: .left)
-
+        let newSection = self.prepareSection()
+        self.addLoadingRow(at: newSection)
         DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
-            conversationDataSource.isLoadingNewElements = false
-            self.contentView.deleteRows(at: [IndexPath(row: 0, section: section)], with: .right)
+            self.removeLoadingRow(at: newSection)
+            self.contentView.beginUpdates()     // Start loading questionnaires
+            self.addQuestionnaireRows(at: newSection)
+            self.addNavigationRow(at: newSection)
+            self.contentView.endUpdates()       // Finish loading questionnaires
 
-            /// Questionnaires
-            self.contentView.beginUpdates()
-            let elements = try! self.viewModel.getElements()
-            elements.forEach { element in
-                self.contentView.insertRows(at: [IndexPath(row: elements.firstIndex(where: { $0 == element })!, section: section)], with: .left)
-                _ = conversationDataSource.insertRow()
-            }
-
-            /// Navigation
-            conversationDataSource.insertRow()
-            self.contentView.insertRows(at: [IndexPath(row: elements.count, section: section)], with: .left)
-            self.contentView.endUpdates()
+            self.contentView.scrollToRow(at: IndexPath(row: self.contentView.numberOfRows(inSection: newSection)-1, section: newSection), at: .bottom, animated: true)
         }
     }
     func initiateConversationContentView(_ interval: TimeInterval) {
         self.contentView = self.generateTableView(isHidden: false)
         self.updateConversationContentView(interval)
+    }
+
+    private func prepareSection() -> Int {
+        guard var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("Not conformed") }
+        let section = conversationDataSource.insertSection()
+        self.contentView.insertSections(IndexSet(integer: section), with: .left)
+
+        return section
+    }
+
+    private func addLoadingRow(at section: Int) {
+        guard var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("Not conformed") }
+        conversationDataSource.isLoadingNewElements = true
+        self.contentView.insertRows(at: [IndexPath(row: 0, section: section)], with: .bottom)
+    }
+
+    private func removeLoadingRow(at section: Int) {
+        guard var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("Not conformed") }
+        conversationDataSource.isLoadingNewElements = false
+        self.contentView.deleteRows(at: [IndexPath(row: 0, section: section)], with: .top)
+    }
+
+    private func addQuestionnaireRows(at section: Int) {
+        guard var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("Not conformed") }
+        do {
+            let elements = try self.viewModel.getElements()
+            elements.forEach { element in
+                self.contentView.insertRows(at: [IndexPath(row: elements.firstIndex(where: { $0 == element })!, section: section)], with: .bottom)
+                conversationDataSource.insertRow()
+            }
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+    }
+
+    private func addNavigationRow(at section: Int) {
+        guard var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("Not conformed") }
+        do {
+            let elements = try self.viewModel.getElements()
+            conversationDataSource.insertRow()
+            self.contentView.insertRows(at: [IndexPath(row: elements.count, section: section)], with: .bottom)
+        } catch {
+            fatalError(error.localizedDescription)
+        }
     }
 }
 
