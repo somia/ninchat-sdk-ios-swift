@@ -45,7 +45,7 @@ extension QuestionnaireDataSourceDelegate {
         view
             .fix(top: (0.0, parent), bottom: (0.0, parent))
             .fix(leading: (0.0, parent), trailing: (0.0, parent))
-        view.leading?.priority = .required
-        view.trailing?.priority = .required
+        view.leading?.priority = UILayoutPriority(rawValue: 999)
+        view.trailing?.priority = UILayoutPriority(rawValue: 999)
     }
 }

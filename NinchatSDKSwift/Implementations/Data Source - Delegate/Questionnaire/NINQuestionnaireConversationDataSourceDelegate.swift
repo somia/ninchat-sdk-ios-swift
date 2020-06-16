@@ -17,6 +17,8 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
     fileprivate var sectionCount = 0
     fileprivate var rowCount: [Int] = []
     fileprivate var elements: [[QuestionnaireElement]] = []
+    fileprivate var configurations: [QuestionnaireConfiguration] = []
+    fileprivate var requirementSatisfactions: [Bool] = []
 
     // MARK: - NINQuestionnaireFormDelegate
 
@@ -65,6 +67,9 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
                 return (index.row == self.elements[index.section].count) ? self.navigation(view, cellForRowAt: index) : self.questionnaire(view, cellForRowAt: index)
             }
             self.elements.append(contentsOf: [try self.viewModel.getElements()])
+            self.configurations.append(try self.viewModel.getConfiguration())
+            self.requirementSatisfactions.append(false)
+
             return (index.row == (try self.viewModel.getElements().count)) ? self.navigation(view, cellForRowAt: index) : self.questionnaire(view, cellForRowAt: index)
         } catch {
             fatalError(error.localizedDescription)
@@ -85,6 +90,9 @@ extension NINQuestionnaireConversationDataSourceDelegate: QuestionnaireConversat
     }
 
     func removeSection() -> Int {
+        rowCount.remove(at: sectionCount-1)
+        self.elements.remove(at: sectionCount-1)
+        self.requirementSatisfactions.remove(at: sectionCount-1)
         sectionCount -= 1
         return sectionCount
     }
@@ -102,83 +110,75 @@ extension NINQuestionnaireConversationDataSourceDelegate {
     }
 
     private func navigation(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> QuestionnaireNavigationCell {
-        do {
-            let cell: QuestionnaireNavigationCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
-            cell.configuration = try self.viewModel.getConfiguration()
-            cell.requirementsSatisfied = self.viewModel.requirementsSatisfied
-            cell.overrideAssets(with: self.session)
+        let cell: QuestionnaireNavigationCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
+        cell.configuration = self.configurations[indexPath.section]
+        cell.requirementsSatisfied = self.requirementSatisfactions[indexPath.section]
+        cell.overrideAssets(with: self.session)
 
-            self.viewModel.requirementSatisfactionUpdater = { satisfied in
-                cell.requirementSatisfactionUpdater?(satisfied)
-            }
-            cell.onNextButtonTapped = { [self] in
-                guard let nextPage = self.viewModel.goToNextPage() else { return }
-                (nextPage) ? self.onUpdateCellContent?() : self.viewModel.finishQuestionnaire(for: nil, autoApply: false)
-            }
-            cell.onBackButtonTapped = { [self] in
-                _ = self.viewModel.clearAnswersForCurrentPage()
-                if self.viewModel.goToPreviousPage() {
-                    self.onRemoveCellContent?()
-                }
-            }
-            cell.backgroundColor = .clear
-
-            return cell
-        } catch {
-            fatalError(error.localizedDescription)
+        self.viewModel.requirementSatisfactionUpdater = { [weak self] satisfied in
+            self?.requirementSatisfactions[indexPath.section] = satisfied
+            cell.requirementSatisfactionUpdater?(satisfied)
         }
+        cell.onNextButtonTapped = { [weak self] in
+            guard let nextPage = self?.viewModel.goToNextPage() else { return }
+            (nextPage) ? self?.onUpdateCellContent?() : self?.viewModel.finishQuestionnaire(for: nil, autoApply: false)
+        }
+        cell.onBackButtonTapped = { [weak self] in
+            _ = self?.viewModel.clearAnswersForCurrentPage()
+            if self?.viewModel.goToPreviousPage() ?? false {
+                self?.onRemoveCellContent?()
+            }
+        }
+        cell.backgroundColor = .clear
+
+        return cell
     }
 
     private func questionnaire(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> QuestionnaireCell {
-        do {
-            debugger("** ** indexPath: \(indexPath)")
-            let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
-            let element = self.elements[indexPath.section][indexPath.row]
-            element.overrideAssets(with: self.session)
+        let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
+        let element = self.elements[indexPath.section][indexPath.row]
+        element.overrideAssets(with: self.session)
 
-            if var view = element as? QuestionnaireSettable {
-                view.presetAnswer = self.viewModel.getAnswersForElement(element)
-                self.viewModel.resetAnswer(for: element)
-            }
-            if var view = element as? QuestionnaireOptionSelectableElement {
-                view.onElementOptionSelected = { [self] option in
-                    func showTargetPage(_ page: Int) {
-                        guard self.viewModel.canGoToPage(page), !self.viewModel.shouldWaitForNextButton else { return }
-                        if self.viewModel.goToPage(page) {
-                            view.deselect(option: option)
-                            self.onUpdateCellContent?()
-                        }
-                    }
-
-                    self.viewModel.submitAnswer(key: element, value: option.value)
-                    if let page = self.viewModel.redirectTargetPage(for: option.value) {
-                        showTargetPage(page)
-                    } else if let key = element.elementConfiguration?.name, !key.isEmpty, let page = self.viewModel.logicTargetPage(key: key, value: option.value) {
-                        showTargetPage(page)
-                    }
-                }
-                view.onElementOptionDeselected = { _ in
-                    self.viewModel.removeAnswer(key: element)
-                }
-            }
-            if var view = element as? QuestionnaireFocusableElement {
-                view.onElementFocused = { _ in }
-                view.onElementDismissed = { [self] element in
-                    if let textView = element as? QuestionnaireElementTextArea, let text = textView.view.text, !text.isEmpty, textView.isCompleted {
-                        self.viewModel.submitAnswer(key: element, value: textView.view.text)
-                    } else if let textField = element as? QuestionnaireElementTextField, let text = textField.view.text, !text.isEmpty, textField.isCompleted {
-                        self.viewModel.submitAnswer(key: element, value: textField.view.text)
-                    } else {
-                        self.viewModel.removeAnswer(key: element)
-                    }
-                }
-            }
-            cell.backgroundColor = .clear
-            self.layoutSubview(element, parent: cell.content)
-
-            return cell
-        } catch {
-            fatalError(error.localizedDescription)
+        if var view = element as? QuestionnaireSettable {
+            view.presetAnswer = self.viewModel.getAnswersForElement(element)
+            self.viewModel.resetAnswer(for: element)
         }
+        if var view = element as? QuestionnaireOptionSelectableElement {
+            view.onElementOptionSelected = { [weak self] option in
+                func showTargetPage(_ page: Int) {
+                    guard self?.viewModel.canGoToPage(page) ?? false, !(self?.viewModel.shouldWaitForNextButton ?? false) else { return }
+                    if self?.viewModel.goToPage(page) ?? false {
+                        view.deselect(option: option)
+                        self?.onUpdateCellContent?()
+                    }
+                }
+
+                self?.viewModel.submitAnswer(key: element, value: option.value)
+                if let page = self?.viewModel.redirectTargetPage(for: option.value) {
+                    showTargetPage(page)
+                } else if let key = element.elementConfiguration?.name, !key.isEmpty, let page = self?.viewModel.logicTargetPage(key: key, value: option.value) {
+                    showTargetPage(page)
+                }
+            }
+            view.onElementOptionDeselected = { _ in
+                self.viewModel.removeAnswer(key: element)
+            }
+        }
+        if var view = element as? QuestionnaireFocusableElement {
+            view.onElementFocused = { _ in }
+            view.onElementDismissed = { [weak self] element in
+                if let textView = element as? QuestionnaireElementTextArea, let text = textView.view.text, !text.isEmpty, textView.isCompleted {
+                    self?.viewModel.submitAnswer(key: element, value: textView.view.text)
+                } else if let textField = element as? QuestionnaireElementTextField, let text = textField.view.text, !text.isEmpty, textField.isCompleted {
+                    self?.viewModel.submitAnswer(key: element, value: textField.view.text)
+                } else {
+                    self?.viewModel.removeAnswer(key: element)
+                }
+            }
+        }
+        cell.backgroundColor = .clear
+        self.layoutSubview(element, parent: cell.content)
+
+        return cell
     }
 }

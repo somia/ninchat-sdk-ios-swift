@@ -8,7 +8,8 @@ import UIKit
 
 class Button: UIButton {
     var closure: ((Button) -> Void)?
-    
+    var type: QuestionnaireButtonType?
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.addTarget(self, action: #selector(touchUpInside(sender:)), for: .touchUpInside)

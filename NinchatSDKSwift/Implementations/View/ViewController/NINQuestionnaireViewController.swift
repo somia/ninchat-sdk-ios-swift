@@ -159,6 +159,8 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     func updateConversationContentView(_ interval: TimeInterval = 0.0) {
         let newSection = self.prepareSection()
         self.addLoadingRow(at: newSection)
+        self.scrollToBottom(at: newSection)     /// Scroll to bottom
+
         DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
             self.removeLoadingRow(at: newSection)
             self.contentView.beginUpdates()     // Start loading questionnaires
@@ -166,12 +168,16 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
             self.addNavigationRow(at: newSection)
             self.contentView.endUpdates()       // Finish loading questionnaires
 
-            self.contentView.scrollToRow(at: IndexPath(row: self.contentView.numberOfRows(inSection: newSection)-1, section: newSection), at: .bottom, animated: true)
+            self.scrollToBottom(at: newSection) /// Scroll to bottom
         }
     }
     func initiateConversationContentView(_ interval: TimeInterval) {
         self.contentView = self.generateTableView(isHidden: false)
         self.updateConversationContentView(interval)
+    }
+
+    private func scrollToBottom(at section: Int) {
+        self.contentView.scrollToRow(at: IndexPath(row: self.contentView.numberOfRows(inSection: section)-1, section: section), at: .bottom, animated: true)
     }
 
     private func prepareSection() -> Int {

@@ -57,8 +57,8 @@ extension QuestionnaireElementWithTitle {
             .fix(top: (0.0, title), isRelative: true)
             .center(toX: self)
             .fix(width: self.width?.constant ?? self.bounds.width)
-        view.leading?.priority = .required
-        view.trailing?.priority = .required
+        view.leading?.priority = UILayoutPriority(rawValue: 999)
+        view.trailing?.priority = UILayoutPriority(rawValue: 999)
     }
 
     func overrideTitle(delegate: NINChatSessionInternalDelegate?) {
