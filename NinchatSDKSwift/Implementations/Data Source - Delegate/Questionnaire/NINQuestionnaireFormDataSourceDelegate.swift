@@ -13,6 +13,7 @@ struct NINQuestionnaireFormDataSourceDelegate: QuestionnaireDataSourceDelegate {
     var session: NINChatSession!
     var viewModel: NINQuestionnaireViewModel!
     var onUpdateCellContent: (() -> Void)?
+    var onRemoveCellContent: (() -> Void)?
 
     // MARK: - NINQuestionnaireFormDataSource
 
@@ -55,6 +56,34 @@ struct NINQuestionnaireFormDataSourceDelegate: QuestionnaireDataSourceDelegate {
 
 // MARK: - Helper
 extension NINQuestionnaireFormDataSourceDelegate {
+    private mutating func navigation(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> QuestionnaireNavigationCell {
+        do {
+            let cell: QuestionnaireNavigationCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
+            cell.configuration = try self.viewModel.getConfiguration()
+            cell.requirementsSatisfied = self.viewModel.requirementsSatisfied
+            cell.overrideAssets(with: self.session)
+
+            self.viewModel.requirementSatisfactionUpdater = { satisfied in
+                cell.requirementSatisfactionUpdater?(satisfied)
+            }
+            cell.onNextButtonTapped = { [self] in
+                guard let nextPage = self.viewModel.goToNextPage() else { return }
+                (nextPage) ? self.onUpdateCellContent?() : self.viewModel.finishQuestionnaire(for: nil, autoApply: false)
+            }
+            cell.onBackButtonTapped = { [self] in
+                _ = self.viewModel.clearAnswersForCurrentPage()
+                if self.viewModel.goToPreviousPage() {
+                    self.onUpdateCellContent?()
+                }
+            }
+            cell.backgroundColor = .clear
+
+            return cell
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+    }
+
     private func questionnaire(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> QuestionnaireCell {
         do {
             let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)

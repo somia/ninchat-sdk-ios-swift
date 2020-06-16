@@ -9,6 +9,7 @@ import UIKit
 protocol QuestionnaireConversationHelpers: QuestionnaireDataSourceDelegate {
     func insertSection() -> Int
     func insertRow() -> Int
+    func removeSection() -> Int
 }
 
 final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSourceDelegate {
@@ -22,6 +23,7 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
     var session: NINChatSession!
     var viewModel: NINQuestionnaireViewModel!
     var onUpdateCellContent: (() -> Void)?
+    var onRemoveCellContent: (() -> Void)?
 
     // MARK: - NINQuestionnaireFormDataSource
 
@@ -81,6 +83,11 @@ extension NINQuestionnaireConversationDataSourceDelegate: QuestionnaireConversat
         rowCount[sectionCount-1] += 1
         return rowCount[sectionCount-1] - 1
     }
+
+    func removeSection() -> Int {
+        sectionCount -= 1
+        return sectionCount
+    }
 }
 
 // MARK: - Helper
@@ -111,7 +118,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
             cell.onBackButtonTapped = { [self] in
                 _ = self.viewModel.clearAnswersForCurrentPage()
                 if self.viewModel.goToPreviousPage() {
-                    self.onUpdateCellContent?()
+                    self.onRemoveCellContent?()
                 }
             }
             cell.backgroundColor = .clear

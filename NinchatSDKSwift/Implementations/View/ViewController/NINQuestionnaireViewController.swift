@@ -38,6 +38,10 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
                     self?.updateConversationContentView(1.0)
                 }
             }
+            dataSourceDelegate.onRemoveCellContent = { [weak self] in
+                guard self?.style == .conversation else { return }
+                self?.removeQuestionnaireSection()
+            }
         }
     }
     var viewModel: NINQuestionnaireViewModel! {
@@ -181,13 +185,13 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     private func addLoadingRow(at section: Int) {
         guard var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("Not conformed") }
         conversationDataSource.isLoadingNewElements = true
-        self.contentView.insertRows(at: [IndexPath(row: 0, section: section)], with: .bottom)
+        self.contentView.insertRows(at: [IndexPath(row: 0, section: section)], with: .left)
     }
 
     private func removeLoadingRow(at section: Int) {
         guard var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("Not conformed") }
         conversationDataSource.isLoadingNewElements = false
-        self.contentView.deleteRows(at: [IndexPath(row: 0, section: section)], with: .top)
+        self.contentView.deleteRows(at: [IndexPath(row: 0, section: section)], with: .right)
     }
 
     private func addQuestionnaireRows(at section: Int) {
@@ -195,7 +199,7 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
         do {
             let elements = try self.viewModel.getElements()
             elements.forEach { element in
-                self.contentView.insertRows(at: [IndexPath(row: elements.firstIndex(where: { $0 == element })!, section: section)], with: .bottom)
+                self.contentView.insertRows(at: [IndexPath(row: elements.firstIndex(where: { $0 == element })!, section: section)], with: .left)
                 conversationDataSource.insertRow()
             }
         } catch {
@@ -208,11 +212,17 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
         do {
             let elements = try self.viewModel.getElements()
             conversationDataSource.insertRow()
-            self.contentView.insertRows(at: [IndexPath(row: elements.count, section: section)], with: .bottom)
+            self.contentView.insertRows(at: [IndexPath(row: elements.count, section: section)], with: .left)
         } catch {
             fatalError(error.localizedDescription)
         }
     }
+
+    private func removeQuestionnaireSection() {
+        guard var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("Not conformed") }
+        self.contentView.deleteSections(IndexSet(integer: conversationDataSource.removeSection()), with: .right)
+    }
+
 }
 
 extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDelegate {

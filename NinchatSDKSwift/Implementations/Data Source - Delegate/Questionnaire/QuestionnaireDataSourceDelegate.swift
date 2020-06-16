@@ -9,6 +9,8 @@ import UIKit
 /** Delegate for the questionnaire view. */
 protocol QuestionnaireDelegate {
     var onUpdateCellContent: (() -> Void)? { get set }
+    var onRemoveCellContent: (() -> Void)? { get set }
+
     var isLoadingNewElements: Bool! { get set }
 }
 
@@ -34,34 +36,6 @@ protocol QuestionnaireDataSource {
 protocol QuestionnaireDataSourceDelegate: QuestionnaireDataSource, QuestionnaireDelegate {}
 
 extension QuestionnaireDataSourceDelegate {
-    internal mutating func navigation(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> QuestionnaireNavigationCell {
-        do {
-            let cell: QuestionnaireNavigationCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
-            cell.configuration = try self.viewModel.getConfiguration()
-            cell.requirementsSatisfied = self.viewModel.requirementsSatisfied
-            cell.overrideAssets(with: self.session)
-
-            self.viewModel.requirementSatisfactionUpdater = { satisfied in
-                cell.requirementSatisfactionUpdater?(satisfied)
-            }
-            cell.onNextButtonTapped = { [self] in
-                guard let nextPage = self.viewModel.goToNextPage() else { return }
-                (nextPage) ? self.onUpdateCellContent?() : self.viewModel.finishQuestionnaire(for: nil, autoApply: false)
-            }
-            cell.onBackButtonTapped = { [self] in
-                _ = self.viewModel.clearAnswersForCurrentPage()
-                if self.viewModel.goToPreviousPage() {
-                    self.onUpdateCellContent?()
-                }
-            }
-            cell.backgroundColor = .clear
-
-            return cell
-        } catch {
-            fatalError(error.localizedDescription)
-        }
-    }
-
     internal func layoutSubview(_ view: UIView, parent: UIView) {
         if parent.subviews.filter({ $0 is QuestionnaireElement }).count > 0 {
             parent.subviews.filter({ $0 is QuestionnaireElement }).forEach({ $0.removeFromSuperview() })
