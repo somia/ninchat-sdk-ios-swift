@@ -8,10 +8,9 @@ import UIKit
 
 /** Delegate for the questionnaire view. */
 protocol QuestionnaireDelegate {
+    var isLoadingNewElements: Bool! { get set }
     var onUpdateCellContent: (() -> Void)? { get set }
     var onRemoveCellContent: (() -> Void)? { get set }
-
-    var isLoadingNewElements: Bool! { get set }
 }
 
 /** Data source for the questionnaire view. */
@@ -26,7 +25,7 @@ protocol QuestionnaireDataSource {
     func height(at index: IndexPath) -> CGFloat
 
     /** Returns the cell with element embedded into it at given index. */
-    mutating func cell(at index: IndexPath, view: UITableView) -> UITableViewCell
+    func cell(at index: IndexPath, view: UITableView) -> UITableViewCell
 
     var session: NINChatSession! { get }
     var viewModel: NINQuestionnaireViewModel! { get set }
@@ -45,7 +44,69 @@ extension QuestionnaireDataSourceDelegate {
         view
             .fix(top: (0.0, parent), bottom: (0.0, parent))
             .fix(leading: (0.0, parent), trailing: (0.0, parent))
-        view.leading?.priority = UILayoutPriority(rawValue: 999)
-        view.trailing?.priority = UILayoutPriority(rawValue: 999)
+        view.leading?.priority = .almostRequired
+        view.trailing?.priority = .almostRequired
+    }
+}
+
+// MARK: - Closures
+
+extension QuestionnaireDataSourceDelegate {
+    internal func onRequirementsUpdated(_ update: Bool, for cell: QuestionnaireNavigationCell) {
+        cell.requirementSatisfactionUpdater?(update)
+    }
+
+    internal func onNextButtonTapped() {
+        guard let nextPage = self.viewModel.goToNextPage() else { return }
+        (nextPage) ? self.onUpdateCellContent?() : self.viewModel.finishQuestionnaire(for: nil, autoApply: false)
+    }
+
+    internal func onBackButtonTapped(completion: (() -> Void)?) {
+        if self.viewModel.clearAnswersForCurrentPage(), self.viewModel.goToPreviousPage() {
+            completion?()
+        }
+    }
+}
+
+// MARK: - Cell Setup
+
+extension QuestionnaireDataSourceDelegate {
+    internal func setupSettable(view: inout QuestionnaireSettable, element: QuestionnaireElement) {
+        view.presetAnswer = self.viewModel.getAnswersForElement(element)
+        self.viewModel.resetAnswer(for: element)
+    }
+
+    internal func setupSelectable(view: inout QuestionnaireOptionSelectableElement, element: QuestionnaireElement) {
+        view.onElementOptionSelected = { [view] option in
+            self.viewModel.submitAnswer(key: element, value: option.value)
+            if let page = self.viewModel.redirectTargetPage(for: option.value) {
+                self.showTargetPage(view: view, page: page, option: option)
+            } else if let key = element.elementConfiguration?.name, !key.isEmpty, let page = self.viewModel.logicTargetPage(key: key, value: option.value) {
+                self.showTargetPage(view: view, page: page, option: option)
+            }
+        }
+        view.onElementOptionDeselected = { _ in
+            self.viewModel.removeAnswer(key: element)
+        }
+    }
+
+    internal func setupFocusable(view: inout QuestionnaireFocusableElement) {
+        view.onElementFocused = { _ in }
+        view.onElementDismissed = {  element in
+            if let textView = element as? QuestionnaireElementTextArea, let text = textView.view.text, !text.isEmpty, textView.isCompleted {
+                self.viewModel.submitAnswer(key: element, value: textView.view.text)
+            } else if let textField = element as? QuestionnaireElementTextField, let text = textField.view.text, !text.isEmpty, textField.isCompleted {
+                self.viewModel.submitAnswer(key: element, value: textField.view.text)
+            } else {
+                self.viewModel.removeAnswer(key: element)
+            }
+        }
+    }
+
+    private func showTargetPage(view: QuestionnaireOptionSelectableElement, page: Int, option: ElementOption) {
+        if self.viewModel.canGoToPage(page), !self.viewModel.shouldWaitForNextButton, self.viewModel.goToPage(page) {
+            view.deselect(option: option)
+            self.onUpdateCellContent?()
+        }
     }
 }

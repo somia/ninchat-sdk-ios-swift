@@ -183,6 +183,7 @@
 		91A16C5D68E8007CBAD77F75 /* Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = 91A16E22A6933B9561BDF84E /* Secrets.plist */; };
 		91A16C9B6FDDC53C045ABD3D /* NINChatClientPropsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16EAC1C68B081618E08E9 /* NINChatClientPropsParser.swift */; };
 		91A16D1F0B9B5ED2C45271B4 /* SiteConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A164E1E7207BA353BF6418 /* SiteConfiguration.swift */; };
+		91A16D4462A48D5CB145D36D /* UILayoutPriority+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A161F49CF87AD53CF4E199 /* UILayoutPriority+Extension.swift */; };
 		91A16D46F4A792C00EC23086 /* ComposeMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A162A3A1B95DCF935DA47E /* ComposeMessage.swift */; };
 		91A16D8F59D6DC431464E959 /* QuestionnaireElementCheckbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16009B294E8960F6094D5 /* QuestionnaireElementCheckbox.swift */; };
 		91A16DADA8573FDFAB27A7AC /* ChannelUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A165370F88E5B62075CFB2 /* ChannelUser.swift */; };
@@ -356,6 +357,7 @@
 		91A161CED30CF077F137B719 /* QuestionnaireElementTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireElementTextField.swift; sourceTree = "<group>"; };
 		91A161D30D89818FBC9A0476 /* ExtensionsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionsTests.swift; sourceTree = "<group>"; };
 		91A161EE9C9467CBC886D9B1 /* QuestionnaireElementRadio.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireElementRadio.swift; sourceTree = "<group>"; };
+		91A161F49CF87AD53CF4E199 /* UILayoutPriority+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UILayoutPriority+Extension.swift"; sourceTree = "<group>"; };
 		91A1621FC457EFE156F90335 /* ChannelMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelMessage.swift; sourceTree = "<group>"; };
 		91A16241F1BD25005BE48B83 /* RTCIceCandidate+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RTCIceCandidate+Extension.swift"; sourceTree = "<group>"; };
 		91A1629E2C198B4299F8E532 /* fi */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = fi; path = Localizable.strings; sourceTree = "<group>"; };
@@ -542,7 +544,7 @@
 				8571D44523C0B47300C16758 /* Models */,
 				8563007923B384590098A7B0 /* Data Source - Delegate */,
 				8561EACB23C2805900943C72 /* Managers */,
-				855CBE202397CBB800A024A7 /* Helpers */,
+				855CBE202397CBB800A024A7 /* Extensions */,
 				91A16981F4B61A36FE950F24 /* Utilities */,
 				91A161210E2C3DD3E16BB449 /* Network */,
 			);
@@ -644,7 +646,7 @@
 			path = Coordinator;
 			sourceTree = "<group>";
 		};
-		855CBE202397CBB800A024A7 /* Helpers */ = {
+		855CBE202397CBB800A024A7 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
 				8571D44323C091C000C16758 /* Debugger.swift */,
@@ -675,8 +677,9 @@
 				91A16E65EA02A328F488F74C /* UIApplication+Extension.swift */,
 				91A168DEF02D4EED4F01B97E /* WKWebView+Extension.swift */,
 				91A16EDB1E05655FA925BCCB /* NSAttributedString+Extension.swift */,
+				91A161F49CF87AD53CF4E199 /* UILayoutPriority+Extension.swift */,
 			);
-			path = Helpers;
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		855CBE292397DE7800A024A7 /* ViewController */ = {
@@ -1444,6 +1447,7 @@
 				91A1674CD64ED14E91D77851 /* QuestionnaireDataSourceDelegate.swift in Sources */,
 				91A16EBD69F3BE407AACAFF4 /* NINQuestionnaireFormDataSourceDelegate.swift in Sources */,
 				91A1685BFB39CDD931E5FCAC /* NINQuestionnaireConversationDataSourceDelegate.swift in Sources */,
+				91A16D4462A48D5CB145D36D /* UILayoutPriority+Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

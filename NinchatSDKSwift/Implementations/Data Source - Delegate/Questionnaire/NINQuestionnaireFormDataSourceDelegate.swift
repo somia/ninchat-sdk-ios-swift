@@ -6,7 +6,7 @@
 
 import UIKit
 
-struct NINQuestionnaireFormDataSourceDelegate: QuestionnaireDataSourceDelegate {
+final class NINQuestionnaireFormDataSourceDelegate: QuestionnaireDataSourceDelegate {
 
     // MARK: - NINQuestionnaireFormDelegate
 
@@ -45,7 +45,7 @@ struct NINQuestionnaireFormDataSourceDelegate: QuestionnaireDataSourceDelegate {
         }
     }
 
-    mutating func cell(at index: IndexPath, view: UITableView) -> UITableViewCell {
+    func cell(at index: IndexPath, view: UITableView) -> UITableViewCell {
         do {
             return (index.row == (try self.viewModel.getElements()).count) ? self.navigation(view, cellForRowAt: index) : self.questionnaire(view, cellForRowAt: index)
         } catch {
@@ -56,25 +56,21 @@ struct NINQuestionnaireFormDataSourceDelegate: QuestionnaireDataSourceDelegate {
 
 // MARK: - Helper
 extension NINQuestionnaireFormDataSourceDelegate {
-    private mutating func navigation(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> QuestionnaireNavigationCell {
+    private func navigation(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> QuestionnaireNavigationCell {
         do {
             let cell: QuestionnaireNavigationCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
             cell.configuration = try self.viewModel.getConfiguration()
             cell.requirementsSatisfied = self.viewModel.requirementsSatisfied
             cell.overrideAssets(with: self.session)
 
-            self.viewModel.requirementSatisfactionUpdater = { satisfied in
-                cell.requirementSatisfactionUpdater?(satisfied)
+            self.viewModel.requirementSatisfactionUpdater = { [weak self] satisfied in
+                self?.onRequirementsUpdated(satisfied, for: cell)
             }
-            cell.onNextButtonTapped = { [self] in
-                guard let nextPage = self.viewModel.goToNextPage() else { return }
-                (nextPage) ? self.onUpdateCellContent?() : self.viewModel.finishQuestionnaire(for: nil, autoApply: false)
+            cell.onNextButtonTapped = { [weak self] in
+                self?.onNextButtonTapped()
             }
-            cell.onBackButtonTapped = { [self] in
-                _ = self.viewModel.clearAnswersForCurrentPage()
-                if self.viewModel.goToPreviousPage() {
-                    self.onUpdateCellContent?()
-                }
+            cell.onBackButtonTapped = { [weak self] in
+                self?.onBackButtonTapped(completion: self?.onUpdateCellContent)
             }
             cell.backgroundColor = .clear
 
@@ -89,45 +85,17 @@ extension NINQuestionnaireFormDataSourceDelegate {
             let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
             let element = try self.viewModel.getElements()[indexPath.row]
             element.overrideAssets(with: self.session)
+            cell.backgroundColor = .clear
 
             if var view = element as? QuestionnaireSettable {
-                view.presetAnswer = self.viewModel.getAnswersForElement(element)
-                self.viewModel.resetAnswer(for: element)
+                self.setupSettable(view: &view, element: element)
             }
             if var view = element as? QuestionnaireOptionSelectableElement {
-                view.onElementOptionSelected = { [self] option in
-                    func showTargetPage(_ page: Int) {
-                        guard self.viewModel.canGoToPage(page), !self.viewModel.shouldWaitForNextButton else { return }
-                        if self.viewModel.goToPage(page) {
-                            view.deselect(option: option)
-                            self.onUpdateCellContent?()
-                        }
-                    }
-
-                    self.viewModel.submitAnswer(key: element, value: option.value)
-                    if let page = self.viewModel.redirectTargetPage(for: option.value) {
-                        showTargetPage(page)
-                    } else if let key = element.elementConfiguration?.name, !key.isEmpty, let page = self.viewModel.logicTargetPage(key: key, value: option.value) {
-                        showTargetPage(page)
-                    }
-                }
-                view.onElementOptionDeselected = { _ in
-                    self.viewModel.removeAnswer(key: element)
-                }
+                self.setupSelectable(view: &view, element: element)
             }
             if var view = element as? QuestionnaireFocusableElement {
-                view.onElementFocused = { _ in }
-                view.onElementDismissed = { [self] element in
-                    if let textView = element as? QuestionnaireElementTextArea, let text = textView.view.text, !text.isEmpty, textView.isCompleted {
-                        self.viewModel.submitAnswer(key: element, value: textView.view.text)
-                    } else if let textField = element as? QuestionnaireElementTextField, let text = textField.view.text, !text.isEmpty, textField.isCompleted {
-                        self.viewModel.submitAnswer(key: element, value: textField.view.text)
-                    } else {
-                        self.viewModel.removeAnswer(key: element)
-                    }
-                }
+                self.setupFocusable(view: &view)
             }
-            cell.backgroundColor = .clear
             self.layoutSubview(element, parent: cell.content)
 
             return cell

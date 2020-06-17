@@ -148,8 +148,8 @@ extension QuestionnaireElementRadio {
 
         if self.scaleToParent {
             button.fix(leading: (0.0, self.view), trailing: (0.0, self.view))
-            button.leading?.priority = UILayoutPriority(rawValue: 999)
-            button.trailing?.priority = UILayoutPriority(rawValue: 999)
+            button.leading?.priority = .almostRequired
+            button.trailing?.priority = .almostRequired
         } else if self.width?.constant ?? 0 < self.intrinsicContentSize.width + 32.0 {
             button.fix(width: button.intrinsicContentSize.width + 32.0)
         }

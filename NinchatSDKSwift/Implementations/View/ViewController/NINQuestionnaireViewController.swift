@@ -181,7 +181,7 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     }
 
     private func prepareSection() -> Int {
-        guard var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("Not conformed") }
+        guard let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
         let section = conversationDataSource.insertSection()
         self.contentView.insertSections(IndexSet(integer: section), with: .left)
 
@@ -189,7 +189,7 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     }
 
     private func addLoadingRow(at section: Int) {
-        guard var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("Not conformed") }
+        guard var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
         conversationDataSource.isLoadingNewElements = true
         self.contentView.insertRows(at: [IndexPath(row: 0, section: section)], with: .left)
     }
@@ -201,12 +201,12 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     }
 
     private func addQuestionnaireRows(at section: Int) {
-        guard var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("Not conformed") }
+        guard let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
         do {
             let elements = try self.viewModel.getElements()
             elements.forEach { element in
                 self.contentView.insertRows(at: [IndexPath(row: elements.firstIndex(where: { $0 == element })!, section: section)], with: .left)
-                conversationDataSource.insertRow()
+                _ = conversationDataSource.insertRow()
             }
         } catch {
             fatalError(error.localizedDescription)
@@ -214,10 +214,10 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     }
 
     private func addNavigationRow(at section: Int) {
-        guard var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("Not conformed") }
+        guard let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
         do {
+            _ = conversationDataSource.insertRow()
             let elements = try self.viewModel.getElements()
-            conversationDataSource.insertRow()
             self.contentView.insertRows(at: [IndexPath(row: elements.count, section: section)], with: .left)
         } catch {
             fatalError(error.localizedDescription)
@@ -225,7 +225,7 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     }
 
     private func removeQuestionnaireSection() {
-        guard var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("Not conformed") }
+        guard let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
         self.contentView.deleteSections(IndexSet(integer: conversationDataSource.removeSection()), with: .right)
     }
 
