@@ -189,16 +189,18 @@ extension NINQuestionnaireViewModelImpl {
 
     func submitAnswer(key: QuestionnaireElement?, value: AnyHashable) {
         if let configuration = key?.elementConfiguration {
+            if let currentValue = self.answers[configuration.name], value == currentValue { return }
+
             self.answers[configuration.name] = value
+            self.requirementSatisfactionUpdater?(self.requirementsSatisfied)
         }
-        self.requirementSatisfactionUpdater?(self.requirementsSatisfied)
     }
 
     func removeAnswer(key: QuestionnaireElement?) {
         if let configuration = key?.elementConfiguration {
             self.answers.removeValue(forKey: configuration.name)
+            self.requirementSatisfactionUpdater?(self.requirementsSatisfied)
         }
-        self.requirementSatisfactionUpdater?(self.requirementsSatisfied)
     }
 
     func clearAnswersForCurrentPage() -> Bool {

@@ -28,5 +28,18 @@ final class SiteConfigurationTests: XCTestCase {
         XCTAssertNotNil(siteConfiguration?.preAudienceQuestionnaire)
         XCTAssertGreaterThan(siteConfiguration?.preAudienceQuestionnaire?.count ?? 0, 0)
     }
+
+    func test_11_postQuestionnaire_style() {
+        XCTAssertEqual(siteConfiguration?.preAudienceQuestionnaireStyle, .form)
+        XCTAssertEqual(siteConfiguration?.postAudienceQuestionnaireStyle, .conversation)
+    }
+
+    func test_12_audienceQuestionnaire_name_avatar() {
+        XCTAssertNotNil(siteConfiguration?.audienceQuestionnaireAvatar)
+        XCTAssertTrue(siteConfiguration?.audienceQuestionnaireAvatar as? Bool ?? false)
+
+        XCTAssertNotNil(siteConfiguration?.audienceQuestionnaireUserName)
+        XCTAssertEqual(siteConfiguration?.audienceQuestionnaireUserName, "Ninchat")
+    }
 }
 

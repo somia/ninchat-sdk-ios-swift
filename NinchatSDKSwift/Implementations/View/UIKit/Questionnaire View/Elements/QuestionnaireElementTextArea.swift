@@ -23,7 +23,7 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
     }
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
-        CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + CGFloat(4.0 * 8.0)
+        CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + CGFloat(5.0 * 8.0)
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {

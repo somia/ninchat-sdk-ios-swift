@@ -732,6 +732,9 @@
           }
         }
       ],
+      "postAudienceQuestionnaireStyle": "conversation",
+      "questionnaireAvatar": true,
+      "questionnaireName": "Ninchat",
       "postAudienceQuestionnaire": [
         {
           "name": "feedback",

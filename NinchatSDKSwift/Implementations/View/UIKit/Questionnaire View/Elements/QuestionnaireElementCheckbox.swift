@@ -201,9 +201,9 @@ extension QuestionnaireElementCheckbox {
             .fix(leading: (0.0, self.view))
             .fix(width: 23.0, height: 23.0)
             .center(toY: button)
-        icon.leading?.priority = .required
-        icon.width?.priority = .required
-        icon.height?.priority = .required
+        icon.leading?.priority = .almostRequired
+        icon.width?.priority = .almostRequired
+        icon.height?.priority = .almostRequired
 
         /// Layout button
         if let upperView = upperView {

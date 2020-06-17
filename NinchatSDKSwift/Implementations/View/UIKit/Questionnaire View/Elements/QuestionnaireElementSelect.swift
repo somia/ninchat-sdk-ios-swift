@@ -171,7 +171,7 @@ extension QuestionnaireElementSelect: QuestionnaireElement {
 
         self.elementConfiguration = configuration
         self.shapeTitle(configuration)
-        self.view.backgroundColor = .clear
+        self.view.backgroundColor = self.normalBackgroundColor
         self.view.fix(height: 45.0)
         self.selectedOption.font = .ninchat
         self.selectedOption.textAlignment = .left

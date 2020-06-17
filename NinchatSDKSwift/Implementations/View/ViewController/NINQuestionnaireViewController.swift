@@ -8,15 +8,42 @@ import UIKit
 import AnyCodable
 import NinchatLowLevelClient
 
+protocol QuestionnaireFormViewController {
+    func initiateFormContentView(_ interval: TimeInterval)
+    func updateFormContentView(_ interval: TimeInterval)
+}
+protocol QuestionnaireConversationController {
+    func initiateConversationContentView(_ interval: TimeInterval)
+    func updateConversationContentView(_ interval: TimeInterval)
+}
+
 final class NINQuestionnaireViewController: UIViewController, ViewController {
 
     // MARK: - ViewController
 
     var session: NINChatSession!
-    var queue: Queue?
 
     // MARK: - Injected
 
+    var queue: Queue?
+    var style: QuestionnaireStyle!
+    var dataSourceDelegate: QuestionnaireDataSourceDelegate! {
+        didSet {
+            dataSourceDelegate.onUpdateCellContent = { [weak self] in
+                guard let style = self?.style else { return }
+                switch style {
+                case .form:
+                    self?.updateFormContentView()
+                case .conversation:
+                    self?.updateConversationContentView(1.0)
+                }
+            }
+            dataSourceDelegate.onRemoveCellContent = { [weak self] in
+                guard self?.style == .conversation else { return }
+                self?.removeQuestionnaireSection()
+            }
+        }
+    }
     var viewModel: NINQuestionnaireViewModel! {
         didSet {
             viewModel.onErrorOccurred = { error in
@@ -45,10 +72,15 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
 
     private var contentView: UITableView! {
         didSet {
+            contentView.backgroundColor = .clear
             self.view.addSubview(contentView)
-            contentView
-                    .fix(top: (0, self.view), bottom: (0, self.view), toSafeArea: true)
-                    .fix(leading: (0, self.view), trailing: (0, self.view))
+
+            if #available(iOS 11, *) {
+                contentView.fix(top: (0.0, self.view), bottom: (0.0, self.view), toSafeArea: true)
+            } else {
+                contentView.fix(top: (20.0, self.view), bottom: (0.0, self.view))
+            }
+            contentView.fix(leading: (0, self.view), trailing: (0, self.view))
         }
     }
     private lazy var loadingIndicator: UIActivityIndicatorView = {
@@ -60,39 +92,54 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.overrideAssets()
         self.addKeyboardListeners()
         self.initiateIndicatorView()
-        self.initiateContentView(0.5) /// let elements be loaded for a few seconds
+
+        /// let elements be loaded for a few seconds
+        if self.style == .form { self.initiateFormContentView(0.5) }
+        else if self.style == .conversation { self.initiateConversationContentView(1.0) }
     }
 
     deinit {
         self.removeKeyboardListeners()
     }
-}
 
-extension NINQuestionnaireViewController {
-    private func layoutSubview(_ view: UIView, parent: UIView) {
-        if parent.subviews.filter({ $0 is QuestionnaireElement }).count > 0 {
-            parent.subviews.filter({ $0 is QuestionnaireElement }).forEach({ $0.removeFromSuperview() })
+    private func overrideAssets() {
+        if let backgroundImage = self.session.override(imageAsset: .questionnaireBackground) {
+            self.view.backgroundColor = UIColor(patternImage: backgroundImage)
+        } else if let bundleImage = UIImage(named: "chat_background_pattern", in: .SDKBundle, compatibleWith: nil) {
+            self.view.backgroundColor = UIColor(patternImage: bundleImage)
         }
-        parent.addSubview(view)
-
-        view
-            .fix(top: (0.0, parent), bottom: (0.0, parent))
-            .fix(leading: (0.0, parent), trailing: (0.0, parent))
-        view.leading?.priority = .required
-        view.trailing?.priority = .required
     }
 
-    private func updateContentView(_ interval: TimeInterval = 0.0) {
+    private func generateTableView(isHidden: Bool) -> UITableView  {
+        let view = UITableView(frame: .zero)
+        view.register(ChatTypingCell.self)
+        view.register(QuestionnaireCell.self)
+        view.registerClass(QuestionnaireNavigationCell.self)
+
+        view.separatorStyle = .none
+        view.allowsSelection = false
+        view.alpha = isHidden ? 0.0 : 1.0
+        view.delegate = self
+        view.dataSource = self
+
+        return view
+    }
+}
+
+// MARK: - 'Form Like' questionnaires
+extension NINQuestionnaireViewController: QuestionnaireFormViewController {
+    func updateFormContentView(_ interval: TimeInterval = 0.0) {
         self.loadingIndicator.startAnimating()
         contentView?.hide(true, andCompletion: { [weak self] in
             self?.contentView?.removeFromSuperview()
-            self?.initiateContentView(interval)
+            self?.initiateFormContentView(interval)
         })
     }
 
-    private func initiateContentView(_ interval: TimeInterval) {
+    func initiateFormContentView(_ interval: TimeInterval) {
         self.loadingIndicator.startAnimating()
         DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
             self.contentView = self.generateTableView(isHidden: true)
@@ -109,122 +156,99 @@ extension NINQuestionnaireViewController {
         self.view.addSubview(self.loadingIndicator)
         self.loadingIndicator.center(toX: self.view, toY: self.view)
     }
+}
 
-    private func generateTableView(isHidden: Bool) -> UITableView {
-        let view = UITableView(frame: .zero)
-        view.register(QuestionnaireCell.self)
-        view.registerClass(QuestionnaireNavigationCell.self)
+// MARK: - 'Conversation Like' questionnaires
+extension NINQuestionnaireViewController: QuestionnaireConversationController {
+    func updateConversationContentView(_ interval: TimeInterval = 0.0) {
+        let newSection = self.prepareSection()
+        self.addLoadingRow(at: newSection)
+        self.scrollToBottom(at: newSection)     /// Scroll to bottom
 
-        view.separatorStyle = .none
-        view.allowsSelection = false
-        view.alpha = isHidden ? 0.0 : 1.0
-        view.delegate = self
-        view.dataSource = self
+        DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
+            self.removeLoadingRow(at: newSection)
+            self.contentView.beginUpdates()     // Start loading questionnaires
+            self.addQuestionnaireRows(at: newSection)
+            self.addNavigationRow(at: newSection)
+            self.contentView.endUpdates()       // Finish loading questionnaires
 
-        return view
+            self.scrollToBottom(at: newSection) /// Scroll to bottom
+        }
     }
+    func initiateConversationContentView(_ interval: TimeInterval) {
+        self.contentView = self.generateTableView(isHidden: false)
+        self.updateConversationContentView(interval)
+    }
+
+    private func scrollToBottom(at section: Int) {
+        self.contentView.scrollToRow(at: IndexPath(row: self.contentView.numberOfRows(inSection: section)-1, section: section), at: .bottom, animated: true)
+    }
+
+    private func prepareSection() -> Int {
+        guard let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
+        let section = conversationDataSource.insertSection()
+        self.contentView.insertSections(IndexSet(integer: section), with: .left)
+
+        return section
+    }
+
+    private func addLoadingRow(at section: Int) {
+        guard var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
+        conversationDataSource.isLoadingNewElements = true
+        self.contentView.insertRows(at: [IndexPath(row: 0, section: section)], with: .left)
+    }
+
+    private func removeLoadingRow(at section: Int) {
+        guard var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("Not conformed") }
+        conversationDataSource.isLoadingNewElements = false
+        self.contentView.deleteRows(at: [IndexPath(row: 0, section: section)], with: .right)
+    }
+
+    private func addQuestionnaireRows(at section: Int) {
+        guard let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
+        do {
+            let elements = try self.viewModel.getElements()
+            elements.forEach { element in
+                self.contentView.insertRows(at: [IndexPath(row: elements.firstIndex(where: { $0 == element })!, section: section)], with: .left)
+                _ = conversationDataSource.insertRow()
+            }
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+    }
+
+    private func addNavigationRow(at section: Int) {
+        guard let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
+        do {
+            _ = conversationDataSource.insertRow()
+            let elements = try self.viewModel.getElements()
+            self.contentView.insertRows(at: [IndexPath(row: elements.count, section: section)], with: .left)
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+    }
+
+    private func removeQuestionnaireSection() {
+        guard let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
+        self.contentView.deleteSections(IndexSet(integer: conversationDataSource.removeSection()), with: .right)
+    }
+
 }
 
 extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDelegate {
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        do {
-            let elements = try self.viewModel.getElements()
-            return (indexPath.row == elements.count) ? 65.0 : elements[indexPath.row].elementHeight
-        } catch {
-            fatalError(error.localizedDescription)
-        }
+    func numberOfSections(in tableView: UITableView) -> Int {
+        self.dataSourceDelegate.numberOfPages()
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        do {
-            return try self.viewModel.getElements().count + 1
-        } catch {
-            fatalError(error.localizedDescription)
-        }
+        self.dataSourceDelegate.numberOfMessages(in: section)
+    }
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        self.dataSourceDelegate.height(at: indexPath)
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        do {
-            return (indexPath.row == (try self.viewModel.getElements()).count) ? navigation(tableView, cellForRowAt: indexPath) : questionnaire(tableView, cellForRowAt: indexPath)
-        } catch {
-            fatalError(error.localizedDescription)
-        }
-    }
-
-    private func navigation(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        do {
-            let cell: QuestionnaireNavigationCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
-            cell.configuration = try self.viewModel.getConfiguration()
-            cell.requirementsSatisfied = self.viewModel.requirementsSatisfied
-            cell.overrideAssets(with: self.session)
-
-            self.viewModel.requirementSatisfactionUpdater = { satisfied in
-                cell.requirementSatisfactionUpdater?(satisfied)
-            }
-            cell.onNextButtonTapped = { [weak self] in
-                guard let nextPage = self?.viewModel.goToNextPage() else { return }
-                (nextPage) ? self?.updateContentView() : self?.viewModel.finishQuestionnaire(for: nil, autoApply: false)
-            }
-            cell.onBackButtonTapped = { [weak self] in
-                _ = self?.viewModel.clearAnswersForCurrentPage()
-                if self?.viewModel.goToPreviousPage() ?? false {
-                    self?.updateContentView()
-                }
-            }
-            return cell
-        } catch {
-            fatalError(error.localizedDescription)
-        }
-    }
-
-    private func questionnaire(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        do {
-            let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
-            let element = try self.viewModel.getElements()[indexPath.row]
-            element.overrideAssets(with: self.session)
-
-            if var view = element as? QuestionnaireSettable {
-                view.presetAnswer = self.viewModel.getAnswersForElement(element)
-                self.viewModel.resetAnswer(for: element)
-            }
-            if var view = element as? QuestionnaireOptionSelectableElement {
-                view.onElementOptionSelected = { [weak self] option in
-                    func showTargetPage(_ page: Int) {
-                        guard (self?.viewModel.canGoToPage(page) ?? false), !(self?.viewModel.shouldWaitForNextButton ?? false) else { return }
-                        if self?.viewModel.goToPage(page) ?? false {
-                            view.deselect(option: option)
-                            self?.updateContentView()
-                        }
-                    }
-
-                    self?.viewModel.submitAnswer(key: element, value: option.value)
-                    if let page = self?.viewModel.redirectTargetPage(for: option.value) {
-                        showTargetPage(page)
-                    } else if let page = self?.viewModel.logicTargetPage(key: element.elementConfiguration?.name ?? "", value: option.value) {
-                        showTargetPage(page)
-                    }
-                }
-                view.onElementOptionDeselected = { _ in
-                    self.viewModel.removeAnswer(key: element)
-                }
-            }
-            if var view = element as? QuestionnaireFocusableElement {
-                view.onElementFocused = { _ in }
-                view.onElementDismissed = { [weak self] element in
-                    if let textView = element as? QuestionnaireElementTextArea, let text = textView.view.text, !text.isEmpty, textView.isCompleted {
-                        self?.viewModel.submitAnswer(key: element, value: textView.view.text)
-                    } else if let textField = element as? QuestionnaireElementTextField, let text = textField.view.text, !text.isEmpty, textField.isCompleted {
-                        self?.viewModel.submitAnswer(key: element, value: textField.view.text)
-                    } else {
-                        self?.viewModel.removeAnswer(key: element)
-                    }
-                }
-            }
-            self.layoutSubview(element, parent: cell.content)
-
-            return cell
-        } catch {
-            fatalError(error.localizedDescription)
-        }
+        self.dataSourceDelegate.cell(at: indexPath, view: self.contentView)
     }
 }

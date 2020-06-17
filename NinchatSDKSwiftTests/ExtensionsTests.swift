@@ -152,4 +152,9 @@ final class ExtensionsTests: XCTestCase {
         XCTAssertNotNil(date?.time)
         XCTAssertEqual(date?.time, "12:30:45")
     }
+
+    func test_layout_priority() {
+        let priority = UILayoutPriority.almostRequired
+        XCTAssertEqual(priority.rawValue, 999.0)
+    }
 }

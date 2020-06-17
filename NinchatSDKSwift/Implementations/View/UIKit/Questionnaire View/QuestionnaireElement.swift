@@ -42,6 +42,8 @@ extension QuestionnaireElementWithTitle {
 
     func addElementViews() {
         /// Must be called in `view.awakeFromNib()` function
+
+        title.preferredMaxLayoutWidth = UIScreen.main.bounds.width - 16.0
         self.addSubview(title)
         self.addSubview(view)
     }
@@ -56,9 +58,9 @@ extension QuestionnaireElementWithTitle {
             .fix(leading: (8.0, self), trailing: (8.0, self))
             .fix(top: (0.0, title), isRelative: true)
             .center(toX: self)
-            .fix(width: self.width?.constant ?? self.bounds.width)
-        view.leading?.priority = .required
-        view.trailing?.priority = .required
+            .fix(width: self.bounds.width)
+        view.leading?.priority = .almostRequired
+        view.trailing?.priority = .almostRequired
     }
 
     func overrideTitle(delegate: NINChatSessionInternalDelegate?) {

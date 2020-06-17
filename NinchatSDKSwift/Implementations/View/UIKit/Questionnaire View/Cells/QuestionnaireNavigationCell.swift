@@ -17,7 +17,7 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
             self.decorateView()
         }
     }
-    var requirementsSatisfied: Bool = true {
+    var requirementsSatisfied: Bool = false {
         didSet {
             self.setSatisfaction(requirementsSatisfied)
         }
@@ -94,10 +94,8 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
     }
 
     private func setSatisfaction(_ satisfied: Bool) {
-        if let nextButton = self.buttons.subviews.compactMap({ $0 as? UIButton }).first(where: { $0.trailing != nil }) {
-            nextButton.isEnabled = satisfied
-            nextButton.alpha = (satisfied) ? 1.0 : 0.5
-        }
+        self.buttons.subviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next })?.isEnabled = satisfied
+        self.buttons.subviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next })?.alpha = (satisfied) ? 1.0 : 0.5
     }
 }
 
@@ -115,30 +113,37 @@ extension QuestionnaireNavigationCell {
     }
 
     func shapeNavigationButtons(_ configuration: QuestionnaireConfiguration?) {
-        func drawBackButton() {
+        self.buttons.subviews.compactMap({ $0 as? Button }).forEach({ $0.removeFromSuperview() })
+
+        func drawBackButton(isVisible: Bool) {
+            if self.buttons.subviews.compactMap({ $0 as? Button }).filter({ $0.type == .back }).count > 0 { return }
+
             let button = Button(frame: .zero) { [weak self] button in
                 button.isSelected = !button.isSelected
                 self?.onBackButtonTapped?()
             }
+            button.type = .back
+            button.isHidden = !isVisible
+            button.isEnabled = isVisible
             self.layoutButton(button, configuration: configuration?.buttons, type: .back)
         }
-        func drawNextButton() {
+        func drawNextButton(isVisible: Bool) {
+            if self.buttons.subviews.compactMap({ $0 as? Button }).filter({ $0.type == .next }).count > 0 { return }
+
             let button = Button(frame: .zero) { [weak self] button in
                 button.isSelected = !button.isSelected
                 self?.onNextButtonTapped?()
             }
+            button.type = .next
+            button.isHidden = !isVisible
+            button.isEnabled = isVisible
             self.layoutButton(button, configuration: configuration?.buttons, type: .next)
         }
 
         /// According to `https://github.com/somia/mobile/issues/238`
         /// " Basically you have buttons always displayed unless they are removed in config. "
-        if configuration?.buttons == nil {
-            drawBackButton()
-            drawNextButton()
-        } else if let configuration = configuration?.buttons, configuration.hasValidButtons {
-            if configuration.hasValidBackButton { drawBackButton() }
-            if configuration.hasValidNextButton { drawNextButton() }
-        }
+        drawNextButton(isVisible: configuration?.buttons?.hasValidNextButton ?? true)
+        drawBackButton(isVisible: configuration?.buttons?.hasValidBackButton ?? true)
     }
 
     private func layoutButton(_ button: UIButton, configuration: ButtonQuestionnaire?, type: QuestionnaireButtonType) {
