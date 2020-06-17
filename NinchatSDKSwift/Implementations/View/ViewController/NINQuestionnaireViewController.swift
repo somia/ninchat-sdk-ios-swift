@@ -73,11 +73,14 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
     private var contentView: UITableView! {
         didSet {
             contentView.backgroundColor = .clear
-
             self.view.addSubview(contentView)
-            contentView
-                    .fix(top: (0, self.view), bottom: (0, self.view), toSafeArea: true)
-                    .fix(leading: (0, self.view), trailing: (0, self.view))
+
+            if #available(iOS 11, *) {
+                contentView.fix(top: (0.0, self.view), bottom: (0.0, self.view), toSafeArea: true)
+            } else {
+                contentView.fix(top: (20.0, self.view), bottom: (0.0, self.view))
+            }
+            contentView.fix(leading: (0, self.view), trailing: (0, self.view))
         }
     }
     private lazy var loadingIndicator: UIActivityIndicatorView = {
@@ -155,6 +158,7 @@ extension NINQuestionnaireViewController: QuestionnaireFormViewController {
     }
 }
 
+// MARK: - 'Conversation Like' questionnaires
 extension NINQuestionnaireViewController: QuestionnaireConversationController {
     func updateConversationContentView(_ interval: TimeInterval = 0.0) {
         let newSection = self.prepareSection()
@@ -236,12 +240,12 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
         self.dataSourceDelegate.numberOfPages()
     }
 
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        self.dataSourceDelegate.height(at: indexPath)
-    }
-
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         self.dataSourceDelegate.numberOfMessages(in: section)
+    }
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        self.dataSourceDelegate.height(at: indexPath)
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

@@ -25,7 +25,7 @@ class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Question
     }
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
-        CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + (2 * 8.0)
+        self.title.frame.origin.y + 16.0 + self.title.intrinsicContentSize.height + CGFloat(self.view.height?.constant ?? 0) + 8.0
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
@@ -124,6 +124,7 @@ extension QuestionnaireElementRadio {
             let button = self.generateButton(for: option, tag: (configuration?.options?.firstIndex(of: option))!)
             self.layoutButton(button, upperView: &upperView)
         }
+        upperView?.fix(bottom: (8.0, self.view), isRelative: false)
     }
 
     internal func generateButton(for option: ElementOption, tag: Int) -> Button {
@@ -159,8 +160,8 @@ extension QuestionnaireElementRadio {
             button.fix(top: (8.0, self.view), isRelative: false)
         }
         button
-                .fix(height: max(45.0, button.intrinsicContentSize.height + 16.0))
-                .center(toX: self.view)
+            .fix(height: max(45.0, button.intrinsicContentSize.height + 16.0))
+            .center(toX: self.view)
 
         if let height = self.view.height {
             height.constant += ((button.height?.constant ?? 0) + 8.0)

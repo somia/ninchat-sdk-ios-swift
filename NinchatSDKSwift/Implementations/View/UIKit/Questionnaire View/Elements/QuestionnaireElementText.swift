@@ -67,11 +67,6 @@ extension QuestionnaireElement where Self:QuestionnaireElementText {
     }
 
     private func estimateHeight(for text: String) -> CGFloat {
-        let size = self.sizeThatFits(CGSize(width: self.superview?.bounds.width ?? UIScreen.main.bounds.width, height: .greatestFiniteMagnitude))
-
-        if text.containsTags, let regex = try? NSRegularExpression(pattern: "</p>", options: .caseInsensitive), regex.numberOfMatches(in: text, range: NSRange(text.startIndex..., in: text)) > 0 {
-            return size.height + 20.0
-        }
-        return size.height
+        self.sizeThatFits(CGSize(width: UIScreen.main.bounds.width - 16.0, height: .greatestFiniteMagnitude)).height
     }
 }
