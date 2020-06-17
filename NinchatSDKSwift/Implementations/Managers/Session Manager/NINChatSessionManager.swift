@@ -53,10 +53,14 @@ protocol NINChatSessionConnectionManager {
     func registerQuestionnaire(queue ID: String, answers: NINLowLevelClientProps, completion: @escaping CompletionWithError) throws
 
     /** Closes the chat by shutting down the session. Triggers the API delegate method -ninchatDidEndChatSession:. */
-    func closeChat() throws
     
+    func closeChat(onCompletion: Completion?) throws
     /** (Optionally) sends ratings and finishes the current chat from our end. */
     func finishChat(rating status: ChatStatus?) throws
+}
+/// Add backward compatibility for uses that don't need the completion block
+extension NINChatSessionConnectionManager {
+    func closeChat() throws { try self.closeChat(onCompletion: nil) }
 }
 
 protocol NINChatSessionMessenger {

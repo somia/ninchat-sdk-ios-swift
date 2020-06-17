@@ -125,7 +125,6 @@ final class NinchatSDKSwiftServerSessionTests: XCTestCase {
             XCTAssertNotNil(self.sessionManager.siteConfiguration)
             XCTAssertNotNil(self.sessionManager.siteConfiguration.preAudienceQuestionnaire)
             XCTAssertGreaterThan(self.sessionManager.siteConfiguration.preAudienceQuestionnaire?.count ?? 0, 0)
-            XCTAssertNil(self.sessionManager.siteConfiguration.postAudienceQuestionnaire)
             expect.fulfill()
         }
 

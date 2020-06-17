@@ -331,7 +331,7 @@ extension NINChatSessionManagerImpl {
     }
 
     /// Low-level shutdown of the chat's session; invalidates session resource.
-    func closeChat() throws {
+    func closeChat(onCompletion: Completion? = nil) throws {
         delegate?.log(value: "Shutting down chat Session..")
 
         func endSession() {
@@ -340,11 +340,10 @@ extension NINChatSessionManagerImpl {
             /// Signal the delegate that our session has ended
             self.delegate?.onDidEnd()
             self.didEndSession?()
+            onCompletion?()
         }
 
-        if self.myUserID == nil {
-            endSession()
-        } else if let userID = self.myUserID, let user = self.channelUsers[userID], !user.guest {
+        if let userID = self.myUserID, let user = self.channelUsers[userID], !user.guest {
             endSession()
         } else {
             try self.deleteCurrentUser { error in
