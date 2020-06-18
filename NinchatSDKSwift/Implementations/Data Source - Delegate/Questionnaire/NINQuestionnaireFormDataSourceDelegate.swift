@@ -96,6 +96,10 @@ extension NINQuestionnaireFormDataSourceDelegate {
             if var view = element as? QuestionnaireFocusableElement {
                 self.setupFocusable(view: &view)
             }
+            cell.style = .form
+            cell.indexPath = indexPath
+            cell.backgroundColor = .clear
+            cell.sessionManager = self.session.sessionManager
             self.layoutSubview(element, parent: cell.content)
 
             return cell
