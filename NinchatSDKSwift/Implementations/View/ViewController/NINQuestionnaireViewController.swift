@@ -72,7 +72,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
 
     private var contentView: UITableView! {
         didSet {
-            contentView.backgroundColor = .clear
+            self.contentView.backgroundColor = .clear
             self.view.addSubview(contentView)
 
             if #available(iOS 11, *) {
@@ -175,6 +175,7 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
             self.scrollToBottom(at: newSection) /// Scroll to bottom
         }
     }
+
     func initiateConversationContentView(_ interval: TimeInterval) {
         self.contentView = self.generateTableView(isHidden: false)
         self.updateConversationContentView(interval)
@@ -195,13 +196,13 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     private func addLoadingRow(at section: Int) {
         guard var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
         conversationDataSource.isLoadingNewElements = true
-        self.contentView.insertRows(at: [IndexPath(row: 0, section: section)], with: .left)
+        self.contentView.insertRows(at: [IndexPath(row: 0, section: section)], with: .bottom)
     }
 
     private func removeLoadingRow(at section: Int) {
         guard var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("Not conformed") }
         conversationDataSource.isLoadingNewElements = false
-        self.contentView.deleteRows(at: [IndexPath(row: 0, section: section)], with: .right)
+        self.contentView.deleteRows(at: [IndexPath(row: 0, section: section)], with: .top)
     }
 
     private func addQuestionnaireRows(at section: Int) {
@@ -209,7 +210,7 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
         do {
             let elements = try self.viewModel.getElements()
             elements.forEach { element in
-                self.contentView.insertRows(at: [IndexPath(row: elements.firstIndex(where: { $0 == element })!, section: section)], with: .left)
+                self.contentView.insertRows(at: [IndexPath(row: elements.firstIndex(where: { $0 == element })!, section: section)], with: .bottom)
                 _ = conversationDataSource.insertRow()
             }
         } catch {
@@ -222,7 +223,7 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
         do {
             _ = conversationDataSource.insertRow()
             let elements = try self.viewModel.getElements()
-            self.contentView.insertRows(at: [IndexPath(row: elements.count, section: section)], with: .left)
+            self.contentView.insertRows(at: [IndexPath(row: elements.count, section: section)], with: .bottom)
         } catch {
             fatalError(error.localizedDescription)
         }
@@ -230,9 +231,8 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
 
     private func removeQuestionnaireSection() {
         guard let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
-        self.contentView.deleteSections(IndexSet(integer: conversationDataSource.removeSection()), with: .right)
+        self.contentView.deleteSections(IndexSet(integer: conversationDataSource.removeSection()), with: .fade)
     }
-
 }
 
 extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDelegate {
@@ -245,7 +245,11 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        self.dataSourceDelegate.height(at: indexPath)
+        let height = self.dataSourceDelegate.height(at: indexPath)
+        if self.style == .conversation {
+            return height + ((indexPath.row == 0) ? 60.0 : 20.0)
+        }
+        return height
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

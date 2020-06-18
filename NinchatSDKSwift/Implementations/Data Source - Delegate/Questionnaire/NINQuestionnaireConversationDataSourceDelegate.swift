@@ -49,11 +49,11 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
         do {
             if self.isLoadingNewElements, self.elements.count <= index.section, index.row == 0 { return 75.0 }
             if self.elements.count > index.section {
-                if index.row >= self.elements[index.section].count { return 65.0 }
+                if index.row >= self.elements[index.section].count { return 55.0 }
                 return self.elements[index.section][index.row].elementHeight
             }
 
-            if index.row == (try self.viewModel.getElements().count) { return 65.0 }
+            if index.row == (try self.viewModel.getElements().count) { return 55.0 }
             return try self.viewModel.getElements()[index.row].elementHeight
         } catch {
             fatalError(error.localizedDescription)
@@ -144,7 +144,10 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         if var view = element as? QuestionnaireFocusableElement {
             self.setupFocusable(view: &view)
         }
+        cell.style = .conversation
+        cell.indexPath = indexPath
         cell.backgroundColor = .clear
+        cell.sessionManager = self.session.sessionManager
         self.layoutSubview(element, parent: cell.content)
 
         return cell
