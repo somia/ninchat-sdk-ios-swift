@@ -118,7 +118,8 @@ struct ElementOption: Codable, Equatable {
 
 // MARK: - Redirect
 struct ElementRedirect: Codable {
-    let pattern, target: String
+    let pattern: String?
+    let target: String
 }
 
 // MARK: - QuestionnaireConfigurationTypes
