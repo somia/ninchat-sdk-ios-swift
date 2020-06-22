@@ -120,6 +120,8 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         cell.overrideAssets(with: self.session)
 
         self.viewModel.requirementSatisfactionUpdater = { [weak self] satisfied in
+            guard self?.requirementSatisfactions.count ?? 0 > indexPath.section else { return }
+
             self?.requirementSatisfactions[indexPath.section] = satisfied
             self?.onRequirementsUpdated(satisfied, for: cell)
         }
