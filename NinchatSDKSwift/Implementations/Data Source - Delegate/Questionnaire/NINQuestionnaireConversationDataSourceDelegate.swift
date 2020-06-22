@@ -50,15 +50,16 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
             if self.isLoadingNewElements, self.elements.count <= index.section, index.row == 0 { return 75.0 }
 
             if self.elements.count > index.section {
-                if index.row >= self.elements[index.section].count { return 55.0 }
+                if index.row >= self.elements[index.section].count { return self.shouldShowNavigationCell ? 55.0 : 0.0 }
                 if let text = elements[index.section][index.row] as? QuestionnaireElementText {
                     return text.estimateHeight(width: UIScreen.main.bounds.width - 65.0)
                 }
                 return self.elements[index.section][index.row].elementHeight
             }
 
-            if index.row == (try self.viewModel.getElements().count) { return 55.0 }
-            return try self.viewModel.getElements()[index.row].elementHeight
+            let elements = try self.viewModel.getElements()
+            if index.row == elements.count { return self.shouldShowNavigationCell ? 55.0 : 0.0 }
+            return elements[index.row].elementHeight
         } catch {
             fatalError(error.localizedDescription)
         }

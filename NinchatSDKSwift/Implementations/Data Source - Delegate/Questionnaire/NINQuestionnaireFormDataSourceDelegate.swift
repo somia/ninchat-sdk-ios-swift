@@ -39,7 +39,8 @@ final class NINQuestionnaireFormDataSourceDelegate: QuestionnaireDataSourceDeleg
             if isLoadingNewElements { return 75.0 }
 
             let elements = try self.viewModel.getElements()
-            return (index.row == elements.count) ? 65.0 : elements[index.row].elementHeight
+            if index.row == elements.count { return self.shouldShowNavigationCell ? 55.0 : 0.0 }
+            return elements[index.row].elementHeight
         } catch {
             fatalError(error.localizedDescription)
         }

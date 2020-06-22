@@ -9,6 +9,8 @@ import UIKit
 /** Delegate for the questionnaire view. */
 protocol QuestionnaireDelegate {
     var isLoadingNewElements: Bool! { get set }
+    var shouldShowNavigationCell: Bool { get }
+
     var onUpdateCellContent: (() -> Void)? { get set }
     var onRemoveCellContent: (() -> Void)? { get set }
 }
@@ -35,6 +37,13 @@ protocol QuestionnaireDataSource {
 protocol QuestionnaireDataSourceDelegate: QuestionnaireDataSource, QuestionnaireDelegate {}
 
 extension QuestionnaireDataSourceDelegate {
+    var shouldShowNavigationCell: Bool {
+        if let configuration = try? self.viewModel.getConfiguration() {
+            return configuration.buttons?.hasValidButtons ?? true
+        }
+        return false
+    }
+
     internal func layoutSubview(_ view: UIView, parent: UIView) {
         if parent.subviews.filter({ $0 is QuestionnaireElement }).count > 0 {
             parent.subviews.filter({ $0 is QuestionnaireElement }).forEach({ $0.removeFromSuperview() })
