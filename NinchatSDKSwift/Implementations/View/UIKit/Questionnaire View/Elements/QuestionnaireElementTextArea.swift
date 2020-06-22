@@ -44,7 +44,7 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
 
     // MARK: - QuestionnaireHasBorder
 
-    var isCompleted: Bool! {
+    var isCompleted: Bool? {
         didSet {
             self.updateBorder()
         }

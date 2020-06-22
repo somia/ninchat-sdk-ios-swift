@@ -78,7 +78,7 @@ extension QuestionnaireDataSourceDelegate {
 
     internal func setupSelectable(view: inout QuestionnaireOptionSelectableElement, element: QuestionnaireElement) {
         view.onElementOptionSelected = { [view] option in
-            self.viewModel.submitAnswer(key: element, value: option.value)
+            guard self.viewModel.submitAnswer(key: element, value: option.value) else { return }
             if let page = self.viewModel.redirectTargetPage(for: option.value) {
                 self.showTargetPage(view: view, page: page, option: option)
             } else if let key = element.elementConfiguration?.name, !key.isEmpty, let page = self.viewModel.logicTargetPage(key: key, value: option.value) {
@@ -93,9 +93,9 @@ extension QuestionnaireDataSourceDelegate {
     internal func setupFocusable(view: inout QuestionnaireFocusableElement) {
         view.onElementFocused = { _ in }
         view.onElementDismissed = {  element in
-            if let textView = element as? QuestionnaireElementTextArea, let text = textView.view.text, !text.isEmpty, textView.isCompleted {
+            if let textView = element as? QuestionnaireElementTextArea, let text = textView.view.text, !text.isEmpty, (textView.isCompleted ?? true) {
                 self.viewModel.submitAnswer(key: element, value: textView.view.text)
-            } else if let textField = element as? QuestionnaireElementTextField, let text = textField.view.text, !text.isEmpty, textField.isCompleted {
+            } else if let textField = element as? QuestionnaireElementTextField, let text = textField.view.text, !text.isEmpty, (textField.isCompleted ?? true) {
                 self.viewModel.submitAnswer(key: element, value: textField.view.text)
             } else {
                 self.viewModel.removeAnswer(key: element)
@@ -105,7 +105,6 @@ extension QuestionnaireDataSourceDelegate {
 
     private func showTargetPage(view: QuestionnaireOptionSelectableElement, page: Int, option: ElementOption) {
         if self.viewModel.canGoToPage(page), !self.viewModel.shouldWaitForNextButton, self.viewModel.goToPage(page) {
-            view.deselect(option: option)
             self.onUpdateCellContent?()
         }
     }

@@ -31,7 +31,7 @@ protocol NINQuestionnaireViewModel {
     func goToPreviousPage() -> Bool
     func goToPage(_ page: Int) -> Bool
     func canGoToPage(_ page: Int) -> Bool
-    func submitAnswer(key: QuestionnaireElement?, value: AnyHashable)
+    func submitAnswer(key: QuestionnaireElement?, value: AnyHashable) -> Bool
     func removeAnswer(key: QuestionnaireElement?)
     func finishQuestionnaire(for logic: LogicQuestionnaire?, autoApply: Bool)
 }
@@ -187,13 +187,15 @@ extension NINQuestionnaireViewModelImpl {
         }).filter({ self.getAnswersForElement($0) == nil }).count == 0
     }
 
-    func submitAnswer(key: QuestionnaireElement?, value: AnyHashable) {
+    func submitAnswer(key: QuestionnaireElement?, value: AnyHashable) -> Bool {
         if let configuration = key?.elementConfiguration {
-            if let currentValue = self.answers[configuration.name], value == currentValue { return }
+            if let currentValue = self.answers[configuration.name], value == currentValue { return false }
 
             self.answers[configuration.name] = value
             self.requirementSatisfactionUpdater?(self.requirementsSatisfied)
+            return true
         }
+        return false
     }
 
     func removeAnswer(key: QuestionnaireElement?) {

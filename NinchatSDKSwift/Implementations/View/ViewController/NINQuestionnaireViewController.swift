@@ -102,6 +102,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
     }
 
     deinit {
+        OperationQueue.main.cancelAllOperations()
         self.removeKeyboardListeners()
     }
 
@@ -161,19 +162,25 @@ extension NINQuestionnaireViewController: QuestionnaireFormViewController {
 // MARK: - 'Conversation Like' questionnaires
 extension NINQuestionnaireViewController: QuestionnaireConversationController {
     func updateConversationContentView(_ interval: TimeInterval = 0.0) {
-        let newSection = self.prepareSection()
-        self.addLoadingRow(at: newSection)
-        self.scrollToBottom(at: newSection)     /// Scroll to bottom
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
-            self.removeLoadingRow(at: newSection)
-            self.contentView.beginUpdates()     // Start loading questionnaires
-            self.addQuestionnaireRows(at: newSection)
-            self.addNavigationRow(at: newSection)
-            self.contentView.endUpdates()       // Finish loading questionnaires
-
-            self.scrollToBottom(at: newSection) /// Scroll to bottom
+        var newSection = -1
+        let prepareOperation = BlockOperation {
+            newSection = self.prepareSection()
+            self.addLoadingRow(at: newSection)
+            self.scrollToBottom(at: newSection)     /// Scroll to bottom
         }
+        let updateContentViewOperation = BlockOperation {
+            DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
+                self.removeLoadingRow(at: newSection)
+                self.contentView.beginUpdates()         /// Start loading questionnaires
+                self.addQuestionnaireRows(at: newSection)
+                self.addNavigationRow(at: newSection)
+                self.contentView.endUpdates()           /// Finish loading questionnaires
+                self.scrollToBottom(at: newSection)     /// Scroll to bottom
+            }
+        }
+
+        updateContentViewOperation.addDependency(prepareOperation)
+        OperationQueue.main.addOperations([prepareOperation, updateContentViewOperation], waitUntilFinished: false)
     }
 
     func initiateConversationContentView(_ interval: TimeInterval) {
@@ -182,7 +189,10 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     }
 
     private func scrollToBottom(at section: Int) {
-        self.contentView.scrollToRow(at: IndexPath(row: self.contentView.numberOfRows(inSection: section)-1, section: section), at: .bottom, animated: true)
+        DispatchQueue.main.async {
+            guard self.contentView.numberOfSections > section, self.contentView.numberOfRows(inSection: section) >= 1 else { return }
+            self.contentView.scrollToRow(at: IndexPath(row: self.contentView.numberOfRows(inSection: section)-1, section: section), at: .bottom, animated: true)
+        }
     }
 
     private func prepareSection() -> Int {

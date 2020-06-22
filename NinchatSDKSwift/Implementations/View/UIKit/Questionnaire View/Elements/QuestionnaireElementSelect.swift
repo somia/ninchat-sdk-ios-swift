@@ -183,7 +183,7 @@ extension QuestionnaireElementSelect: QuestionnaireElement {
 }
 
 extension QuestionnaireElementSelect: QuestionnaireHasBorder {
-    var isCompleted: Bool! {
+    var isCompleted: Bool? {
         self.selectedOption.text != "Select".localized
     }
 
