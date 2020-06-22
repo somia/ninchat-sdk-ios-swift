@@ -68,7 +68,7 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
             }
             self.elements.append(contentsOf: [try self.viewModel.getElements()])
             self.configurations.append(try self.viewModel.getConfiguration())
-            self.requirementSatisfactions.append(false)
+            self.requirementSatisfactions.append(self.viewModel.requirementsSatisfied)
 
             return (index.row == (try self.viewModel.getElements().count)) ? self.navigation(view, cellForRowAt: index) : self.questionnaire(view, cellForRowAt: index)
         } catch {

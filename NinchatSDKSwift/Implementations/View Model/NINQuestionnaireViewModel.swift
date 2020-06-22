@@ -176,7 +176,7 @@ extension NINQuestionnaireViewModelImpl {
     }
 
     var requirementsSatisfied: Bool {
-        guard self.views.count > self.pageNumber, !self.answers.isEmpty else { return false }
+        guard self.views.count > self.pageNumber else { return false }
         return self.views[self.pageNumber].filter({
             if let required = $0.elementConfiguration?.required {
                 return required
