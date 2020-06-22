@@ -85,7 +85,6 @@ extension NINQuestionnaireFormDataSourceDelegate {
             let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
             let element = try self.viewModel.getElements()[indexPath.row]
             element.overrideAssets(with: self.session)
-            cell.backgroundColor = .clear
 
             if var view = element as? QuestionnaireSettable {
                 self.setupSettable(view: &view, element: element)

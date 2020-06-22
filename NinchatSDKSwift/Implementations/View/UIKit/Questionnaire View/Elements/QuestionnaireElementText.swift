@@ -22,7 +22,7 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
     }
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
-        self.height?.constant ?? 0
+        self.estimateHeight(width: UIScreen.main.bounds.width)
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
@@ -54,6 +54,10 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
         self.isEditable = false
         self.isScrollEnabled = false
     }
+
+    func estimateHeight(width: CGFloat) -> CGFloat {
+        max(24,0, self.sizeThatFits(CGSize(width: width - 16.0, height: .greatestFiniteMagnitude)).height)
+    }
 }
 
 extension QuestionnaireElement where Self:QuestionnaireElementText {
@@ -62,11 +66,5 @@ extension QuestionnaireElement where Self:QuestionnaireElementText {
         self.backgroundColor = .clear
         self.setAttributed(text: configuration?.label ?? "", font: .ninchat)
         self.elementConfiguration = configuration
-
-        self.fix(height: max(32,0, self.estimateHeight(for: configuration?.label ?? "")))
-    }
-
-    private func estimateHeight(for text: String) -> CGFloat {
-        self.sizeThatFits(CGSize(width: UIScreen.main.bounds.width - 16.0, height: .greatestFiniteMagnitude)).height
     }
 }

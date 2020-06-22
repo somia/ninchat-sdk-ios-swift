@@ -48,8 +48,12 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
     func height(at index: IndexPath) -> CGFloat {
         do {
             if self.isLoadingNewElements, self.elements.count <= index.section, index.row == 0 { return 75.0 }
+
             if self.elements.count > index.section {
                 if index.row >= self.elements[index.section].count { return 55.0 }
+                if let text = elements[index.section][index.row] as? QuestionnaireElementText {
+                    return text.estimateHeight(width: UIScreen.main.bounds.width - 65.0)
+                }
                 return self.elements[index.section][index.row].elementHeight
             }
 
