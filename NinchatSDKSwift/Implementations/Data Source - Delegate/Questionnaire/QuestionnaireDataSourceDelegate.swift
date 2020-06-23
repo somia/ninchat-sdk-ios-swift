@@ -93,6 +93,11 @@ extension QuestionnaireDataSourceDelegate {
             } else if let key = element.elementConfiguration?.name, !key.isEmpty, let page = self.viewModel.logicTargetPage(key: key, value: option.value) {
                 self.showTargetPage(view: view, page: page, option: option)
             }
+            /// Load the next element if the selected element was a radio or checkbox without any navigation block (redirect/logic)
+            else if view is QuestionnaireElementRadio || view is QuestionnaireElementCheckbox {
+                guard !self.viewModel.shouldWaitForNextButton else { return }
+                self.onNextButtonTapped()
+            }
         }
         view.onElementOptionDeselected = { _ in
             self.viewModel.removeAnswer(key: element)
@@ -113,7 +118,7 @@ extension QuestionnaireDataSourceDelegate {
     }
 
     private func showTargetPage(view: QuestionnaireOptionSelectableElement, page: Int, option: ElementOption) {
-        if self.viewModel.canGoToPage(page), !self.viewModel.shouldWaitForNextButton, self.viewModel.goToPage(page) {
+        if !self.viewModel.shouldWaitForNextButton, self.viewModel.canGoToPage(page), self.viewModel.goToPage(page) {
             self.onUpdateCellContent?()
         }
     }

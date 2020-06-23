@@ -44,12 +44,13 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     private let views: [[QuestionnaireElement]]
     private let queue: Queue?
     internal var answers: [String:AnyHashable]! = [:]
+    private var askedPageNumber: Int?
+    private var setPageNumber: Int?
 
     // MARK: - NINQuestionnaireViewModel
 
     var pageNumber: Int = 0
     var previousPage: Int = 0
-    var tempPageNumber: Int?
     var onSessionFinished: (() -> Void)?
     var onErrorOccurred: ((Error) -> Void)?
     var onQuestionnaireFinished: ((Queue) -> Void)?
@@ -76,13 +77,13 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
         }
         self.connector.onCompleteTargetReached = { [weak self] logic, autoApply in
             if self?.hasToWaitForUserConfirmation(autoApply) ?? false {
-                self?.tempPageNumber = (self?.views.count ?? 0) + 1; return
+                self?.askedPageNumber = (self?.views.count ?? 0) + 1; return
             }
             self?.finishQuestionnaire(for: logic, autoApply: autoApply)
         }
         self.connector.onRegisterTargetReached = { [weak self] logic, autoApply in
             if self?.hasToWaitForUserConfirmation(autoApply) ?? false {
-                self?.tempPageNumber = (self?.views.count ?? 0) + 1; return
+                self?.askedPageNumber = (self?.views.count ?? 0) + 1; return
             }
             self?.registerAudience(queueID: logic?.queue ?? queue.queueID) { error in
                 if let error = error {
@@ -98,7 +99,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
         self.connector.onRegisterTargetReached = { [weak self] _, autoApply in
             do {
                 if self?.hasToWaitForUserConfirmation(autoApply) ?? false {
-                    self?.tempPageNumber = (self?.views.count ?? 0) + 1; return
+                    self?.askedPageNumber = (self?.views.count ?? 0) + 1; return
                 }
                 try self?.sessionManager.send(type: .metadata, payload: ["data": ["post_answers": self?.answers ?? [:]], "time": Date().timeIntervalSince1970]) { error in
                     if let error = error {
@@ -234,11 +235,12 @@ extension NINQuestionnaireViewModelImpl {
     }
 
     func resetAnswer(for element: QuestionnaireElement) {
-        guard let value = self.getAnswersForElement(element) as? String else { return }
+        guard let value = self.getAnswersForElement(element) as? String, self.requirementsSatisfied, !element.isUserInteractionEnabled else { return }
+
         if let page = self.redirectTargetPage(for: value) {
-            self.tempPageNumber = page
+            self.askedPageNumber = page
         } else if let page = self.logicTargetPage(key: element.elementConfiguration?.name ?? "", value: value) {
-            self.tempPageNumber = page
+            self.askedPageNumber = page
         }
     }
 }
@@ -269,20 +271,13 @@ extension NINQuestionnaireViewModelImpl {
         guard self.requirementsSatisfied else { return nil }
 
         /// To navigate to a page saved during element selection
-        if let targetPage = tempPageNumber {
+        if let targetPage = askedPageNumber {
             guard self.views.count >= targetPage else { return false }
-
-            self.previousPage = self.pageNumber
-            self.pageNumber = targetPage
-            self.tempPageNumber = nil
-            return true
+            return self.goToPage(targetPage)
         }
 
         if self.views.count > self.pageNumber + 1 {
-            self.previousPage = self.pageNumber
-            self.pageNumber += 1
-            self.tempPageNumber = nil
-            return true
+            return self.goToPage(self.pageNumber+1)
         }
 
         return false
@@ -301,12 +296,12 @@ extension NINQuestionnaireViewModelImpl {
 
         self.previousPage = self.pageNumber
         self.pageNumber = page
-        self.tempPageNumber = nil
+        self.askedPageNumber = nil
         return true
     }
 
     func canGoToPage(_ page: Int) -> Bool {
-        tempPageNumber = page
+        askedPageNumber = page
         return self.requirementsSatisfied
     }
 }
