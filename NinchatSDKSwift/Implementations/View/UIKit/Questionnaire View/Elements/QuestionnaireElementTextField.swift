@@ -109,12 +109,14 @@ extension QuestionnaireElementTextField: UITextFieldDelegate {
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {
+        defer { self.onElementDismissed?(self) }
+
+        guard self.elementConfiguration?.required ?? true else { self.isCompleted = true; return }
         if let text = textField.text, !text.isEmpty, let pattern = self.elementConfiguration?.pattern, let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) {
             self.isCompleted = regex.matches(in: text, range: NSRange(location: 0, length: text.count)).count > 0
-        } else {
-            self.isCompleted = !(self.elementConfiguration?.required ?? false)
+        } else if let text = textField.text {
+            self.isCompleted = !text.isEmpty
         }
-        self.onElementDismissed?(self)
     }
 }
 
