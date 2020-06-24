@@ -216,13 +216,13 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     private func addLoadingRow(at section: Int) {
         guard let contentView = self.contentView, var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
         conversationDataSource.isLoadingNewElements = true
-        contentView.insertRows(at: [IndexPath(row: 0, section: section)], with: .bottom)
+        contentView.insertRows(at: [IndexPath(row: 0, section: section)], with: .automatic)
     }
 
     private func removeLoadingRow(at section: Int) {
         guard let contentView = self.contentView, var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("Not conformed") }
         conversationDataSource.isLoadingNewElements = false
-        contentView.deleteRows(at: [IndexPath(row: 0, section: section)], with: .top)
+        contentView.deleteRows(at: [IndexPath(row: 0, section: section)], with: .automatic)
     }
 
     private func addQuestionnaireRows(at section: Int) {
