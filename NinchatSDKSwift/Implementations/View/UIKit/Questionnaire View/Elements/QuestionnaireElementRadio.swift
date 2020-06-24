@@ -128,6 +128,7 @@ extension QuestionnaireElementRadio {
         configuration?.options?.forEach { [unowned self] option in
             let button = self.generateButton(for: option, tag: (configuration?.options?.firstIndex(of: option))!)
             self.layoutButton(button, upperView: &upperView)
+            button.roundButton()
         }
         upperView?.fix(bottom: (8.0, self.view), isRelative: false)
     }
@@ -144,7 +145,6 @@ extension QuestionnaireElementRadio {
         view.setTitle(option.label, for: .selected)
         view.setTitleColor(.QBlueButtonNormal, for: .selected)
         view.updateTitleScale()
-        view.roundButton()
 
         return view
     }
