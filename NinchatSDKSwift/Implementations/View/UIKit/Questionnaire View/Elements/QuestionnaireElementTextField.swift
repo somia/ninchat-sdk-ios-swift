@@ -8,6 +8,8 @@ import UIKit
 
 final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireHasBorder, QuestionnaireFocusableElement {
 
+    fileprivate var heightValue: CGFloat = 45.0
+
     // MARK: - QuestionnaireElement
 
     var index: Int = 0
@@ -29,7 +31,7 @@ final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle
     }
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
-        CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + CGFloat(5.0 * 8.0)
+        self.title.frame.origin.y + self.title.intrinsicContentSize.height + self.heightValue + 8.0 + self.padding
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
@@ -144,7 +146,7 @@ extension QuestionnaireElement where Self:QuestionnaireElementTextField {
         self.view.borderStyle = .none
         self.view.keyboardType = keyboardType(configuration)
         self.view.font = .ninchat
-        self.view.fix(height: 45.0)
+        self.view.fix(height: self.heightValue)
         self.updateBorder()
     }
 

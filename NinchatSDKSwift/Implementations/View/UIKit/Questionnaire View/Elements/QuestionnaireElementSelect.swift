@@ -8,6 +8,7 @@ import UIKit
 
 final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireOptionSelectableElement {
 
+    fileprivate var heightValue: CGFloat = 45.0
     var normalBackgroundColor: UIColor! = .white
     var selectedBackgroundColor: UIColor! = .white
 
@@ -34,7 +35,7 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
     }
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
-        CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0) + (2.0 * 8)
+        self.title.frame.origin.y + self.title.intrinsicContentSize.height + self.heightValue + 8.0 + self.padding
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
@@ -178,7 +179,7 @@ extension QuestionnaireElementSelect: QuestionnaireElement {
         self.elementConfiguration = configuration
         self.shapeTitle(configuration)
         self.view.backgroundColor = self.normalBackgroundColor
-        self.view.fix(height: 45.0)
+        self.view.fix(height: self.heightValue)
         self.selectedOption.font = .ninchat
         self.selectedOption.textAlignment = .left
         self.selectedOption.textColor = .QBlueButtonNormal

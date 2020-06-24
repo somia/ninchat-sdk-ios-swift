@@ -267,7 +267,7 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let height = self.dataSourceDelegate.height(at: indexPath)
         if self.style == .conversation {
-            return height + ((indexPath.row == 0) ? 60.0 : 20.0)
+            return height + ((indexPath.row == 0) ? 60.0 : 16.0)
         }
         return height
     }

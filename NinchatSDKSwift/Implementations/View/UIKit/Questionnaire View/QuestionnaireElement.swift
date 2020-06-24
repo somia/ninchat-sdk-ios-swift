@@ -42,6 +42,11 @@ extension QuestionnaireElementWithTitle {
         self.elementConfiguration != nil
     }
 
+    var padding: CGFloat {
+        guard let title = self.title.text else { return 0.0 }
+        return (self.questionnaireStyle == .form || title.isEmpty) ? 0.0 : 20.0
+    }
+
     func addElementViews() {
         /// Must be called in `view.awakeFromNib()` function
 
@@ -55,7 +60,7 @@ extension QuestionnaireElementWithTitle {
         title
             .fix(leading: (8.0, self), trailing: (8.0, self))
             .fix(top: (4.0, self))
-            .fix(height: title.intrinsicContentSize.height + ((self.questionnaireStyle == .form || title.text!.isEmpty) ? 0.0 : 20.0))
+            .fix(height: title.intrinsicContentSize.height + self.padding)
         view
             .fix(leading: (8.0, self), trailing: (8.0, self))
             .fix(top: (0.0, title), isRelative: true)
