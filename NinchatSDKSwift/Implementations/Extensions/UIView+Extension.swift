@@ -42,10 +42,10 @@ extension UIView {
     func round(radius: CGFloat? = nil, borderWidth: CGFloat = 0.0, borderColor: UIColor = .clear) -> Self {
         if let radius = radius {
             self.layer.cornerRadius = radius
-        } else if let heightAnchor = self.height?.constant {
-            self.layer.cornerRadius = heightAnchor / 2
         } else if self.bounds.height > 0 {
             self.layer.cornerRadius = self.bounds.height / 2
+        } else if let heightAnchor = self.height?.constant {
+            self.layer.cornerRadius = heightAnchor / 2
         }
         self.layer.masksToBounds = true
         self.layer.borderWidth = borderWidth

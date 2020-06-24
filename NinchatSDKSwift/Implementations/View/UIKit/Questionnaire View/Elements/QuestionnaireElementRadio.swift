@@ -11,7 +11,13 @@ class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Question
     // MARK: - QuestionnaireElement
 
     var index: Int = 0
+    var isShown: Bool? {
+        didSet {
+            self.isUserInteractionEnabled = isShown ?? true
+        }
+    }
     var scaleToParent: Bool = true
+    var questionnaireStyle: QuestionnaireStyle?
     var questionnaireConfiguration: QuestionnaireConfiguration? {
         didSet {
             if let elements = questionnaireConfiguration?.elements {
@@ -123,6 +129,7 @@ extension QuestionnaireElementRadio {
         configuration?.options?.forEach { [unowned self] option in
             let button = self.generateButton(for: option, tag: (configuration?.options?.firstIndex(of: option))!)
             self.layoutButton(button, upperView: &upperView)
+            button.roundButton()
         }
         upperView?.fix(bottom: (8.0, self.view), isRelative: false)
     }
@@ -139,7 +146,6 @@ extension QuestionnaireElementRadio {
         view.setTitle(option.label, for: .selected)
         view.setTitleColor(.QBlueButtonNormal, for: .selected)
         view.updateTitleScale()
-        view.roundButton()
 
         return view
     }

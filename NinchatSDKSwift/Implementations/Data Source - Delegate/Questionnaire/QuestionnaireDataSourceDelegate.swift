@@ -93,6 +93,11 @@ extension QuestionnaireDataSourceDelegate {
             } else if let key = element.elementConfiguration?.name, !key.isEmpty, let page = self.viewModel.logicTargetPage(key: key, value: option.value) {
                 self.showTargetPage(view: view, page: page, option: option)
             }
+            /// Load the next element if the selected element was a radio or checkbox without any navigation block (redirect/logic)
+            else if view is QuestionnaireElementRadio || view is QuestionnaireElementCheckbox {
+                guard !self.viewModel.shouldWaitForNextButton else { return }
+                self.onNextButtonTapped()
+            }
         }
         view.onElementOptionDeselected = { _ in
             self.viewModel.removeAnswer(key: element)
@@ -103,9 +108,9 @@ extension QuestionnaireDataSourceDelegate {
         view.onElementFocused = { _ in }
         view.onElementDismissed = {  element in
             if let textView = element as? QuestionnaireElementTextArea, let text = textView.view.text, !text.isEmpty, (textView.isCompleted ?? true) {
-                self.viewModel.submitAnswer(key: element, value: textView.view.text)
+                _ = self.viewModel.submitAnswer(key: element, value: textView.view.text)
             } else if let textField = element as? QuestionnaireElementTextField, let text = textField.view.text, !text.isEmpty, (textField.isCompleted ?? true) {
-                self.viewModel.submitAnswer(key: element, value: textField.view.text)
+                _ = self.viewModel.submitAnswer(key: element, value: textField.view.text)
             } else {
                 self.viewModel.removeAnswer(key: element)
             }

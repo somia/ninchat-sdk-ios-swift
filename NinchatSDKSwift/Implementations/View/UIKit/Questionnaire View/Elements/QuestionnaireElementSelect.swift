@@ -14,7 +14,13 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
     // MARK: - QuestionnaireElement
 
     var index: Int = 0
+    var isShown: Bool? {
+        didSet {
+            self.isUserInteractionEnabled = isShown ?? true
+        }
+    }
     var scaleToParent: Bool = false
+    var questionnaireStyle: QuestionnaireStyle?
     var questionnaireConfiguration: QuestionnaireConfiguration? {
         didSet {
             if let elements = questionnaireConfiguration?.elements {

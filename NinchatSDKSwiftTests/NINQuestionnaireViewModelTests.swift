@@ -53,15 +53,15 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
 
     func test_21_setPreAnswers() throws {
         self.viewModel?.pageNumber = 0
-        XCTAssertNil(self.viewModel?.tempPageNumber)
+        XCTAssertNil(self.viewModel?.askedPageNumber)
 
         do {
             self.viewModel?.answers = ["Aiheet": "Mikä on koronavirus"]
             let element = try self.viewModel?.getElements()[0]
 
             self.viewModel?.resetAnswer(for: element!)
-            XCTAssertNotNil(self.viewModel?.tempPageNumber)
-            XCTAssertEqual(self.viewModel?.tempPageNumber ?? 0, 1)
+            XCTAssertNotNil(self.viewModel?.askedPageNumber)
+            XCTAssertEqual(self.viewModel?.askedPageNumber ?? 0, 1)
         } catch {
             XCTFail(error.localizedDescription)
         }

@@ -9,7 +9,9 @@ import AnyCodable
 
 protocol QuestionnaireElement: UIView {
     var index: Int { get set }
+    var isShown: Bool? { get set }
     var elementHeight: CGFloat { get }
+    var questionnaireStyle: QuestionnaireStyle? { get set }
     var questionnaireConfiguration: QuestionnaireConfiguration? { get set }
     var elementConfiguration: QuestionnaireConfiguration? { get }
 
@@ -52,8 +54,8 @@ extension QuestionnaireElementWithTitle {
         /// Must be called once subviews are added
         title
             .fix(leading: (8.0, self), trailing: (8.0, self))
-            .fix(top: (0.0, self))
-            .fix(height: title.intrinsicContentSize.height + 16.0)
+            .fix(top: (4.0, self))
+            .fix(height: title.intrinsicContentSize.height + ((self.questionnaireStyle == .form || title.text!.isEmpty) ? 0.0 : 20.0))
         view
             .fix(leading: (8.0, self), trailing: (8.0, self))
             .fix(top: (0.0, title), isRelative: true)
@@ -88,6 +90,12 @@ protocol QuestionnaireOptionSelectableElement {
     var onElementOptionDeselected: ((ElementOption) -> Void)? { get set }
 
     func deselect(option: ElementOption)
+    func deselectAll()
+}
+extension QuestionnaireOptionSelectableElement where Self:QuestionnaireElement {
+    func deselectAll() {
+        self.elementConfiguration?.options?.compactMap({ $0 }).forEach({ self.deselect(option: $0) })
+    }
 }
 
 /// Questionnaire buttons
