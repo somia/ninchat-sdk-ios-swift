@@ -44,7 +44,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     private let views: [[QuestionnaireElement]]
     private let queue: Queue?
     internal var answers: [String:AnyHashable]! = [:]
-    private var askedPageNumber: Int?
+    internal var askedPageNumber: Int?
     private var setPageNumber: Int?
 
     // MARK: - NINQuestionnaireViewModel
