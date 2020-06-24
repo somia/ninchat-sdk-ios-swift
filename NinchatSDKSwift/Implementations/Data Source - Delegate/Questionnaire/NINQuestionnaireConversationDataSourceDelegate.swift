@@ -164,7 +164,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
             self?.onBackButtonTapped(completion: self?.onRemoveCellContent)
         }
         cell.backgroundColor = .clear
-        cell.isUserInteractionEnabled = self.elements[indexPath.section].first?.isShown ?? true
+        cell.isUserInteractionEnabled = (self.elements[indexPath.section].first?.isShown ?? true) && (indexPath.section == self.sectionCount-1)
 
         return cell
     }
@@ -172,7 +172,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
     private func questionnaire(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> QuestionnaireCell {
         let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
         let element = self.elements[indexPath.section][indexPath.row]
-        element.isUserInteractionEnabled = element.isShown ?? true
+        element.isUserInteractionEnabled = (element.isShown ?? true) && (indexPath.section == self.sectionCount-1)
         element.questionnaireStyle = .conversation
         element.overrideAssets(with: self.session)
 
