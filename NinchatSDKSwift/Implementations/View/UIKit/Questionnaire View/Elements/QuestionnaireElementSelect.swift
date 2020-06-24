@@ -20,6 +20,7 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
         }
     }
     var scaleToParent: Bool = false
+    var questionnaireStyle: QuestionnaireStyle?
     var questionnaireConfiguration: QuestionnaireConfiguration? {
         didSet {
             if let elements = questionnaireConfiguration?.elements {

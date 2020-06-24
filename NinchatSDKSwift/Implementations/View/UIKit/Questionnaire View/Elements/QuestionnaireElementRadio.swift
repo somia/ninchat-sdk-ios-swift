@@ -17,6 +17,7 @@ class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Question
         }
     }
     var scaleToParent: Bool = true
+    var questionnaireStyle: QuestionnaireStyle?
     var questionnaireConfiguration: QuestionnaireConfiguration? {
         didSet {
             if let elements = questionnaireConfiguration?.elements {

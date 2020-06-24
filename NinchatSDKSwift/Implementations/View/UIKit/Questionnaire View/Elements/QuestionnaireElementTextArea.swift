@@ -17,6 +17,7 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
         }
     }
     var scaleToParent: Bool = true
+    var questionnaireStyle: QuestionnaireStyle?
     var questionnaireConfiguration: QuestionnaireConfiguration? {
         didSet {
             if let elements = questionnaireConfiguration?.elements {

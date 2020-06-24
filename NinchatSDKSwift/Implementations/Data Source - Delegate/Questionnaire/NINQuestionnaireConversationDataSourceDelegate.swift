@@ -173,6 +173,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
         let element = self.elements[indexPath.section][indexPath.row]
         element.isUserInteractionEnabled = element.isShown ?? true
+        element.questionnaireStyle = .conversation
         element.overrideAssets(with: self.session)
 
         if var view = element as? QuestionnaireSettable {
