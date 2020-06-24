@@ -11,6 +11,11 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
     // MARK: - QuestionnaireElement
 
     var index: Int = 0
+    var isShown: Bool? {
+        didSet {
+            self.isUserInteractionEnabled = isShown ?? true
+        }
+    }
     var questionnaireConfiguration: QuestionnaireConfiguration? {
         didSet {
             if let elements = questionnaireConfiguration?.elements {

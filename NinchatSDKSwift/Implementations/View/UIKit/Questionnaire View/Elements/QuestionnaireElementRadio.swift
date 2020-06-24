@@ -11,6 +11,11 @@ class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Question
     // MARK: - QuestionnaireElement
 
     var index: Int = 0
+    var isShown: Bool? {
+        didSet {
+            self.isUserInteractionEnabled = isShown ?? true
+        }
+    }
     var scaleToParent: Bool = true
     var questionnaireConfiguration: QuestionnaireConfiguration? {
         didSet {

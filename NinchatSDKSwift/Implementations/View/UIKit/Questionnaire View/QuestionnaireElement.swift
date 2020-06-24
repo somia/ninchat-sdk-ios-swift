@@ -9,6 +9,7 @@ import AnyCodable
 
 protocol QuestionnaireElement: UIView {
     var index: Int { get set }
+    var isShown: Bool? { get set }
     var elementHeight: CGFloat { get }
     var questionnaireConfiguration: QuestionnaireConfiguration? { get set }
     var elementConfiguration: QuestionnaireConfiguration? { get }
@@ -88,6 +89,12 @@ protocol QuestionnaireOptionSelectableElement {
     var onElementOptionDeselected: ((ElementOption) -> Void)? { get set }
 
     func deselect(option: ElementOption)
+    func deselectAll()
+}
+extension QuestionnaireOptionSelectableElement where Self:QuestionnaireElement {
+    func deselectAll() {
+        self.elementConfiguration?.options?.compactMap({ $0 }).forEach({ self.deselect(option: $0) })
+    }
 }
 
 /// Questionnaire buttons

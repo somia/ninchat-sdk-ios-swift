@@ -235,7 +235,7 @@ extension NINQuestionnaireViewModelImpl {
     }
 
     func resetAnswer(for element: QuestionnaireElement) {
-        guard let value = self.getAnswersForElement(element) as? String, self.requirementsSatisfied, !element.isUserInteractionEnabled else { return }
+        guard let value = self.getAnswersForElement(element) as? String, self.requirementsSatisfied, element.isUserInteractionEnabled else { return }
 
         if let page = self.redirectTargetPage(for: value) {
             self.askedPageNumber = page
