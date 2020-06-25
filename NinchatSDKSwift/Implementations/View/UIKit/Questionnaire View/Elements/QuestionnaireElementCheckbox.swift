@@ -34,7 +34,7 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle,
     }
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
-        CGFloat(self.title.height?.constant ?? 0) + CGFloat(self.view.height?.constant ?? 0)
+        self.title.frame.origin.y + self.title.intrinsicContentSize.height + CGFloat(self.view.height?.constant ?? 0) + self.padding
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {

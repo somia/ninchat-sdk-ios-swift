@@ -31,7 +31,7 @@ class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Question
     }
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
-        self.title.frame.origin.y + 16.0 + self.title.intrinsicContentSize.height + CGFloat(self.view.height?.constant ?? 0) + 8.0
+        self.title.frame.origin.y + self.title.intrinsicContentSize.height + CGFloat(self.view.height?.constant ?? 0) + self.padding
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {

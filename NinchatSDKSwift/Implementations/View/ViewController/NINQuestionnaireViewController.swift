@@ -70,9 +70,9 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
 
     // MARK: - SubViews
 
-    private var contentView: UITableView! {
+    private weak var contentView: UITableView? {
         didSet {
-            self.contentView.backgroundColor = .clear
+            guard let contentView = contentView else { return }
             self.view.addSubview(contentView)
 
             if #available(iOS 11, *) {
@@ -80,7 +80,9 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
             } else {
                 contentView.fix(top: (20.0, self.view), bottom: (0.0, self.view))
             }
-            contentView.fix(leading: (0, self.view), trailing: (0, self.view))
+            contentView
+                    .fix(leading: (0, self.view), trailing: (0, self.view))
+                    .backgroundColor = .clear
         }
     }
     private lazy var loadingIndicator: UIActivityIndicatorView = {
@@ -101,8 +103,14 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
         else if self.style == .conversation { self.initiateConversationContentView(1.0) }
     }
 
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.contentView = nil
+    }
+
     deinit {
         OperationQueue.main.cancelAllOperations()
+        self.contentView = nil
         self.removeKeyboardListeners()
     }
 
@@ -170,11 +178,13 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
         }
         let updateContentViewOperation = BlockOperation {
             DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
+                guard let contentView = self.contentView else { return }
+
                 self.removeLoadingRow(at: newSection)
-                self.contentView.beginUpdates()         /// Start loading questionnaires
+                contentView.beginUpdates()              /// Start loading questionnaires
                 self.addQuestionnaireRows(at: newSection)
                 self.addNavigationRow(at: newSection)
-                self.contentView.endUpdates()           /// Finish loading questionnaires
+                contentView.endUpdates()                /// Finish loading questionnaires
                 self.scrollToBottom(at: newSection)     /// Scroll to bottom
             }
         }
@@ -190,37 +200,37 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
 
     private func scrollToBottom(at section: Int) {
         DispatchQueue.main.async {
-            guard self.contentView.numberOfSections > section, self.contentView.numberOfRows(inSection: section) >= 1 else { return }
-            self.contentView.scrollToRow(at: IndexPath(row: self.contentView.numberOfRows(inSection: section)-1, section: section), at: .bottom, animated: true)
+            guard let contentView = self.contentView, contentView.numberOfSections > section, contentView.numberOfRows(inSection: section) >= 1 else { return }
+            self.contentView?.scrollToRow(at: IndexPath(row: contentView.numberOfRows(inSection: section)-1, section: section), at: .bottom, animated: true)
         }
     }
 
     private func prepareSection() -> Int {
-        guard let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
+        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
         let section = conversationDataSource.insertSection()
-        self.contentView.insertSections(IndexSet(integer: section), with: .left)
+        contentView.insertSections(IndexSet(integer: section), with: .left)
 
         return section
     }
 
     private func addLoadingRow(at section: Int) {
-        guard var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
+        guard let contentView = self.contentView, var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
         conversationDataSource.isLoadingNewElements = true
-        self.contentView.insertRows(at: [IndexPath(row: 0, section: section)], with: .bottom)
+        contentView.insertRows(at: [IndexPath(row: 0, section: section)], with: .automatic)
     }
 
     private func removeLoadingRow(at section: Int) {
-        guard var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("Not conformed") }
+        guard let contentView = self.contentView, var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("Not conformed") }
         conversationDataSource.isLoadingNewElements = false
-        self.contentView.deleteRows(at: [IndexPath(row: 0, section: section)], with: .top)
+        contentView.deleteRows(at: [IndexPath(row: 0, section: section)], with: .automatic)
     }
 
     private func addQuestionnaireRows(at section: Int) {
-        guard let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
+        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
         do {
             let elements = try self.viewModel.getElements()
             elements.forEach { element in
-                self.contentView.insertRows(at: [IndexPath(row: elements.firstIndex(where: { $0 == element })!, section: section)], with: .bottom)
+                contentView.insertRows(at: [IndexPath(row: elements.firstIndex(where: { $0 == element })!, section: section)], with: .bottom)
                 _ = conversationDataSource.insertRow()
             }
         } catch {
@@ -229,19 +239,19 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     }
 
     private func addNavigationRow(at section: Int) {
-        guard let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
+        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
         do {
             _ = conversationDataSource.insertRow()
             let elements = try self.viewModel.getElements()
-            self.contentView.insertRows(at: [IndexPath(row: elements.count, section: section)], with: .bottom)
+            contentView.insertRows(at: [IndexPath(row: elements.count, section: section)], with: .bottom)
         } catch {
             fatalError(error.localizedDescription)
         }
     }
 
     private func removeQuestionnaireSection() {
-        guard let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
-        self.contentView.deleteSections(IndexSet(integer: conversationDataSource.removeSection()), with: .fade)
+        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
+        contentView.deleteSections(IndexSet(integer: conversationDataSource.removeSection()), with: .fade)
     }
 }
 
@@ -257,12 +267,13 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let height = self.dataSourceDelegate.height(at: indexPath)
         if self.style == .conversation {
-            return height + ((indexPath.row == 0) ? 60.0 : 20.0)
+            return height + ((indexPath.row == 0) ? 60.0 : 16.0)
         }
         return height
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        self.dataSourceDelegate.cell(at: indexPath, view: self.contentView)
+        guard let contentView = self.contentView else { return UITableViewCell() }
+        return self.dataSourceDelegate.cell(at: indexPath, view: contentView)
     }
 }
