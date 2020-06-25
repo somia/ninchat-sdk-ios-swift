@@ -52,8 +52,14 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
                     self?.session.onDidEnd()
                 }
             }
-            viewModel.onQuestionnaireFinished = { [weak self] queue in
-                self?.completeQuestionnaire?(queue)
+            viewModel.onQuestionnaireFinished = { [weak self] queue, exit in
+                if let queue = queue {
+                    self?.completeQuestionnaire?(queue)
+                } else if exit {
+                    self?.viewModel.onSessionFinished?()
+                } else {
+                    _ = self?.dataSourceDelegate.addRegisterSection()
+                }
             }
             viewModel.onSessionFinished = { [unowned self] in
                 if let ratingViewModel = self.ratingViewModel {
@@ -208,7 +214,7 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     private func prepareSection() -> Int {
         guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
         let section = conversationDataSource.insertSection()
-        contentView.insertSections(IndexSet(integer: section), with: .left)
+        contentView.insertSections(IndexSet(integer: section), with: .automatic)
 
         return section
     }

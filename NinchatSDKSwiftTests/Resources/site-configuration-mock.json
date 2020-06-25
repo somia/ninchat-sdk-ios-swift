@@ -45,6 +45,7 @@
       "userAvatar": false,
       "userName": "Asiakas (öäå)",
       "welcome": "Tervetuloa keskusteluun öäå (welcome)",
+      "audienceRegisteredText": "Kysely rekisteröity..",
       "preAudienceQuestionnaire": [
         {
           "element": "radio",
@@ -730,6 +731,46 @@
             ],
             "target": "_complete"
           }
+        },
+        {
+          "element": "radio",
+          "name": "audienceRegisteredText",
+          "label": "Kysely rekisteröity..",
+          "buttons": {
+            "back": false,
+            "next": false
+          },
+          "options": [
+            {
+              "label": "Sulje keskustelu",
+              "value":""
+            }
+          ],
+          "redirects": [
+            {
+              "target":"_register"
+            }
+          ]
+        },
+        {
+          "element": "radio",
+          "name": "audienceCompletedText",
+          "label": "Kysely rekisteröity..",
+          "buttons": {
+            "back": false,
+            "next": false
+          },
+          "options": [
+            {
+              "label": "Sulje keskustelu",
+              "value":""
+            }
+          ],
+          "redirects": [
+            {
+              "target":"_complete"
+            }
+          ]
         }
       ],
       "postAudienceQuestionnaireStyle": "conversation",

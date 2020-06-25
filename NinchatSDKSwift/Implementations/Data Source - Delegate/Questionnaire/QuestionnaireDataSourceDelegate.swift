@@ -28,6 +28,9 @@ protocol QuestionnaireDataSource {
     /** Returns the cell with element embedded into it at given index. */
     func cell(at index: IndexPath, view: UITableView) -> UITableViewCell
 
+    /** Add an extra section/page to questionnaires to show 'AudienceRegisteredText' */
+    func addRegisterSection()-> Bool
+
     var session: NINChatSession! { get }
     var viewModel: NINQuestionnaireViewModel! { get set }
     init(viewModel: NINQuestionnaireViewModel, session: NINChatSession)
@@ -65,7 +68,7 @@ extension QuestionnaireDataSourceDelegate {
 
     internal func onNextButtonTapped() {
         guard let nextPage = self.viewModel.goToNextPage() else { return }
-        (nextPage) ? self.onUpdateCellContent?() : self.viewModel.finishQuestionnaire(for: nil, autoApply: false)
+        (nextPage) ? self.onUpdateCellContent?() : self.viewModel.finishQuestionnaire(for: nil, redirect: nil, autoApply: false)
     }
 
     internal func onBackButtonTapped(completion: (() -> Void)?) {
@@ -91,8 +94,9 @@ extension QuestionnaireDataSourceDelegate {
                 self.showTargetPage(view: view, page: page, option: option)
             }
             /// Load the next element if the selected element was a radio or checkbox without any navigation block (redirect/logic)
-            else if view is QuestionnaireElementRadio || view is QuestionnaireElementCheckbox {
-                guard !self.viewModel.shouldWaitForNextButton else { return }
+            /// It will perform only if the element is not the exit element provided to close the questionnaire
+            else if (view is QuestionnaireElementRadio || view is QuestionnaireElementCheckbox) {
+                guard !self.viewModel.shouldWaitForNextButton, !self.viewModel.isExitElement(view) else { return }
                 self.onNextButtonTapped()
             }
         }
