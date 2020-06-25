@@ -16,10 +16,10 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
 
     fileprivate var sectionCount = 0
     fileprivate var rowCount: [Int] = []
-    fileprivate var elements: [[QuestionnaireElement]] = []
-    fileprivate var configurations: [QuestionnaireConfiguration] = []
-    fileprivate var requirementSatisfactions: [Bool] = []
-    fileprivate var shouldShowNavigationCells: [Bool] = []
+    internal var elements: [[QuestionnaireElement]] = []
+    internal var configurations: [QuestionnaireConfiguration] = []
+    internal var requirementSatisfactions: [Bool] = []
+    internal var shouldShowNavigationCells: [Bool] = []
 
     // MARK: - NINQuestionnaireFormDelegate
 
@@ -113,23 +113,25 @@ extension NINQuestionnaireConversationDataSourceDelegate: QuestionnaireConversat
         self.clearCurrentRows()
         sectionCount -= 1
         rowCount.remove(at: sectionCount)
-        elements.remove(at: sectionCount)
-        configurations.remove(at: sectionCount)
-        requirementSatisfactions.remove(at: sectionCount)
-        shouldShowNavigationCells.remove(at: sectionCount)
+        if elements.count > sectionCount { elements.remove(at: sectionCount) }
+        if configurations.count > sectionCount { configurations.remove(at: sectionCount) }
+        if requirementSatisfactions.count > sectionCount { requirementSatisfactions.remove(at: sectionCount) }
+        if shouldShowNavigationCells.count > sectionCount { shouldShowNavigationCells.remove(at: sectionCount) }
         return sectionCount
     }
 
     private func disablePreviousRows(_ disable: Bool) {
+        guard self.elements.count > self.sectionCount else { return }
         self.elements[sectionCount-1].forEach({ $0.isShown = !disable })
     }
 
     private func enableCurrentRows() {
-        guard self.elements.count >= self.sectionCount, !(self.elements[sectionCount-1].first?.isShown ?? false) else { return }
+        guard self.elements.count > self.sectionCount, !(self.elements[sectionCount-1].first?.isShown ?? false) else { return }
         self.elements[sectionCount-1].forEach({ $0.isShown = true })
     }
 
     private func clearCurrentRows() {
+        guard self.elements.count > self.sectionCount else { return }
         self.elements[sectionCount-1].compactMap({ $0 as? QuestionnaireOptionSelectableElement }).forEach({ $0.deselectAll() })
     }
 }
@@ -145,7 +147,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         return cell
     }
 
-    private func navigation(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> QuestionnaireNavigationCell {
+    private func navigation(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: QuestionnaireNavigationCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
         cell.configuration = self.configurations[indexPath.section]
         cell.requirementsSatisfied = self.requirementSatisfactions[indexPath.section]
@@ -169,7 +171,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         return cell
     }
 
-    private func questionnaire(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> QuestionnaireCell {
+    private func questionnaire(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
         let element = self.elements[indexPath.section][indexPath.row]
         element.isUserInteractionEnabled = (element.isShown ?? true) && (indexPath.section == self.sectionCount-1)

@@ -10,7 +10,6 @@ import UIKit
 protocol QuestionnaireDelegate {
     var isLoadingNewElements: Bool! { get set }
     var shouldShowNavigationCell: Bool { get }
-
     var onUpdateCellContent: (() -> Void)? { get set }
     var onRemoveCellContent: (() -> Void)? { get set }
 }
@@ -59,7 +58,6 @@ extension QuestionnaireDataSourceDelegate {
 }
 
 // MARK: - Closures
-
 extension QuestionnaireDataSourceDelegate {
     internal func onRequirementsUpdated(_ update: Bool, for cell: QuestionnaireNavigationCell) {
         cell.requirementSatisfactionUpdater?(update)
@@ -78,7 +76,6 @@ extension QuestionnaireDataSourceDelegate {
 }
 
 // MARK: - Cell Setup
-
 extension QuestionnaireDataSourceDelegate {
     internal func setupSettable(view: inout QuestionnaireSettable, element: QuestionnaireElement) {
         view.presetAnswer = self.viewModel.getAnswersForElement(element)
