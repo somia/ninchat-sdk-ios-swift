@@ -255,6 +255,7 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     }
 }
 
+// MARK: - UITableViewDataSource, UITableViewDelegate
 extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDelegate {
     func numberOfSections(in tableView: UITableView) -> Int {
         self.dataSourceDelegate.numberOfPages()
