@@ -29,6 +29,7 @@ protocol SiteConfiguration  {
     var audienceQuestionnaireAvatar: AnyHashable? { get }
     var audienceQuestionnaireUserName: String? { get }
     var audienceRegisteredText: String? { get }
+    var audienceClosedRegisteredText: String? { get }
     var preAudienceQuestionnaireStyle: QuestionnaireStyle { get }
     var preAudienceQuestionnaire: [QuestionnaireConfiguration]? { get }
     var postAudienceQuestionnaireStyle: QuestionnaireStyle { get }
@@ -107,6 +108,9 @@ struct SiteConfigurationImpl: SiteConfiguration {
     }
     var audienceRegisteredText: String? {
         self.value(for: "audienceRegisteredText")
+    }
+    var audienceClosedRegisteredText: String? {
+        self.value(for: "audienceClosedRegisteredText")
     }
 
     // MARK: - PreAudience Questionnaire

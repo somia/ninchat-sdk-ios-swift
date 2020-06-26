@@ -31,6 +31,9 @@ protocol QuestionnaireDataSource {
     /** Add an extra section/page to questionnaires to show 'AudienceRegisteredText' */
     func addRegisterSection()-> Bool
 
+    /** Add an extra section/page to questionnaires to show 'audienceRegisteredClosedText' */
+    func addClosedRegisteredSection() -> Bool
+
     var session: NINChatSession! { get }
     var viewModel: NINQuestionnaireViewModel! { get set }
     init(viewModel: NINQuestionnaireViewModel, session: NINChatSession)

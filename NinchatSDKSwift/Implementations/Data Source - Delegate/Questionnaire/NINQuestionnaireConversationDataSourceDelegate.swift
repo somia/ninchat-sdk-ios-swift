@@ -215,4 +215,20 @@ extension NINQuestionnaireConversationDataSourceDelegate {
 
         return true
     }
+
+    func addClosedRegisteredSection() -> Bool {
+        guard let registerTitle = self.session.sessionManager.siteConfiguration.audienceClosedRegisteredText else { return false }
+        let closeTitle = self.session.sessionManager.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) ?? "Close Chat"
+        let registerJSON: [String:AnyHashable] = ["element": "radio", "name": "audienceClosedRegisteredText", "label": registerTitle, "buttons": ["back":false,"next":false], "options":[["label":closeTitle, "value":""]], "redirects":[["target":"_register"]]]
+
+        guard let registerConfiguration = AudienceQuestionnaire(from: [registerJSON]).questionnaireConfiguration, registerConfiguration.count > 0, let element = QuestionnaireElementConverter(configurations: registerConfiguration).elements.first else { return false }
+        element.compactMap({ $0 as? QuestionnaireElementRadio }).first?.isExitElement = true
+
+        self.elements.append(element)
+        self.configurations.append(contentsOf: registerConfiguration)
+        self.requirementSatisfactions.append(false)
+        self.shouldShowNavigationCells.append(false)
+        self.viewModel.insertRegisteredElement(element, configuration: registerConfiguration)
+        return true
+    }
 }
