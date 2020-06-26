@@ -60,7 +60,7 @@ extension QuestionnaireDataSourceDelegateTests {
 
     func test_105_navigationCell() {
         formQuestionnaireDataSource.isLoadingNewElements = true
-        XCTAssertEqual(formQuestionnaireDataSource.height(at: IndexPath(row: 1, section: 0)), 55.0)
+        XCTAssertEqual(formQuestionnaireDataSource.height(at: IndexPath(row: 1, section: 0)), 65.0)
         XCTAssertTrue(formQuestionnaireDataSource.cell(at: IndexPath(row: 1, section: 0), view: self.tableView) is QuestionnaireNavigationCell)
     }
 

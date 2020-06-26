@@ -119,11 +119,12 @@ extension QuestionnaireElementTextArea: UITextViewDelegate {
     func textViewDidEndEditing(_ textView: UITextView) {
         defer { self.onElementDismissed?(self) }
 
-        guard self.elementConfiguration?.required ?? true else { self.isCompleted = true; return }
         if let text = textView.text, !text.isEmpty, let pattern = self.elementConfiguration?.pattern, let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) {
             self.isCompleted = regex.matches(in: text, range: NSRange(location: 0, length: text.count)).count > 0
         } else if let text = textView.text {
             self.isCompleted = !text.isEmpty
+        } else if !(self.elementConfiguration?.required ?? false) {
+            self.isCompleted = true
         }
     }
 }
@@ -145,9 +146,7 @@ extension QuestionnaireElement where Self:QuestionnaireElementTextArea {
         self.view.textAlignment = .left
         self.view.font = .ninchat
         self.view.fix(height: self.heightValue)
-        if self.isCompleted == nil {
-            self.isCompleted = !(configuration?.required ?? false)
-        }
+        self.isCompleted = !(configuration?.required ?? false)
         self.updateBorder()
     }
 }

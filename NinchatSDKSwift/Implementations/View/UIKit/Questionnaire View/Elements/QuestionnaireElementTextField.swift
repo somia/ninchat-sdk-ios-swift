@@ -31,7 +31,7 @@ final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle
     }
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
-        self.title.frame.origin.y + self.title.intrinsicContentSize.height + self.heightValue + 8.0 + self.padding
+        self.title.frame.origin.y + self.title.intrinsicContentSize.height + self.heightValue + 4.0 + self.padding
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
@@ -119,11 +119,13 @@ extension QuestionnaireElementTextField: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         defer { self.onElementDismissed?(self) }
 
-        guard self.elementConfiguration?.required ?? true else { self.isCompleted = true; return }
+
         if let text = textField.text, !text.isEmpty, let pattern = self.elementConfiguration?.pattern, let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) {
             self.isCompleted = regex.matches(in: text, range: NSRange(location: 0, length: text.count)).count > 0
         } else if let text = textField.text {
             self.isCompleted = !text.isEmpty
+        } else if !(self.elementConfiguration?.required ?? false) {
+            self.isCompleted = true
         }
     }
 }
@@ -147,6 +149,7 @@ extension QuestionnaireElement where Self:QuestionnaireElementTextField {
         self.view.keyboardType = keyboardType(configuration)
         self.view.font = .ninchat
         self.view.fix(height: self.heightValue)
+        self.isCompleted = !(configuration?.required ?? false)
         self.updateBorder()
     }
 
@@ -156,7 +159,7 @@ extension QuestionnaireElement where Self:QuestionnaireElementTextField {
             return .numberPad
         case "^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$":
             return .emailAddress
-        case "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$":
+        case "^\\+?[1-9]\\d{4,14}$":
             return .phonePad
         default:
             return .default
