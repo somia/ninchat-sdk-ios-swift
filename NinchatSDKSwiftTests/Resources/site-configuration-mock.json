@@ -46,6 +46,7 @@
       "userName": "Asiakas (öäå)",
       "welcome": "Tervetuloa keskusteluun öäå (welcome)",
       "audienceRegisteredText": "Kysely rekisteröity..",
+      "audienceClosedRegisteredText": "Jono on suljettu..",
       "preAudienceQuestionnaire": [
         {
           "element": "radio",

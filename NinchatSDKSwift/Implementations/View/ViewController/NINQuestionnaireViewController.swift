@@ -46,8 +46,10 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
     }
     var viewModel: NINQuestionnaireViewModel! {
         didSet {
-            viewModel.onErrorOccurred = { error in
+            viewModel.onErrorOccurred = { [weak self] error in
                 debugger("** ** SDK: error in registering audience: \(error)")
+                /// Add 'audienceRegisteredClosedText' after a short delay, to ensure 'dataSourceDelegate.onUpdateCellContent' called first
+                if let error = error as? NinchatError, error.title == "queue_is_closed", self?.dataSourceDelegate.addClosedRegisteredSection(after: 0.5) ?? false { return }
                 Toast.show(message: .error("Error is submitting the answers")) { [weak self] in
                     self?.session.onDidEnd()
                 }
