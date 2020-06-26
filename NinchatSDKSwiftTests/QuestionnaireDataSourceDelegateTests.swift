@@ -195,19 +195,14 @@ extension QuestionnaireDataSourceDelegateTests {
     func test_012_audienceClosedRegisteredSection() {
         let currentElementsCount = (conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).elements.count
         let currentConfigurationCount = (conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).configurations.count
-        XCTAssertTrue(conversationQuestionnaireDataSource.addClosedRegisteredSection(after: 0.5))
+        XCTAssertTrue(conversationQuestionnaireDataSource.addClosedRegisteredSection())
+        let newElementsCount = (self.conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).elements.count
+        let newConfigurationCount = (self.conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).configurations.count
 
-        let expect = self.expectation(description: "Expected to get elements and configurations updated after some delay")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            let newElementsCount = (self.conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).elements.count
-            let newConfigurationCount = (self.conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).configurations.count
+        XCTAssertEqual(newElementsCount, currentElementsCount+1)
+        XCTAssertEqual(newConfigurationCount, currentConfigurationCount+1)
+        XCTAssertFalse((self.conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).requirementSatisfactions.last ?? true)
+        XCTAssertFalse((self.conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).shouldShowNavigationCells.last ?? true)
 
-            XCTAssertEqual(newElementsCount, currentElementsCount+1)
-            XCTAssertEqual(newConfigurationCount, currentConfigurationCount+1)
-            XCTAssertFalse((self.conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).requirementSatisfactions.last ?? true)
-            XCTAssertFalse((self.conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).shouldShowNavigationCells.last ?? true)
-            expect.fulfill()
-        }
-        waitForExpectations(timeout: 1.5)
     }
 }
