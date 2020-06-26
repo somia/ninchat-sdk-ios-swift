@@ -43,8 +43,8 @@ extension QuestionnaireElementWithTitle {
     }
 
     var padding: CGFloat {
-        guard let title = self.title.text else { return 0.0 }
-        return (self.questionnaireStyle == .form || title.isEmpty) ? 0.0 : 20.0
+        guard let title = self.title.text else { return 8.0 }
+        return (self.questionnaireStyle == .form || title.isEmpty) ? 8.0 : 20.0
     }
 
     func addElementViews() {
@@ -59,7 +59,7 @@ extension QuestionnaireElementWithTitle {
         /// Must be called once subviews are added
         title
             .fix(leading: (8.0, self), trailing: (8.0, self))
-            .fix(top: (4.0, self))
+            .fix(top: (0.0, self))
             .fix(height: title.intrinsicContentSize.height + self.padding)
         view
             .fix(leading: (8.0, self), trailing: (8.0, self))
