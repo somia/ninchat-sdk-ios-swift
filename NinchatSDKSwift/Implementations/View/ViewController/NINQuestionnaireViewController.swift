@@ -19,6 +19,10 @@ protocol QuestionnaireConversationController {
 
 final class NINQuestionnaireViewController: UIViewController, ViewController {
 
+    private let operationQueue = OperationQueue.main
+    private let dispatchQueue = DispatchQueue.main
+    private var updateOperationBlock: BlockOperation?
+
     // MARK: - ViewController
 
     var session: NINChatSession!
@@ -33,10 +37,16 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
                 guard let style = self?.style else { return }
                 switch style {
                 case .form:
-                    self?.updateFormContentView()
+                    self?.updateOperationBlock = BlockOperation {
+                        self?.dispatchQueue.async { self?.updateFormContentView() }
+                    }
                 case .conversation:
-                    self?.updateConversationContentView(1.0)
+                    self?.updateOperationBlock = BlockOperation {
+                        self?.dispatchQueue.async { self?.updateConversationContentView(0.5) }
+                    }
                 }
+                guard let updateOperationBlock = self?.updateOperationBlock else { return }
+                self?.operationQueue.addOperation(updateOperationBlock)
             }
             dataSourceDelegate.onRemoveCellContent = { [weak self] in
                 guard self?.style == .conversation else { return }
@@ -48,8 +58,16 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
         didSet {
             viewModel.onErrorOccurred = { [weak self] error in
                 debugger("** ** SDK: error in registering audience: \(error)")
-                /// Add 'audienceRegisteredClosedText' after a short delay, to ensure 'dataSourceDelegate.onUpdateCellContent' called first
-                if let error = error as? NinchatError, error.title == "queue_is_closed", self?.dataSourceDelegate.addClosedRegisteredSection(after: 0.5) ?? false { return }
+                /// Add 'audienceRegisteredClosedText' block operation
+                /// The operation is called only when the dependency ('updateOperationBlock') is satisfied
+                if let error = error as? NinchatError, error.title == "queue_is_closed", let updateOperationBlock = self?.updateOperationBlock {
+                    let closedRegisteredOperation = BlockOperation {
+                        _ = self?.dataSourceDelegate.addClosedRegisteredSection()
+                    }
+                    closedRegisteredOperation.addDependency(updateOperationBlock)
+                    self?.operationQueue.addOperation(closedRegisteredOperation)
+                    return
+                }
                 Toast.show(message: .error("Error is submitting the answers")) { [weak self] in
                     self?.session.onDidEnd()
                 }
@@ -113,13 +131,19 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        self.contentView = nil
+        self.deallocate()
     }
 
     deinit {
-        OperationQueue.main.cancelAllOperations()
-        self.contentView = nil
+        self.deallocate()
+    }
+
+    func deallocate() {
+        debugger("`NINQuestionnaireViewController` deallocated")
+
+        self.operationQueue.cancelAllOperations()
         self.removeKeyboardListeners()
+        self.contentView = nil
     }
 
     private func overrideAssets() {
@@ -158,7 +182,7 @@ extension NINQuestionnaireViewController: QuestionnaireFormViewController {
 
     func initiateFormContentView(_ interval: TimeInterval) {
         self.loadingIndicator.startAnimating()
-        DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
+        self.dispatchQueue.asyncAfter(deadline: .now() + interval) {
             self.contentView = self.generateTableView(isHidden: true)
             self.contentView?.hide(false, andCompletion: { [weak self] in
                 self?.loadingIndicator.stopAnimating()
@@ -184,21 +208,21 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
             self.addLoadingRow(at: newSection)
             self.scrollToBottom(at: newSection)     /// Scroll to bottom
         }
-        let updateContentViewOperation = BlockOperation {
-            DispatchQueue.main.asyncAfter(deadline: .now() + interval) {
-                guard let contentView = self.contentView else { return }
+        let updateContentViewOperation = BlockOperation { [weak self] in
+            self?.dispatchQueue.asyncAfter(deadline: .now() + interval) {
+                guard let contentView = self?.contentView else { return }
 
-                self.removeLoadingRow(at: newSection)
+                self?.removeLoadingRow(at: newSection)
                 contentView.beginUpdates()              /// Start loading questionnaires
-                self.addQuestionnaireRows(at: newSection)
-                self.addNavigationRow(at: newSection)
+                self?.addQuestionnaireRows(at: newSection)
+                self?.addNavigationRow(at: newSection)
                 contentView.endUpdates()                /// Finish loading questionnaires
-                self.scrollToBottom(at: newSection)     /// Scroll to bottom
+                self?.scrollToBottom(at: newSection)     /// Scroll to bottom
             }
         }
 
         updateContentViewOperation.addDependency(prepareOperation)
-        OperationQueue.main.addOperations([prepareOperation, updateContentViewOperation], waitUntilFinished: false)
+        self.operationQueue.addOperations([prepareOperation, updateContentViewOperation], waitUntilFinished: false)
     }
 
     func initiateConversationContentView(_ interval: TimeInterval) {
@@ -207,7 +231,7 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     }
 
     private func scrollToBottom(at section: Int) {
-        DispatchQueue.main.async {
+        self.dispatchQueue.async {
             guard let contentView = self.contentView, contentView.numberOfSections > section, contentView.numberOfRows(inSection: section) >= 1 else { return }
             self.contentView?.scrollToRow(at: IndexPath(row: contentView.numberOfRows(inSection: section)-1, section: section), at: .bottom, animated: true)
         }

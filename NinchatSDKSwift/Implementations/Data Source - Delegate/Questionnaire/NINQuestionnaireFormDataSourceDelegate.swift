@@ -122,7 +122,7 @@ extension NINQuestionnaireFormDataSourceDelegate {
         return true
     }
 
-    func addClosedRegisteredSection(after interval: Double) -> Bool {
+    func addClosedRegisteredSection() -> Bool {
         guard let registerTitle = self.session.sessionManager.siteConfiguration.audienceClosedRegisteredText else { return false }
         let closeTitle = self.session.sessionManager.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) ?? "Close Chat"
         let registerJSON: [String:AnyHashable] = ["element": "radio", "name": "audienceClosedRegisteredText", "label": registerTitle, "buttons": ["back":false,"next":false], "options":[["label":closeTitle, "value":""]], "redirects":[["target":"_register"]]]
