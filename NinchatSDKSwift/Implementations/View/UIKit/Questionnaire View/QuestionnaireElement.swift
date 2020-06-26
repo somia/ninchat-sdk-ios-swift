@@ -142,12 +142,7 @@ protocol QuestionnaireHasBorder: QuestionnaireElementWithTitle {
 extension QuestionnaireHasBorder {
     func updateBorder() {
         guard self.view is UITextField || self.view is UITextView else { fatalError("Call only on `UITextView` and `UITextField` types") }
-
-        if self.elementConfiguration?.required ?? false {
-            self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: (self.isCompleted ?? true) ? .QGrayButton : .QRedBorder)
-        } else {
-            self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: .QGrayButton)
-        }
+        self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: (self.isCompleted ?? true) ? .QGrayButton : .QRedBorder)
     }
 }
 
