@@ -15,15 +15,17 @@ protocol NINQuestionnaireViewModel {
     var questionnaireAnswers: NINLowLevelClientProps { get }
 
     var onErrorOccurred: ((Error) -> Void)? { get set }
-    var onQuestionnaireFinished: ((Queue) -> Void)? { get set }
+    var onQuestionnaireFinished: ((Queue?, _ exit: Bool) -> Void)? { get set }
     var onSessionFinished: (() -> Void)? { get set }
     var requirementSatisfactionUpdater: ((Bool) -> Void)? { get set }
 
     init(sessionManager: NINChatSessionManager, queue: Queue?, questionnaireType: AudienceQuestionnaireType)
+    func isExitElement(_ element: Any?) -> Bool
     func getConfiguration() throws -> QuestionnaireConfiguration
     func getElements() throws -> [QuestionnaireElement]
     func getAnswersForElement(_ element: QuestionnaireElement) -> AnyHashable?
     func resetAnswer(for element: QuestionnaireElement)
+    func insertRegisteredElement(_ elements: [QuestionnaireElement], configuration: [QuestionnaireConfiguration])
     func clearAnswersForCurrentPage() -> Bool
     func redirectTargetPage(for value: String) -> Int?
     func logicTargetPage(key: String, value: String) -> Int?
@@ -33,15 +35,15 @@ protocol NINQuestionnaireViewModel {
     func canGoToPage(_ page: Int) -> Bool
     func submitAnswer(key: QuestionnaireElement?, value: AnyHashable) -> Bool
     func removeAnswer(key: QuestionnaireElement?)
-    func finishQuestionnaire(for logic: LogicQuestionnaire?, autoApply: Bool)
+    func finishQuestionnaire(for logic: LogicQuestionnaire?, redirect: ElementRedirect?, autoApply: Bool)
 }
 
 final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 
     private let sessionManager: NINChatSessionManager
-    private let configurations: [QuestionnaireConfiguration]
+    private var configurations: [QuestionnaireConfiguration] = []
     internal var connector: QuestionnaireElementConnector!
-    private let views: [[QuestionnaireElement]]
+    private var views: [[QuestionnaireElement]] = []
     private let queue: Queue?
     internal var answers: [String:AnyHashable]! = [:]
     internal var askedPageNumber: Int?
@@ -53,7 +55,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     var previousPage: Int = 0
     var onSessionFinished: (() -> Void)?
     var onErrorOccurred: ((Error) -> Void)?
-    var onQuestionnaireFinished: ((Queue) -> Void)?
+    var onQuestionnaireFinished: ((Queue?, _ exit: Bool) -> Void)?
     var requirementSatisfactionUpdater: ((Bool) -> Void)?
 
     init(sessionManager: NINChatSessionManager, queue: Queue?, questionnaireType: AudienceQuestionnaireType) {
@@ -75,28 +77,31 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
         self.connector.logicContainsTags = { [weak self] logic in
             self?.submitTags(logic?.tags ?? [])
         }
-        self.connector.onCompleteTargetReached = { [weak self] logic, autoApply in
+        self.connector.onCompleteTargetReached = { [weak self] logic, redirect, autoApply in
             if self?.hasToWaitForUserConfirmation(autoApply) ?? false {
                 self?.askedPageNumber = (self?.views.count ?? 0) + 1; return
             }
-            self?.finishQuestionnaire(for: logic, autoApply: autoApply)
+            self?.finishQuestionnaire(for: logic, redirect: redirect, autoApply: autoApply)
         }
-        self.connector.onRegisterTargetReached = { [weak self] logic, autoApply in
+        self.connector.onRegisterTargetReached = { [weak self] logic, redirect, autoApply in
             if self?.hasToWaitForUserConfirmation(autoApply) ?? false {
                 self?.askedPageNumber = (self?.views.count ?? 0) + 1; return
+            }
+            if self?.hasToExitQuestionnaire(redirect) ?? false {
+                self?.onQuestionnaireFinished?(nil, true); return
             }
             self?.registerAudience(queueID: logic?.queue ?? queue.queueID) { error in
                 if let error = error {
                     self?.onErrorOccurred?(error)
                 } else {
-                    self?.onSessionFinished?()
+                    self?.onQuestionnaireFinished?(nil, false)
                 }
             }
         }
     }
 
     private func setupPostConnector() {
-        self.connector.onRegisterTargetReached = { [weak self] _, autoApply in
+        self.connector.onRegisterTargetReached = { [weak self] _, _, autoApply in
             do {
                 if self?.hasToWaitForUserConfirmation(autoApply) ?? false {
                     self?.askedPageNumber = (self?.views.count ?? 0) + 1; return
@@ -119,6 +124,11 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
             return !(self.requirementsSatisfied) || self.shouldWaitForNextButton
         }
         return !self.requirementsSatisfied
+    }
+    
+    internal func hasToExitQuestionnaire(_ redirect: ElementRedirect?) -> Bool {
+        guard redirect != nil, let elements = try? self.getElements(), let exitElement = elements.first as? QuestionnaireExitElement else { return false }
+        return exitElement.isExitElement
     }
 
     private func extractGivenPreAnswers() throws -> [String:AnyHashable] {
@@ -160,13 +170,18 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 // MARK: - NINQuestionnaireViewModel
 
 extension NINQuestionnaireViewModelImpl {
-    func finishQuestionnaire(for logic: LogicQuestionnaire?, autoApply: Bool) {
+    func finishQuestionnaire(for logic: LogicQuestionnaire?, redirect: ElementRedirect?, autoApply: Bool) {
         guard let queue = self.queue, let target: (canJoin: Bool, queue: Queue?) = self.canJoinGivenQueue(withID: logic?.queue ?? queue.queueID), let targetQueue = target.queue, target.canJoin else {
-            self.connector.onRegisterTargetReached?(logic, autoApply); return
+            self.connector.onRegisterTargetReached?(logic, redirect, autoApply); return
         }
 
         self.sessionManager.preAudienceQuestionnaireMetadata = self.questionnaireAnswers
-        self.onQuestionnaireFinished?(targetQueue)
+        self.onQuestionnaireFinished?(targetQueue, false)
+    }
+
+    func isExitElement(_ element: Any?) -> Bool {
+        guard let exitElement = element as? QuestionnaireExitElement else { return false }
+        return exitElement.isExitElement
     }
 }
 
@@ -189,6 +204,7 @@ extension NINQuestionnaireViewModelImpl {
     }
 
     func submitAnswer(key: QuestionnaireElement?, value: AnyHashable) -> Bool {
+        guard !self.isExitElement(key) else { return true }
         if let configuration = key?.elementConfiguration {
             if let currentValue = self.answers[configuration.name], value == currentValue { return false }
 
@@ -242,6 +258,13 @@ extension NINQuestionnaireViewModelImpl {
         } else if let page = self.logicTargetPage(key: element.elementConfiguration?.name ?? "", value: value) {
             self.askedPageNumber = page
         }
+    }
+
+    func insertRegisteredElement(_ elements: [QuestionnaireElement], configuration: [QuestionnaireConfiguration]) {
+        self.connector.appendElement(elements: elements, configurations: configuration)
+        self.configurations.append(contentsOf: configuration)
+        self.views.append(elements)
+        self.pageNumber = self.views.count-1
     }
 }
 

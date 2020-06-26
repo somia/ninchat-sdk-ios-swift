@@ -6,7 +6,11 @@
 
 import UIKit
 
-class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireOptionSelectableElement {
+protocol QuestionnaireExitElement {
+    var isExitElement: Bool { set get }
+}
+
+class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireOptionSelectableElement, QuestionnaireExitElement {
 
     // MARK: - QuestionnaireElement
 
@@ -61,6 +65,10 @@ class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Question
         (self.view.viewWithTag(tag + 1) as? Button)?.isSelected = false
         (self.view.viewWithTag(tag + 1) as? Button)?.roundButton()
     }
+
+    // MARK: - QuestionnaireExitElement
+
+    var isExitElement: Bool = false
 
     // MARK: - Subviews - QuestionnaireElementWithTitleAndOptions + QuestionnaireElementHasButtons
 

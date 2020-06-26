@@ -8,17 +8,18 @@ import UIKit
 
 protocol QuestionnaireElementConnector {
     var logicContainsTags: ((LogicQuestionnaire?) -> Void)? { get set }
-    var onRegisterTargetReached: ((LogicQuestionnaire?, _ autoApply: Bool) -> Void)? { get set }
-    var onCompleteTargetReached: ((LogicQuestionnaire?, _ autoApply: Bool) -> Void)? { get set }
+    var onRegisterTargetReached: ((LogicQuestionnaire?, ElementRedirect?, _ autoApply: Bool) -> Void)? { get set }
+    var onCompleteTargetReached: ((LogicQuestionnaire?, ElementRedirect?, _ autoApply: Bool) -> Void)? { get set }
 
     init(configurations: [QuestionnaireConfiguration])
     func findElementAndPageRedirect(for input: String, in configuration: QuestionnaireConfiguration) -> ([QuestionnaireElement]?, Int?)
     func findElementAndPageLogic(for dictionary: [String:String], in answers: [String:AnyHashable]) -> ([QuestionnaireElement]?, Int?)
+    mutating func appendElement(elements: [QuestionnaireElement], configurations: [QuestionnaireConfiguration])
 }
 
 struct QuestionnaireElementConnectorImpl: QuestionnaireElementConnector {
-    private let elements: [[QuestionnaireElement]]
-    private let configurations: [QuestionnaireConfiguration]
+    private var elements: [[QuestionnaireElement]] = []
+    private var configurations: [QuestionnaireConfiguration] = []
 
     init(configurations: [QuestionnaireConfiguration]) {
         self.configurations = configurations
@@ -26,13 +27,18 @@ struct QuestionnaireElementConnectorImpl: QuestionnaireElementConnector {
     }
 
     var logicContainsTags: ((LogicQuestionnaire?) -> Void)?
-    var onRegisterTargetReached: ((LogicQuestionnaire?, _ autoApply: Bool) -> Void)?
-    var onCompleteTargetReached: ((LogicQuestionnaire?, _ autoApply: Bool) -> Void)?
+    var onRegisterTargetReached: ((LogicQuestionnaire?, ElementRedirect?, _ autoApply: Bool) -> Void)?
+    var onCompleteTargetReached: ((LogicQuestionnaire?, ElementRedirect?, _ autoApply: Bool) -> Void)?
 
     /// Returns the element the given configuration associated to
     /// The function is called if the `findTargetRedirectConfiguration(from:)` or `findTargetLogicConfiguration(from:)` returns valid configuration
     internal func findTargetElement(for configuration: QuestionnaireConfiguration) -> ([QuestionnaireElement]?, Int?) {
         (self.elements.first { $0.filter { $0.questionnaireConfiguration == configuration }.count != 0 }, self.elements.firstIndex { $0.filter { $0.questionnaireConfiguration == configuration }.count != 0 })
+    }
+
+    mutating func appendElement(elements: [QuestionnaireElement], configurations: [QuestionnaireConfiguration]) {
+        self.elements.append(elements)
+        self.configurations.append(contentsOf: configurations)
     }
 }
 
@@ -41,7 +47,11 @@ struct QuestionnaireElementConnectorImpl: QuestionnaireElementConnector {
 extension QuestionnaireElementConnectorImpl {
     func findElementAndPageRedirect(for input: String, in configuration: QuestionnaireConfiguration) -> ([QuestionnaireElement]?, Int?) {
         if let redirect = self.findAssociatedRedirect(for: input, in: configuration) {
-            if let configuration = self.findTargetRedirectConfiguration(from: redirect).0 {
+            if redirect.target == "_register" {
+                self.onRegisterTargetReached?(nil, redirect, true)
+            } else if redirect.target == "_complete" {
+                self.onCompleteTargetReached?(nil, redirect, true)
+            } else if let configuration = self.findTargetRedirectConfiguration(from: redirect).0 {
                 if let element = self.findTargetElement(for: configuration).0, let page = self.findTargetElement(for: configuration).1 {
                     return (element, page)
                 }
@@ -54,7 +64,7 @@ extension QuestionnaireElementConnectorImpl {
     /// The input could be either the 'name' variable in QuestionnaireConfiguration object
     /// Or 'value' in ElementOption object
     internal func findAssociatedRedirect(for input: String, in configuration: QuestionnaireConfiguration) -> ElementRedirect? {
-        if let redirect = configuration.redirects?.first(where: { $0.pattern == input }) {
+        if let redirect = configuration.redirects?.first(where: { $0.pattern ?? "" == input }) {
             return redirect
         }
         return nil
@@ -83,9 +93,9 @@ extension QuestionnaireElementConnectorImpl {
                 }
 
                 if logic.target == "_register" {
-                    self.onRegisterTargetReached?(logic, true)
+                    self.onRegisterTargetReached?(logic, nil, true)
                 } else if logic.target == "_complete" {
-                    self.onCompleteTargetReached?(logic, true)
+                    self.onCompleteTargetReached?(logic, nil, true)
                 } else if let configuration = self.findTargetLogicConfiguration(from: logic).0 {
                     if let element = self.findTargetElement(for: configuration).0, let page = self.findTargetElement(for: configuration).1 {
                         return (element, page)

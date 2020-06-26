@@ -28,6 +28,7 @@ protocol SiteConfiguration  {
     var audienceAutoQueue: String? { get }
     var audienceQuestionnaireAvatar: AnyHashable? { get }
     var audienceQuestionnaireUserName: String? { get }
+    var audienceRegisteredText: String? { get }
     var preAudienceQuestionnaireStyle: QuestionnaireStyle { get }
     var preAudienceQuestionnaire: [QuestionnaireConfiguration]? { get }
     var postAudienceQuestionnaireStyle: QuestionnaireStyle { get }
@@ -103,6 +104,9 @@ struct SiteConfigurationImpl: SiteConfiguration {
     }
     var audienceQuestionnaireUserName: String? {
         self.value(for: "questionnaireName")
+    }
+    var audienceRegisteredText: String? {
+        self.value(for: "audienceRegisteredText")
     }
 
     // MARK: - PreAudience Questionnaire

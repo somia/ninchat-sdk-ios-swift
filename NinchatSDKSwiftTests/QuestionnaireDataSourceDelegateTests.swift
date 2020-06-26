@@ -178,4 +178,17 @@ extension QuestionnaireDataSourceDelegateTests {
         XCTAssertNotNil(navigationCell.onNextButtonTapped)
         XCTAssertNotNil(navigationCell.onBackButtonTapped)
     }
+
+    func test_011_audienceRegisteredSection() {
+        let currentElementsCount = (conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).elements.count
+        let currentConfigurationCount = (conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).configurations.count
+        XCTAssertTrue(conversationQuestionnaireDataSource.addRegisterSection())
+        let newElementsCount = (conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).elements.count
+        let newConfigurationCount = (conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).configurations.count
+
+        XCTAssertEqual(newElementsCount, currentElementsCount+1)
+        XCTAssertEqual(newConfigurationCount, currentConfigurationCount+1)
+        XCTAssertFalse((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).requirementSatisfactions.last ?? true)
+        XCTAssertFalse((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).shouldShowNavigationCells.last ?? true)
+    }
 }

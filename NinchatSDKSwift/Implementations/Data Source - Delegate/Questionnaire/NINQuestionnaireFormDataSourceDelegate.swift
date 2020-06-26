@@ -107,3 +107,18 @@ extension NINQuestionnaireFormDataSourceDelegate {
         }
     }
 }
+
+// MARK: - Audience Register Text
+extension NINQuestionnaireFormDataSourceDelegate {
+    func addRegisterSection() -> Bool {
+        guard let registerTitle = self.session.sessionManager.siteConfiguration.audienceRegisteredText else { return false }
+        let closeTitle = self.session.sessionManager.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) ?? "Close Chat"
+        let registerJSON: [String:AnyHashable] = ["element": "radio", "name": "audienceRegisteredText", "label": registerTitle, "buttons": ["back":false,"next":false], "options":[["label":closeTitle, "value":""]], "redirects":[["target":"_register"]]]
+
+        guard let registerConfiguration = AudienceQuestionnaire(from: [registerJSON]).questionnaireConfiguration, registerConfiguration.count > 0, let element = QuestionnaireElementConverter(configurations: registerConfiguration).elements.first else { return false }
+        element.compactMap({ $0 as? QuestionnaireElementRadio }).first?.isExitElement = true
+        self.viewModel.insertRegisteredElement(element, configuration: registerConfiguration)
+
+        return true
+    }
+}

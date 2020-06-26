@@ -76,7 +76,7 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         XCTAssertFalse(self.viewModel?.requirementsSatisfied ?? true)
 
         let element = try? self.viewModel?.getElements().first
-        self.viewModel?.submitAnswer(key: element!, value: "Mikä on koronavirus")
+        _ = self.viewModel?.submitAnswer(key: element!, value: "Mikä on koronavirus")
         XCTAssertTrue(self.viewModel?.requirementsSatisfied ?? false)
     }
 
@@ -85,11 +85,11 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         XCTAssertFalse(self.viewModel?.requirementsSatisfied ?? false)
 
         let textField = try? self.viewModel?.getElements().first(where: { $0 is QuestionnaireElementTextField })
-        self.viewModel?.submitAnswer(key: textField!, value: "+358123456789")
+        _ = self.viewModel?.submitAnswer(key: textField!, value: "+358123456789")
         XCTAssertFalse(self.viewModel?.requirementsSatisfied ?? false)
 
         let textView = try? self.viewModel?.getElements().first(where: { $0 is QuestionnaireElementTextArea })
-        self.viewModel?.submitAnswer(key: textView!, value: "This is a sample input")
+        _ = self.viewModel?.submitAnswer(key: textView!, value: "This is a sample input")
         XCTAssertTrue(self.viewModel?.requirementsSatisfied ?? false)
     }
 
@@ -97,7 +97,7 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         XCTAssertFalse(self.viewModel?.goToPage(8) ?? true)
 
         let element = try? self.viewModel?.getElements().first
-        self.viewModel?.submitAnswer(key: element!, value: "Mikä on koronavirus")
+        _ = self.viewModel?.submitAnswer(key: element!, value: "Mikä on koronavirus")
         XCTAssertTrue(self.viewModel?.goToPage(8) ?? false)
     }
 
@@ -133,12 +133,45 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         XCTAssertTrue(self.viewModel?.goToPage(page!) ?? false)
     }
 
-    func test_52_navigationWithLogic_Complete() {
+    func test_52_navigationWithRedirects_Complete() {
+        let expect = self.expectation(description: "Expected to reach _complete redirect")
+
+        self.viewModel?.connector.onCompleteTargetReached = { logic, redirect, autoApply in
+            XCTAssertTrue(autoApply)
+            XCTAssertNil(logic)
+            XCTAssertNotNil(redirect)
+            expect.fulfill()
+        }
+        self.viewModel?.pageNumber = 13
+        let page = self.viewModel?.redirectTargetPage(for: "")
+        XCTAssertNil(page)
+
+        waitForExpectations(timeout: 2.0)
+    }
+    
+    func test_53_navigationWithRedirects_Register() {
+        let expect = self.expectation(description: "Expected to reach _register redirect")
+
+        self.viewModel?.connector.onRegisterTargetReached = { logic, redirect, autoApply in
+            XCTAssertTrue(autoApply)
+            XCTAssertNil(logic)
+            XCTAssertNotNil(redirect)
+            expect.fulfill()
+        }
+        self.viewModel?.pageNumber = 12
+        let page = self.viewModel?.redirectTargetPage(for: "")
+        XCTAssertNil(page)
+
+        waitForExpectations(timeout: 2.0)
+    }
+
+    func test_60_navigationWithLogic_Complete() {
         let expect = self.expectation(description: "Expected to reach _complete logic")
 
-        self.viewModel?.connector.onCompleteTargetReached = { logic, autoApply in
+        self.viewModel?.connector.onCompleteTargetReached = { logic, redirect, autoApply in
             XCTAssertTrue(autoApply)
             XCTAssertNotNil(logic)
+            XCTAssertNil(redirect)
             expect.fulfill()
         }
         self.viewModel?.pageNumber = 11
@@ -150,12 +183,13 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         waitForExpectations(timeout: 2.0)
     }
 
-    func test_52_navigationWithLogic_Register() {
+    func test_61_navigationWithLogic_Register() {
         let expect = self.expectation(description: "Expected to reach _register logic")
 
-        self.viewModel?.connector.onRegisterTargetReached = { logic, autoApply in
+        self.viewModel?.connector.onRegisterTargetReached = { logic, redirect, autoApply in
             XCTAssertTrue(autoApply)
             XCTAssertNotNil(logic)
+            XCTAssertNil(redirect)
             expect.fulfill()
         }
         self.viewModel?.pageNumber = 9
@@ -167,12 +201,12 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         waitForExpectations(timeout: 2.0)
     }
 
-    func test_53_navigationAutoApply_Complete() {
+    func test_62_navigationAutoApply_Complete() {
         var expectedResult: Bool!
         let expect = self.expectation(description: "Expected to reach _complete logic")
         expect.assertForOverFulfill = false
 
-        self.viewModel?.connector.onCompleteTargetReached = { _, autoApply in
+        self.viewModel?.connector.onCompleteTargetReached = { _, _, autoApply in
             XCTAssertEqual(self.viewModel!.hasToWaitForUserConfirmation(autoApply), expectedResult)
             expect.fulfill()
         }
@@ -183,17 +217,17 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         _ = self.viewModel?.logicTargetPage(key: "wouldRecommendService", value: "1")
 
         expectedResult = false
-        self.viewModel?.finishQuestionnaire(for: nil, autoApply: false)
+        self.viewModel?.finishQuestionnaire(for: nil, redirect: nil, autoApply: false)
 
         waitForExpectations(timeout: 2.0)
     }
 
-    func test_54_navigationAutoApply_Register() {
+    func test_63_navigationAutoApply_Register() {
         var expectedResult: Bool!
         let expect = self.expectation(description: "Expected to reach _register logic")
         expect.assertForOverFulfill = false
 
-        self.viewModel?.connector.onRegisterTargetReached = { _, autoApply in
+        self.viewModel?.connector.onRegisterTargetReached = { _, _, autoApply in
             XCTAssertEqual(self.viewModel!.hasToWaitForUserConfirmation(autoApply), expectedResult)
             expect.fulfill()
         }
@@ -204,12 +238,12 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         _ = self.viewModel?.logicTargetPage(key: "Huolet-jatko", value: "Sulje")
 
         expectedResult = false
-        self.viewModel?.finishQuestionnaire(for: nil, autoApply: false)
+        self.viewModel?.finishQuestionnaire(for: nil, redirect: nil, autoApply: false)
 
         waitForExpectations(timeout: 2.0)
     }
 
-    func test_60_clearAnswers() {
+    func test_70_clearAnswers() {
         self.viewModel?.pageNumber = 0
         self.viewModel?.answers = [:]
         XCTAssertFalse(self.viewModel?.clearAnswersForCurrentPage() ?? true)
