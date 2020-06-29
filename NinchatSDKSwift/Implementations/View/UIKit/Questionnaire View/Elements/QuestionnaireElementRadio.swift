@@ -153,6 +153,7 @@ extension QuestionnaireElementRadio {
         view.setTitleColor(.QGrayButton, for: .normal)
         view.setTitle(option.label, for: .selected)
         view.setTitleColor(.QBlueButtonNormal, for: .selected)
+        view.setBackgroundImage(UIColor.QBlueButtonHighlighted.toImage, for: .highlighted)
         view.updateTitleScale()
 
         return view
