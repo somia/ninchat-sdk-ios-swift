@@ -149,24 +149,27 @@ extension NINQuestionnaireConversationDataSourceDelegate {
 
     private func navigation(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: QuestionnaireNavigationCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
-        cell.configuration = self.configurations[indexPath.section]
-        cell.requirementsSatisfied = self.requirementSatisfactions[indexPath.section]
-        cell.overrideAssets(with: self.session)
-
         self.viewModel.requirementSatisfactionUpdater = { [weak self] satisfied in
             guard self?.requirementSatisfactions.count ?? 0 > indexPath.section else { return }
 
             self?.requirementSatisfactions[indexPath.section] = satisfied
             self?.onRequirementsUpdated(satisfied, for: cell)
         }
+
+        cell.shouldShowNextButton = self.configurations[indexPath.section].buttons?.hasValidNextButton ?? true
+        cell.shouldShowBackButton = (self.configurations[indexPath.section].buttons?.hasValidBackButton ?? true) && indexPath.section != 0
+        cell.requirementsSatisfied = self.requirementSatisfactions[indexPath.section]
+        cell.configuration = self.configurations[indexPath.section]
+        cell.overrideAssets(with: self.session)
+        cell.backgroundColor = .clear
+        cell.isUserInteractionEnabled = (self.elements[indexPath.section].first?.isShown ?? true) && (indexPath.section == self.sectionCount-1)
+
         cell.onNextButtonTapped = { [weak self] in
             self?.onNextButtonTapped()
         }
         cell.onBackButtonTapped = { [weak self] in
             self?.onBackButtonTapped(completion: self?.onRemoveCellContent)
         }
-        cell.backgroundColor = .clear
-        cell.isUserInteractionEnabled = (self.elements[indexPath.section].first?.isShown ?? true) && (indexPath.section == self.sectionCount-1)
 
         return cell
     }

@@ -58,7 +58,11 @@ extension NINQuestionnaireFormDataSourceDelegate {
     private func navigation(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> QuestionnaireNavigationCell {
         do {
             let cell: QuestionnaireNavigationCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
-            cell.configuration = try self.viewModel.getConfiguration()
+
+            let configuration = try self.viewModel.getConfiguration()
+            cell.shouldShowNextButton = configuration.buttons?.hasValidNextButton ?? true
+            cell.shouldShowBackButton = (configuration.buttons?.hasValidBackButton ?? true) && self.viewModel.pageNumber != 0
+            cell.configuration = configuration
             cell.requirementsSatisfied = self.viewModel.requirementsSatisfied
             cell.overrideAssets(with: self.session)
 
