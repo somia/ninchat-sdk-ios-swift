@@ -163,7 +163,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         cell.shouldShowBackButton = (self.configurations[indexPath.section].buttons?.hasValidBackButton ?? true) && indexPath.section != 0
         cell.requirementsSatisfied = self.requirementSatisfactions[indexPath.section]
         cell.configuration = self.configurations[indexPath.section]
-        cell.overrideAssets(with: self.session)
+        cell.overrideAssets(with: self.session?.internalDelegate)
         cell.backgroundColor = .clear
         cell.isUserInteractionEnabled = (self.elements[indexPath.section].first?.isShown ?? true) && (indexPath.section == self.sectionCount-1)
 
