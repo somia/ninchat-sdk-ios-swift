@@ -146,6 +146,7 @@ extension QuestionnaireElement where Self:QuestionnaireElementTextField {
         self.view.backgroundColor = .clear
         self.view.textAlignment = .left
         self.view.borderStyle = .none
+        self.view.addPadding(.equalSpacing(8.0))
         self.view.keyboardType = keyboardType(configuration)
         self.view.font = .ninchat
         self.view.fix(height: self.heightValue)

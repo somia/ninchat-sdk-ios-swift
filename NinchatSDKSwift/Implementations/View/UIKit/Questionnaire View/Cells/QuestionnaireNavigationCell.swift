@@ -11,6 +11,8 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
 
     // MARK: - QuestionnaireElementWithNavigationButtons
 
+    var shouldShowNextButton: Bool! = false
+    var shouldShowBackButton: Bool! = false
     var configuration: QuestionnaireConfiguration? {
         didSet {
             self.shapeNavigationButtons(configuration)
@@ -142,8 +144,9 @@ extension QuestionnaireNavigationCell {
 
         /// According to `https://github.com/somia/mobile/issues/238`
         /// " Basically you have buttons always displayed unless they are removed in config. "
-        drawNextButton(isVisible: configuration?.buttons?.hasValidNextButton ?? true)
-        drawBackButton(isVisible: configuration?.buttons?.hasValidBackButton ?? true)
+        /// " But it should omit 'back' for the first element "
+        drawNextButton(isVisible: self.shouldShowNextButton)
+        drawBackButton(isVisible: self.shouldShowBackButton)
     }
 
     private func layoutButton(_ button: UIButton, configuration: ButtonQuestionnaire?, type: QuestionnaireButtonType) {
