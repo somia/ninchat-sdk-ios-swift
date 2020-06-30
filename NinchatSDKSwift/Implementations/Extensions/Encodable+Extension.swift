@@ -5,7 +5,6 @@
 //
 
 import Foundation
-import AnyCodable
 
 extension Encodable {
     var toDictionary: [String: Any]? {

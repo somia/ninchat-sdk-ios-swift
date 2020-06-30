@@ -8,14 +8,14 @@ import UIKit
 import WebRTC
 
 protocol VideoViewActions {
-    typealias Action = ((UIButton) -> Void)
+    typealias Action = (UIButton) -> Void
     var onHangupTapped: Action? { get set }
     var onAudioTapped: Action? { get set }
     var onCameraTapped: Action? { get set }
 }
 
 protocol VideoViewProtocol: UIView, VideoViewActions {
-    var session: NINChatSession! { get set }
+    var session: NINChatSession? { get set }
     var viewModel: NINChatViewModel! { get set }
     var localCapture: RTCCameraVideoCapturer? { get set }
     var remoteCapture: RTCVideoRenderer? { get set }
@@ -33,7 +33,7 @@ final class VideoView: UIView, VideoViewProtocol {
     
     // MARK: - VideoViewProtocol
     
-    var session: NINChatSession!
+    weak var session: NINChatSession?
     var viewModel: NINChatViewModel!
     var onHangupTapped: Action?
     var onAudioTapped: Action?
@@ -109,23 +109,23 @@ final class VideoView: UIView, VideoViewProtocol {
     }
     
     func overrideAssets() {
-        if let hangupIcon = self.session.override(imageAsset: .iconVideoHangup) {
+        if let hangupIcon = self.session?.internalDelegate?.override(imageAsset: .iconVideoHangup) {
             self.hangupButton.setImage(hangupIcon, for: .normal)
         }
         
-        if let micOnIcon = self.session.override(imageAsset: .iconVideoMicrophoneOn) {
+        if let micOnIcon = self.session?.internalDelegate?.override(imageAsset: .iconVideoMicrophoneOn) {
             self.microphoneEnabledButton.setImage(micOnIcon, for: .normal)
         }
         
-        if let micOffIcon = self.session.override(imageAsset: .iconVideoMicrophoneOff) {
+        if let micOffIcon = self.session?.internalDelegate?.override(imageAsset: .iconVideoMicrophoneOff) {
             self.microphoneEnabledButton.setImage(micOffIcon, for: .selected)
         }
         
-        if let cameraOnIcon = self.session.override(imageAsset: .iconVideoCameraOn) {
+        if let cameraOnIcon = self.session?.internalDelegate?.override(imageAsset: .iconVideoCameraOn) {
             self.cameraEnabledButton.setImage(cameraOnIcon, for: .normal)
         }
         
-        if let cameraOffIcon = self.session.override(imageAsset: .iconVideoCameraOff) {
+        if let cameraOffIcon = self.session?.internalDelegate?.override(imageAsset: .iconVideoCameraOff) {
             self.cameraEnabledButton.setImage(cameraOffIcon, for: .selected)
         }
     }

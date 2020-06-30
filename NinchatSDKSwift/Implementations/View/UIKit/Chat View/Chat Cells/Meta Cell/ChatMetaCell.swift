@@ -21,10 +21,10 @@ final class ChatMetaCell: UITableViewCell, ChatMeta {
     
     // MARK: - ChatMeta
     
-    weak var delegate: NINChatSessionInternalDelegate?
+    var delegate: NINChatSessionInternalDelegate?
     var onCloseChatTapped: ((Button) -> Void)?
     
-    func populate(message: MetaMessage, colorAssets: NINColorAssetDictionary) {
+    func populate(message: MetaMessage, colorAssets: NINColorAssetDictionary?) {
         self.applyAssets(message, colorAssets)
         self.metaTextLabel.text = message.text
     }
@@ -41,8 +41,8 @@ final class ChatMetaCell: UITableViewCell, ChatMeta {
         self.rasterize()
     }
     
-    private func applyAssets(_ message: MetaMessage, _ colorAssets: NINColorAssetDictionary) {
-        if let labelColor = colorAssets[.infoText] {
+    private func applyAssets(_ message: MetaMessage, _ colorAssets: NINColorAssetDictionary?) {
+        if let labelColor = colorAssets?[.infoText] {
             self.metaTextLabel.textColor = labelColor
         }
         if let title = message.closeChatButtonTitle {

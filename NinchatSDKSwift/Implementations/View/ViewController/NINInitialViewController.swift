@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class NINInitialViewController: UIViewController, ViewController {
+final class NINInitialViewController: UIViewController {
     
     // MARK: - Injected
     
@@ -14,7 +14,8 @@ final class NINInitialViewController: UIViewController, ViewController {
     
     // MARK: - ViewController
     
-    var session: NINChatSession!
+    weak var session: NINChatSession?
+    weak var sessionManager: NINChatSessionManager?
     
     // MARK: - Outlets
     
@@ -22,7 +23,7 @@ final class NINInitialViewController: UIViewController, ViewController {
     @IBOutlet private(set) weak var bottomContainerView: UIView!
     @IBOutlet private(set) weak var welcomeTextView: UITextView! {
         didSet {
-            if let welcomeText = self.session.sessionManager.siteConfiguration.welcome {
+            if let welcomeText = self.sessionManager?.siteConfiguration.welcome {
                 welcomeTextView.setAttributed(text: welcomeText, font: .ninchat)
                 welcomeTextView.delegate = self
             }
@@ -31,7 +32,7 @@ final class NINInitialViewController: UIViewController, ViewController {
     @IBOutlet private(set) weak var queueButtonsStackView: UIStackView!
     @IBOutlet private(set) weak var closeWindowButton: Button! {
         didSet {
-            if let closeText = self.session.sessionManager.translate(key: Constants.kCloseWindowText.rawValue, formatParams: [:]) {
+            if let closeText = self.sessionManager?.translate(key: Constants.kCloseWindowText.rawValue, formatParams: [:]) {
                 closeWindowButton.setTitle(closeText, for: .normal)
             }
             closeWindowButton.round(borderWidth: 1.0, borderColor: .defaultBackgroundButton)
@@ -39,7 +40,7 @@ final class NINInitialViewController: UIViewController, ViewController {
     }
     @IBOutlet private(set) weak var motdTextView: UITextView! {
         didSet {
-            if let motdText = self.session.sessionManager.siteConfiguration.motd {
+            if let motdText = self.sessionManager?.siteConfiguration.motd {
                 motdTextView.setAttributed(text: motdText, font: .ninchat)
             }
             motdTextView.delegate = self
@@ -62,7 +63,7 @@ final class NINInitialViewController: UIViewController, ViewController {
         super.viewDidLoad()
         
         self.overrideAssets()
-        if self.session.sessionManager.audienceQueues.filter({ !$0.isClosed }).count > 0 {
+        if self.sessionManager?.audienceQueues.filter({ !$0.isClosed }).count ?? 0 > 0 {
             /// There is at least one open queue to join
             self.drawQueueButtons()
         } else {
@@ -74,7 +75,7 @@ final class NINInitialViewController: UIViewController, ViewController {
     // MARK: - User actions
     
     @IBAction private func closeWindowButtonPressed(button: UIButton) {
-        self.session.onDidEnd()
+        self.session?.internalDelegate?.onDidEnd()
     }
 }
 
@@ -82,20 +83,20 @@ final class NINInitialViewController: UIViewController, ViewController {
 
 private extension NINInitialViewController {
     private func overrideAssets() {
-        closeWindowButton.overrideAssets(with: self.session, isPrimary: false)
-        if let topBackgroundColor = session.override(colorAsset: .backgroundTop) {
+        closeWindowButton.overrideAssets(with: self.session?.internalDelegate, isPrimary: false)
+        if let topBackgroundColor = self.session?.internalDelegate?.override(colorAsset: .backgroundTop) {
             topContainerView.backgroundColor = topBackgroundColor
         }
-        if let bottomBackgroundColor = session.override(colorAsset: .backgroundBottom) {
+        if let bottomBackgroundColor = self.session?.internalDelegate?.override(colorAsset: .backgroundBottom) {
             bottomContainerView.backgroundColor = bottomBackgroundColor
         }
-        if let textTopColor = session.override(colorAsset: .textTop) {
+        if let textTopColor = self.session?.internalDelegate?.override(colorAsset: .textTop) {
             welcomeTextView.textColor = textTopColor
         }
-        if let textBottomColor = session.override(colorAsset: .textBottom) {
+        if let textBottomColor = self.session?.internalDelegate?.override(colorAsset: .textBottom) {
             motdTextView.textColor = textBottomColor
         }
-        if let linkColor = session.override(colorAsset: .link) {
+        if let linkColor = self.session?.internalDelegate?.override(colorAsset: .link) {
             let attribute = [NSAttributedString.Key.foregroundColor: linkColor]
             welcomeTextView.linkTextAttributes = attribute
             motdTextView.linkTextAttributes = attribute
@@ -105,7 +106,7 @@ private extension NINInitialViewController {
     private func drawQueueButtons() {
         self.queueButtonsStackView.subviews.forEach { $0.removeFromSuperview() }
 
-        let availableQueues = self.session.sessionManager.audienceQueues.filter({ !$0.isClosed })
+        let availableQueues = self.session?.sessionManager.audienceQueues.filter({ !$0.isClosed }) ?? []
         let numberOfButtons = min(3, availableQueues.count)
         let buttonHeights: CGFloat = (numberOfButtons > 2) ? 40.0 : 60.0
         for index in 0..<numberOfButtons {
@@ -118,8 +119,8 @@ private extension NINInitialViewController {
             button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
             button.backgroundColor = .defaultBackgroundButton
             button.setTitleColor(.white, for: .normal)
-            button.setTitle(self.session.sessionManager.translate(key: Constants.kJoinQueueText.rawValue, formatParams: ["audienceQueue.queue_attrs.name": queue.name]), for: .normal)
-            button.overrideAssets(with: self.session, isPrimary: true)
+            button.setTitle(self.session?.sessionManager.translate(key: Constants.kJoinQueueText.rawValue, formatParams: ["audienceQueue.queue_attrs.name": queue.name]) ?? "", for: .normal)
+            button.overrideAssets(with: self.session?.internalDelegate, isPrimary: true)
             
             queueButtonsStackView.addArrangedSubview(button)
             button.heightAnchor.constraint(equalToConstant: buttonHeights).isActive = true
@@ -129,6 +130,6 @@ private extension NINInitialViewController {
     private func drawNoQueueText() {
         self.queueButtonsStackView.isHidden = true
         self.noQueueTextView.isHidden = false
-        self.noQueueTextView.setAttributed(text: self.session.sessionManager.siteConfiguration.noQueueText ?? NSLocalizedString("NoQueueText", tableName: "Localizable", bundle: Bundle.SDKBundle!, value: "", comment: ""), font: self.noQueueTextView.font)
+        self.noQueueTextView.setAttributed(text: self.session?.sessionManager.siteConfiguration.noQueueText ?? NSLocalizedString("NoQueueText", tableName: "Localizable", bundle: Bundle.SDKBundle!, value: "", comment: ""), font: self.noQueueTextView.font)
     }
 }

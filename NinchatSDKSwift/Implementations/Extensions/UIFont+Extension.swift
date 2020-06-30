@@ -23,7 +23,7 @@ extension UIFont {
         guard let font = UIFont(name: fontName, size: 16.0) else {
             return UIFont(name: fontName, size: 16.0)
         }
-        
+
         return font
     }
     
@@ -36,6 +36,7 @@ extension UIFont {
             else { return false }
         
         var errorRef: Unmanaged<CFError>? = nil
+        defer { _ = errorRef?.autorelease() }
         return CTFontManagerRegisterGraphicsFont(fontRef, &errorRef)
     }
 }

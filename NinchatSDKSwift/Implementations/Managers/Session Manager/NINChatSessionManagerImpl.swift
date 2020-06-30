@@ -6,7 +6,6 @@
 
 import UIKit
 import Foundation
-import AnyCodable
 import NinchatLowLevelClient
 
 protocol NINChatSessionManagerInternalActions {
@@ -82,8 +81,8 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
 
     // MARK: - NINChatSessionManager
     
-    weak var delegate: NINChatSessionInternalDelegate?
     private(set) var audienceMetadata: NINLowLevelClientProps?
+    var delegate: NINChatSessionInternalDelegate?
     var queues: [Queue]! = [] {
         didSet {
             self.audienceQueues = self.queues
@@ -259,10 +258,10 @@ extension NINChatSessionManagerImpl {
         if let currentChannel = self.currentChannelID {
             delegate?.log(value: "Parting current channel first")
             
-            try self.part(channel: currentChannel) { [unowned self] error in
-                self.delegate?.log(value: "Channel parted; joining queue.")
-                self.backgroundChannelID = self.currentChannelID
-                self.currentChannelID = nil
+            try self.part(channel: currentChannel) { [weak self] error in
+                self?.delegate?.log(value: "Channel parted; joining queue.")
+                self?.backgroundChannelID = self?.currentChannelID
+                self?.currentChannelID = nil
                 try? performJoin()
             }
         } else {
@@ -496,7 +495,7 @@ extension NINChatSessionManagerImpl {
 
 extension NINChatSessionManagerImpl {
     // Asynchronously retrieves file info
-    func describe(file id: String, completion: @escaping ((Error?, [String:Any]?) -> Void)) throws {
+    func describe(file id: String, completion: @escaping (Error?, [String:Any]?) -> Void) throws {
         guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
         let param = NINLowLevelClientProps.initiate(action: .describeFile)
         param.fileID = .success(id)

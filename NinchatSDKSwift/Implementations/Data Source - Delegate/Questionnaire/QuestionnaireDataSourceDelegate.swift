@@ -7,7 +7,7 @@
 import UIKit
 
 /** Delegate for the questionnaire view. */
-protocol QuestionnaireDelegate {
+protocol QuestionnaireDelegate: class {
     var isLoadingNewElements: Bool! { get set }
     var shouldShowNavigationCell: Bool { get }
     var onUpdateCellContent: (() -> Void)? { get set }
@@ -15,7 +15,7 @@ protocol QuestionnaireDelegate {
 }
 
 /** Data source for the questionnaire view. */
-protocol QuestionnaireDataSource {
+protocol QuestionnaireDataSource: class {
     /** How many pages are available. */
     func numberOfPages() -> Int
 
@@ -34,9 +34,8 @@ protocol QuestionnaireDataSource {
     /** Add an extra section/page to questionnaires to show 'audienceRegisteredClosedText' */
     func addClosedRegisteredSection() -> Bool
 
-    var session: NINChatSession! { get }
     var viewModel: NINQuestionnaireViewModel! { get set }
-    init(viewModel: NINQuestionnaireViewModel, session: NINChatSession)
+    init(viewModel: NINQuestionnaireViewModel, session: NINChatSession, sessionManager: NINChatSessionManager)
 }
 
 protocol QuestionnaireDataSourceDelegate: QuestionnaireDataSource, QuestionnaireDelegate {}

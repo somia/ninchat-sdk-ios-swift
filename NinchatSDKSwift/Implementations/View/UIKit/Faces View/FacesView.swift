@@ -13,8 +13,9 @@ protocol FacesViewActions {
 }
 
 protocol FacesViewProtocol: UIView, FacesViewActions {
-    var session: NINChatSession! { get set }
-    
+    var session: NINChatSession? { get set }
+    var sessionManager: NINChatSessionManager? { get set }
+
     func overrideAssets()
 }
 
@@ -22,8 +23,8 @@ final class FacesView: UIView, FacesViewProtocol {
     
     // MARK: - FacesViewProtocol
     
-    var session: NINChatSession!
-    var translate: NINChatSessionTranslation!
+    weak var session: NINChatSession?
+    weak var sessionManager: NINChatSessionManager?
     
     // MARK: - Outlets
     
@@ -40,34 +41,34 @@ final class FacesView: UIView, FacesViewProtocol {
     var onNeutralTapped: ((UIButton) -> Void)?
     var onNegativeTapped: ((UIButton) -> Void)?
     
-    func overrideAssets() {        
-        if let positiveTitle = self.translate.translate(key: Constants.kRatingPositiveText.rawValue, formatParams: [:]) {
+    func overrideAssets() {
+        if let positiveTitle = self.sessionManager?.translate(key: Constants.kRatingPositiveText.rawValue, formatParams: [:]) {
             self.positiveLabel.text = positiveTitle
         }
-        if let positive = self.session.override(imageAsset: .iconRatingPositive) {
+        if let positive = self.session?.internalDelegate?.override(imageAsset: .iconRatingPositive) {
             self.positiveButton.setImage(positive, for: .normal)
         }
-        if let positiveColor = self.session.override(colorAsset: .ratingPositiveText) {
+        if let positiveColor = self.session?.internalDelegate?.override(colorAsset: .ratingPositiveText) {
             self.positiveLabel.textColor = positiveColor
         }
         
-        if let neutralTitle = self.translate.translate(key: Constants.kRatingNeutralText.rawValue, formatParams: [:]) {
+        if let neutralTitle = self.sessionManager?.translate(key: Constants.kRatingNeutralText.rawValue, formatParams: [:]) {
             self.neutralLabel.text = neutralTitle
         }
-        if let neutral = self.session.override(imageAsset: .iconRatingNeutral) {
+        if let neutral = self.session?.internalDelegate?.override(imageAsset: .iconRatingNeutral) {
             self.neutralButton.setImage(neutral, for: .normal)
         }
-        if let neutralColor = self.session.override(colorAsset: .ratingNeutralText) {
+        if let neutralColor = self.session?.internalDelegate?.override(colorAsset: .ratingNeutralText) {
             self.neutralLabel.textColor = neutralColor
         }
-        
-        if let negativeTitle = self.translate.translate(key: Constants.kRatingNegativeText.rawValue, formatParams: [:]) {
+
+        if let negativeTitle = self.sessionManager?.translate(key: Constants.kRatingNegativeText.rawValue, formatParams: [:]) {
             self.negativeLabel.text = negativeTitle
         }
-        if let negative = self.session.override(imageAsset: .iconRatingNegative) {
+        if let negative = self.session?.internalDelegate?.override(imageAsset: .iconRatingNegative) {
             self.negativeButton.setImage(negative, for: .normal)
         }
-        if let negativeColor = self.session.override(colorAsset: .ratingNegativeText) {
+        if let negativeColor = self.session?.internalDelegate?.override(colorAsset: .ratingNegativeText) {
             self.negativeLabel.textColor = negativeColor
         }
     }

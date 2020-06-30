@@ -7,7 +7,7 @@
 import UIKit
 
 /** Delegate for the chat view. */
-protocol ChatViewDelegate {
+protocol ChatViewDelegate: class {
     /** An image in a cell was selected (tapped). */
     func didSelect(image: UIImage?, for attachment: FileInfo?, _ view: ChatView)
     
@@ -25,7 +25,7 @@ protocol NINChatDelegate: ChatViewDelegate {
 }
 
 /** Data source for the chat view. */
-protocol ChatViewDataSource {
+protocol ChatViewDataSource: class {
     /** How many messages there are. */
     func numberOfMessages(for view: ChatView) -> Int
     
@@ -60,11 +60,12 @@ final class NINChatDataSourceDelegateImpl: NINChatDataSourceDelegate {
 
 extension NINChatDataSourceDelegateImpl {
     func numberOfMessages(for view: ChatView) -> Int {
-        view.sessionManager.chatMessages.count
+        view.sessionManager?.chatMessages.count ?? 0
     }
     
     func message(at index: Int, _ view: ChatView) -> ChatMessage {
-        view.sessionManager.chatMessages[index]
+        guard let message = view.sessionManager?.chatMessages[index] else { fatalError("Unable to fetch chat message") }
+        return message
     }
 }
 

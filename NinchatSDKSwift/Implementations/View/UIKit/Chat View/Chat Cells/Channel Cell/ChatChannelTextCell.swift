@@ -18,7 +18,7 @@ extension ChannelTextCell {
         self.messageTextView.contentInset = (message.series) ? UIEdgeInsets(top: 3.5, left: 0.0, bottom: 0.0, right: 0.0) : .zero
         if attachment?.isPDF ?? false, let url = attachment?.url, let name = attachment?.name {
             self.messageTextView.setAttributed(text: "<a href=\"\(url)\">\(name)</a>", font: .ninchat)
-        } else if let text = message.textContent {
+        } else if let text = message.content {
             /// remove attributed texts if any
             self.messageTextView.setPlain(text: text, font: .ninchat)
         }
@@ -33,16 +33,16 @@ final class ChatChannelTextMineCell: ChatChannelMineCell, ChannelTextCell {
         }
     }
     
-    override func configureMyMessage(avatar url: String?, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, config: AvatarConfig, series: Bool) {
+    override func configureMyMessage(avatar url: String?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, config: AvatarConfig?, series: Bool) {
         super.configureMyMessage(avatar: url, imageAssets: imageAssets, colorAssets: colorAssets, config: config, series: series)
     
         self.messageTextView.textColor = .white
         self.messageTextView.textAlignment = .right
         self.messageTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.blue]
-        if let bubbleTextColor = colorAssets[.chatBubbleRightText] {
+        if let bubbleTextColor = colorAssets?[.chatBubbleRightText] {
             self.messageTextView.textColor = bubbleTextColor
         }
-        if let linkColor = colorAssets[.chatBubbleRightLink] {
+        if let linkColor = colorAssets?[.chatBubbleRightLink] {
             self.messageTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
         }
         
@@ -57,16 +57,16 @@ final class ChatChannelTextOthersCell: ChatChannelOthersCell, ChannelTextCell {
         }
     }
     
-    override func configureOtherMessage(avatar url: String?, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, config: AvatarConfig, series: Bool) {
+    override func configureOtherMessage(avatar url: String?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, config: AvatarConfig?, series: Bool) {
         super.configureOtherMessage(avatar: url, imageAssets: imageAssets, colorAssets: colorAssets, config: config, series: series)
     
         self.messageTextView.textAlignment = .left
         self.messageTextView.textColor = .black
         self.messageTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.blue]
-        if let bubbleTextColor = colorAssets[.chatBubbleLeftText] {
+        if let bubbleTextColor = colorAssets?[.chatBubbleLeftText] {
             self.messageTextView.textColor = bubbleTextColor
         }
-        if let linkColor = colorAssets[.chatBubbleLeftLink] {
+        if let linkColor = colorAssets?[.chatBubbleLeftLink] {
             self.messageTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
         }
     }
@@ -79,7 +79,7 @@ final class ChatChannelTextOthersCell: ChatChannelOthersCell, ChannelTextCell {
 
             let text = "<a href=" + url + ">" + name.replacingOccurrences(of: "ä", with: "ä").replacingOccurrences(of: "ö", with: "ö").replacingOccurrences(of: "å", with: "å") + "</a>"
             self.messageTextView.setAttributed(text: text, font: .ninchat)
-        } else if let text = message.textContent {
+        } else if let text = message.content {
             /// remove attributed texts if any
             self.messageTextView.setPlain(text: text, font: .ninchat)
         }

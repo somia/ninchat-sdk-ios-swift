@@ -16,7 +16,7 @@ class NinchatSessionManagerTests: XCTestCase {
     
     override func setUp() {
         sessionSwift = NINChatSession(configKey: "")
-        sessionManager = NINChatSessionManagerImpl(session: sessionSwift, serverAddress: "", audienceMetadata: NINLowLevelClientProps.initiate(metadata: ["metadata":"value"]) ,configuration: nil)
+        sessionManager = NINChatSessionManagerImpl(session: InternalDelegate(session: sessionSwift), serverAddress: "", audienceMetadata: NINLowLevelClientProps.initiate(metadata: ["metadata":"value"]) ,configuration: nil)
     }
 
     override func tearDown() { }
@@ -46,7 +46,7 @@ class NinchatSessionManagerPrivateTests: XCTestCase {
     
     override func setUp() {
         sessionSwift = NINChatSession(configKey: "")
-        sessionManager = NINChatSessionManagerImpl(session: sessionSwift, serverAddress: "", configuration: nil)
+        sessionManager = NINChatSessionManagerImpl(session: InternalDelegate(session: sessionSwift), serverAddress: "", configuration: nil)
     }
 
     func testIndexOfItem() {
@@ -138,7 +138,7 @@ class NinchatSessionManagerPrivateTests: XCTestCase {
 extension NinchatSessionManagerPrivateTests {
     private func simulateAddMessage(id: Int) {
         let user = ChannelUser(userID: "11", realName: "Hassan Shahbazi", displayName: "Hassan", iconURL: "", guest: false)
-        self.sessionManager.add(message: TextMessage(timestamp: Date(), messageID:  "\(id)", mine: false, sender: user, textContent: "content", attachment: nil))
+        self.sessionManager.add(message: TextMessage(timestamp: Date(), messageID:  "\(id)", mine: false, sender: user, content: "content", attachment: nil))
     }
 
     private func simulateRemoveMessage(at index: Int) {
@@ -154,7 +154,7 @@ class NinchatSessionManagerClosureHandlersTests: XCTestCase {
     
     override func setUp() {
         sessionSwift = NINChatSession(configKey: "")
-        sessionManager = NINChatSessionManagerImpl(session: sessionSwift, serverAddress: "", configuration: nil)
+        sessionManager = NINChatSessionManagerImpl(session: InternalDelegate(session: sessionSwift), serverAddress: "", configuration: nil)
     }
 
     func testBindFailure() {

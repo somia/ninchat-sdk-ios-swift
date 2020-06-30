@@ -27,8 +27,8 @@ final class QuestionnaireDataSourceDelegateTests: XCTestCase {
         (self.session.sessionManager as! NINChatSessionManagerImpl).setSiteConfiguration(SiteConfigurationImpl(configuration: try! openAsset(forResource: "site-configuration-mock"), environments: ["default"]))
         self.viewModel = NINQuestionnaireViewModelImpl(sessionManager: self.session.sessionManager, queue: Queue(queueID: "", name: "", isClosed: false), questionnaireType: .pre)
 
-        formQuestionnaireDataSource = NINQuestionnaireFormDataSourceDelegate(viewModel: viewModel, session: self.session)
-        conversationQuestionnaireDataSource = NINQuestionnaireConversationDataSourceDelegate(viewModel: viewModel, session: self.session)
+        formQuestionnaireDataSource = NINQuestionnaireFormDataSourceDelegate(viewModel: viewModel, session: self.session, sessionManager: self.session.sessionManager)
+        conversationQuestionnaireDataSource = NINQuestionnaireConversationDataSourceDelegate(viewModel: viewModel, session: self.session, sessionManager: self.session.sessionManager)
     }
 
     private var formQuestionnaireDataSource: QuestionnaireDataSourceDelegate!
@@ -38,7 +38,6 @@ final class QuestionnaireDataSourceDelegateTests: XCTestCase {
 // MARK: - 'Form-like' tests
 extension QuestionnaireDataSourceDelegateTests {
     func test_101_conformance() {
-        XCTAssertNotNil(formQuestionnaireDataSource.session)
         XCTAssertNotNil(formQuestionnaireDataSource.viewModel)
     }
 
@@ -81,7 +80,6 @@ extension QuestionnaireDataSourceDelegateTests {
 extension QuestionnaireDataSourceDelegateTests {
     func test_001_conformance() {
         XCTAssertTrue(conversationQuestionnaireDataSource is QuestionnaireConversationHelpers)
-        XCTAssertNotNil(conversationQuestionnaireDataSource.session)
         XCTAssertNotNil(conversationQuestionnaireDataSource.viewModel)
     }
 

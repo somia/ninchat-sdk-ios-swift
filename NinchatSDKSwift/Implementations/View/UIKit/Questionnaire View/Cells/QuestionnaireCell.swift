@@ -32,15 +32,15 @@ class QuestionnaireCell: UITableViewCell {
         }
     }
 
-    var sessionManager: NINChatSessionManager! {
+    weak var sessionManager: NINChatSessionManager? {
         didSet {
             guard self.style == .conversation,
                   let usernameLabel = self.conversationDetailsView.compactMap({ $0 as? UILabel }).first,
                   let userAvatar = self.conversationDetailsView.compactMap({ $0 as? UIImageView }).first
                 else { return }
 
-            usernameLabel.text = sessionManager.siteConfiguration.audienceQuestionnaireUserName ?? ""
-            if let avatar = sessionManager.siteConfiguration.audienceQuestionnaireAvatar as? String, !avatar.isEmpty {
+            usernameLabel.text = sessionManager?.siteConfiguration.audienceQuestionnaireUserName ?? ""
+            if let avatar = sessionManager?.siteConfiguration.audienceQuestionnaireAvatar as? String, !avatar.isEmpty {
                 userAvatar.image(from: avatar)
             } else {
                 userAvatar.image = UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)

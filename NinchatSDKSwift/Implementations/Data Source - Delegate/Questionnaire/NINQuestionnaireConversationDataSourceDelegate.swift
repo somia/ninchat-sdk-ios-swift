@@ -23,7 +23,9 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
 
     // MARK: - NINQuestionnaireFormDelegate
 
-    var session: NINChatSession!
+    private weak var session: NINChatSession?
+    private weak var sessionManager: NINChatSessionManager?
+
     var viewModel: NINQuestionnaireViewModel!
     var onUpdateCellContent: (() -> Void)?
     var onRemoveCellContent: (() -> Void)?
@@ -37,8 +39,9 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
         }
     }
 
-    init(viewModel: NINQuestionnaireViewModel, session: NINChatSession) {
+    init(viewModel: NINQuestionnaireViewModel, session: NINChatSession, sessionManager: NINChatSessionManager) {
         self.session = session
+        self.sessionManager = sessionManager
         self.viewModel = viewModel
     }
 
@@ -140,9 +143,9 @@ extension NINQuestionnaireConversationDataSourceDelegate: QuestionnaireConversat
 extension NINQuestionnaireConversationDataSourceDelegate {
     private func loading(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: ChatTypingCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
-        cell.populateLoading(name: self.session.sessionManager.siteConfiguration.audienceQuestionnaireUserName ?? "",
-                imageAssets: self.session.sessionManager.delegate?.imageAssetsDictionary ?? [:],
-                colorAssets: self.session.sessionManager.delegate?.colorAssetsDictionary ?? [:])
+        cell.populateLoading(name: self.sessionManager?.siteConfiguration.audienceQuestionnaireUserName ?? "",
+                imageAssets: self.session?.internalDelegate?.imageAssetsDictionary ?? [:],
+                colorAssets: self.session?.internalDelegate?.colorAssetsDictionary ?? [:])
 
         return cell
     }
@@ -179,7 +182,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         let element = self.elements[indexPath.section][indexPath.row]
         element.isUserInteractionEnabled = (element.isShown ?? true) && (indexPath.section == self.sectionCount-1)
         element.questionnaireStyle = .conversation
-        element.overrideAssets(with: self.session)
+        element.overrideAssets(with: self.session?.internalDelegate)
 
         if var view = element as? QuestionnaireSettable {
             self.setupSettable(view: &view, element: element)
@@ -193,7 +196,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         cell.style = .conversation
         cell.indexPath = indexPath
         cell.backgroundColor = .clear
-        cell.sessionManager = self.session.sessionManager
+        cell.sessionManager = self.sessionManager
         self.layoutSubview(element, parent: cell.content)
 
         return cell
@@ -203,8 +206,8 @@ extension NINQuestionnaireConversationDataSourceDelegate {
 // MARK: - Audience Register Text
 extension NINQuestionnaireConversationDataSourceDelegate {
     func addRegisterSection() -> Bool {
-        guard let registerTitle = self.session.sessionManager.siteConfiguration.audienceRegisteredText else { return false }
-        let closeTitle = self.session.sessionManager.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) ?? "Close Chat"
+        guard let registerTitle = self.sessionManager?.siteConfiguration.audienceRegisteredText else { return false }
+        let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) ?? "Close Chat"
         let registerJSON: [String:AnyHashable] = ["element": "radio", "name": "audienceRegisteredText", "label": registerTitle, "buttons": ["back":false,"next":false], "options":[["label":closeTitle, "value":""]], "redirects":[["target":"_register"]]]
 
         guard let registerConfiguration = AudienceQuestionnaire(from: [registerJSON]).questionnaireConfiguration, registerConfiguration.count > 0, let element = QuestionnaireElementConverter(configurations: registerConfiguration).elements.first else { return false }
@@ -220,8 +223,8 @@ extension NINQuestionnaireConversationDataSourceDelegate {
     }
 
     func addClosedRegisteredSection() -> Bool {
-        guard let registerTitle = self.session.sessionManager.siteConfiguration.audienceClosedRegisteredText else { return false }
-        let closeTitle = self.session.sessionManager.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) ?? "Close Chat"
+        guard let registerTitle = self.sessionManager?.siteConfiguration.audienceClosedRegisteredText else { return false }
+        let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) ?? "Close Chat"
         let registerJSON: [String:AnyHashable] = ["element": "radio", "name": "audienceClosedRegisteredText", "label": registerTitle, "buttons": ["back":false,"next":false], "options":[["label":closeTitle, "value":""]], "redirects":[["target":"_register"]]]
 
         guard let registerConfiguration = AudienceQuestionnaire(from: [registerJSON]).questionnaireConfiguration, registerConfiguration.count > 0, let element = QuestionnaireElementConverter(configurations: registerConfiguration).elements.first else { return false }

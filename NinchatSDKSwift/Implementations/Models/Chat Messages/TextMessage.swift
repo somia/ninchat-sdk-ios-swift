@@ -17,9 +17,9 @@ struct TextMessage: ChannelMessage, Equatable {
     var series: Bool = false
     
     // MARK: - TextMessage
-    let textContent: String?
-    let attachment: FileInfo?
-    
+    let content: String?
+    unowned var attachment: FileInfo?
+
     // MARK: - Equatable
     public static func ==(lhs: Self, rhs: Self) -> Bool {
         lhs.messageID == rhs.messageID

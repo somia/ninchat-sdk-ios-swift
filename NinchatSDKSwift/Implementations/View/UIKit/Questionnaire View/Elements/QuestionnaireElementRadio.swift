@@ -134,9 +134,9 @@ extension Button {
 extension QuestionnaireElementRadio {
     func shapeRadioView(_ configuration: QuestionnaireConfiguration?) {
         var upperView: UIView?
-        configuration?.options?.forEach { [unowned self] option in
-            let button = self.generateButton(for: option, tag: (configuration?.options?.firstIndex(of: option))!)
-            self.layoutButton(button, upperView: &upperView)
+        configuration?.options?.forEach { [weak self] option in
+            guard let button = self?.generateButton(for: option, tag: (configuration?.options?.firstIndex(of: option))!) else { return }
+            self?.layoutButton(button, upperView: &upperView)
             button.roundButton()
         }
         upperView?.fix(bottom: (8.0, self.view), isRelative: false)

@@ -27,12 +27,12 @@ final class NINCoordinator: Coordinator {
             }
         }
     }
-    internal var storyboard: UIStoryboard {
+    internal lazy var storyboard: UIStoryboard = {
         UIStoryboard(name: "Chat", bundle: .SDKBundle)
-    }
-    internal var sessionManager: NINChatSessionManager {
+    }()
+    internal lazy var sessionManager: NINChatSessionManager = {
         session.sessionManager
-    }
+    }()
 
     // MARK: - Questionnaire helpers
 
@@ -45,46 +45,62 @@ final class NINCoordinator: Coordinator {
 
     // MARK: - ViewControllers
 
+    private var didLoaded_initialViewController = false
     internal lazy var initialViewController: NINInitialViewController = {
         let initialViewController: NINInitialViewController = storyboard.instantiateViewController()
         initialViewController.session = session
-        initialViewController.onQueueActionTapped = { [unowned self] queue in
+        initialViewController.sessionManager = sessionManager
+        initialViewController.onQueueActionTapped = { [weak self] queue in
             DispatchQueue.main.async {
-                self.navigationController?.pushViewController((self.hasPreAudienceQuestionnaire) ? self.questionnaireViewController(queue: queue, questionnaireType: .pre) : self.queueViewController(queue: queue), animated: true)
+                guard let weakSelf = self else { return }
+                weakSelf.navigationController?.pushViewController((weakSelf.hasPreAudienceQuestionnaire) ? weakSelf.questionnaireViewController(queue: queue, questionnaireType: .pre) : weakSelf.queueViewController(queue: queue), animated: true)
             }
         }
 
+        didLoaded_initialViewController = true
         return initialViewController
     }()
     /// Since it is pushed more than once, it cannot be defined as `lazy`
+    private var didLoaded_questionnaireViewController = false
     internal var questionnaireViewController: NINQuestionnaireViewController {
-        storyboard.instantiateViewController()
+        let questionnaireViewController: NINQuestionnaireViewController = storyboard.instantiateViewController()
+        questionnaireViewController.session = self.session
+//        questionnaireViewController.sessionManager = self.sessionManager
+
+        didLoaded_questionnaireViewController = true
+        return questionnaireViewController
     }
+    private var didLoaded_queueViewController = false
     internal lazy var queueViewController: NINQueueViewController = {
         let joinViewController: NINQueueViewController = storyboard.instantiateViewController()
-        joinViewController.viewModel = NINQueueViewModelImpl(sessionManager: self.sessionManager, delegate: self.session)
+        joinViewController.viewModel = NINQueueViewModelImpl(sessionManager: self.sessionManager, delegate: self.session.internalDelegate)
         joinViewController.session = session
-        joinViewController.onQueueActionTapped = { [unowned self] in
+        joinViewController.sessionManager = sessionManager
+        joinViewController.onQueueActionTapped = { [weak self] in
             DispatchQueue.main.async {
-                self.navigationController?.pushViewController(self.chatViewController, animated: true)
+                guard let weakSelf = self else { return }
+                weakSelf.navigationController?.pushViewController(weakSelf.chatViewController, animated: true)
             }
         }
 
+        didLoaded_queueViewController = true
         return joinViewController
     }()
+    private var didLoaded_chatViewController = false
     internal lazy var chatViewController: NINChatViewController = {
         let viewModel: NINChatViewModel = NINChatViewModelImpl(sessionManager: self.sessionManager)
         let videoDelegate: NINRTCVideoDelegate = NINRTCVideoDelegateImpl()
         let mediaDelegate: NINPickerControllerDelegate = chatMediaPicker(viewModel)
         let chatViewController: NINChatViewController = storyboard.instantiateViewController()
         chatViewController.viewModel = viewModel
-        chatViewController.session = session
+        chatViewController.session = self.session
+        chatViewController.sessionManager = self.sessionManager
         chatViewController.chatDataSourceDelegate = chatDataSourceDelegate(viewModel)
         chatViewController.chatVideoDelegate = videoDelegate
         chatViewController.chatRTCDelegate = chatRTCDelegate(videoDelegate)
         chatViewController.chatMediaPickerDelegate = mediaDelegate
 
-        chatViewController.onOpenGallery = { [unowned self] source in
+        chatViewController.onOpenGallery = { [weak self] source in
             let controller = UIImagePickerController()
             controller.sourceType = source
             controller.mediaTypes = [kUTTypeImage, kUTTypeMovie] as [String]
@@ -92,49 +108,58 @@ final class NINCoordinator: Coordinator {
             controller.delegate = mediaDelegate
 
             DispatchQueue.main.async {
-                self.navigationController?.present(controller, animated: true, completion: nil)
+                guard let weakSelf = self else { return }
+                weakSelf.navigationController?.present(controller, animated: true, completion: nil)
             }
         }
-        chatViewController.onBackToQueue = { [unowned self] in
+        chatViewController.onBackToQueue = { [weak self] in
             DispatchQueue.main.async {
-                self.navigationController?.popViewController(animated: true)
+                self?.navigationController?.popViewController(animated: true)
             }
         }
-        chatViewController.onChatClosed = { [unowned self] in
+        chatViewController.onChatClosed = { [weak self] in
             DispatchQueue.main.async {
-                self.navigationController?.pushViewController(self.ratingViewController, animated: true)
+                guard let weakSelf = self else { return }
+                weakSelf.navigationController?.pushViewController(weakSelf.ratingViewController, animated: true)
             }
         }
 
+        didLoaded_chatViewController = true
         return chatViewController
     }()
+    private var didLoaded_fullScreenViewController = false
     internal lazy var fullScreenViewController: NINFullScreenViewController = {
-        let viewModel: NINFullScreenViewModel = NINFullScreenViewModelImpl(delegate: self.session)
+        let viewModel: NINFullScreenViewModel = NINFullScreenViewModelImpl(delegate: nil)
         let previewViewController: NINFullScreenViewController = storyboard.instantiateViewController()
         previewViewController.viewModel = viewModel
-        previewViewController.session = session
-        previewViewController.onCloseTapped = { [unowned self] in
+        previewViewController.session = self.session
+        previewViewController.sessionManager = self.sessionManager
+        previewViewController.onCloseTapped = { [weak self] in
             DispatchQueue.main.async {
-                self.navigationController?.popViewController(animated: true)
+                self?.navigationController?.popViewController(animated: true)
             }
         }
 
+        didLoaded_fullScreenViewController = true
         return previewViewController
     }()
+    private var didLoaded_ratingViewController = false
     internal lazy var ratingViewController: NINRatingViewController = {
         let viewModel: NINRatingViewModel = NINRatingViewModelImpl(sessionManager: self.sessionManager)
         let ratingViewController: NINRatingViewController = storyboard.instantiateViewController()
-        ratingViewController.session = session
         ratingViewController.viewModel = viewModel
-        ratingViewController.translate = sessionManager
-        ratingViewController.onRatingFinished = { [unowned self] (status: ChatStatus?) -> Bool in
-            if !self.hasPostAudienceQuestionnaire { return true }
+        ratingViewController.session = self.session
+        ratingViewController.sessionManager = self.sessionManager
+        ratingViewController.onRatingFinished = { [weak self] (status: ChatStatus?) -> Bool in
+            if !(self?.hasPostAudienceQuestionnaire ?? true) { return true }
             DispatchQueue.main.async {
-                self.navigationController?.pushViewController(self.questionnaireViewController(ratingViewModel: viewModel, rating: status, questionnaireType: .post), animated: true)
+                guard let weakSelf = self else { return }
+                weakSelf.navigationController?.pushViewController(weakSelf.questionnaireViewController(ratingViewModel: viewModel, rating: status, questionnaireType: .post), animated: true)
             }
             return false
         }
 
+        didLoaded_ratingViewController = true
         return ratingViewController
     }()
 
@@ -158,7 +183,8 @@ final class NINCoordinator: Coordinator {
     }
 
     func deallocate() {
-        self.chatViewController.deallocate()
+        if self.didLoaded_questionnaireViewController { self.questionnaireViewController.deallocate() }
+        if self.didLoaded_chatViewController { self.chatViewController.deallocate() }
     }
 }
 
@@ -166,7 +192,8 @@ extension NINCoordinator {
     internal func questionnaireViewController(queue: Queue? = nil, ratingViewModel: NINRatingViewModel? = nil, rating: ChatStatus? = nil, questionnaireType: AudienceQuestionnaireType) -> NINQuestionnaireViewController {
         let vc = self.questionnaireViewController
         vc.queue = queue
-        vc.session = session
+        vc.session = self.session
+        vc.sessionManager = self.sessionManager
         vc.rating = rating
         vc.ratingViewModel = ratingViewModel
 
@@ -174,16 +201,17 @@ extension NINCoordinator {
         let style = self.session.sessionManager.siteConfiguration.preAudienceQuestionnaireStyle
         switch style {
         case .form:
-            vc.dataSourceDelegate = NINQuestionnaireFormDataSourceDelegate(viewModel: viewModel, session: self.session)
+            vc.dataSourceDelegate = NINQuestionnaireFormDataSourceDelegate(viewModel: viewModel, session: self.session, sessionManager: self.sessionManager)
         case .conversation:
-            vc.dataSourceDelegate = NINQuestionnaireConversationDataSourceDelegate(viewModel: viewModel, session: self.session)
+            vc.dataSourceDelegate = NINQuestionnaireConversationDataSourceDelegate(viewModel: viewModel, session: self.session, sessionManager: self.sessionManager)
         }
         vc.style = style
         vc.viewModel = viewModel
-        vc.completeQuestionnaire = { [unowned self] queue in
+        vc.completeQuestionnaire = { [weak self] queue in
             DispatchQueue.main.async {
                 if questionnaireType == .pre {
-                    self.navigationController?.pushViewController(self.queueViewController(queue: queue), animated: true)
+                    guard let weakSelf = self else { return }
+                    weakSelf.navigationController?.pushViewController(weakSelf.queueViewController(queue: queue), animated: true)
                 }
             }
         }
@@ -219,10 +247,11 @@ extension NINCoordinator {
 
 extension NINCoordinator {
     internal func chatDataSourceDelegate(_ viewModel: NINChatViewModel) -> NINChatDataSourceDelegate {
-        var dataSourceDelegate: NINChatDataSourceDelegate = NINChatDataSourceDelegateImpl(viewModel: viewModel)
-        dataSourceDelegate.onOpenPhotoAttachment = { [unowned self] image, attachment in
+        let dataSourceDelegate: NINChatDataSourceDelegate = NINChatDataSourceDelegateImpl(viewModel: viewModel)
+        dataSourceDelegate.onOpenPhotoAttachment = { [weak self] image, attachment in
             DispatchQueue.main.async {
-                self.navigationController?.pushViewController(self.fullScreenViewController(image: image, attachment: attachment), animated: true)
+                guard let weakSelf = self else { return }
+                weakSelf.navigationController?.pushViewController(weakSelf.fullScreenViewController(image: image, attachment: attachment), animated: true)
             }
         }
         dataSourceDelegate.onOpenVideoAttachment = { attachment in

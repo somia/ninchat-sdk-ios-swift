@@ -7,9 +7,9 @@
 import UIKit
 
 protocol TypingCell: UIView {
-    func populateTyping(message: UserTypingMessage, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: AvatarConfig)
+    func populateTyping(message: UserTypingMessage, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, agentAvatarConfig: AvatarConfig?)
 }
 
 protocol LoadingCell: UIView {
-    func populateLoading(name: String, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary)
+    func populateLoading(name: String, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?)
 }
