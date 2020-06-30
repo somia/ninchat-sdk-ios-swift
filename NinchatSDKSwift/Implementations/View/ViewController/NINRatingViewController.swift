@@ -84,7 +84,7 @@ final class NINRatingViewController: UIViewController, ViewController {
         if let bottomBackgroundColor = self.session?.internalDelegate?.override(colorAsset: .backgroundBottom) {
             self.view.backgroundColor = bottomBackgroundColor
         }
-        if let textTopColor = self.session.override(colorAsset: .textTop) {
+        if let textTopColor = self.session?.internalDelegate?.override(colorAsset: .textTop) {
             self.titleTextView.textColor = textTopColor
         }
         

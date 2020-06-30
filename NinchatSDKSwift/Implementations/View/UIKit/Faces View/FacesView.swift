@@ -61,9 +61,8 @@ final class FacesView: UIView, FacesViewProtocol {
         if let neutralColor = self.session?.internalDelegate?.override(colorAsset: .ratingNeutralText) {
             self.neutralLabel.textColor = neutralColor
         }
-        
-        if let negativeTitle = self.translate.translate(key: Constants.kRatingNegativeText.rawValue, formatParams: [:]) {
 
+        if let negativeTitle = self.sessionManager?.translate(key: Constants.kRatingNegativeText.rawValue, formatParams: [:]) {
             self.negativeLabel.text = negativeTitle
         }
         if let negative = self.session?.internalDelegate?.override(imageAsset: .iconRatingNegative) {
