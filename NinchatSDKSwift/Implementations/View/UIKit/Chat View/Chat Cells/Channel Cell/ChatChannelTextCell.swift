@@ -33,16 +33,16 @@ final class ChatChannelTextMineCell: ChatChannelMineCell, ChannelTextCell {
         }
     }
     
-    override func configureMyMessage(avatar url: String?, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, config: AvatarConfig, series: Bool) {
+    override func configureMyMessage(avatar url: String?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, config: AvatarConfig?, series: Bool) {
         super.configureMyMessage(avatar: url, imageAssets: imageAssets, colorAssets: colorAssets, config: config, series: series)
     
         self.messageTextView.textColor = .white
         self.messageTextView.textAlignment = .right
         self.messageTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.blue]
-        if let bubbleTextColor = colorAssets[.chatBubbleRightText] {
+        if let bubbleTextColor = colorAssets?[.chatBubbleRightText] {
             self.messageTextView.textColor = bubbleTextColor
         }
-        if let linkColor = colorAssets[.chatBubbleRightLink] {
+        if let linkColor = colorAssets?[.chatBubbleRightLink] {
             self.messageTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
         }
         
@@ -57,16 +57,16 @@ final class ChatChannelTextOthersCell: ChatChannelOthersCell, ChannelTextCell {
         }
     }
     
-    override func configureOtherMessage(avatar url: String?, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, config: AvatarConfig, series: Bool) {
+    override func configureOtherMessage(avatar url: String?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, config: AvatarConfig?, series: Bool) {
         super.configureOtherMessage(avatar: url, imageAssets: imageAssets, colorAssets: colorAssets, config: config, series: series)
     
         self.messageTextView.textAlignment = .left
         self.messageTextView.textColor = .black
         self.messageTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.blue]
-        if let bubbleTextColor = colorAssets[.chatBubbleLeftText] {
+        if let bubbleTextColor = colorAssets?[.chatBubbleLeftText] {
             self.messageTextView.textColor = bubbleTextColor
         }
-        if let linkColor = colorAssets[.chatBubbleLeftLink] {
+        if let linkColor = colorAssets?[.chatBubbleLeftLink] {
             self.messageTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
         }
     }

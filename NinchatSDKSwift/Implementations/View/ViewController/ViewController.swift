@@ -7,5 +7,6 @@
 import UIKit
 
 protocol ViewController: UIViewController {
-    var session: NINChatSession! { get set }
+    var session: NINChatSession? { get set }
+    var sessionManager: NINChatSessionManager? { get set }
 }

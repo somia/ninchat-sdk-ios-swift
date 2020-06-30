@@ -28,10 +28,12 @@ final class QuestionnaireElementLikert: QuestionnaireElementRadio {
 extension QuestionnaireElementLikert {
     func shapeLikertView() {
         var upperView: UIView?
-        self.options.forEach { [unowned self] string in
-            let option = self.option(string, self.options)
-            let button = self.generateButton(for: option, tag: Int(option.value)!)
-            self.layoutButton(button, upperView: &upperView)
+        self.options.forEach { [weak self] string in
+            guard let weakSelf = self else { return }
+
+            let option = weakSelf.option(string, weakSelf.options)
+            let button = weakSelf.generateButton(for: option, tag: Int(option.value)!)
+            weakSelf.layoutButton(button, upperView: &upperView)
         }
     }
 }

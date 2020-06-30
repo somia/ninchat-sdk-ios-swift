@@ -8,13 +8,13 @@ import UIKit
 
 protocol ChatViewProtocol: UIView {
     /** ChatView data source. */
-    var dataSource: ChatViewDataSource! { get set }
+    var dataSource: ChatViewDataSource? { get set }
     
     /** ChatView delegate. */
-    var delegate: ChatViewDelegate! { get set }
+    var delegate: ChatViewDelegate? { get set }
     
     /** Chat session manager. */
-    var sessionManager: NINChatSessionManager! { get set }
+    var sessionManager: NINChatSessionManager? { get set }
     
     /** A new message was added to given index. Updates the view. */
     func didAddMessage(at index: Int)
@@ -81,7 +81,7 @@ final class ChatView: UIView, ChatViewProtocol {
         }
     }
     
-    private var cell: ((ChannelMessage, UITableView, IndexPath) -> ChatChannelCell) = { (message, tableView, index) -> ChatChannelCell in
+    private var cell: (ChannelMessage, UITableView, IndexPath) -> ChatChannelCell = { (message, tableView, index) -> ChatChannelCell in
         if let compose = message as? ComposeMessage {
             return tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelComposeCell
         } else if let text = message as? TextMessage {
@@ -94,25 +94,25 @@ final class ChatView: UIView, ChatViewProtocol {
     }
     
     // MARK: - ChatViewProtocol
-    
-    var dataSource: ChatViewDataSource!
-    var delegate: ChatViewDelegate!
-    var sessionManager: NINChatSessionManager! {
+
+    weak var sessionManager: NINChatSessionManager? {
         didSet {
-            self.imageAssets = self.sessionManager.delegate?.imageAssetsDictionary
-            self.colorAssets = self.sessionManager.delegate?.colorAssetsDictionary
+            self.imageAssets = self.sessionManager?.delegate?.imageAssetsDictionary
+            self.colorAssets = self.sessionManager?.delegate?.colorAssetsDictionary
             
-            self.agentAvatarConfig = AvatarConfig(avatar: sessionManager.siteConfiguration.agentAvatar, name: sessionManager.siteConfiguration.agentName)
-            self.userAvatarConfig = AvatarConfig(avatar: sessionManager.siteConfiguration.userAvatar, name: sessionManager.siteConfiguration.userName)
+            self.agentAvatarConfig = AvatarConfig(avatar: sessionManager?.siteConfiguration.agentAvatar, name: sessionManager?.siteConfiguration.agentName)
+            self.userAvatarConfig = AvatarConfig(avatar: sessionManager?.siteConfiguration.userAvatar, name: sessionManager?.siteConfiguration.userName)
         }
     }
+    weak var dataSource: ChatViewDataSource?
+    weak var delegate: ChatViewDelegate?
     
     func didAddMessage(at index: Int) {
-        tableView.insertRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+        self.tableView.insertRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
     }
     
     func didRemoveMessage(from index: Int) {
-        tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+        self.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
     }
     
     func updateContentSize(_ value: CGFloat) {
@@ -131,11 +131,11 @@ final class ChatView: UIView, ChatViewProtocol {
 extension ChatView: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         self.cellConstraints.insert(.zero, at: 0)
-        return dataSource.numberOfMessages(for: self)
+        return dataSource?.numberOfMessages(for: self) ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let message = dataSource.message(at: indexPath.row, self)
+        guard let message = dataSource?.message(at: indexPath.row, self) else { fatalError("Unable to fetch chat cell") }
         
         if let channelMSG = message as? ChannelMessage {
             return setupBubbleCell(channelMSG, at: indexPath)
@@ -156,26 +156,27 @@ extension ChatView {
         cell.session = self.sessionManager
         cell.videoThumbnailManager = videoThumbnailManager
 
-        cell.onComposeSendTapped = { [unowned self] composeContentView in
-            self.delegate?.didSendUIAction(composeContent: composeContentView)
+        cell.onComposeSendTapped = { [weak self] composeContentView in
+            self?.delegate?.didSendUIAction(composeContent: composeContentView)
         }
-        cell.onComposeUpdateTapped = { [unowned self] composeState in
-            self.composeMessageStates?[message.messageID] = composeState
+        cell.onComposeUpdateTapped = { [weak self] composeState in
+            self?.composeMessageStates?[message.messageID] = composeState
         }
-        cell.onImageTapped = { [unowned self] attachment, image in
-            self.delegate.didSelect(image: image, for: attachment, self)
+        cell.onImageTapped = { [weak self] attachment, image in
+            guard let weakSelf = self else { return }
+            weakSelf.delegate?.didSelect(image: image, for: attachment, weakSelf)
         }
-        cell.onConstraintsUpdate = { [unowned self] in
+        cell.onConstraintsUpdate = { [weak self] in
             cell.isReloading = true
             UIView.animate(withDuration: TimeConstants.kAnimationDuration.rawValue, animations: {
-                self.tableView.beginUpdates()
-                self.tableView.endUpdates()
+                self?.tableView.beginUpdates()
+                self?.tableView.endUpdates()
             }, completion: { finished in
                 cell.isReloading = !finished
             })
         }
         
-        cell.populateChannel(message: message, configuration: self.sessionManager.siteConfiguration, imageAssets: self.imageAssets, colorAssets: self.colorAssets, agentAvatarConfig: self.agentAvatarConfig, userAvatarConfig: self.userAvatarConfig, composeState: self.composeMessageStates?[message.messageID])
+        cell.populateChannel(message: message, configuration: self.sessionManager?.siteConfiguration, imageAssets: self.imageAssets, colorAssets: self.colorAssets, agentAvatarConfig: self.agentAvatarConfig, userAvatarConfig: self.userAvatarConfig, composeState: self.composeMessageStates?[message.messageID])
         return cell
     }
 
@@ -187,9 +188,10 @@ extension ChatView {
 
     private func setupMetaCell(_ message: MetaMessage, at indexPath: IndexPath) -> ChatMetaCell {
         let cell: ChatMetaCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
-        cell.delegate = self.sessionManager.delegate
-        cell.onCloseChatTapped = { [unowned self] _ in
-            self.delegate.didRequestToClose(self)
+        cell.delegate = self.sessionManager?.delegate
+        cell.onCloseChatTapped = { [weak self] _ in
+            guard let weakSelf = self else { return }
+            weakSelf.delegate?.didRequestToClose(weakSelf)
         }
         
         cell.populate(message: message, colorAssets: self.colorAssets)

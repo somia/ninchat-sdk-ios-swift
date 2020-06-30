@@ -27,8 +27,8 @@ final class QuestionnaireDataSourceDelegateTests: XCTestCase {
         (self.session.sessionManager as! NINChatSessionManagerImpl).setSiteConfiguration(SiteConfigurationImpl(configuration: try! openAsset(forResource: "site-configuration-mock"), environments: ["default"]))
         self.viewModel = NINQuestionnaireViewModelImpl(sessionManager: self.session.sessionManager, queue: Queue(queueID: "", name: "", isClosed: false), questionnaireType: .pre)
 
-        formQuestionnaireDataSource = NINQuestionnaireFormDataSourceDelegate(viewModel: viewModel, session: self.session)
-        conversationQuestionnaireDataSource = NINQuestionnaireConversationDataSourceDelegate(viewModel: viewModel, session: self.session)
+        formQuestionnaireDataSource = NINQuestionnaireFormDataSourceDelegate(viewModel: viewModel, session: self.session, sessionManager: self.session.sessionManager)
+        conversationQuestionnaireDataSource = NINQuestionnaireConversationDataSourceDelegate(viewModel: viewModel, session: self.session, sessionManager: self.session.sessionManager)
     }
 
     private var formQuestionnaireDataSource: QuestionnaireDataSourceDelegate!
@@ -38,7 +38,6 @@ final class QuestionnaireDataSourceDelegateTests: XCTestCase {
 // MARK: - 'Form-like' tests
 extension QuestionnaireDataSourceDelegateTests {
     func test_101_conformance() {
-        XCTAssertNotNil(formQuestionnaireDataSource.session)
         XCTAssertNotNil(formQuestionnaireDataSource.viewModel)
     }
 
@@ -53,7 +52,7 @@ extension QuestionnaireDataSourceDelegateTests {
 
     func test_104_questionnaireCell() {
         formQuestionnaireDataSource.isLoadingNewElements = true
-        XCTAssertEqual(formQuestionnaireDataSource.height(at: IndexPath(row: 0, section: 0)), 590.5)
+        XCTAssertEqual(formQuestionnaireDataSource.height(at: IndexPath(row: 0, section: 0)), 588.5)
         XCTAssertTrue(formQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) is QuestionnaireCell)
         XCTAssertEqual((formQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) as! QuestionnaireCell).style, QuestionnaireStyle.form)
     }
@@ -81,7 +80,6 @@ extension QuestionnaireDataSourceDelegateTests {
 extension QuestionnaireDataSourceDelegateTests {
     func test_001_conformance() {
         XCTAssertTrue(conversationQuestionnaireDataSource is QuestionnaireConversationHelpers)
-        XCTAssertNotNil(conversationQuestionnaireDataSource.session)
         XCTAssertNotNil(conversationQuestionnaireDataSource.viewModel)
     }
 
@@ -135,7 +133,7 @@ extension QuestionnaireDataSourceDelegateTests {
         XCTAssertEqual((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).insertRow(), 0)
 
         conversationQuestionnaireDataSource.isLoadingNewElements = false
-        XCTAssertEqual(conversationQuestionnaireDataSource.height(at: IndexPath(row: 0, section: 0)), 590.5)
+        XCTAssertEqual(conversationQuestionnaireDataSource.height(at: IndexPath(row: 0, section: 0)), 588.5)
         XCTAssertTrue(conversationQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) is QuestionnaireCell)
         XCTAssertEqual((conversationQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) as! QuestionnaireCell).style, QuestionnaireStyle.conversation)
 

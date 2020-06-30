@@ -533,7 +533,7 @@ extension NINChatSessionManagerImpl {
     
     internal func handleCompose(message id: String, user: ChannelUser?, time: Double, actionID: Int, remained: NINResult<Int>, payload: NINLowLevelClientPayload) throws {
         
-        try [Int](0..<payload.length()).forEach { [unowned self] index in
+        try [Int](0..<payload.length()).forEach { [weak self] index in
             let decode: NINResult<[ComposeContent]> = payload.get(index)!.decode()
             switch decode {
             case .success(let compose):
@@ -541,7 +541,7 @@ extension NINChatSessionManagerImpl {
                 if compose.filter({ $0.element != .button && $0.element != .select }).count > 0 {
                     debugger("Found ui/compose object with unhandled element, discarding message")
                 } else {
-                    self.add(message: ComposeMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user?.userID == self.myUserID, sender: user, content: compose), remained: remained)
+                    self?.add(message: ComposeMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user?.userID == self?.myUserID, sender: user, content: compose), remained: remained)
                 }
             case .failure(let error):
                 throw error

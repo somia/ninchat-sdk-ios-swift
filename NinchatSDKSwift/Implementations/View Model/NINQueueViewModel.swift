@@ -18,7 +18,7 @@ protocol NINQueueViewModel {
 final class NINQueueViewModelImpl: NINQueueViewModel {
     
     private unowned var sessionManager: NINChatSessionManager!
-    private weak var delegate: NINChatSessionInternalDelegate?
+    private var delegate: NINChatSessionInternalDelegate?
     private var readyToJoin: Bool = false
 
     // MARK: - NINQueueViewModel
@@ -42,12 +42,12 @@ final class NINQueueViewModelImpl: NINQueueViewModel {
     
     func connect(queue: Queue) {
         do {
-            try self.sessionManager.join(queue: queue.queueID, progress: { [unowned self] queue, error, progress in
+            try self.sessionManager.join(queue: queue.queueID, progress: { [weak self] queue, error, progress in
                 if let error = error {
-                    self.delegate?.log(format: "Failed to join the queue: %@", error.localizedDescription)
-                    self.onQueueJoin?(error)
+                    self?.delegate?.log(format: "Failed to join the queue: %@", error.localizedDescription)
+                    self?.onQueueJoin?(error)
                 }
-                self.onInfoTextUpdate?(self.queueTextInfo(queue: queue, progress))
+                self?.onInfoTextUpdate?(self?.queueTextInfo(queue: queue, progress))
             }, completion: { [weak self] in
                 self?.onQueueJoin?(nil)
                 self?.readyToJoin = true

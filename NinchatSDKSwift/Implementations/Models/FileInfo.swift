@@ -46,7 +46,7 @@ final class FileInfo {
     
     // MARK: - Functions
     
-    func updateInfo(session: NINChatSessionAttachment, completion: @escaping (Error?, _ didRefreshNetwork: Bool) -> Void) {
+    func updateInfo(session: NINChatSessionAttachment?, completion: @escaping (Error?, _ didRefreshNetwork: Bool) -> Void) {
         /// The URL must not expire within the next 15 minutes
         let comparisonDate = Date(timeIntervalSinceNow: -(15*60))
 
@@ -58,7 +58,7 @@ final class FileInfo {
 
         debugger("Must update file info; call describe_file with id: \(self.fileID ?? "")")
         do {
-            try session.describe(file: self.fileID) { [weak self] error, fileInfo in
+            try session?.describe(file: self.fileID) { [weak self] error, fileInfo in
                 debugger("described file with id: \(self?.fileID ?? "nil")")
 
                 if let error = error {

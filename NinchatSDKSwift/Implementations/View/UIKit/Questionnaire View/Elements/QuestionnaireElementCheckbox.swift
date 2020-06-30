@@ -153,11 +153,11 @@ extension QuestionnaireElement where Self:QuestionnaireElementCheckbox {
 extension QuestionnaireElementCheckbox {
     func shapeCheckbox(_ configuration: QuestionnaireConfiguration?) {
         var upperView: UIView?
-        configuration?.options?.forEach { [unowned self] option in
-            let icon = self.generateIcon(tag: (configuration?.options?.firstIndex(of: option))!)
-            let button = self.generateButton(for: option, icon: icon, tag: (configuration?.options?.firstIndex(of: option))!)
-            self.layout(icon: icon.1, within: icon.0)
-            self.layout(button: button, icon: icon.0, upperView: &upperView)
+        configuration?.options?.forEach { [weak self] option in
+            guard let icon = self?.generateIcon(tag: (configuration?.options?.firstIndex(of: option))!) else { return }
+            guard let button = self?.generateButton(for: option, icon: icon, tag: (configuration?.options?.firstIndex(of: option))!) else { return }
+            self?.layout(icon: icon.1, within: icon.0)
+            self?.layout(button: button, icon: icon.0, upperView: &upperView)
         }
     }
 

@@ -414,8 +414,6 @@ extension NinchatSDKSwiftAcceptanceTests: NINChatSessionInternalDelegate {
 }
 
 extension NinchatSDKSwiftAcceptanceTests: QueueUpdateCapture {
-
-    
     var desc: String {
         "NinchatSDKSwiftServerInternalTests"
     }

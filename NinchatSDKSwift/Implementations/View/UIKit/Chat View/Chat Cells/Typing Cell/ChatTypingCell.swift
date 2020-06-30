@@ -38,19 +38,19 @@ final class ChatTypingCell: UITableViewCell {
     }
 
     /// Performs asset customizations independent of message sender
-    private func applyCommon(imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary) {
-        if let nameColor = colorAssets[.chatName] {
+    private func applyCommon(imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?) {
+        if let nameColor = colorAssets?[.chatName] {
             self.senderNameLabel.textColor = nameColor
         }
         
-        if let timeColor = colorAssets[.chatTimestamp] {
+        if let timeColor = colorAssets?[.chatTimestamp] {
             self.timeLabel.textColor = timeColor
         }
     }
 
-    private func apply(avatar config: AvatarConfig, imageView: UIImageView, url: String?) {
-        imageView.isHidden = !config.show
-        if let overrideURL = config.imageOverrideURL {
+    private func apply(avatar config: AvatarConfig?, imageView: UIImageView, url: String?) {
+        imageView.isHidden = !(config?.show ?? false)
+        if let overrideURL = config?.imageOverrideURL {
             imageView.image(from: overrideURL)
         } else {
             imageView.image(from: url)
@@ -61,20 +61,20 @@ final class ChatTypingCell: UITableViewCell {
 // MARK: - TypingCell
 
 extension ChatTypingCell: TypingCell {
-    func populateTyping(message: UserTypingMessage, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: AvatarConfig) {
-        if let user = message.user, !user.displayName.isEmpty, agentAvatarConfig.nameOverride.isEmpty {
+    func populateTyping(message: UserTypingMessage, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, agentAvatarConfig: AvatarConfig?) {
+        if let user = message.user, !user.displayName.isEmpty, let name = agentAvatarConfig?.nameOverride, !name.isEmpty {
             self.senderNameLabel.text = user.displayName
         } else {
-            self.senderNameLabel.text = agentAvatarConfig.nameOverride
+            self.senderNameLabel.text = agentAvatarConfig?.nameOverride ?? ""
         }
         self.timeLabel.text = DateFormatter.shortTime.string(from: message.timestamp)
 
         /// Make Image view background match the bubble color
         self.bubbleImageView.tintColor = .white
-        self.bubbleImageView.image = imageAssets[.chatBubbleLeft]
+        self.bubbleImageView.image = imageAssets?[.chatBubbleLeft]
 
         self.messageImageView.backgroundColor = .white
-        self.messageImageView.image = imageAssets[.chatWritingIndicator]
+        self.messageImageView.image = imageAssets?[.chatWritingIndicator]
         self.messageImageView.tintColor = .black
 
         /// Apply asset overrides
@@ -86,16 +86,16 @@ extension ChatTypingCell: TypingCell {
 // MARK: - LoadingCell
 
 extension ChatTypingCell: LoadingCell {
-    func populateLoading(name: String, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary) {
+    func populateLoading(name: String, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?) {
         self.senderNameLabel.text = name
         self.timeLabel.text = ""
 
         /// Make Image view background match the bubble color
         self.bubbleImageView.tintColor = .white
-        self.bubbleImageView.image = imageAssets[.chatBubbleLeft]
+        self.bubbleImageView.image = imageAssets?[.chatBubbleLeft]
 
         self.messageImageView.backgroundColor = .white
-        self.messageImageView.image = imageAssets[.chatWritingIndicator]
+        self.messageImageView.image = imageAssets?[.chatWritingIndicator]
         self.messageImageView.tintColor = .black
 
         /// Apply asset overrides

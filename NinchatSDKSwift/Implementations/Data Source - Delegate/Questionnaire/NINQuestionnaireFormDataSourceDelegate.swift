@@ -10,7 +10,9 @@ final class NINQuestionnaireFormDataSourceDelegate: QuestionnaireDataSourceDeleg
 
     // MARK: - NINQuestionnaireFormDelegate
 
-    var session: NINChatSession!
+    private weak var session: NINChatSession?
+    private weak var sessionManager: NINChatSessionManager?
+
     var viewModel: NINQuestionnaireViewModel!
     var onUpdateCellContent: (() -> Void)?
     var onRemoveCellContent: (() -> Void)?
@@ -19,8 +21,9 @@ final class NINQuestionnaireFormDataSourceDelegate: QuestionnaireDataSourceDeleg
 
     var isLoadingNewElements: Bool! = false
 
-    init(viewModel: NINQuestionnaireViewModel, session: NINChatSession) {
+    init(viewModel: NINQuestionnaireViewModel, session: NINChatSession, sessionManager: NINChatSessionManager) {
         self.session = session
+        self.sessionManager = sessionManager
         self.viewModel = viewModel
     }
 
@@ -60,7 +63,7 @@ extension NINQuestionnaireFormDataSourceDelegate {
             let cell: QuestionnaireNavigationCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
             cell.configuration = try self.viewModel.getConfiguration()
             cell.requirementsSatisfied = self.viewModel.requirementsSatisfied
-            cell.overrideAssets(with: self.session)
+            cell.overrideAssets(with: self.session?.internalDelegate)
 
             self.viewModel.requirementSatisfactionUpdater = { [weak self] satisfied in
                 self?.onRequirementsUpdated(satisfied, for: cell)
@@ -84,7 +87,7 @@ extension NINQuestionnaireFormDataSourceDelegate {
             let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
             let element = try self.viewModel.getElements()[indexPath.row]
             element.questionnaireStyle = .form
-            element.overrideAssets(with: self.session)
+            element.overrideAssets(with: self.session?.internalDelegate)
 
             if var view = element as? QuestionnaireSettable {
                 self.setupSettable(view: &view, element: element)
@@ -98,7 +101,7 @@ extension NINQuestionnaireFormDataSourceDelegate {
             cell.style = .form
             cell.indexPath = indexPath
             cell.backgroundColor = .clear
-            cell.sessionManager = self.session.sessionManager
+            cell.sessionManager = self.sessionManager
             self.layoutSubview(element, parent: cell.content)
 
             return cell
@@ -111,8 +114,8 @@ extension NINQuestionnaireFormDataSourceDelegate {
 // MARK: - Audience Register Text
 extension NINQuestionnaireFormDataSourceDelegate {
     func addRegisterSection() -> Bool {
-        guard let registerTitle = self.session.sessionManager.siteConfiguration.audienceRegisteredText else { return false }
-        let closeTitle = self.session.sessionManager.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) ?? "Close Chat"
+        guard let registerTitle = self.sessionManager?.siteConfiguration.audienceRegisteredText else { return false }
+        let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) ?? "Close Chat"
         let registerJSON: [String:AnyHashable] = ["element": "radio", "name": "audienceRegisteredText", "label": registerTitle, "buttons": ["back":false,"next":false], "options":[["label":closeTitle, "value":""]], "redirects":[["target":"_register"]]]
 
         guard let registerConfiguration = AudienceQuestionnaire(from: [registerJSON]).questionnaireConfiguration, registerConfiguration.count > 0, let element = QuestionnaireElementConverter(configurations: registerConfiguration).elements.first else { return false }
@@ -123,8 +126,8 @@ extension NINQuestionnaireFormDataSourceDelegate {
     }
 
     func addClosedRegisteredSection() -> Bool {
-        guard let registerTitle = self.session.sessionManager.siteConfiguration.audienceClosedRegisteredText else { return false }
-        let closeTitle = self.session.sessionManager.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) ?? "Close Chat"
+        guard let registerTitle = self.sessionManager?.siteConfiguration.audienceClosedRegisteredText else { return false }
+        let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) ?? "Close Chat"
         let registerJSON: [String:AnyHashable] = ["element": "radio", "name": "audienceClosedRegisteredText", "label": registerTitle, "buttons": ["back":false,"next":false], "options":[["label":closeTitle, "value":""]], "redirects":[["target":"_register"]]]
 
         guard let registerConfiguration = AudienceQuestionnaire(from: [registerJSON]).questionnaireConfiguration, registerConfiguration.count > 0, let element = QuestionnaireElementConverter(configurations: registerConfiguration).elements.first else { return false }

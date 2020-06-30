@@ -7,14 +7,14 @@
 import UIKit
 
 protocol ComposeMessageViewProtocol: UIView {
-    typealias OnUIComposeSendActionTapped = ((ComposeContentViewProtocol) -> Void)
+    typealias OnUIComposeSendActionTapped = (ComposeContentViewProtocol) -> Void
     var onSendActionTapped: OnUIComposeSendActionTapped? { get set }
     
-    typealias OnUIComposeUpdateActionTapped = (([Bool]) -> Void)
+    typealias OnUIComposeUpdateActionTapped = ([Bool]) -> Void
     var onStateUpdateTapped: OnUIComposeUpdateActionTapped? { get set }
     
     func clear()
-    func populate(message: ComposeMessage, siteConfiguration: SiteConfiguration, colorAssets: NINColorAssetDictionary, composeStates: [Bool]?)
+    func populate(message: ComposeMessage, siteConfiguration: SiteConfiguration?, colorAssets: NINColorAssetDictionary?, composeStates: [Bool]?)
 }
 
 final class ComposeMessageView: UIView, ComposeMessageViewProtocol {
@@ -61,31 +61,31 @@ final class ComposeMessageView: UIView, ComposeMessageViewProtocol {
         self.invalidateIntrinsicContentSize()
     }
 
-    func populate(message: ComposeMessage, siteConfiguration: SiteConfiguration, colorAssets: NINColorAssetDictionary, composeStates: [Bool]?) {
+    func populate(message: ComposeMessage, siteConfiguration: SiteConfiguration?, colorAssets: NINColorAssetDictionary?, composeStates: [Bool]?) {
         /// Reusing existing content views that are already allocated results in UI problems for different scenarios, e.g.
         /// `https://github.com/somia/ninchat-sdk-ios/issues/52`
         self.contentViews = []
         self.composeStates = composeStates ?? Array(repeating: false, count: message.content.count)
         
         let enableSendButton = message.sendPressedIndex == -1
-        message.content.forEach { ( content: ComposeContent) in
+        message.content.forEach { [weak self] (content: ComposeContent) in
             let view: ComposeContentViewProtocol = ComposeContentView(frame: .zero)
             view.populate(message: content, siteConfiguration: siteConfiguration, colorAssets: colorAssets, composeStates: composeStates, enableSendButton: enableSendButton, isSelected: content.sendPressed ?? false)
             view.isHidden = false
-            view.onSendActionTapped = { [unowned self] contentView in
+            view.onSendActionTapped = { [weak self] contentView in
                 content.sendPressed = true
     
                 /// Make the send buttons un-clickable for this message
-                self.contentViews.forEach { $0.removeSendTapAction() }
-                self.onSendActionTapped?(contentView)
+                self?.contentViews.forEach { $0.removeSendTapAction() }
+                self?.onSendActionTapped?(contentView)
             }
-            view.onStateUpdateTapped = { [unowned self] state in
-                self.composeStates = state
-                self.onStateUpdateTapped?(self.composeStates)
+            view.onStateUpdateTapped = { [weak self] state in
+                self?.composeStates = state
+                self?.onStateUpdateTapped?(self?.composeStates ?? [])
             }
             
-            self.contentViews.append(view)
-            self.addSubview(view)
+            self?.contentViews.append(view)
+            self?.addSubview(view)
         }
         
         self.invalidateIntrinsicContentSize()

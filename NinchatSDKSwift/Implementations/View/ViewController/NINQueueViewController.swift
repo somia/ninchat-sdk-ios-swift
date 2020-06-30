@@ -6,11 +6,7 @@
 
 import UIKit
 
-final class NINQueueViewController: UIViewController, ViewController {
-    
-    private var sessionManager: NINChatSessionManager {
-        session.sessionManager
-    }
+final class NINQueueViewController: UIViewController {
     
     // MARK: - Injected
     
@@ -22,7 +18,8 @@ final class NINQueueViewController: UIViewController, ViewController {
     
     // MARK: - ViewController
     
-    var session: NINChatSession!
+    weak var session: NINChatSession?
+    weak var sessionManager: NINChatSessionManager?
     
     // MARK: - Outlets
     
@@ -31,7 +28,7 @@ final class NINQueueViewController: UIViewController, ViewController {
     @IBOutlet private(set) weak var spinnerImageView: UIImageView!
     @IBOutlet private(set) weak var queueInfoTextView: UITextView! {
         didSet {
-            if let textTopColor = self.session.override(colorAsset: .textTop) {
+            if let textTopColor = self.session?.internalDelegate?.override(colorAsset: .textTop) {
                 self.queueInfoTextView.textColor = textTopColor
             }
             queueInfoTextView.text = nil
@@ -40,9 +37,9 @@ final class NINQueueViewController: UIViewController, ViewController {
     }
     @IBOutlet private(set) weak var motdTextView: UITextView! {
         didSet {
-            if let queueText = self.sessionManager.siteConfiguration.inQueue {
+            if let queueText = self.sessionManager?.siteConfiguration.inQueue {
                 motdTextView.setAttributed(text: queueText, font: .ninchat)
-            } else if let motdText = self.sessionManager.siteConfiguration.motd {
+            } else if let motdText = self.sessionManager?.siteConfiguration.motd {
                 motdTextView.setAttributed(text: motdText, font: .ninchat)
             }
             motdTextView.delegate = self
@@ -50,12 +47,13 @@ final class NINQueueViewController: UIViewController, ViewController {
     }
     @IBOutlet private(set) weak var closeChatButton: CloseButton! {
         didSet {
-            let closeTitle = self.session.sessionManager.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
+            let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
+            closeChatButton.overrideAssets(with: self.session?.internalDelegate)
             closeChatButton.buttonTitle = closeTitle
-            closeChatButton.overrideAssets(with: self.session)
             closeChatButton.closure = { [weak self] button in
-                try? self?.sessionManager.closeChat {
-                    self?.sessionManager.deallocateSession()
+                #warning("fix the issue here")
+                try? self?.sessionManager?.closeChat {
+                    self?.sessionManager?.deallocateSession()
                 }
             }
         }
@@ -117,24 +115,24 @@ extension NINQueueViewController {
     }
     
     private func overrideAssets() {
-        closeChatButton.overrideAssets(with: self.session)
         
-        if let spinnerImage = session.override(imageAsset: .iconLoader) {
+        closeChatButton.overrideAssets(with: self.session?.internalDelegate)
+        if let spinnerImage = self.session?.internalDelegate?.override(imageAsset: .iconLoader) {
             self.spinnerImageView.image = spinnerImage
         }
-        if let topBackgroundColor = session.override(colorAsset: .backgroundTop) {
+        if let topBackgroundColor = self.session?.internalDelegate?.override(colorAsset: .backgroundTop) {
             topContainerView.backgroundColor = topBackgroundColor
         }
-        if let bottomBackgroundColor = session.override(colorAsset: .backgroundBottom) {
+        if let bottomBackgroundColor = self.session?.internalDelegate?.override(colorAsset: .backgroundBottom) {
             bottomContainerView.backgroundColor = bottomBackgroundColor
         }
-        if let textTopColor = session.override(colorAsset: .textTop) {
+        if let textTopColor = self.session?.internalDelegate?.override(colorAsset: .textTop) {
             queueInfoTextView.textColor = textTopColor
         }
-        if let textBottomColor = session.override(colorAsset: .textBottom) {
+        if let textBottomColor = self.session?.internalDelegate?.override(colorAsset: .textBottom) {
             motdTextView.textColor = textBottomColor
         }
-        if let linkColor = session.override(colorAsset: .link) {
+        if let linkColor = self.session?.internalDelegate?.override(colorAsset: .link) {
             let attribute = [NSAttributedString.Key.foregroundColor: linkColor]
             queueInfoTextView.linkTextAttributes = attribute
             motdTextView.linkTextAttributes = attribute

@@ -142,18 +142,18 @@ extension QuestionnaireElementSelect {
         if dialogueIsShown { return }
 
         self.dialogueIsShown = true
-        ChoiceDialogue.showDialogue(withOptions: options) { [unowned self] result in
-            self.dialogueIsShown = false
+        ChoiceDialogue.showDialogue(withOptions: options) { [weak self] result in
+            self?.dialogueIsShown = false
 
             switch result {
             case .cancel:
-                guard let option = self.elementConfiguration?.options?.first(where: { $0.label == self.selectedOption.text }) else { return }
-                self.deselect(option: option)
+                guard let option = self?.elementConfiguration?.options?.first(where: { $0.label == self?.selectedOption.text }) else { return }
+                self?.deselect(option: option)
             case .select(let index):
-                guard let option = self.elementConfiguration?.options?[index] else { fatalError("Unable to pick selected option") }
-                self.select(option: option)
+                guard let option = self?.elementConfiguration?.options?[index] else { fatalError("Unable to pick selected option") }
+                self?.select(option: option)
             }
-            self.updateBorder()
+            self?.updateBorder()
         }
     }
 

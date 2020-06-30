@@ -25,15 +25,16 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
 
     // MARK: - ViewController
 
-    var session: NINChatSession!
+    weak var session: NINChatSession?
+    weak var sessionManager: NINChatSessionManager?
 
     // MARK: - Injected
 
     var queue: Queue?
     var style: QuestionnaireStyle!
-    var dataSourceDelegate: QuestionnaireDataSourceDelegate! {
+    var dataSourceDelegate: QuestionnaireDataSourceDelegate? {
         didSet {
-            dataSourceDelegate.onUpdateCellContent = { [weak self] in
+            dataSourceDelegate?.onUpdateCellContent = { [weak self] in
                 guard let style = self?.style else { return }
                 switch style {
                 case .form:
@@ -48,7 +49,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
                 guard let updateOperationBlock = self?.updateOperationBlock else { return }
                 self?.operationQueue.addOperation(updateOperationBlock)
             }
-            dataSourceDelegate.onRemoveCellContent = { [weak self] in
+            dataSourceDelegate?.onRemoveCellContent = { [weak self] in
                 guard self?.style == .conversation else { return }
                 self?.removeQuestionnaireSection()
             }
@@ -62,14 +63,14 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
                 /// The operation is called only when the dependency ('updateOperationBlock') is satisfied
                 if let error = error as? NinchatError, error.title == "queue_is_closed", let updateOperationBlock = self?.updateOperationBlock {
                     let closedRegisteredOperation = BlockOperation {
-                        _ = self?.dataSourceDelegate.addClosedRegisteredSection()
+                        _ = self?.dataSourceDelegate?.addClosedRegisteredSection()
                     }
                     closedRegisteredOperation.addDependency(updateOperationBlock)
                     self?.operationQueue.addOperation(closedRegisteredOperation)
                     return
                 }
                 Toast.show(message: .error("Error is submitting the answers")) { [weak self] in
-                    self?.session.onDidEnd()
+                    self?.session?.internalDelegate?.onDidEnd()
                 }
             }
             viewModel.onQuestionnaireFinished = { [weak self] queue, exit in
@@ -78,14 +79,14 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
                 } else if exit {
                     self?.viewModel.onSessionFinished?()
                 } else {
-                    _ = self?.dataSourceDelegate.addRegisterSection()
+                    _ = self?.dataSourceDelegate?.addRegisterSection()
                 }
             }
-            viewModel.onSessionFinished = { [unowned self] in
-                if let ratingViewModel = self.ratingViewModel {
-                    (self.rating != nil) ? ratingViewModel.rateChat(with: self.rating!) : ratingViewModel.skipRating()
+            viewModel.onSessionFinished = { [weak self] in
+                if let ratingViewModel = self?.ratingViewModel, let weakSelf = self {
+                    (weakSelf.rating != nil) ? ratingViewModel.rateChat(with: weakSelf.rating!) : ratingViewModel.skipRating()
                 } else {
-                    self.session.onDidEnd()
+                    self?.session?.internalDelegate?.onDidEnd()
                 }
             }
         }
@@ -147,7 +148,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
     }
 
     private func overrideAssets() {
-        if let backgroundImage = self.session.override(imageAsset: .questionnaireBackground) {
+        if let backgroundImage = self.session?.internalDelegate?.override(imageAsset: .questionnaireBackground) {
             self.view.backgroundColor = UIColor(patternImage: backgroundImage)
         } else if let bundleImage = UIImage(named: "chat_background_pattern", in: .SDKBundle, compatibleWith: nil) {
             self.view.backgroundColor = UIColor(patternImage: bundleImage)
@@ -246,13 +247,13 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     }
 
     private func addLoadingRow(at section: Int) {
-        guard let contentView = self.contentView, var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
+        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
         conversationDataSource.isLoadingNewElements = true
         contentView.insertRows(at: [IndexPath(row: 0, section: section)], with: .automatic)
     }
 
     private func removeLoadingRow(at section: Int) {
-        guard let contentView = self.contentView, var conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("Not conformed") }
+        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("Not conformed") }
         conversationDataSource.isLoadingNewElements = false
         contentView.deleteRows(at: [IndexPath(row: 0, section: section)], with: .automatic)
     }
@@ -290,15 +291,15 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
 // MARK: - UITableViewDataSource, UITableViewDelegate
 extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDelegate {
     func numberOfSections(in tableView: UITableView) -> Int {
-        self.dataSourceDelegate.numberOfPages()
+        self.dataSourceDelegate?.numberOfPages() ?? 0
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        self.dataSourceDelegate.numberOfMessages(in: section)
+        self.dataSourceDelegate?.numberOfMessages(in: section) ?? 0
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let height = self.dataSourceDelegate.height(at: indexPath)
+        let height = self.dataSourceDelegate?.height(at: indexPath) ?? 0.0
         if self.style == .conversation {
             return height + ((indexPath.row == 0) ? 60.0 : 16.0)
         }
@@ -306,7 +307,7 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let contentView = self.contentView else { return UITableViewCell() }
-        return self.dataSourceDelegate.cell(at: indexPath, view: contentView)
+        guard let contentView = self.contentView, let cell = self.dataSourceDelegate?.cell(at: indexPath, view: contentView) else { return UITableViewCell() }
+        return cell
     }
 }
