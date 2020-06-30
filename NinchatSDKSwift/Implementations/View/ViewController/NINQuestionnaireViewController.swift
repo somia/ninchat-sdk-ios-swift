@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import AnyCodable
 import NinchatLowLevelClient
 
 protocol QuestionnaireFormViewController {

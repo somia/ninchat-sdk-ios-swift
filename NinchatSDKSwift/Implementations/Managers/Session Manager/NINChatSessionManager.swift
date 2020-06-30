@@ -5,7 +5,6 @@
 //
 
 import Foundation
-import AnyCodable
 import NinchatLowLevelClient
 
 typealias CompletionWithError = (Error?) -> Void

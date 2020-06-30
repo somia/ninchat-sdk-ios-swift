@@ -5,7 +5,6 @@
 //
 
 import UIKit
-import AnyCodable
 
 protocol QuestionnaireElement: UIView {
     var index: Int { get set }

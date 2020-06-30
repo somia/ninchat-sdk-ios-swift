@@ -6,7 +6,7 @@
 
 import Foundation
 
-final class FileInfo {
+final class FileInfo: Codable {
     var fileID: String!
     var name: String!
     var mimeType: String!

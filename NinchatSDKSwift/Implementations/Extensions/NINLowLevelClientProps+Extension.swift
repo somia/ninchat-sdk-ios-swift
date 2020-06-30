@@ -533,11 +533,13 @@ extension NINLowLevelClientProps {
     }
 
     internal func getString(_ key: String) throws -> String {
-        var error: NSError?
-        let value = self.getString(key, error: &error)
-        if let err = error {
-            throw err as Error
+        try autoreleasepool { () -> String in
+            var error: NSError?
+            let value = self.getString(key, error: &error)
+            if let err = error {
+                throw err as Error
+            }
+            return value
         }
-        return value
     }
 }

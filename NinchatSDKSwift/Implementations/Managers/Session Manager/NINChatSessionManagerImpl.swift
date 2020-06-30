@@ -6,7 +6,6 @@
 
 import UIKit
 import Foundation
-import AnyCodable
 import NinchatLowLevelClient
 
 protocol NINChatSessionManagerInternalActions {
