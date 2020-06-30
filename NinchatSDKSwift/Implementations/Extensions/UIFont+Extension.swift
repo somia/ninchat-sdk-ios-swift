@@ -18,15 +18,13 @@ extension UIFont {
         "SourceSansPro-\(FontWeight.regular.rawValue)"
     }
     
-    #warning("LEAKAGE !")
     static var ninchat: UIFont? {
-//        FontWeight.allCases.forEach({ register(font: "SourceSansPro-\($0.rawValue)") })
-//        guard let font = UIFont(name: fontName, size: 16.0) else {
-//            return UIFont(name: fontName, size: 16.0)
-//        }
-//
-//        return font
-        UIFont.systemFont(ofSize: 16.0)
+        FontWeight.allCases.forEach({ register(font: "SourceSansPro-\($0.rawValue)") })
+        guard let font = UIFont(name: fontName, size: 16.0) else {
+            return UIFont(name: fontName, size: 16.0)
+        }
+
+        return font
     }
     
     @discardableResult
@@ -38,6 +36,7 @@ extension UIFont {
             else { return false }
         
         var errorRef: Unmanaged<CFError>? = nil
+        defer { _ = errorRef?.autorelease() }
         return CTFontManagerRegisterGraphicsFont(fontRef, &errorRef)
     }
 }
