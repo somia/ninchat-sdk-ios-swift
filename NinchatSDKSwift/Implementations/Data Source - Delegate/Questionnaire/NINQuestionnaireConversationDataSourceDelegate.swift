@@ -124,12 +124,12 @@ extension NINQuestionnaireConversationDataSourceDelegate: QuestionnaireConversat
     }
 
     private func disablePreviousRows(_ disable: Bool) {
-        guard self.elements.count > self.sectionCount else { return }
+        guard self.elements.count >= self.sectionCount else { return }
         self.elements[sectionCount-1].forEach({ $0.isShown = !disable })
     }
 
     private func enableCurrentRows() {
-        guard self.elements.count > self.sectionCount, !(self.elements[sectionCount-1].first?.isShown ?? false) else { return }
+        guard self.elements.count >= self.sectionCount, !(self.elements[sectionCount-1].first?.isShown ?? false) else { return }
         self.elements[sectionCount-1].forEach({ $0.isShown = true })
     }
 
