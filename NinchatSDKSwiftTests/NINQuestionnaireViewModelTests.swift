@@ -24,7 +24,7 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         viewModel.queue = Queue(queueID: "", name: "", isClosed: false)
         
         let expect = self.expectation(description: "Expected to initiate the view model")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
             expect.fulfill()
         }
         wait(for: [expect], timeout: 10.0)
