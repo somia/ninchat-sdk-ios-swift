@@ -64,7 +64,7 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
             if self.elements.count > index.section {
                 if index.row >= self.elements[index.section].count { return self.shouldShowNavigationCells[index.section] ? 55.0 : 0.0 }
                 if let text = elements[index.section][index.row] as? QuestionnaireElementText {
-                    return text.estimateHeight(width: UIScreen.main.bounds.width - 65.0)
+                    return text.estimateHeight(width: (UIApplication.topViewController()?.view.bounds ?? UIScreen.main.bounds).width - 65.0)
                 }
                 return self.elements[index.section][index.row].elementHeight
             }
