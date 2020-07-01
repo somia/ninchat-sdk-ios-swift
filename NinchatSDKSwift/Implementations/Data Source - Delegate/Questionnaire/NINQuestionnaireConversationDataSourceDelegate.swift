@@ -64,7 +64,7 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
             if self.elements.count > index.section {
                 if index.row >= self.elements[index.section].count { return self.shouldShowNavigationCells[index.section] ? 55.0 : 0.0 }
                 if let text = elements[index.section][index.row] as? QuestionnaireElementText {
-                    return text.estimateHeight(width: UIScreen.main.bounds.width - 65.0)
+                    return text.estimateHeight(width: (UIApplication.topViewController()?.view.bounds ?? UIScreen.main.bounds).width - 65.0)
                 }
                 return self.elements[index.section][index.row].elementHeight
             }
@@ -124,12 +124,12 @@ extension NINQuestionnaireConversationDataSourceDelegate: QuestionnaireConversat
     }
 
     private func disablePreviousRows(_ disable: Bool) {
-        guard self.elements.count > self.sectionCount else { return }
+        guard self.elements.count >= self.sectionCount else { return }
         self.elements[sectionCount-1].forEach({ $0.isShown = !disable })
     }
 
     private func enableCurrentRows() {
-        guard self.elements.count > self.sectionCount, !(self.elements[sectionCount-1].first?.isShown ?? false) else { return }
+        guard self.elements.count >= self.sectionCount, !(self.elements[sectionCount-1].first?.isShown ?? false) else { return }
         self.elements[sectionCount-1].forEach({ $0.isShown = true })
     }
 

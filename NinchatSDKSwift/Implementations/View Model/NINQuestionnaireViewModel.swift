@@ -8,6 +8,7 @@ import Foundation
 import NinchatLowLevelClient
 
 protocol NINQuestionnaireViewModel {
+    var queue: Queue? { get set }
     var pageNumber: Int { get set }
     var previousPage: Int { get set }
     var requirementsSatisfied: Bool { get }
@@ -19,7 +20,7 @@ protocol NINQuestionnaireViewModel {
     var onSessionFinished: (() -> Void)? { get set }
     var requirementSatisfactionUpdater: ((Bool) -> Void)? { get set }
 
-    init(sessionManager: NINChatSessionManager, queue: Queue?, questionnaireType: AudienceQuestionnaireType)
+    init(sessionManager: NINChatSessionManager?, questionnaireType: AudienceQuestionnaireType)
     func isExitElement(_ element: Any?) -> Bool
     func getConfiguration() throws -> QuestionnaireConfiguration
     func getElements() throws -> [QuestionnaireElement]
@@ -40,17 +41,29 @@ protocol NINQuestionnaireViewModel {
 
 final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 
-    private let sessionManager: NINChatSessionManager
+    private let operationQueue = OperationQueue.main
+
+    private weak var sessionManager: NINChatSessionManager?
     private var configurations: [QuestionnaireConfiguration] = []
     internal var connector: QuestionnaireElementConnector!
     private var views: [[QuestionnaireElement]] = []
-    private let queue: Queue?
     internal var answers: [String:AnyHashable]! = [:]
     internal var askedPageNumber: Int?
     private var setPageNumber: Int?
-
+    private var setupConnectorOperation: BlockOperation!
+    
     // MARK: - NINQuestionnaireViewModel
 
+    var queue: Queue? {
+        didSet {
+            guard let queue = queue else { return }
+            let setupPareConnectorOperation = BlockOperation { [weak self] in
+                self?.setupPreConnector(queue: queue)
+            }
+            setupPareConnectorOperation.addDependency(self.setupConnectorOperation)
+            self.operationQueue.addOperations([setupPareConnectorOperation], waitUntilFinished: false)
+        }
+    }
     var pageNumber: Int = 0
     var previousPage: Int = 0
     var onSessionFinished: (() -> Void)?
@@ -58,19 +71,33 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     var onQuestionnaireFinished: ((Queue?, _ exit: Bool) -> Void)?
     var requirementSatisfactionUpdater: ((Bool) -> Void)?
 
-    init(sessionManager: NINChatSessionManager, queue: Queue?, questionnaireType: AudienceQuestionnaireType) {
-        self.queue = queue
+    init(sessionManager: NINChatSessionManager?, questionnaireType: AudienceQuestionnaireType) {
         self.sessionManager = sessionManager
-        self.configurations = (questionnaireType == .pre) ? sessionManager.siteConfiguration.preAudienceQuestionnaire! : sessionManager.siteConfiguration.postAudienceQuestionnaire!
-        self.views = QuestionnaireElementConverter(configurations: configurations).elements
-        self.connector = QuestionnaireElementConnectorImpl(configurations: configurations)
 
-        if let queue = queue, questionnaireType == .pre {
-            self.answers = (try? self.extractGivenPreAnswers()) ?? [:]
-            self.setupPreConnector(queue: queue)
-        } else if questionnaireType == .post {
-            self.setupPostConnector()
+        let configurationOperation = BlockOperation { [weak self] in
+            guard let configurations = (questionnaireType == .pre) ? sessionManager?.siteConfiguration.preAudienceQuestionnaire : sessionManager?.siteConfiguration.postAudienceQuestionnaire else { return }
+            self?.configurations = configurations
         }
+        let elementsOperation = BlockOperation { [weak self] in
+            guard let configurations = self?.configurations else { return }
+            self?.views = QuestionnaireElementConverter(configurations: configurations).elements
+        }
+        let connectorOperation = BlockOperation { [weak self] in
+            guard let configurations = self?.configurations else { return }
+            self?.connector = QuestionnaireElementConnectorImpl(configurations: configurations)
+        }
+        self.setupConnectorOperation = BlockOperation { [weak self] in
+            if questionnaireType == .pre {
+                self?.answers = (try? self?.extractGivenPreAnswers()) ?? [:]
+            } else if questionnaireType == .post {
+                self?.setupPostConnector()
+            }
+        }
+
+        elementsOperation.addDependency(configurationOperation)
+        connectorOperation.addDependency(configurationOperation)
+        setupConnectorOperation.addDependency(connectorOperation)
+        self.operationQueue.addOperations([configurationOperation, elementsOperation, connectorOperation, setupConnectorOperation], waitUntilFinished: false)
     }
 
     private func setupPreConnector(queue: Queue) {
@@ -106,7 +133,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
                 if self?.hasToWaitForUserConfirmation(autoApply) ?? false {
                     self?.askedPageNumber = (self?.views.count ?? 0) + 1; return
                 }
-                try self?.sessionManager.send(type: .metadata, payload: ["data": ["post_answers": self?.answers ?? [:]], "time": Date().timeIntervalSince1970]) { error in
+                try self?.sessionManager?.send(type: .metadata, payload: ["data": ["post_answers": self?.answers ?? [:]], "time": Date().timeIntervalSince1970]) { error in
                     if let error = error {
                         self?.onErrorOccurred?(error)
                     } else {
@@ -132,7 +159,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     }
 
     private func extractGivenPreAnswers() throws -> [String:AnyHashable] {
-        if let answersMetadata: NINResult<NINLowLevelClientProps> = sessionManager.audienceMetadata?.get(forKey: "pre_answers"), case let .success(pre_answers) = answersMetadata {
+        if let answersMetadata: NINResult<NINLowLevelClientProps> = sessionManager?.audienceMetadata?.get(forKey: "pre_answers"), case let .success(pre_answers) = answersMetadata {
             let parser = NINChatClientPropsParser()
             try pre_answers.accept(parser)
 
@@ -144,7 +171,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     }
 
     private func canJoinGivenQueue(withID id: String) -> (Bool, Queue?)? {
-        if let targetQueue = self.sessionManager.queues.first(where: { $0.queueID == id }) {
+        if let targetQueue = self.sessionManager?.queues.first(where: { $0.queueID == id }) {
             return (!targetQueue.isClosed, targetQueue)
         }
         return (false, nil)
@@ -160,7 +187,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 
     private func registerAudience(queueID: String, completion: @escaping (Error?) -> Void) {
         do {
-            try self.sessionManager.registerQuestionnaire(queue: queueID, answers: NINLowLevelClientProps.initiate(preQuestionnaireAnswers: self.answers), completion: completion)
+            try self.sessionManager?.registerQuestionnaire(queue: queueID, answers: NINLowLevelClientProps.initiate(preQuestionnaireAnswers: self.answers), completion: completion)
         } catch {
             completion(error)
         }
@@ -175,7 +202,7 @@ extension NINQuestionnaireViewModelImpl {
             self.connector.onRegisterTargetReached?(logic, redirect, autoApply); return
         }
 
-        self.sessionManager.preAudienceQuestionnaireMetadata = self.questionnaireAnswers
+        self.sessionManager?.preAudienceQuestionnaireMetadata = self.questionnaireAnswers
         self.onQuestionnaireFinished?(targetQueue, false)
     }
 

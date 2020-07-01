@@ -151,17 +151,18 @@ extension QuestionnaireNavigationCell {
 
     private func layoutButton(_ button: UIButton, configuration: ButtonQuestionnaire?, type: QuestionnaireButtonType) {
         self.buttons.addSubview(button)
-
-        button.titleLabel?.font = .ninchat
-        button.imageEdgeInsets = UIEdgeInsets(top: 4.0, left: 4.0, bottom: 4.0, right: 4.0)
-        button
-            .fix(width: max(80.0, self.intrinsicContentSize.width + 32.0), height: 45.0)
-            .round(radius: 45.0 / 2, borderWidth: 1.0, borderColor: .QBlueButtonNormal)
         if type == .back {
             self.shapeNavigationBack(button: button, configuration: configuration?.back)
         } else if type == .next {
             self.shapeNavigationNext(button: button, configuration: configuration?.next)
         }
+
+        button.titleLabel?.font = .ninchat
+        button.imageEdgeInsets = UIEdgeInsets(top: 4.0, left: 4.0, bottom: 4.0, right: 4.0)
+        button
+            .fix(width: max(80.0, button.intrinsicContentSize.width + 32.0), height: 45.0)
+            .round(radius: 45.0 / 2, borderWidth: 1.0, borderColor: .QBlueButtonNormal)
+
     }
 
     private func shapeNavigationNext(button: UIButton, configuration: AnyCodable?) {

@@ -12,16 +12,28 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
     private lazy var answers: NINLowLevelClientProps = {
         NINLowLevelClientProps.initiate(preQuestionnaireAnswers: ["pre-answer1": "1", "pre-answer2": "2", "Phone":"+358123456789"])
     }()
-    private var session: NINChatSessionManagerImpl!
-    private var viewModel: NINQuestionnaireViewModelImpl?
-
+    private lazy var session: NINChatSessionManagerImpl! = {
+        let siteConfiguration = SiteConfigurationImpl(configuration: try! openAsset(forResource: "site-configuration-mock"), environments: ["default"])
+        let sessionManager = NINChatSessionManagerImpl(session: nil, serverAddress: "", audienceMetadata: self.answers, configuration: nil)
+        sessionManager.setSiteConfiguration(siteConfiguration)
+        
+        return sessionManager
+    }()
+    private lazy var viewModel: NINQuestionnaireViewModelImpl? = {
+        let viewModel = NINQuestionnaireViewModelImpl(sessionManager: session, questionnaireType: .pre)
+        viewModel.queue = Queue(queueID: "", name: "", isClosed: false)
+        
+        let expect = self.expectation(description: "Expected to initiate the view model")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            expect.fulfill()
+        }
+        wait(for: [expect], timeout: 10.0)
+        
+        return viewModel
+    }()
+    
     override func setUp() {
         super.setUp()
-        let siteConfiguration = SiteConfigurationImpl(configuration: try! openAsset(forResource: "site-configuration-mock"), environments: ["default"])
-        self.session = NINChatSessionManagerImpl(session: nil, serverAddress: "", audienceMetadata: self.answers, configuration: nil)
-        self.session.setSiteConfiguration(siteConfiguration)
-
-        self.viewModel = NINQuestionnaireViewModelImpl(sessionManager: session, queue: Queue(queueID: "", name: "", isClosed: false), questionnaireType: .pre)
     }
 
     func test_00_initialization() {

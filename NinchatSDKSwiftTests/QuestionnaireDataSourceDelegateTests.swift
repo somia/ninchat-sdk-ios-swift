@@ -9,8 +9,28 @@ import XCTest
 @testable import NinchatSDKSwift
 
 final class QuestionnaireDataSourceDelegateTests: XCTestCase {
-    private var session: NINChatSession!
-    private var viewModel: NINQuestionnaireViewModel!
+    private lazy var session: NINChatSession! = {
+        let session = NINChatSession(configKey: "")
+        let siteConfiguration = SiteConfigurationImpl(configuration: try! openAsset(forResource: "site-configuration-mock"), environments: ["default"])
+        let sessionManager = NINChatSessionManagerImpl(session: nil, serverAddress: "", audienceMetadata: nil, configuration: nil)
+        sessionManager.setSiteConfiguration(siteConfiguration)
+        session.sessionManager = sessionManager
+        
+        return session
+    }()
+    private lazy var viewModel: NINQuestionnaireViewModel! = {
+        let viewModel = NINQuestionnaireViewModelImpl(sessionManager: self.session.sessionManager, questionnaireType: .pre)
+        viewModel.queue = Queue(queueID: "", name: "", isClosed: false)
+        
+        let expect = self.expectation(description: "Expected to initiate the view model")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            expect.fulfill()
+        }
+        wait(for: [expect], timeout: 10.0)
+        
+        return viewModel
+    }()
+
     private lazy var tableView: UITableView = {
         let view = UITableView(frame: .zero)
         view.register(ChatTypingCell.self)
@@ -22,11 +42,6 @@ final class QuestionnaireDataSourceDelegateTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        self.session = NINChatSession(configKey: "")
-        self.session.sessionManager = NINChatSessionManagerImpl(session: nil, serverAddress: "", audienceMetadata: nil, configuration: nil)
-        (self.session.sessionManager as! NINChatSessionManagerImpl).setSiteConfiguration(SiteConfigurationImpl(configuration: try! openAsset(forResource: "site-configuration-mock"), environments: ["default"]))
-        self.viewModel = NINQuestionnaireViewModelImpl(sessionManager: self.session.sessionManager, queue: Queue(queueID: "", name: "", isClosed: false), questionnaireType: .pre)
-
         formQuestionnaireDataSource = NINQuestionnaireFormDataSourceDelegate(viewModel: viewModel, session: self.session, sessionManager: self.session.sessionManager)
         conversationQuestionnaireDataSource = NINQuestionnaireConversationDataSourceDelegate(viewModel: viewModel, session: self.session, sessionManager: self.session.sessionManager)
     }
