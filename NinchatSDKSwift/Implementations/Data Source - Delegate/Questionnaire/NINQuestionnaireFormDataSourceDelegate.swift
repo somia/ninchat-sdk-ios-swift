@@ -69,9 +69,6 @@ extension NINQuestionnaireFormDataSourceDelegate {
             cell.requirementsSatisfied = self.viewModel.requirementsSatisfied
             cell.overrideAssets(with: self.session?.internalDelegate)
 
-            self.viewModel.requirementSatisfactionUpdater = { [weak self] satisfied in
-                self?.onRequirementsUpdated(satisfied, for: cell)
-            }
             cell.onNextButtonTapped = { [weak self] in
                 self?.onNextButtonTapped()
             }
@@ -79,6 +76,9 @@ extension NINQuestionnaireFormDataSourceDelegate {
                 self?.onBackButtonTapped(completion: self?.onUpdateCellContent)
             }
             cell.backgroundColor = .clear
+            self.viewModel.requirementSatisfactionUpdater = { [weak self] satisfied in
+                self?.onRequirementsUpdated(satisfied, for: cell)
+            }
 
             return cell
         } catch {

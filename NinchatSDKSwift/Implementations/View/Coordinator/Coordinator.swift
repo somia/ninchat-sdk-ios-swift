@@ -65,7 +65,7 @@ final class NINCoordinator: Coordinator {
     internal var questionnaireViewController: NINQuestionnaireViewController {
         let questionnaireViewController: NINQuestionnaireViewController = storyboard.instantiateViewController()
         questionnaireViewController.session = self.session
-//        questionnaireViewController.sessionManager = self.sessionManager
+        questionnaireViewController.sessionManager = self.sessionManager
 
         didLoaded_questionnaireViewController = true
         return questionnaireViewController
@@ -192,8 +192,6 @@ extension NINCoordinator {
     internal func questionnaireViewController(queue: Queue? = nil, ratingViewModel: NINRatingViewModel? = nil, rating: ChatStatus? = nil, questionnaireType: AudienceQuestionnaireType) -> NINQuestionnaireViewController {
         let vc = self.questionnaireViewController
         vc.queue = queue
-        vc.session = self.session
-        vc.sessionManager = self.sessionManager
         vc.rating = rating
         vc.ratingViewModel = ratingViewModel
 
