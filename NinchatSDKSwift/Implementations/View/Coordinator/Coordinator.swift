@@ -37,10 +37,10 @@ final class NINCoordinator: Coordinator {
     // MARK: - Questionnaire helpers
 
     private var hasPreAudienceQuestionnaire: Bool {
-        self.sessionManager.siteConfiguration.preAudienceQuestionnaire?.count ?? 0 > 0
+        self.sessionManager.siteConfiguration?.preAudienceQuestionnaire?.count ?? 0 > 0
     }
     private var hasPostAudienceQuestionnaire: Bool {
-        self.sessionManager.siteConfiguration.postAudienceQuestionnaire?.count ?? 0 > 0
+        self.sessionManager.siteConfiguration?.postAudienceQuestionnaire?.count ?? 0 > 0
     }
 
     // MARK: - ViewControllers
@@ -62,10 +62,12 @@ final class NINCoordinator: Coordinator {
     }()
     /// Since it is pushed more than once, it cannot be defined as `lazy`
     private var didLoaded_questionnaireViewController = false
+    private var questionnaireViewModel: NINQuestionnaireViewModel!
     internal var questionnaireViewController: NINQuestionnaireViewController {
         let questionnaireViewController: NINQuestionnaireViewController = storyboard.instantiateViewController()
         questionnaireViewController.session = self.session
         questionnaireViewController.sessionManager = self.sessionManager
+        questionnaireViewController.viewModel = self.questionnaireViewModel
 
         didLoaded_questionnaireViewController = true
         return questionnaireViewController
@@ -167,6 +169,7 @@ final class NINCoordinator: Coordinator {
 
     init(with session: NINChatSession) {
         self.session = session
+        self.prepareNINQuestionnaireViewModel()
     }
     
     func start(with queue: String?, resumeSession: Bool, within navigation: UINavigationController?) -> UIViewController? {
@@ -186,6 +189,15 @@ final class NINCoordinator: Coordinator {
         if self.didLoaded_questionnaireViewController { self.questionnaireViewController.deallocate() }
         if self.didLoaded_chatViewController { self.chatViewController.deallocate() }
     }
+
+    /// In case of heavy questionnaires, there would be a memory-consuming job in instantiation of `NINQuestionnaireViewModel` even though it is implemented in a multi-thread manner using `OperationQueue`.
+    /// Thus, we have to do the job in background before the questionnaire page being loaded
+    private func prepareNINQuestionnaireViewModel() {
+        guard self.hasPreAudienceQuestionnaire else { return }
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            self?.questionnaireViewModel = NINQuestionnaireViewModelImpl(sessionManager: self?.sessionManager, questionnaireType: .pre)
+        }
+    }
 }
 
 extension NINCoordinator {
@@ -195,24 +207,21 @@ extension NINCoordinator {
         vc.rating = rating
         vc.ratingViewModel = ratingViewModel
 
-        let viewModel = NINQuestionnaireViewModelImpl(sessionManager: self.sessionManager, queue: queue, questionnaireType: questionnaireType)
         let style = self.session.sessionManager.siteConfiguration.preAudienceQuestionnaireStyle
         switch style {
         case .form:
-            vc.dataSourceDelegate = NINQuestionnaireFormDataSourceDelegate(viewModel: viewModel, session: self.session, sessionManager: self.sessionManager)
+            vc.dataSourceDelegate = NINQuestionnaireFormDataSourceDelegate(viewModel: self.questionnaireViewModel, session: self.session, sessionManager: self.sessionManager)
         case .conversation:
-            vc.dataSourceDelegate = NINQuestionnaireConversationDataSourceDelegate(viewModel: viewModel, session: self.session, sessionManager: self.sessionManager)
+            vc.dataSourceDelegate = NINQuestionnaireConversationDataSourceDelegate(viewModel: self.questionnaireViewModel, session: self.session, sessionManager: self.sessionManager)
         }
         vc.style = style
-        vc.viewModel = viewModel
         vc.completeQuestionnaire = { [weak self] queue in
             DispatchQueue.main.async {
-                if questionnaireType == .pre {
-                    guard let weakSelf = self else { return }
-                    weakSelf.navigationController?.pushViewController(weakSelf.queueViewController(queue: queue), animated: true)
-                }
+                guard let weakSelf = self, questionnaireType == .pre else { return }
+                weakSelf.navigationController?.pushViewController(weakSelf.queueViewController(queue: queue), animated: true)
             }
         }
+        self.questionnaireViewModel.queue = queue
 
         return vc
     }
