@@ -51,7 +51,7 @@ struct QuestionnaireConfiguration: Codable, Equatable {
 
 // MARK: - Buttons
 struct ButtonQuestionnaire: Codable {
-    let back, next: AnyCodable
+    let back, next: AnyCodable?
     var hasValidButtons: Bool {
         self.hasValidBackButton || self.hasValidNextButton
     }
@@ -64,10 +64,10 @@ struct ButtonQuestionnaire: Codable {
 
     // MARK: - Private helper
 
-    private func isValid(_ button: AnyCodable) -> Bool {
-        if let bool = button.value as? Bool {
+    private func isValid(_ button: AnyCodable?) -> Bool {
+        if let bool = button?.value as? Bool {
             return bool
-        } else if let string = button.value as? String {
+        } else if let string = button?.value as? String {
             return !string.isEmpty
         }
         return false
