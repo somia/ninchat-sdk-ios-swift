@@ -62,12 +62,12 @@ final class NINCoordinator: Coordinator {
     }()
     /// Since it is pushed more than once, it cannot be defined as `lazy`
     private var didLoaded_questionnaireViewController = false
-    private var questionnaireViewModel: NINQuestionnaireViewModel!
+    private var preQuestionnaireViewModel: NINQuestionnaireViewModel!
+    private var postQuestionnaireViewModel: NINQuestionnaireViewModel!
     internal var questionnaireViewController: NINQuestionnaireViewController {
         let questionnaireViewController: NINQuestionnaireViewController = storyboard.instantiateViewController()
         questionnaireViewController.session = self.session
         questionnaireViewController.sessionManager = self.sessionManager
-        questionnaireViewController.viewModel = self.questionnaireViewModel
 
         didLoaded_questionnaireViewController = true
         return questionnaireViewController
@@ -193,9 +193,15 @@ final class NINCoordinator: Coordinator {
     /// In case of heavy questionnaires, there would be a memory-consuming job in instantiation of `NINQuestionnaireViewModel` even though it is implemented in a multi-thread manner using `OperationQueue`.
     /// Thus, we have to do the job in background before the questionnaire page being loaded
     private func prepareNINQuestionnaireViewModel() {
-        guard self.hasPreAudienceQuestionnaire else { return }
-        DispatchQueue.global(qos: .background).async { [weak self] in
-            self?.questionnaireViewModel = NINQuestionnaireViewModelImpl(sessionManager: self?.sessionManager, questionnaireType: .pre)
+        if self.hasPreAudienceQuestionnaire {
+            DispatchQueue.global(qos: .background).async { [weak self] in
+                self?.preQuestionnaireViewModel = NINQuestionnaireViewModelImpl(sessionManager: self?.sessionManager, questionnaireType: .pre)
+            }
+        }
+        if self.hasPostAudienceQuestionnaire {
+            DispatchQueue.global(qos: .background).async { [weak self] in
+                self?.postQuestionnaireViewModel = NINQuestionnaireViewModelImpl(sessionManager: self?.sessionManager, questionnaireType: .post)
+            }
         }
     }
 }
@@ -206,13 +212,14 @@ extension NINCoordinator {
         vc.queue = queue
         vc.rating = rating
         vc.ratingViewModel = ratingViewModel
+        vc.viewModel = (questionnaireType == .pre) ? self.preQuestionnaireViewModel : self.postQuestionnaireViewModel
 
         let style = self.session.sessionManager.siteConfiguration.preAudienceQuestionnaireStyle
         switch style {
         case .form:
-            vc.dataSourceDelegate = NINQuestionnaireFormDataSourceDelegate(viewModel: self.questionnaireViewModel, session: self.session, sessionManager: self.sessionManager)
+            vc.dataSourceDelegate = NINQuestionnaireFormDataSourceDelegate(viewModel: (questionnaireType == .pre) ? self.preQuestionnaireViewModel : self.postQuestionnaireViewModel, session: self.session, sessionManager: self.sessionManager)
         case .conversation:
-            vc.dataSourceDelegate = NINQuestionnaireConversationDataSourceDelegate(viewModel: self.questionnaireViewModel, session: self.session, sessionManager: self.sessionManager)
+            vc.dataSourceDelegate = NINQuestionnaireConversationDataSourceDelegate(viewModel: (questionnaireType == .pre) ? self.preQuestionnaireViewModel : self.postQuestionnaireViewModel, session: self.session, sessionManager: self.sessionManager)
         }
         vc.style = style
         vc.completeQuestionnaire = { [weak self] queue in
@@ -221,7 +228,7 @@ extension NINCoordinator {
                 weakSelf.navigationController?.pushViewController(weakSelf.queueViewController(queue: queue), animated: true)
             }
         }
-        self.questionnaireViewModel.queue = queue
+        self.preQuestionnaireViewModel.queue = queue
 
         return vc
     }
