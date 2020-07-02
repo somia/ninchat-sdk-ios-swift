@@ -152,11 +152,11 @@ extension QuestionnaireHasDoneButton {
 }
 
 /// Shape border for applicable elements (e.g. textarea, input)
-protocol QuestionnaireHasBorder: QuestionnaireElementWithTitle {
+protocol QuestionnaireHasBorder {
     var isCompleted: Bool? { get }
     func updateBorder()
 }
-extension QuestionnaireHasBorder {
+extension QuestionnaireHasBorder where Self:QuestionnaireElementWithTitle {
     func updateBorder() {
         guard self.view is UITextField || self.view is UITextView else { fatalError("Call only on `UITextView` and `UITextField` types") }
         self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: (self.isCompleted ?? true) ? .QGrayButton : .QRedBorder)

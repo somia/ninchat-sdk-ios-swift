@@ -109,8 +109,15 @@ extension QuestionnaireDataSourceDelegate {
 
     internal func setupFocusable(view: inout QuestionnaireFocusableElement) {
         view.onElementFocused = { _ in }
-        view.onElementDismissed = {  element in
-            if let textView = element as? QuestionnaireElementTextArea, let text = textView.view.text, !text.isEmpty, (textView.isCompleted ?? true) {
+        view.onElementDismissed = { [view] element in
+            /// First ensure that the element is completed properly, otherwise remove any submitted answer for it
+            if let isCompleted = self.isCompletedBorder(view: view as? QuestionnaireHasBorder), !isCompleted {
+                self.viewModel.removeAnswer(key: element)
+                self.viewModel.requirementSatisfactionUpdater?(false)
+            }
+
+            /// Now that the element is completed properly, save the answer
+            else if let textView = element as? QuestionnaireElementTextArea, let text = textView.view.text, !text.isEmpty, (textView.isCompleted ?? true) {
                 _ = self.viewModel.submitAnswer(key: element, value: textView.view.text)
             } else if let textField = element as? QuestionnaireElementTextField, let text = textField.view.text, !text.isEmpty, (textField.isCompleted ?? true) {
                 _ = self.viewModel.submitAnswer(key: element, value: textField.view.text)
@@ -118,6 +125,11 @@ extension QuestionnaireDataSourceDelegate {
                 self.viewModel.removeAnswer(key: element)
             }
         }
+    }
+
+    private func isCompletedBorder(view: QuestionnaireHasBorder?) -> Bool? {
+        guard let view = view else { return nil }
+        return view.isCompleted ?? true
     }
 
     private func showTargetPage(view: QuestionnaireOptionSelectableElement, page: Int, option: ElementOption) {
