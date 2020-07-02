@@ -22,4 +22,13 @@ extension NSMutableAttributedString {
 
         return self
     }
+
+    @discardableResult
+    func setColor(to text: String, color: UIColor) -> Self {
+        let range = self.mutableString.range(of: text, options: .caseInsensitive)
+        if range.location != NSNotFound {
+            self.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: range)
+        }
+        return self
+    }
 }

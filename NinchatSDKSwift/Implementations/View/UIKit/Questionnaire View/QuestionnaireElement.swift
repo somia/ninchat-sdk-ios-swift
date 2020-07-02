@@ -36,6 +36,10 @@ protocol QuestionnaireElementWithTitle: QuestionnaireElement {
     func overrideTitle(delegate: NINChatSessionInternalDelegate?)
 }
 extension QuestionnaireElementWithTitle {
+    private var requiredIndicator: String {
+        "*required- "
+    }
+
     /// To prevent duplicate shaping functions
     var didShapedView: Bool {
         self.elementConfiguration != nil
@@ -70,7 +74,16 @@ extension QuestionnaireElementWithTitle {
     }
 
     func overrideTitle(delegate: NINChatSessionInternalDelegate?) {
-        self.title.textColor = delegate?.override(questionnaireAsset: .titleTextColor) ?? UIColor.black
+        guard let titleComponents = self.title.text?.components(separatedBy: self.requiredIndicator) else { return }
+
+        let attributedString = NSMutableAttributedString(string: self.title.text!)
+        if titleComponents.count > 1 {
+            attributedString.setColor(to: self.requiredIndicator, color: .QRedBorder)
+        }
+        if let restComponent = titleComponents.filter({ !$0.isEmpty }).first, restComponent != self.requiredIndicator {
+            attributedString.setColor(to: restComponent, color: delegate?.override(questionnaireAsset: .titleTextColor) ?? UIColor.black)
+        }
+        self.title.attributedText = attributedString
     }
 
     func shapeTitle(_ configuration: QuestionnaireConfiguration?) {
@@ -78,7 +91,10 @@ extension QuestionnaireElementWithTitle {
         self.title.numberOfLines = 0
         self.title.textAlignment = .left
         self.title.lineBreakMode = .byWordWrapping
-        self.title.text = configuration?.label
+
+        if let text = configuration?.label {
+            self.title.text = ((configuration?.required ?? false) ? self.requiredIndicator : "") + text
+        }
     }
 }
 
