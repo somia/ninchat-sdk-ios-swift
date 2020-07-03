@@ -24,10 +24,15 @@ extension NSMutableAttributedString {
     }
 
     @discardableResult
-    func setColor(to text: String, color: UIColor) -> Self {
+    func applyUpdates(to text: String, color: UIColor? = nil, font: UIFont? = nil) -> Self {
         let range = self.mutableString.range(of: text, options: .caseInsensitive)
         if range.location != NSNotFound {
-            self.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: range)
+            if let color = color {
+                self.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: range)
+            }
+            if let font = font {
+                self.addAttribute(NSAttributedString.Key.font, value: font, range: range)
+            }
         }
         return self
     }

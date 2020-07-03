@@ -37,7 +37,10 @@ protocol QuestionnaireElementWithTitle: QuestionnaireElement {
 }
 extension QuestionnaireElementWithTitle {
     private var requiredIndicator: String {
-        "*required- "
+        "   *required"
+    }
+    private var requiredIndicatorAlpha: CGFloat {
+        0.7
     }
 
     /// To prevent duplicate shaping functions
@@ -77,11 +80,12 @@ extension QuestionnaireElementWithTitle {
         guard let titleComponents = self.title.text?.components(separatedBy: self.requiredIndicator) else { return }
 
         let attributedString = NSMutableAttributedString(string: self.title.text!)
-        if titleComponents.count > 1 {
-            attributedString.setColor(to: self.requiredIndicator, color: .QRedBorder)
-        }
+        let defaultColor = delegate?.override(questionnaireAsset: .titleTextColor) ?? UIColor.black
         if let restComponent = titleComponents.filter({ !$0.isEmpty }).first, restComponent != self.requiredIndicator {
-            attributedString.setColor(to: restComponent, color: delegate?.override(questionnaireAsset: .titleTextColor) ?? UIColor.black)
+            attributedString.applyUpdates(to: restComponent, color: defaultColor)
+        }
+        if titleComponents.count > 1 {
+            attributedString.applyUpdates(to: self.requiredIndicator, color: defaultColor.withAlphaComponent(self.requiredIndicatorAlpha), font: .subtitleNinchat)
         }
         self.title.attributedText = attributedString
     }
@@ -93,7 +97,7 @@ extension QuestionnaireElementWithTitle {
         self.title.lineBreakMode = .byWordWrapping
 
         if let text = configuration?.label {
-            self.title.text = ((configuration?.required ?? false) ? self.requiredIndicator : "") + text
+            self.title.text = text + ((configuration?.required ?? false) ? self.requiredIndicator : "")
         }
     }
 }

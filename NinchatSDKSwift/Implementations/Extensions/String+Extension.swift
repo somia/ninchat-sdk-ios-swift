@@ -60,7 +60,7 @@ extension String {
 extension String {
     @discardableResult
     func setColor(to text: String, color: UIColor) -> NSMutableAttributedString {
-        NSMutableAttributedString(string: self).setColor(to: text, color: color)
+        NSMutableAttributedString(string: self).applyUpdates(to: text, color: color)
     }
 }
 

@@ -26,7 +26,16 @@ extension UIFont {
 
         return font
     }
-    
+
+    static var subtitleNinchat: UIFont? {
+        FontWeight.allCases.forEach({ register(font: "SourceSansPro-\($0.rawValue)") })
+        guard let font = UIFont(name: fontName, size: 12.0) else {
+            return UIFont(name: fontName, size: 12.0)
+        }
+
+        return font
+    }
+
     @discardableResult
     private static func register(font: String) -> Bool {
         guard let pathForResourceString = Bundle.SDKBundle?.path(forResource: font, ofType: "ttf"),
