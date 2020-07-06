@@ -100,7 +100,17 @@ extension QuestionnaireElementWithTitle {
             self.title.text = text + ((configuration?.required ?? false) ? self.requiredIndicator : "")
         }
     }
+
+    func isCompleted(text: String?) -> Bool {
+        if let text = text, !text.isEmpty, let pattern = self.elementConfiguration?.pattern, let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) {
+            return regex.matches(in: text, range: NSRange(location: 0, length: text.count)).count > 0
+        } else if let text = text, self.elementConfiguration?.required ?? false  {
+            return !text.isEmpty
+        }
+        return true
+    }
 }
+
 
 /// Add focus/dismiss closure for applicable elements (e.g. textarea, input)
 protocol QuestionnaireFocusableElement {
