@@ -29,12 +29,15 @@ protocol QuestionnaireDataSource: class {
     func cell(at index: IndexPath, view: UITableView) -> UITableViewCell
 
     /** Add an extra section/page to questionnaires to show 'AudienceRegisteredText' */
-    func addRegisterSection()-> Bool
+    var canAddRegisteredSection: Bool { get }
+    func addRegisterSection()
 
     /** Add an extra section/page to questionnaires to show 'audienceRegisteredClosedText' */
-    func addClosedRegisteredSection() -> Bool
+    var canAddClosedRegisteredSection: Bool { get }
+    func addClosedRegisteredSection()
 
     var viewModel: NINQuestionnaireViewModel! { get set }
+    var sessionManager: NINChatSessionManager? { get set }
     init(viewModel: NINQuestionnaireViewModel, session: NINChatSession, sessionManager: NINChatSessionManager)
 }
 
@@ -46,6 +49,14 @@ extension QuestionnaireDataSourceDelegate {
             return configuration.buttons?.hasValidButtons ?? true
         }
         return false
+    }
+
+    var canAddRegisteredSection: Bool {
+        self.sessionManager?.siteConfiguration.audienceRegisteredText != nil
+    }
+
+    var canAddClosedRegisteredSection: Bool {
+        self.sessionManager?.siteConfiguration.audienceClosedRegisteredText != nil
     }
 
     internal func layoutSubview(_ view: UIView, parent: UIView) {

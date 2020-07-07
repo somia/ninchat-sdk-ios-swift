@@ -24,9 +24,9 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
     // MARK: - NINQuestionnaireFormDelegate
 
     private weak var session: NINChatSession?
-    private weak var sessionManager: NINChatSessionManager?
 
     var viewModel: NINQuestionnaireViewModel!
+    weak var sessionManager: NINChatSessionManager?
     var onUpdateCellContent: (() -> Void)?
     var onRemoveCellContent: (() -> Void)?
 
@@ -204,12 +204,12 @@ extension NINQuestionnaireConversationDataSourceDelegate {
 
 // MARK: - Audience Register Text
 extension NINQuestionnaireConversationDataSourceDelegate {
-    func addRegisterSection() -> Bool {
-        guard let registerTitle = self.sessionManager?.siteConfiguration.audienceRegisteredText else { return false }
+    func addRegisterSection() {
+        guard let registerTitle = self.sessionManager?.siteConfiguration.audienceRegisteredText else { return }
         let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) ?? "Close Chat"
         let registerJSON: [String:AnyHashable] = ["element": "radio", "name": "audienceRegisteredText", "label": registerTitle, "buttons": ["back":false,"next":false], "options":[["label":closeTitle, "value":""]], "redirects":[["target":"_register"]]]
 
-        guard let registerConfiguration = AudienceQuestionnaire(from: [registerJSON]).questionnaireConfiguration, registerConfiguration.count > 0, let element = QuestionnaireElementConverter(configurations: registerConfiguration).elements.first else { return false }
+        guard let registerConfiguration = AudienceQuestionnaire(from: [registerJSON]).questionnaireConfiguration, registerConfiguration.count > 0, let element = QuestionnaireElementConverter(configurations: registerConfiguration).elements.first else { return }
         element.compactMap({ $0 as? QuestionnaireElementRadio }).first?.isExitElement = true
 
         self.elements.append(element)
@@ -217,16 +217,14 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         self.requirementSatisfactions.append(false)
         self.shouldShowNavigationCells.append(false)
         self.viewModel.insertRegisteredElement(element, configuration: registerConfiguration)
-
-        return true
     }
 
-    func addClosedRegisteredSection() -> Bool {
-        guard let registerTitle = self.sessionManager?.siteConfiguration.audienceClosedRegisteredText else { return false }
+    func addClosedRegisteredSection() {
+        guard let registerTitle = self.sessionManager?.siteConfiguration.audienceClosedRegisteredText else { return }
         let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) ?? "Close Chat"
         let registerJSON: [String:AnyHashable] = ["element": "radio", "name": "audienceClosedRegisteredText", "label": registerTitle, "buttons": ["back":false,"next":false], "options":[["label":closeTitle, "value":""]], "redirects":[["target":"_register"]]]
 
-        guard let registerConfiguration = AudienceQuestionnaire(from: [registerJSON]).questionnaireConfiguration, registerConfiguration.count > 0, let element = QuestionnaireElementConverter(configurations: registerConfiguration).elements.first else { return false }
+        guard let registerConfiguration = AudienceQuestionnaire(from: [registerJSON]).questionnaireConfiguration, registerConfiguration.count > 0, let element = QuestionnaireElementConverter(configurations: registerConfiguration).elements.first else { return }
         element.compactMap({ $0 as? QuestionnaireElementRadio }).first?.isExitElement = true
 
         self.elements.append(element)
