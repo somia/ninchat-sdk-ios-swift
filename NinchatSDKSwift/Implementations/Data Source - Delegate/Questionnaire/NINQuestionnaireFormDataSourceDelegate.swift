@@ -40,7 +40,7 @@ final class NINQuestionnaireFormDataSourceDelegate: QuestionnaireDataSourceDeleg
     func height(at index: IndexPath) -> CGFloat {
         do {
             let elements = try self.viewModel.getElements()
-            if index.row == elements.count { return self.shouldShowNavigationCell ? 65.0 : 0.0 }
+            if index.row == elements.count { return self.shouldShowNavigationCell(at: index.row) ? 65.0 : 0.0 }
             return elements[index.row].elementHeight
         } catch {
             fatalError(error.localizedDescription)

@@ -70,7 +70,7 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
             }
 
             let elements = try self.viewModel.getElements()
-            if index.row == elements.count { return self.shouldShowNavigationCell ? 55.0 : 0.0 }
+            if index.row == elements.count { return self.shouldShowNavigationCell(at: index.section) ? 55.0 : 0.0 }
             return elements[index.row].elementHeight
         } catch {
             fatalError(error.localizedDescription)
@@ -86,7 +86,7 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
             self.elements.append(contentsOf: [try self.viewModel.getElements()])
             self.configurations.append(try self.viewModel.getConfiguration())
             self.requirementSatisfactions.append(self.viewModel.requirementsSatisfied)
-            self.shouldShowNavigationCells.append(self.shouldShowNavigationCell)
+            self.shouldShowNavigationCells.append(self.shouldShowNavigationCell(at: index.section))
             self.enableCurrentRows()
             self.clearCurrentRows()
 

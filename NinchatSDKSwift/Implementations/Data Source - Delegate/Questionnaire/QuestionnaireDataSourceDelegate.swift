@@ -9,9 +9,10 @@ import UIKit
 /** Delegate for the questionnaire view. */
 protocol QuestionnaireDelegate: class {
     var isLoadingNewElements: Bool! { get set }
-    var shouldShowNavigationCell: Bool { get }
     var onUpdateCellContent: (() -> Void)? { get set }
     var onRemoveCellContent: (() -> Void)? { get set }
+
+    func shouldShowNavigationCell(at index: Int) -> Bool
 }
 
 /** Data source for the questionnaire view. */
@@ -44,19 +45,20 @@ protocol QuestionnaireDataSource: class {
 protocol QuestionnaireDataSourceDelegate: QuestionnaireDataSource, QuestionnaireDelegate {}
 
 extension QuestionnaireDataSourceDelegate {
-    var shouldShowNavigationCell: Bool {
-        if let configuration = try? self.viewModel.getConfiguration() {
-            return configuration.buttons?.hasValidButtons ?? true
-        }
-        return false
-    }
-
     var canAddRegisteredSection: Bool {
         self.sessionManager?.siteConfiguration.audienceRegisteredText != nil
     }
 
     var canAddClosedRegisteredSection: Bool {
         self.sessionManager?.siteConfiguration.audienceClosedRegisteredText != nil
+    }
+
+    internal func shouldShowNavigationCell(at index: Int) -> Bool {
+        guard let configuration = try? self.viewModel.getConfiguration() else { return false }
+        if index == 0 {
+            return configuration.buttons?.hasValidNextButton ?? true
+        }
+        return configuration.buttons?.hasValidButtons ?? true
     }
 
     internal func layoutSubview(_ view: UIView, parent: UIView) {
