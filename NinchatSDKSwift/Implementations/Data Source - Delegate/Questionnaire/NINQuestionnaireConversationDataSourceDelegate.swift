@@ -161,7 +161,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         cell.overrideAssets(with: self.session?.internalDelegate)
 
         cell.onNextButtonTapped = { [weak self] in
-            self?.onNextButtonTapped()
+            self?.onNextButtonTapped(element: self?.elements[indexPath.section].first)
         }
         cell.onBackButtonTapped = { [weak self] in
             self?.onBackButtonTapped(completion: self?.onRemoveCellContent)
@@ -234,6 +234,5 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         self.requirementSatisfactions.append(false)
         self.shouldShowNavigationCells.append(false)
         self.viewModel.insertRegisteredElement(element, configuration: registerConfiguration)
-        return true
     }
 }

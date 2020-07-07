@@ -51,8 +51,11 @@ final class QuestionnaireElementConnectorRedirectTests: XCTestCase {
     }
 
     func test_12_find_redirect() {
-        let target = connector.findAssociatedRedirect(for: "Sovitut", in: self.configuration!)
-        XCTAssertNil(target)
+        let target_1 = connector.findAssociatedRedirect(for: "Sovitut", in: self.configuration!)
+        XCTAssertNil(target_1)
+
+        let target_2 = connector.findAssociatedRedirect(for: "", in: self.configuration!)
+        XCTAssertNotNil(target_2)
     }
 
     func test_13_find_configuration() {
@@ -95,5 +98,20 @@ final class QuestionnaireElementConnectorRedirectTests: XCTestCase {
         XCTAssertNotNil(targetElement.0?[0] as? QuestionnaireElementText)
         XCTAssertNotNil(targetElement.0?[1] as? QuestionnaireElementRadio)
         XCTAssertEqual(targetElement.1, 1)
+    }
+
+    func test_21_acceptance() {
+        let expect = self.expectation(description: "Expected to catch '_register' closure for empty redirect")
+        connector.onRegisterTargetReached = { questionnaire, redirect, autoApply in
+            XCTAssertNotNil(redirect)
+            expect.fulfill()
+        }
+
+        let configuration = self.questionnaire_preAudience?.questionnaireConfiguration?.first(where: { $0.name == "soita112" })
+        let targetElement = connector.findElementAndPageRedirect(for: "", in: configuration!)
+        XCTAssertNil(targetElement.0)
+        XCTAssertNotNil(targetElement.1)
+        XCTAssertEqual(targetElement.1, -1)
+        waitForExpectations(timeout: 3.0)
     }
 }

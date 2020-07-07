@@ -140,7 +140,8 @@ final class QuestionnaireElementConnectorLogicTests: XCTestCase {
         }
         let targetElement = connector.findElementAndPageLogic(for: ["temp-btn":"Finnish"], in: ["Riskiryhmät-jatko": "Muut aiheet", "condition1": "satisfied", "temp-btn":"Finnish", "temp-btn2":"Finnish"])
         XCTAssertNil(targetElement.0)
-        XCTAssertNil(targetElement.1)
+        XCTAssertNotNil(targetElement.1)
+        XCTAssertEqual(targetElement.1, -1)
 
         waitForExpectations(timeout: 2.0)
     }

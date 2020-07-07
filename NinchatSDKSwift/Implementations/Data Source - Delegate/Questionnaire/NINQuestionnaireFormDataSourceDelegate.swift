@@ -70,7 +70,11 @@ extension NINQuestionnaireFormDataSourceDelegate {
             cell.overrideAssets(with: self.session?.internalDelegate)
 
             cell.onNextButtonTapped = { [weak self] in
-                self?.onNextButtonTapped()
+                do {
+                    self?.onNextButtonTapped(element: try self?.viewModel.getElements().first)
+                } catch {
+                    self?.onNextButtonTapped(element: nil)
+                }
             }
             cell.onBackButtonTapped = { [weak self] in
                 self?.onBackButtonTapped(completion: self?.onUpdateCellContent)

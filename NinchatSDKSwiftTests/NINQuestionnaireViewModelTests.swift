@@ -156,7 +156,8 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         }
         self.viewModel?.pageNumber = 13
         let page = self.viewModel?.redirectTargetPage(for: "")
-        XCTAssertNil(page)
+        XCTAssertNotNil(page)
+        XCTAssertEqual(page, -1)
 
         waitForExpectations(timeout: 2.0)
     }
@@ -172,7 +173,8 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         }
         self.viewModel?.pageNumber = 12
         let page = self.viewModel?.redirectTargetPage(for: "")
-        XCTAssertNil(page)
+        XCTAssertNotNil(page)
+        XCTAssertEqual(page, -1)
 
         waitForExpectations(timeout: 2.0)
     }
@@ -190,7 +192,8 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         self.viewModel?.answers = ["wouldRecommendService": "1"]
 
         let page = self.viewModel?.logicTargetPage(key: "wouldRecommendService", value: "1")
-        XCTAssertNil(page)
+        XCTAssertNotNil(page)
+        XCTAssertEqual(page, -1)
 
         waitForExpectations(timeout: 2.0)
     }
@@ -208,7 +211,8 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         self.viewModel?.answers = ["Huolet-jatko": "Sulje"]
 
         let page = self.viewModel?.logicTargetPage(key: "Huolet-jatko", value: "Sulje")
-        XCTAssertNil(page)
+        XCTAssertNotNil(page)
+        XCTAssertEqual(page, -1)
 
         waitForExpectations(timeout: 2.0)
     }
