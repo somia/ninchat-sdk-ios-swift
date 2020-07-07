@@ -57,7 +57,7 @@ extension QuestionnaireDataSourceDelegateTests {
     }
 
     func test_102_navigation() {
-        XCTAssertTrue(formQuestionnaireDataSource.shouldShowNavigationCell)
+        XCTAssertTrue(formQuestionnaireDataSource.shouldShowNavigationCell(at: 0))
     }
 
     func test_103_initialState() {
@@ -99,7 +99,7 @@ extension QuestionnaireDataSourceDelegateTests {
     }
 
     func test_002_navigation() {
-        XCTAssertTrue(conversationQuestionnaireDataSource.shouldShowNavigationCell)
+        XCTAssertTrue(conversationQuestionnaireDataSource.shouldShowNavigationCell(at: 0))
     }
 
     func test_003_initialState() {
