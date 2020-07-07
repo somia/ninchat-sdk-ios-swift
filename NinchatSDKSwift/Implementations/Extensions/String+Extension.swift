@@ -58,6 +58,13 @@ extension String {
 }
 
 extension String {
+    @discardableResult
+    func setColor(to text: String, color: UIColor) -> NSMutableAttributedString {
+        NSMutableAttributedString(string: self).applyUpdates(to: text, color: color)
+    }
+}
+
+extension String {
     func extractRegex(withPattern pattern: String) -> [String]? {
         do {
             let regex = try NSRegularExpression(pattern: pattern)

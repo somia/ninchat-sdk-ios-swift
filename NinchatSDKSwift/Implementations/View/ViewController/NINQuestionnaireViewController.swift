@@ -20,7 +20,33 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
 
     private let operationQueue = OperationQueue.main
     private let dispatchQueue = DispatchQueue.main
-    private var updateOperationBlock: BlockOperation?
+
+    private var updateOperationBlock: (BlockOperation, TimeInterval)? {
+        switch style {
+        case .form:
+            return ((BlockOperation { [weak self] in
+                        self?.updateFormContentView()
+                    }), 0.0)
+        case .conversation:
+            return ((BlockOperation { [weak self] in
+                        self?.updateConversationContentView(0.5)
+                    }), 0.5)
+        default:
+            return nil
+        }
+    }
+    private var audienceRegisteredOperation: BlockOperation? {
+        guard self.dataSourceDelegate?.canAddRegisteredSection ?? false else { return nil }
+        return BlockOperation { [weak self] in
+            self?.dataSourceDelegate?.addRegisterSection()
+        }
+    }
+    private var closedRegisteredOperation: BlockOperation? {
+        guard self.dataSourceDelegate?.canAddClosedRegisteredSection ?? false else { return nil }
+        return BlockOperation { [weak self] in
+            self?.dataSourceDelegate?.addClosedRegisteredSection()
+        }
+    }
 
     // MARK: - ViewController
 
@@ -34,19 +60,8 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
     var dataSourceDelegate: QuestionnaireDataSourceDelegate? {
         didSet {
             dataSourceDelegate?.onUpdateCellContent = { [weak self] in
-                guard let style = self?.style else { return }
-                switch style {
-                case .form:
-                    self?.updateOperationBlock = BlockOperation {
-                        self?.dispatchQueue.async { self?.updateFormContentView() }
-                    }
-                case .conversation:
-                    self?.updateOperationBlock = BlockOperation {
-                        self?.dispatchQueue.async { self?.updateConversationContentView(0.5) }
-                    }
-                }
-                guard let updateOperationBlock = self?.updateOperationBlock else { return }
-                self?.operationQueue.addOperation(updateOperationBlock)
+                guard let updateOperationTuple: (block: BlockOperation, _: TimeInterval) = self?.updateOperationBlock else { return }
+                self?.operationQueue.addOperation(updateOperationTuple.block)
             }
             dataSourceDelegate?.onRemoveCellContent = { [weak self] in
                 guard self?.style == .conversation else { return }
@@ -58,27 +73,29 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
         didSet {
             viewModel.onErrorOccurred = { [weak self] error in
                 debugger("** ** SDK: error in registering audience: \(error)")
-                /// Add 'audienceRegisteredClosedText' block operation
-                /// The operation is called only when the dependency ('updateOperationBlock') is satisfied
-                if let error = error as? NinchatError, error.title == "queue_is_closed", let updateOperationBlock = self?.updateOperationBlock {
-                    let closedRegisteredOperation = BlockOperation {
-                        _ = self?.dataSourceDelegate?.addClosedRegisteredSection()
-                    }
-                    closedRegisteredOperation.addDependency(updateOperationBlock)
-                    self?.operationQueue.addOperation(closedRegisteredOperation)
-                    return
+                if let error = error as? NinchatError, error.title == "queue_is_closed" {
+                    self?.showRegisteredPage(operation: self?.closedRegisteredOperation); return
                 }
                 Toast.show(message: .error("Error is submitting the answers")) { [weak self] in
                     self?.session?.internalDelegate?.onDidEnd()
                 }
             }
             viewModel.onQuestionnaireFinished = { [weak self] queue, exit in
+                /// Complete questionnaire and navigate to the queue.
                 if let queue = queue {
                     self?.completeQuestionnaire?(queue)
-                } else if exit {
+                }
+                /// Finish the session if it is an `exit` element
+                else if exit {
                     self?.viewModel.onSessionFinished?()
-                } else {
-                    _ = self?.dataSourceDelegate?.addRegisterSection()
+                }
+                /// Show `AudienceRegisteredText` if it is set in the site configuration
+                else if let registeredOperation = self?.audienceRegisteredOperation {
+                    self?.showRegisteredPage(operation: registeredOperation)
+                }
+                /// If not, just finish the session
+                else {
+                    self?.viewModel.onSessionFinished?()
                 }
             }
             viewModel.onSessionFinished = { [weak self] in
@@ -168,6 +185,14 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
 
         return view
     }
+
+    private func showRegisteredPage(operation: BlockOperation?) {
+        guard let operation = operation, let updateOperationTuple: (block: BlockOperation, delay: TimeInterval) = self.updateOperationBlock else { return }
+        self.operationQueue.addOperation(updateOperationTuple.block)
+
+        operation.addDependency(updateOperationTuple.block)
+        self.dispatchQueue.asyncAfter(deadline: .now() + updateOperationTuple.delay) { self.operationQueue.addOperation(operation) }
+    }
 }
 
 // MARK: - 'Form Like' questionnaires
@@ -209,20 +234,19 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
             self.scrollToBottom(at: newSection)     /// Scroll to bottom
         }
         let updateContentViewOperation = BlockOperation { [weak self] in
-            self?.dispatchQueue.asyncAfter(deadline: .now() + interval) {
-                guard let contentView = self?.contentView else { return }
+            guard let contentView = self?.contentView else { return }
 
-                self?.removeLoadingRow(at: newSection)
-                contentView.beginUpdates()              /// Start loading questionnaires
-                self?.addQuestionnaireRows(at: newSection)
-                self?.addNavigationRow(at: newSection)
-                contentView.endUpdates()                /// Finish loading questionnaires
-                self?.scrollToBottom(at: newSection)     /// Scroll to bottom
-            }
+            self?.removeLoadingRow(at: newSection)
+            contentView.beginUpdates()              /// Start loading questionnaires
+            self?.addQuestionnaireRows(at: newSection)
+            self?.addNavigationRow(at: newSection)
+            contentView.endUpdates()                /// Finish loading questionnaires
+            self?.scrollToBottom(at: newSection)     /// Scroll to bottom
         }
 
         updateContentViewOperation.addDependency(prepareOperation)
-        self.operationQueue.addOperations([prepareOperation, updateContentViewOperation], waitUntilFinished: false)
+        self.dispatchQueue.asyncAfter(deadline: .now() + interval) { self.operationQueue.addOperation(updateContentViewOperation) }
+        self.operationQueue.addOperation(prepareOperation)
     }
 
     func initiateConversationContentView(_ interval: TimeInterval) {

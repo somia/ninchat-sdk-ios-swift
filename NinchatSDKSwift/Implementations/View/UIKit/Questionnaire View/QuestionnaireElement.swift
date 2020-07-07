@@ -36,6 +36,13 @@ protocol QuestionnaireElementWithTitle: QuestionnaireElement {
     func overrideTitle(delegate: NINChatSessionInternalDelegate?)
 }
 extension QuestionnaireElementWithTitle {
+    private var requiredIndicator: String {
+        "   *required"
+    }
+    private var requiredIndicatorAlpha: CGFloat {
+        0.7
+    }
+
     /// To prevent duplicate shaping functions
     var didShapedView: Bool {
         self.elementConfiguration != nil
@@ -70,7 +77,17 @@ extension QuestionnaireElementWithTitle {
     }
 
     func overrideTitle(delegate: NINChatSessionInternalDelegate?) {
-        self.title.textColor = delegate?.override(questionnaireAsset: .titleTextColor) ?? UIColor.black
+        guard let titleComponents = self.title.text?.components(separatedBy: self.requiredIndicator) else { return }
+
+        let attributedString = NSMutableAttributedString(string: self.title.text!)
+        let defaultColor = delegate?.override(questionnaireAsset: .titleTextColor) ?? UIColor.black
+        if let restComponent = titleComponents.filter({ !$0.isEmpty }).first, restComponent != self.requiredIndicator {
+            attributedString.applyUpdates(to: restComponent, color: defaultColor)
+        }
+        if titleComponents.count > 1 {
+            attributedString.applyUpdates(to: self.requiredIndicator, color: defaultColor.withAlphaComponent(self.requiredIndicatorAlpha), font: .subtitleNinchat)
+        }
+        self.title.attributedText = attributedString
     }
 
     func shapeTitle(_ configuration: QuestionnaireConfiguration?) {
@@ -78,9 +95,22 @@ extension QuestionnaireElementWithTitle {
         self.title.numberOfLines = 0
         self.title.textAlignment = .left
         self.title.lineBreakMode = .byWordWrapping
-        self.title.text = configuration?.label
+
+        if let text = configuration?.label {
+            self.title.text = text + ((configuration?.required ?? false) ? self.requiredIndicator : "")
+        }
+    }
+
+    func isCompleted(text: String?) -> Bool {
+        if let text = text, !text.isEmpty, let pattern = self.elementConfiguration?.pattern, let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) {
+            return regex.matches(in: text, range: NSRange(location: 0, length: text.count)).count > 0
+        } else if let text = text, self.elementConfiguration?.required ?? false  {
+            return !text.isEmpty
+        }
+        return true
     }
 }
+
 
 /// Add focus/dismiss closure for applicable elements (e.g. textarea, input)
 protocol QuestionnaireFocusableElement {
@@ -136,11 +166,11 @@ extension QuestionnaireHasDoneButton {
 }
 
 /// Shape border for applicable elements (e.g. textarea, input)
-protocol QuestionnaireHasBorder: QuestionnaireElementWithTitle {
+protocol QuestionnaireHasBorder {
     var isCompleted: Bool? { get }
     func updateBorder()
 }
-extension QuestionnaireHasBorder {
+extension QuestionnaireHasBorder where Self:QuestionnaireElementWithTitle {
     func updateBorder() {
         guard self.view is UITextField || self.view is UITextView else { fatalError("Call only on `UITextView` and `UITextField` types") }
         self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: (self.isCompleted ?? true) ? .QGrayButton : .QRedBorder)

@@ -42,14 +42,16 @@ final class QuestionnaireConverterTests: XCTestCase {
             expect.fulfill()
         }
 
-        if let element = self.questionnaire_preAudience?.questionnaireConfiguration?.filter({ $0.type != .group }).filter({ $0.element == .text }), element.count > 0 {
+        if let element = self.questionnaire_preAudience?.questionnaireConfiguration?.filter({ $0.type != .group && $0.element == .text && $0.name == "Koronavirus" }), element.count > 0 {
             let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementText }) }).first(where: { $0.count > 0 })
             XCTAssertNotNil(element)
             XCTAssertNotNil(views)
 
             let configuration = element[0]
             let view = views![0]
-            XCTAssertEqual(view.questionnaireConfiguration, configuration)
+            XCTAssertNotEqual(configuration.type, .group)
+            XCTAssertEqual(configuration.element, .text)
+            AssertEqual(view.questionnaireConfiguration, configuration)
             expect.fulfill()
         }
 
