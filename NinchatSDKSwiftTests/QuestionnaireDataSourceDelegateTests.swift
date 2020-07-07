@@ -195,7 +195,8 @@ extension QuestionnaireDataSourceDelegateTests {
     func test_011_audienceRegisteredSection() {
         let currentElementsCount = (conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).elements.count
         let currentConfigurationCount = (conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).configurations.count
-        XCTAssertTrue(conversationQuestionnaireDataSource.addRegisterSection())
+        XCTAssertTrue(conversationQuestionnaireDataSource.canAddRegisteredSection)
+        conversationQuestionnaireDataSource.addRegisterSection()
         let newElementsCount = (conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).elements.count
         let newConfigurationCount = (conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).configurations.count
 
@@ -208,7 +209,8 @@ extension QuestionnaireDataSourceDelegateTests {
     func test_012_audienceClosedRegisteredSection() {
         let currentElementsCount = (conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).elements.count
         let currentConfigurationCount = (conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).configurations.count
-        XCTAssertTrue(conversationQuestionnaireDataSource.addClosedRegisteredSection())
+        XCTAssertTrue(conversationQuestionnaireDataSource.canAddClosedRegisteredSection)
+        conversationQuestionnaireDataSource.addClosedRegisteredSection()
         let newElementsCount = (self.conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).elements.count
         let newConfigurationCount = (self.conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).configurations.count
 
