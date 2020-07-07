@@ -190,7 +190,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
         guard let operation = operation, let updateOperationTuple: (block: BlockOperation, delay: TimeInterval) = self.updateOperationBlock else { return }
         self.operationQueue.addOperation(updateOperationTuple.block)
 
-        operation.addDependency(updateOperationTuple.0)
+        operation.addDependency(updateOperationTuple.block)
         self.dispatchQueue.asyncAfter(deadline: .now() + updateOperationTuple.delay) { self.operationQueue.addOperation(operation) }
     }
 }

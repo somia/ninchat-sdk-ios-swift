@@ -207,6 +207,11 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 
 extension NINQuestionnaireViewModelImpl {
     func finishQuestionnaire(for logic: LogicQuestionnaire?, redirect: ElementRedirect?, autoApply: Bool) {
+        guard logic != nil || redirect != nil else {
+            /// Both redirect and logic are nil, thus, this is an invalid target case
+            /// Register questionnaire and finnish
+            self.connector.onRegisterTargetReached?(nil, nil, autoApply); return
+        }
         guard let queue = self.queue, let target: (canJoin: Bool, queue: Queue?) = self.canJoinGivenQueue(withID: logic?.queue ?? queue.queueID), let targetQueue = target.queue, target.canJoin else {
             self.connector.onRegisterTargetReached?(logic, redirect, autoApply); return
         }
