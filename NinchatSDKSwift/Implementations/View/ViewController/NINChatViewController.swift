@@ -522,13 +522,13 @@ extension NINChatViewController {
             }
         }
     }
-    
+
     @objc
     private func willResignActive(notification: Notification) {
-        debugger("applicationWillResignActive: no action.")
-        
-        /// TODO: pause video - if one should be active - here?
-        viewModel.appWillResignActive { _ in }
+        /// For the time-being, the solo solution is to terminate the call and then re-initiate it from the agent.
+        /// I may pause/resume the video later, when I figure out how to.
+        self.didEnterBackground(notification: notification)
+//        viewModel.appWillResignActive { _ in }
     }
 }
 
