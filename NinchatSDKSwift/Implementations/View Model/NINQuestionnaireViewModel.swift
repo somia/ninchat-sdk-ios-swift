@@ -348,7 +348,7 @@ extension NINQuestionnaireViewModelImpl {
     }
 
     func goToPreviousPage() -> Bool {
-        if self.pageNumber > 0 {
+        if self.pageNumber >= 0, self.pageNumber != self.previousPage {
             self.pageNumber = self.previousPage
             return true
         }
