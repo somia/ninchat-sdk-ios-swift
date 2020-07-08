@@ -244,6 +244,18 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
     
     private func connectRTC() {
         self.viewModel.listenToRTCSignaling(delegate: chatRTCDelegate, onCallReceived: { [weak self] channel in
+            func answerCall(with action: ConfirmAction) {
+                self?.viewModel.pickup(answer: action == .confirm) { error in
+                    if error != nil { Toast.show(message: .error("failed to send WebRTC pickup message")) }
+                }
+            }
+
+            /// accept invite silently when re-invited `https://github.com/somia/mobile/issues/232`
+            guard self?.webRTCClient == nil else {
+                debugger("Silently accept the video call")
+                answerCall(with: .confirm); return
+            }
+
             DispatchQueue.main.async {
                 self?.view.endEditing(true)
 
@@ -252,9 +264,7 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
                 confirmVideoDialog.session = self?.session
                 confirmVideoDialog.onViewAction = { [weak self] action in
                     confirmVideoDialog.hideConfirmView()
-                    self?.viewModel.pickup(answer: action == .confirm) { error in
-                        if error != nil { Toast.show(message: .error("failed to send WebRTC pickup message")) }
-                    }
+                    answerCall(with: action)
                 }
                 confirmVideoDialog.showConfirmView(on: self?.view ?? UIView())
             }
