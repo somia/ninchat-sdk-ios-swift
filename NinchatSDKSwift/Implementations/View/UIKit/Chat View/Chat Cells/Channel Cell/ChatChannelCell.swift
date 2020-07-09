@@ -32,8 +32,8 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
     weak var session: NINChatSessionAttachment?
     var videoThumbnailManager: VideoThumbnailManager?
     var onImageTapped: ((FileInfo, UIImage?) -> Void)?
-    var onComposeSendTapped: ((ComposeContentViewProtocol) -> Void)?
-    var onComposeUpdateTapped: (([Bool]?) -> Void)?
+    var onComposeSendTapped: ComposeMessageViewProtocol.OnUIComposeSendActionTapped?
+    var onComposeUpdateTapped: ComposeMessageViewProtocol.OnUIComposeUpdateActionTapped?
     var onConstraintsUpdate: (() -> Void)?
         
     // MARK: - UITableViewCell

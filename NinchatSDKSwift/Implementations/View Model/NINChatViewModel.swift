@@ -41,6 +41,7 @@ protocol NINChatViewModel: NINChatRTCProtocol, NINChatStateProtocol, NINChatMess
     var onChannelClosed: (() -> Void)? { get set }
     var onQueueUpdated: (() -> Void)? { get set }
     var onChannelMessage: ((MessageUpdateType) -> Void)? { get set }
+    var onComposeActionUpdated: ((_ index: Int, _ action: ComposeUIAction) -> Void)? { get set }
     
     init(sessionManager: NINChatSessionManager)
 }
@@ -50,7 +51,8 @@ final class NINChatViewModelImpl: NINChatViewModel {
     var onChannelClosed: (() -> Void)?
     var onQueueUpdated: (() -> Void)?
     var onChannelMessage: ((MessageUpdateType) -> Void)?
-    
+    var onComposeActionUpdated: ((_ index: Int, _ action: ComposeUIAction) -> Void)?
+
     init(sessionManager: NINChatSessionManager) {
         self.sessionManager = sessionManager
         
@@ -76,6 +78,9 @@ final class NINChatViewModelImpl: NINChatViewModel {
         }
         self.sessionManager.onSessionDeallocated = { [weak self] in
             self?.onChannelMessage?(.clean)
+        }
+        self.sessionManager.onComposeActionUpdated = { [weak self] index, action in
+            self?.onComposeActionUpdated?(index, action)
         }
     }
 }

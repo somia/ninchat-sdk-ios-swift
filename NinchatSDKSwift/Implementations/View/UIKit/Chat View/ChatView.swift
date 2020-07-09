@@ -21,6 +21,9 @@ protocol ChatViewProtocol: UIView {
     
     /** A message was removed from given index. */
     func didRemoveMessage(from index: Int)
+
+    /** A compose message got updates from the server regarding its options. */
+    func didUpdateComposeAction(at index: Int, with action: ComposeUIAction)
     
     /** Should update table content offset when keyboard state changes. */
     func updateContentSize(_ value: CGFloat)
@@ -57,7 +60,8 @@ final class ChatView: UIView, ChatViewProtocol {
     
     private let videoThumbnailManager = VideoThumbnailManager()
     private var cellConstraints: Array<CGSize> = []
-    
+    private var composeCellActions: [Int:ComposeUIAction] = [:]
+
     // MARK: - Outlets
     
     @IBOutlet private(set) weak var tableView: UITableView! {
@@ -81,18 +85,6 @@ final class ChatView: UIView, ChatViewProtocol {
         }
     }
     
-    private var cell: (ChannelMessage, UITableView, IndexPath) -> ChatChannelCell = { (message, tableView, index) -> ChatChannelCell in
-        if let compose = message as? ComposeMessage {
-            return tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelComposeCell
-        } else if let text = message as? TextMessage {
-            if let attachment = text.attachment, attachment.isImage || attachment.isVideo {
-                return (text.mine) ? tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelMediaMineCell : tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelMediaOthersCell
-            }
-            return (text.mine) ? tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelTextMineCell : tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelTextOthersCell
-        }
-        fatalError("Unsupported cell type")
-    }
-    
     // MARK: - ChatViewProtocol
 
     weak var sessionManager: NINChatSessionManager? {
@@ -114,7 +106,14 @@ final class ChatView: UIView, ChatViewProtocol {
     func didRemoveMessage(from index: Int) {
         self.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
     }
-    
+
+    func didUpdateComposeAction(at index: Int, with action: ComposeUIAction) {
+        debugger("Got ui action update for compose for message at: \(index)")
+
+        guard self.composeCellActions[index] == nil else { return }
+        self.composeCellActions[index] = action
+    }
+
     func updateContentSize(_ value: CGFloat) {
         self.tableView.contentInset = UIEdgeInsets(top: 8.0, left: 0.0, bottom: value, right: 0.0)
     }
@@ -146,20 +145,34 @@ extension ChatView: UITableViewDataSource, UITableViewDelegate {
         }
         fatalError("Invalid message type")
     }
+
+    private func cell(_ message: ChannelMessage, for tableView: UITableView, at index: IndexPath) -> ChatChannelCell {
+        if let _ = message as? ComposeMessage {
+            return tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelComposeCell
+        } else if let text = message as? TextMessage {
+            if let attachment = text.attachment, attachment.isImage || attachment.isVideo {
+                return (text.mine) ? tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelMediaMineCell : tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelMediaOthersCell
+            }
+            return (text.mine) ? tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelTextMineCell : tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelTextOthersCell
+        }
+        fatalError("Unsupported cell type")
+    }
 }
 
 // MARK: - Helper methods for Cell Setup
 
 extension ChatView {
     private func setupBubbleCell(_ message: ChannelMessage, at indexPath: IndexPath) -> ChatChannelCell {
-        let cell = self.cell(message, tableView, indexPath)
+        let cell = self.cell(message, for: tableView, at: indexPath)
         cell.session = self.sessionManager
         cell.videoThumbnailManager = videoThumbnailManager
 
-        cell.onComposeSendTapped = { [weak self] composeContentView in
+        cell.onComposeSendTapped = { [weak self] composeContentView, didUpdateOptions in
+            guard didUpdateOptions else { return }
             self?.delegate?.didSendUIAction(composeContent: composeContentView)
         }
-        cell.onComposeUpdateTapped = { [weak self] composeState in
+        cell.onComposeUpdateTapped = { [weak self] composeState, didUpdateOptions in
+            guard didUpdateOptions else { return }
             self?.composeMessageStates?[message.messageID] = composeState
         }
         cell.onImageTapped = { [weak self] attachment, image in
@@ -177,6 +190,12 @@ extension ChatView {
         }
         
         cell.populateChannel(message: message, configuration: self.sessionManager?.siteConfiguration, imageAssets: self.imageAssets, colorAssets: self.colorAssets, agentAvatarConfig: self.agentAvatarConfig, userAvatarConfig: self.userAvatarConfig, composeState: self.composeMessageStates?[message.messageID])
+        if let cell = cell as? ChatChannelComposeCell {
+            if let action = self.composeCellActions[indexPath.row] {
+                cell.composeMessageView.updateStates(with: action)
+                composeCellActions.removeValue(forKey: indexPath.row)
+            }
+        }
         return cell
     }
 
