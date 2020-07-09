@@ -238,6 +238,9 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
             }
         }
         self.viewModel.loadHistory { _ in }
+        self.viewModel.onComposeActionUpdated = { [weak self] index, action in
+            self?.chatView.didUpdateComposeAction(at: index, with: action)
+        }
     }
     
     // MARK: - Helpers
