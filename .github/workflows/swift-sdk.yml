@@ -30,7 +30,7 @@ jobs:
               run: xcodebuild clean
 
             - name: Build SDK
-              run: xcodebuild -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -configuration "Release" -destination "platform=iOS Simulator,name=iPhone 8" CODE_SIGNING_ALLOWED=NO 
+              run: xcodebuild -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -configuration "Release" -destination "platform=iOS Simulator,name=iPhone 8" "OTHER_LDFLAGS=\$(OTHER_LDFLAGS) -read_only_relocs suppress" CODE_SIGNING_ALLOWED=NO 
             
             - name: Run SDK Tests
-              run: xcodebuild test -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -destination "platform=iOS Simulator,name=iPhone 8"
+              run: xcodebuild test -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -destination "platform=iOS Simulator,name=iPhone 8" "OTHER_LDFLAGS=\$(OTHER_LDFLAGS) -read_only_relocs suppress"
