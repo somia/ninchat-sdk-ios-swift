@@ -22,21 +22,19 @@ struct debugger {
         guard let error = error else { return }
 
         func output() {
-            print("""
-                  error log:
-                  error_type: \(error.type),
-                  error_reason: \(error.reason ?? "null"),
-                  session_id: \(error.sessionID ?? "null"),
-                  action_id: \(error.actionID ?? "null"),
-                  user_id: \(error.userID ?? "null"),
-                  identity_type: \(error.identityType ?? "null"),
-                  identity_name: \(error.identityName ?? "null"),
-                  channel_id: \(error.channelID ?? "null"),
-                  realm_id: \(error.realmID ?? "null"),
-                  queue_id: \(error.queueID ?? "null"),
-                  tag_id: \(error.tagID ?? "null"),
-                  message_type: \(error.messageType ?? "null"),
-                  """)
+            var log = "error_type: \(error.type)"
+            if let reason = error.reason, !reason.isEmpty { log += ",   error_reason: \(reason)" }
+            if let sessionID = error.sessionID, !sessionID.isEmpty { log += ",   session_id: \(sessionID)" }
+            if let actionID = error.actionID, !actionID.isEmpty { log += ",   action_id: \(actionID)" }
+            if let userID = error.userID, !userID.isEmpty { log += ",   user_id: \(userID)" }
+            if let identityType = error.identityType, !identityType.isEmpty { log += ",   identity_type: \(identityType)" }
+            if let identityName = error.identityName, !identityName.isEmpty { log += ",   identity_name: \(identityName)" }
+            if let channelID = error.channelID, !channelID.isEmpty { log += ",   channel_id: \(channelID)" }
+            if let realmID = error.realmID, !realmID.isEmpty { log += ",   realm_id: \(realmID)" }
+            if let queueID = error.queueID, !queueID.isEmpty { log += ",   queue_id: \(queueID)" }
+            if let tagID = error.tagID, !tagID.isEmpty { log += ",   tag_id: \(tagID)" }
+            if let messageType = error.messageType, !messageType.isEmpty { log += ",   tag_id: \(messageType)" }
+            print(log)
         }
 
         if isDebugOnly {
