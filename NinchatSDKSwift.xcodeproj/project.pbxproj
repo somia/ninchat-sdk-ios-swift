@@ -1499,6 +1499,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = NinchatSDKSwift/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1522,8 +1523,6 @@
 					"\"SystemConfiguration\"",
 					"-framework",
 					"\"WebRTC\"",
-					"-read_only_relocs",
-					suppress,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ninchat.NinchatSDKSwift;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -1547,6 +1546,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = NinchatSDKSwift/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1570,8 +1570,6 @@
 					"\"SystemConfiguration\"",
 					"-framework",
 					"\"WebRTC\"",
-					"-read_only_relocs",
-					suppress,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ninchat.NinchatSDKSwift;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
