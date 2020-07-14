@@ -552,6 +552,7 @@ extension NINChatSessionManagerImpl {
     }
  
     internal func handlerError(param: NINLowLevelClientProps) throws {
+        debugger.error(param.error as? NinchatError)
         self.onActionID?(param.actionID, param.error)
     }
 }
