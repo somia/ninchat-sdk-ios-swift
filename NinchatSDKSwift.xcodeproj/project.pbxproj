@@ -143,6 +143,7 @@
 		91A167A80359759A47DB2B11 /* ServiceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16407D8FAC5AEEDD748C9 /* ServiceManager.swift */; };
 		91A167A8436C7DEA859E45C9 /* UIKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16F6CAA073C2B72C58FBF /* UIKitTests.swift */; };
 		91A167D5B0BD96D3FD190F94 /* ComposeMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1689A5BDC25419D67E9BF /* ComposeMessageView.swift */; };
+		91A16813665172FFFA81A455 /* NinchatError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A163A915328A44FBCAD0C2 /* NinchatError.swift */; };
 		91A1688A7C316AEDFAF3BFD1 /* NinchatViewModelTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16BD6BFDA5810A0BE45F4 /* NinchatViewModelTestCase.swift */; };
 		91A168E2844E0CDE5A4D632A /* NinchatSDKSwiftServerHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16E2E2FDA2CB5D3AAA5B7 /* NinchatSDKSwiftServerHelperTests.swift */; };
 		91A16914F0B5CA995B9CD28D /* UIImageView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16A99A8F815E0C72B0AAE /* UIImageView+Extension.swift */; };
@@ -322,6 +323,7 @@
 		91A1629E2C198B4299F8E532 /* fi */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = fi; path = Localizable.strings; sourceTree = "<group>"; };
 		91A162A3A1B95DCF935DA47E /* ComposeMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposeMessage.swift; sourceTree = "<group>"; };
 		91A163542A73487774FB1D3C /* Permission.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Permission.swift; sourceTree = "<group>"; };
+		91A163A915328A44FBCAD0C2 /* NinchatError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatError.swift; sourceTree = "<group>"; };
 		91A163B62D2DBB763D1B850A /* UIFont+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+Extension.swift"; sourceTree = "<group>"; };
 		91A16407D8FAC5AEEDD748C9 /* ServiceManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceManager.swift; sourceTree = "<group>"; };
 		91A16468FB26B3084F03232F /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
@@ -711,6 +713,7 @@
 				91A16120032609820A06185E /* Queue.swift */,
 				91A166E121EFB4764BE628C8 /* WebRTCServerInfo.swift */,
 				91A16BFFA180E7ADBDE99C8D /* InboundMessage.swift */,
+				91A163A915328A44FBCAD0C2 /* NinchatError.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1284,6 +1287,7 @@
 				91A16B2F768C5422B895C769 /* Toast.swift in Sources */,
 				91A161EC840C41258CBA12A4 /* NINSessionCredentials.swift in Sources */,
 				91A1617A1502B89B969891D0 /* CloseSession.swift in Sources */,
+				91A16813665172FFFA81A455 /* NinchatError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

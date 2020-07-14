@@ -17,4 +17,34 @@ struct debugger {
             print(value)
         }
     }
+
+    static func error(_ error: NinchatError?, isDebugOnly: Bool = true) {
+        guard let error = error else { return }
+
+        func output() {
+            print("""
+                  error log:
+                  error_type: \(error.type),
+                  error_reason: \(error.reason ?? "null"),
+                  session_id: \(error.sessionID ?? "null"),
+                  action_id: \(error.actionID ?? "null"),
+                  user_id: \(error.userID ?? "null"),
+                  identity_type: \(error.identityType ?? "null"),
+                  identity_name: \(error.identityName ?? "null"),
+                  channel_id: \(error.channelID ?? "null"),
+                  realm_id: \(error.realmID ?? "null"),
+                  queue_id: \(error.queueID ?? "null"),
+                  tag_id: \(error.tagID ?? "null"),
+                  message_type: \(error.messageType ?? "null"),
+                  """)
+        }
+
+        if isDebugOnly {
+            #if DEBUG
+            output()
+            #endif
+        } else {
+            output()
+        }
+    }
 }

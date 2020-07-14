@@ -7,11 +7,6 @@
 import UIKit
 import NinchatLowLevelClient
 
-struct NinchatError: Error {
-    let code: Int
-    let title: String
-}
-
 enum NINLowLevelClientActions: String {
     case deleteUser = "delete_user"
     case describeRealmQueues = "describe_realm_queues"
@@ -92,7 +87,7 @@ extension NINLowLevelClientProps: NINLowLevelSessionProps {
     var error: Error? {
         let errorType: NINResult<String> = self.get(forKey: "error_type")
         if case let .failure(error) = errorType { return error }
-        return NinchatError(code: 1, title: errorType.value)
+        return NinchatError(type: errorType.value, props: self)
     }
 
     public var event: NINResult<String> {
