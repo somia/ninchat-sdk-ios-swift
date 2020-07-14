@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17132" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17105.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -32,9 +33,9 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="69"/>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <constraints>
-                                                <constraint firstAttribute="height" priority="750" constant="69" id="xq5-jT-hX9"/>
+                                                <constraint firstAttribute="height" constant="69" id="xq5-jT-hX9"/>
                                             </constraints>
-                                            <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="textColor" systemColor="labelColor"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                             <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                         </textView>
@@ -82,9 +83,9 @@
                                     </constraints>
                                 </stackView>
                             </subviews>
-                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <constraints>
-                                <constraint firstAttribute="bottom" secondItem="Deh-ax-vc8" secondAttribute="bottom" constant="16" id="9Zp-MB-urT"/>
+                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="Deh-ax-vc8" secondAttribute="bottom" constant="16" id="9Zp-MB-urT"/>
                                 <constraint firstItem="Deh-ax-vc8" firstAttribute="top" secondItem="yxJ-Vl-9Ub" secondAttribute="bottom" constant="16" id="DrP-Pq-Pvg"/>
                                 <constraint firstAttribute="trailing" secondItem="Deh-ax-vc8" secondAttribute="trailing" constant="16" id="MFe-2D-7or"/>
                                 <constraint firstItem="yxJ-Vl-9Ub" firstAttribute="leading" secondItem="O0S-eu-jhA" secondAttribute="leading" id="NlW-7t-0ZZ"/>
@@ -93,7 +94,7 @@
                             </constraints>
                         </view>
                     </subviews>
-                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     <constraints>
                         <constraint firstItem="O0S-eu-jhA" firstAttribute="leading" secondItem="jmf-3H-Xli" secondAttribute="leading" id="5Lz-Ui-75n"/>
                         <constraint firstAttribute="bottom" secondItem="O0S-eu-jhA" secondAttribute="bottom" id="EjI-30-r8y"/>
@@ -102,6 +103,7 @@
                     </constraints>
                 </view>
             </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <constraints>
                 <constraint firstItem="jmf-3H-Xli" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="040-ft-KCC"/>
                 <constraint firstItem="jmf-3H-Xli" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="UQB-QJ-kKh"/>
@@ -109,7 +111,6 @@
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="jmf-3H-Xli" secondAttribute="bottom" id="wzi-tK-mBc"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <connections>
                 <outlet property="attachmentButton" destination="Gtd-3Z-Rym" id="0yE-OP-qNX"/>
                 <outlet property="inputControlsContainerView" destination="jmf-3H-Xli" id="P79-h3-Qfq"/>
@@ -117,11 +118,17 @@
                 <outlet property="sendMessageButtonWidthConstraint" destination="w4y-nO-ztI" id="jlO-DG-BPh"/>
                 <outlet property="textInput" destination="81J-RR-IXx" id="QhM-E5-FFS"/>
             </connections>
-            <point key="canvasLocation" x="-302.89855072463769" y="56.584821428571423"/>
+            <point key="canvasLocation" x="-29" y="57"/>
         </view>
     </objects>
     <resources>
         <image name="icon_attachment" width="674" height="770"/>
         <image name="icon_send_message" width="35" height="35"/>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
     </resources>
 </document>
