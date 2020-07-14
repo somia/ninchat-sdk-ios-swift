@@ -59,7 +59,7 @@ final class NINFullScreenViewController: UIViewController, ViewController {
     
         self.view.addSubview(topBar)
         topBar
-            .fix(top: (0, self.view))
+            .fix(top: (0, self.view), toSafeArea: true)
             .fix(leading: (0, self.view), trailing: (0, self.view))
             .fix(height: 60)
     }

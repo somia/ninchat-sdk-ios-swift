@@ -122,7 +122,7 @@ you are next.</string>
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="brw-f0-DOL" userLabel="Chat view" customClass="ChatView" customModule="NinchatSwiftSDKUI" customModuleProvider="target">
+                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="brw-f0-DOL" userLabel="Chat view" customClass="ChatView" customModule="NinchatSDKSwift" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="44" width="414" height="698"/>
                                 <subviews>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="g76-kj-vdH">
@@ -210,7 +210,7 @@ you are next.</string>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" minimumZoomScale="0.94999999999999996" maximumZoomScale="2" translatesAutoresizingMaskIntoConstraints="NO" id="2wb-ko-jfV">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                                <rect key="frame" x="0.0" y="44" width="414" height="852"/>
                                 <subviews>
                                     <imageView contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="WiY-xq-PIw">
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
@@ -230,12 +230,12 @@ you are next.</string>
                             </scrollView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Qyc-Oh-tKW"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="WiY-xq-PIw" firstAttribute="width" secondItem="7ZM-ms-G5f" secondAttribute="width" id="7jG-b4-Q6S"/>
                             <constraint firstItem="WiY-xq-PIw" firstAttribute="height" secondItem="7ZM-ms-G5f" secondAttribute="height" id="Fr9-Nk-b3f"/>
                             <constraint firstAttribute="trailing" secondItem="2wb-ko-jfV" secondAttribute="trailing" id="Mwa-MM-gma"/>
-                            <constraint firstItem="2wb-ko-jfV" firstAttribute="top" secondItem="7ZM-ms-G5f" secondAttribute="top" id="kzl-GV-obI"/>
+                            <constraint firstItem="2wb-ko-jfV" firstAttribute="top" secondItem="Qyc-Oh-tKW" secondAttribute="top" id="kzl-GV-obI"/>
                             <constraint firstItem="2wb-ko-jfV" firstAttribute="leading" secondItem="7ZM-ms-G5f" secondAttribute="leading" id="n16-Ap-aa5"/>
                             <constraint firstAttribute="bottom" secondItem="2wb-ko-jfV" secondAttribute="bottom" id="tbB-xw-cq2"/>
                         </constraints>
