@@ -6,8 +6,19 @@
 
 import Foundation
 
+enum QueuePermissionType: String {
+    case member
+    case agent
+}
+
 struct Queue {
     let queueID: String
     let name: String
     let isClosed: Bool
+    let permissions: QueuePermissions
+}
+
+struct QueuePermissions {
+    let upload: Bool
+    let video: Bool = true
 }

@@ -24,8 +24,8 @@ extension NINChatSessionManagerImpl {
             self.queues = queuesParser.properties.keys.compactMap({ key in
                 /// Add the queue only if it is not already available
                 guard !self.queues.contains(where: { $0.queueID == key } ) else { return nil }
-                if let queue = try? realmQueues.getObject(key), case let .success(queueName) = queue.queueName, case let .success(queueClosed) = queue.queueClosed {
-                    return Queue(queueID: key, name: queueName, isClosed: queueClosed)
+                if let queue = try? realmQueues.getObject(key), case let .success(queueName) = queue.queueName, case let .success(queueClosed) = queue.queueClosed, case let .success(queueUploadPermission) = queue.queueUpload {
+                    return Queue(queueID: key, name: queueName, isClosed: queueClosed, permissions: QueuePermissions(upload: queueUploadPermission))
                 }
                 return nil
             })
@@ -123,14 +123,16 @@ extension NINChatSessionManagerImpl {
             let parser = NINChatClientPropsParser()
             try param.channelMembers.value.accept(parser)
             
-            parser.properties.compactMap({ dict in
+            parser.properties
+                    .compactMap({ dict in
                         (dict.key, dict.value) as? (String,NINLowLevelClientProps)
                     })
                     .map({ key, value in
                         (key, value.userAttributes.value)
-                    }).forEach({ [weak self] userID, attributes in
-                self?.parse(userAttr: attributes, userID: userID)
-            })
+                    })
+                    .forEach({ [weak self] userID, attributes in
+                        self?.parse(userAttr: attributes, userID: userID)
+                    })
         } catch {
             debugger(error.localizedDescription)
         }
@@ -147,11 +149,15 @@ extension NINChatSessionManagerImpl {
         self.backgroundChannelID = nil
 
         /// Get the queue we are joining
-        let queueName = self.queues.compactMap({ $0 }).filter({ [weak self] queue in
-            queue.queueID == self?.currentQueueID }).first?.name ?? ""
+        self.describedQueue = self.queues
+                .compactMap({ $0 })
+                .filter({ [weak self] queue in
+                    queue.queueID == self?.currentQueueID
+                })
+                .first
 
         /// We are no longer in the queue; clear the queue reference
-        self.currentQueueID = nil;
+        self.currentQueueID = nil
 
         /// Clear current list of messages and users
         /// If only the previous channel was successfully closed.
@@ -161,8 +167,7 @@ extension NINChatSessionManagerImpl {
         }
 
         /// Insert a meta message about the conversation start
-        self.add(message: MetaMessage(timestamp: Date(), messageID: self.chatMessages.first?.messageID, text: self.translate(key: "Audience in queue {{queue}} accepted.", formatParams: ["queue": queueName]) ?? "", closeChatButtonTitle: nil))
-
+        self.add(message: MetaMessage(timestamp: Date(), messageID: self.chatMessages.first?.messageID, text: self.translate(key: "Audience in queue {{queue}} accepted.", formatParams: ["queue": self.describedQueue?.name ?? ""]) ?? "", closeChatButtonTitle: nil))
     }
     
     internal func didPartChannel(param: NINLowLevelClientProps) throws {

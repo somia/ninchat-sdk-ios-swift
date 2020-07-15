@@ -68,6 +68,9 @@ protocol NINChatSessionMessenger: class {
     * timestamp in descending order (most recent first).
     */
     var chatMessages: [ChatMessage]! { get }
+
+    /* A reference to currently described queue, used for setting queue permissions within the chat view. */
+    var describedQueue: Queue? { get }
     
     /** Indicate whether or not the user is currently typing into the chat. */
     func update(isWriting: Bool, completion: @escaping CompletionWithError) throws
