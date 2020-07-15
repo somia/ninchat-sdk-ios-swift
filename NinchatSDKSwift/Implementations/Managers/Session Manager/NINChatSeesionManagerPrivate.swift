@@ -346,18 +346,44 @@ extension NINChatSessionManagerImpl {
         if self.chatMessages.contains(where: { $0.messageID == message.messageID }) { return }
         self.chatMessages.insert(message, at: 0)
 
+        defer {
+            /// Apply Compose Actions if there is any associated one AND the history is loaded completely
+            if self.expectedHistoryLength == -1, self.composeActions.count > 0 {
+                self.composeActions.forEach { [weak self] action in
+                    self?.addCompose(action: action)
+                }
+            }
+        }
+
         if self.expectedHistoryLength == self.chatMessages.filter({ $0 is ChannelMessage }).count {
             /// We are loading a history that needs to `reload` corresponded chat view
             self.chatMessages = self.sortAndMap()
             self.onHistoryLoaded?(self.expectedHistoryLength)
             self.expectedHistoryLength = -1
-
         } else if self.expectedHistoryLength == -1, case let .success(length) = remained, length == 0 {
             /// We are not waiting for a history result
             /// Thus, we will update the view with the index of received message
             self.chatMessages = self.sortAndMap()
             self.onMessageAdded?(chatMessages.firstIndex(where: { $0.messageID == message.messageID }) ?? -1)
         }
+    }
+
+    internal func addCompose(action: ComposeUIAction) {
+        /// Check if the corresponded message is already added
+        if let composeMessage = self.chatMessages.compactMap({ $0 as? ComposeMessage }).first(where: { $0.content.contains(action.target) }) {
+            self.applyCompose(action: action, to: composeMessage)
+        }
+        /// Add the action to a list waiting to get the corresponded compose message later
+        else {
+            /// Guard against the same compose action getting added multiple times
+            if self.composeActions.contains(where: { $0.target == action.target }) { return }
+            self.composeActions.append(action)
+        }
+    }
+
+    internal func applyCompose(action: ComposeUIAction, to message: ComposeMessage) {
+        self.onComposeActionUpdated?(self.chatMessages.firstIndex(where: { $0.messageID == message.messageID }) ?? -1, action)
+        self.composeActions.removeAll(where: { $0.target == action.target })
     }
     
     internal func removeMessage(atIndex index: Int) {
@@ -455,6 +481,10 @@ extension NINChatSessionManagerImpl {
         let messageTime = param.messageTime.value
         let messageUser = self.channelUsers[messageUserID]
 
+        func adjustHistoryLength() {
+            if self.expectedHistoryLength > 0 { self.expectedHistoryLength -= 1 }
+        }
+
         guard let messageType = param.messageType.value else { return }
         switch messageType {
         case .candidate, .answer, .offer, .call, .pickup, .hangup:
@@ -465,11 +495,12 @@ extension NINChatSessionManagerImpl {
             try self.handleCompose(message: messageID, user: messageUser, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
         case .channel:
             try self.handleChannel(message: messageID, user: messageUser, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
+        case .uiAction:
+            try self.handleUIAction(message: messageID, user: messageUser, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
+            adjustHistoryLength()
         default:
             debugger("Ignoring unsupported message type: \(messageType.rawValue)")
-            if self.expectedHistoryLength > 0 {
-                self.expectedHistoryLength -= 1
-            }
+            adjustHistoryLength()
         }
 
     }
@@ -527,11 +558,17 @@ extension NINChatSessionManagerImpl {
             self?.add(message: ComposeMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user?.userID == self?.myUserID, sender: user, content: compose), remained: remained)
         }
     }
-    
+
+    internal func handleUIAction(message id: String, user: ChannelUser?, time: Double, actionID: Int, remained: NINResult<Int>, payload: NINLowLevelClientPayload) throws {
+        try [Int](0..<payload.length()).decodeAndPerform(onPayload: payload, type: ComposeUIAction.self) { [weak self] (action: ComposeUIAction) in
+            self?.addCompose(action: action)
+        }
+    }
+
     internal func handlePart(param: NINLowLevelClientProps, payload: NINLowLevelClientPayload) throws {
         debugger("Received a Part message with payload: \(payload)")
     }
- 
+
     internal func handlerError(param: NINLowLevelClientProps) throws {
         self.onActionID?(param.actionID, param.error)
     }

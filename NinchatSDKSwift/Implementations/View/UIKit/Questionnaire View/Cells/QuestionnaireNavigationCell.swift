@@ -34,7 +34,7 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
     }()
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
-        if let nextButton = self.buttons.subviews.first(where: { $0.trailing != nil }) as? Button {
+        if let nextButton = self.buttons.subviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next }) {
             if nextButton.titleLabel?.text?.isEmpty ?? true {
                 nextButton.imageView?.tint = delegate?.override(questionnaireAsset: .navigationNextText) ?? .white
             } else {
@@ -44,7 +44,7 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
             nextButton.layer.borderColor = delegate?.override(questionnaireAsset: .navigationNextText)?.cgColor ?? UIColor.QBlueButtonNormal.cgColor
             nextButton.backgroundColor = delegate?.override(questionnaireAsset: .navigationNextBackground) ?? .QBlueButtonNormal
         }
-        if let backButton = self.buttons.subviews.first(where: { $0.leading != nil }) as? Button {
+        if let backButton = self.buttons.subviews.compactMap({ $0 as? Button }).first(where: { $0.type == .back }) {
             if backButton.titleLabel?.text?.isEmpty ?? true {
                 backButton.imageView?.tint = delegate?.override(questionnaireAsset: .navigationBackText) ?? .QBlueButtonNormal
             } else {
@@ -159,10 +159,11 @@ extension QuestionnaireNavigationCell {
 
         button.titleLabel?.font = .ninchat
         button.imageEdgeInsets = UIEdgeInsets(top: 4.0, left: 4.0, bottom: 4.0, right: 4.0)
+        button.updateTitleScale()
         button
-            .fix(width: max(80.0, button.intrinsicContentSize.width + 32.0), height: 45.0)
+            .fix(width: min((self.contentView.bounds.width / 2) - 32, max(80.0, button.intrinsicContentSize.width + 32.0)), height: 45.0)
             .round(radius: 45.0 / 2, borderWidth: 1.0, borderColor: .QBlueButtonNormal)
-
+        button.width?.priority = .almostRequired
     }
 
     private func shapeNavigationNext(button: UIButton, configuration: AnyCodable?) {

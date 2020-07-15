@@ -71,6 +71,12 @@ protocol NINChatSessionMessenger: class {
 
     /* A reference to currently described queue, used for setting queue permissions within the chat view. */
     var describedQueue: Queue? { get }
+
+    /*
+    * The list that keeps a temporary record of `ComposeMessageView` states
+    * To satisfy the issue `https://github.com/somia/mobile/issues/218`
+    */
+    var composeActions: [ComposeUIAction] { get }
     
     /** Indicate whether or not the user is currently typing into the chat. */
     func update(isWriting: Bool, completion: @escaping CompletionWithError) throws
@@ -120,6 +126,7 @@ protocol NINChatSessionManagerDelegate: class {
     var onChannelClosed: (() -> Void)? { get set }
     var onRTCSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
     var onRTCClientSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
+    var onComposeActionUpdated: ((_ index: Int, _ action: ComposeUIAction) -> Void)? { get set }
 
     func bindQueueUpdate<T: QueueUpdateCapture>(closure: @escaping (Events, Queue, Error?) -> Void, to receiver: T)
     func unbindQueueUpdateClosure<T: QueueUpdateCapture>(from receiver: T)

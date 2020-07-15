@@ -62,10 +62,10 @@ final class ChatTypingCell: UITableViewCell {
 
 extension ChatTypingCell: TypingCell {
     func populateTyping(message: UserTypingMessage, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, agentAvatarConfig: AvatarConfig?) {
-        if let user = message.user, !user.displayName.isEmpty, let name = agentAvatarConfig?.nameOverride, !name.isEmpty {
+        if let name = agentAvatarConfig?.nameOverride, !name.isEmpty {
+            self.senderNameLabel.text = name
+        } else if let user = message.user, !user.displayName.isEmpty {
             self.senderNameLabel.text = user.displayName
-        } else {
-            self.senderNameLabel.text = agentAvatarConfig?.nameOverride ?? ""
         }
         self.timeLabel.text = DateFormatter.shortTime.string(from: message.timestamp)
 
