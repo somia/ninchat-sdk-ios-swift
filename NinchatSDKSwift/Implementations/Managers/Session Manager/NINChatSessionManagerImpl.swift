@@ -178,7 +178,7 @@ extension NINChatSessionManagerImpl {
         }
 
         /// Make sure our site configuration contains a realm_id
-        guard let realmId = self.siteConfiguration.audienceRealm else { throw NINSessionExceptions.invalidRealmConfiguration }
+        guard let realmId = self.siteConfiguration?.audienceRealm else { throw NINSessionExceptions.invalidRealmConfiguration }
         self.realmID = realmId
 
         if let secret = self.siteSecret {
