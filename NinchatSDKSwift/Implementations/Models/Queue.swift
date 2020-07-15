@@ -8,7 +8,6 @@ import Foundation
 
 enum QueuePermissionType: String {
     case member
-    case agent
 }
 
 struct Queue {
