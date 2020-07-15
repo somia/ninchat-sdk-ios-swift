@@ -58,7 +58,8 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     
     // MARK: - NINChatSessionManager variables
     
-    var chatMessages: [ChatMessage] = []
+    var chatMessages: [ChatMessage]! = []
+    var describedQueue: Queue?
     var composeActions: [ComposeUIAction] = []
     
     // MARK: - NINChatSessionManagerDelegate

@@ -67,7 +67,10 @@ protocol NINChatSessionMessenger: class {
     * Chronological list of messages on the current channel. The list is ordered by the message
     * timestamp in descending order (most recent first).
     */
-    var chatMessages: [ChatMessage] { get }
+    var chatMessages: [ChatMessage]! { get }
+
+    /* A reference to currently described queue, used for setting queue permissions within the chat view. */
+    var describedQueue: Queue? { get }
 
     /*
     * The list that keeps a temporary record of `ComposeMessageView` states

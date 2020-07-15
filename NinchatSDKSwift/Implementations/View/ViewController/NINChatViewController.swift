@@ -15,7 +15,8 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
     weak var sessionManager: NINChatSessionManager?
 
     // MARK: - Injected
-    
+
+    var queue: Queue?
     var viewModel: NINChatViewModel!
     var chatDataSourceDelegate: NINChatDataSourceDelegate! {
         didSet {
@@ -214,6 +215,10 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
         self.inputControlsView.onTextSizeChanged = { [weak self] height in
             debugger("new text area height: \(height + Margins.kTextFieldPaddingHeight.rawValue)")
             self?.updateInputContainerHeight(height + Margins.kTextFieldPaddingHeight.rawValue)
+        }
+        if let queue = self.queue {
+            /// Apply queue permissions to view
+            self.inputControlsView.updatePermissions(queue.permissions)
         }
     }
     

@@ -78,10 +78,10 @@ final class NINCoordinator: Coordinator {
         joinViewController.viewModel = NINQueueViewModelImpl(sessionManager: self.sessionManager, delegate: self.session.internalDelegate)
         joinViewController.session = session
         joinViewController.sessionManager = sessionManager
-        joinViewController.onQueueActionTapped = { [weak self] in
+        joinViewController.onQueueActionTapped = { [weak self] queue in
             DispatchQueue.main.async {
                 guard let weakSelf = self else { return }
-                weakSelf.navigationController?.pushViewController(weakSelf.chatViewController, animated: true)
+                weakSelf.navigationController?.pushViewController(weakSelf.chatViewController(queue: queue), animated: true)
             }
         }
 
@@ -243,6 +243,13 @@ extension NINCoordinator {
     internal func queueViewController(queue: Queue) -> NINQueueViewController {
         let vc = self.queueViewController
         vc.resumeMode = false
+        vc.queue = queue
+
+        return vc
+    }
+
+    internal func chatViewController(queue: Queue?) -> NINChatViewController {
+        let vc = self.chatViewController
         vc.queue = queue
 
         return vc

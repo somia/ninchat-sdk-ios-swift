@@ -21,7 +21,7 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
     }()
     private lazy var viewModel: NINQuestionnaireViewModelImpl? = {
         let viewModel = NINQuestionnaireViewModelImpl(sessionManager: session, questionnaireType: .pre)
-        viewModel.queue = Queue(queueID: "", name: "", isClosed: false)
+        viewModel.queue = Queue(queueID: "", name: "", isClosed: false, permissions: QueuePermissions(upload: false))
         
         let expect = self.expectation(description: "Expected to initiate the view model")
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {

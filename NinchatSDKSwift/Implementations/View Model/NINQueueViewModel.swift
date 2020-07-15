@@ -34,8 +34,8 @@ final class NINQueueViewModelImpl: NINQueueViewModel {
         self.sessionManager.unbindQueueUpdateClosure(from: self)
         self.sessionManager.bindQueueUpdate(closure: { [weak self] event, queue, error in
             if let _ = error { try? self?.sessionManager.closeChat(); return }
-
             guard (self?.resumeMode ?? false) || (self?.readyToJoin ?? false) else { return }
+
             self?.connect(queue: queue)
         }, to: self)
     }

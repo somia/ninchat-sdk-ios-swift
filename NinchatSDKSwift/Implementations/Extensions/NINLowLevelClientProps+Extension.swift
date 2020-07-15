@@ -129,6 +129,7 @@ protocol NINLowLevelQueueProps {
     var realmQueue: NINResult<NINLowLevelClientProps> { get }
     var queuePosition: NINResult<Int> { get }
     var queueClosed: NINResult<Bool> { get }
+    var queueUpload: NINResult<Bool> { get }
     var queueAttributes: NINResult<NINLowLevelClientProps> { get }
 
     var queueID: NINResult<String> { set get }
@@ -159,6 +160,21 @@ extension NINLowLevelClientProps: NINLowLevelQueueProps {
         switch self.queueAttributes {
         case .success(let attributes):
             return attributes.closed
+        case .failure(let error):
+            return .failure(error)
+        }
+    }
+
+    var queueUpload: NINResult<Bool> {
+        switch self.queueAttributes {
+        case .success(let attributes):
+            let upload: NINResult<String> = attributes.get(forKey: "upload")
+            switch upload {
+            case .success(let value):
+                return .success(QueuePermissionType(rawValue: value) == .member)
+            case .failure(let error):
+                return .failure(error)
+            }
         case .failure(let error):
             return .failure(error)
         }
