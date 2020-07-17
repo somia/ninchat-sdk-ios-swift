@@ -8,7 +8,7 @@ source 'https://github.com/somia/ninchat-podspecs.git'
 def libraries
   pod 'AnyCodable-FlightSchool', '~> 0.2.3'
   pod 'AutoLayoutSwift', '4.0.0'
-  pod 'NinchatLowLevelClient', :path => '.' #'~> 0.0.40'
+  pod 'NinchatLowLevelClient', '~> 0.2.8'
   pod 'GoogleWebRTC'
 end
 

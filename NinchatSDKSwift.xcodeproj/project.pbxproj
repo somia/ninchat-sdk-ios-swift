@@ -328,6 +328,7 @@
 		91A16501A258D1244E52AD23 /* String+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		91A1652A485CCE644E39135E /* NSMutableAttributedString+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSMutableAttributedString+Extension.swift"; sourceTree = "<group>"; };
 		91A165370F88E5B62075CFB2 /* ChannelUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelUser.swift; sourceTree = "<group>"; };
+		91A165ACC671F88CB39EEB82 /* NinchatLowLevelClient.podspec */ = {isa = PBXFileReference; lastKnownFileType = file.podspec; path = NinchatLowLevelClient.podspec; sourceTree = "<group>"; };
 		91A1665602ED586F1BD60785 /* RTCSessionDescription+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RTCSessionDescription+Extension.swift"; sourceTree = "<group>"; };
 		91A166D4F9B0F6D7063479E9 /* NinchatXCTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatXCTestCase.swift; sourceTree = "<group>"; };
 		91A166E121EFB4764BE628C8 /* WebRTCServerInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebRTCServerInfo.swift; sourceTree = "<group>"; };
@@ -495,6 +496,7 @@
 				855B9F12238ECDB30081A9C6 /* Products */,
 				51F561339DA2FBB7CF2F5A02 /* Pods */,
 				1F3E30E3300160A871D02F85 /* Frameworks */,
+				91A165ACC671F88CB39EEB82 /* NinchatLowLevelClient.podspec */,
 			);
 			sourceTree = "<group>";
 		};
