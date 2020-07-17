@@ -11,7 +11,7 @@ import NinchatLowLevelClient
 
 /**
  * Due to some unknown reasons, setting and getting "int" values in 'NINLowLevelClientProps' here results in the following error from go:
- * 'Error Domain=go Code=1 "Prop type: "they_key" is not a number" UserInfo={NSLocalizedDescription=Prop type: "the_key" is not a number'
+ * 'Error Domain=go Code=1 "Prop type: "the_key" is not a number" UserInfo={NSLocalizedDescription=Prop type: "the_key" is not a number'
  * However, it is working on the SDK when the parameters are set from the server.
  * This is why we have to omit testing "int" parameters for now, until we can figure out what is happening here.
 */
@@ -82,11 +82,10 @@ final class NINLowLevelClientPropsTests: XCTestCase {
         props.set(value: "id", forKey: "message_id")
 
 
-        props.setInt("history_order", val: NSNumber(value: 1).intValue)
-        let long = props.get(forKey: "history_order", ofType: CLong.self)
+        props.setInt("history_order", val: 1)
+        let long = props.get(forKey: "history_order", ofType: Int.self)
         if case let .failure(error) = long {
-            /// It needs to be investigated why we get error when trying to fetch an "int" parameter
-            print(error)
+            XCTFail(error.localizedDescription)
         } else {
             XCTAssertEqual(long.value, 1)
         }
@@ -102,7 +101,7 @@ extension NINLowLevelClientProps {
     func get<T>(forKey key: String, ofType type: T.Type) -> NINResult<T> {
         do {
             switch type {
-            case is CLong.Type:
+            case is Int.Type:
                 return .success(try self.getInt(key) as! T)
             case is Double.Type:
                 return .success(try self.getDouble(key) as! T)

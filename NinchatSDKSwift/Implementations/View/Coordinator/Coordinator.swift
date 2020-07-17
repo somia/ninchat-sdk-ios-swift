@@ -193,9 +193,14 @@ final class NINCoordinator: Coordinator {
     /// In case of heavy questionnaires, there would be a memory-consuming job in instantiation of `NINQuestionnaireViewModel` even though it is implemented in a multi-thread manner using `OperationQueue`.
     /// Thus, we have to do the job in background before the questionnaire page being loaded
     private func prepareNINQuestionnaireViewModel() {
-        guard self.hasPreAudienceQuestionnaire else { return }
-        DispatchQueue.global(qos: .background).async { [weak self] in
-            self?.questionnaireViewModel = NINQuestionnaireViewModelImpl(sessionManager: self?.sessionManager, questionnaireType: .pre)
+        if self.hasPreAudienceQuestionnaire {
+            DispatchQueue.global(qos: .background).async { [weak self] in
+                self?.questionnaireViewModel = NINQuestionnaireViewModelImpl(sessionManager: self?.sessionManager, questionnaireType: .pre)
+            }
+        } else if self.hasPostAudienceQuestionnaire {
+            DispatchQueue.global(qos: .background).async { [weak self] in
+                self?.questionnaireViewModel = NINQuestionnaireViewModelImpl(sessionManager: self?.sessionManager, questionnaireType: .post)
+            }
         }
     }
 }
