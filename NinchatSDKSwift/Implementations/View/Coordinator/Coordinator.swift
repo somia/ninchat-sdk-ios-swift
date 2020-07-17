@@ -228,7 +228,7 @@ extension NINCoordinator {
                 weakSelf.navigationController?.pushViewController(weakSelf.queueViewController(queue: queue), animated: true)
             }
         }
-        self.preQuestionnaireViewModel.queue = queue
+        self.preQuestionnaireViewModel?.queue = queue
 
         return vc
     }
