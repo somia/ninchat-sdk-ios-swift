@@ -34,21 +34,21 @@ extension NINLowLevelClientProps {
         let props = NINLowLevelClientProps()
 
         if let action = action {
-            props?.setAction(action)
+            props.setAction(action)
         }
         if let name = name {
-            props?.name = .success(name)
+            props.name = .success(name)
         }
 
-        return props!
+        return props
     }
 
     static func initiate(credentials: NINSessionCredentials) -> NINLowLevelClientProps {
         let props = NINLowLevelClientProps()
-        props?.set(value: credentials.userID, forKey: "user_id")
-        props?.set(value: credentials.userAuth, forKey: "user_auth")
+        props.set(value: credentials.userID, forKey: "user_id")
+        props.set(value: credentials.userAuth, forKey: "user_auth")
 
-        return props!
+        return props
     }
 
     /**
@@ -57,10 +57,10 @@ extension NINLowLevelClientProps {
     public static func initiate<T>(metadata: [String:T]) -> NINLowLevelClientProps {
         let props = NINLowLevelClientProps()
         for (key,value) in metadata {
-            props?.set(value: value, forKey: key)
+            props.set(value: value, forKey: key)
         }
 
-        return props!
+        return props
     }
 }
 
