@@ -8,16 +8,19 @@ import Foundation
 import UIKit
 
 extension String {
-    func htmlAttributedString(withFont font: UIFont?, alignment: NSTextAlignment, color: UIColor?) -> NSAttributedString? {
-        applyStyle(attrString: attributedString(font, document: .html), alignment, color)
+
+    func htmlAttributedString(withFont font: UIFont?, alignment: NSTextAlignment, color: UIColor?, width: CGFloat?) -> NSAttributedString? {
+        applyStyle(attrString: attributedString(font, document: .html, width: width), alignment, color)
     }
     
     func plainString(withFont font: UIFont?, alignment: NSTextAlignment, color: UIColor?) -> NSAttributedString? {
-        applyStyle(attrString: attributedString(font, document: .plain), alignment, color)
+        applyStyle(attrString: attributedString(font, document: .plain, width: nil), alignment, color)
     }
     
-    private func attributedString(_ font: UIFont?, document: NSAttributedString.DocumentType) -> NSMutableAttributedString? {
-        guard let data = self.data(using: .utf16, allowLossyConversion: false), let font = font else { return nil }
+    private func attributedString(_ font: UIFont?, document: NSAttributedString.DocumentType, width: CGFloat?) -> NSMutableAttributedString? {
+        /// To limit embedded images to the given width
+        let input = (width != nil) ? "<head><style type=\"text/css\"> img{ max-height: 100%; max-width: \(width!) !important; width: auto; height: auto;} </style> </head><body> \(self) </body>" : self
+        guard let data = input.data(using: .utf16, allowLossyConversion: false), let font = font else { return nil }
         do {
             return try NSMutableAttributedString(data: data, options: [.documentType: document], documentAttributes: nil).override(font: font)
         } catch {

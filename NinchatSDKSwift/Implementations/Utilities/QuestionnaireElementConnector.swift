@@ -11,8 +11,7 @@ protocol QuestionnaireElementConnector {
     var onRegisterTargetReached: ((LogicQuestionnaire?, ElementRedirect?, _ autoApply: Bool) -> Void)? { get set }
     var onCompleteTargetReached: ((LogicQuestionnaire?, ElementRedirect?, _ autoApply: Bool) -> Void)? { get set }
 
-    init(configurations: [QuestionnaireConfiguration])
-
+    init(configurations: [QuestionnaireConfiguration], style: QuestionnaireStyle)
     func findElementAndPageRedirect(for input: String, in configuration: QuestionnaireConfiguration, autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?)
     func findElementAndPageLogic(for dictionary: [String:String], in answers: [String:AnyHashable], autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?)
     mutating func appendElement(elements: [QuestionnaireElement], configurations: [QuestionnaireConfiguration])
@@ -22,9 +21,9 @@ struct QuestionnaireElementConnectorImpl: QuestionnaireElementConnector {
     private var elements: [[QuestionnaireElement]] = []
     private var configurations: [QuestionnaireConfiguration] = []
 
-    init(configurations: [QuestionnaireConfiguration]) {
+    init(configurations: [QuestionnaireConfiguration], style: QuestionnaireStyle) {
         self.configurations = configurations
-        self.elements = QuestionnaireElementConverter(configurations: configurations).elements
+        self.elements = QuestionnaireElementConverter(configurations: configurations, style: style).elements
     }
 
     var logicContainsTags: ((LogicQuestionnaire?) -> Void)?

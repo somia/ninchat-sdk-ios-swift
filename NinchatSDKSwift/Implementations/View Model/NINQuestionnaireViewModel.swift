@@ -88,12 +88,12 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
             self?.configurations = configurations
         }
         let elementsOperation = BlockOperation { [weak self] in
-            guard let configurations = self?.configurations else { return }
-            self?.views = QuestionnaireElementConverter(configurations: configurations).elements
+            guard let configurations = self?.configurations, let siteConfiguration = self?.sessionManager?.siteConfiguration else { return }
+            self?.views = QuestionnaireElementConverter(configurations: configurations, style: (questionnaireType == .pre) ? siteConfiguration.preAudienceQuestionnaireStyle : siteConfiguration.postAudienceQuestionnaireStyle).elements
         }
         let connectorOperation = BlockOperation { [weak self] in
-            guard let configurations = self?.configurations else { return }
-            self?.connector = QuestionnaireElementConnectorImpl(configurations: configurations)
+            guard let configurations = self?.configurations, let siteConfiguration = self?.sessionManager?.siteConfiguration else { return }
+            self?.connector = QuestionnaireElementConnectorImpl(configurations: configurations, style: (questionnaireType == .pre) ? siteConfiguration.preAudienceQuestionnaireStyle : siteConfiguration.postAudienceQuestionnaireStyle)
         }
         self.setupConnectorOperation = BlockOperation { [weak self] in
             if questionnaireType == .pre {
