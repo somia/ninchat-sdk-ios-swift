@@ -330,7 +330,6 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let contentView = self.contentView, let cell = self.dataSourceDelegate?.cell(at: indexPath, view: contentView) else { return UITableViewCell() }
-        return cell
+        self.dataSourceDelegate!.cell(at: indexPath, view: self.contentView!)
     }
 }

@@ -85,6 +85,10 @@
           "target": "Huolet"
         },
         {
+          "pattern": "[4-9]\\d+|\\d{3,}",
+          "target": "Huolet"
+        },
+        {
           "pattern": "",
           "target": "_register"
         }

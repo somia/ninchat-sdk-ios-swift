@@ -76,7 +76,9 @@ extension QuestionnaireElementConnectorImpl {
     /// The input could be either the 'name' variable in QuestionnaireConfiguration object
     /// Or 'value' in ElementOption object
     internal func findAssociatedRedirect(for input: String, in configuration: QuestionnaireConfiguration) -> ElementRedirect? {
-        if let redirect = configuration.redirects?.first(where: { $0.pattern ?? "" == input }) {
+        if let redirect = configuration.redirects?.first(where: { input.extractRegex(withPattern: $0.pattern ?? "")?.count ?? 0 > 0 }) {
+            return redirect
+        } else if let redirect = configuration.redirects?.first(where: { $0.pattern ?? "" == input }) {
             return redirect
         }
         return nil
