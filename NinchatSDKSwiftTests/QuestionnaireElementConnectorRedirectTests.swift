@@ -56,6 +56,9 @@ final class QuestionnaireElementConnectorRedirectTests: XCTestCase {
 
         let target_2 = connector.findAssociatedRedirect(for: "", in: self.configuration!)
         XCTAssertNotNil(target_2)
+
+        let target_3 = connector.findAssociatedRedirect(for: "40", in: self.configuration!)
+        XCTAssertNotNil(target_3)
     }
 
     func test_13_find_configuration() {
