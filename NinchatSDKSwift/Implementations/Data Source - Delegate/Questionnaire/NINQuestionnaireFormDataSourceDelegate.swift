@@ -71,9 +71,9 @@ extension NINQuestionnaireFormDataSourceDelegate {
 
             cell.onNextButtonTapped = { [weak self] in
                 do {
-                    self?.onNextButtonTapped(element: try self?.viewModel.getElements().first)
+                    self?.onNextButtonTapped(elements: try self?.viewModel.getElements())
                 } catch {
-                    self?.onNextButtonTapped(element: nil)
+                    self?.onNextButtonTapped(elements: nil)
                 }
             }
             cell.onBackButtonTapped = { [weak self] in

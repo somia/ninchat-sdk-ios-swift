@@ -81,13 +81,13 @@ extension QuestionnaireDataSourceDelegate {
         cell.requirementSatisfactionUpdater?(update)
     }
 
-    internal func onNextButtonTapped(element: QuestionnaireElement?) {
+    internal func onNextButtonTapped(elements: [QuestionnaireElement]?) {
         /// In case the element's redirect/logic is not reachable through ´QuestionnaireOptionSelectableElement´ protocol
-        if let element = element, self.viewModel.askedPageNumber == nil {
+        if let elements = elements, elements.count > 0, self.viewModel.askedPageNumber == nil {
             if let page = self.viewModel.redirectTargetPage(for: "", autoApply: false) {
                 guard page >= 0 else { return; }
                 self.showTargetPage(page: page)
-            } else if let key = element.elementConfiguration?.name, !key.isEmpty, let page = self.viewModel.logicTargetPage(key: key, value: "", autoApply: false) {
+            } else if let page = self.viewModel.logicTargetPage(for: elements.reduce(into: [:]) { $0[$1.elementConfiguration?.name ?? ""] = "" }, autoApply: false) {
                 guard page >= 0 else { return; }
                 self.showTargetPage(page: page)
             }
@@ -117,7 +117,7 @@ extension QuestionnaireDataSourceDelegate {
             if let page = self.viewModel.redirectTargetPage(for: option.value) {
                 guard page >= 0 else { return; }
                 self.showTargetPage(page: page)
-            } else if let key = element.elementConfiguration?.name, !key.isEmpty, let page = self.viewModel.logicTargetPage(key: key, value: option.value) {
+            } else if let page = self.viewModel.logicTargetPage(for: [element.elementConfiguration?.name ?? "": option.value], autoApply: false) {
                 guard page >= 0 else { return; }
                 self.showTargetPage(page: page)
             }
@@ -125,7 +125,7 @@ extension QuestionnaireDataSourceDelegate {
             /// It will perform only if the element is not the exit element provided to close the questionnaire
             else if (view is QuestionnaireElementRadio || view is QuestionnaireElementCheckbox) {
                 guard !self.viewModel.shouldWaitForNextButton, !self.viewModel.isExitElement(view) else { return }
-                self.onNextButtonTapped(element: element)
+                self.onNextButtonTapped(elements: [element])
             }
         }
         view.onElementOptionDeselected = { _ in

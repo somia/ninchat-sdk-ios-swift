@@ -158,7 +158,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         cell.overrideAssets(with: self.session?.internalDelegate)
 
         cell.onNextButtonTapped = { [weak self] in
-            self?.onNextButtonTapped(element: self?.elements[indexPath.section].first)
+            self?.onNextButtonTapped(elements: self?.elements[indexPath.section])
         }
         cell.onBackButtonTapped = { [weak self] in
             self?.onBackButtonTapped(completion: self?.onRemoveCellContent)

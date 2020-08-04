@@ -30,7 +30,7 @@ protocol NINQuestionnaireViewModel {
     func insertRegisteredElement(_ elements: [QuestionnaireElement], configuration: [QuestionnaireConfiguration])
     func clearAnswersForCurrentPage() -> Bool
     func redirectTargetPage(for value: String, autoApply: Bool, performClosures: Bool) -> Int?
-    func logicTargetPage(key: String, value: String, autoApply: Bool, performClosures: Bool) -> Int?
+    func logicTargetPage(for dictionary: [String:String], autoApply: Bool, performClosures: Bool) -> Int?
     func goToNextPage() -> Bool?
     func goToPreviousPage() -> Bool
     func goToPage(_ page: Int) -> Bool
@@ -43,8 +43,8 @@ extension NINQuestionnaireViewModel {
     func redirectTargetPage(for value: String, autoApply: Bool = true, performClosures: Bool = true) -> Int? {
         self.redirectTargetPage(for: value, autoApply: autoApply, performClosures: performClosures)
     }
-    func logicTargetPage(key: String, value: String, autoApply: Bool = true, performClosures: Bool = true) -> Int? {
-        self.logicTargetPage(key: key, value: value, autoApply: autoApply, performClosures: performClosures)
+    func logicTargetPage(for dictionary: [String:String], autoApply: Bool = true, performClosures: Bool = true) -> Int? {
+        self.logicTargetPage(for: dictionary, autoApply: autoApply, performClosures: performClosures)
     }
 }
 
@@ -207,11 +207,6 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 
 extension NINQuestionnaireViewModelImpl {
     func finishQuestionnaire(for logic: LogicQuestionnaire?, redirect: ElementRedirect?, autoApply: Bool) {
-        guard logic != nil || redirect != nil else {
-            /// Both redirect and logic are nil, thus, this is an invalid target case
-            /// Register questionnaire and finnish
-            self.connector.onRegisterTargetReached?(nil, nil, autoApply); return
-        }
         guard let queue = self.queue, let target: (canJoin: Bool, queue: Queue?) = self.canJoinGivenQueue(withID: logic?.queue ?? queue.queueID), let targetQueue = target.queue, target.canJoin else {
             self.connector.onRegisterTargetReached?(logic, redirect, autoApply); return
         }
@@ -296,7 +291,7 @@ extension NINQuestionnaireViewModelImpl {
 
         if let page = self.redirectTargetPage(for: value, performClosures: false), page >= 0 {
             self.askedPageNumber = page
-        } else if let page = self.logicTargetPage(key: element.elementConfiguration?.name ?? "", value: value, performClosures: false), page >= 0 {
+        } else if let page = self.logicTargetPage(for: [element.elementConfiguration?.name ?? "": value], performClosures: false), page >= 0 {
             self.askedPageNumber = page
         }
     }
@@ -327,8 +322,8 @@ extension NINQuestionnaireViewModelImpl {
         }
     }
 
-    func logicTargetPage(key: String, value: String, autoApply: Bool, performClosures: Bool) -> Int? {
-        self.connector.findElementAndPageLogic(for: [key:value], in: self.answers, autoApply: autoApply, performClosures: performClosures).1
+    func logicTargetPage(for dictionary: [String:String], autoApply: Bool, performClosures: Bool) -> Int? {
+        self.connector.findElementAndPageLogic(for: dictionary, in: self.answers, autoApply: autoApply, performClosures: performClosures).1
     }
 
     func goToNextPage() -> Bool? {
