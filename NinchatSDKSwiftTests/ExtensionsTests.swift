@@ -24,8 +24,8 @@ final class ExtensionsTests: XCTestCase {
     }
     
     func test_html_string() {
-        XCTAssertNotNil("This is an example of simple string".htmlAttributedString(withFont: .ninchat, alignment: .center, color: .white))
-        XCTAssertNotNil("<head>This is an example of html string</head>".htmlAttributedString(withFont: .ninchat, alignment: .left, color: .black))
+        XCTAssertNotNil("This is an example of simple string".htmlAttributedString(withFont: .ninchat, alignment: .center, color: .white, width: nil))
+        XCTAssertNotNil("<head>This is an example of html string</head>".htmlAttributedString(withFont: .ninchat, alignment: .left, color: .black, width: 100))
     }
     
     func test_string_with_tags() {
@@ -56,7 +56,7 @@ final class ExtensionsTests: XCTestCase {
         func test_link1() {
             let url = "https://www.ninchat.com/"
             let text = "<a href=\"https://www.ninchat.com\">salaries_by_field_of_study_2018.pdf</a>"
-            let attrString = text.htmlAttributedString(withFont: .ninchat, alignment: .left, color: .black)
+            let attrString = text.htmlAttributedString(withFont: .ninchat, alignment: .left, color: .black, width: nil)
             XCTAssertNotNil(attrString)
             XCTAssertEqual(attrString?.string, "salaries_by_field_of_study_2018.pdf")
 
@@ -79,7 +79,7 @@ final class ExtensionsTests: XCTestCase {
         func test_link2() {
             let url = "https://www.ninchat.com/"
             let text = "<a href=\"https://www.ninchat.com\">Pellon kuivatusjärjestelmät ja ravinteiden talteenotto raportti.pdf</a>"
-            let attrString = text.htmlAttributedString(withFont: .ninchat, alignment: .left, color: .black)
+            let attrString = text.htmlAttributedString(withFont: .ninchat, alignment: .left, color: .black, width: nil)
             XCTAssertNotNil(attrString)
             XCTAssertEqual(attrString?.string, "Pellon kuivatusjärjestelmät ja ravinteiden talteenotto raportti.pdf")
 
