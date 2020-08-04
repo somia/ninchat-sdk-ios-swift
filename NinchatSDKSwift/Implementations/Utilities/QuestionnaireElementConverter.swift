@@ -11,9 +11,11 @@ import UIKit
 
 struct QuestionnaireElementConverter {
     private let configurations: [QuestionnaireConfiguration]
+    private let style: QuestionnaireStyle
 
-    init(configurations: [QuestionnaireConfiguration]) {
+    init(configurations: [QuestionnaireConfiguration], style: QuestionnaireStyle) {
         self.configurations = configurations
+        self.style = style
     }
 
     var elements: [[QuestionnaireElement]] {
@@ -54,6 +56,7 @@ extension QuestionnaireElementConverter {
     func generate<T: QuestionnaireElement>(from configuration: QuestionnaireConfiguration, index: Int, ofType: T.Type) -> T {
         let view = T(frame: .zero)
         view.index = index
+        view.questionnaireStyle = style
         view.questionnaireConfiguration = configuration
 
         return view

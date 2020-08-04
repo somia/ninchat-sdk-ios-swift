@@ -270,7 +270,7 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
                 let confirmVideoDialog: ConfirmVideoCallView = ConfirmVideoCallView.loadFromNib()
                 confirmVideoDialog.user = channel
                 confirmVideoDialog.session = self?.session
-                confirmVideoDialog.onViewAction = { [weak self] action in
+                confirmVideoDialog.onViewAction = { action in
                     confirmVideoDialog.hideConfirmView()
                     answerCall(with: action)
                 }

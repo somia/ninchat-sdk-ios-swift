@@ -13,7 +13,7 @@ final class QuestionnaireElementConnectorRedirectTests: XCTestCase {
         self.questionnaire_preAudience?.questionnaireConfiguration?.first(where: { $0.name == "Aiheet" })
     }()
     private lazy var connector: QuestionnaireElementConnectorImpl = {
-        QuestionnaireElementConnectorImpl(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
+        QuestionnaireElementConnectorImpl(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!, style: .conversation)
     }()
     private lazy var elementRedirect1: ElementRedirect = {
         ElementRedirect(pattern: "Mikä on koronavirus", target: "Koronavirus")

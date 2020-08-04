@@ -8,6 +8,10 @@ import UIKit
 
 final class QuestionnaireElementText: UITextView, QuestionnaireElement {
 
+    fileprivate var conversationStylePadding: CGFloat {
+        (self.questionnaireStyle == .conversation) ? 75 : 0
+    }
+
     // MARK: - QuestionnaireElement
 
     var index: Int = 0
@@ -28,7 +32,7 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
     }
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
-        self.estimateHeight(width: UIScreen.main.bounds.width)
+        self.estimateHeight(width: UIScreen.main.bounds.width - conversationStylePadding)
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
@@ -62,7 +66,7 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
     }
 
     func estimateHeight(width: CGFloat) -> CGFloat {
-        max(24,0, self.sizeThatFits(CGSize(width: width - 8.0, height: .greatestFiniteMagnitude)).height)
+        max(24,0, self.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude)).height)
     }
 }
 
@@ -70,7 +74,7 @@ extension QuestionnaireElement where Self:QuestionnaireElementText {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
         self.textAlignment = .left
         self.backgroundColor = .clear
-        self.setAttributed(text: configuration?.label ?? "", font: .ninchat)
+        self.setAttributed(text: configuration?.label ?? "", font: .ninchat, width: UIScreen.main.bounds.width - conversationStylePadding - 16.0)
         self.elementConfiguration = configuration
     }
 }

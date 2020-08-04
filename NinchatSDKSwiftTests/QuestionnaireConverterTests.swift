@@ -26,7 +26,7 @@ final class QuestionnaireConverterTests: XCTestCase {
     }
 
     func test_01_converter_text() {
-        let converter = QuestionnaireElementConverter(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
+        let converter = QuestionnaireElementConverter(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!, style: .conversation)
         let expect = self.expectation(description: "Expected to extract 'text' element")
         expect.assertForOverFulfill = false
 
@@ -51,6 +51,7 @@ final class QuestionnaireConverterTests: XCTestCase {
             let view = views![0]
             XCTAssertNotEqual(configuration.type, .group)
             XCTAssertEqual(configuration.element, .text)
+            AssertEqual(view.questionnaireStyle, .conversation)
             AssertEqual(view.questionnaireConfiguration, configuration)
             expect.fulfill()
         }
@@ -59,7 +60,7 @@ final class QuestionnaireConverterTests: XCTestCase {
     }
 
     func test_02_converter_select() {
-        let converter = QuestionnaireElementConverter(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
+        let converter = QuestionnaireElementConverter(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!, style: .form)
         let expect = self.expectation(description: "Expected to extract 'select' element")
         expect.assertForOverFulfill = false
 
@@ -75,6 +76,7 @@ final class QuestionnaireConverterTests: XCTestCase {
             let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementSelect }) }).first(where: { $0.count > 0 })
             XCTAssertNotNil(element)
             XCTAssertNotNil(views)
+            AssertEqual(views?.first?.questionnaireStyle, .form)
             expect.fulfill()
         }
 
@@ -82,7 +84,7 @@ final class QuestionnaireConverterTests: XCTestCase {
     }
 
     func test_03_converter_radio() {
-        let converter = QuestionnaireElementConverter(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
+        let converter = QuestionnaireElementConverter(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!, style: .conversation)
         let expect = self.expectation(description: "Expected to extract 'radio' element")
         expect.assertForOverFulfill = false
 
@@ -98,6 +100,7 @@ final class QuestionnaireConverterTests: XCTestCase {
             let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementRadio }) }).first(where: { $0.count > 0 })
             XCTAssertNotNil(element)
             XCTAssertNotNil(views)
+            AssertEqual(views?.first?.questionnaireStyle, .conversation)
             expect.fulfill()
         }
 
@@ -105,7 +108,7 @@ final class QuestionnaireConverterTests: XCTestCase {
     }
 
     func test_04_converter_textArea() {
-        let converter = QuestionnaireElementConverter(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
+        let converter = QuestionnaireElementConverter(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!, style: .form)
         let expect = self.expectation(description: "Expected to extract 'textarea' element")
         expect.assertForOverFulfill = false
 
@@ -121,6 +124,7 @@ final class QuestionnaireConverterTests: XCTestCase {
             let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementTextArea }) }).first(where: { $0.count > 0 })
             XCTAssertNotNil(element)
             XCTAssertNotNil(views)
+            AssertEqual(views?.first?.questionnaireStyle, .form)
             expect.fulfill()
         }
 
@@ -128,7 +132,7 @@ final class QuestionnaireConverterTests: XCTestCase {
     }
 
     func test_05_converter_textField() {
-        let converter = QuestionnaireElementConverter(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
+        let converter = QuestionnaireElementConverter(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!, style: .conversation)
         let expect = self.expectation(description: "Expected to extract 'input' element")
         expect.assertForOverFulfill = false
 
@@ -144,6 +148,7 @@ final class QuestionnaireConverterTests: XCTestCase {
             let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementTextField }) }).first(where: { $0.count > 0 })
             XCTAssertNotNil(element)
             XCTAssertNotNil(views)
+            AssertEqual(views?.first?.questionnaireStyle, .conversation)
             expect.fulfill()
         }
 
@@ -151,7 +156,7 @@ final class QuestionnaireConverterTests: XCTestCase {
     }
 
     func test_06_converter_checkbox() {
-        let converter = QuestionnaireElementConverter(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
+        let converter = QuestionnaireElementConverter(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!, style: .form)
         let expect = self.expectation(description: "Expected to extract 'checkbox' element")
         expect.assertForOverFulfill = false
 
@@ -167,6 +172,7 @@ final class QuestionnaireConverterTests: XCTestCase {
             let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementCheckbox }) }).first(where: { $0.count > 0 })
             XCTAssertNotNil(element)
             XCTAssertNotNil(views)
+            AssertEqual(views?.first?.questionnaireStyle, .form)
             expect.fulfill()
         }
 
@@ -174,7 +180,7 @@ final class QuestionnaireConverterTests: XCTestCase {
     }
 
     func test_07_converter_likert() {
-        let converter = QuestionnaireElementConverter(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
+        let converter = QuestionnaireElementConverter(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!, style: .conversation)
         let expect = self.expectation(description: "Expected to extract 'likert' element")
         expect.assertForOverFulfill = false
 
@@ -190,6 +196,7 @@ final class QuestionnaireConverterTests: XCTestCase {
             let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementLikert }) }).first(where: { $0.count > 0 })
             XCTAssertNotNil(element)
             XCTAssertNotNil(views)
+            AssertEqual(views?.first?.questionnaireStyle, .conversation)
             expect.fulfill()
         }
 

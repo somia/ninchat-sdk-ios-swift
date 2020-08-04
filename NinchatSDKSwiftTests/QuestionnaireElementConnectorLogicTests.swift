@@ -15,7 +15,7 @@ final class QuestionnaireElementConnectorLogicTests: XCTestCase {
         self.questionnaire_preAudience?.questionnaireConfiguration?.first(where: { $0.name == "Aiheet" })
     }()
     private lazy var connector: QuestionnaireElementConnectorImpl = {
-        QuestionnaireElementConnectorImpl(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
+        QuestionnaireElementConnectorImpl(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!, style: .conversation)
     }()
 
 
