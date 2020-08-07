@@ -14,33 +14,34 @@ enum MessageUpdateType {
 }
 
 protocol NINChatRTCProtocol {
-    typealias RTCCallReceive = ((ChannelUser?) -> Void)
-    typealias RTCCallInitial = ((Error?, NINChatWebRTCClient?) -> Void)
-    typealias RTCCallHangup = (() -> Void)
+    typealias RTCCallReceive = (ChannelUser?) -> Void
+    typealias RTCCallInitial = (Error?, NINChatWebRTCClient?) -> Void
+    typealias RTCCallHangup = () -> Void
     
     func listenToRTCSignaling(delegate: NINChatWebRTCClientDelegate?, onCallReceived: @escaping RTCCallReceive, onCallInitiated: @escaping RTCCallInitial, onCallHangup: @escaping RTCCallHangup)
-    func pickup(answer: Bool, completion: @escaping ((Error?) -> Void))
+    func pickup(answer: Bool, completion: @escaping (Error?) -> Void)
     func disconnectRTC(_ client: NINChatWebRTCClient?, completion: (() -> Void)?)
 }
 
 protocol NINChatStateProtocol {
-    func appDidEnterBackground(completion: @escaping ((Error?) -> Void))
-    func appWillResignActive(completion: @escaping ((Error?) -> Void))
+    func appDidEnterBackground(completion: @escaping (Error?) -> Void)
+    func appWillResignActive(completion: @escaping (Error?) -> Void)
 }
 
 protocol NINChatMessageProtocol {
     func updateWriting(state: Bool)
-    func send(message: String, completion: @escaping ((Error?) -> Void))
-    func send(action: ComposeContentViewProtocol, completion: @escaping ((Error?) -> Void))
-    func send(attachment: String, data: Data, completion: @escaping ((Error?) -> Void))
-    func send(type: MessageType, payload: [String:String], completion: @escaping ((Error?) -> Void))
-    func loadHistory(completion: @escaping ((Error?) -> Void))
+    func send(message: String, completion: @escaping (Error?) -> Void)
+    func send(action: ComposeContentViewProtocol, completion: @escaping (Error?) -> Void)
+    func send(attachment: String, data: Data, completion: @escaping (Error?) -> Void)
+    func send(type: MessageType, payload: [String:String], completion: @escaping (Error?) -> Void)
+    func loadHistory(completion: @escaping (Error?) -> Void)
 }
 
 protocol NINChatViewModel: NINChatRTCProtocol, NINChatStateProtocol, NINChatMessageProtocol {
     var onChannelClosed: (() -> Void)? { get set }
     var onQueueUpdated: (() -> Void)? { get set }
     var onChannelMessage: ((MessageUpdateType) -> Void)? { get set }
+    var onComposeActionUpdated: ((_ index: Int, _ action: ComposeUIAction) -> Void)? { get set }
     
     init(sessionManager: NINChatSessionManager)
 }
@@ -50,7 +51,8 @@ final class NINChatViewModelImpl: NINChatViewModel {
     var onChannelClosed: (() -> Void)?
     var onQueueUpdated: (() -> Void)?
     var onChannelMessage: ((MessageUpdateType) -> Void)?
-    
+    var onComposeActionUpdated: ((_ index: Int, _ action: ComposeUIAction) -> Void)?
+
     init(sessionManager: NINChatSessionManager) {
         self.sessionManager = sessionManager
         
@@ -76,6 +78,9 @@ final class NINChatViewModelImpl: NINChatViewModel {
         }
         self.sessionManager.onSessionDeallocated = { [weak self] in
             self?.onChannelMessage?(.clean)
+        }
+        self.sessionManager.onComposeActionUpdated = { [weak self] index, action in
+            self?.onComposeActionUpdated?(index, action)
         }
     }
 }
@@ -117,7 +122,7 @@ extension NINChatViewModelImpl {
         }
     }
     
-    func pickup(answer: Bool, completion: @escaping ((Error?) -> Void)) {
+    func pickup(answer: Bool, completion: @escaping (Error?) -> Void) {
         do {
             try self.sessionManager.send(type: .pickup, payload: ["answer": answer], completion: completion)
         } catch {
@@ -137,7 +142,7 @@ extension NINChatViewModelImpl {
 // MARK: - NINChatState
 
 extension NINChatViewModelImpl {
-    func appDidEnterBackground(completion: @escaping ((Error?) -> Void)) {
+    func appDidEnterBackground(completion: @escaping (Error?) -> Void) {
         do {
             try self.sessionManager.send(type: .hangup, payload: [:], completion: completion)
         } catch {
@@ -145,13 +150,13 @@ extension NINChatViewModelImpl {
         }
     }
     
-    func appWillResignActive(completion: @escaping ((Error?) -> Void)) {}
+    func appWillResignActive(completion: @escaping (Error?) -> Void) {}
 }
 
 // MARK: - NINChatMessage
 
 extension NINChatViewModelImpl {
-    func send(message: String, completion: @escaping ((Error?) -> Void)) {
+    func send(message: String, completion: @escaping (Error?) -> Void) {
         do {
             try self.sessionManager.send(message: message, completion: completion)
         } catch {
@@ -159,7 +164,7 @@ extension NINChatViewModelImpl {
         }
     }
     
-    func send(action: ComposeContentViewProtocol, completion: @escaping ((Error?) -> Void)) {
+    func send(action: ComposeContentViewProtocol, completion: @escaping (Error?) -> Void) {
         do {
             try self.sessionManager.send(action: action, completion: completion)
         } catch {
@@ -167,7 +172,7 @@ extension NINChatViewModelImpl {
         }
     }
     
-    func send(attachment: String, data: Data, completion: @escaping ((Error?) -> Void)) {
+    func send(attachment: String, data: Data, completion: @escaping (Error?) -> Void) {
         do {
             try self.sessionManager.send(attachment: attachment, data: data, completion: completion)
         } catch {
@@ -175,7 +180,7 @@ extension NINChatViewModelImpl {
         }
     }
     
-    func send(type: MessageType, payload: [String:String], completion: @escaping ((Error?) -> Void)) {
+    func send(type: MessageType, payload: [String:String], completion: @escaping (Error?) -> Void) {
         do {
             try self.sessionManager.send(type: type, payload: payload, completion: completion)
         } catch {
@@ -187,7 +192,7 @@ extension NINChatViewModelImpl {
         try? self.sessionManager.update(isWriting: state, completion: { _ in })
     }
 
-    func loadHistory(completion: @escaping ((Error?) -> Void)) {
+    func loadHistory(completion: @escaping (Error?) -> Void) {
         do {
             try self.sessionManager.loadHistory(completion: completion)
         } catch {

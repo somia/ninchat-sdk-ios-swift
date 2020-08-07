@@ -117,16 +117,13 @@ extension QuestionnaireElementTextField: UITextFieldDelegate {
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {
-        defer { self.onElementDismissed?(self) }
+        defer {  self.onElementDismissed?(self) }
+        self.isCompleted = isCompleted(text: textField.text)
+    }
 
-
-        if let text = textField.text, !text.isEmpty, let pattern = self.elementConfiguration?.pattern, let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) {
-            self.isCompleted = regex.matches(in: text, range: NSRange(location: 0, length: text.count)).count > 0
-        } else if let text = textField.text {
-            self.isCompleted = !text.isEmpty
-        } else if !(self.elementConfiguration?.required ?? false) {
-            self.isCompleted = true
-        }
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        self.isCompleted = isCompleted(text: (textField.text ?? "") + string)
+        return true
     }
 }
 
@@ -150,7 +147,6 @@ extension QuestionnaireElement where Self:QuestionnaireElementTextField {
         self.view.keyboardType = keyboardType(configuration)
         self.view.font = .ninchat
         self.view.fix(height: self.heightValue)
-        self.isCompleted = !(configuration?.required ?? false)
         self.updateBorder()
     }
 

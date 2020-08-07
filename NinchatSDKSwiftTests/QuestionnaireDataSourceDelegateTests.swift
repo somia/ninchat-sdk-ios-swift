@@ -20,7 +20,7 @@ final class QuestionnaireDataSourceDelegateTests: XCTestCase {
     }()
     private lazy var viewModel: NINQuestionnaireViewModel! = {
         let viewModel = NINQuestionnaireViewModelImpl(sessionManager: self.session.sessionManager, questionnaireType: .pre)
-        viewModel.queue = Queue(queueID: "", name: "", isClosed: false)
+        viewModel.queue = Queue(queueID: "", name: "", isClosed: false, permissions: QueuePermissions(upload: false))
         
         let expect = self.expectation(description: "Expected to initiate the view model")
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
@@ -57,7 +57,7 @@ extension QuestionnaireDataSourceDelegateTests {
     }
 
     func test_102_navigation() {
-        XCTAssertTrue(formQuestionnaireDataSource.shouldShowNavigationCell)
+        XCTAssertTrue(formQuestionnaireDataSource.shouldShowNavigationCell(at: 0))
     }
 
     func test_103_initialState() {
@@ -67,7 +67,7 @@ extension QuestionnaireDataSourceDelegateTests {
 
     func test_104_questionnaireCell() {
         formQuestionnaireDataSource.isLoadingNewElements = true
-        XCTAssertEqual(formQuestionnaireDataSource.height(at: IndexPath(row: 0, section: 0)), 590.5)
+        XCTAssertEqual(formQuestionnaireDataSource.height(at: IndexPath(row: 0, section: 0)), 578.5)
         XCTAssertTrue(formQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) is QuestionnaireCell)
         XCTAssertEqual((formQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) as! QuestionnaireCell).style, QuestionnaireStyle.form)
     }
@@ -99,7 +99,7 @@ extension QuestionnaireDataSourceDelegateTests {
     }
 
     func test_002_navigation() {
-        XCTAssertTrue(conversationQuestionnaireDataSource.shouldShowNavigationCell)
+        XCTAssertTrue(conversationQuestionnaireDataSource.shouldShowNavigationCell(at: 0))
     }
 
     func test_003_initialState() {
@@ -148,7 +148,7 @@ extension QuestionnaireDataSourceDelegateTests {
         XCTAssertEqual((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).insertRow(), 0)
 
         conversationQuestionnaireDataSource.isLoadingNewElements = false
-        XCTAssertEqual(conversationQuestionnaireDataSource.height(at: IndexPath(row: 0, section: 0)), 590.5)
+        XCTAssertEqual(conversationQuestionnaireDataSource.height(at: IndexPath(row: 0, section: 0)), 578.5)
         XCTAssertTrue(conversationQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) is QuestionnaireCell)
         XCTAssertEqual((conversationQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) as! QuestionnaireCell).style, QuestionnaireStyle.conversation)
 
@@ -195,7 +195,8 @@ extension QuestionnaireDataSourceDelegateTests {
     func test_011_audienceRegisteredSection() {
         let currentElementsCount = (conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).elements.count
         let currentConfigurationCount = (conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).configurations.count
-        XCTAssertTrue(conversationQuestionnaireDataSource.addRegisterSection())
+        XCTAssertTrue(conversationQuestionnaireDataSource.canAddRegisteredSection)
+        conversationQuestionnaireDataSource.addRegisterSection()
         let newElementsCount = (conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).elements.count
         let newConfigurationCount = (conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).configurations.count
 
@@ -208,7 +209,8 @@ extension QuestionnaireDataSourceDelegateTests {
     func test_012_audienceClosedRegisteredSection() {
         let currentElementsCount = (conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).elements.count
         let currentConfigurationCount = (conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).configurations.count
-        XCTAssertTrue(conversationQuestionnaireDataSource.addClosedRegisteredSection())
+        XCTAssertTrue(conversationQuestionnaireDataSource.canAddClosedRegisteredSection)
+        conversationQuestionnaireDataSource.addClosedRegisteredSection()
         let newElementsCount = (self.conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).elements.count
         let newConfigurationCount = (self.conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).configurations.count
 

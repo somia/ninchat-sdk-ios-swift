@@ -11,6 +11,7 @@ protocol NINQuestionnaireViewModel {
     var queue: Queue? { get set }
     var pageNumber: Int { get set }
     var previousPage: Int { get set }
+    var askedPageNumber: Int? { get }
     var requirementsSatisfied: Bool { get }
     var shouldWaitForNextButton: Bool { get }
     var questionnaireAnswers: NINLowLevelClientProps { get }
@@ -28,8 +29,8 @@ protocol NINQuestionnaireViewModel {
     func resetAnswer(for element: QuestionnaireElement)
     func insertRegisteredElement(_ elements: [QuestionnaireElement], configuration: [QuestionnaireConfiguration])
     func clearAnswersForCurrentPage() -> Bool
-    func redirectTargetPage(for value: String) -> Int?
-    func logicTargetPage(key: String, value: String) -> Int?
+    func redirectTargetPage(for value: String, autoApply: Bool, performClosures: Bool) -> Int?
+    func logicTargetPage(for dictionary: [String:String], autoApply: Bool, performClosures: Bool) -> Int?
     func goToNextPage() -> Bool?
     func goToPreviousPage() -> Bool
     func goToPage(_ page: Int) -> Bool
@@ -37,6 +38,14 @@ protocol NINQuestionnaireViewModel {
     func submitAnswer(key: QuestionnaireElement?, value: AnyHashable) -> Bool
     func removeAnswer(key: QuestionnaireElement?)
     func finishQuestionnaire(for logic: LogicQuestionnaire?, redirect: ElementRedirect?, autoApply: Bool)
+}
+extension NINQuestionnaireViewModel {
+    func redirectTargetPage(for value: String, autoApply: Bool = true, performClosures: Bool = true) -> Int? {
+        self.redirectTargetPage(for: value, autoApply: autoApply, performClosures: performClosures)
+    }
+    func logicTargetPage(for dictionary: [String:String], autoApply: Bool = true, performClosures: Bool = true) -> Int? {
+        self.logicTargetPage(for: dictionary, autoApply: autoApply, performClosures: performClosures)
+    }
 }
 
 final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
@@ -48,7 +57,6 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     internal var connector: QuestionnaireElementConnector!
     private var views: [[QuestionnaireElement]] = []
     internal var answers: [String:AnyHashable]! = [:]
-    internal var askedPageNumber: Int?
     private var setPageNumber: Int?
     private var setupConnectorOperation: BlockOperation!
     
@@ -66,6 +74,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     }
     var pageNumber: Int = 0
     var previousPage: Int = 0
+    private(set) var askedPageNumber: Int? = nil
     var onSessionFinished: (() -> Void)?
     var onErrorOccurred: ((Error) -> Void)?
     var onQuestionnaireFinished: ((Queue?, _ exit: Bool) -> Void)?
@@ -79,12 +88,12 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
             self?.configurations = configurations
         }
         let elementsOperation = BlockOperation { [weak self] in
-            guard let configurations = self?.configurations else { return }
-            self?.views = QuestionnaireElementConverter(configurations: configurations).elements
+            guard let configurations = self?.configurations, let siteConfiguration = self?.sessionManager?.siteConfiguration else { return }
+            self?.views = QuestionnaireElementConverter(configurations: configurations, style: (questionnaireType == .pre) ? siteConfiguration.preAudienceQuestionnaireStyle : siteConfiguration.postAudienceQuestionnaireStyle).elements
         }
         let connectorOperation = BlockOperation { [weak self] in
-            guard let configurations = self?.configurations else { return }
-            self?.connector = QuestionnaireElementConnectorImpl(configurations: configurations)
+            guard let configurations = self?.configurations, let siteConfiguration = self?.sessionManager?.siteConfiguration else { return }
+            self?.connector = QuestionnaireElementConnectorImpl(configurations: configurations, style: (questionnaireType == .pre) ? siteConfiguration.preAudienceQuestionnaireStyle : siteConfiguration.postAudienceQuestionnaireStyle)
         }
         self.setupConnectorOperation = BlockOperation { [weak self] in
             if questionnaireType == .pre {
@@ -280,9 +289,9 @@ extension NINQuestionnaireViewModelImpl {
     func resetAnswer(for element: QuestionnaireElement) {
         guard let value = self.getAnswersForElement(element) as? String, self.requirementsSatisfied, element.isUserInteractionEnabled else { return }
 
-        if let page = self.redirectTargetPage(for: value) {
+        if let page = self.redirectTargetPage(for: value, performClosures: false), page >= 0 {
             self.askedPageNumber = page
-        } else if let page = self.logicTargetPage(key: element.elementConfiguration?.name ?? "", value: value) {
+        } else if let page = self.logicTargetPage(for: [element.elementConfiguration?.name ?? "": value], performClosures: false), page >= 0 {
             self.askedPageNumber = page
         }
     }
@@ -305,16 +314,16 @@ extension NINQuestionnaireViewModelImpl {
         }
     }
 
-    func redirectTargetPage(for value: String) -> Int? {
+    func redirectTargetPage(for value: String, autoApply: Bool, performClosures: Bool) -> Int? {
         do {
-            return self.connector.findElementAndPageRedirect(for: value, in: try getConfiguration()).1
+            return self.connector.findElementAndPageRedirect(for: value, in: try getConfiguration(), autoApply: autoApply, performClosures: performClosures).1
         } catch {
             return nil
         }
     }
 
-    func logicTargetPage(key: String, value: String) -> Int? {
-        self.connector.findElementAndPageLogic(for: [key:value], in: self.answers).1
+    func logicTargetPage(for dictionary: [String:String], autoApply: Bool, performClosures: Bool) -> Int? {
+        self.connector.findElementAndPageLogic(for: dictionary, in: self.answers, autoApply: autoApply, performClosures: performClosures).1
     }
 
     func goToNextPage() -> Bool? {
@@ -334,7 +343,7 @@ extension NINQuestionnaireViewModelImpl {
     }
 
     func goToPreviousPage() -> Bool {
-        if self.pageNumber > 0 {
+        if self.pageNumber >= 0, self.pageNumber != self.previousPage {
             self.pageNumber = self.previousPage
             return true
         }

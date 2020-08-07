@@ -15,7 +15,7 @@ final class QuestionnaireElementConnectorLogicTests: XCTestCase {
         self.questionnaire_preAudience?.questionnaireConfiguration?.first(where: { $0.name == "Aiheet" })
     }()
     private lazy var connector: QuestionnaireElementConnectorImpl = {
-        QuestionnaireElementConnectorImpl(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
+        QuestionnaireElementConnectorImpl(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!, style: .conversation)
     }()
 
 
@@ -119,7 +119,7 @@ final class QuestionnaireElementConnectorLogicTests: XCTestCase {
 
     /// Acceptance test
     func test_20_acceptance() {
-        let targetElement = connector.findElementAndPageLogic(for: ["Riskiryhmät-jatko": "Muut aiheet", "condition1": "satisfied"], in: ["Riskiryhmät-jatko": "Muut aiheet", "condition1": "satisfied"])
+        let targetElement = connector.findElementAndPageLogic(for: ["Riskiryhmät-jatko": "Muut aiheet", "condition1": "satisfied"], in: ["Riskiryhmät-jatko": "Muut aiheet", "condition1": "satisfied"], autoApply: false, performClosures: false)
         XCTAssertNotNil(targetElement.0)
         XCTAssertNotNil(targetElement.1)
 
@@ -130,17 +130,20 @@ final class QuestionnaireElementConnectorLogicTests: XCTestCase {
 
     func test_21_acceptance() {
         let expect = self.expectation(description: "Expected to reach `_complete` target")
-        expect.assertForOverFulfill = false
-
         connector.onCompleteTargetReached = { logic, redirect, autoApply in
-            XCTAssertTrue(autoApply)
+            XCTAssertFalse(autoApply)
             XCTAssertNotNil(logic)
             XCTAssertNil(redirect)
             expect.fulfill()
         }
-        let targetElement = connector.findElementAndPageLogic(for: ["temp-btn":"Finnish"], in: ["Riskiryhmät-jatko": "Muut aiheet", "condition1": "satisfied", "temp-btn":"Finnish", "temp-btn2":"Finnish"])
-        XCTAssertNil(targetElement.0)
-        XCTAssertNil(targetElement.1)
+        let targetElement_1 = connector.findElementAndPageLogic(for: ["temp-btn":"Finnish"], in: ["Riskiryhmät-jatko": "Muut aiheet", "condition1": "satisfied", "temp-btn":"Finnish", "temp-btn2":"Finnish"], autoApply: false, performClosures: true)
+        XCTAssertNil(targetElement_1.0)
+        XCTAssertNotNil(targetElement_1.1)
+        XCTAssertEqual(targetElement_1.1, -1)
+
+        let targetElement_2 = connector.findElementAndPageLogic(for: ["temp-btn":"Finnish"], in: ["Riskiryhmät-jatko": "Muut aiheet", "condition1": "satisfied", "temp-btn":"Finnish", "temp-btn2":"Finnish"], autoApply: false, performClosures: false)
+        XCTAssertNil(targetElement_2.0)
+        XCTAssertNil(targetElement_2.1)
 
         waitForExpectations(timeout: 2.0)
     }

@@ -13,7 +13,7 @@ final class QuestionnaireElementConnectorRedirectTests: XCTestCase {
         self.questionnaire_preAudience?.questionnaireConfiguration?.first(where: { $0.name == "Aiheet" })
     }()
     private lazy var connector: QuestionnaireElementConnectorImpl = {
-        QuestionnaireElementConnectorImpl(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!)
+        QuestionnaireElementConnectorImpl(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!, style: .conversation)
     }()
     private lazy var elementRedirect1: ElementRedirect = {
         ElementRedirect(pattern: "Mikä on koronavirus", target: "Koronavirus")
@@ -51,8 +51,14 @@ final class QuestionnaireElementConnectorRedirectTests: XCTestCase {
     }
 
     func test_12_find_redirect() {
-        let target = connector.findAssociatedRedirect(for: "Sovitut", in: self.configuration!)
-        XCTAssertNil(target)
+        let target_1 = connector.findAssociatedRedirect(for: "Sovitut", in: self.configuration!)
+        XCTAssertNil(target_1)
+
+        let target_2 = connector.findAssociatedRedirect(for: "", in: self.configuration!)
+        XCTAssertNotNil(target_2)
+
+        let target_3 = connector.findAssociatedRedirect(for: "40", in: self.configuration!)
+        XCTAssertNotNil(target_3)
     }
 
     func test_13_find_configuration() {
@@ -87,7 +93,7 @@ final class QuestionnaireElementConnectorRedirectTests: XCTestCase {
 
     // Acceptance
     func test_20_acceptance() {
-        let targetElement = connector.findElementAndPageRedirect(for: "Mikä on koronavirus", in: self.configuration!)
+        let targetElement = connector.findElementAndPageRedirect(for: "Mikä on koronavirus", in: self.configuration!, autoApply: false, performClosures: false)
         XCTAssertNotNil(targetElement.0)
         XCTAssertNotNil(targetElement.1)
 
@@ -95,5 +101,26 @@ final class QuestionnaireElementConnectorRedirectTests: XCTestCase {
         XCTAssertNotNil(targetElement.0?[0] as? QuestionnaireElementText)
         XCTAssertNotNil(targetElement.0?[1] as? QuestionnaireElementRadio)
         XCTAssertEqual(targetElement.1, 1)
+    }
+
+    func test_21_acceptance() {
+        let expect = self.expectation(description: "Expected to catch '_register' closure for empty redirect")
+        connector.onRegisterTargetReached = { questionnaire, redirect, autoApply in
+            XCTAssertFalse(autoApply)
+            XCTAssertNotNil(redirect)
+            expect.fulfill()
+        }
+
+        let configuration = self.questionnaire_preAudience?.questionnaireConfiguration?.first(where: { $0.name == "soita112" })
+        let targetElement_1 = connector.findElementAndPageRedirect(for: "", in: configuration!, autoApply: false, performClosures: true)
+        XCTAssertNil(targetElement_1.0)
+        XCTAssertNotNil(targetElement_1.1)
+        XCTAssertEqual(targetElement_1.1, -1)
+
+        let targetElement_2 = connector.findElementAndPageRedirect(for: "", in: configuration!, autoApply: false, performClosures: false)
+        XCTAssertNil(targetElement_2.0)
+        XCTAssertNil(targetElement_2.1)
+
+        waitForExpectations(timeout: 3.0)
     }
 }

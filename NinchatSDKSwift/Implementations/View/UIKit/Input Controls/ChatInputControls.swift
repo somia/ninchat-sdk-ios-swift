@@ -11,6 +11,8 @@ protocol ChatInputActions {
     var onAttachmentTapped: ((UIButton) -> Void)? { get set }
     var onTextSizeChanged: ((CGFloat) -> Void)? { get set }
     var onWritingStatusChanged: ((_ writing: Bool) -> Void)? { get set }
+
+    func updatePermissions(_ permissions: QueuePermissions)
 }
 
 protocol ChatInputControlsProtocol: UIView, ChatInputActions {
@@ -100,6 +102,13 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
             textColor = inputTextColor
         }
         self.updatePlaceholder()
+    }
+
+    func updatePermissions(_ permissions: QueuePermissions) {
+        /// Hiding buttons results in resizing parent UIStackView
+        /// Thus, hide them by making their alpha=0 and isEnabled=false
+        attachmentButton.isEnabled = permissions.upload
+        attachmentButton.alpha = (permissions.upload) ? 1.0 : 0.0
     }
     
     // MARK: - User actions

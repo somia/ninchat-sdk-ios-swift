@@ -83,6 +83,14 @@
         {
           "pattern": "Huolen tai epävarmuuden sietäminen",
           "target": "Huolet"
+        },
+        {
+          "pattern": "[4-9]\\d+|\\d{3,}",
+          "target": "Huolet"
+        },
+        {
+          "pattern": "",
+          "target": "_register"
         }
       ]
     },
@@ -668,6 +676,21 @@
         ],
         "target": "_complete"
       }
+    },
+    {
+      "element": "text",
+      "label": "<p><strong>Soita 112</strong>Jos lapsella on mitä tahansa edellä kuvatuista oireista, <a href='tel:112'>soita välittömästi hätänumeroon 112</a>. Kuvaile lapsen oireet tarkasti ja seuraa hätäkeskuspäivystäjän antamia ohjeita.</p><p>Voit sulkea oirenavigaattori-ikkunan.</p>",
+      "name": "soita112",
+      "buttons": {
+        "back": "Valitse oireet uudestaan",
+        "next": "Sulje ja lopeta"
+      },
+      "redirects": [
+        {
+          "pattern": "",
+          "target": "_register"
+        }
+      ]
     }
   ]
 }

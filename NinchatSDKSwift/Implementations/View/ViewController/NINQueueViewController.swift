@@ -13,7 +13,7 @@ final class NINQueueViewController: UIViewController {
     var viewModel: NINQueueViewModel!
     var queue: Queue!
     var resumeMode: Bool!
-    var onQueueActionTapped: (() -> Void)?
+    var onQueueActionTapped: ((Queue?) -> Void)?
     private var queueTransferListener: AnyHashable!
     
     // MARK: - ViewController
@@ -91,10 +91,10 @@ final class NINQueueViewController: UIViewController {
         }
         self.viewModel.onQueueJoin = { [weak self] error in
             guard error == nil else { return }
-            self?.onQueueActionTapped?()
+            self?.onQueueActionTapped?(self?.sessionManager?.describedQueue)
         }
         /// Directly open chat page if it is a session resumption condition
-        (self.resumeMode) ? self.onQueueActionTapped?() : self.viewModel.connect(queue: self.queue)
+        (self.resumeMode) ? self.onQueueActionTapped?(self.sessionManager?.describedQueue) : self.viewModel.connect(queue: self.queue)
     }
 }
 

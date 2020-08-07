@@ -8,6 +8,13 @@ import UIKit
 
 final class QuestionnaireElementText: UITextView, QuestionnaireElement {
 
+    fileprivate var conversationStylePadding: CGFloat {
+        (self.questionnaireStyle == .conversation) ? 75 : 0
+    }
+    private var estimatedWidth: CGFloat {
+        (UIApplication.topViewController()?.view.bounds ?? UIScreen.main.bounds).width - conversationStylePadding
+    }
+
     // MARK: - QuestionnaireElement
 
     var index: Int = 0
@@ -28,12 +35,12 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
     }
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
-        self.estimateHeight(width: UIScreen.main.bounds.width)
+        self.estimateHeight(width: self.estimatedWidth)
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         if let overriddenColor = delegate?.override(questionnaireAsset: .titleTextColor) {
-            self.setAttributed(text: self.elementConfiguration?.label ?? "", font: .ninchat, color: overriddenColor)
+            self.setAttributed(text: self.elementConfiguration?.label ?? "", font: .ninchat, color: overriddenColor, width:  self.estimatedWidth - 24.0)
         }
     }
 
@@ -62,7 +69,7 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
     }
 
     func estimateHeight(width: CGFloat) -> CGFloat {
-        max(24,0, self.sizeThatFits(CGSize(width: width - 8.0, height: .greatestFiniteMagnitude)).height)
+        max(24,0, self.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude)).height)
     }
 }
 
@@ -70,7 +77,7 @@ extension QuestionnaireElement where Self:QuestionnaireElementText {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
         self.textAlignment = .left
         self.backgroundColor = .clear
-        self.setAttributed(text: configuration?.label ?? "", font: .ninchat)
+        self.setAttributed(text: configuration?.label ?? "", font: .ninchat, width: UIScreen.main.bounds.width - self.conversationStylePadding - 21.0)
         self.elementConfiguration = configuration
     }
 }

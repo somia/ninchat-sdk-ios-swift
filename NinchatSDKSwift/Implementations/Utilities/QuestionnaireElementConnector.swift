@@ -11,9 +11,9 @@ protocol QuestionnaireElementConnector {
     var onRegisterTargetReached: ((LogicQuestionnaire?, ElementRedirect?, _ autoApply: Bool) -> Void)? { get set }
     var onCompleteTargetReached: ((LogicQuestionnaire?, ElementRedirect?, _ autoApply: Bool) -> Void)? { get set }
 
-    init(configurations: [QuestionnaireConfiguration])
-    func findElementAndPageRedirect(for input: String, in configuration: QuestionnaireConfiguration) -> ([QuestionnaireElement]?, Int?)
-    func findElementAndPageLogic(for dictionary: [String:String], in answers: [String:AnyHashable]) -> ([QuestionnaireElement]?, Int?)
+    init(configurations: [QuestionnaireConfiguration], style: QuestionnaireStyle)
+    func findElementAndPageRedirect(for input: String, in configuration: QuestionnaireConfiguration, autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?)
+    func findElementAndPageLogic(for dictionary: [String:String], in answers: [String:AnyHashable], autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?)
     mutating func appendElement(elements: [QuestionnaireElement], configurations: [QuestionnaireConfiguration])
 }
 
@@ -21,9 +21,9 @@ struct QuestionnaireElementConnectorImpl: QuestionnaireElementConnector {
     private var elements: [[QuestionnaireElement]] = []
     private var configurations: [QuestionnaireConfiguration] = []
 
-    init(configurations: [QuestionnaireConfiguration]) {
+    init(configurations: [QuestionnaireConfiguration], style: QuestionnaireStyle) {
         self.configurations = configurations
-        self.elements = QuestionnaireElementConverter(configurations: configurations).elements
+        self.elements = QuestionnaireElementConverter(configurations: configurations, style: style).elements
     }
 
     var logicContainsTags: ((LogicQuestionnaire?) -> Void)?
@@ -45,13 +45,24 @@ struct QuestionnaireElementConnectorImpl: QuestionnaireElementConnector {
 // MARK: - QuestionnaireElementConnector 'redirect'
 
 extension QuestionnaireElementConnectorImpl {
-    func findElementAndPageRedirect(for input: String, in configuration: QuestionnaireConfiguration) -> ([QuestionnaireElement]?, Int?) {
+    /// The function aims to extract associated index and QuestionnaireElement object for a given ElementRedirect
+    /// - Parameters:
+    ///   - input: The value that has to be looked up in the given configuration to find associated index and element
+    ///   - configuration: The configuration that holds ElementRedirect object
+    ///   - autoApply: The variable declares if the '_register'/'_complete' closures are automatically applied or not.
+    ///   - performClosures: The variable declares if the '_register'/'_complete' closures has to be performed or not.
+    /// - Returns: Returns associated index and QuestionnaireElement for given configuration. If the
+        /// index == nil -> No associated elements found
+        /// index == -1 -> No associated elements found, but the '_register' or '_complete' block is found.
+    func findElementAndPageRedirect(for input: String, in configuration: QuestionnaireConfiguration, autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?) {
         if let redirect = self.findAssociatedRedirect(for: input, in: configuration) {
-            if redirect.target == "_register" {
-                self.onRegisterTargetReached?(nil, redirect, true)
-            } else if redirect.target == "_complete" {
-                self.onCompleteTargetReached?(nil, redirect, true)
-            } else if let configuration = self.findTargetRedirectConfiguration(from: redirect).0 {
+            if redirect.target == "_register", performClosures {
+                self.onRegisterTargetReached?(nil, redirect, autoApply); return (nil, -1)
+            }
+            if redirect.target == "_complete", performClosures {
+                self.onCompleteTargetReached?(nil, redirect, autoApply); return (nil, -1)
+            }
+            if let configuration = self.findTargetRedirectConfiguration(from: redirect).0 {
                 if let element = self.findTargetElement(for: configuration).0, let page = self.findTargetElement(for: configuration).1 {
                     return (element, page)
                 }
@@ -64,7 +75,9 @@ extension QuestionnaireElementConnectorImpl {
     /// The input could be either the 'name' variable in QuestionnaireConfiguration object
     /// Or 'value' in ElementOption object
     internal func findAssociatedRedirect(for input: String, in configuration: QuestionnaireConfiguration) -> ElementRedirect? {
-        if let redirect = configuration.redirects?.first(where: { $0.pattern ?? "" == input }) {
+        if let redirect = configuration.redirects?.first(where: { input.extractRegex(withPattern: $0.pattern ?? "")?.count ?? 0 > 0 }) {
+            return redirect
+        } else if let redirect = configuration.redirects?.first(where: { $0.pattern ?? "" == input }) {
             return redirect
         }
         return nil
@@ -84,7 +97,16 @@ extension QuestionnaireElementConnectorImpl {
         self.configurations.compactMap({ $0.logic })
     }
 
-    func findElementAndPageLogic(for dictionary: [String:String], in answers: [String:AnyHashable]) -> ([QuestionnaireElement]?, Int?) {
+    /// The function aims to extract associated index and QuestionnaireElement object for a given LogicQuestionnaire
+    /// - Parameters:
+    ///   - dictionary: The dictionary that is supposed to point to a valid element. Both the keys and values must match with at least one logic block.
+    ///   - answers: The dictionary of currently saved answers that has to be looked through
+    ///   - autoApply: The variable declares if the '_register'/'_complete' closures are automatically applied or not.
+    ///   - performClosures: The variable declares if the '_register'/'_complete' closures has to be performed or not.
+    /// - Returns: Returns associated index and QuestionnaireElement for the given input in the given answers. If the
+        /// index == nil -> No associated elements found
+        /// index == -1 -> No associated elements found, but the '_register' or '_complete' block is found.
+    func findElementAndPageLogic(for dictionary: [String:String], in answers: [String:AnyHashable], autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?) {
         if let blocks = self.findLogicBlocks(for: Array(dictionary.keys)), blocks.count > 0 {
             let satisfied: (bool: Bool, logic: LogicQuestionnaire?) = areSatisfied(logic: blocks, forAnswers: answers)
             if satisfied.bool, let logic = satisfied.logic {
@@ -92,11 +114,13 @@ extension QuestionnaireElementConnectorImpl {
                     self.logicContainsTags?(logic)
                 }
 
-                if logic.target == "_register" {
-                    self.onRegisterTargetReached?(logic, nil, true)
-                } else if logic.target == "_complete" {
-                    self.onCompleteTargetReached?(logic, nil, true)
-                } else if let configuration = self.findTargetLogicConfiguration(from: logic).0 {
+                if logic.target == "_register", performClosures {
+                    self.onRegisterTargetReached?(logic, nil, autoApply); return (nil, -1)
+                }
+                if logic.target == "_complete", performClosures {
+                    self.onCompleteTargetReached?(logic, nil, autoApply); return (nil, -1)
+                }
+                if let configuration = self.findTargetLogicConfiguration(from: logic).0 {
                     if let element = self.findTargetElement(for: configuration).0, let page = self.findTargetElement(for: configuration).1 {
                         return (element, page)
                     }

@@ -12,21 +12,28 @@ protocol ComposeContentViewProtocol: UIView {
     var messageDictionary: [AnyHashable : Any] { get }
     var intrinsicHeight: CGFloat { get }
     var intrinsicWidth: CGFloat { get }
-    
+
+    var didUpdatedOptions: Bool { get set }
+    var message: ComposeContent? { get }
+    var sendButton: UIButton? { get }
+    var optionsButton: [UIButton] { get }
+
     func clear()
     func removeSendTapAction()
+    func onOptionSelected(_ sender: UIButton)
     func populate(message: ComposeContent, siteConfiguration: SiteConfiguration?, colorAssets: NINColorAssetDictionary?, composeStates: [Bool]?, enableSendButton: Bool, isSelected: Bool)
 }
 
 final class ComposeContentView: UIView, ComposeContentViewProtocol {
-    private var message: ComposeContent?
+    private(set) var message: ComposeContent?
+
     private var selectedOptions: [ComposeContentOption] = []
-    
     private var titleLabel: UILabel?
-    private var sendButton: UIButton?
-    private var optionsButton: [UIButton] = []
+    private(set) var sendButton: UIButton?
+    private(set) var optionsButton: [UIButton] = []
     private var composeState: [Bool] = []
-    
+    var didUpdatedOptions: Bool = true
+
     // MARK: - UIView life-cycle
     
     override func layoutSubviews() {
@@ -61,10 +68,10 @@ final class ComposeContentView: UIView, ComposeContentViewProtocol {
     // MARK: - User actions
     
     @objc
-    private func onButtonTapped(_ sender: UIButton) {
+    func onOptionSelected(_ sender: UIButton) {
         if sender == self.sendButton, let closure = self.onSendActionTapped {
             self.applyStyle(to: sender, selected: true)
-            closure(self)
+            closure(self, self.didUpdatedOptions)
         } else if let closure = self.onStateUpdateTapped {
             guard let button = self.optionsButton.first(where: { $0 == sender }), let index = self.optionsButton.firstIndex(of: button) else { return }
             let selected = self.selectedOptions[index].selected ?? false
@@ -72,13 +79,13 @@ final class ComposeContentView: UIView, ComposeContentViewProtocol {
             self.applyStyle(to: sender, selected: !selected)
             self.selectedOptions[index].selected = !selected
             self.composeState[index] = !selected
-            closure(self.composeState)
+            closure(self.composeState, true)
         }
     }
-    
+
     func removeSendTapAction() {
-        self.optionsButton.forEach { $0.removeTarget(self, action: #selector(self.onButtonTapped(_:)), for: .touchUpInside) }
-        self.sendButton?.removeTarget(self, action: #selector(self.onButtonTapped(_:)), for: .touchUpInside)
+        self.optionsButton.forEach { $0.removeTarget(self, action: #selector(self.onOptionSelected(_:)), for: .touchUpInside) }
+        self.sendButton?.removeTarget(self, action: #selector(self.onOptionSelected(_:)), for: .touchUpInside)
     }
     
     // MARK: - ComposeContentViewProtocol
@@ -138,7 +145,7 @@ final class ComposeContentView: UIView, ComposeContentViewProtocol {
         self.sendButton = UIButton(type: .custom)
         self.sendButton?.titleLabel?.font = .ninchat
         if enableSendButton {
-            self.sendButton?.addTarget(self, action: #selector(self.onButtonTapped(_:)), for: .touchUpInside)
+            self.sendButton?.addTarget(self, action: #selector(self.onOptionSelected(_:)), for: .touchUpInside)
         }
         self.addSubview(self.sendButton!)
     
@@ -176,7 +183,7 @@ final class ComposeContentView: UIView, ComposeContentViewProtocol {
             let button = UIButton(type: .custom)
             button.titleLabel?.font = .ninchat
             button.setTitle(option.label, for: .normal)
-            button.addTarget(self, action: #selector(self?.onButtonTapped(_:)), for: .touchUpInside)
+            button.addTarget(self, action: #selector(self?.onOptionSelected(_:)), for: .touchUpInside)
             self?.applyStyle(to: button, selected: state ?? false)
             self?.updateTitleScale(for: button)
             self?.addSubview(button)

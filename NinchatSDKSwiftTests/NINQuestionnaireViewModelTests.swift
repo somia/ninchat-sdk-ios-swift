@@ -21,7 +21,7 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
     }()
     private lazy var viewModel: NINQuestionnaireViewModelImpl? = {
         let viewModel = NINQuestionnaireViewModelImpl(sessionManager: session, questionnaireType: .pre)
-        viewModel.queue = Queue(queueID: "", name: "", isClosed: false)
+        viewModel.queue = Queue(queueID: "", name: "", isClosed: false, permissions: QueuePermissions(upload: false))
         
         let expect = self.expectation(description: "Expected to initiate the view model")
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
@@ -156,7 +156,8 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         }
         self.viewModel?.pageNumber = 13
         let page = self.viewModel?.redirectTargetPage(for: "")
-        XCTAssertNil(page)
+        XCTAssertNotNil(page)
+        XCTAssertEqual(page, -1)
 
         waitForExpectations(timeout: 2.0)
     }
@@ -172,7 +173,8 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         }
         self.viewModel?.pageNumber = 12
         let page = self.viewModel?.redirectTargetPage(for: "")
-        XCTAssertNil(page)
+        XCTAssertNotNil(page)
+        XCTAssertEqual(page, -1)
 
         waitForExpectations(timeout: 2.0)
     }
@@ -189,8 +191,9 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         self.viewModel?.pageNumber = 11
         self.viewModel?.answers = ["wouldRecommendService": "1"]
 
-        let page = self.viewModel?.logicTargetPage(key: "wouldRecommendService", value: "1")
-        XCTAssertNil(page)
+        let page = self.viewModel?.logicTargetPage(for: ["wouldRecommendService": "1"])
+        XCTAssertNotNil(page)
+        XCTAssertEqual(page, -1)
 
         waitForExpectations(timeout: 2.0)
     }
@@ -207,8 +210,9 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         self.viewModel?.pageNumber = 9
         self.viewModel?.answers = ["Huolet-jatko": "Sulje"]
 
-        let page = self.viewModel?.logicTargetPage(key: "Huolet-jatko", value: "Sulje")
-        XCTAssertNil(page)
+        let page = self.viewModel?.logicTargetPage(for: ["Huolet-jatko":"Sulje"])
+        XCTAssertNotNil(page)
+        XCTAssertEqual(page, -1)
 
         waitForExpectations(timeout: 2.0)
     }
@@ -226,7 +230,7 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         self.viewModel?.answers = ["wouldRecommendService": "1"]
 
         expectedResult = true
-        _ = self.viewModel?.logicTargetPage(key: "wouldRecommendService", value: "1")
+        _ = self.viewModel?.logicTargetPage(for: ["wouldRecommendService":"1"])
 
         expectedResult = false
         self.viewModel?.finishQuestionnaire(for: nil, redirect: nil, autoApply: false)
@@ -247,7 +251,7 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         self.viewModel?.answers = ["Huolet-jatko": "Sulje"]
 
         expectedResult = true
-        _ = self.viewModel?.logicTargetPage(key: "Huolet-jatko", value: "Sulje")
+        _ = self.viewModel?.logicTargetPage(for: ["Huolet-jatko":"Sulje"])
 
         expectedResult = false
         self.viewModel?.finishQuestionnaire(for: nil, redirect: nil, autoApply: false)

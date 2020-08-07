@@ -12,8 +12,8 @@ protocol ChatCell: UIView {
     var session: NINChatSessionAttachment? { get set }
     var videoThumbnailManager: VideoThumbnailManager? { get set }
     var onImageTapped: ((_ attachment: FileInfo, _ image: UIImage?) -> Void)? { get set }
-    var onComposeSendTapped: ((_ compose: ComposeContentViewProtocol) -> Void)? { get set }
-    var onComposeUpdateTapped: ((_ state: [Bool]?) -> Void)? { get set }
+    var onComposeSendTapped: ComposeMessageViewProtocol.OnUIComposeSendActionTapped? { get set }
+    var onComposeUpdateTapped: ComposeMessageViewProtocol.OnUIComposeUpdateActionTapped? { get set }
     var onConstraintsUpdate: (() -> Void)? { get set }
 }
 

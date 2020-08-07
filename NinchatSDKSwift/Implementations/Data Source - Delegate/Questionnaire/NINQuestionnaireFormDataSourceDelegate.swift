@@ -11,9 +11,9 @@ final class NINQuestionnaireFormDataSourceDelegate: QuestionnaireDataSourceDeleg
     // MARK: - NINQuestionnaireFormDelegate
 
     private weak var session: NINChatSession?
-    private weak var sessionManager: NINChatSessionManager?
 
     var viewModel: NINQuestionnaireViewModel!
+    weak var sessionManager: NINChatSessionManager?
     var onUpdateCellContent: (() -> Void)?
     var onRemoveCellContent: (() -> Void)?
 
@@ -40,7 +40,7 @@ final class NINQuestionnaireFormDataSourceDelegate: QuestionnaireDataSourceDeleg
     func height(at index: IndexPath) -> CGFloat {
         do {
             let elements = try self.viewModel.getElements()
-            if index.row == elements.count { return self.shouldShowNavigationCell ? 65.0 : 0.0 }
+            if index.row == elements.count { return self.shouldShowNavigationCell(at: index.row) ? 65.0 : 0.0 }
             return elements[index.row].elementHeight
         } catch {
             fatalError(error.localizedDescription)
@@ -70,7 +70,11 @@ extension NINQuestionnaireFormDataSourceDelegate {
             cell.overrideAssets(with: self.session?.internalDelegate)
 
             cell.onNextButtonTapped = { [weak self] in
-                self?.onNextButtonTapped()
+                do {
+                    self?.onNextButtonTapped(elements: try self?.viewModel.getElements())
+                } catch {
+                    self?.onNextButtonTapped(elements: nil)
+                }
             }
             cell.onBackButtonTapped = { [weak self] in
                 self?.onBackButtonTapped(completion: self?.onUpdateCellContent)
@@ -117,27 +121,23 @@ extension NINQuestionnaireFormDataSourceDelegate {
 
 // MARK: - Audience Register Text
 extension NINQuestionnaireFormDataSourceDelegate {
-    func addRegisterSection() -> Bool {
-        guard let registerTitle = self.sessionManager?.siteConfiguration.audienceRegisteredText else { return false }
+    func addRegisterSection() {
+        guard let registerTitle = self.sessionManager?.siteConfiguration.audienceRegisteredText else { return }
         let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) ?? "Close Chat"
         let registerJSON: [String:AnyHashable] = ["element": "radio", "name": "audienceRegisteredText", "label": registerTitle, "buttons": ["back":false,"next":false], "options":[["label":closeTitle, "value":""]], "redirects":[["target":"_register"]]]
 
-        guard let registerConfiguration = AudienceQuestionnaire(from: [registerJSON]).questionnaireConfiguration, registerConfiguration.count > 0, let element = QuestionnaireElementConverter(configurations: registerConfiguration).elements.first else { return false }
+        guard let registerConfiguration = AudienceQuestionnaire(from: [registerJSON]).questionnaireConfiguration, registerConfiguration.count > 0, let element = QuestionnaireElementConverter(configurations: registerConfiguration, style: .form).elements.first else { return }
         element.compactMap({ $0 as? QuestionnaireElementRadio }).first?.isExitElement = true
         self.viewModel.insertRegisteredElement(element, configuration: registerConfiguration)
-
-        return true
     }
 
-    func addClosedRegisteredSection() -> Bool {
-        guard let registerTitle = self.sessionManager?.siteConfiguration.audienceClosedRegisteredText else { return false }
+    func addClosedRegisteredSection() {
+        guard let registerTitle = self.sessionManager?.siteConfiguration.audienceClosedRegisteredText else { return }
         let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) ?? "Close Chat"
         let registerJSON: [String:AnyHashable] = ["element": "radio", "name": "audienceClosedRegisteredText", "label": registerTitle, "buttons": ["back":false,"next":false], "options":[["label":closeTitle, "value":""]], "redirects":[["target":"_register"]]]
 
-        guard let registerConfiguration = AudienceQuestionnaire(from: [registerJSON]).questionnaireConfiguration, registerConfiguration.count > 0, let element = QuestionnaireElementConverter(configurations: registerConfiguration).elements.first else { return false }
+        guard let registerConfiguration = AudienceQuestionnaire(from: [registerJSON]).questionnaireConfiguration, registerConfiguration.count > 0, let element = QuestionnaireElementConverter(configurations: registerConfiguration, style: .form).elements.first else { return }
         element.compactMap({ $0 as? QuestionnaireElementRadio }).first?.isExitElement = true
         self.viewModel.insertRegisteredElement(element, configuration: registerConfiguration)
-
-        return true
     }
 }

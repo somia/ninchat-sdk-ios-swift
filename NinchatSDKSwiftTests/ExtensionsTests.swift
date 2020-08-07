@@ -24,8 +24,8 @@ final class ExtensionsTests: XCTestCase {
     }
     
     func test_html_string() {
-        XCTAssertNotNil("This is an example of simple string".htmlAttributedString(withFont: .ninchat, alignment: .center, color: .white))
-        XCTAssertNotNil("<head>This is an example of html string</head>".htmlAttributedString(withFont: .ninchat, alignment: .left, color: .black))
+        XCTAssertNotNil("This is an example of simple string".htmlAttributedString(withFont: .ninchat, alignment: .center, color: .white, width: nil))
+        XCTAssertNotNil("<head>This is an example of html string</head>".htmlAttributedString(withFont: .ninchat, alignment: .left, color: .black, width: 100))
     }
     
     func test_string_with_tags() {
@@ -48,17 +48,17 @@ final class ExtensionsTests: XCTestCase {
 
     func test_html_string_utf16() {
         let expect_url = self.expectation(description: "Expected to get back the url from attributed string")
-        expect_url.expectedFulfillmentCount = 2
+        expect_url.assertForOverFulfill = false
 
         let expect_style = self.expectation(description: "Expected to get appropriate style from attributed string")
-        expect_style.expectedFulfillmentCount = 2
+        expect_style.assertForOverFulfill = false
 
         func test_link1() {
             let url = "https://www.ninchat.com/"
             let text = "<a href=\"https://www.ninchat.com\">salaries_by_field_of_study_2018.pdf</a>"
-            let attrString = text.htmlAttributedString(withFont: .ninchat, alignment: .left, color: .black)
+            let attrString = text.htmlAttributedString(withFont: .ninchat, alignment: .left, color: .black, width: nil)
             XCTAssertNotNil(attrString)
-            XCTAssertEqual(attrString?.string, "salaries_by_field_of_study_2018.pdf")
+            XCTAssertEqual(attrString?.string, "salaries_by_field_of_study_2018.pdf\n")
 
             attrString!.enumerateAttributes(in: NSMakeRange(0, attrString!.length)) { attributes, range, stopped in
                 attributes.forEach { key, value in
@@ -79,9 +79,9 @@ final class ExtensionsTests: XCTestCase {
         func test_link2() {
             let url = "https://www.ninchat.com/"
             let text = "<a href=\"https://www.ninchat.com\">Pellon kuivatusjärjestelmät ja ravinteiden talteenotto raportti.pdf</a>"
-            let attrString = text.htmlAttributedString(withFont: .ninchat, alignment: .left, color: .black)
+            let attrString = text.htmlAttributedString(withFont: .ninchat, alignment: .left, color: .black, width: nil)
             XCTAssertNotNil(attrString)
-            XCTAssertEqual(attrString?.string, "Pellon kuivatusjärjestelmät ja ravinteiden talteenotto raportti.pdf")
+            XCTAssertEqual(attrString?.string, "Pellon kuivatusjärjestelmät ja ravinteiden talteenotto raportti.pdf\n")
 
             attrString!.enumerateAttributes(in: NSMakeRange(0, attrString!.length)) { attributes, range, stopped in
                 attributes.forEach { key, value in
