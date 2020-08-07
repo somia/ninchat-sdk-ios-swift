@@ -9,3 +9,5 @@ NinchatSDKSwiftServerTests/Secrets.plist
 
 *.out
 *.log
+
+go-sdk/
