@@ -36,25 +36,25 @@ extension NINLowLevelClientProps {
         let props = NINLowLevelClientProps()
 
         if let action = action {
-            props?.setAction(action)
+            props.setAction(action)
         }
         if let name = name {
-            props?.name = .success(name)
+            props.name = .success(name)
         }
 
-        return props!
+        return props
     }
 
     static func initiate(credentials: NINSessionCredentials) -> NINLowLevelClientProps {
         let props = NINLowLevelClientProps()
-        props?.set(value: credentials.userID, forKey: "user_id")
-        props?.set(value: credentials.userAuth, forKey: "user_auth")
+        props.set(value: credentials.userID, forKey: "user_id")
+        props.set(value: credentials.userAuth, forKey: "user_auth")
 
-        return props!
+        return props
     }
 
     static func initiate(preQuestionnaireAnswers dictionary: [String:AnyHashable]) -> NINLowLevelClientProps {
-        let metadata = dictionary.reduce(into: NINLowLevelClientProps()!) { (metadata: inout NINLowLevelClientProps, tuple: (key: String, value: Any)) in
+        let metadata = dictionary.reduce(into: NINLowLevelClientProps()) { (metadata: inout NINLowLevelClientProps, tuple: (key: String, value: Any)) in
             metadata.set(value: tuple.value, forKey: tuple.key)
         }
         return NINLowLevelClientProps.initiate(metadata: ["pre_answers": metadata])
@@ -64,7 +64,7 @@ extension NINLowLevelClientProps {
     * Currently supported value types: String, Int, Double, Bool, NINLowLevelClientProps, NINLowLevelClientStrings, and NINLowLevelClientJSON
     */
     public static func initiate<T>(metadata: [String:T]) -> NINLowLevelClientProps {
-        metadata.reduce(into: NINLowLevelClientProps()!) { (props: inout NINLowLevelClientProps, tuple: (key: String, value: T)) in
+        metadata.reduce(into: NINLowLevelClientProps()) { (props: inout NINLowLevelClientProps, tuple: (key: String, value: T)) in
             props.set(value: tuple.value, forKey: tuple.key)
         }
     }

@@ -202,7 +202,7 @@ extension NINChatSessionManagerImpl {
             params.userAttributes = .success(NINLowLevelClientProps.initiate(name: userName))
         }
 
-        let messageType = NINLowLevelClientStrings.initiate
+        let messageType = NINLowLevelClientStrings()
         messageType.append(MessageType.file.rawValue)
         messageType.append(MessageType.text.rawValue)
         messageType.append(MessageType.metadata.rawValue)
@@ -427,7 +427,7 @@ extension NINChatSessionManagerImpl {
         param.fileAttributes = .success(fileAttributes)
         param.channelID = .success(currentChannel)
         
-        let payload = NINLowLevelClientPayload.initiate
+        let payload = NINLowLevelClientPayload()
         payload.append(data)
         
         do {
@@ -451,16 +451,18 @@ extension NINChatSessionManagerImpl {
         param.channelID = .success(currentChannel)
         
         if type == .metadata, let _ = (payload["data"] as? [String:String])?["rating"] {
-            /// Add an empty message_recipient to the rating metadata message
-            param.recipients = .success(NINLowLevelClientStrings.initiate)
-        } else if type.isRTC {
+            param.recipients = .success(NINLowLevelClientStrings())
+            param.messageFold = .success(false)
+        }
+        
+        if type.isRTC {
             /// Add message_ttl to all rtc signaling messages
             param.messageTTL = .success(10)
         }
         
         do {
             let data = try JSONSerialization.data(withJSONObject: payload, options: .prettyPrinted)
-            let newPayload = NINLowLevelClientPayload.initiate
+            let newPayload = NINLowLevelClientPayload()
             newPayload.append(data)
             
             let actionID = try session.send(param, newPayload)
@@ -481,7 +483,7 @@ extension NINChatSessionManagerImpl {
         param.historyOrder = .success(HistoryOrder.DESC.rawValue)
 
         /// Currently we need to just load supported message types
-        let messageType = NINLowLevelClientStrings.initiate
+        let messageType = NINLowLevelClientStrings()
         messageType.append(MessageType.file.rawValue)
         messageType.append(MessageType.text.rawValue)
         messageType.append(MessageType.ui.rawValue)
@@ -536,7 +538,7 @@ extension NINChatSessionManagerImpl {
         param.realmID = .success(id)
         if let queuesID = queuesID {
             /// Parameter should be set only if there are any queues passed to the function
-            param.queuesID = .success(queuesID.reduce(into: NINLowLevelClientStrings.initiate) { list, id in
+            param.queuesID = .success(queuesID.reduce(into: NINLowLevelClientStrings()) { list, id in
                 list.append(id)
             })
         }

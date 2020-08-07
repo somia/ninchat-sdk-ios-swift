@@ -189,7 +189,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     private func submitTags(_ tags: [String]) {
         guard !tags.isEmpty else { return }
 
-        self.answers["tags"] = tags.reduce(into: NINLowLevelClientStrings.initiate) { (result: inout NINLowLevelClientStrings, tag: String) in
+        self.answers["tags"] = tags.reduce(into: NINLowLevelClientStrings()) { (result: inout NINLowLevelClientStrings, tag: String) in
             result.append(tag)
         }
     }

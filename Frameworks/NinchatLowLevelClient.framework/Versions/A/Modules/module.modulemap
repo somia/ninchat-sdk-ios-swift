@@ -1,0 +1,6 @@
+framework module NinchatLowLevelClient {
+  umbrella header "Client.h"
+
+  export *
+  module * { export * }
+}

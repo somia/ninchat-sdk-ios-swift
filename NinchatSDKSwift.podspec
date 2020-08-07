@@ -41,7 +41,7 @@ Pod::Spec.new do |s|
   s.dependency "GoogleWebRTC"
   s.dependency 'AnyCodable-FlightSchool', '~> 0.2.3'
   s.dependency "AutoLayoutSwift", "4.0.0"
-  s.dependency "NinchatLowLevelClient", "~> 0.0.40"
+  s.dependency "NinchatLowLevelClient", "~> 0.2.8"
 
   s.module_name = "NinchatSDKSwift"
 end

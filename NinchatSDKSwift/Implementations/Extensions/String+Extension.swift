@@ -58,7 +58,7 @@ extension String {
 
         /// Text Font
         if let font = font {
-            attrString.override(font: font)
+            _ = attrString.override(font: font)
         }
 
         return attrString
