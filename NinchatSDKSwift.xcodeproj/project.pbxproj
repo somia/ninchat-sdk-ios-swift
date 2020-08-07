@@ -161,6 +161,7 @@
 		91A167F485DBCDFEEA0261F6 /* QuestionnaireElementLikert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16ED021E7CDE32491AE5D /* QuestionnaireElementLikert.swift */; };
 		91A1685BFB39CDD931E5FCAC /* NINQuestionnaireConversationDataSourceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16F08D697EA1A1125CC1E /* NINQuestionnaireConversationDataSourceDelegate.swift */; };
 		91A1686AC0F93B6707C55930 /* QuestionnaireConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16D113215A7C879D84505 /* QuestionnaireConverterTests.swift */; };
+		91A16813665172FFFA81A455 /* NinchatError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A163A915328A44FBCAD0C2 /* NinchatError.swift */; };
 		91A1688A7C316AEDFAF3BFD1 /* NinchatViewModelTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16BD6BFDA5810A0BE45F4 /* NinchatViewModelTestCase.swift */; };
 		91A168E2844E0CDE5A4D632A /* NinchatSDKSwiftServerHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16E2E2FDA2CB5D3AAA5B7 /* NinchatSDKSwiftServerHelperTests.swift */; };
 		91A16914F0B5CA995B9CD28D /* UIImageView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16A99A8F815E0C72B0AAE /* UIImageView+Extension.swift */; };
@@ -371,6 +372,7 @@
 		91A1633706071B64D349FD72 /* QuestionnaireElementConnectorLogicTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireElementConnectorLogicTests.swift; sourceTree = "<group>"; };
 		91A163540D74E87CE6247C06 /* QuestionnaireElementSelect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireElementSelect.swift; sourceTree = "<group>"; };
 		91A163542A73487774FB1D3C /* Permission.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Permission.swift; sourceTree = "<group>"; };
+		91A163A915328A44FBCAD0C2 /* NinchatError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatError.swift; sourceTree = "<group>"; };
 		91A163B62D2DBB763D1B850A /* UIFont+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+Extension.swift"; sourceTree = "<group>"; };
 		91A16407D8FAC5AEEDD748C9 /* ServiceManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceManager.swift; sourceTree = "<group>"; };
 		91A16468FB26B3084F03232F /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
@@ -814,6 +816,7 @@
 				91A16BFFA180E7ADBDE99C8D /* InboundMessage.swift */,
 				91A1675E285CCC4A250D77BB /* QuestionnaireConfiguration.swift */,
 				91A16B895B61CE50613D6AD7 /* ComposeUIAction.swift */,
+				91A163A915328A44FBCAD0C2 /* NinchatError.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1463,6 +1466,7 @@
 				91A16DDD3F9AB146FF604EFB /* UITextField+Extension.swift in Sources */,
 				91A16BB0EBC43AB17FBEC7BD /* Array+Extension.swift in Sources */,
 				91A1601A6F8D21DA68AC39A6 /* ComposeUIAction.swift in Sources */,
+				91A16813665172FFFA81A455 /* NinchatError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1708,11 +1712,6 @@
 					"\"SystemConfiguration\"",
 					"-framework",
 					"\"WebRTC\"",
-					"-read_only_relocs",
-					suppress,
-					"-Wl,-no_uuid",
-					"-Wl,-no_deduplicate",
-					"-Wl,-no_compact_unwind",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ninchat.NinchatSDKSwift;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -1761,11 +1760,6 @@
 					"\"SystemConfiguration\"",
 					"-framework",
 					"\"WebRTC\"",
-					"-read_only_relocs",
-					suppress,
-					"-Wl,-no_uuid",
-					"-Wl,-no_deduplicate",
-					"-Wl,-no_compact_unwind",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ninchat.NinchatSDKSwift;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";

@@ -73,7 +73,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
         didSet {
             viewModel.onErrorOccurred = { [weak self] error in
                 debugger("** ** SDK: error in registering audience: \(error)")
-                if let error = error as? NinchatError, error.title == "queue_is_closed" {
+                if let error = error as? NinchatError, error.type == "queue_is_closed" {
                     self?.showRegisteredPage(operation: self?.closedRegisteredOperation); return
                 }
                 Toast.show(message: .error("Error is submitting the answers")) { [weak self] in

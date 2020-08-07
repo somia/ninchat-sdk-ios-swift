@@ -25,6 +25,18 @@ Pod::Spec.new do |s|
   # Our dependency (NinchatLowLevel) is a static library, so we must also be
   s.static_framework = true
 
+  # Due to gomobile bind not supporting bitcode we must switch it off - for
+  # the pod as well as the user target (app using the SDK). This is unfortunate,
+  # but hopefully support will be there soon.
+  # In addition we must suppress 'illegal text relocation' error for i386 platform
+  s.pod_target_xcconfig = {
+    "OTHER_LDFLAGS[arch=i386]" => "-Wl,-read_only_relocs,suppress -lstdc++",
+    "ENABLE_BITCODE" => "NO"
+  }
+  s.user_target_xcconfig = {
+      "ENABLE_BITCODE" => "NO"
+  }
+
   # Cocoapods dependencies
   s.dependency "GoogleWebRTC"
   s.dependency 'AnyCodable-FlightSchool', '~> 0.2.3'

@@ -153,7 +153,7 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
             inputContainer.addSubview(inputControlsView)
             inputControlsView
                 .fix(leading: (0.0, inputContainer), trailing: (0.0, inputContainer))
-                .fix(top: (0.0, inputContainer), bottom: (0.0, inputContainer))
+                .fix(top: (0.0, inputContainer), bottom: (0.0, inputContainer), toSafeArea: true)
         }
     }
     

@@ -191,7 +191,7 @@ extension NINChatSessionManagerImpl {
         }
 
         /// Make sure our site configuration contains a realm_id
-        guard let realmId = self.siteConfiguration.audienceRealm else { throw NINSessionExceptions.invalidRealmConfiguration }
+        guard let realmId = self.siteConfiguration?.audienceRealm else { throw NINSessionExceptions.invalidRealmConfiguration }
         self.realmID = realmId
 
         if let secret = self.siteSecret {
@@ -345,7 +345,9 @@ extension NINChatSessionManagerImpl {
             onCompletion?()
         }
 
-        if let userID = self.myUserID, let user = self.channelUsers[userID], !user.guest {
+        if self.myUserID == nil {
+            endSession()
+        } else if let userID = self.myUserID, let user = self.channelUsers[userID], !user.guest {
             endSession()
         } else {
             try self.deleteCurrentUser { error in

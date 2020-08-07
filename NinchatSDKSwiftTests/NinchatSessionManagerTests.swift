@@ -164,7 +164,7 @@ class NinchatSessionManagerClosureHandlersTests: XCTestCase {
         }
 
         /// The test will fail if both following actions call the closure (API Violation)
-        sessionManager.onActionID?(.failure(NinchatError(code: 0, title: "error")), nil)
+        sessionManager.onActionID?(.failure(NinchatError(type: "error", props: nil)), nil)
         sessionManager.onActionID?(.success(0), nil)
         waitForExpectations(timeout: 5.0)
     }
@@ -182,7 +182,7 @@ class NinchatSessionManagerClosureHandlersTests: XCTestCase {
         }
         
         sessionManager.onActionID?(.success(0), nil)
-        sessionManager.onActionID?(.success(1), NinchatError(code: 0, title: "title"))
+        sessionManager.onActionID?(.success(1), NinchatError(type: "title", props: nil))
         waitForExpectations(timeout: 5.0)
     }
     
@@ -199,7 +199,7 @@ class NinchatSessionManagerClosureHandlersTests: XCTestCase {
         
         sessionManager.actionBoundClosures.removeValue(forKey: 0)
         sessionManager.onActionID?(.success(0), nil)
-        sessionManager.onActionID?(.success(1), NinchatError(code: 0, title: "title"))
+        sessionManager.onActionID?(.success(1), NinchatError(type: "title", props: nil))
         waitForExpectations(timeout: 5.0)
     }
 

@@ -60,6 +60,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
             if let eventType = Events(rawValue: event) {
                 switch eventType {
                 case .error:
+                    debugger.error(param.error as? NinchatError)
                     self.onActionSessionEvent?(nil, eventType, param.error)
                 case .sessionCreated:
                     let credentials = try? NINSessionCredentials(params: param)
