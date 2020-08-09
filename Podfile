@@ -18,13 +18,11 @@ target 'NinchatSDKSwift' do
   target 'NinchatSDKSwiftTests' do
     inherit! :search_paths
     libraries
-    pod 'Difference'
   end
 
   target 'NinchatSDKSwiftServerTests' do
     inherit! :search_paths
     libraries
-    pod 'Difference'
   end
 end
 
