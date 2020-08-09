@@ -9,7 +9,13 @@ import Difference
 @testable import NinchatSDKSwift
 
 extension XCTest {
-    func AssertEqual<T: Equatable>(_ expected: T, _ received: T, file: StaticString = #filePath, line: UInt = #line) {
+    @available(iOS 12.0, *)
+    func AssertEqual<T: Equatable>(_ expected: T, _ received: T, filePath: StaticString = #filePath, line: UInt = #line) {
+        XCTAssertTrue(expected == received, "Found difference for \n" + diff(expected, received).joined(separator: ", "), file: filePath, line: line)
+    }
+
+    @available(iOS, deprecated: 11.0)
+    func AssertEqual<T: Equatable>(_ expected: T, _ received: T, file: StaticString = #file, line: UInt = #line) {
         XCTAssertTrue(expected == received, "Found difference for \n" + diff(expected, received).joined(separator: ", "), file: file, line: line)
     }
 
