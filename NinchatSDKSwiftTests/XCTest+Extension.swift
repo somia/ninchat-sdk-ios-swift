@@ -5,14 +5,9 @@
 //
 
 import XCTest
-import Difference
 @testable import NinchatSDKSwift
 
 extension XCTest {
-    func AssertEqual<T: Equatable>(_ expected: T, _ received: T, file: StaticString = #filePath, line: UInt = #line) {
-        XCTAssertTrue(expected == received, "Found difference for \n" + diff(expected, received).joined(separator: ", "), file: file, line: line)
-    }
-
     func openAsset(forResource name: String, ofType type: String = "json") throws -> [String:AnyHashable]? {
         let bundle = Bundle(for: QuestionnaireConverterTests.self)
         if let path = bundle.path(forResource: name, ofType: type) {

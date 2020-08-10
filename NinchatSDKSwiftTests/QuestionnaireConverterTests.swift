@@ -51,8 +51,8 @@ final class QuestionnaireConverterTests: XCTestCase {
             let view = views![0]
             XCTAssertNotEqual(configuration.type, .group)
             XCTAssertEqual(configuration.element, .text)
-            AssertEqual(view.questionnaireStyle, .conversation)
-            AssertEqual(view.questionnaireConfiguration, configuration)
+            XCTAssertEqual(view.questionnaireStyle, .conversation)
+            XCTAssertEqual(view.questionnaireConfiguration, configuration)
             expect.fulfill()
         }
 
@@ -76,7 +76,7 @@ final class QuestionnaireConverterTests: XCTestCase {
             let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementSelect }) }).first(where: { $0.count > 0 })
             XCTAssertNotNil(element)
             XCTAssertNotNil(views)
-            AssertEqual(views?.first?.questionnaireStyle, .form)
+            XCTAssertEqual(views?.first?.questionnaireStyle, .form)
             expect.fulfill()
         }
 
@@ -100,7 +100,7 @@ final class QuestionnaireConverterTests: XCTestCase {
             let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementRadio }) }).first(where: { $0.count > 0 })
             XCTAssertNotNil(element)
             XCTAssertNotNil(views)
-            AssertEqual(views?.first?.questionnaireStyle, .conversation)
+            XCTAssertEqual(views?.first?.questionnaireStyle, .conversation)
             expect.fulfill()
         }
 
@@ -124,7 +124,7 @@ final class QuestionnaireConverterTests: XCTestCase {
             let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementTextArea }) }).first(where: { $0.count > 0 })
             XCTAssertNotNil(element)
             XCTAssertNotNil(views)
-            AssertEqual(views?.first?.questionnaireStyle, .form)
+            XCTAssertEqual(views?.first?.questionnaireStyle, .form)
             expect.fulfill()
         }
 
@@ -148,7 +148,7 @@ final class QuestionnaireConverterTests: XCTestCase {
             let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementTextField }) }).first(where: { $0.count > 0 })
             XCTAssertNotNil(element)
             XCTAssertNotNil(views)
-            AssertEqual(views?.first?.questionnaireStyle, .conversation)
+            XCTAssertEqual(views?.first?.questionnaireStyle, .conversation)
             expect.fulfill()
         }
 
@@ -172,7 +172,7 @@ final class QuestionnaireConverterTests: XCTestCase {
             let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementCheckbox }) }).first(where: { $0.count > 0 })
             XCTAssertNotNil(element)
             XCTAssertNotNil(views)
-            AssertEqual(views?.first?.questionnaireStyle, .form)
+            XCTAssertEqual(views?.first?.questionnaireStyle, .form)
             expect.fulfill()
         }
 
@@ -196,7 +196,7 @@ final class QuestionnaireConverterTests: XCTestCase {
             let views = converter.elements.compactMap({ $0.filter({ $0 is QuestionnaireElementLikert }) }).first(where: { $0.count > 0 })
             XCTAssertNotNil(element)
             XCTAssertNotNil(views)
-            AssertEqual(views?.first?.questionnaireStyle, .conversation)
+            XCTAssertEqual(views?.first?.questionnaireStyle, .conversation)
             expect.fulfill()
         }
 
