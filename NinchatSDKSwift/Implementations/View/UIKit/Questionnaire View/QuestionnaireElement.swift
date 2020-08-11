@@ -178,6 +178,10 @@ extension QuestionnaireHasBorder where Self:QuestionnaireElementWithTitle {
 }
 
 /// Make the applicable questionnaire item able to get pre-set answers
+enum QuestionnaireSettableState {
+    case set
+    case nothing
+}
 protocol QuestionnaireSettable {
-    var presetAnswer: AnyHashable? { get set }
+    func updateSetAnswers(_ answer: AnyHashable?, state: QuestionnaireSettableState)
 }

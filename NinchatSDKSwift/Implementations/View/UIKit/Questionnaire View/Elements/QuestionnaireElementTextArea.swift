@@ -41,13 +41,15 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
 
     // MARK: - QuestionnaireSettable
 
-    var presetAnswer: AnyHashable? {
-        didSet {
-            if let answer = self.presetAnswer as? String {
-                self.view.text = answer
-                self.textViewDidEndEditing(self.view)
-            }
+    func updateSetAnswers(_ answer: AnyHashable?, state: QuestionnaireSettableState) {
+        guard let answer = answer as? String else { return }
+        switch state {
+        case .set:
+            self.view.text = answer
+        case .nothing:
+            break
         }
+        self.textViewDidEndEditing(self.view)
     }
 
     // MARK: - QuestionnaireHasBorder

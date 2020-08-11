@@ -42,8 +42,9 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
     }
 
     func test_10_preAnswersInitiated() {
-        XCTAssertNotEqual(self.viewModel?.answers, [:])
-        XCTAssertEqual(self.viewModel?.answers["pre-answer1"], "1")
+        XCTAssertEqual(self.viewModel?.answers, [:])
+        XCTAssertNotEqual(self.viewModel?.preAnswers, [:])
+        XCTAssertEqual(self.viewModel?.preAnswers["pre-answer1"], "1")
     }
 
     func test_20_getAnswersForElement() {
@@ -68,7 +69,7 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         XCTAssertNil(self.viewModel?.askedPageNumber)
 
         do {
-            self.viewModel?.answers = ["Aiheet": "Mikä on koronavirus"]
+            self.viewModel?.preAnswers = ["Aiheet": "Mikä on koronavirus"]
             let element = try self.viewModel?.getElements()[0]
 
             self.viewModel?.resetAnswer(for: element!)
