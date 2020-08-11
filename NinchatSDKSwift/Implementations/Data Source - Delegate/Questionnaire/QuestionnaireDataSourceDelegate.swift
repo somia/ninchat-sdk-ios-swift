@@ -85,11 +85,10 @@ extension QuestionnaireDataSourceDelegate {
         /// In case the element's redirect/logic is not reachable through ´QuestionnaireOptionSelectableElement´ protocol
         if let elements = elements, elements.count > 0, self.viewModel.askedPageNumber == nil {
             if let page = self.viewModel.redirectTargetPage(for: "", autoApply: false) {
-                guard page >= 0 else { return; }
-                self.showTargetPage(page: page)
-            } else if let page = self.viewModel.logicTargetPage(for: elements.reduce(into: [:]) { $0[$1.elementConfiguration?.name ?? ""] = "" }, autoApply: false) {
-                guard page >= 0 else { return; }
-                self.showTargetPage(page: page)
+                if page >= 0, self.showTargetPage(page: page) { return }
+            } 
+            if let page = self.viewModel.logicTargetPage(for: elements.reduce(into: [:]) { $0[$1.elementConfiguration?.name ?? ""] = "" }, autoApply: false) {
+                if page >= 0, self.showTargetPage(page: page) { return }
             }
         }
 
@@ -115,15 +114,14 @@ extension QuestionnaireDataSourceDelegate {
         view.onElementOptionSelected = { [view] option in
             guard self.viewModel.submitAnswer(key: element, value: option.value) else { return }
             if let page = self.viewModel.redirectTargetPage(for: option.value) {
-                guard page >= 0 else { return; }
-                self.showTargetPage(page: page)
-            } else if let page = self.viewModel.logicTargetPage(for: [element.elementConfiguration?.name ?? "": option.value], autoApply: false) {
-                guard page >= 0 else { return; }
-                self.showTargetPage(page: page)
+                if page >= 0, self.showTargetPage(page: page) { return }
+            }
+            if let page = self.viewModel.logicTargetPage(for: [element.elementConfiguration?.name ?? "": option.value], autoApply: false) {
+                if page >= 0, self.showTargetPage(page: page) { return }
             }
             /// Load the next element if the selected element was a radio or checkbox without any navigation block (redirect/logic)
             /// It will perform only if the element is not the exit element provided to close the questionnaire
-            else if (view is QuestionnaireElementRadio || view is QuestionnaireElementCheckbox) {
+            if (view is QuestionnaireElementRadio || view is QuestionnaireElementCheckbox) {
                 guard !self.viewModel.shouldWaitForNextButton, !self.viewModel.isExitElement(view) else { return }
                 self.onNextButtonTapped(elements: [element])
             }
@@ -161,9 +159,10 @@ extension QuestionnaireDataSourceDelegate {
         return view.isCompleted ?? true
     }
 
-    private func showTargetPage(page: Int) {
+    private func showTargetPage(page: Int) -> Bool {
         if self.viewModel.canGoToPage(page), !self.viewModel.shouldWaitForNextButton, self.viewModel.goToPage(page) {
-            self.onUpdateCellContent?()
+            self.onUpdateCellContent?(); return true
         }
+        return false
     }
 }
