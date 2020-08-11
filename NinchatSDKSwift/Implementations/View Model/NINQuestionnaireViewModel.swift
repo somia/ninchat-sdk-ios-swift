@@ -25,8 +25,8 @@ protocol NINQuestionnaireViewModel {
     func isExitElement(_ element: Any?) -> Bool
     func getConfiguration() throws -> QuestionnaireConfiguration
     func getElements() throws -> [QuestionnaireElement]
-    func getAnswersForElement(_ element: QuestionnaireElement) -> AnyHashable?
-    func resetAnswer(for element: QuestionnaireElement)
+    func getAnswersForElement(_ element: QuestionnaireElement, presetOnly: Bool) -> AnyHashable?
+    func resetAnswer(for element: QuestionnaireElement) -> Bool
     func insertRegisteredElement(_ elements: [QuestionnaireElement], configuration: [QuestionnaireConfiguration])
     func clearAnswersForCurrentPage() -> Bool
     func redirectTargetPage(for value: String, autoApply: Bool, performClosures: Bool) -> Int?
@@ -46,6 +46,10 @@ extension NINQuestionnaireViewModel {
     func logicTargetPage(for dictionary: [String:String], autoApply: Bool = true, performClosures: Bool = true) -> Int? {
         self.logicTargetPage(for: dictionary, autoApply: autoApply, performClosures: performClosures)
     }
+
+    func getAnswersForElement(_ element: QuestionnaireElement) -> AnyHashable? {
+        self.getAnswersForElement(element, presetOnly: false)
+    }
 }
 
 final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
@@ -57,6 +61,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     internal var connector: QuestionnaireElementConnector!
     private var views: [[QuestionnaireElement]] = []
     internal var answers: [String:AnyHashable]! = [:]
+    internal var preAnswers: [String:AnyHashable]! = [:]
     private var setPageNumber: Int?
     private var setupConnectorOperation: BlockOperation!
     
@@ -97,7 +102,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
         }
         self.setupConnectorOperation = BlockOperation { [weak self] in
             if questionnaireType == .pre {
-                self?.answers = (try? self?.extractGivenPreAnswers()) ?? [:]
+                self?.preAnswers = (try? self?.extractGivenPreAnswers()) ?? [:]
             } else if questionnaireType == .post {
                 self?.setupPostConnector()
             }
@@ -224,7 +229,8 @@ extension NINQuestionnaireViewModelImpl {
 // MARK :- Answers handlers
 extension NINQuestionnaireViewModelImpl {
     var questionnaireAnswers: NINLowLevelClientProps {
-        NINLowLevelClientProps.initiate(metadata: self.answers)
+        /// taken from `https://stackoverflow.com/a/43615143/7264553`
+        NINLowLevelClientProps.initiate(metadata: self.answers.merging(self.preAnswers) { (current,new) in new })
     }
 
     var requirementsSatisfied: Bool {
@@ -241,10 +247,12 @@ extension NINQuestionnaireViewModelImpl {
 
     func submitAnswer(key: QuestionnaireElement?, value: AnyHashable) -> Bool {
         guard !self.isExitElement(key) else { return true }
+
         if let configuration = key?.elementConfiguration {
             if let currentValue = self.answers[configuration.name], value == currentValue { return false }
 
             self.answers[configuration.name] = value
+            self.preAnswers.removeValue(forKey: configuration.name) // clear preset answers if there is a matched one
             self.requirementSatisfactionUpdater?(self.requirementsSatisfied)
             return true
         }
@@ -279,21 +287,29 @@ extension NINQuestionnaireViewModelImpl {
         return self.views[self.pageNumber]
     }
 
-    func getAnswersForElement(_ element: QuestionnaireElement) -> AnyHashable? {
-        if let configuration = element.elementConfiguration, let value = self.answers[configuration.name] {
+    func getAnswersForElement(_ element: QuestionnaireElement, presetOnly: Bool = false) -> AnyHashable? {
+        guard let configuration = element.elementConfiguration else { return nil }
+        if let value = self.answers[configuration.name], !presetOnly {
+            return value
+        }
+        if let value = self.preAnswers[configuration.name] {
             return value
         }
         return nil
     }
 
-    func resetAnswer(for element: QuestionnaireElement) {
-        guard let value = self.getAnswersForElement(element) as? String, self.requirementsSatisfied, element.isUserInteractionEnabled else { return }
+    func resetAnswer(for element: QuestionnaireElement) -> Bool {
+        guard let value = self.getAnswersForElement(element, presetOnly: true) as? String, self.requirementsSatisfied, element.isUserInteractionEnabled else {
+            self.askedPageNumber = nil; return false
+        }
 
         if let page = self.redirectTargetPage(for: value, performClosures: false), page >= 0 {
-            self.askedPageNumber = page
-        } else if let page = self.logicTargetPage(for: [element.elementConfiguration?.name ?? "": value], performClosures: false), page >= 0 {
-            self.askedPageNumber = page
+            self.askedPageNumber = page; return true
         }
+        if let page = self.logicTargetPage(for: [element.elementConfiguration?.name ?? "": value], performClosures: false), page >= 0 {
+            self.askedPageNumber = page; return true
+        }
+        return false
     }
 
     func insertRegisteredElement(_ elements: [QuestionnaireElement], configuration: [QuestionnaireConfiguration]) {

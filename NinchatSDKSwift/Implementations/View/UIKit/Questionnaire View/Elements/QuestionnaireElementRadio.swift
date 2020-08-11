@@ -45,13 +45,13 @@ class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Question
 
     // MARK: - QuestionnaireSettable
 
-    var presetAnswer: AnyHashable? {
-        didSet {
-            if let answer = self.presetAnswer as? String,
-               let option = self.elementConfiguration?.options?.first(where: { $0.label == answer }),
-               let button = self.view.subviews.compactMap({ $0 as? Button }).first(where: { $0.titleLabel?.text == option.label }) {
-                button.closure?(button)
-            }
+    func updateSetAnswers(_ answer: AnyHashable?, state: QuestionnaireSettableState) {
+        guard let answer = answer as? String, let option = self.elementConfiguration?.options?.first(where: { $0.label == answer }), let button = self.view.subviews.compactMap({ $0 as? Button }).first(where: { $0.titleLabel?.text == option.label }) else { return }
+        switch state {
+        case .set:
+            button.closure?(button)
+        case .nothing:
+            break
         }
     }
 

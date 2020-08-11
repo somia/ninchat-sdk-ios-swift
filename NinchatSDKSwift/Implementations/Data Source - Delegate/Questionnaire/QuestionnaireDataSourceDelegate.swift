@@ -86,9 +86,13 @@ extension QuestionnaireDataSourceDelegate {
         if let elements = elements, elements.count > 0, self.viewModel.askedPageNumber == nil {
             if let page = self.viewModel.redirectTargetPage(for: "", autoApply: false) {
                 if page >= 0, self.showTargetPage(page: page) { return }
+                /// This is a _register or _complete closure
+                if page == -1 { return }
             } 
             if let page = self.viewModel.logicTargetPage(for: elements.reduce(into: [:]) { $0[$1.elementConfiguration?.name ?? ""] = "" }, autoApply: false) {
                 if page >= 0, self.showTargetPage(page: page) { return }
+                /// This is a _register or _complete closure
+                if page == -1 { return }
             }
         }
 
@@ -106,8 +110,8 @@ extension QuestionnaireDataSourceDelegate {
 // MARK: - Cell Setup
 extension QuestionnaireDataSourceDelegate {
     internal func setupSettable(view: inout QuestionnaireSettable, element: QuestionnaireElement) {
-        view.presetAnswer = self.viewModel.getAnswersForElement(element)
-        self.viewModel.resetAnswer(for: element)
+        let setAnswerState: QuestionnaireSettableState = self.viewModel.resetAnswer(for: element) ? .set : .nothing
+        view.updateSetAnswers(self.viewModel.getAnswersForElement(element), state: setAnswerState)
     }
 
     internal func setupSelectable(view: inout QuestionnaireOptionSelectableElement, element: QuestionnaireElement) {
@@ -115,9 +119,13 @@ extension QuestionnaireDataSourceDelegate {
             guard self.viewModel.submitAnswer(key: element, value: option.value) else { return }
             if let page = self.viewModel.redirectTargetPage(for: option.value) {
                 if page >= 0, self.showTargetPage(page: page) { return }
+                /// This is a _register or _complete closure
+                if page == -1 { return }
             }
             if let page = self.viewModel.logicTargetPage(for: [element.elementConfiguration?.name ?? "": option.value], autoApply: false) {
                 if page >= 0, self.showTargetPage(page: page) { return }
+                /// This is a _register or _complete closure
+                if page == -1 { return }
             }
             /// Load the next element if the selected element was a radio or checkbox without any navigation block (redirect/logic)
             /// It will perform only if the element is not the exit element provided to close the questionnaire

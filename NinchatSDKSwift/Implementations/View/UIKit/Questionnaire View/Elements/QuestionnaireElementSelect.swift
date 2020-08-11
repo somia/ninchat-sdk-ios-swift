@@ -49,13 +49,16 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
 
     // MARK: - QuestionnaireSettable
 
-    var presetAnswer: AnyHashable? {
-        didSet {
-            if let answer = self.presetAnswer as? String, let option = self.elementConfiguration?.options?.first(where: { $0.value == answer }) {
-                self.select(option: option)
-            }
-            self.updateBorder()
+    func updateSetAnswers(_ answer: AnyHashable?, state: QuestionnaireSettableState) {
+        guard let answer = answer as? String, let option = self.elementConfiguration?.options?.first(where: { $0.value == answer }) else { return }
+
+        switch state {
+        case .set:
+            self.select(option: option)
+        case .nothing:
+            break
         }
+        self.updateBorder()
     }
 
     // MARK: - QuestionnaireOptionSelectableElement
