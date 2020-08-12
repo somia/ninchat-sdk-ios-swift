@@ -72,7 +72,7 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
             self.viewModel?.preAnswers = ["Aiheet": "Mikä on koronavirus"]
             let element = try self.viewModel?.getElements()[0]
 
-            self.viewModel?.resetAnswer(for: element!)
+            _ = self.viewModel?.resetAnswer(for: element!)
             XCTAssertNotNil(self.viewModel?.askedPageNumber)
             XCTAssertEqual(self.viewModel?.askedPageNumber ?? 0, 1)
         } catch {

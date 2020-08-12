@@ -89,7 +89,7 @@ extension QuestionnaireDataSourceDelegate {
                 /// This is a _register or _complete closure
                 if page == -1 { return }
             } 
-            if let page = self.viewModel.logicTargetPage(for: elements.reduce(into: [:]) { $0[$1.elementConfiguration?.name ?? ""] = "" }, autoApply: false) {
+            if let page = self.viewModel.logicTargetPage(for: elements.reduce(into: [:], { $0[$1.elementConfiguration?.name ?? ""] = "" }), autoApply: false) {
                 if page >= 0, self.showTargetPage(page: page) { return }
                 /// This is a _register or _complete closure
                 if page == -1 { return }
