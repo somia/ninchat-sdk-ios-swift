@@ -10,7 +10,7 @@ import NinchatLowLevelClient
 protocol NINQuestionnaireViewModel {
     var queue: Queue? { get set }
     var pageNumber: Int { get set }
-    var previousPage: Int { get set }
+    var appearedPages: [Int] { set get }
     var askedPageNumber: Int? { get }
     var requirementsSatisfied: Bool { get }
     var shouldWaitForNextButton: Bool { get }
@@ -28,7 +28,7 @@ protocol NINQuestionnaireViewModel {
     func getAnswersForElement(_ element: QuestionnaireElement, presetOnly: Bool) -> AnyHashable?
     func resetAnswer(for element: QuestionnaireElement) -> Bool
     func insertRegisteredElement(_ elements: [QuestionnaireElement], configuration: [QuestionnaireConfiguration])
-    func clearAnswersForCurrentPage() -> Bool
+    func clearAnswers() -> Bool
     func redirectTargetPage(for value: String, autoApply: Bool, performClosures: Bool) -> Int?
     func logicTargetPage(for dictionary: [String:String], autoApply: Bool, performClosures: Bool) -> Int?
     func goToNextPage() -> Bool?
@@ -78,7 +78,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
         }
     }
     var pageNumber: Int = 0
-    var previousPage: Int = 0
+    var appearedPages: [Int] = [0] /// keep track of appeared pages
     private(set) var askedPageNumber: Int? = nil
     var onSessionFinished: (() -> Void)?
     var onErrorOccurred: ((Error) -> Void)?
@@ -206,6 +206,13 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
             completion(error)
         }
     }
+
+    private func clearAnswersAtPage(_ page: Int) -> Bool {
+        guard self.views.count > page, page >= 0, !self.answers.isEmpty else { return false }
+        self.views[page].filter({ $0.questionnaireConfiguration != nil || $0.elementConfiguration != nil }).forEach({ self.removeAnswer(key: $0) })
+
+        return true
+    }
 }
 
 // MARK: - NINQuestionnaireViewModel
@@ -266,10 +273,12 @@ extension NINQuestionnaireViewModelImpl {
         }
     }
 
-    func clearAnswersForCurrentPage() -> Bool {
-        guard self.views.count > self.pageNumber, !self.answers.isEmpty else { return false }
-        self.views[self.pageNumber].filter({ $0.questionnaireConfiguration != nil || $0.elementConfiguration != nil }).forEach({ self.removeAnswer(key: $0) })
-        return true
+    func clearAnswers() -> Bool {
+        if self.appearedPages.count <= 1 {
+            return clearAnswersAtPage(self.pageNumber)
+        }
+        self.appearedPages.removeLast()
+        return clearAnswersAtPage(self.pageNumber) && self.clearAnswersAtPage(self.appearedPages.last ?? -1)
     }
 }
 
@@ -359,9 +368,8 @@ extension NINQuestionnaireViewModelImpl {
     }
 
     func goToPreviousPage() -> Bool {
-        if self.pageNumber >= 0, self.pageNumber != self.previousPage {
-            self.pageNumber = self.previousPage
-            return true
+        if self.pageNumber > 0, self.appearedPages.count > 0, let previousPage = self.appearedPages.last {
+            self.pageNumber = previousPage; return true
         }
         return false
     }
@@ -369,8 +377,8 @@ extension NINQuestionnaireViewModelImpl {
     func goToPage(_ page: Int) -> Bool {
         guard self.requirementsSatisfied else { return false }
 
-        self.previousPage = self.pageNumber
         self.pageNumber = page
+        self.appearedPages.append(page)
         self.askedPageNumber = nil
         return true
     }

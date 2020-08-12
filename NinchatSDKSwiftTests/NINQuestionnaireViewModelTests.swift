@@ -261,12 +261,50 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
     }
 
     func test_70_clearAnswers() {
-        self.viewModel?.pageNumber = 0
         self.viewModel?.answers = [:]
-        XCTAssertFalse(self.viewModel?.clearAnswersForCurrentPage() ?? true)
+        self.viewModel?.pageNumber = 0
+        self.viewModel?.appearedPages = [0]
 
-        self.viewModel?.answers = ["Aiheet": "Mikä on koronavirus", "arbitraryAnswer": "answer"]
-        XCTAssertTrue(self.viewModel?.clearAnswersForCurrentPage() ?? false)
-        XCTAssertEqual(self.viewModel?.answers, ["arbitraryAnswer": "answer"])
+        self.viewModel?.answers = ["Aiheet": "Mikä on koronavirus"]
+        XCTAssertTrue(self.viewModel?.clearAnswers() ?? false)
+        XCTAssertFalse(self.viewModel?.goToPreviousPage() ?? true)
+        XCTAssertEqual(self.viewModel?.answers, [:])
+        XCTAssertEqual(self.viewModel?.pageNumber, 0)
+    }
+
+    func test_71_clearAnswers() {
+        self.viewModel?.answers = [:]
+        self.viewModel?.pageNumber = 1
+        self.viewModel?.appearedPages = [0, 1]
+
+        self.viewModel?.answers = ["Aiheet": "Mikä on koronavirus", "Koronavirus-jatko": "Sulje"]
+        XCTAssertTrue(self.viewModel?.clearAnswers() ?? false)
+        XCTAssertTrue(self.viewModel?.goToPreviousPage() ?? false)
+        XCTAssertEqual(self.viewModel?.answers, [:])
+        XCTAssertEqual(self.viewModel?.pageNumber, 0)
+    }
+
+    func test_72_clearAnswers() {
+        self.viewModel?.answers = [:]
+        self.viewModel?.pageNumber = 1
+        self.viewModel?.appearedPages = [0, 1]
+
+        self.viewModel?.answers = ["Aiheet": "Mikä on koronavirus", "Koronavirus-jatko": "Sulje"]
+        XCTAssertTrue(self.viewModel?.clearAnswers() ?? false)
+        XCTAssertTrue(self.viewModel?.goToPreviousPage() ?? false)
+        XCTAssertEqual(self.viewModel?.answers, [:])
+        XCTAssertEqual(self.viewModel?.pageNumber, 0)
+    }
+
+    func test_73_clearAnswers() {
+        self.viewModel?.answers = [:]
+        self.viewModel?.pageNumber = 2
+        self.viewModel?.appearedPages = [0, 1, 2]
+
+        self.viewModel?.answers = ["Aiheet": "Mikä on koronavirus", "Koronavirus-jatko": "Sulje", "Epäilys-jatko": "Muut aiheet"]
+        XCTAssertTrue(self.viewModel?.clearAnswers() ?? false)
+        XCTAssertTrue(self.viewModel?.goToPreviousPage() ?? false)
+        XCTAssertEqual(self.viewModel?.answers, ["Aiheet": "Mikä on koronavirus"])
+        XCTAssertEqual(self.viewModel?.pageNumber, 1)
     }
 }
