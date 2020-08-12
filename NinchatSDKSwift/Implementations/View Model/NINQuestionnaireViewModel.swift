@@ -10,7 +10,7 @@ import NinchatLowLevelClient
 protocol NINQuestionnaireViewModel {
     var queue: Queue? { get set }
     var pageNumber: Int { get set }
-    var appearedPages: [Int] { set get }
+    var visitedPages: [Int] { set get }
     var askedPageNumber: Int? { get }
     var requirementsSatisfied: Bool { get }
     var shouldWaitForNextButton: Bool { get }
@@ -78,7 +78,8 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
         }
     }
     var pageNumber: Int = 0
-    var appearedPages: [Int] = [0] /// keep track of appeared pages
+    /// keep track of visited pages for navigation purposes
+    var visitedPages: [Int] = [0]
     private(set) var askedPageNumber: Int? = nil
     var onSessionFinished: (() -> Void)?
     var onErrorOccurred: ((Error) -> Void)?
@@ -274,11 +275,11 @@ extension NINQuestionnaireViewModelImpl {
     }
 
     func clearAnswers() -> Bool {
-        if self.appearedPages.count <= 1 {
+        if self.visitedPages.count <= 1 {
             return clearAnswersAtPage(self.pageNumber)
         }
-        self.appearedPages.removeLast()
-        return clearAnswersAtPage(self.pageNumber) && self.clearAnswersAtPage(self.appearedPages.last ?? -1)
+        self.visitedPages.removeLast()
+        return clearAnswersAtPage(self.pageNumber) && self.clearAnswersAtPage(self.visitedPages.last ?? -1)
     }
 }
 
@@ -368,7 +369,7 @@ extension NINQuestionnaireViewModelImpl {
     }
 
     func goToPreviousPage() -> Bool {
-        if self.pageNumber > 0, self.appearedPages.count > 0, let previousPage = self.appearedPages.last {
+        if self.pageNumber > 0, self.visitedPages.count > 0, let previousPage = self.visitedPages.last {
             self.pageNumber = previousPage; return true
         }
         return false
@@ -378,7 +379,7 @@ extension NINQuestionnaireViewModelImpl {
         guard self.requirementsSatisfied else { return false }
 
         self.pageNumber = page
-        self.appearedPages.append(page)
+        self.visitedPages.append(page)
         self.askedPageNumber = nil
         return true
     }
