@@ -93,6 +93,8 @@ extension NINLowLevelClientProps: NINLowLevelSessionProps {
     var error: Error? {
         let errorType: NINResult<String> = self.get(forKey: "error_type")
         if case let .failure(error) = errorType { return error }
+
+        guard errorType.value != "" else { return nil }
         return NinchatError(type: errorType.value, props: self)
     }
 
