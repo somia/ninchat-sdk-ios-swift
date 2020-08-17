@@ -18,7 +18,7 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
     fileprivate var rowCount: [Int] = []
     internal var elements: [[QuestionnaireElement]] = []
     internal var configurations: [QuestionnaireConfiguration] = []
-    internal var requirementSatisfactions: [Bool] = []
+    internal var requirementsSatisfied: Bool = false
     internal var shouldShowNavigationCells: [Bool] = []
 
     // MARK: - NINQuestionnaireFormDelegate
@@ -49,7 +49,6 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
         rowCount.removeAll()
         elements.removeAll()
         configurations.removeAll()
-        requirementSatisfactions.removeAll()
         shouldShowNavigationCells.removeAll()
     }
 
@@ -80,9 +79,9 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
             if self.elements.count > index.section {
                 return (index.row == self.elements[index.section].count) ? self.navigation(view, cellForRowAt: index) : self.questionnaire(view, cellForRowAt: index)
             }
+            self.requirementsSatisfied = self.viewModel.requirementsSatisfied
             self.elements.append(contentsOf: [try self.viewModel.getElements()])
             self.configurations.append(try self.viewModel.getConfiguration())
-            self.requirementSatisfactions.append(self.viewModel.requirementsSatisfied)
             self.shouldShowNavigationCells.append(self.shouldShowNavigationCell(at: index.section))
             self.enableCurrentRows()
             self.clearCurrentRows()
@@ -115,14 +114,12 @@ extension NINQuestionnaireConversationDataSourceDelegate: QuestionnaireConversat
         rowCount.remove(at: sectionCount)
         if elements.count > sectionCount { elements.remove(at: sectionCount) }
         if configurations.count > sectionCount { configurations.remove(at: sectionCount) }
-        if requirementSatisfactions.count > sectionCount { requirementSatisfactions.remove(at: sectionCount) }
         if shouldShowNavigationCells.count > sectionCount { shouldShowNavigationCells.remove(at: sectionCount) }
         return sectionCount
     }
 
     private func disablePreviousRows(_ disable: Bool) {
         if self.elements.count >= self.sectionCount { self.elements[sectionCount-1].forEach({ $0.isShown = !disable; $0.alpha = disable ? 0.5 : 1.0 }) }
-        if requirementSatisfactions.count > sectionCount - 1 { requirementSatisfactions[sectionCount - 1] = !disable }
     }
 
     private func enableCurrentRows() {
@@ -152,7 +149,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         cell.shouldShowNextButton = self.configurations[indexPath.section].buttons?.hasValidNextButton ?? true
         cell.shouldShowBackButton = (self.configurations[indexPath.section].buttons?.hasValidBackButton ?? true) && indexPath.section != 0
         cell.configuration = self.configurations[indexPath.section]
-        cell.requirementsSatisfied = self.requirementSatisfactions[indexPath.section]
+        cell.requirementsSatisfied = self.requirementsSatisfied
         cell.disabled = indexPath.section != sectionCount-1
         cell.backgroundColor = .clear
         cell.isUserInteractionEnabled = (self.elements[indexPath.section].first?.isShown ?? true) && (indexPath.section == self.sectionCount-1)
@@ -165,9 +162,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
             self?.onBackButtonTapped(completion: self?.onRemoveCellContent)
         }
         self.viewModel.requirementSatisfactionUpdater = { [weak self] satisfied in
-            guard self?.requirementSatisfactions.count ?? 0 > indexPath.section else { return }
-
-            self?.requirementSatisfactions[indexPath.section] = satisfied
+            self?.requirementsSatisfied = satisfied
             self?.onRequirementsUpdated(satisfied, for: cell)
         }
 
@@ -212,7 +207,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
 
         self.elements.append(element)
         self.configurations.append(contentsOf: registerConfiguration)
-        self.requirementSatisfactions.append(false)
+        self.requirementsSatisfied = false
         self.shouldShowNavigationCells.append(false)
         self.viewModel.insertRegisteredElement(element, configuration: registerConfiguration)
     }
@@ -227,7 +222,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
 
         self.elements.append(element)
         self.configurations.append(contentsOf: registerConfiguration)
-        self.requirementSatisfactions.append(false)
+        self.requirementsSatisfied = false
         self.shouldShowNavigationCells.append(false)
         self.viewModel.insertRegisteredElement(element, configuration: registerConfiguration)
     }
