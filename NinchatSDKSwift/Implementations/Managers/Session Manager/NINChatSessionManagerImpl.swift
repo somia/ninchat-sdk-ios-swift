@@ -450,9 +450,9 @@ extension NINChatSessionManagerImpl {
         param.messageType = .success(type)
         param.channelID = .success(currentChannel)
         
-        if type == .metadata, let _ = (payload["data"] as? [String:String])?["rating"] {
+        if type == .metadata, let _ = (payload["data"] as? [String:Int])?["rating"] {
             param.recipients = .success(NINLowLevelClientStrings())
-            param.messageFold = .success(false)
+            param.messageFold = .success(true)
         }
         
         if type.isRTC {
