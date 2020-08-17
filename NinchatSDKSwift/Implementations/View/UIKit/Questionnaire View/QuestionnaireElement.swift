@@ -137,7 +137,7 @@ extension QuestionnaireOptionSelectableElement where Self:QuestionnaireElement {
 ///         - next
 ///         - back
 protocol QuestionnaireNavigationButtons {
-    var buttons: UIView { get }
+    var buttons: UIStackView { get }
     var configuration: QuestionnaireConfiguration? { get set }
     var shouldShowNextButton: Bool! { get set }
     var shouldShowBackButton: Bool! { get set }
