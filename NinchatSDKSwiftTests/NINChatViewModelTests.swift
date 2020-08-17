@@ -20,7 +20,7 @@ class NINChatViewModelTests: XCTestCase, NINChatWebRTCClientDelegate {
     var onError: ((NINChatWebRTCClient, Error) -> Void)?
 
     override func setUp() {
-        let delegate = NINChatSession(configKey: "")
+        let delegate = InternalDelegate(session: NINChatSession(configKey: ""))
         sessionManager = NINChatSessionManagerImpl(session: delegate, serverAddress: "", configuration: nil)
         viewModel = NINChatViewModelImpl(sessionManager: sessionManager)
     }
@@ -114,7 +114,7 @@ extension NINChatViewModelTests {
     
     private func simulateChatQueue() {
         (sessionManager as! NINChatSessionManagerImpl).queueUpdateBoundClosures.forEach {
-            $0.value(.audienceEnqueued, Queue(queueID: "1", name: "Name", isClosed: false), nil)
+            $0.value(.audienceEnqueued, Queue(queueID: "1", name: "Name", isClosed: false, permissions: QueuePermissions(upload: false)), nil)
         }
     }
     

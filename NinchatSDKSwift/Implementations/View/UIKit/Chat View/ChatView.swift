@@ -8,19 +8,22 @@ import UIKit
 
 protocol ChatViewProtocol: UIView {
     /** ChatView data source. */
-    var dataSource: ChatViewDataSource! { get set }
+    var dataSource: ChatViewDataSource? { get set }
     
     /** ChatView delegate. */
-    var delegate: ChatViewDelegate! { get set }
+    var delegate: ChatViewDelegate? { get set }
     
     /** Chat session manager. */
-    var sessionManager: NINChatSessionManager! { get set }
+    var sessionManager: NINChatSessionManager? { get set }
     
     /** A new message was added to given index. Updates the view. */
     func didAddMessage(at index: Int)
     
     /** A message was removed from given index. */
     func didRemoveMessage(from index: Int)
+
+    /** A compose message got updates from the server regarding its options. */
+    func didUpdateComposeAction(at index: Int, with action: ComposeUIAction)
     
     /** Should update table content offset when keyboard state changes. */
     func updateContentSize(_ value: CGFloat)
@@ -57,7 +60,8 @@ final class ChatView: UIView, ChatViewProtocol {
     
     private let videoThumbnailManager = VideoThumbnailManager()
     private var cellConstraints: Array<CGSize> = []
-    
+    private var composeCellActions: [Int:ComposeUIAction] = [:]
+
     // MARK: - Outlets
     
     @IBOutlet private(set) weak var tableView: UITableView! {
@@ -81,40 +85,35 @@ final class ChatView: UIView, ChatViewProtocol {
         }
     }
     
-    private var cell: ((ChannelMessage, UITableView, IndexPath) -> ChatChannelCell) = { (message, tableView, index) -> ChatChannelCell in
-        if let compose = message as? ComposeMessage {
-            return tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelComposeCell
-        } else if let text = message as? TextMessage {
-            if let attachment = text.attachment, attachment.isImage || attachment.isVideo {
-                return (text.mine) ? tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelMediaMineCell : tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelMediaOthersCell
-            }
-            return (text.mine) ? tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelTextMineCell : tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelTextOthersCell
-        }
-        fatalError("Unsupported cell type")
-    }
-    
     // MARK: - ChatViewProtocol
-    
-    var dataSource: ChatViewDataSource!
-    var delegate: ChatViewDelegate!
-    var sessionManager: NINChatSessionManager! {
+
+    weak var sessionManager: NINChatSessionManager? {
         didSet {
-            self.imageAssets = self.imageAssetsDictionary
-            self.colorAssets = self.colorAssetsDictionary
+            self.imageAssets = self.sessionManager?.delegate?.imageAssetsDictionary
+            self.colorAssets = self.sessionManager?.delegate?.colorAssetsDictionary
             
-            self.agentAvatarConfig = AvatarConfig(avatar: sessionManager.siteConfiguration.agentAvatar, name: sessionManager.siteConfiguration.agentName)
-            self.userAvatarConfig = AvatarConfig(avatar: sessionManager.siteConfiguration.userAvatar, name: sessionManager.siteConfiguration.userName)
+            self.agentAvatarConfig = AvatarConfig(avatar: sessionManager?.siteConfiguration.agentAvatar, name: sessionManager?.siteConfiguration.agentName)
+            self.userAvatarConfig = AvatarConfig(avatar: sessionManager?.siteConfiguration.userAvatar, name: sessionManager?.siteConfiguration.userName)
         }
     }
+    weak var dataSource: ChatViewDataSource?
+    weak var delegate: ChatViewDelegate?
     
     func didAddMessage(at index: Int) {
-        tableView.insertRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+        self.tableView.insertRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
     }
     
     func didRemoveMessage(from index: Int) {
-        tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+        self.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
     }
-    
+
+    func didUpdateComposeAction(at index: Int, with action: ComposeUIAction) {
+        debugger("Got ui action update for compose for message at: \(index)")
+
+        guard self.composeCellActions[index] == nil else { return }
+        self.composeCellActions[index] = action
+    }
+
     func updateContentSize(_ value: CGFloat) {
         self.tableView.contentInset = UIEdgeInsets(top: 8.0, left: 0.0, bottom: value, right: 0.0)
     }
@@ -126,100 +125,16 @@ final class ChatView: UIView, ChatViewProtocol {
     }
 }
 
-// MARK: - Helper methods for assets
-
-extension ChatView {
-    var imageAssetsDictionary: NINImageAssetDictionary {
-        let delegate = self.sessionManager.delegate
-        
-        /// User typing indicator
-        var userTypingIcon = delegate?.override(imageAsset: .chatWritingIndicator)
-        if userTypingIcon == nil {
-            userTypingIcon = UIImage.animatedImage(with: [Int](0...23).compactMap({
-                UIImage(named: "icon_writing_\($0)", in: .SDKBundle, compatibleWith: nil)
-            }), duration: 1.0)
-        }
-        
-        /// Left side bubble
-        var leftSideBubble = delegate?.override(imageAsset: .chatBubbleLeft)
-        if leftSideBubble == nil {
-            leftSideBubble = UIImage(named: "chat_bubble_left", in: .SDKBundle, compatibleWith: nil)
-        }
-        
-        /// Left side bubble (series)
-        var leftSideBubbleSeries = delegate?.override(imageAsset: .chatBubbleLeftRepeated)
-        if leftSideBubbleSeries == nil {
-            leftSideBubbleSeries = UIImage(named: "chat_bubble_left_series", in: .SDKBundle, compatibleWith: nil)
-        }
-        
-        /// Right side bubble
-        var rightSideBubble = delegate?.override(imageAsset: .chatBubbleRight)
-        if rightSideBubble == nil {
-            rightSideBubble = UIImage(named: "chat_bubble_right", in: .SDKBundle, compatibleWith: nil)
-        }
-        
-        /// Left side bubble (series)
-        var rightSideBubbleSeries = delegate?.override(imageAsset: .chatBubbleRightRepeated)
-        if rightSideBubbleSeries == nil {
-            rightSideBubbleSeries = UIImage(named: "chat_bubble_right_series", in: .SDKBundle, compatibleWith: nil)
-        }
-        
-        /// Left side avatar
-        var leftSideAvatar = delegate?.override(imageAsset: .chatAvatarLeft)
-        if leftSideAvatar == nil {
-            leftSideAvatar = UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)
-        }
-        
-        /// Right side avatar
-        var rightSideAvatar = delegate?.override(imageAsset: .chatAvatarRight)
-        if rightSideAvatar == nil {
-            rightSideAvatar = UIImage(named: "icon_avatar_mine", in: .SDKBundle, compatibleWith: nil)
-        }
-        
-        /// Play video icon
-        var playVideoIcon = delegate?.override(imageAsset: .chatPlayVideo)
-        if playVideoIcon == nil {
-            playVideoIcon = UIImage(named: "icon_play", in: .SDKBundle, compatibleWith: nil)
-        }
-        
-        return [.chatWritingIndicator: userTypingIcon!,
-                .chatBubbleLeft: leftSideBubble!,
-                .chatBubbleLeftRepeated: leftSideBubbleSeries!,
-                .chatBubbleRight: rightSideBubble!,
-                .chatBubbleRightRepeated: rightSideBubbleSeries!,
-                .chatAvatarLeft: leftSideAvatar!,
-                .chatAvatarRight: rightSideAvatar!,
-                .chatPlayVideo: playVideoIcon!]
-    }
-    
-    var colorAssetsDictionary: [ColorConstants:UIColor] {
-        let delegate = self.sessionManager.delegate
-        let colorKeys: [ColorConstants] = [.infoText,
-                                           .chatName,
-                                           .chatTimestamp,
-                                           .chatBubbleLeftText,
-                                           .chatBubbleRightText,
-                                           .chatBubbleLeftLink,
-                                           .chatBubbleRightLink]
-        
-        return colorKeys.reduce(into: [:]) { (colorAsset: inout [ColorConstants:UIColor], key) in
-            if let color = delegate?.override(colorAsset: key) {
-                colorAsset[key] = color
-            }
-        }
-    }
-}
-
 // MARK: - UITableViewDataSource - UITableViewDelegate
 
 extension ChatView: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         self.cellConstraints.insert(.zero, at: 0)
-        return dataSource.numberOfMessages(for: self)
+        return dataSource?.numberOfMessages(for: self) ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let message = dataSource.message(at: indexPath.row, self)
+        guard let message = dataSource?.message(at: indexPath.row, self) else { fatalError("Unable to fetch chat cell") }
         
         if let channelMSG = message as? ChannelMessage {
             return setupBubbleCell(channelMSG, at: indexPath)
@@ -230,36 +145,57 @@ extension ChatView: UITableViewDataSource, UITableViewDelegate {
         }
         fatalError("Invalid message type")
     }
+
+    private func cell(_ message: ChannelMessage, for tableView: UITableView, at index: IndexPath) -> ChatChannelCell {
+        if let _ = message as? ComposeMessage {
+            return tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelComposeCell
+        } else if let text = message as? TextMessage {
+            if let attachment = text.attachment, attachment.isImage || attachment.isVideo {
+                return (text.mine) ? tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelMediaMineCell : tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelMediaOthersCell
+            }
+            return (text.mine) ? tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelTextMineCell : tableView.dequeueReusableCell(forIndexPath: index) as ChatChannelTextOthersCell
+        }
+        fatalError("Unsupported cell type")
+    }
 }
 
 // MARK: - Helper methods for Cell Setup
 
 extension ChatView {
     private func setupBubbleCell(_ message: ChannelMessage, at indexPath: IndexPath) -> ChatChannelCell {
-        let cell = self.cell(message, tableView, indexPath)
+        let cell = self.cell(message, for: tableView, at: indexPath)
         cell.session = self.sessionManager
         cell.videoThumbnailManager = videoThumbnailManager
 
-        cell.onComposeSendTapped = { [unowned self] composeContentView in
-            self.delegate?.didSendUIAction(composeContent: composeContentView)
+        cell.onComposeSendTapped = { [weak self] composeContentView, didUpdateOptions in
+            guard didUpdateOptions else { return }
+            self?.delegate?.didSendUIAction(composeContent: composeContentView)
         }
-        cell.onComposeUpdateTapped = { [unowned self] composeState in
-            self.composeMessageStates?[message.messageID] = composeState
+        cell.onComposeUpdateTapped = { [weak self] composeState, didUpdateOptions in
+            guard didUpdateOptions else { return }
+            self?.composeMessageStates?[message.messageID] = composeState
         }
-        cell.onImageTapped = { [unowned self] attachment, image in
-            self.delegate.didSelect(image: image, for: attachment, self)
+        cell.onImageTapped = { [weak self] attachment, image in
+            guard let weakSelf = self else { return }
+            weakSelf.delegate?.didSelect(image: image, for: attachment, weakSelf)
         }
-        cell.onConstraintsUpdate = { [unowned self] in
+        cell.onConstraintsUpdate = { [weak self] in
             cell.isReloading = true
             UIView.animate(withDuration: TimeConstants.kAnimationDuration.rawValue, animations: {
-                self.tableView.beginUpdates()
-                self.tableView.endUpdates()
+                self?.tableView.beginUpdates()
+                self?.tableView.endUpdates()
             }, completion: { finished in
                 cell.isReloading = !finished
             })
         }
         
-        cell.populateChannel(message: message, configuration: self.sessionManager.siteConfiguration, imageAssets: self.imageAssets, colorAssets: self.colorAssets, agentAvatarConfig: self.agentAvatarConfig, userAvatarConfig: self.userAvatarConfig, composeState: self.composeMessageStates?[message.messageID])
+        cell.populateChannel(message: message, configuration: self.sessionManager?.siteConfiguration, imageAssets: self.imageAssets, colorAssets: self.colorAssets, agentAvatarConfig: self.agentAvatarConfig, userAvatarConfig: self.userAvatarConfig, composeState: self.composeMessageStates?[message.messageID])
+        if let cell = cell as? ChatChannelComposeCell {
+            if let action = self.composeCellActions[indexPath.row] {
+                cell.composeMessageView.updateStates(with: action)
+                composeCellActions.removeValue(forKey: indexPath.row)
+            }
+        }
         return cell
     }
 
@@ -271,9 +207,10 @@ extension ChatView {
 
     private func setupMetaCell(_ message: MetaMessage, at indexPath: IndexPath) -> ChatMetaCell {
         let cell: ChatMetaCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
-        cell.delegate = self.sessionManager.delegate
-        cell.onCloseChatTapped = { [unowned self] _ in
-            self.delegate.didRequestToClose(self)
+        cell.delegate = self.sessionManager?.delegate
+        cell.onCloseChatTapped = { [weak self] _ in
+            guard let weakSelf = self else { return }
+            weakSelf.delegate?.didRequestToClose(weakSelf)
         }
         
         cell.populate(message: message, colorAssets: self.colorAssets)

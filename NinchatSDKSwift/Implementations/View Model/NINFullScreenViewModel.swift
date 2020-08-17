@@ -8,12 +8,12 @@ import UIKit
 
 protocol NINFullScreenViewModel {
     init(delegate: NINChatSessionInternalDelegate?)
-    func download(image: UIImage, completion: @escaping ((Error?) -> Void))
+    func download(image: UIImage, completion: @escaping (Error?) -> Void)
 }
 
 final class NINFullScreenViewModelImpl: NSObject, NINFullScreenViewModel {
     
-    private weak var delegate: NINChatSessionInternalDelegate?
+    private var delegate: NINChatSessionInternalDelegate?
     private var downloadCompletion: ((Error?) -> Void)?
     
     // MARK: - NINFullScreenViewModel
@@ -22,7 +22,7 @@ final class NINFullScreenViewModelImpl: NSObject, NINFullScreenViewModel {
         self.delegate = delegate
     }
 
-    func download(image: UIImage, completion: @escaping ((Error?) -> Void)) {
+    func download(image: UIImage, completion: @escaping (Error?) -> Void) {
         downloadCompletion = completion
         UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.didSaved(_:error:context:)), nil)
     }

@@ -6,13 +6,18 @@
 
 import UIKit
 
-final class NINChatViewController: UIViewController, ViewController, KeyboardHandler {
+final class NINChatViewController: UIViewController, KeyboardHandler {
     private var webRTCClient: NINChatWebRTCClient?
-    
+
+    // MARK: - ViewController
+
+    weak var session: NINChatSession?
+    weak var sessionManager: NINChatSessionManager?
+
     // MARK: - Injected
-    
-    var viewModel: NINChatViewModel!    
-    var session: NINChatSession!
+
+    var queue: Queue?
+    var viewModel: NINChatViewModel!
     var chatDataSourceDelegate: NINChatDataSourceDelegate! {
         didSet {
             chatDataSourceDelegate.onCloseChatTapped = { [weak self] in
@@ -105,18 +110,20 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     @IBOutlet private(set) weak var chatView: ChatView! {
         didSet {
             chatView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(sender:))))
-            chatView.sessionManager = self.session.sessionManager
+            chatView.sessionManager = self.sessionManager
             chatView.delegate = self.chatDataSourceDelegate
             chatView.dataSource = self.chatDataSourceDelegate
         }
     }
     @IBOutlet private(set) weak var closeChatButton: CloseButton! {
         didSet {
-            let closeTitle = self.session.sessionManager.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
+            let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
+            closeChatButton.overrideAssets(with: self.session?.internalDelegate)
             closeChatButton.buttonTitle = closeTitle
-            closeChatButton.overrideAssets(with: self.session)
             closeChatButton.closure = { [weak self] button in
-                self?.onCloseChatTapped()
+                DispatchQueue.main.async {
+                    self?.onCloseChatTapped()
+                }
             }
         }
     }
@@ -124,7 +131,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     private lazy var inputControlsView: ChatInputControlsProtocol = {
         let view: ChatInputControls = ChatInputControls.loadFromNib()
         view.viewModel = viewModel
-        view.session = session
+        view.sessionManager = self.sessionManager
         view.onSendTapped = { [weak self] text in
             self?.onSendTapped(text)
         }
@@ -209,6 +216,10 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
             debugger("new text area height: \(height + Margins.kTextFieldPaddingHeight.rawValue)")
             self?.updateInputContainerHeight(height + Margins.kTextFieldPaddingHeight.rawValue)
         }
+        if let queue = self.queue {
+            /// Apply queue permissions to view
+            self.inputControlsView.updatePermissions(queue.permissions)
+        }
     }
     
     // MARK: - Setup ViewModel
@@ -232,25 +243,38 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
             }
         }
         self.viewModel.loadHistory { _ in }
+        self.viewModel.onComposeActionUpdated = { [weak self] index, action in
+            self?.chatView.didUpdateComposeAction(at: index, with: action)
+        }
     }
     
     // MARK: - Helpers
     
     private func connectRTC() {
-        self.viewModel.listenToRTCSignaling(delegate: chatRTCDelegate, onCallReceived: { [unowned self] channel in
+        self.viewModel.listenToRTCSignaling(delegate: chatRTCDelegate, onCallReceived: { [weak self] channel in
+            func answerCall(with action: ConfirmAction) {
+                self?.viewModel.pickup(answer: action == .confirm) { error in
+                    if error != nil { Toast.show(message: .error("failed to send WebRTC pickup message")) }
+                }
+            }
+
+            /// accept invite silently when re-invited `https://github.com/somia/mobile/issues/232`
+            guard self?.webRTCClient == nil else {
+                debugger("Silently accept the video call")
+                answerCall(with: .confirm); return
+            }
+
             DispatchQueue.main.async {
-                self.view.endEditing(true)
+                self?.view.endEditing(true)
 
                 let confirmVideoDialog: ConfirmVideoCallView = ConfirmVideoCallView.loadFromNib()
                 confirmVideoDialog.user = channel
-                confirmVideoDialog.session = self.session
-                confirmVideoDialog.onViewAction = { [unowned self] action in
+                confirmVideoDialog.session = self?.session
+                confirmVideoDialog.onViewAction = { action in
                     confirmVideoDialog.hideConfirmView()
-                    self.viewModel.pickup(answer: action == .confirm) { error in
-                        if error != nil { Toast.show(message: .error("failed to send WebRTC pickup message")) }
-                    }
+                    answerCall(with: action)
                 }
-                confirmVideoDialog.showConfirmView(on: self.view)
+                confirmVideoDialog.showConfirmView(on: self?.view ?? UIView())
             }
         }, onCallInitiated: { [weak self] error, rtcClient in
             DispatchQueue.main.async {
@@ -315,7 +339,7 @@ extension NINChatViewController {
         videoView.overrideAssets()
         inputControlsView.overrideAssets()
         
-        if let backgroundImage = self.session.override(imageAsset: .chatBackground) {
+        if let backgroundImage = self.session?.internalDelegate?.override(imageAsset: .chatBackground) {
             self.view.backgroundColor = UIColor(patternImage: backgroundImage)
         } else if let bundleImage = UIImage(named: "chat_background_pattern", in: .SDKBundle, compatibleWith: nil) {
             self.view.backgroundColor = UIColor(patternImage: bundleImage)
@@ -323,8 +347,8 @@ extension NINChatViewController {
     }
     
     func setupKeyboardClosure() {
-        self.onKeyboardSizeChanged = { [unowned self] height in
-            self.chatView.updateContentSize(height)
+        self.onKeyboardSizeChanged = { [weak self] height in
+            self?.chatView.updateContentSize(height)
         }
     }
     
@@ -382,7 +406,7 @@ extension NINChatViewController {
 
 extension NINChatViewController {
     private func openGallery() {
-        Permission.grantPermission(.devicePhotoLibrary) { [unowned self] error in
+        Permission.grantPermission(.devicePhotoLibrary) { [weak self] error in
             if let _ = error {
                 Toast.show(message: .error("Photo Library access is denied."), onToastTouched: {
                     if #available(iOS 10.0, *) {
@@ -392,13 +416,13 @@ extension NINChatViewController {
                     }
                 })
             } else {
-                self.onOpenGallery?(.photoLibrary)
+                self?.onOpenGallery?(.photoLibrary)
             }
         }
     }
     
     private func openVideo() {
-        Permission.grantPermission(.deviceCamera) { [unowned self] error in
+        Permission.grantPermission(.deviceCamera) { [weak self] error in
             if let _ = error {
                 Toast.show(message: .error("Camera access is denied"), onToastTouched: {
                     if #available(iOS 10.0, *) {
@@ -408,7 +432,7 @@ extension NINChatViewController {
                     }
                 })
             } else {
-                self.onOpenGallery?(.camera)
+                self?.onOpenGallery?(.camera)
             }
         }
     }
@@ -473,23 +497,23 @@ extension NINChatViewController {
     
     private func onVideoCameraTapped(with button: UIButton) {
         self.webRTCClient?.disableLocalVideo = !button.isSelected
-        self.session.log(value: "Video disabled: \(!button.isSelected)")
+        self.session?.internalDelegate?.log(value: "Video disabled: \(!button.isSelected)")
         
         button.isSelected = !button.isSelected
     }
     
     private func onVideoAudioTapped(with button: UIButton) {
         self.webRTCClient?.disableLocalAudio = !button.isSelected
-        self.session.log(value: "Audio disabled: \(!button.isSelected)")
+        self.session?.internalDelegate?.log(value: "Audio disabled: \(!button.isSelected)")
         
         button.isSelected = !button.isSelected
     }
     
     private func onVideoHangupTapped() {
-        self.session.log(value: "Hang-up button pressed")
-        self.viewModel?.send(type: .hangup, payload: [:]) { [unowned self] error in
-            self.disconnectRTC {
-                self.adjustConstraints(for: self.view.bounds.size, withAnimation: true)
+        self.session?.internalDelegate?.log(value: "Hang-up button pressed")
+        self.viewModel?.send(type: .hangup, payload: [:]) { [weak self] error in
+            self?.disconnectRTC {
+                self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
             }
         }
     }
@@ -516,13 +540,13 @@ extension NINChatViewController {
             }
         }
     }
-    
+
     @objc
     private func willResignActive(notification: Notification) {
-        debugger("applicationWillResignActive: no action.")
-        
-        /// TODO: pause video - if one should be active - here?
-        viewModel.appWillResignActive { _ in }
+        /// For the time-being, the solo solution is to terminate the call and then re-initiate it from the agent.
+        /// I may pause/resume the video later, when I figure out how to.
+        self.didEnterBackground(notification: notification)
+//        viewModel.appWillResignActive { _ in }
     }
 }
 

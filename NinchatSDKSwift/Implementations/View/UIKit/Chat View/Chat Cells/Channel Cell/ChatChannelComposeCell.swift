@@ -8,10 +8,10 @@ import UIKit
 
 class ChatChannelComposeCell: ChatChannelOthersCell {
     
-    override var onComposeSendTapped: ((ComposeContentViewProtocol) -> Void)? {
+    override var onComposeSendTapped: ((ComposeContentViewProtocol, _ didUpdateOptions: Bool) -> Void)? {
         set {
-            self.composeMessageView.onSendActionTapped = { compose in
-                newValue?(compose)
+            self.composeMessageView.onSendActionTapped = { compose, didUpdateOptions in
+                newValue?(compose, didUpdateOptions)
             }
         }
         get {
@@ -32,10 +32,10 @@ class ChatChannelComposeCell: ChatChannelOthersCell {
         self.composeMessageView.clear()
     }
     
-    func populateCompose(message: ComposeMessage, configuration: SiteConfiguration, colorAssets: NINColorAssetDictionary, composeStates: [Bool]?) {
+    func populateCompose(message: ComposeMessage, configuration: SiteConfiguration?, colorAssets: NINColorAssetDictionary?, composeStates: [Bool]?) {
         self.composeMessageView.clear()
-        self.composeMessageView.onStateUpdateTapped = { [weak self] composeStates in
-            self?.onComposeUpdateTapped?(composeStates)
+        self.composeMessageView.onStateUpdateTapped = { [weak self] composeStates, didUpdateOptions in
+            self?.onComposeUpdateTapped?(composeStates, didUpdateOptions)
         }
         self.composeMessageView.populate(message: message, siteConfiguration: configuration, colorAssets: colorAssets, composeStates: composeStates)
     }

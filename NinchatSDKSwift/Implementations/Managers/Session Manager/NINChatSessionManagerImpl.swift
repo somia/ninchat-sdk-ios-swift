@@ -4,8 +4,8 @@
 // license that can be found in the LICENSE file.
 //
 
-import Foundation
 import UIKit
+import Foundation
 import NinchatLowLevelClient
 
 protocol NINChatSessionManagerInternalActions {
@@ -20,7 +20,6 @@ protocol NINChatSessionManagerInternalActions {
 }
 
 final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatDevHelper, NINChatSessionManagerInternalActions {
-    internal let audienceMetadata: NINLowLevelClientProps?
     internal let serviceManager = ServiceManager()
     internal var channelUsers: [String:ChannelUser] = [:]
     internal var currentQueueID: String?
@@ -60,6 +59,8 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     // MARK: - NINChatSessionManager variables
     
     var chatMessages: [ChatMessage]! = []
+    var describedQueue: Queue?
+    var composeActions: [ComposeUIAction] = []
     
     // MARK: - NINChatSessionManagerDelegate
 
@@ -70,6 +71,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     var onChannelClosed: (() -> Void)?
     var onRTCSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)?
     var onRTCClientSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)?
+    var onComposeActionUpdated: ((_ index: Int, _ action: ComposeUIAction) -> Void)?
     
     func bindQueueUpdate<T: QueueUpdateCapture>(closure: @escaping (Events, Queue, Error?) -> Void, to receiver: T) {
         guard queueUpdateBoundClosures.keys.filter({ $0 == receiver.desc }).count == 0 else { return }
@@ -82,7 +84,8 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
 
     // MARK: - NINChatSessionManager
     
-    weak var delegate: NINChatSessionInternalDelegate?
+    private(set) var audienceMetadata: NINLowLevelClientProps?
+    var delegate: NINChatSessionInternalDelegate?
     var queues: [Queue]! = [] {
         didSet {
             self.audienceQueues = self.queues
@@ -91,6 +94,16 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     var audienceQueues: [Queue]! = []
     var siteConfiguration: SiteConfiguration!
     var givenConfiguration: NINSiteConfiguration?
+    var preAudienceQuestionnaireMetadata: NINLowLevelClientProps! {
+        didSet {
+            if let audienceMetadata = self.audienceMetadata {
+                audienceMetadata.set(value: preAudienceQuestionnaireMetadata, forKey: "pre_answers")
+            } else {
+                self.audienceMetadata = NINLowLevelClientProps.initiate(metadata: ["pre_answers": preAudienceQuestionnaireMetadata])
+            }
+
+        }
+    }
     var appDetails: String?
     
     // MARK: - NINChatSessionManagerDevTools
@@ -101,8 +114,8 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     init(session: NINChatSessionInternalDelegate?, serverAddress: String, audienceMetadata: NINLowLevelClientProps? = nil, configuration: NINSiteConfiguration?) {
         self.delegate = session
         self.serverAddress = serverAddress
-        self.audienceMetadata = audienceMetadata
         self.givenConfiguration = configuration
+        self.audienceMetadata = audienceMetadata
     }
     
     /** Designed for test and internal purposes. */
@@ -248,10 +261,10 @@ extension NINChatSessionManagerImpl {
         if let currentChannel = self.currentChannelID {
             delegate?.log(value: "Parting current channel first")
             
-            try self.part(channel: currentChannel) { [unowned self] error in
-                self.delegate?.log(value: "Channel parted; joining queue.")
-                self.backgroundChannelID = self.currentChannelID
-                self.currentChannelID = nil
+            try self.part(channel: currentChannel) { [weak self] error in
+                self?.delegate?.log(value: "Channel parted; joining queue.")
+                self?.backgroundChannelID = self?.currentChannelID
+                self?.currentChannelID = nil
                 try? performJoin()
             }
         } else {
@@ -303,8 +316,24 @@ extension NINChatSessionManagerImpl {
         }
     }
     
+    /// Register audience questionnaire answers
+    func registerQuestionnaire(queue ID: String, answers: NINLowLevelClientProps, completion: @escaping CompletionWithError) throws {
+        guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
+
+        let param = NINLowLevelClientProps.initiate(action: .registerAudience)
+        param.queueID = .success(ID)
+        param.metadata = .success(answers)
+
+        do {
+            let actionID = try session.send(param)
+            self.bind(action: actionID, closure: completion)
+        } catch {
+            completion(error)
+        }
+    }
+
     /// Low-level shutdown of the chat's session; invalidates session resource.
-    func closeChat() throws {
+    func closeChat(onCompletion: Completion? = nil) throws {
         delegate?.log(value: "Shutting down chat Session..")
 
         func endSession() {
@@ -313,6 +342,7 @@ extension NINChatSessionManagerImpl {
             /// Signal the delegate that our session has ended
             self.delegate?.onDidEnd()
             self.didEndSession?()
+            onCompletion?()
         }
 
         if self.myUserID == nil {
@@ -472,7 +502,7 @@ extension NINChatSessionManagerImpl {
 
 extension NINChatSessionManagerImpl {
     // Asynchronously retrieves file info
-    func describe(file id: String, completion: @escaping ((Error?, [String:Any]?) -> Void)) throws {
+    func describe(file id: String, completion: @escaping (Error?, [String:Any]?) -> Void) throws {
         guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
         let param = NINLowLevelClientProps.initiate(action: .describeFile)
         param.fileID = .success(id)

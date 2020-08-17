@@ -6,7 +6,7 @@
 
 import Foundation
 
-struct ChannelUser: Equatable {
+struct ChannelUser: Codable, Equatable {
     let userID: String
     let realName: String
     let displayName: String

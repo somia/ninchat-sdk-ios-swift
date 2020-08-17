@@ -40,20 +40,23 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase, NINChatWebRTCClientDelegate {
 
     // MARK: - start
 
-    func testServer_00_fetchSiteConfigurations() {
+    func testServer_01_fetchSiteConfigurations() {
         let expect = self.expectation(description: "Expected to fetch site configurations")
         self.sessionManager.fetchSiteConfiguration(config: Session.configurationKey, environments: []) { error in
             XCTAssertNil(error)
             XCTAssertNotNil(self.sessionManager.siteConfiguration.audienceQueues)
             XCTAssertNotNil(self.sessionManager.siteConfiguration.audienceRealm)
             XCTAssertTrue(self.sessionManager.siteConfiguration.audienceQueues?.contains(Session.suiteQueue) ?? false)
+
+            XCTAssertNotNil(self.sessionManager.siteConfiguration.preAudienceQuestionnaire)
+            XCTAssertNotNil(self.sessionManager.siteConfiguration.postAudienceQuestionnaire)
             expect.fulfill()
         }
 
         wait(for: [expect], timeout: 10.0)
     }
 
-    func testServer_01_openSession() {
+    func testServer_02_openSession() {
         let expect = self.expectation(description: "Expected to open a session")
         do {
             try self.sessionManager.openSession { credentials, canResume, error in
@@ -83,7 +86,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase, NINChatWebRTCClientDelegate {
         wait(for: [expect], timeout: 10.0)
     }
 
-    func testServer_02_listQueues() {
+    func testServer_03_listQueues() {
         let expect = self.expectation(description: "Expected to get objects for queue ids")
         expect.assertForOverFulfill = false
 
@@ -102,7 +105,14 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase, NINChatWebRTCClientDelegate {
         wait(for: [expect], timeout: 15.0)
     }
 
-    func testServer_03_joinQueue() {
+    func testServer_04_setPreAudienceQuestionnaire() {
+        let pre_answers: [String:AnyHashable] = ["Questionnaire_pre_1": "Answer_pre_1", "Questionnaire_pre_2": "Answer_pre_2"]
+        self.sessionManager.preAudienceQuestionnaireMetadata = NINLowLevelClientProps.initiate(metadata: pre_answers)
+
+        XCTAssertTrue(true)
+    }
+
+    func testServer_05_joinQueue() {
         let expect_join = self.expectation(description: "Expected to join the queue")
         let expect_progress = self.expectation(description: "Expected to get progress update for the first time")
         expect_progress.assertForOverFulfill = false
@@ -128,7 +138,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase, NINChatWebRTCClientDelegate {
         wait(for: [expect_join, expect_progress], timeout: 150.0)
     }
     
-    func testServer_04_startVideoChat() {
+    func testServer_06_startVideoChat() {
         let expect_call = self.expectation(description: "Expected to get a call request")
         let expect_offer = self.expectation(description: "Expected to get a call offer")
         let expect_hangup = self.expectation(description: "Expected to hangup the offer")
@@ -141,7 +151,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase, NINChatWebRTCClientDelegate {
         waitForExpectations(timeout: 15.0)
     }
 
-    func testServer_05_transferQueue() {
+    func testServer_07_transferQueue() {
         try! self.simulateTextMessage("Now transfer to another queue to continue tests")
         let expect_part = self.expectation(description: "Expected to get transferred to another channel")
         expect_part.assertForOverFulfill = false
@@ -181,7 +191,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase, NINChatWebRTCClientDelegate {
         wait(for: [expect_part, expect_join], timeout: 30.0)
     }
 
-    func testServer_06_loadHistory() {
+    func testServer_08_loadHistory() {
         let expect = self.expectation(description: "Expected to fetch all messages after the transfer")
 
         do {
@@ -202,7 +212,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase, NINChatWebRTCClientDelegate {
         waitForExpectations(timeout: 15.0)
     }
 
-    func testServer_07_deallocate() {
+    func testServer_09_deallocate() {
         let expect_deallocation = self.expectation(description: "Expected to delete user and close the session")
 
         self.sessionManager.onSessionDeallocated = {
@@ -280,7 +290,24 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase, NINChatWebRTCClientDelegate {
         waitForExpectations(timeout: 15.0)
     }
 
-    func testServer_13_deallocate() {
+    func testServer_13_setPostAudienceQuestionnaire() {
+        let expect = self.expectation(description: "Expected to submit post audience questionnaire")
+        let post_answers: [String:AnyHashable] = ["Questionnaire_post_1": "Answer_post_1", "Questionnaire_post_2": "Answer_post_2"]
+
+        do {
+            try self.simulateTextMessage("Check the pre/post questionnaires on the sidebar, before you leave the test suite")
+            try self.sessionManager.send(type: .metadata, payload: ["data": ["post_answers": post_answers], "time": Date().timeIntervalSince1970]) { error in
+                XCTAssertNil(error)
+                expect.fulfill()
+            }
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+
+        wait(for: [expect], timeout: 15.0)
+    }
+
+    func testServer_14_deallocate() {
         let expect_close = self.expectation(description: "Expected to delete user and close the session")
         let expect_deallocation = self.expectation(description: "Expected to delete user and close the session")
 
@@ -378,6 +405,8 @@ extension NinchatSDKSwiftAcceptanceTests: NINChatSessionInternalDelegate {
 
     func override(colorAsset key: ColorConstants) -> UIColor? { nil }
 
+    func override(questionnaireAsset key: QuestionnaireColorConstants) -> UIColor? { nil }
+
     func onLowLevelEvent(event: NINLowLevelClientProps, payload: NINLowLevelClientPayload, lastReply: Bool) {
         if case let .failure(error) = event.event { self.onEvent?(nil, error); return }
         self.onEvent?(Events(rawValue: event.event.value), nil)
@@ -385,8 +414,6 @@ extension NinchatSDKSwiftAcceptanceTests: NINChatSessionInternalDelegate {
 }
 
 extension NinchatSDKSwiftAcceptanceTests: QueueUpdateCapture {
-
-    
     var desc: String {
         "NinchatSDKSwiftServerInternalTests"
     }

@@ -7,14 +7,19 @@
 import UIKit
 
 protocol ComposeMessageViewProtocol: UIView {
-    typealias OnUIComposeSendActionTapped = ((ComposeContentViewProtocol) -> Void)
+    /*
+    * didUpdateOptions: defines if the selection has to be sent to the server, or it is just a UI update
+    */
+    typealias OnUIComposeSendActionTapped = (ComposeContentViewProtocol, _ didUpdateOptions: Bool) -> Void
+    typealias OnUIComposeUpdateActionTapped = ([Bool], _ didUpdateOptions: Bool) -> Void
+
     var onSendActionTapped: OnUIComposeSendActionTapped? { get set }
-    
-    typealias OnUIComposeUpdateActionTapped = (([Bool]) -> Void)
     var onStateUpdateTapped: OnUIComposeUpdateActionTapped? { get set }
     
     func clear()
-    func populate(message: ComposeMessage, siteConfiguration: SiteConfiguration, colorAssets: NINColorAssetDictionary, composeStates: [Bool]?)
+    func updateStates(with action: ComposeUIAction)
+    func disableUserInteraction(_ disable: Bool)
+    func populate(message: ComposeMessage, siteConfiguration: SiteConfiguration?, colorAssets: NINColorAssetDictionary?, composeStates: [Bool]?)
 }
 
 final class ComposeMessageView: UIView, ComposeMessageViewProtocol {
@@ -61,31 +66,51 @@ final class ComposeMessageView: UIView, ComposeMessageViewProtocol {
         self.invalidateIntrinsicContentSize()
     }
 
-    func populate(message: ComposeMessage, siteConfiguration: SiteConfiguration, colorAssets: NINColorAssetDictionary, composeStates: [Bool]?) {
+    func updateStates(with action: ComposeUIAction) {
+        debugger("Start updating compose states received from the server")
+
+        self.contentViews.forEach { view in
+            guard action.target == view.message, view.didUpdatedOptions, let sendButton = view.sendButton else { return }
+            view.didUpdatedOptions = false
+
+            action.target.options?.filter({ $0.selected ?? false }).forEach({ option in
+                if let optionButton = view.optionsButton.first(where: { $0.titleLabel?.text == option.label }) {
+                    view.onOptionSelected(optionButton)
+                }
+            })
+            view.onOptionSelected(sendButton)
+        }
+    }
+
+    func disableUserInteraction(_ disable: Bool) {
+        self.contentViews.forEach({ $0.isUserInteractionEnabled = !disable })
+    }
+
+    func populate(message: ComposeMessage, siteConfiguration: SiteConfiguration?, colorAssets: NINColorAssetDictionary?, composeStates: [Bool]?) {
         /// Reusing existing content views that are already allocated results in UI problems for different scenarios, e.g.
         /// `https://github.com/somia/ninchat-sdk-ios/issues/52`
         self.contentViews = []
         self.composeStates = composeStates ?? Array(repeating: false, count: message.content.count)
         
         let enableSendButton = message.sendPressedIndex == -1
-        message.content.forEach { ( content: ComposeContent) in
+        message.content.forEach { [weak self] (content: ComposeContent) in
             let view: ComposeContentViewProtocol = ComposeContentView(frame: .zero)
             view.populate(message: content, siteConfiguration: siteConfiguration, colorAssets: colorAssets, composeStates: composeStates, enableSendButton: enableSendButton, isSelected: content.sendPressed ?? false)
             view.isHidden = false
-            view.onSendActionTapped = { [unowned self] contentView in
+            view.onSendActionTapped = { [weak self] contentView, didUpdateOptions in
                 content.sendPressed = true
     
                 /// Make the send buttons un-clickable for this message
-                self.contentViews.forEach { $0.removeSendTapAction() }
-                self.onSendActionTapped?(contentView)
+                self?.contentViews.forEach { $0.removeSendTapAction() }
+                self?.onSendActionTapped?(contentView, didUpdateOptions)
             }
-            view.onStateUpdateTapped = { [unowned self] state in
-                self.composeStates = state
-                self.onStateUpdateTapped?(self.composeStates)
+            view.onStateUpdateTapped = { [weak self] state, didUpdateOptions in
+                self?.composeStates = state
+                self?.onStateUpdateTapped?(self?.composeStates ?? [], didUpdateOptions)
             }
             
-            self.contentViews.append(view)
-            self.addSubview(view)
+            self?.contentViews.append(view)
+            self?.addSubview(view)
         }
         
         self.invalidateIntrinsicContentSize()

@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class ChatTypingCell: UITableViewCell, TypingCell {
+final class ChatTypingCell: UITableViewCell {
     
     // MARK: - Outlets
     
@@ -36,47 +36,73 @@ final class ChatTypingCell: UITableViewCell, TypingCell {
         
         self.messageImageView.image = nil
     }
-    
-    // MARK: - TypingCell
-    
-    func populateTyping(message: UserTypingMessage, imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary, agentAvatarConfig: AvatarConfig) {
-        if let user = message.user, !user.displayName.isEmpty, agentAvatarConfig.nameOverride.isEmpty {
-            self.senderNameLabel.text = user.displayName
-        } else {
-            self.senderNameLabel.text = agentAvatarConfig.nameOverride
-        }
-        self.timeLabel.text = DateFormatter.shortTime.string(from: message.timestamp)
-    
-        /// Make Image view background match the bubble color
-        self.bubbleImageView.tintColor = .white
-        self.bubbleImageView.image = imageAssets[.chatBubbleLeft]
-        
-        self.messageImageView.backgroundColor = .white
-        self.messageImageView.image = imageAssets[.chatWritingIndicator]
-        self.messageImageView.tintColor = .black
-    
-        /// Apply asset overrides
-        self.applyCommon(imageAssets: imageAssets, colorAssets: colorAssets)
-        self.apply(avatar: agentAvatarConfig, imageView: self.leftAvatarImageView, url: message.user?.iconURL)
-    }
-    
+
     /// Performs asset customizations independent of message sender
-    private func applyCommon(imageAssets: NINImageAssetDictionary, colorAssets: NINColorAssetDictionary) {
-        if let nameColor = colorAssets[.chatName] {
+    private func applyCommon(imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?) {
+        if let nameColor = colorAssets?[.chatName] {
             self.senderNameLabel.textColor = nameColor
         }
         
-        if let timeColor = colorAssets[.chatTimestamp] {
+        if let timeColor = colorAssets?[.chatTimestamp] {
             self.timeLabel.textColor = timeColor
         }
     }
 
-    private func apply(avatar config: AvatarConfig, imageView: UIImageView, url: String?) {
-        imageView.isHidden = !config.show
-        if let overrideURL = config.imageOverrideURL {
+    private func apply(avatar config: AvatarConfig?, imageView: UIImageView, url: String?) {
+        imageView.isHidden = !(config?.show ?? false)
+        if let overrideURL = config?.imageOverrideURL {
             imageView.image(from: overrideURL)
         } else {
             imageView.image(from: url)
         }
+    }
+}
+
+// MARK: - TypingCell
+
+extension ChatTypingCell: TypingCell {
+    func populateTyping(message: UserTypingMessage, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, agentAvatarConfig: AvatarConfig?) {
+        if let name = agentAvatarConfig?.nameOverride, !name.isEmpty {
+            self.senderNameLabel.text = name
+        } else if let user = message.user, !user.displayName.isEmpty {
+            self.senderNameLabel.text = user.displayName
+        }
+        self.timeLabel.text = DateFormatter.shortTime.string(from: message.timestamp)
+
+        /// Make Image view background match the bubble color
+        self.bubbleImageView.tintColor = .white
+        self.bubbleImageView.image = imageAssets?[.chatBubbleLeft]
+
+        self.messageImageView.backgroundColor = .white
+        self.messageImageView.image = imageAssets?[.chatWritingIndicator]
+        self.messageImageView.tintColor = .black
+
+        /// Apply asset overrides
+        self.applyCommon(imageAssets: imageAssets, colorAssets: colorAssets)
+        self.apply(avatar: agentAvatarConfig, imageView: self.leftAvatarImageView, url: message.user?.iconURL)
+    }
+}
+
+// MARK: - LoadingCell
+
+extension ChatTypingCell: LoadingCell {
+    func populateLoading(name: String, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?) {
+        self.senderNameLabel.text = name
+        self.timeLabel.text = ""
+
+        /// Make Image view background match the bubble color
+        self.bubbleImageView.tintColor = .white
+        self.bubbleImageView.image = imageAssets?[.chatBubbleLeft]
+
+        self.messageImageView.backgroundColor = .white
+        self.messageImageView.image = imageAssets?[.chatWritingIndicator]
+        self.messageImageView.tintColor = .black
+
+        /// Apply asset overrides
+        self.applyCommon(imageAssets: imageAssets, colorAssets: colorAssets)
+        self.imageView?.isHidden = true
+
+        /// Rotate the cell back to the normal
+        self.rotate(0.0)
     }
 }

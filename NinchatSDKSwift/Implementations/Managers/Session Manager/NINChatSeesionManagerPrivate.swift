@@ -24,8 +24,8 @@ extension NINChatSessionManagerImpl {
             self.queues = queuesParser.properties.keys.compactMap({ key in
                 /// Add the queue only if it is not already available
                 guard !self.queues.contains(where: { $0.queueID == key } ) else { return nil }
-                if let queue = try? realmQueues.getObject(key), case let .success(queueName) = queue.queueName, case let .success(queueClosed) = queue.queueClosed {
-                    return Queue(queueID: key, name: queueName, isClosed: queueClosed)
+                if let queue = try? realmQueues.getObject(key), case let .success(queueName) = queue.queueName, case let .success(queueClosed) = queue.queueClosed, case let .success(queueUploadPermission) = queue.queueUpload {
+                    return Queue(queueID: key, name: queueName, isClosed: queueClosed, permissions: QueuePermissions(upload: queueUploadPermission))
                 }
                 return nil
             })
@@ -123,14 +123,16 @@ extension NINChatSessionManagerImpl {
             let parser = NINChatClientPropsParser()
             try param.channelMembers.value.accept(parser)
             
-            parser.properties.compactMap({ dict in
+            parser.properties
+                    .compactMap({ dict in
                         (dict.key, dict.value) as? (String,NINLowLevelClientProps)
                     })
                     .map({ key, value in
                         (key, value.userAttributes.value)
-                    }).forEach({ [weak self] userID, attributes in
-                self?.parse(userAttr: attributes, userID: userID)
-            })
+                    })
+                    .forEach({ [weak self] userID, attributes in
+                        self?.parse(userAttr: attributes, userID: userID)
+                    })
         } catch {
             debugger(error.localizedDescription)
         }
@@ -147,11 +149,15 @@ extension NINChatSessionManagerImpl {
         self.backgroundChannelID = nil
 
         /// Get the queue we are joining
-        let queueName = self.queues.compactMap({ $0 }).filter({ [weak self] queue in
-            queue.queueID == self?.currentQueueID }).first?.name ?? ""
+        self.describedQueue = self.queues
+                .compactMap({ $0 })
+                .filter({ [weak self] queue in
+                    queue.queueID == self?.currentQueueID
+                })
+                .first
 
         /// We are no longer in the queue; clear the queue reference
-        self.currentQueueID = nil;
+        self.currentQueueID = nil
 
         /// Clear current list of messages and users
         /// If only the previous channel was successfully closed.
@@ -161,8 +167,7 @@ extension NINChatSessionManagerImpl {
         }
 
         /// Insert a meta message about the conversation start
-        self.add(message: MetaMessage(timestamp: Date(), messageID: self.chatMessages.first?.messageID, text: self.translate(key: "Audience in queue {{queue}} accepted.", formatParams: ["queue": queueName]) ?? "", closeChatButtonTitle: nil))
-
+        self.add(message: MetaMessage(timestamp: Date(), messageID: self.chatMessages.first?.messageID, text: self.translate(key: "Audience in queue {{queue}} accepted.", formatParams: ["queue": self.describedQueue?.name ?? ""]) ?? "", closeChatButtonTitle: nil))
     }
     
     internal func didPartChannel(param: NINLowLevelClientProps) throws {
@@ -303,7 +308,7 @@ extension NINChatSessionManagerImpl {
                 if isWriting, writingMessage == nil {
                     /// There's no 'typing' message for this user yet, lets create one
                     self.add(message: UserTypingMessage(timestamp: Date(), messageID: self.chatMessages.first?.messageID, user: messageUser))
-                } else if let msg = writingMessage, let index = chatMessages.firstIndex(where: { $0.asEquatable == msg.asEquatable }) {
+                } else if let msg = writingMessage, let index = chatMessages.firstIndex(where: { $0.messageID == msg.messageID }) {
                     /// There's a 'typing' message for this user - lets remove that.
                     self.removeMessage(atIndex: index)
                 }
@@ -314,13 +319,17 @@ extension NINChatSessionManagerImpl {
             self.onActionID?(actionID, error)
         }
     }
+
+    internal func didRegisterAudience(param: NINLowLevelClientProps) throws {
+        self.onActionID?(param.actionID, param.error)
+    }
 }
 
 // MARK: - Private helper functions - actions
 
 extension NINChatSessionManagerImpl {
     /// Deletes the current user.
-    internal func deleteCurrentUser(completion: @escaping ((Error?) -> Void)) throws {
+    internal func deleteCurrentUser(completion: @escaping (Error?) -> Void) throws {
         guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
         let param = NINLowLevelClientProps.initiate(action: .deleteUser)
         
@@ -332,23 +341,49 @@ extension NINChatSessionManagerImpl {
         }
     }
     
-    internal func add(message: ChatMessage, remained: NINResult<Int>? = .success(0)) {
+    internal func add<T: ChatMessage>(message: T, remained: NINResult<Int>? = .success(0)) {
         /// Guard against the same message getting added multiple times
         if self.chatMessages.contains(where: { $0.messageID == message.messageID }) { return }
-        chatMessages.insert(message, at: 0)
+        self.chatMessages.insert(message, at: 0)
+
+        defer {
+            /// Apply Compose Actions if there is any associated one AND the history is loaded completely
+            if self.expectedHistoryLength == -1, self.composeActions.count > 0 {
+                self.composeActions.forEach { [weak self] action in
+                    self?.addCompose(action: action)
+                }
+            }
+        }
 
         if self.expectedHistoryLength == self.chatMessages.filter({ $0 is ChannelMessage }).count {
             /// We are loading a history that needs to `reload` corresponded chat view
             self.chatMessages = self.sortAndMap()
             self.onHistoryLoaded?(self.expectedHistoryLength)
             self.expectedHistoryLength = -1
-
         } else if self.expectedHistoryLength == -1, case let .success(length) = remained, length == 0 {
             /// We are not waiting for a history result
             /// Thus, we will update the view with the index of received message
             self.chatMessages = self.sortAndMap()
-            self.onMessageAdded?(chatMessages.firstIndex(where: { $0.asEquatable == message.asEquatable }) ?? -1)
+            self.onMessageAdded?(chatMessages.firstIndex(where: { $0.messageID == message.messageID }) ?? -1)
         }
+    }
+
+    internal func addCompose(action: ComposeUIAction) {
+        /// Check if the corresponded message is already added
+        if let composeMessage = self.chatMessages.compactMap({ $0 as? ComposeMessage }).first(where: { $0.content.contains(action.target) }) {
+            self.applyCompose(action: action, to: composeMessage)
+        }
+        /// Add the action to a list waiting to get the corresponded compose message later
+        else {
+            /// Guard against the same compose action getting added multiple times
+            if self.composeActions.contains(where: { $0.target == action.target }) { return }
+            self.composeActions.append(action)
+        }
+    }
+
+    internal func applyCompose(action: ComposeUIAction, to message: ComposeMessage) {
+        self.onComposeActionUpdated?(self.chatMessages.firstIndex(where: { $0.messageID == message.messageID }) ?? -1, action)
+        self.composeActions.removeAll(where: { $0.target == action.target })
     }
     
     internal func removeMessage(atIndex index: Int) {
@@ -387,8 +422,8 @@ extension NINChatSessionManagerImpl {
 
     internal func sortAndMap() -> [ChatMessage] {
         self.chatMessages.sort { $0.messageID > $1.messageID }
-        return self.chatMessages.map { message in
-            if var msg = message as? ChannelMessage, let msgIndex = self.chatMessages.firstIndex(where: { $0.asEquatable == msg.asEquatable }), msgIndex < self.chatMessages.count - 1, let prevMsg = self.chatMessages[msgIndex + 1] as? ChannelMessage {
+        return self.chatMessages.map { [weak self] message in
+            if var msg = message as? ChannelMessage, let msgIndex = self?.chatMessages.firstIndex(where: { $0.messageID == msg.messageID }), msgIndex < (self?.chatMessages.count ?? 0) - 1, let prevMsg = self?.chatMessages[msgIndex + 1] as? ChannelMessage {
                 msg.series = (msg.sender?.userID == prevMsg.sender?.userID) && (msg.timestamp.minute == prevMsg.timestamp.minute)
                 return msg
             }
@@ -446,111 +481,94 @@ extension NINChatSessionManagerImpl {
         let messageTime = param.messageTime.value
         let messageUser = self.channelUsers[messageUserID]
 
+        func adjustHistoryLength() {
+            if self.expectedHistoryLength > 0 { self.expectedHistoryLength -= 1 }
+        }
+
         guard let messageType = param.messageType.value else { return }
         switch messageType {
         case .candidate, .answer, .offer, .call, .pickup, .hangup:
-            /// This message originates from me; we can ignore it.
-            if actionID != 0 { return }
-            
-            try [Int](0..<payload.length()).forEach { [weak self] index in
-                /// Handle a WebRTC signaling message
-                let decode: NINResult<RTCSignal> = payload.get(index)!.decode()
-                switch decode {
-                case .success(let signal):
-                    if  [.offer, .call, .pickup, .hangup].filter({ $0 == messageType }).count > 0 {
-                        self?.onRTCSignal?(messageType, messageUser, signal)
-                    } else if [.candidate, .answer].filter({ $0 == messageType }).count > 0 {
-                        self?.onRTCClientSignal?(messageType, messageUser, signal)
-                    }
-                case .failure(let error):
-                    throw error
-                }
-            }
+            try self.handleRTCSignal(type: messageType, user: messageUser, actionID: actionID, payload: payload)
         case .text, .file:
             try self.handleInbound(message: messageID, user: messageUser, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
         case .compose:
             try self.handleCompose(message: messageID, user: messageUser, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
         case .channel:
             try self.handleChannel(message: messageID, user: messageUser, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
+        case .uiAction:
+            try self.handleUIAction(message: messageID, user: messageUser, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
+            adjustHistoryLength()
         default:
             debugger("Ignoring unsupported message type: \(messageType.rawValue)")
-            if self.expectedHistoryLength > 0 {
-                self.expectedHistoryLength -= 1
-            }
+            adjustHistoryLength()
         }
 
     }
-    
+
+    internal func handleRTCSignal(type: MessageType, user: ChannelUser?, actionID: Int, payload: NINLowLevelClientPayload) throws {
+        /// This message originates from me; we can ignore it.
+        if actionID != 0 { return }
+        try [Int](0..<payload.length()).decodeAndPerform(onPayload: payload, type: RTCSignal.self) { [weak self] (signal: RTCSignal) in
+            if  [.offer, .call, .pickup, .hangup].filter({ $0 == type }).count > 0 {
+                self?.onRTCSignal?(type, user, signal)
+            } else if [.candidate, .answer].filter({ $0 == type }).count > 0 {
+                self?.onRTCClientSignal?(type, user, signal)
+            }
+        }
+    }
+
     internal func handleInbound(message id: String, user: ChannelUser?, time: Double, actionID: Int, remained: NINResult<Int>, payload: NINLowLevelClientPayload) throws {
-        try [Int](0..<payload.length()).forEach({ index in
-            let decode: NINResult<ChatMessagePayload> = payload.get(index)!.decode()
-            switch decode {
-            case .success(let message):
-                debugger("Received Chat message with payload: \(message)")
-                var hasAttachment = false
-                if let files = message.files, files.count > 0 {
-                    files.forEach { [unowned self] file in
-                        self.delegate?.log(value: "Got file with MIME type: \(String(describing: file.attributes.type))")
-                        let fileInfo = FileInfo(fileID: file.id, name: file.attributes.name, mimeType: file.attributes.type, size: file.attributes.size)
-                        hasAttachment = fileInfo.isImage || fileInfo.isVideo || fileInfo.isPDF
-                        
-                        // Only process certain files at this point
-                        guard hasAttachment else { return }
-                        fileInfo.updateInfo(session: self) { error, didRefreshNetwork in
-                            guard error == nil else { return }
-                            
-                            self.add(message: TextMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user?.userID == self.myUserID, sender: user, textContent: nil, attachment: fileInfo), remained: remained)
-                        }
+        try [Int](0..<payload.length()).decodeAndPerform(onPayload: payload, type: ChatMessagePayload.self) { [weak self] (message: ChatMessagePayload) in
+            debugger("Received Chat message with payload: \(message)")
+            var hasAttachment = false
+            if let files = message.files, files.count > 0 {
+                files.forEach { [weak self] file in
+                    self?.delegate?.log(value: "Got file with MIME type: \(String(describing: file.attributes.type))")
+                    let fileInfo = FileInfo(fileID: file.id, name: file.attributes.name, mimeType: file.attributes.type, size: file.attributes.size)
+                    hasAttachment = fileInfo.isImage || fileInfo.isVideo || fileInfo.isPDF
+
+                    /// Only process certain files at this point
+                    guard hasAttachment else { return }
+                    fileInfo.updateInfo(session: self) { [weak self] error, didRefreshNetwork in
+                        guard error == nil else { return }
+                        self?.add(message: TextMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user?.userID == self?.myUserID, sender: user, content: nil, attachment: fileInfo), remained: remained)
                     }
                 }
-    
-                /// Only allocate a new message now if there is text and no attachment
-                if let text = message.text, !text.isEmpty, !hasAttachment {
-                    self.add(message:  TextMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user?.userID == self.myUserID, sender: user, textContent: text, attachment: nil), remained: remained)
-                }
-            case .failure(let error):
-                throw error
             }
-        })
+
+            /// Only allocate a new message now if there is text and no attachment
+            if let text = message.text, !text.isEmpty, !hasAttachment {
+                self?.add(message: TextMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user?.userID == self?.myUserID, sender: user, content: text, attachment: nil), remained: remained)
+            }
+        }
     }
     
     internal func handleChannel(message id: String, user: ChannelUser?, time: Double, actionID: Int, remained: NINResult<Int>, payload: NINLowLevelClientPayload) throws {
-        
-        try [Int](0..<payload.length()).forEach { index in
-            let decode: NINResult<ChatChannelPayload> = payload.get(index)!.decode()
-            switch decode {
-            case .success(let message):
-                debugger("Received a Channel message with payload: \(message)")
-            case .failure(let error):
-                throw error
-            }
+        try [Int](0..<payload.length()).decodeAndPerform(onPayload: payload, type: ChatChannelPayload.self) { (channel: ChatChannelPayload) in
+            debugger("Received a Channel message with payload: \(channel)")
         }
     }
     
     internal func handleCompose(message id: String, user: ChannelUser?, time: Double, actionID: Int, remained: NINResult<Int>, payload: NINLowLevelClientPayload) throws {
-        
-        try [Int](0..<payload.length()).forEach { [unowned self] index in
-            let decode: NINResult<[ComposeContent]> = payload.get(index)!.decode()
-            switch decode {
-            case .success(let compose):
-                debugger("Received Compose message with payload: \(compose)")
-                if compose.filter({ $0.element != .button && $0.element != .select }).count > 0 {
-                    debugger("Found ui/compose object with unhandled element, discarding message")
-                } else {
-                    self.add(message: ComposeMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user?.userID == self.myUserID, sender: user, content: compose), remained: remained)
-                }
-            case .failure(let error):
-                throw error
+        try [Int](0..<payload.length()).decodeAndPerform(onPayload: payload, type: [ComposeContent].self) { [weak self] (compose: [ComposeContent]) in
+            debugger("Received Compose message with payload: \(compose)")
+            guard compose.filter({ $0.element != .button && $0.element != .select }).count == 0 else {
+                debugger("Found ui/compose object with unhandled element, discarding message"); return
             }
+            self?.add(message: ComposeMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user?.userID == self?.myUserID, sender: user, content: compose), remained: remained)
         }
     }
-    
+
+    internal func handleUIAction(message id: String, user: ChannelUser?, time: Double, actionID: Int, remained: NINResult<Int>, payload: NINLowLevelClientPayload) throws {
+        try [Int](0..<payload.length()).decodeAndPerform(onPayload: payload, type: ComposeUIAction.self) { [weak self] (action: ComposeUIAction) in
+            self?.addCompose(action: action)
+        }
+    }
+
     internal func handlePart(param: NINLowLevelClientProps, payload: NINLowLevelClientPayload) throws {
-        /// TODO: The corresponded model does not exists in `NinchatSDK`
-        /// Update to use JSON decode as soon as we find how the function works
         debugger("Received a Part message with payload: \(payload)")
     }
- 
+
     internal func handlerError(param: NINLowLevelClientProps) throws {
         debugger.error(param.error as? NinchatError)
         self.onActionID?(param.actionID, param.error)

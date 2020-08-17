@@ -18,7 +18,7 @@ enum ChatStatus: Int {
     case sad = -1
 }
 
-protocol NINChatSessionConnectionManager {
+protocol NINChatSessionConnectionManager: class {
     /** Low-level chat session reference. */
     var session: NINLowLevelClientSession? { get }
     
@@ -46,19 +46,37 @@ protocol NINChatSessionConnectionManager {
     /** Runs ICE (Interactive Connectivity Establishment) for WebRTC connection negotiations. */
     func beginICE(completion: @escaping (Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void) throws
     
+    /** Register audience questionnaire answers in some the given queue's statistics
+      * More info: `https://github.com/somia/customer/wiki/Questionnaires#pseudo-targets-register-complete`
+     */
+    func registerQuestionnaire(queue ID: String, answers: NINLowLevelClientProps, completion: @escaping CompletionWithError) throws
+
     /** Closes the chat by shutting down the session. Triggers the API delegate method -ninchatDidEndChatSession:. */
-    func closeChat() throws
     
+    func closeChat(onCompletion: Completion?) throws
     /** (Optionally) sends ratings and finishes the current chat from our end. */
     func finishChat(rating status: ChatStatus?) throws
 }
+/// Add backward compatibility for uses that don't need the completion block
+extension NINChatSessionConnectionManager {
+    func closeChat() throws { try self.closeChat(onCompletion: nil) }
+}
 
-protocol NINChatSessionMessenger {
+protocol NINChatSessionMessenger: class {
     /**
     * Chronological list of messages on the current channel. The list is ordered by the message
     * timestamp in descending order (most recent first).
     */
     var chatMessages: [ChatMessage]! { get }
+
+    /* A reference to currently described queue, used for setting queue permissions within the chat view. */
+    var describedQueue: Queue? { get }
+
+    /*
+    * The list that keeps a temporary record of `ComposeMessageView` states
+    * To satisfy the issue `https://github.com/somia/mobile/issues/218`
+    */
+    var composeActions: [ComposeUIAction] { get }
     
     /** Indicate whether or not the user is currently typing into the chat. */
     func update(isWriting: Bool, completion: @escaping CompletionWithError) throws
@@ -83,12 +101,12 @@ protocol NINChatSessionMessenger {
     func closeSession(credentials: NINSessionCredentials, completion: ((NINResult<Empty>) -> Void)?)
 }
 
-protocol NINChatSessionAttachment {
+protocol NINChatSessionAttachment: class {
     /** Describe a file by its ID. */
     func describe(file id: String, completion: @escaping (Error?, [String:Any]?) -> Void) throws
 }
 
-protocol NINChatSessionTranslation {
+protocol NINChatSessionTranslation: class {
     /**
     * Get a formatted translation from the site configuration.
     * @param formatParams contains format param mappings key -> value
@@ -96,11 +114,11 @@ protocol NINChatSessionTranslation {
     func translate(key: String, formatParams: [String:String]) -> String?
 }
 
-protocol QueueUpdateCapture {
+protocol QueueUpdateCapture: class {
     var desc: String { get }
 }
 
-protocol NINChatSessionManagerDelegate {
+protocol NINChatSessionManagerDelegate: class {
     var onMessageAdded: ((_ index: Int) -> Void)? { get set }
     var onMessageRemoved: ((_ index: Int) -> Void)? { get set }
     var onHistoryLoaded: ((_ length: Int) -> Void)? { get set }
@@ -108,18 +126,25 @@ protocol NINChatSessionManagerDelegate {
     var onChannelClosed: (() -> Void)? { get set }
     var onRTCSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
     var onRTCClientSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
+    var onComposeActionUpdated: ((_ index: Int, _ action: ComposeUIAction) -> Void)? { get set }
 
     func bindQueueUpdate<T: QueueUpdateCapture>(closure: @escaping (Events, Queue, Error?) -> Void, to receiver: T)
     func unbindQueueUpdateClosure<T: QueueUpdateCapture>(from receiver: T)
 }
 
-protocol NINChatSessionManager: class, NINChatSessionConnectionManager, NINChatSessionMessenger, NINChatDevHelper, NINChatSessionAttachment, NINChatSessionTranslation, NINChatSessionManagerDelegate {
+protocol NINChatSessionManager: NINChatSessionConnectionManager, NINChatSessionMessenger, NINChatDevHelper, NINChatSessionAttachment, NINChatSessionTranslation, NINChatSessionManagerDelegate {
     /** List of available queues for the realm_id. */
     var queues: [Queue]! { get set }
     
     /** List of Audience queues. These are the queues the user gets to pick from in the UI. */
     var audienceQueues: [Queue]! { get set }
-    
+
+    /** Initiated metadata for the current session. */
+    var audienceMetadata: NINLowLevelClientProps? { get }
+
+    /** Submitted answers for "preAudienceQuestionnaire" configurations. */
+    var preAudienceQuestionnaireMetadata: NINLowLevelClientProps! { get set }
+
     /** Site configuration. */
     var siteConfiguration: SiteConfiguration! { get }
     

@@ -15,7 +15,7 @@ final class UIKitTests: XCTestCase {
     
     override func setUp() {
         sessionSwift = NINChatSession(configKey: "")
-        sessionManager = NINChatSessionManagerImpl(session: sessionSwift, serverAddress: "", configuration: nil)
+        sessionManager = NINChatSessionManagerImpl(session: InternalDelegate(session: sessionSwift), serverAddress: "", configuration: nil)
     }
     
     func test_confirmView() {
@@ -53,7 +53,7 @@ final class UIKitTests: XCTestCase {
             }
         }
         
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: 30.0)
     }
     
     func test_faceView() {
@@ -262,15 +262,11 @@ final class UIKitTests: XCTestCase {
         view.onViewTapped(nil)
         waitForExpectations(timeout: 5.0)
     }
-
-    func test_toast_dismiss() {
-
-    }
 }
 
 extension UIKitTests {
     private func simulateSendMessage() {
         let user = ChannelUser(userID: "11", realName: "Hassan Shahbazi", displayName: "Hassan", iconURL: "", guest: false)
-        self.sessionManager.add(message: TextMessage(timestamp: Date(), messageID:  "11", mine: false, sender: user, textContent: "content", attachment: nil))
+        self.sessionManager.add(message: TextMessage(timestamp: Date(), messageID:  "11", mine: false, sender: user, content: "content", attachment: nil))
     }
 }

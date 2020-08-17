@@ -12,11 +12,13 @@ final class NINRatingViewController: UIViewController, ViewController {
     // MARK: - Injected
     
     var viewModel: NINRatingViewModel!
-    var translate: NINChatSessionTranslation!
     
     // MARK: - ViewController
-    
-    var session: NINChatSession!
+
+    weak var session: NINChatSession?
+    weak var sessionManager: NINChatSessionManager?
+
+    var onRatingFinished: ((ChatStatus?) -> Bool)!
     
     // MARK: - Outlets
     
@@ -25,8 +27,8 @@ final class NINRatingViewController: UIViewController, ViewController {
     
     private lazy var facesView: FacesViewProtocol = {
         var view: FacesView = FacesView.loadFromNib()
-        view.session = session
-        view.translate = translate
+        view.session = self.session
+        view.sessionManager = self.sessionManager
         view.backgroundColor = .clear
         view.onPositiveTapped = { [weak self] button in
             self?.onPositiveButtonTapped(sender: button)
@@ -67,27 +69,26 @@ final class NINRatingViewController: UIViewController, ViewController {
     func overrideAssets() {
         facesView.overrideAssets()
         
-        if let title = self.translate.translate(key: Constants.kRatingTitleText.rawValue, formatParams: [:]) {
+        if let title = self.sessionManager?.translate(key: Constants.kRatingTitleText.rawValue, formatParams: [:]) {
             self.titleTextView.setAttributed(text: title, font: .ninchat)
         }
         
-        if let skip = self.translate.translate(key: Constants.kRatingSkipText.rawValue, formatParams: [:]) {
+        if let skip = self.sessionManager?.translate(key: Constants.kRatingSkipText.rawValue, formatParams: [:]) {
             self.skipButton.setTitle(skip, for: .normal)
         }
         
-        if let topBackgroundColor = self.session.override(colorAsset: .backgroundTop) {
+        if let topBackgroundColor = self.session?.internalDelegate?.override(colorAsset: .backgroundTop) {
             self.topViewContainer.backgroundColor = topBackgroundColor
         }
         
-        if let bottomBackgroundColor = self.session.override(colorAsset: .backgroundBottom) {
+        if let bottomBackgroundColor = self.session?.internalDelegate?.override(colorAsset: .backgroundBottom) {
             self.view.backgroundColor = bottomBackgroundColor
         }
-        
-        if let textTopColor = self.session.override(colorAsset: .textTop) {
+        if let textTopColor = self.session?.internalDelegate?.override(colorAsset: .textTop) {
             self.titleTextView.textColor = textTopColor
         }
         
-        if let linkColor = self.session.override(colorAsset: .link) {
+        if let linkColor = self.session?.internalDelegate?.override(colorAsset: .link) {
             self.titleTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
             self.skipButton.setTitleColor(linkColor, for: .normal)
         }
@@ -98,18 +99,26 @@ final class NINRatingViewController: UIViewController, ViewController {
 
 extension NINRatingViewController {
     private func onPositiveButtonTapped(sender: UIButton) {
-        viewModel.rateChat(with: .happy)
+        if self.onRatingFinished(.happy) {
+            viewModel.rateChat(with: .happy)
+        }
     }
     
     private func onNeutralButtonTapped(sender: UIButton) {
-        viewModel.rateChat(with: .neutral)
+        if self.onRatingFinished(.neutral) {
+            viewModel.rateChat(with: .neutral)
+        }
     }
     
     private func onNegativeButtonTapped(sender: UIButton) {
-        viewModel.rateChat(with: .sad)
+        if self.onRatingFinished(.sad) {
+            viewModel.rateChat(with: .sad)
+        }
     }
         
     @IBAction private func onSkipButtonTapped(sender: UIButton) {
-        viewModel.skipRating()
+        if self.onRatingFinished(nil) {
+            viewModel.skipRating()
+        }
     }
 }

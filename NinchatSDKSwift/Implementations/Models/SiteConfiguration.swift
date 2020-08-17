@@ -6,6 +6,11 @@
 
 import Foundation
 
+enum QuestionnaireStyle: String {
+    case conversation
+    case form
+}
+
 protocol SiteConfiguration  {
     var welcome: String? { get }
     var motd: String? { get }
@@ -21,6 +26,14 @@ protocol SiteConfiguration  {
     var userName: String? { get }
     var noQueueText: String? { get }
     var audienceAutoQueue: String? { get }
+    var audienceQuestionnaireAvatar: AnyHashable? { get }
+    var audienceQuestionnaireUserName: String? { get }
+    var audienceRegisteredText: String? { get }
+    var audienceClosedRegisteredText: String? { get }
+    var preAudienceQuestionnaireStyle: QuestionnaireStyle { get }
+    var preAudienceQuestionnaire: [QuestionnaireConfiguration]? { get }
+    var postAudienceQuestionnaireStyle: QuestionnaireStyle { get }
+    var postAudienceQuestionnaire: [QuestionnaireConfiguration]? { get }
 
     init(configuration: [AnyHashable : Any]?, environments: [String]?)
     mutating func override(configuration: NINSiteConfiguration?)
@@ -83,9 +96,45 @@ struct SiteConfigurationImpl: SiteConfiguration {
     var noQueueText: String? {
         self.value(for: "noQueuesText")
     }
-
     var audienceAutoQueue: String? {
         self.value(for: "audienceAutoQueue")
+    }
+
+    var audienceQuestionnaireAvatar: AnyHashable? {
+        self.value(for: "questionnaireAvatar")
+    }
+    var audienceQuestionnaireUserName: String? {
+        self.value(for: "questionnaireName")
+    }
+    var audienceRegisteredText: String? {
+        self.value(for: "audienceRegisteredText")
+    }
+    var audienceClosedRegisteredText: String? {
+        self.value(for: "audienceClosedRegisteredText")
+    }
+
+    // MARK: - PreAudience Questionnaire
+    var preAudienceQuestionnaireStyle: QuestionnaireStyle {
+        guard let style: String? = self.value(for: "preAudienceQuestionnaireStyle"), style != nil else { return .form }
+        return QuestionnaireStyle(rawValue: style!) ?? .form
+    }
+    var preAudienceQuestionnaire: [QuestionnaireConfiguration]? {
+        if let questionnaire = self.value(for: "preAudienceQuestionnaire", ofType: Array<[String: AnyHashable]>.self) {
+            return AudienceQuestionnaire(from: questionnaire).questionnaireConfiguration
+        }
+        return nil
+    }
+
+    // MARK: - PostAudience Questionnaire
+    var postAudienceQuestionnaireStyle: QuestionnaireStyle {
+        guard let style: String? = self.value(for: "postAudienceQuestionnaireStyle"), style != nil else { return .form }
+        return QuestionnaireStyle(rawValue: style!) ?? .form
+    }
+    var postAudienceQuestionnaire: [QuestionnaireConfiguration]? {
+        if let questionnaire = self.value(for: "postAudienceQuestionnaire", ofType: Array<[String: AnyHashable]>.self) {
+            return AudienceQuestionnaire(from: questionnaire).questionnaireConfiguration
+        }
+        return nil
     }
 
     init(configuration: [AnyHashable : Any]?, environments: [String]?) {
@@ -100,7 +149,7 @@ struct SiteConfigurationImpl: SiteConfiguration {
 }
 
 extension SiteConfigurationImpl {
-    private func value<T>(for key: String) -> T? {
+    private func value<T>(for key: String, ofType type: T.Type = T.self) -> T? {
         guard let configuration = configuration as? [String:Any] else { return nil }
 
         /// Use given environments first, if any

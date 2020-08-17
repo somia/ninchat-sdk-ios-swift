@@ -17,10 +17,10 @@ protocol ChannelMediaCell {
 
 extension ChannelMediaCell where Self:ChatChannelCell {
     func populateText(message: TextMessage, attachment: FileInfo?) {
-        attachment?.updateInfo(session: self.session) { [unowned self] error, didRefreshNetwork in
+        attachment?.updateInfo(session: self.session) { [weak self] error, didRefreshNetwork in
             guard error == nil else { return }
             do {
-                try self.updateAttachment(asynchronous: didRefreshNetwork || self.messageImageView.height == nil)
+                try self?.updateAttachment(asynchronous: didRefreshNetwork || self?.messageImageView.height == nil)
             } catch {
                 debugger("Error in updating attachment info: \(error)")
             }
@@ -51,20 +51,20 @@ extension ChannelMediaCell where Self:ChatChannelCell {
         guard let thumbnailManager = self.videoThumbnailManager else { throw NINUIExceptions.noThumbnailManager }
         
         /// For video we must fetch the thumbnail image
-        thumbnailManager.fetchVideoThumbnail(fromURL: videoURL) { [unowned self] error, fromCache, thumbnail in
+        thumbnailManager.fetchVideoThumbnail(fromURL: videoURL) { [weak self] error, fromCache, thumbnail in
             DispatchQueue.main.async {
                 guard let image = thumbnail, error == nil else {
                     Toast.show(message: .error("Failed to get video thumbnail")); return
                 }
                 
-                self.messageImageView.image = image
-                self.set(aspect: CGFloat(attachment.aspectRatio ?? 1), isSeries)
+                self?.messageImageView.image = image
+                self?.set(aspect: CGFloat(attachment.aspectRatio ?? 1), isSeries)
                 
-                guard !self.isReloading && asynchronous else { return }
+                guard !(self?.isReloading ?? false) && asynchronous else { return }
                 /// Inform the chat view that our cell might need resizing due to new constraints.
                 /// We do this regardless of fromCache -value as this method may have been called asynchronously
                 /// from `updateInfo(session:completion:)` completion block in populate method.
-                self.onConstraintsUpdate?()
+                self?.onConstraintsUpdate?()
             }
         }
     }

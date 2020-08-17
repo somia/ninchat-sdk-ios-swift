@@ -69,8 +69,9 @@ extension NinchatXCTestCase {
         sessionManager.didEndSession = {
             completion()
         }
-        sessionManager.deallocateSession()
-        try! sessionManager.closeChat()
+        try! sessionManager.closeChat {
+            sessionManager.deallocateSession()
+        }
     }
 }
 

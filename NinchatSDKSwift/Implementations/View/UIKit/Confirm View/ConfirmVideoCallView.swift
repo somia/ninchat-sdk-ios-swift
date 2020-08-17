@@ -48,15 +48,15 @@ final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol {
     }
     
     func overrideAssets() {
-        acceptButton.overrideAssets(with: self.session, isPrimary: true)
-        rejectButton.overrideAssets(with: self.session, isPrimary: false)
-        
-        if let backgroundColor = self.session?.override(colorAsset: .modalBackground) {
+        acceptButton.overrideAssets(with: self.session?.internalDelegate, isPrimary: true)
+        rejectButton.overrideAssets(with: self.session?.internalDelegate, isPrimary: false)
+
+        if let backgroundColor = self.session?.internalDelegate?.override(colorAsset: .modalBackground) {
             self.headerContainerView.backgroundColor = backgroundColor
             self.bottomContainerView.backgroundColor = backgroundColor
         }
         
-        if let textColor = self.session?.override(colorAsset: .modalText) {
+        if let textColor = self.session?.internalDelegate?.override(colorAsset: .modalText) {
             self.titleLabel.textColor = textColor
             self.usernameLabel.textColor = textColor
             self.infoLabel.textColor = textColor

@@ -12,36 +12,41 @@ protocol ComposeContentViewProtocol: UIView {
     var messageDictionary: [AnyHashable : Any] { get }
     var intrinsicHeight: CGFloat { get }
     var intrinsicWidth: CGFloat { get }
-    
+
+    var didUpdatedOptions: Bool { get set }
+    var message: ComposeContent? { get }
+    var sendButton: UIButton? { get }
+    var optionsButton: [UIButton] { get }
+
     func clear()
     func removeSendTapAction()
-    func populate(message: ComposeContent, siteConfiguration: SiteConfiguration, colorAssets: NINColorAssetDictionary, composeStates: [Bool]?, enableSendButton: Bool, isSelected: Bool)
+    func onOptionSelected(_ sender: UIButton)
+    func populate(message: ComposeContent, siteConfiguration: SiteConfiguration?, colorAssets: NINColorAssetDictionary?, composeStates: [Bool]?, enableSendButton: Bool, isSelected: Bool)
 }
 
 final class ComposeContentView: UIView, ComposeContentViewProtocol {
-    private var message: ComposeContent?
+    private(set) var message: ComposeContent?
+
     private var selectedOptions: [ComposeContentOption] = []
-    
     private var titleLabel: UILabel?
-    private var sendButton: UIButton?
-    private var optionsButton: [UIButton] = []
+    private(set) var sendButton: UIButton?
+    private(set) var optionsButton: [UIButton] = []
     private var composeState: [Bool] = []
-    
+    var didUpdatedOptions: Bool = true
+
     // MARK: - UIView life-cycle
     
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        guard self.titleLabel != nil, self.sendButton != nil else { return }
+        guard let label = self.titleLabel, let send = self.sendButton else { return }
         if self.message?.element == .select {
-            self.titleLabel!.frame = CGRect(x: 0, y: 0, width: self.titleLabel!.intrinsicContentSize.width, height: self.titleLabel!.intrinsicContentSize.height)
-            
-            let y = self.optionsButton.reduce(into: self.titleLabel!.intrinsicContentSize.height + Margins.kComposeVerticalMargin.rawValue) { (y: inout CGFloat, button: UIButton) in
+            label.frame = CGRect(x: 0, y: 0, width: label.intrinsicContentSize.width, height: label.intrinsicContentSize.height)
+            let y = self.optionsButton.reduce(into: label.intrinsicContentSize.height + Margins.kComposeVerticalMargin.rawValue) { (y: inout CGFloat, button: UIButton) in
                 button.frame = CGRect(x: 0, y: y, width: self.bounds.width, height: Margins.kButtonHeight.rawValue)
                 y += Margins.kButtonHeight.rawValue + Margins.kComposeVerticalMargin.rawValue
             }
-            
-            self.sendButton!.frame = CGRect(x: self.bounds.width - self.sendButton!.intrinsicContentSize.width - Margins.kComposeHorizontalMargin.rawValue, y: y, width: self.sendButton!.intrinsicContentSize.width + Margins.kComposeHorizontalMargin.rawValue, height: Margins.kButtonHeight.rawValue)
+            send.frame = CGRect(x: self.bounds.width - send.intrinsicContentSize.width - Margins.kComposeHorizontalMargin.rawValue, y: y, width: send.intrinsicContentSize.width + Margins.kComposeHorizontalMargin.rawValue, height: Margins.kButtonHeight.rawValue)
         } else if message?.element == .button {
             self.sendButton?.frame = CGRect(x: 0, y: 0, width: self.bounds.width, height: Margins.kButtonHeight.rawValue)
         }
@@ -56,19 +61,17 @@ final class ComposeContentView: UIView, ComposeContentViewProtocol {
     
     /// `https://github.com/somia/ninchat-sdk-ios/issues/84`
     private func updateTitleScale(for button: UIButton?) {
-        button?.titleLabel?.minimumScaleFactor = 0.7
-        button?.titleLabel?.adjustsFontSizeToFitWidth = true
-        button?.titleLabel?.lineBreakMode = .byTruncatingTail
+        button?.updateTitleScale()
         button?.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 2, right: 8)
     }
     
     // MARK: - User actions
     
     @objc
-    private func onButtonTapped(_ sender: UIButton) {
+    func onOptionSelected(_ sender: UIButton) {
         if sender == self.sendButton, let closure = self.onSendActionTapped {
             self.applyStyle(to: sender, selected: true)
-            closure(self)
+            closure(self, self.didUpdatedOptions)
         } else if let closure = self.onStateUpdateTapped {
             guard let button = self.optionsButton.first(where: { $0 == sender }), let index = self.optionsButton.firstIndex(of: button) else { return }
             let selected = self.selectedOptions[index].selected ?? false
@@ -76,13 +79,13 @@ final class ComposeContentView: UIView, ComposeContentViewProtocol {
             self.applyStyle(to: sender, selected: !selected)
             self.selectedOptions[index].selected = !selected
             self.composeState[index] = !selected
-            closure(self.composeState)
+            closure(self.composeState, true)
         }
     }
-    
+
     func removeSendTapAction() {
-        self.optionsButton.forEach { $0.removeTarget(self, action: #selector(self.onButtonTapped(_:)), for: .touchUpInside) }
-        self.sendButton?.removeTarget(self, action: #selector(self.onButtonTapped(_:)), for: .touchUpInside)
+        self.optionsButton.forEach { $0.removeTarget(self, action: #selector(self.onOptionSelected(_:)), for: .touchUpInside) }
+        self.sendButton?.removeTarget(self, action: #selector(self.onOptionSelected(_:)), for: .touchUpInside)
     }
     
     // MARK: - ComposeContentViewProtocol
@@ -118,7 +121,7 @@ final class ComposeContentView: UIView, ComposeContentViewProtocol {
         self.sendButton = nil
     }
     
-    func populate(message: ComposeContent, siteConfiguration: SiteConfiguration, colorAssets: NINColorAssetDictionary, composeStates: [Bool]?, enableSendButton: Bool, isSelected: Bool) {
+    func populate(message: ComposeContent, siteConfiguration: SiteConfiguration?, colorAssets: NINColorAssetDictionary?, composeStates: [Bool]?, enableSendButton: Bool, isSelected: Bool) {
         self.message = message
         
         self.drawTitleAndSend(colorAssets, enableSendButton)
@@ -129,20 +132,20 @@ final class ComposeContentView: UIView, ComposeContentViewProtocol {
         }
     }
     
-    private func drawTitleAndSend(_ colorAssets: NINColorAssetDictionary, _ enableSendButton: Bool) {
+    private func drawTitleAndSend(_ colorAssets: NINColorAssetDictionary?, _ enableSendButton: Bool) {
         guard self.titleLabel == nil else { return }
         
         /// Title label
         self.titleLabel = UILabel(frame: .zero)
         self.titleLabel?.font = .ninchat
-        self.titleLabel?.textColor = colorAssets[.chatBubbleLeftText] ?? .black
+        self.titleLabel?.textColor = colorAssets?[.chatBubbleLeftText] ?? .black
         self.addSubview(self.titleLabel!)
     
         /// Send button
         self.sendButton = UIButton(type: .custom)
         self.sendButton?.titleLabel?.font = .ninchat
         if enableSendButton {
-            self.sendButton?.addTarget(self, action: #selector(self.onButtonTapped(_:)), for: .touchUpInside)
+            self.sendButton?.addTarget(self, action: #selector(self.onOptionSelected(_:)), for: .touchUpInside)
         }
         self.addSubview(self.sendButton!)
     
@@ -156,10 +159,10 @@ final class ComposeContentView: UIView, ComposeContentViewProtocol {
         self.composeState = []
     }
     
-    private func drawSelect(_ siteConfiguration: SiteConfiguration, _ composeStates: [Bool]?, _ isSelected: Bool) {
+    private func drawSelect(_ siteConfiguration: SiteConfiguration?, _ composeStates: [Bool]?, _ isSelected: Bool) {
         self.titleLabel?.isHidden = false
         self.titleLabel?.text = message?.label
-        self.sendButton?.setTitle(siteConfiguration.sendButtonTitle ?? "Send", for: .normal)
+        self.sendButton?.setTitle(siteConfiguration?.sendButtonTitle ?? "Send", for: .normal)
         self.applyStyle(to: sendButton, borderWidth: 2.0, selected: isSelected)
     
         /// Clear existing option buttons
@@ -174,18 +177,17 @@ final class ComposeContentView: UIView, ComposeContentViewProtocol {
         
             return option
         }
-    
-        self.optionsButton = zip(options, self.composeState).map { [unowned self] (arg: (ComposeContentOption, Bool?)) in
+        self.optionsButton = zip(options, self.composeState).map { [weak self] (arg: (ComposeContentOption, Bool?)) in
             let (option, state) = arg
         
             let button = UIButton(type: .custom)
             button.titleLabel?.font = .ninchat
             button.setTitle(option.label, for: .normal)
-            button.addTarget(self, action: #selector(self.onButtonTapped(_:)), for: .touchUpInside)
-            self.applyStyle(to: button, selected: state ?? false)
-            self.updateTitleScale(for: button)
-            self.addSubview(button)
-        
+            button.addTarget(self, action: #selector(self?.onOptionSelected(_:)), for: .touchUpInside)
+            self?.applyStyle(to: button, selected: state ?? false)
+            self?.updateTitleScale(for: button)
+            self?.addSubview(button)
+
             return button
         }
     }

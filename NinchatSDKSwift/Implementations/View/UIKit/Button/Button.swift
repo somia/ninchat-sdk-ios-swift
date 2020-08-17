@@ -6,9 +6,10 @@
 
 import UIKit
 
-final class Button: UIButton {
+class Button: UIButton {
     var closure: ((Button) -> Void)?
-    
+    var type: QuestionnaireButtonType?
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.addTarget(self, action: #selector(touchUpInside(sender:)), for: .touchUpInside)
@@ -30,7 +31,8 @@ final class Button: UIButton {
         self.closure?(self)
     }
     
-    @objc private func touchUpInside(sender: UIButton) {
+    @objc
+    internal func touchUpInside(sender: UIButton) {
         self.closure?(self)
     }
     
@@ -47,5 +49,13 @@ final class Button: UIButton {
         if let overrideColor = delegate?.override(colorAsset: primary ? .buttonPrimaryText : .buttonSecondaryText) {
             self.setTitleColor(overrideColor, for: .normal)
         }
+    }
+}
+
+/// Helper for questionnaire items
+
+extension Button {
+    func roundButton() {
+        self.round(borderWidth: 1.0, borderColor: (self.isSelected ? self.titleColor(for: .selected) : self.titleColor(for: .normal)) ?? .QGrayButton)
     }
 }

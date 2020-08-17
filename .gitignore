@@ -5,6 +5,9 @@ NinchatSDKSwift.xcodeproj/xcuserdata/
 NinchatSDKSwift.xcworkspace/xcuserdata/
 NinchatSDKSwiftServerTests/Secrets.plist
 .idea/
+.run/
 
 *.out
 *.log
+
+go-sdk/

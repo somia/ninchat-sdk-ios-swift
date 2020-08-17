@@ -17,7 +17,8 @@ final class NINFullScreenViewController: UIViewController, ViewController {
     
     // MARK: - ViewController
     
-    var session: NINChatSession!
+    weak var session: NINChatSession?
+    weak var sessionManager: NINChatSessionManager?
     
     // MARK: - Outlets
     
@@ -26,8 +27,9 @@ final class NINFullScreenViewController: UIViewController, ViewController {
         view.session = session
         view.fileName = attachment.name
         view.onCloseTapped = onCloseTapped
-        view.onDownloadTapped = { [unowned self] in
-            self.viewModel.download(image: self.image, completion: { error in
+        view.onDownloadTapped = { [weak self] in
+            guard let weakSelf = self else { return }
+            weakSelf.viewModel.download(image: weakSelf.image, completion: { error in
                 if error != nil {
                     Toast.show(message: .error("Failed to save image"))
                 } else {
