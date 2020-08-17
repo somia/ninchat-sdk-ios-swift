@@ -121,19 +121,13 @@ extension NINQuestionnaireConversationDataSourceDelegate: QuestionnaireConversat
     }
 
     private func disablePreviousRows(_ disable: Bool) {
-        guard self.elements.count >= self.sectionCount else { return }
-        self.elements[sectionCount-1].forEach({
-            $0.isShown = !disable
-            $0.alpha = disable ? 0.5 : 1.0
-        })
+        if self.elements.count >= self.sectionCount { self.elements[sectionCount-1].forEach({ $0.isShown = !disable; $0.alpha = disable ? 0.5 : 1.0 }) }
+        if requirementSatisfactions.count > sectionCount - 1 { requirementSatisfactions[sectionCount - 1] = !disable }
     }
 
     private func enableCurrentRows() {
         guard self.elements.count >= self.sectionCount, !(self.elements[sectionCount-1].first?.isShown ?? false) else { return }
-        self.elements[sectionCount-1].forEach({
-            $0.isShown = true
-            $0.alpha = 1.0
-        })
+        self.elements[sectionCount-1].forEach({ $0.isShown = true;  $0.alpha = 1.0 })
     }
 
     private func clearCurrentRows() {
@@ -159,6 +153,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         cell.shouldShowBackButton = (self.configurations[indexPath.section].buttons?.hasValidBackButton ?? true) && indexPath.section != 0
         cell.configuration = self.configurations[indexPath.section]
         cell.requirementsSatisfied = self.requirementSatisfactions[indexPath.section]
+        cell.disabled = indexPath.section != sectionCount-1
         cell.backgroundColor = .clear
         cell.isUserInteractionEnabled = (self.elements[indexPath.section].first?.isShown ?? true) && (indexPath.section == self.sectionCount-1)
         cell.overrideAssets(with: self.session?.internalDelegate)

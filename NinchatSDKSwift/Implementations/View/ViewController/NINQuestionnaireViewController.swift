@@ -306,8 +306,10 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     }
 
     private func removeQuestionnaireSection() {
-        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
-        contentView.deleteSections(IndexSet(integer: conversationDataSource.removeSection()), with: .fade)
+        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` is not conformed to `QuestionnaireConversationHelpers`") }
+        let section = conversationDataSource.removeSection()
+        contentView.deleteSections(IndexSet(integer: section), with: .fade)
+        contentView.reloadSections(IndexSet(integer: section-1), with: .none)
     }
 }
 
