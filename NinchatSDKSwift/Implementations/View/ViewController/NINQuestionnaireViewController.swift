@@ -262,15 +262,15 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     }
 
     private func prepareSection() -> Int {
-        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
+        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` is not conformed to `QuestionnaireConversationHelpers`") }
         let section = conversationDataSource.insertSection()
         contentView.insertSections(IndexSet(integer: section), with: .automatic)
-
+        if section > 0 { contentView.reloadSections(IndexSet(integer: section-1), with: .none) }
         return section
     }
 
     private func addLoadingRow(at section: Int) {
-        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
+        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` is not conformed to `QuestionnaireConversationHelpers`") }
         conversationDataSource.isLoadingNewElements = true
         contentView.insertRows(at: [IndexPath(row: 0, section: section)], with: .automatic)
     }
@@ -282,7 +282,7 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     }
 
     private func addQuestionnaireRows(at section: Int) {
-        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
+        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` is not conformed to `QuestionnaireConversationHelpers`") }
         do {
             let elements = try self.viewModel.getElements()
             elements.forEach { element in
@@ -295,7 +295,7 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     }
 
     private func addNavigationRow(at section: Int) {
-        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` does is conformed to `QuestionnaireConversationHelpers`") }
+        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` is not conformed to `QuestionnaireConversationHelpers`") }
         do {
             _ = conversationDataSource.insertRow()
             let elements = try self.viewModel.getElements()
