@@ -78,7 +78,7 @@ extension ChannelMediaCell where Self:ChatChannelCell {
             else if let imageURL = imageURL {
                 let message = self.message
                 self.messageImageView.fetchImage(from: URL(string: imageURL)) { [weak self, message] data in
-                    if self?.message?.messageID != message?.messageID { print("** ** Dismiss unrelated attachment"); return }
+                    if self?.message?.messageID != message?.messageID { debugger("** ** Dismiss unrelated attachment"); return }
                     self?.messageImageView.image = UIImage(data: data)
                     (self as? ChannelMediaCellDelegate)?.didLoadAttachment(UIImage(data: data))
                 }
