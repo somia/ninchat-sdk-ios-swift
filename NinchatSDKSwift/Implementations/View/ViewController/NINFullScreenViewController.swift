@@ -42,7 +42,6 @@ final class NINFullScreenViewController: UIViewController, ViewController {
     }()
     @IBOutlet private(set) weak var imageView: UIImageView! {
         didSet {
-            imageView.image = image
             imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(onFullScreenImageTapped(sender:))))
         }
     }
@@ -64,6 +63,13 @@ final class NINFullScreenViewController: UIViewController, ViewController {
             .fix(top: (0, self.view), toSafeArea: true)
             .fix(leading: (0, self.view), trailing: (0, self.view))
             .fix(height: 60)
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        /// Update image
+        imageView.image = image
     }
 }
 
