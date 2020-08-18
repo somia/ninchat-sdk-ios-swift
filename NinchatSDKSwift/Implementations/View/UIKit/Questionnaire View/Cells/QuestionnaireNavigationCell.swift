@@ -25,6 +25,11 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
             self.setSatisfaction(requirementsSatisfied)
         }
     }
+    var disabled: Bool = false {
+        didSet {
+            self.setDisableNavigations(disabled)
+        }
+    }
 
     var requirementSatisfactionUpdater: ((Bool) -> Void)?
     var onNextButtonTapped: (() -> Void)?
@@ -105,6 +110,10 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
     private func setSatisfaction(_ satisfied: Bool) {
         self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next })?.isEnabled = satisfied
         self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next })?.alpha = (satisfied) ? 1.0 : 0.5
+    }
+
+    private func setDisableNavigations(_ disable: Bool) {
+        self.buttons.subviews.compactMap({ $0 as? Button }).forEach({ $0.isEnabled = !disable; $0.alpha = (disable) ? 0.5 : 1.0 })
     }
 }
 

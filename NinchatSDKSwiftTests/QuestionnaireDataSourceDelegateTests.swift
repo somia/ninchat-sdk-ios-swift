@@ -159,9 +159,7 @@ extension QuestionnaireDataSourceDelegateTests {
 
         XCTAssertEqual((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).configurations.count, 1)
         XCTAssertEqual((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).configurations.first?.name, "Aiheet")
-
-        XCTAssertEqual((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).requirementSatisfactions.count, 1)
-        XCTAssertEqual((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).requirementSatisfactions.first, false)
+        XCTAssertEqual((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).requirementsSatisfied, false)
 
         XCTAssertEqual((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).shouldShowNavigationCells.count, 1)
         XCTAssertEqual((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).shouldShowNavigationCells.first, true)
@@ -202,7 +200,7 @@ extension QuestionnaireDataSourceDelegateTests {
 
         XCTAssertEqual(newElementsCount, currentElementsCount+1)
         XCTAssertEqual(newConfigurationCount, currentConfigurationCount+1)
-        XCTAssertFalse((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).requirementSatisfactions.last ?? true)
+        XCTAssertFalse((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).requirementsSatisfied)
         XCTAssertFalse((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).shouldShowNavigationCells.last ?? true)
     }
 
@@ -216,7 +214,7 @@ extension QuestionnaireDataSourceDelegateTests {
 
         XCTAssertEqual(newElementsCount, currentElementsCount+1)
         XCTAssertEqual(newConfigurationCount, currentConfigurationCount+1)
-        XCTAssertFalse((self.conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).requirementSatisfactions.last ?? true)
+        XCTAssertFalse((self.conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).requirementsSatisfied)
         XCTAssertFalse((self.conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).shouldShowNavigationCells.last ?? true)
 
     }
