@@ -49,7 +49,8 @@ extension ChannelMediaCell where Self:ChatChannelCell {
     /// Update constraints to match new thumbnail image size
     private func updateVideo(from attachment: FileInfo, videoURL: String, _ asynchronous: Bool, _ isSeries: Bool) throws {
         guard let thumbnailManager = self.videoThumbnailManager else { throw NINUIExceptions.noThumbnailManager }
-        
+        guard self.messageImageView.image == nil else { return }
+
         /// For video we must fetch the thumbnail image
         thumbnailManager.fetchVideoThumbnail(fromURL: videoURL) { [weak self] error, fromCache, thumbnail in
             DispatchQueue.main.async {
@@ -72,11 +73,13 @@ extension ChannelMediaCell where Self:ChatChannelCell {
     /// asynchronous = YES implies we're calling this asynchronously from the
     /// `updateInfo(session:completion:)` completion block (meaning it did a network update)
     private func updateImage(from attachment: FileInfo, imageURL: String, _ asynchronous: Bool, _ isSeries: Bool) {
+        /// Do not reload the media if it is already available
+        guard self.messageImageView.image == nil else { return }
         DispatchQueue.main.async {
             /// Load the image in message image view over HTTP or from local cache
             self.messageImageView.image(from: imageURL)
             self.set(aspect: CGFloat(attachment.aspectRatio ?? 1), isSeries)
-            
+
             guard !self.isReloading && asynchronous else { return }
             /// Inform the chat view that our cell might need resizing due to new constraints.
             self.onConstraintsUpdate?()
@@ -98,7 +101,6 @@ extension ChannelMediaCell where Self:ChatChannelCell {
     }
     
     private func resetImageLayout() {
-        self.messageImageView.image = nil
         self.messageImageViewContainer.gestureRecognizers?.forEach { self.messageImageViewContainer.removeGestureRecognizer($0) }
     }
 }
@@ -121,13 +123,6 @@ final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell {
         }
     }
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        
-        self.messageImageView.image = nil
-        self.videoPlayIndicator.isHidden = true
-    }
-    
     @objc
     func didTappedOnImage() {
         guard let message = self.message as? TextMessage, let attachment = message.attachment else { return }
@@ -143,28 +138,21 @@ final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell {
 }
 
 final class ChatChannelMediaOthersCell: ChatChannelOthersCell, ChannelMediaCell {
-    @IBOutlet var messageImageViewContainer: UIView! {
+    @IBOutlet weak var messageImageViewContainer: UIView! {
         didSet {
             messageImageViewContainer.round(radius: 10.0)
         }
     }
-    @IBOutlet var messageImageView: UIImageView! {
+    @IBOutlet weak var messageImageView: UIImageView! {
         didSet {
             messageImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTappedOnImage)))
             messageImageView.contentMode = .scaleAspectFill
         }
     }
-    @IBOutlet var videoPlayIndicator: UIImageView! {
+    @IBOutlet weak var videoPlayIndicator: UIImageView! {
         didSet {
             videoPlayIndicator.tintColor = .white
         }
-    }
-    
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        
-        self.messageImageView.image = nil
-        self.videoPlayIndicator.isHidden = true
     }
     
     @objc
