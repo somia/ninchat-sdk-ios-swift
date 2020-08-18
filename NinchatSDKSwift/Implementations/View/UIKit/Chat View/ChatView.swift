@@ -100,10 +100,12 @@ final class ChatView: UIView, ChatViewProtocol {
     weak var delegate: ChatViewDelegate?
     
     func didAddMessage(at index: Int) {
+        guard let messageCount = dataSource?.numberOfMessages(for: self), tableView.numberOfRows(inSection: 0) < messageCount else { return }
         self.tableView.insertRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
     }
     
     func didRemoveMessage(from index: Int) {
+        guard let messageCount = dataSource?.numberOfMessages(for: self), tableView.numberOfRows(inSection: 0) > messageCount else { return }
         self.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
     }
 
