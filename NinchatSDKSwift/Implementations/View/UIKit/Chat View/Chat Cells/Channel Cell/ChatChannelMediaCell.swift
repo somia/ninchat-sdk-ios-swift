@@ -130,7 +130,7 @@ final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell {
     
     @objc
     func didTappedOnImage() {
-        guard let message = super.message as? TextMessage, let attachment = message.attachment else { return }
+        guard let message = self.message as? TextMessage, let attachment = message.attachment else { return }
         
         if attachment.isVideo {
             /// Will open video player
@@ -169,7 +169,7 @@ final class ChatChannelMediaOthersCell: ChatChannelOthersCell, ChannelMediaCell 
     
     @objc
     func didTappedOnImage() {
-        guard let message = super.message as? TextMessage, let attachment = message.attachment else { return }
+        guard let message = self.message as? TextMessage, let attachment = message.attachment else { return }
         
         if attachment.isVideo {
             /// Will open video player
