@@ -95,6 +95,10 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         self.started = false
     }
 
+    deinit {
+        self.deallocate()
+    }
+
     /// Performs these steps:
     /// 1. Fetches the site configuration over a REST call
     /// 2. Using that configuration, starts a new chat session
@@ -138,6 +142,8 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
     }
 
     public func deallocate() {
+        URLSession.shared.invalidateAndCancel()
+
         self.coordinator.deallocate()
         self.sessionManager?.deallocateSession()
         self.sessionManager = nil
