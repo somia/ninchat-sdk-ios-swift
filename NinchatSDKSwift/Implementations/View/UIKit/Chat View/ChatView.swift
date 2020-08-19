@@ -62,6 +62,9 @@ final class ChatView: UIView, ChatViewProtocol {
     private var cellConstraints: Array<CGSize> = []
     private var composeCellActions: [Int:ComposeUIAction] = [:]
 
+    /// To avoid a race condition in updating the chat view
+    private let lock = NSLock()
+
     // MARK: - Outlets
     
     @IBOutlet private(set) weak var tableView: UITableView! {
@@ -101,12 +104,16 @@ final class ChatView: UIView, ChatViewProtocol {
     
     func didAddMessage(at index: Int) {
         guard let messageCount = dataSource?.numberOfMessages(for: self), tableView.numberOfRows(inSection: 0) < messageCount else { return }
+        lock.lock()
         self.tableView.insertRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+        lock.unlock()
     }
     
     func didRemoveMessage(from index: Int) {
         guard let messageCount = dataSource?.numberOfMessages(for: self), tableView.numberOfRows(inSection: 0) > messageCount else { return }
+        lock.lock()
         self.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+        lock.unlock()
     }
 
     func didUpdateComposeAction(at index: Int, with action: ComposeUIAction) {
