@@ -23,9 +23,9 @@ extension String {
                                         </style>
                                    </head>
                                    <body>
-                                        <p>\(self)</p>
+                                        <p>%@</p>
                                    </body>
-                                   """, arguments: [widthStyle, fontStyle])
+                                   """, arguments: [widthStyle, fontStyle, self])
         return applyStyle(attrString: attributedString(input, document: .html, width: width), font, alignment, color)
     }
     
