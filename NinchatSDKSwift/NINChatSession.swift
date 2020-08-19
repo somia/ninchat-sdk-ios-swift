@@ -142,8 +142,9 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
     }
 
     public func deallocate() {
-        URLSession.shared.invalidateAndCancel()
+        guard !Thread.current.isRunningXCTests else { return }
 
+        URLSession.shared.invalidateAndCancel()
         self.coordinator.deallocate()
         self.sessionManager?.deallocateSession()
         self.sessionManager = nil

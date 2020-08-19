@@ -67,7 +67,7 @@ extension QuestionnaireDataSourceDelegateTests {
 
     func test_104_questionnaireCell() {
         formQuestionnaireDataSource.isLoadingNewElements = true
-        XCTAssertEqual(formQuestionnaireDataSource.height(at: IndexPath(row: 0, section: 0)), 578.5)
+        XCTAssertGreaterThan(formQuestionnaireDataSource.height(at: IndexPath(row: 0, section: 0)), 0)
         XCTAssertTrue(formQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) is QuestionnaireCell)
         XCTAssertEqual((formQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) as! QuestionnaireCell).style, QuestionnaireStyle.form)
     }
@@ -148,7 +148,7 @@ extension QuestionnaireDataSourceDelegateTests {
         XCTAssertEqual((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).insertRow(), 0)
 
         conversationQuestionnaireDataSource.isLoadingNewElements = false
-        XCTAssertEqual(conversationQuestionnaireDataSource.height(at: IndexPath(row: 0, section: 0)), 578.5)
+        XCTAssertGreaterThan(conversationQuestionnaireDataSource.height(at: IndexPath(row: 0, section: 0)), 0)
         XCTAssertTrue(conversationQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) is QuestionnaireCell)
         XCTAssertEqual((conversationQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) as! QuestionnaireCell).style, QuestionnaireStyle.conversation)
 
