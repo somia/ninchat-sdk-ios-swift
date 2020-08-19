@@ -287,6 +287,7 @@ extension NINChatSessionManagerImpl {
         self.queueUpdateBoundClosures.keys.forEach { self.queueUpdateBoundClosures.removeValue(forKey: $0) }
         self.actionICEServersBoundClosures.keys.forEach { self.actionICEServersBoundClosures.removeValue(forKey: $0) }
         self.actionChannelBoundClosures.keys.forEach { self.actionChannelBoundClosures.removeValue(forKey: $0) }
+        self.actionFileBoundClosures.keys.forEach({ self.actionFileBoundClosures.removeValue(forKey: $0) })
         self.chatMessages.removeAll()
         self.channelUsers.removeAll()
         self.queues.removeAll()

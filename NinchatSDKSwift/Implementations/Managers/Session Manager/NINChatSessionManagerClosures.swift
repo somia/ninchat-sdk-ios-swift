@@ -15,7 +15,7 @@ protocol NINChatSessionManagerClosureHandler {
 
 extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
     internal func bind(action id: Int?, closure: @escaping (Error?) -> Void) {
-        guard let id = id, !self.actionBoundClosures.keys.contains(id) else { return }
+        guard let id = id else { return }
         self.actionBoundClosures[id] = closure
         
         if self.onActionID == nil {
@@ -26,14 +26,13 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
                 }).first?.value {
                     
                     targetClosure(error)
-                    DispatchQueue.main.async { self?.actionBoundClosures.removeValue(forKey: id) }
                 }
             }
         }
     }
     
     internal func bindFile(action id: Int?, closure: @escaping (Error?, [String:Any]?) -> Void) {
-        guard let id = id, !self.actionFileBoundClosures.keys.contains(id) else { return }
+        guard let id = id else { return }
         self.actionFileBoundClosures[id] = closure
         
         if self.onActionFileInfo == nil {
@@ -44,14 +43,13 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
                 }).first?.value {
 
                     targetClosure(error, fileInfo)
-                    DispatchQueue.main.async { self?.actionFileBoundClosures.removeValue(forKey: id) }
                 }
             }
         }
     }
     
     internal func bindChannel(action id: Int?, closure: @escaping (Error?) -> Void) {
-        guard let id = id, !self.actionChannelBoundClosures.keys.contains(id) else { return }
+        guard let id = id else { return }
         self.actionChannelBoundClosures[id] = closure
 
         if self.onActionChannel == nil {
@@ -62,14 +60,13 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
                 }).first?.value {
 
                     targetClosure(nil)
-                    DispatchQueue.main.async { self?.actionChannelBoundClosures.removeValue(forKey: id) }
                 }
             }
         }
     }
     
     internal func bindICEServer(action id: Int?, closure: @escaping (Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void) {
-        guard let id = id, !self.actionICEServersBoundClosures.keys.contains(id) else { return }
+        guard let id = id else { return }
         self.actionICEServersBoundClosures[id] = closure
 
         if self.onActionSevers == nil {
@@ -80,7 +77,6 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
                 }).first?.value {
 
                     targetClosure(nil, stunServers, turnServers)
-                    DispatchQueue.main.async { self?.actionICEServersBoundClosures.removeValue(forKey: id) }
                 }
             }
         }
