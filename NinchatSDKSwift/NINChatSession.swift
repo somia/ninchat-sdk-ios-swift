@@ -44,9 +44,7 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
     lazy var internalDelegate: InternalDelegate? = {
         InternalDelegate(session: self)
     }()
-    private lazy var coordinator: Coordinator = {
-        NINCoordinator(with: self)
-    }()
+    private var coordinator: Coordinator?
     private let audienceMetadata: NINLowLevelClientProps?
     private let configuration: NINSiteConfiguration?
     private var configKey: String!
@@ -141,14 +139,16 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         guard !self.sessionAlive else { throw NINExceptions.apiAlive }
 
         self.sessionAlive = true
-        return coordinator.start(with: self.queueID ?? self.sessionManager.siteConfiguration.audienceAutoQueue, resumeSession: self.resumed, within: navigationController)
+        if self.coordinator == nil { self.coordinator = NINCoordinator(with: self) }
+        return coordinator?.start(with: self.queueID ?? self.sessionManager.siteConfiguration.audienceAutoQueue, resumeSession: self.resumed, within: navigationController)
     }
 
     public func deallocate() {
         guard !Thread.current.isRunningXCTests else { return }
 
         URLSession.shared.invalidateAndCancel()
-        self.coordinator.deallocate()
+        self.coordinator?.deallocate()
+        self.coordinator = nil
         self.sessionManager?.deallocateSession()
         self.sessionManager = nil
         self.started = false
