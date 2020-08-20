@@ -25,7 +25,7 @@ extension UIViewController {
     
     @objc
     private func keyboardWillShow(notification: Notification) {
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue,
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
            let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval {
             guard let focusedView: UIView = self.view.allSubviews.first(where: { $0.isFirstResponder }), (focusedView is UITextField) || (focusedView is UITextView),
                   UIScreen.main.bounds.height - keyboardSize.height <= focusedView.convert(focusedView.bounds, to: nil).origin.y + focusedView.frame.size.height

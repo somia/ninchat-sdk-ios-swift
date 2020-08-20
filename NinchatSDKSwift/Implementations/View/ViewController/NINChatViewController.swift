@@ -179,6 +179,7 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.addRotationListener()
+        self.reloadView()
         self.adjustConstraints(for: self.view.bounds.size, withAnimation: false)
     }
     
@@ -211,25 +212,31 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
     private func setupView() {
         self.overrideAssets()
         self.setupGestures()
-        
+        self.reloadView()
+
         self.inputControlsView.onTextSizeChanged = { [weak self] height in
             debugger("new text area height: \(height + Margins.kTextFieldPaddingHeight.rawValue)")
             self?.updateInputContainerHeight(height + Margins.kTextFieldPaddingHeight.rawValue)
         }
+    }
+
+    /// In case the queue was transferred
+    private func reloadView() {
         if let queue = self.queue {
             /// Apply queue permissions to view
             self.inputControlsView.updatePermissions(queue.permissions)
         }
+        self.disableView(false)
     }
-    
+
     // MARK: - Setup ViewModel
     
     private func setupViewModel() {
         self.viewModel.onChannelClosed = { [weak self] in
-            self?.disableView()
+            self?.disableView(true)
         }
         self.viewModel.onQueueUpdated = { [weak self] in
-            self?.disableView()
+            self?.disableView(true)
             self?.onBackToQueue?()
         }
         self.viewModel.onChannelMessage = { [weak self] update in
@@ -330,9 +337,9 @@ extension NINChatViewController {
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(sender:))))
     }
     
-    private func disableView() {
+    private func disableView(_ disable: Bool) {
         self.view.endEditing(true)
-        self.inputControlsView.isUserInteractionEnabled = false
+        self.inputControlsView.isUserInteractionEnabled = !disable
     }
     
     private func overrideAssets() {

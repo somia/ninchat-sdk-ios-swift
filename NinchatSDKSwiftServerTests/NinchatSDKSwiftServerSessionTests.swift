@@ -130,6 +130,26 @@ final class NinchatSDKSwiftServerSessionTests: XCTestCase {
 
         waitForExpectations(timeout: 10.0)
     }
+
+    func testServer_ratingAppearance() {
+        let expect_close_session = self.expectation(description: "Expected to not show the rating in the conversation")
+
+        self.sessionManager.fetchSiteConfiguration(config: Session.configurationKey, environments: []) { _ in
+            self.openSession { credentials1 in
+                do {
+                    try self.sessionManager.finishChat(rating: .happy)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        expect_close_session.fulfill()
+                    }
+                } catch {
+                    XCTFail(error.localizedDescription)
+                }
+            }
+        }
+
+        /// The test needs a manual interaction from server to fulfills all expectations
+        waitForExpectations(timeout: 10.0)
+    }
 }
 
 extension NinchatSDKSwiftServerSessionTests: QueueUpdateCapture {

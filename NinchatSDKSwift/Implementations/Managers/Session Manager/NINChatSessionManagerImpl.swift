@@ -287,6 +287,7 @@ extension NINChatSessionManagerImpl {
         self.queueUpdateBoundClosures.keys.forEach { self.queueUpdateBoundClosures.removeValue(forKey: $0) }
         self.actionICEServersBoundClosures.keys.forEach { self.actionICEServersBoundClosures.removeValue(forKey: $0) }
         self.actionChannelBoundClosures.keys.forEach { self.actionChannelBoundClosures.removeValue(forKey: $0) }
+        self.actionFileBoundClosures.keys.forEach({ self.actionFileBoundClosures.removeValue(forKey: $0) })
         self.chatMessages.removeAll()
         self.channelUsers.removeAll()
         self.queues.removeAll()
@@ -450,9 +451,9 @@ extension NINChatSessionManagerImpl {
         param.messageType = .success(type)
         param.channelID = .success(currentChannel)
         
-        if type == .metadata, let _ = (payload["data"] as? [String:String])?["rating"] {
+        if type == .metadata, let _ = (payload["data"] as? [String:Int])?["rating"] {
             param.recipients = .success(NINLowLevelClientStrings())
-            param.messageFold = .success(false)
+            param.messageFold = .success(true)
         }
         
         if type.isRTC {

@@ -15,16 +15,17 @@ protocol Coordinator: class {
     func deallocate()
 }
 
-final class NINCoordinator: Coordinator {
+final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControllerDelegate {
     
     // MARK: - Coordinator
     
-    internal unowned let session: NINChatSession
+    internal unowned var session: NINChatSession
     internal weak var navigationController: UINavigationController? {
         didSet {
             if #available(iOS 13.0, *) {
                 navigationController?.overrideUserInterfaceStyle = .light
             }
+            navigationController?.presentationController?.delegate = self
         }
     }
     internal lazy var storyboard: UIStoryboard = {
@@ -169,6 +170,8 @@ final class NINCoordinator: Coordinator {
 
     init(with session: NINChatSession) {
         self.session = session
+
+        super.init()
         self.prepareNINQuestionnaireViewModel()
     }
     
@@ -292,5 +295,13 @@ extension NINCoordinator {
     
     internal func chatMediaPicker(_ viewModel: NINChatViewModel) -> NINPickerControllerDelegate {
         NINPickerControllerDelegateImpl(viewModel: viewModel)
+    }
+}
+
+// MARK: - UIAdaptivePresentationControllerDelegate
+
+extension NINCoordinator {
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        self.session.deallocate()
     }
 }

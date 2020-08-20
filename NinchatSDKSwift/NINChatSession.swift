@@ -54,6 +54,7 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
     private var environments: [String]?
     private var started: Bool! = false
     private var resumed: Bool! = false
+    private var sessionAlive: Bool! = false
     private var defaultServerAddress: String {
         #if NIN_USE_TEST_SERVER
             return Constants.kTestServerAddress.rawValue
@@ -95,6 +96,10 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         self.started = false
     }
 
+    deinit {
+        self.deallocate()
+    }
+
     /// Performs these steps:
     /// 1. Fetches the site configuration over a REST call
     /// 2. Using that configuration, starts a new chat session
@@ -133,15 +138,21 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
     public func chatSession(within navigationController: UINavigationController?) throws -> UIViewController? {
         guard Thread.isMainThread else { throw NINExceptions.mainThread }
         guard self.started else { throw NINExceptions.apiNotStarted }
-        
+        guard !self.sessionAlive else { throw NINExceptions.apiAlive }
+
+        self.sessionAlive = true
         return coordinator.start(with: self.queueID ?? self.sessionManager.siteConfiguration.audienceAutoQueue, resumeSession: self.resumed, within: navigationController)
     }
 
     public func deallocate() {
+        guard !Thread.current.isRunningXCTests else { return }
+
+        URLSession.shared.invalidateAndCancel()
         self.coordinator.deallocate()
         self.sessionManager?.deallocateSession()
         self.sessionManager = nil
         self.started = false
+        self.sessionAlive = false
     }
 }
 

@@ -157,4 +157,8 @@ final class ExtensionsTests: XCTestCase {
         let priority = UILayoutPriority.almostRequired
         XCTAssertEqual(priority.rawValue, 999.0)
     }
+
+    func test_thread() {
+        XCTAssertTrue(Thread.current.isRunningXCTests)
+    }
 }

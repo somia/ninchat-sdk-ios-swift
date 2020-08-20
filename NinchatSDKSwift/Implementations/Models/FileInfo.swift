@@ -48,18 +48,16 @@ final class FileInfo: Codable {
     
     func updateInfo(session: NINChatSessionAttachment?, completion: @escaping (Error?, _ didRefreshNetwork: Bool) -> Void) {
         /// The URL must not expire within the next 15 minutes
-        let comparisonDate = Date(timeIntervalSinceNow: -(15*60))
-
-        guard self.url == nil || self.urlExpiry == nil || self.urlExpiry?.compare(comparisonDate) == .orderedAscending else {
-            debugger("No need to update file, it is up to date.")
+        guard self.url == nil || self.urlExpiry == nil || self.urlExpiry?.compare(Date(timeIntervalSinceNow: -(15*60))) == .orderedAscending else {
+            debugger("No need to update file, it is up to date. \(self.name ?? "")")
             completion(nil, false)
             return
         }
 
-        debugger("Must update file info; call describe_file with id: \(self.fileID ?? "")")
+        debugger("Must update file info; call describe_file with id: \(self.fileID ?? "") and name: \(self.name ?? "")")
         do {
             try session?.describe(file: self.fileID) { [weak self] error, fileInfo in
-                debugger("described file with id: \(self?.fileID ?? "nil")")
+                debugger("described file with id: \(self?.fileID ?? "nil") and name: \(self?.name ?? "")")
 
                 if let error = error {
                     completion(error, false)

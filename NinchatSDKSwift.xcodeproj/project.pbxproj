@@ -130,6 +130,7 @@
 		91A1621313714ACDFE35E97C /* NSAttributedString+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16EDB1E05655FA925BCCB /* NSAttributedString+Extension.swift */; };
 		91A1623678B6FA354032558D /* ChannelMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1621FC457EFE156F90335 /* ChannelMessage.swift */; };
 		91A1624977615DA2282774D2 /* NINQuestionnaireViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1611EF0E38FD4DEB8B4AC /* NINQuestionnaireViewController.swift */; };
+		91A162DDA99D9DDB9D0B8436 /* Thread+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16E7CDA2F9D24FF1BE1DC /* Thread+Extension.swift */; };
 		91A163085E1C1FAF4BA8BEB8 /* ChatTypingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A167BAE1C0F6F9466CE1D6 /* ChatTypingCell.swift */; };
 		91A1631CB9FB0E611E88DD99 /* WKWebView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A168DEF02D4EED4F01B97E /* WKWebView+Extension.swift */; };
 		91A1634DB52849BD1F2FEEF8 /* VideoThumbnailManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16EE2919D93717F843D49 /* VideoThumbnailManager.swift */; };
@@ -157,9 +158,9 @@
 		91A167A8436C7DEA859E45C9 /* UIKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16F6CAA073C2B72C58FBF /* UIKitTests.swift */; };
 		91A167D5B0BD96D3FD190F94 /* ComposeMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1689A5BDC25419D67E9BF /* ComposeMessageView.swift */; };
 		91A167F485DBCDFEEA0261F6 /* QuestionnaireElementLikert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16ED021E7CDE32491AE5D /* QuestionnaireElementLikert.swift */; };
+		91A16813665172FFFA81A455 /* NinchatError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A163A915328A44FBCAD0C2 /* NinchatError.swift */; };
 		91A1685BFB39CDD931E5FCAC /* NINQuestionnaireConversationDataSourceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16F08D697EA1A1125CC1E /* NINQuestionnaireConversationDataSourceDelegate.swift */; };
 		91A1686AC0F93B6707C55930 /* QuestionnaireConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16D113215A7C879D84505 /* QuestionnaireConverterTests.swift */; };
-		91A16813665172FFFA81A455 /* NinchatError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A163A915328A44FBCAD0C2 /* NinchatError.swift */; };
 		91A1688A7C316AEDFAF3BFD1 /* NinchatViewModelTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16BD6BFDA5810A0BE45F4 /* NinchatViewModelTestCase.swift */; };
 		91A168E2844E0CDE5A4D632A /* NinchatSDKSwiftServerHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16E2E2FDA2CB5D3AAA5B7 /* NinchatSDKSwiftServerHelperTests.swift */; };
 		91A16914F0B5CA995B9CD28D /* UIImageView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16A99A8F815E0C72B0AAE /* UIImageView+Extension.swift */; };
@@ -380,8 +381,8 @@
 		91A16501A258D1244E52AD23 /* String+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		91A1652A485CCE644E39135E /* NSMutableAttributedString+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSMutableAttributedString+Extension.swift"; sourceTree = "<group>"; };
 		91A165370F88E5B62075CFB2 /* ChannelUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelUser.swift; sourceTree = "<group>"; };
-		91A1660AC336314992BDC930 /* QuestionnaireElementTextArea.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireElementTextArea.swift; sourceTree = "<group>"; };
 		91A165ACC671F88CB39EEB82 /* NinchatLowLevelClient.podspec */ = {isa = PBXFileReference; lastKnownFileType = file.podspec; path = NinchatLowLevelClient.podspec; sourceTree = "<group>"; };
+		91A1660AC336314992BDC930 /* QuestionnaireElementTextArea.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireElementTextArea.swift; sourceTree = "<group>"; };
 		91A1665602ED586F1BD60785 /* RTCSessionDescription+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RTCSessionDescription+Extension.swift"; sourceTree = "<group>"; };
 		91A166D4F9B0F6D7063479E9 /* NinchatXCTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatXCTestCase.swift; sourceTree = "<group>"; };
 		91A166E121EFB4764BE628C8 /* WebRTCServerInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebRTCServerInfo.swift; sourceTree = "<group>"; };
@@ -419,6 +420,7 @@
 		91A16E2E2FDA2CB5D3AAA5B7 /* NinchatSDKSwiftServerHelperTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatSDKSwiftServerHelperTests.swift; sourceTree = "<group>"; };
 		91A16E65EA02A328F488F74C /* UIApplication+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extension.swift"; sourceTree = "<group>"; };
 		91A16E69D69A37749EB13539 /* QuestionnaireElementConverter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireElementConverter.swift; sourceTree = "<group>"; };
+		91A16E7CDA2F9D24FF1BE1DC /* Thread+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Thread+Extension.swift"; sourceTree = "<group>"; };
 		91A16EAC1C68B081618E08E9 /* NINChatClientPropsParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINChatClientPropsParser.swift; sourceTree = "<group>"; };
 		91A16ED021E7CDE32491AE5D /* QuestionnaireElementLikert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireElementLikert.swift; sourceTree = "<group>"; };
 		91A16EDB1E05655FA925BCCB /* NSAttributedString+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+Extension.swift"; sourceTree = "<group>"; };
@@ -687,6 +689,7 @@
 				91A161F49CF87AD53CF4E199 /* UILayoutPriority+Extension.swift */,
 				91A16F9F20590A73609F0DDB /* UITextField+Extension.swift */,
 				91A16739D24E30A3D062D285 /* Array+Extension.swift */,
+				91A16E7CDA2F9D24FF1BE1DC /* Thread+Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1461,6 +1464,7 @@
 				91A16BB0EBC43AB17FBEC7BD /* Array+Extension.swift in Sources */,
 				91A1601A6F8D21DA68AC39A6 /* ComposeUIAction.swift in Sources */,
 				91A16813665172FFFA81A455 /* NinchatError.swift in Sources */,
+				91A162DDA99D9DDB9D0B8436 /* Thread+Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

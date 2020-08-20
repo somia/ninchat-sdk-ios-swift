@@ -15,6 +15,7 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
     var shouldShowBackButton: Bool! = false
     var configuration: QuestionnaireConfiguration? {
         didSet {
+            self.buttons.arrangedSubviews.forEach({ $0.removeFromSuperview() })
             self.shapeNavigationButtons(configuration)
             self.decorateView()
         }
@@ -24,17 +25,28 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
             self.setSatisfaction(requirementsSatisfied)
         }
     }
+    var disabled: Bool = false {
+        didSet {
+            self.setDisableNavigations(disabled)
+        }
+    }
 
     var requirementSatisfactionUpdater: ((Bool) -> Void)?
     var onNextButtonTapped: (() -> Void)?
     var onBackButtonTapped: (() -> Void)?
 
-    private(set) lazy var buttons: UIView = {
+    private(set) lazy var buttons: UIStackView = {
+        let view = UIStackView(frame: .zero)
+        view.spacing = 8.0
+
+        return view
+    }()
+    private(set) lazy var separator: UIView = {
         UIView(frame: .zero)
     }()
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
-        if let nextButton = self.buttons.subviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next }) {
+        if let nextButton = self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next }) {
             if nextButton.titleLabel?.text?.isEmpty ?? true {
                 nextButton.imageView?.tint = delegate?.override(questionnaireAsset: .navigationNextText) ?? .white
             } else {
@@ -44,7 +56,7 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
             nextButton.layer.borderColor = delegate?.override(questionnaireAsset: .navigationNextText)?.cgColor ?? UIColor.QBlueButtonNormal.cgColor
             nextButton.backgroundColor = delegate?.override(questionnaireAsset: .navigationNextBackground) ?? .QBlueButtonNormal
         }
-        if let backButton = self.buttons.subviews.compactMap({ $0 as? Button }).first(where: { $0.type == .back }) {
+        if let backButton = self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .back }) {
             if backButton.titleLabel?.text?.isEmpty ?? true {
                 backButton.imageView?.tint = delegate?.override(questionnaireAsset: .navigationBackText) ?? .QBlueButtonNormal
             } else {
@@ -87,7 +99,7 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
     }
 
     private func decorateView() {
-        if self.buttons.subviews.count > 0 {
+        if self.buttons.arrangedSubviews.count > 0 {
             self.layoutNavigationButtons()
         }
         self.requirementSatisfactionUpdater = { [weak self] satisfied in
@@ -96,8 +108,12 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
     }
 
     private func setSatisfaction(_ satisfied: Bool) {
-        self.buttons.subviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next })?.isEnabled = satisfied
-        self.buttons.subviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next })?.alpha = (satisfied) ? 1.0 : 0.5
+        self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next })?.isEnabled = satisfied
+        self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next })?.alpha = (satisfied) ? 1.0 : 0.5
+    }
+
+    private func setDisableNavigations(_ disable: Bool) {
+        self.buttons.subviews.compactMap({ $0 as? Button }).forEach({ $0.isEnabled = !disable; $0.alpha = (disable) ? 0.5 : 1.0 })
     }
 }
 
@@ -112,13 +128,15 @@ extension QuestionnaireNavigationCell {
             .fix(leading: (8.0, self.contentView), trailing: (8.0, self.contentView))
             .fix(height: 45.0)
             .center(toY: self.contentView)
+        buttons.leading?.priority = .almostRequired
+        buttons.trailing?.priority = .almostRequired
     }
 
     func shapeNavigationButtons(_ configuration: QuestionnaireConfiguration?) {
-        self.buttons.subviews.compactMap({ $0 as? Button }).forEach({ $0.removeFromSuperview() })
+        self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).forEach({ $0.removeFromSuperview() })
 
         func drawBackButton(isVisible: Bool) {
-            if self.buttons.subviews.compactMap({ $0 as? Button }).filter({ $0.type == .back }).count > 0 { return }
+            if self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).filter({ $0.type == .back }).count > 0 || !isVisible { return }
 
             let button = Button(frame: .zero) { [weak self] button in
                 button.isSelected = !button.isSelected
@@ -130,7 +148,7 @@ extension QuestionnaireNavigationCell {
             self.layoutButton(button, configuration: configuration?.buttons, type: .back)
         }
         func drawNextButton(isVisible: Bool) {
-            if self.buttons.subviews.compactMap({ $0 as? Button }).filter({ $0.type == .next }).count > 0 { return }
+            if self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).filter({ $0.type == .next }).count > 0 || !isVisible { return }
 
             let button = Button(frame: .zero) { [weak self] button in
                 button.isSelected = !button.isSelected
@@ -145,12 +163,14 @@ extension QuestionnaireNavigationCell {
         /// According to `https://github.com/somia/mobile/issues/238`
         /// " Basically you have buttons always displayed unless they are removed in config. "
         /// " But it should omit 'back' for the first element "
-        drawNextButton(isVisible: self.shouldShowNextButton)
+
         drawBackButton(isVisible: self.shouldShowBackButton)
+        addSeparator(isVisible: self.shouldShowNextButton || self.shouldShowBackButton)
+        drawNextButton(isVisible: self.shouldShowNextButton)
     }
 
     private func layoutButton(_ button: UIButton, configuration: ButtonQuestionnaire?, type: QuestionnaireButtonType) {
-        self.buttons.addSubview(button)
+        self.buttons.insertArrangedSubview(button, at: self.buttons.arrangedSubviews.count)
         if type == .back {
             self.shapeNavigationBack(button: button, configuration: configuration?.back)
         } else if type == .next {
@@ -159,11 +179,17 @@ extension QuestionnaireNavigationCell {
 
         button.titleLabel?.font = .ninchat
         button.imageEdgeInsets = UIEdgeInsets(top: 4.0, left: 4.0, bottom: 4.0, right: 4.0)
-        button.updateTitleScale()
+        button.contentEdgeInsets = UIEdgeInsets(top: 0.0, left: 8.0, bottom: 0.0, right: 8.0)
+        button.titleLabel?.lineBreakMode = .byTruncatingTail
         button
-            .fix(width: min((self.contentView.bounds.width / 2) - 32, max(80.0, button.intrinsicContentSize.width + 32.0)), height: 45.0)
+            .fix(width: button.intrinsicContentSize.width + 32.0, height: 45.0)
             .round(radius: 45.0 / 2, borderWidth: 1.0, borderColor: .QBlueButtonNormal)
-        button.width?.priority = .almostRequired
+            .width?.priority = .almostRequired
+    }
+
+    private func addSeparator(isVisible: Bool) {
+        guard isVisible, self.buttons.arrangedSubviews.filter({ !($0 is Button) }).count == 0 else { return }
+        self.buttons.addArrangedSubview(self.separator)
     }
 
     private func shapeNavigationNext(button: UIButton, configuration: AnyCodable?) {
@@ -178,10 +204,6 @@ extension QuestionnaireNavigationCell {
             button.setTitle("", for: .selected)
             button.setImage(UIImage(named: "icon_select_next", in: .SDKBundle, compatibleWith: nil), for: .highlighted)
         }
-
-        button
-            .fix(trailing: (16.0, self.buttons))
-            .center(toY: self.buttons)
     }
 
     private func shapeNavigationBack(button: UIButton, configuration: AnyCodable?) {
@@ -196,8 +218,5 @@ extension QuestionnaireNavigationCell {
             button.setTitle("", for: .selected)
             button.setImage(UIImage(named: "icon_select_back", in: .SDKBundle, compatibleWith: nil), for: .selected)
         }
-        button
-            .fix(leading: (16.0, self.buttons))
-            .center(toY: self.buttons)
     }
 }

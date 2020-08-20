@@ -9,6 +9,7 @@ import Foundation
 public enum NINExceptions: Error {
     case mainThread
     case apiNotStarted
+    case apiAlive
         
     public var localizedDescription: String {
         switch self {
@@ -16,6 +17,8 @@ public enum NINExceptions: Error {
             return "The method should be called in the main thread"
         case .apiNotStarted:
             return "NINChat API has not been started; call -startWithCallback first"
+        case .apiAlive:
+            return "There is an alive session available, try calling `deallocate` API before starting a new session"
         }
     }
 }
