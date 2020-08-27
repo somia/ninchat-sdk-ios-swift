@@ -200,7 +200,7 @@ There are some limitations that the SDK imposes on the host app linking to it:
 
 These issues are caused by limitations of the [gomobile bind tool](https://godoc.org/golang.org/x/mobile/cmd/gobind) used to generate the low-level communications library.
 
-## Overriding the Image Assets
+## Overriding Image Assets
 
 Using the API delegate method `overrideImageAsset(session:forKey:)` you may supply your own Image assets as `UIImage` objects. See the table below for explanations on the supported asset keys.
 
@@ -242,7 +242,7 @@ All the assets should be transparent where there is no color.
 | .iconVideoCameraOff | Camera is off | |
 | .iconVideoHangup | End the video call | |
 
-## Overriding the Color Assets
+## Overriding Color Assets
 
 Using the API delegate method `overrideColorAsset(session:forKey:)` you may supply your own color assets as `UIColor` objects. See the table below for explanations on the supported asset keys.
 
@@ -269,6 +269,31 @@ Using the API delegate method `overrideColorAsset(session:forKey:)` you may supp
 | .ratingPositiveText | Text of the positive rating button
 | .ratingNeutralText | Text of the neutral rating button
 | .ratingNegativeText | Text of the negative rating button
+
+## Overriding Questionnaire Color Assets
+
+Starting version [0.3.0](https://github.com/somia/ninchat-sdk-ios-swift/releases/tag/0.3.0) supports questionnaire feature before the chat starts and after the chat is finished. Using the API delegate method `ninchat(session:overrideQuestionnaireColorAssetKey)` you may supply your own color assets as `UIColor` objects. See the table below for explanations on the supported asset keys.
+
+| Asset key                    | Related UI control(s)                                        |
+|:---------------------------- |:------------------------------------------------------------ |
+| .titleTextColor              | Text on _Title_  items                                       |
+| .textInputColor              | Text on _Input_ items                                        |
+| .radioPrimaryText            | Text on 'primary' _Radio_ buttons                            |
+| .radioSecondaryText          | Text on 'secondary' _Radio_ buttons                          |
+| .radioPrimaryBackground      | Background of 'primary' _Radio_ buttons                      |
+| .radioSecondaryBackground    | Background of 'secondary' _Radio_ buttons                    |
+| .checkboxPrimaryText         | Text on 'primary' _Checkbox_ items                           |
+| .checkboxSecondaryText       | Text on 'secondary' _Checkbox_ items                         |
+| .checkboxSelectedIndicator   | Tint and border on 'primary' _Checkbox_ items                |
+| .checkboxDeselectedIndicator | Tint and border on 'secondary' _Checkbox_ items              |
+| .selectSelectedText          | Text, indicator, and border color for 'selected' state on _Select_ items |
+| .selectNormalText            | Text, indicator, and border color for 'normal' state on _Select_ items |
+| .selectSelectedBackground    | Background on 'selected' state on _Select_ items             |
+| .selectDeselectedBackground  | Background on 'deselected' state on _Select_ items           |
+| .navigationNextText          | Text and border on _Next_ navigation button                  |
+| .navigationBackText          | Text and border on _Back_ navigation button                  |
+| .navigationNextBackground    | Background on _Next_ navigation button                       |
+| .navigationBackBackground    | Background on _Back_ navigation button                       |
 
 ## Contact
 
