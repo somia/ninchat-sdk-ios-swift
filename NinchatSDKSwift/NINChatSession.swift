@@ -161,7 +161,6 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
 /// Shared helper
 extension NINChatSession {
     private func fetchSiteConfiguration(completion: @escaping (Error?) -> Void) throws {
-        guard Thread.isMainThread else { throw NINExceptions.mainThread }
         sessionManager.fetchSiteConfiguration(config: configKey, environments: environments) { error in
             completion(error)
         }
