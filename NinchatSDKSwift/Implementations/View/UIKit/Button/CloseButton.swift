@@ -51,12 +51,18 @@ final class CloseButton: UIView, CloseButtonProtocol {
     
     func overrideAssets(with session: NINChatSessionInternalDelegate?) {
         self.theButton.titleLabel?.font = .ninchat
+        self.round(borderWidth: 1.0, borderColor: .defaultBackgroundButton)
+        self.backgroundColor = .white
+
         if let overrideImage = session?.override(imageAsset: .chatCloseButton) {
             /// Overriding (setting) the button background image; no border.
             self.theButton.setBackgroundImage(overrideImage, for: .normal)
+            self.theButton.contentMode = .scaleAspectFill
             self.theButton.backgroundColor = .clear
+            self.theButton.layer.cornerRadius = 0
+            self.theButton.layer.borderWidth = 0
+
             self.backgroundColor = .clear
-            
             self.layer.cornerRadius = 0
             self.layer.borderWidth = 0
         }
@@ -70,21 +76,17 @@ final class CloseButton: UIView, CloseButtonProtocol {
         if let textColor = session?.override(colorAsset: .buttonSecondaryText) {
             self.theButton.setTitleColor(textColor, for: .normal)
             self.closeButtonImageView.tintColor = textColor
-            
             self.layer.borderColor = textColor.cgColor
         }
     }
     
     // MARK: - UIView
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
     }
     
     private func setupView() {
-        self.backgroundColor = .white
-        self.round(borderWidth: 1.0, borderColor: .defaultBackgroundButton)
-        
         self.addSubview(theButton)
         self.theButton
             .fix(top: (0, self), bottom: (0, self))

@@ -131,6 +131,7 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
     private lazy var inputControlsView: ChatInputControlsProtocol = {
         let view: ChatInputControls = ChatInputControls.loadFromNib()
         view.viewModel = viewModel
+        view.session = self.session
         view.sessionManager = self.sessionManager
         view.onSendTapped = { [weak self] text in
             self?.onSendTapped(text)
