@@ -54,6 +54,7 @@ public enum NINSessionExceptions: Error {
     case noActiveUserID
     case invalidRealmConfiguration
     case invalidServerAddress
+    case sessionResumptionFailed
     
     public var localizedDescription: String {
         switch self {
@@ -77,6 +78,8 @@ public enum NINSessionExceptions: Error {
             return "Could not find valid realm id in the site configuration"
         case .invalidServerAddress:
             return "Must have server address"
+        case .sessionResumptionFailed:
+            return "Failed to resume the session by given credentials. Try to initiate a new session instead."
         }
     }
 }

@@ -202,18 +202,35 @@ extension NINChatSession {
     private func openChatSession(credentials: NINSessionCredentials, completion: @escaping NinchatSessionCompletion) throws {
         guard Thread.isMainThread else { throw NINExceptions.mainThread }
         try sessionManager.continueSession(credentials: credentials) { [weak self] newCredential, canResume, error in
-            if newCredential?.sessionID != credentials.sessionID {
-                self?.sessionManager.closeSession(credentials: credentials, completion: nil)
+            self?.removePreviouslyOpenedSession(newCredential: newCredential, oldCredentials: credentials)
+            if !canResume || error != nil {
+                do {
+                    try self?.handleResumptionFailure(completion: completion)
+                } catch { completion(nil, error) }
+
+                return
             }
 
-            if (error != nil || !canResume) && (self?.internalDelegate?.onResumeFailed() ?? false) {
-                try? self?.openChatSession(completion: completion); return
-            }
-
+            /// All good, return to the app
             self?.started = true
             self?.resumed = canResume
             /// Keep userID and userAuth and just update sessionID
             completion(NINSessionCredentials(userID: credentials.userID, userAuth: credentials.userAuth, sessionID: newCredential?.sessionID), error)
+        }
+    }
+
+    private func removePreviouslyOpenedSession(newCredential: NINSessionCredentials?, oldCredentials: NINSessionCredentials) {
+        guard newCredential?.sessionID != oldCredentials.sessionID else { return }
+        self.sessionManager.closeSession(credentials: oldCredentials, completion: nil)
+    }
+
+    private func handleResumptionFailure(completion: @escaping NinchatSessionCompletion) throws {
+        if self.internalDelegate?.onResumeFailed() ?? false {
+            /// Automatically start a new session
+            try self.openChatSession(completion: completion)
+        } else {
+            /// Return an exception if session resumption failed and the app doesn't want to start a new session automatically
+            throw NINSessionExceptions.sessionResumptionFailed
         }
     }
 }
