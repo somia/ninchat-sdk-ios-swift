@@ -184,9 +184,15 @@ extension NINChatSessionManagerImpl {
         /// Wait for the session creation event
         self.onActionSessionEvent = { credentials, event, error in
             if event == .sessionCreated {
-                completion(credentials, self.currentChannelID != nil, error)
+                if self.currentChannelID != nil {
+                    completion(credentials, .toChannel, error); return
+                }
+                if let queueID = self.currentQueueID {
+                    completion(credentials, .toQueue(self.queues.first(where: { $0.queueID == queueID })), error); return
+                }
+                completion(credentials, nil, error)
             } else if event == .error {
-                completion(nil, false, error)
+                completion(nil, nil, error)
             }
         }
 

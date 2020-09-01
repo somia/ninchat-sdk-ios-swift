@@ -8,14 +8,20 @@ import Foundation
 import NinchatLowLevelClient
 
 typealias CompletionWithError = (Error?) -> Void
-typealias CompletionWithCredentials = (NINSessionCredentials?, _ willResume: Bool, Error?) -> Void
+typealias CompletionWithCredentials = (NINSessionCredentials?, _ resume: ResumeMode?, Error?) -> Void
 typealias Completion = () -> Void
 
-/* Available ratings and assigned status codes for finishing the chat from our end */
+/** Available ratings and assigned status codes for finishing the chat from our end */
 enum ChatStatus: Int {
     case happy = 1
     case neutral = 0
     case sad = -1
+}
+
+/** Indicate if the session is resumed to the queue or to the channel */
+enum ResumeMode {
+    case toQueue(Queue?)
+    case toChannel
 }
 
 protocol NINChatSessionConnectionManager: class {

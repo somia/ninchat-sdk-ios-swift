@@ -63,35 +63,31 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                     debugger.error(param.error as? NinchatError)
                     self.onActionSessionEvent?(nil, eventType, param.error)
                 case .sessionCreated:
-                    let credentials = try? NINSessionCredentials(params: param)
-                    self.myUserID = credentials?.userID
-                    self.delegate?.log(value: "Session created - my user ID is: \(String(describing: self.myUserID))")
+                    let credentials = try NINSessionCredentials(params: param)
+                    self.myUserID = credentials.userID
+                    self.delegate?.log(value: "Session created - my user ID is: \(String(describing: credentials.userID))")
 
-                    /// Checks if the session is alive to resume
-                    ///     is alive:
-                    ///         1. update channel members (name, avatar, message threads, etc)
-                    ///         2. describe channel's realm id (to get queues)
-                    ///     is not alive
-                    ///         1. notify to continue normal process.
-                    if self.canResumeSession(param: param) {
-                        try self.describe(channel: self.currentChannelID!) { [weak self] error in
-                            guard error == nil else { debugger("Error in describing the channel"); return }
-                            guard let realmID = self?.realmID else { debugger("Error in getting current Realm ID"); return }
-                            guard let audienceQueues = self?.siteConfiguration.audienceQueues else { debugger("Error in getting audience queues"); return }
-
-                            try? self?.describe(realm: realmID, queuesID: audienceQueues) { error in
-                                guard error == nil else {
-                                    debugger("Error in describing the realm")
-                                    self?.onActionSessionEvent?(credentials, Events.error, error)
-                                    return
-                                }
-                                guard let channelID = self?.currentChannelID else { debugger("Error in getting current channel id"); return }
-
-                                self?.didJoinChannel(channelID: channelID)
-                                self?.onActionSessionEvent?(credentials, eventType, nil)
-                            }
+                    /// Check if the user is waiting in a queue - `https://github.com/somia/mobile/issues/266`
+                    ///     1. describe the queue which user is waiting in
+                    if self.userWaitingInQueue(param: param) {
+                        try self.describe(realm: self.realmID!, queuesID: [self.currentQueueID!]) { [weak self] error in
+                            self?.onActionSessionEvent?(credentials, eventType, error)
                         }
-                    } else {
+                    }
+                    /// If not in a queue, check if the session is alive to resume
+                    ///     1. update channel members (name, avatar, message threads, etc)
+                    ///     2. describe channel's realm id (to get queues)
+                    else if self.canResumeSession(param: param) {
+                        try self.describe(channel: self.currentChannelID!) { [weak self] error in
+                            guard error == nil else { self?.onActionSessionEvent?(credentials, eventType, error); return }
+                            guard let channelID = self?.currentChannelID else { debugger("Error in getting current channel id"); return }
+
+                            self?.didJoinChannel(channelID: channelID)
+                            self?.onActionSessionEvent?(credentials, eventType, nil)
+                        }
+                    }
+                    /// Otherwise, continue to initiate a new session
+                    else {
                         self.onActionSessionEvent?(credentials, eventType, nil)
                     }
                 case .userDeleted:
@@ -104,7 +100,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
             debugger("Error occurred: \(error)")
         }
     }
-    
+
     func onEvent(param: NINLowLevelClientProps, payload: NINLowLevelClientPayload, lastReplay: Bool) {
         do {
             if case let .failure(error) = param.event { throw error }
