@@ -34,15 +34,15 @@ class CoordinatorTests: XCTestCase {
     }
 
     func testStartNINChatSessionViewController() {
-        let joinOptions = coordinator.start(with: nil, resumeSession: false, within: navigationController)
+        let joinOptions = coordinator.start(with: nil, resume: nil, within: navigationController)
         XCTAssertNotNil(coordinator.navigationController)
         XCTAssertNotNil(joinOptions as? NINInitialViewController)
         
-        let initialChat = coordinator.start(with: "default", resumeSession: false, within: navigationController)
+        let initialChat = coordinator.start(with: "default", resume: nil, within: navigationController)
         XCTAssertNotNil(coordinator.navigationController)
         XCTAssertNil(initialChat as? NINQueueViewController, "The result is nil since there is not any audience queue from the server")
 
-        let chatView = coordinator.start(with: nil, resumeSession: true, within: navigationController)
+        let chatView = coordinator.start(with: nil, resume: .toChannel, within: navigationController)
         XCTAssertNotNil(coordinator.navigationController)
         XCTAssertNotNil(chatView as? NINQueueViewController)
     }
