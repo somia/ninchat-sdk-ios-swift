@@ -23,17 +23,22 @@ protocol ChannelMediaCell {
 
 extension ChannelMediaCell where Self:ChatChannelCell {
     func populateText(message: TextMessage, attachment: FileInfo?) {
+        /// early return to avoid rendering performance issues.
+        guard attachment?.fileExpired ?? false else {
+            try? self.updateAttachment(asynchronous: self.messageImageView.height == nil, fromCache: true); return
+        }
+
         attachment?.updateInfo(session: self.session) { [weak self] error, didRefreshNetwork in
             guard error == nil else { return }
             do {
-                try self?.updateAttachment(asynchronous: didRefreshNetwork || self?.messageImageView.height == nil)
+                try self?.updateAttachment(asynchronous: didRefreshNetwork || self?.messageImageView.height == nil, fromCache: false)
             } catch {
                 debugger("Error in updating attachment info: \(error)")
             }
         }
     }
     
-    func updateAttachment(asynchronous: Bool) throws {
+    func updateAttachment(asynchronous: Bool, fromCache: Bool) throws {
         guard let message = self.message as? TextMessage else { throw NINUIExceptions.noMessage }
         guard let attachment = message.attachment else { throw NINUIExceptions.noAttachment }
         guard attachment.isVideo || attachment.isImage else { throw NINUIExceptions.invalidAttachment }
@@ -44,7 +49,7 @@ extension ChannelMediaCell where Self:ChatChannelCell {
         if attachment.isImage, let imageURL = attachment.url {
             self.videoPlayIndicator.isHidden = true
             self.messageImageView.contentMode = .scaleAspectFit
-            self.updateImage(from: attachment, imageURL: imageURL, asynchronous, message.series)
+            self.updateImage(from: attachment, imageURL: imageURL, fromCache, asynchronous, message.series)
         } else if attachment.isVideo, let videoURL = attachment.url {
             self.videoPlayIndicator.isHidden = false
             self.messageImageView.contentMode = .scaleAspectFill
@@ -65,7 +70,10 @@ extension ChannelMediaCell where Self:ChatChannelCell {
     
     /// asynchronous = YES implies we're calling this asynchronously from the
     /// `updateInfo(session:completion:)` completion block (meaning it did a network update)
-    private func updateImage(from attachment: FileInfo, imageURL: String, _ asynchronous: Bool, _ isSeries: Bool) {
+    private func updateImage(from attachment: FileInfo, imageURL: String, _ fromCache: Bool, _ asynchronous: Bool, _ isSeries: Bool) {
+        if fromCache, let id = self.message?.messageID, let image = self.cachedImage?[id] {
+            self.messageImageView.image = image; return
+        }
         self.updateMessageImageView(attachment: attachment, imageURL: imageURL, image: nil, asynchronous: asynchronous, isSeries: isSeries)
     }
 
@@ -160,8 +168,8 @@ final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell, Cha
 
     // MARK: - ChannelMediaCellDelegate
     func didLoadAttachment(_ image: UIImage?) {
-        if let image = image, self.cachedImage == nil {
-            self.cachedImage?[self.message?.messageID ?? ""] = image
+        if let image = image, let id = self.message?.messageID {
+            self.cachedImage?[id] = image
         }
     }
 }
@@ -211,8 +219,8 @@ final class ChatChannelMediaOthersCell: ChatChannelOthersCell, ChannelMediaCell,
 
     // MARK: - ChannelMediaCellDelegate
     func didLoadAttachment(_ image: UIImage?) {
-        if let image = image, self.cachedImage == nil {
-            self.cachedImage?[self.message?.messageID ?? ""] = image
+        if let image = image, let id = self.message?.messageID {
+            self.cachedImage?[id] = image
         }
     }
 }
