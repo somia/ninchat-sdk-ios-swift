@@ -11,7 +11,7 @@ import WebRTC
 
 protocol Coordinator: class {
     init(with session: NINChatSession)
-    func start(with queue: String?, resumeSession: Bool, within navigation: UINavigationController?) -> UIViewController?
+    func start(with queue: String?, resume: ResumeMode?, within navigation: UINavigationController?) -> UIViewController?
     func deallocate()
 }
 
@@ -175,10 +175,10 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         self.prepareNINQuestionnaireViewModel()
     }
     
-    func start(with queue: String?, resumeSession: Bool, within navigation: UINavigationController?) -> UIViewController? {
+    func start(with queue: String?, resume: ResumeMode?, within navigation: UINavigationController?) -> UIViewController? {
         let topViewController: UIViewController
-        if resumeSession {
-            topViewController = self.queueViewController(resume: resumeSession)
+        if let resume = resume {
+            topViewController = self.queueViewController(resume: resume, queue: nil)
         } else if let queue = queue, let target = self.sessionManager.queues.filter({ $0.queueID == queue }).first, !hasPreAudienceQuestionnaire {
             topViewController = self.queueViewController(queue: target)
         } else {
@@ -236,17 +236,11 @@ extension NINCoordinator {
         return vc
     }
 
-    internal func queueViewController(resume: Bool) -> NINQueueViewController {
+    internal func queueViewController(resume: ResumeMode? = nil, queue: Queue?) -> NINQueueViewController {
         let vc = self.queueViewController
         vc.resumeMode = resume
-
-        return vc
-    }
-
-    internal func queueViewController(queue: Queue) -> NINQueueViewController {
-        let vc = self.queueViewController
-        vc.resumeMode = false
-        vc.queue = queue
+        if let queue = queue { vc.queue = queue }
+        else if case let .toQueue(target) = resume, let queue = target { vc.queue = queue }
 
         return vc
     }

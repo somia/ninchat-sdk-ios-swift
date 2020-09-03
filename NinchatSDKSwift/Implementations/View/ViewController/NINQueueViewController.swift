@@ -9,10 +9,10 @@ import UIKit
 final class NINQueueViewController: UIViewController {
     
     // MARK: - Injected
-    
+
     var viewModel: NINQueueViewModel!
     var queue: Queue!
-    var resumeMode: Bool!
+    var resumeMode: ResumeMode?
     var onQueueActionTapped: ((Queue?) -> Void)?
     private var queueTransferListener: AnyHashable!
     
@@ -83,7 +83,7 @@ final class NINQueueViewController: UIViewController {
     }
 
     private func setupViewModel() {
-        self.viewModel.resumeMode = self.resumeMode
+        self.viewModel.resumeMode = self.resumeMode != nil
         self.viewModel.onInfoTextUpdate = { [weak self] text in
             DispatchQueue.main.async {
                 self?.queueInfoTextView.setAttributed(text: text ?? "", font: .ninchat)
@@ -94,7 +94,15 @@ final class NINQueueViewController: UIViewController {
             self?.onQueueActionTapped?(self?.sessionManager?.describedQueue)
         }
         /// Directly open chat page if it is a session resumption condition
-        (self.resumeMode) ? self.onQueueActionTapped?(self.sessionManager?.describedQueue) : self.viewModel.connect(queue: self.queue)
+        switch self.resumeMode {
+        case .toQueue(let target):
+            guard let queue = target else { return }
+            self.viewModel.connect(queue: queue)
+        case .toChannel:
+            self.onQueueActionTapped?(self.sessionManager?.describedQueue)
+        default:
+            self.viewModel.connect(queue: self.queue)
+        }
     }
 }
 

@@ -124,6 +124,7 @@ extension NINLowLevelClientProps: NINLowLevelSessionProps {
 protocol NINLowLevelQueueProps {
     var queueName: NINResult<String> { get }
     var realmQueue: NINResult<NINLowLevelClientProps> { get }
+    var userQueues: NINResult<NINLowLevelClientProps> { get }
     var queuePosition: NINResult<Int> { get }
     var queueClosed: NINResult<Bool> { get }
     var queueUpload: NINResult<Bool> { get }
@@ -147,6 +148,10 @@ extension NINLowLevelClientProps: NINLowLevelQueueProps {
 
     var realmQueue: NINResult<NINLowLevelClientProps> {
         get { self.get(forKey: "realm_queues") }
+    }
+
+    var userQueues: NINResult<NINLowLevelClientProps> {
+        get { self.get(forKey: "user_queues") }
     }
 
     var queuePosition: NINResult<Int> {
