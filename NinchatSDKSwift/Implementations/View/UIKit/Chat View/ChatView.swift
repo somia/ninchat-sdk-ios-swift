@@ -189,15 +189,19 @@ extension ChatView {
             weakSelf.delegate?.didSelect(image: image, for: attachment, weakSelf)
         }
         cell.onConstraintsUpdate = { [weak self] in
-            cell.isReloading = true
-            UIView.animate(withDuration: TimeConstants.kAnimationDuration.rawValue, animations: {
-                guard self?.tableView.numberOfRows(inSection: 0) == self?.dataSource?.numberOfMessages(for: self!) else { return }
+            DispatchQueue.global(qos: .background).async {
+                cell.isReloading = true
+                UIView.animate(withDuration: TimeConstants.kAnimationDuration.rawValue, animations: {
+                    DispatchQueue.main.async {
+                        guard self?.tableView.numberOfRows(inSection: 0) == self?.dataSource?.numberOfMessages(for: self!) else { return }
 
-                self?.tableView.beginUpdates()
-                self?.tableView.endUpdates()
-            }, completion: { finished in
-                cell.isReloading = !finished
-            })
+                        self?.tableView.beginUpdates()
+                        self?.tableView.endUpdates()
+                    }
+                }, completion: { finished in
+                    cell.isReloading = !finished
+                })
+            }
         }
         
         cell.populateChannel(message: message, configuration: self.sessionManager?.siteConfiguration, imageAssets: self.imageAssets, colorAssets: self.colorAssets, agentAvatarConfig: self.agentAvatarConfig, userAvatarConfig: self.userAvatarConfig, composeState: self.composeMessageStates?[message.messageID])
