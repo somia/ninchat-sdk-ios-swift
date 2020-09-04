@@ -72,15 +72,32 @@ extension ChannelMediaCell where Self:ChatChannelCell {
     /// `updateInfo(session:completion:)` completion block (meaning it did a network update)
     private func updateImage(from attachment: FileInfo, imageURL: String, _ fromCache: Bool, _ asynchronous: Bool, _ isSeries: Bool) {
         if fromCache, let id = self.message?.messageID, let image = self.cachedImage?[id] {
-            self.messageImageView.image = image; return
+            self.updateMessageImageView(attachment: attachment, imageURL: nil, image: image, asynchronous: asynchronous, isSeries: isSeries); return
         }
         self.updateMessageImageView(attachment: attachment, imageURL: imageURL, image: nil, asynchronous: asynchronous, isSeries: isSeries)
     }
 
     private func updateMessageImageView(attachment: FileInfo, imageURL: String?, image: UIImage?, asynchronous: Bool, isSeries: Bool) {
+        func updateView() {
+            if self.set(aspect: attachment.aspectRatio, isSeries) {
+                guard !self.isReloading && asynchronous else { return }
+                /// Inform the chat view that our cell might need resizing due to new constraints.
+                /// We do this regardless of fromCache -value as this method may have been called asynchronously
+                /// from `updateInfo(session:completion:)` completion block in populate method.
+                self.onConstraintsUpdate?()
+            }
+        }
+
         DispatchQueue.main.async {
-            if let id = self.message?.messageID, let image = self.cachedImage?[id] {
+            if let image = image {
                 self.messageImageView.image = image
+                (self as? ChannelMediaCellDelegate)?.didLoadAttachment(image)
+                updateView()
+            }
+            /// Load the image from cache first
+            else if let id = self.message?.messageID, let image = self.cachedImage?[id] {
+                self.messageImageView.image = image
+                updateView()
             }
             /// Load the image in message image view over HTTP or from local cache
             else if let imageURL = imageURL {
@@ -89,36 +106,26 @@ extension ChannelMediaCell where Self:ChatChannelCell {
                     if self?.message?.messageID != message?.messageID { debugger("** ** Dismiss unrelated attachment"); return }
                     self?.messageImageView.image = UIImage(data: data)
                     (self as? ChannelMediaCellDelegate)?.didLoadAttachment(UIImage(data: data))
+                    updateView()
                 }
-            } else if let image = image {
-                self.messageImageView.image = image
-                (self as? ChannelMediaCellDelegate)?.didLoadAttachment(image)
             }
-            self.set(aspect: CGFloat(attachment.aspectRatio ?? 1), isSeries)
-
-            guard !self.isReloading && asynchronous else { return }
-            /// Inform the chat view that our cell might need resizing due to new constraints.
-            /// We do this regardless of fromCache -value as this method may have been called asynchronously
-            /// from `updateInfo(session:completion:)` completion block in populate method.
-            self.onConstraintsUpdate?()
         }
     }
     
-    private func set(aspect ratio: CGFloat, _ isSeries: Bool, update: Bool = false) {
+    private func set(aspect ratio: Double?, _ isSeries: Bool, update: Bool = false) -> Bool {
         /// Return if the constraints are currently set
-        if let _ = self.messageImageViewContainer.width { return }
-        
+        guard self.messageImageViewContainer.width == nil, let ratio = ratio else { return false }
+
         let width: CGFloat = (min(self.contentView.bounds.width, 400) / 3) * 2
-        self.messageImageViewContainer.fix(width: width, height: width * (1/ratio))
+        self.messageImageViewContainer.fix(width: width, height: width * (ratio < 0 ? 1.0 : 1/CGFloat(ratio)))
         self.messageImageViewContainer.height?.priority = .defaultHigh
         self.messageImageViewContainer.width?.priority = .defaultHigh
         self.messageImageViewContainer.top?.constant = (isSeries) ? 16 : 8
-
-        self.setNeedsLayout()
-        self.layoutIfNeeded()
+        return true
     }
     
     private func resetImageLayout() {
+        self.messageImageView.image = nil
         self.messageImageViewContainer.gestureRecognizers?.forEach { self.messageImageViewContainer.removeGestureRecognizer($0) }
     }
 }
