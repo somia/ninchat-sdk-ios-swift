@@ -67,6 +67,8 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
     @IBOutlet private(set) weak var textInput: UITextView! {
         didSet {
             textInput.delegate = self
+            textInput.autocapitalizationType = .none
+            textInput.autocorrectionType = .no
         }
     }
     @IBOutlet private(set) weak var attachmentButton: UIButton!
