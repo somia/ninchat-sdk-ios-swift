@@ -192,9 +192,7 @@ extension ChatView {
             cell.isReloading = true
             UIView.animate(withDuration: TimeConstants.kAnimationDuration.rawValue, animations: {
                 guard self?.tableView.numberOfRows(inSection: 0) == self?.dataSource?.numberOfMessages(for: self!) else { return }
-
-                self?.tableView.beginUpdates()
-                self?.tableView.endUpdates()
+                self?.tableView.reloadRows(at: [indexPath], with: .automatic)
             }, completion: { finished in
                 cell.isReloading = !finished
             })

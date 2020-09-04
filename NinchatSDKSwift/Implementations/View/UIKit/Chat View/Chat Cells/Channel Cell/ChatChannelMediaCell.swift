@@ -114,10 +114,11 @@ extension ChannelMediaCell where Self:ChatChannelCell {
     
     private func set(aspect ratio: Double?, _ isSeries: Bool, update: Bool = false) -> Bool {
         /// Return if the constraints are currently set
-        guard self.messageImageViewContainer.width == nil, let ratio = ratio else { return false }
+        guard self.messageImageViewContainer.width == nil/*, let ratio = ratio, self.contentView.bounds.width > 0*/ else { return false }
 
         let width: CGFloat = (min(self.contentView.bounds.width, 400) / 3) * 2
-        self.messageImageViewContainer.fix(width: width, height: width * (ratio < 0 ? 1.0 : 1/CGFloat(ratio)))
+        /// Disable aspect ratio to find a solution to avoid constraints reuse `https://github.com/somia/mobile/issues/271`
+        self.messageImageViewContainer.fix(width: width, height: width * 0.5/*/CGFloat(ratio)*/)
         self.messageImageViewContainer.height?.priority = .defaultHigh
         self.messageImageViewContainer.width?.priority = .defaultHigh
         self.messageImageViewContainer.top?.constant = (isSeries) ? 16 : 8
