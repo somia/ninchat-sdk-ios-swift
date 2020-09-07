@@ -465,6 +465,30 @@ extension NINChatSessionManagerImpl {
             return false
         }
     }
+
+    /** Determines if the user is waiting to join a queue. */
+    internal func userWaitingInQueue(param: NINLowLevelQueueProps) -> Bool {
+        if case .failure = param.userQueues { return false }
+        let userQueues = param.userQueues.value
+        do {
+            let parser = NINChatClientPropsParser()
+            try userQueues.accept(parser)
+            parser.properties.keys.forEach {
+                let queue: NINResult<NINLowLevelClientProps> = userQueues.get(forKey: $0)
+                if case .failure = queue { return }
+
+                /// Check position in the queue
+                if case .failure = queue.value.queuePosition { return }
+                if queue.value.queuePosition.value > 0 {
+                    self.currentQueueID = $0
+                }
+            }
+
+            return self.currentQueueID != nil && self.realmID != nil
+        } catch {
+            return false
+        }
+    }
 }
 
 // MARK: - Private helper functions - handlers

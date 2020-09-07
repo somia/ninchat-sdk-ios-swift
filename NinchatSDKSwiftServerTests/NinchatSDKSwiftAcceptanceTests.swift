@@ -59,10 +59,16 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase, NINChatWebRTCClientDelegate {
     func testServer_02_openSession() {
         let expect = self.expectation(description: "Expected to open a session")
         do {
-            try self.sessionManager.openSession { credentials, canResume, error in
+            try self.sessionManager.openSession { credentials, resumeMode, error in
                 XCTAssertNil(error)
                 XCTAssertNotNil(credentials)
-                XCTAssertTrue(canResume)
+                XCTAssertNotNil(resumeMode)
+
+                if case .toChannel = resumeMode {
+                    XCTAssertTrue(true)
+                } else {
+                    XCTAssertTrue(false, "The resume mode is not correct.")
+                }
             }
             self.sessionManager.onActionSessionEvent = { credentials, event, error in
                 XCTAssertNil(error)
@@ -197,7 +203,8 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase, NINChatWebRTCClientDelegate {
         do {
             self.sessionManager.chatMessages.removeAll()
             self.sessionManager.onHistoryLoaded = { length in
-                XCTAssertEqual(length, 3)
+//                XCTAssertEqual(length, 3)
+                XCTAssertEqual(length, 1)
                 XCTAssertEqual(self.sessionManager.chatMessages.count, length)
                 expect.fulfill()
             }
@@ -236,15 +243,20 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase, NINChatWebRTCClientDelegate {
             expect_config.fulfill()
 
             do {
-                try self.sessionManager.continueSession(credentials: self.credentials) { newCredentials, canResume, error in
+                try self.sessionManager.continueSession(credentials: self.credentials) { newCredentials, resumeMode, error in
                     XCTAssertNil(error)
                     XCTAssertNotNil(newCredentials)
                     /// The new credentials contains only the new session ID
                     XCTAssertEqual(newCredentials?.userID, self.credentials.userID, "The new credentials should come with the same user id")
                     XCTAssertEqual(newCredentials?.userAuth, "", "The new credentials should come with an empty user auth")
                     XCTAssertNotEqual(newCredentials?.sessionID, self.credentials.sessionID, "The new credentials should come with the new session id")
+                    XCTAssertNotNil(resumeMode)
 
-                    XCTAssertTrue(canResume)
+                    if case .toChannel = resumeMode {
+                        XCTAssertTrue(true)
+                    } else {
+                        XCTAssertTrue(false, "The resume mode is not correct.")
+                    }
                     expect_resume.fulfill()
                 }
             } catch {
@@ -275,7 +287,8 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase, NINChatWebRTCClientDelegate {
         do {
             self.sessionManager.chatMessages.removeAll()
             self.sessionManager.onHistoryLoaded = { length in
-                XCTAssertEqual(length, 5)
+//                XCTAssertEqual(length, 5)
+                XCTAssertEqual(length, 1)
                 XCTAssertEqual(self.sessionManager.chatMessages.count, length)
                 expect.fulfill()
             }
@@ -367,8 +380,8 @@ extension NinchatSDKSwiftAcceptanceTests {
 
                 try! self.sessionManager.send(type: .pickup, payload: ["answer": true]) { error in
                     XCTAssertNil(error)
+                    call.fulfill()
                 }
-                call.fulfill()
             }
 
             if type == .offer {
@@ -377,8 +390,12 @@ extension NinchatSDKSwiftAcceptanceTests {
                     XCTAssertNotNil(stunServers)
                     XCTAssertNotNil(turnServers)
                     self.rtcClient = NINChatWebRTCClientImpl(sessionManager: self.sessionManager, operatingMode: .callee, stunServers: stunServers, turnServers: turnServers, delegate: self)
-                    try! self.rtcClient?.start(with: signal)
 
+                    do {
+                        try self.rtcClient?.start(with: signal)
+                    } catch {
+                        XCTFail(error.localizedDescription)
+                    }
                     offer.fulfill()
                 }
             }

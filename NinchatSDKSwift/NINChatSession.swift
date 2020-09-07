@@ -51,7 +51,7 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
     private var queueID: String?
     private var environments: [String]?
     private var started: Bool! = false
-    private var resumed: Bool! = false
+    private var resumeMode: ResumeMode?
     private var sessionAlive: Bool! = false
     private var defaultServerAddress: String {
         #if NIN_USE_TEST_SERVER
@@ -140,7 +140,7 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
 
         self.sessionAlive = true
         if self.coordinator == nil { self.coordinator = NINCoordinator(with: self) }
-        return coordinator?.start(with: self.queueID ?? self.sessionManager.siteConfiguration.audienceAutoQueue, resumeSession: self.resumed, within: navigationController)
+        return coordinator?.start(with: self.queueID ?? self.sessionManager.siteConfiguration.audienceAutoQueue, resume: self.resumeMode, within: navigationController)
     }
 
     public func deallocate() {
@@ -165,6 +165,18 @@ extension NINChatSession {
             completion(error)
         }
     }
+
+    private func listAllQueues(credentials: NINSessionCredentials?, resumeMode: ResumeMode?, completion: @escaping NinchatSessionCompletion) throws {
+        guard Thread.isMainThread else { throw NINExceptions.mainThread }
+        var allQueues = sessionManager.siteConfiguration.audienceQueues ?? []
+        if let queue = queueID { allQueues.append(queue) }
+
+        try sessionManager.list(queues: allQueues) { [weak self] error in
+            self?.started = (error == nil)
+            self?.resumeMode = resumeMode
+            completion(credentials, error)
+        }
+    }
 }
 
 /// Fresh Session helpers
@@ -177,22 +189,10 @@ extension NINChatSession {
             do {
                 /// Find our realm's queues
                 /// Potentially passing a nil queueIds here is intended
-                try self?.listAllQueues(credentials: credentials, completion: completion)
+                try self?.listAllQueues(credentials: credentials, resumeMode: nil, completion: completion)
             } catch {
                 completion(nil, error)
             }
-        }
-    }
-
-    private func listAllQueues(credentials: NINSessionCredentials?, completion: @escaping NinchatSessionCompletion) throws {
-        guard Thread.isMainThread else { throw NINExceptions.mainThread }
-        var allQueues = sessionManager.siteConfiguration.audienceQueues ?? []
-        if let queue = queueID { allQueues.append(queue) }
-        
-        try sessionManager.list(queues: allQueues) { [weak self] error in
-            self?.started = (error == nil)
-            self?.resumed = false
-            completion(credentials, error)
         }
     }
 }
@@ -201,19 +201,33 @@ extension NINChatSession {
 extension NINChatSession {
     private func openChatSession(credentials: NINSessionCredentials, completion: @escaping NinchatSessionCompletion) throws {
         guard Thread.isMainThread else { throw NINExceptions.mainThread }
-        try sessionManager.continueSession(credentials: credentials) { [weak self] newCredential, canResume, error in
-            if newCredential?.sessionID != credentials.sessionID {
-                self?.sessionManager.closeSession(credentials: credentials, completion: nil)
-            }
+        try sessionManager.continueSession(credentials: credentials) { [weak self] newCredential, resumeMode, error in
+            self?.removePreviouslyOpenedSession(newCredential: newCredential, oldCredentials: credentials)
+            if resumeMode == nil || error != nil {
+                do { try self?.handleResumptionFailure(completion: completion) }
+                catch { completion(nil, error) }
 
-            if (error != nil || !canResume) && (self?.internalDelegate?.onResumeFailed() ?? false) {
-                try? self?.openChatSession(completion: completion); return
+                return
             }
 
             self?.started = true
-            self?.resumed = canResume
-            /// Keep userID and userAuth and just update sessionID
+            self?.resumeMode = resumeMode
             completion(NINSessionCredentials(userID: credentials.userID, userAuth: credentials.userAuth, sessionID: newCredential?.sessionID), error)
+        }
+    }
+
+    private func removePreviouslyOpenedSession(newCredential: NINSessionCredentials?, oldCredentials: NINSessionCredentials) {
+        guard newCredential?.sessionID != oldCredentials.sessionID else { return }
+        self.sessionManager.closeSession(credentials: oldCredentials, completion: nil)
+    }
+
+    private func handleResumptionFailure(completion: @escaping NinchatSessionCompletion) throws {
+        if self.internalDelegate?.onResumeFailed() ?? false {
+            /// Automatically start a new session
+            try self.openChatSession(completion: completion)
+        } else {
+            /// Return an exception if session resumption failed and the app doesn't want to start a new session automatically
+            throw NINSessionExceptions.sessionResumptionFailed
         }
     }
 }

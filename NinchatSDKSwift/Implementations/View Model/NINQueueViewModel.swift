@@ -13,6 +13,7 @@ protocol NINQueueViewModel {
 
     init(sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?)
     func connect(queue: Queue)
+    func queueTextInfo(queue: Queue?, _ progress: Int) -> String?
 }
 
 final class NINQueueViewModelImpl: NINQueueViewModel {
@@ -61,12 +62,8 @@ final class NINQueueViewModelImpl: NINQueueViewModel {
         self.onInfoTextUpdate = nil
         self.onQueueJoin = nil
     }
-}
 
-// MARK: - Private helpers
-
-extension NINQueueViewModelImpl {
-    private func queueTextInfo(queue: Queue?, _ progress: Int) -> String? {
+    func queueTextInfo(queue: Queue?, _ progress: Int) -> String? {
         guard let queue = queue else { return "" }
 
         switch progress {

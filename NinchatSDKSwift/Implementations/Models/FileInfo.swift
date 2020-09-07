@@ -43,12 +43,16 @@ final class FileInfo: Codable {
     var isPDF: Bool {
         self.mimeType == "application/pdf"
     }
-    
+
+    var fileExpired: Bool {
+        self.url == nil || self.urlExpiry == nil || self.urlExpiry?.compare(Date(timeIntervalSinceNow: -(15*60))) == .orderedAscending
+    }
+
     // MARK: - Functions
     
     func updateInfo(session: NINChatSessionAttachment?, completion: @escaping (Error?, _ didRefreshNetwork: Bool) -> Void) {
         /// The URL must not expire within the next 15 minutes
-        guard self.url == nil || self.urlExpiry == nil || self.urlExpiry?.compare(Date(timeIntervalSinceNow: -(15*60))) == .orderedAscending else {
+        guard fileExpired else {
             debugger("No need to update file, it is up to date. \(self.name ?? "")")
             completion(nil, false)
             return
