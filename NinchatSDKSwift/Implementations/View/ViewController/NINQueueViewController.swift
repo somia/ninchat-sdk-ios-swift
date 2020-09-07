@@ -66,6 +66,7 @@ final class NINQueueViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.setupClosedQueue()
         self.setupViewModel()
         self.overrideAssets()
 
@@ -103,6 +104,14 @@ final class NINQueueViewController: UIViewController {
             self.viewModel.connect(queue: self.queue)
             self.updateQueueInfo(text: self.viewModel.queueTextInfo(queue: queue, 1))
         }
+    }
+
+    private func setupClosedQueue() {
+        /// `If customer resumes to a session and is already in queue, then show queueing view even if queue is closed`
+        guard queue.isClosed && self.resumeMode == nil else { return }
+
+        self.spinnerImageView.isHidden = true
+        self.queueInfoTextView.setAttributed(text: self.session?.sessionManager.siteConfiguration.noQueueText ?? "", font: .ninchat)
     }
 }
 
