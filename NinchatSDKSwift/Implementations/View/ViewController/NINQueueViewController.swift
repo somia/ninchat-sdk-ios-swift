@@ -66,6 +66,7 @@ final class NINQueueViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.setupClosedQueue()
         self.setupViewModel()
         self.overrideAssets()
 
@@ -85,9 +86,7 @@ final class NINQueueViewController: UIViewController {
     private func setupViewModel() {
         self.viewModel.resumeMode = self.resumeMode != nil
         self.viewModel.onInfoTextUpdate = { [weak self] text in
-            DispatchQueue.main.async {
-                self?.queueInfoTextView.setAttributed(text: text ?? "", font: .ninchat)
-            }
+            self?.updateQueueInfo(text: text)
         }
         self.viewModel.onQueueJoin = { [weak self] error in
             guard error == nil else { return }
@@ -98,11 +97,21 @@ final class NINQueueViewController: UIViewController {
         case .toQueue(let target):
             guard let queue = target else { return }
             self.viewModel.connect(queue: queue)
+            self.updateQueueInfo(text: self.viewModel.queueTextInfo(queue: queue, 1))
         case .toChannel:
             self.onQueueActionTapped?(self.sessionManager?.describedQueue)
         default:
             self.viewModel.connect(queue: self.queue)
+            self.updateQueueInfo(text: self.viewModel.queueTextInfo(queue: queue, 1))
         }
+    }
+
+    private func setupClosedQueue() {
+        /// `If customer resumes to a session and is already in queue, then show queueing view even if queue is closed`
+        guard queue.isClosed && self.resumeMode == nil else { return }
+
+        self.spinnerImageView.isHidden = true
+        self.queueInfoTextView.setAttributed(text: self.session?.sessionManager.siteConfiguration.noQueueText ?? "", font: .ninchat)
     }
 }
 
@@ -121,6 +130,12 @@ extension NINQueueViewController {
         spinnerImageView.layer.add(animation, forKey: "SpinAnimation")
     }
     
+    private func updateQueueInfo(text: String?) {
+        DispatchQueue.main.async {
+            self.queueInfoTextView.setAttributed(text: text ?? "", font: .ninchat)
+        }
+    }
+
     private func overrideAssets() {
         
         closeChatButton.overrideAssets(with: self.session?.internalDelegate)
