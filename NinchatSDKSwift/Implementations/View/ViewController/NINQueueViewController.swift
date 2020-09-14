@@ -108,7 +108,7 @@ final class NINQueueViewController: UIViewController {
 
     private func setupClosedQueue() {
         /// `If customer resumes to a session and is already in queue, then show queueing view even if queue is closed`
-        guard queue.isClosed && self.resumeMode == nil else { return }
+        guard let queue = queue, queue.isClosed && self.resumeMode == nil else { return }
 
         self.spinnerImageView.isHidden = true
         self.queueInfoTextView.setAttributed(text: self.session?.sessionManager.siteConfiguration.noQueueText ?? "", font: .ninchat)
