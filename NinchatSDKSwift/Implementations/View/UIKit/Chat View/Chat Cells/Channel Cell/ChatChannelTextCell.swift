@@ -74,10 +74,8 @@ final class ChatChannelTextOthersCell: ChatChannelOthersCell, ChannelTextCell {
     func populateText(message: TextMessage, attachment: FileInfo?) {
         self.messageTextView.contentInset = (message.series) ? UIEdgeInsets(top: 3.5, left: 0.0, bottom: 0.0, right: 0.0) : .zero
         if attachment?.isPDF ?? false, let url = attachment?.url, let name = attachment?.name {
-            /// This is a truly weird solution for the issue https://github.com/somia/mobile/issues/208
-            /// I have had no idea why we need to replace special characters, but this is the only solution I have found so far
-
-            let text = "<a href=" + url + ">" + name.replacingOccurrences(of: "ä", with: "ä").replacingOccurrences(of: "ö", with: "ö").replacingOccurrences(of: "å", with: "å") + "</a>"
+            /// A related conversation about the issue: `https://github.com/somia/nin/issues/1522`
+            let text = "<a href='\(url)'>\(name.precomposedStringWithCanonicalMapping)</a>"
             self.messageTextView.setAttributed(text: text, font: .ninchat)
         } else if let text = message.content {
             /// remove attributed texts if any

@@ -116,7 +116,7 @@ struct SiteConfigurationImpl: SiteConfiguration {
     // MARK: - PreAudience Questionnaire
     var preAudienceQuestionnaireStyle: QuestionnaireStyle {
         guard let style: String? = self.value(for: "preAudienceQuestionnaireStyle"), style != nil else { return .form }
-        return QuestionnaireStyle(rawValue: style!) ?? .form
+        return QuestionnaireStyle(rawValue: style!.lowercased()) ?? .form
     }
     var preAudienceQuestionnaire: [QuestionnaireConfiguration]? {
         if let questionnaire = self.value(for: "preAudienceQuestionnaire", ofType: Array<[String: AnyHashable]>.self) {
@@ -128,7 +128,7 @@ struct SiteConfigurationImpl: SiteConfiguration {
     // MARK: - PostAudience Questionnaire
     var postAudienceQuestionnaireStyle: QuestionnaireStyle {
         guard let style: String? = self.value(for: "postAudienceQuestionnaireStyle"), style != nil else { return .form }
-        return QuestionnaireStyle(rawValue: style!) ?? .form
+        return QuestionnaireStyle(rawValue: style!.lowercased()) ?? .form
     }
     var postAudienceQuestionnaire: [QuestionnaireConfiguration]? {
         if let questionnaire = self.value(for: "postAudienceQuestionnaire", ofType: Array<[String: AnyHashable]>.self) {
@@ -150,10 +150,11 @@ struct SiteConfigurationImpl: SiteConfiguration {
 
 extension SiteConfigurationImpl {
     private func value<T>(for key: String, ofType type: T.Type = T.self) -> T? {
+        debugger("Loading keys from environments: \(self.environments)")
         guard let configuration = configuration as? [String:Any] else { return nil }
 
-        /// Use given environments first, if any
-        if let value = self.environments.compactMap({ (configuration[$0] as? [String:Any])?[key] }).first as? T {
+        /// Use given environments first, if any. Start the lookup from the end of array
+        if let value = self.environments.reversed().compactMap({ (configuration[$0] as? [String:Any])?[key] }).first as? T {
             return value
         }
 
