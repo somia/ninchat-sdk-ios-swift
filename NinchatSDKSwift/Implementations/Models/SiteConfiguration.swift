@@ -150,10 +150,11 @@ struct SiteConfigurationImpl: SiteConfiguration {
 
 extension SiteConfigurationImpl {
     private func value<T>(for key: String, ofType type: T.Type = T.self) -> T? {
+        debugger("Loading keys from environments: \(self.environments)")
         guard let configuration = configuration as? [String:Any] else { return nil }
 
-        /// Use given environments first, if any
-        if let value = self.environments.compactMap({ (configuration[$0] as? [String:Any])?[key] }).first as? T {
+        /// Use given environments first, if any. Start the lookup from the end of array
+        if let value = self.environments.reversed().compactMap({ (configuration[$0] as? [String:Any])?[key] }).first as? T {
             return value
         }
 
