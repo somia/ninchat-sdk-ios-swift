@@ -9,6 +9,7 @@ import UIKit
 final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireHasBorder, QuestionnaireFocusableElement {
 
     fileprivate var heightValue: CGFloat = 45.0
+    private var answerUpdateWorker: DispatchWorkItem?
 
     // MARK: - QuestionnaireElement
 
@@ -124,6 +125,12 @@ extension QuestionnaireElementTextField: UITextFieldDelegate {
     }
 
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        self.answerUpdateWorker?.cancel()
+        self.answerUpdateWorker = DispatchWorkItem { [weak self] in
+            guard let weakSelf = self else { return }
+            weakSelf.onElementDismissed?(weakSelf)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: self.answerUpdateWorker!)
         self.isCompleted = isCompleted(text: (textField.text ?? "") + string)
         return true
     }
