@@ -202,7 +202,7 @@ These issues are caused by limitations of the [gomobile bind tool](https://godoc
 
 ## Overriding Image Assets
 
-Using the API delegate method `overrideImageAsset(session:forKey:)` you may supply your own Image assets as `UIImage` objects. See the table below for explanations on the supported asset keys.
+Using the API delegate method `ninchat(session:overrideImageAssetForKey)` you may supply your own Image assets as `UIImage` objects. See the table below for explanations on the supported asset keys.
 
 Note that all the buttons may not be available in the UI.
 
@@ -244,7 +244,7 @@ All the assets should be transparent where there is no color.
 
 ## Overriding Color Assets
 
-Using the API delegate method `overrideColorAsset(session:forKey:)` you may supply your own color assets as `UIColor` objects. See the table below for explanations on the supported asset keys.
+Using the API delegate method `ninchat(session:overrideColorAssetForKey)` you may supply your own color assets as `UIColor` objects. See the table below for explanations on the supported asset keys.
 
 | Asset key       | Related UI control(s)
 |:------------- |:-------------|
@@ -270,9 +270,17 @@ Using the API delegate method `overrideColorAsset(session:forKey:)` you may supp
 | .ratingNeutralText | Text of the neutral rating button
 | .ratingNegativeText | Text of the negative rating button
 
-## Overriding Questionnaire Color Assets
+## Questionnaire
+Starting version [0.3.0](https://github.com/somia/ninchat-sdk-ios-swift/releases/tag/0.3.0), the SDK adds support for configurable questionnaire that are shown before the chat starts and after the chat is finished. Using the following APIs, you can customize how questionnaire looks.
 
-Starting version [0.3.0](https://github.com/somia/ninchat-sdk-ios-swift/releases/tag/0.3.0) supports questionnaire feature before the chat starts and after the chat is finished. Using the API delegate method `ninchat(session:overrideQuestionnaireColorAssetKey)` you may supply your own color assets as `UIColor` objects. See the table below for explanations on the supported asset keys.
+### Overriding Questionnaire Image Assets
+To override questionnaire image assets, you can use the same API as other image assets, i.e. `ninchat(session:overrideImageAssetForKey)` with the following keys:
+| Asset key       | Related UI control(s)           | Notes  |
+|:------------- |:-------------|:-----|
+| .questionnaireBackground | Questionnaire view's repeating texture. | Should be repeatable (tiling). |
+
+### Overriding Questionnaire Color Assets
+Using the API delegate method `ninchat(session:overrideQuestionnaireColorAssetKey)` you may supply your own color assets as `UIColor` objects. See the table below for explanations on the supported asset keys.
 
 | Asset key                    | Related UI control(s)                                        |
 |:---------------------------- |:------------------------------------------------------------ |
