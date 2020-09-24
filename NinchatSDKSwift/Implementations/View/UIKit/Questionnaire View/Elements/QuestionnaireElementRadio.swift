@@ -51,7 +51,7 @@ class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Question
         case .set:
             button.closure?(button)
         case .nothing:
-            break
+            debugger("Do nothing for Radio element")
         }
     }
 

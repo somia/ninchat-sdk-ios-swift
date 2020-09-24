@@ -43,13 +43,14 @@ final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle
 
     func updateSetAnswers(_ answer: AnyHashable?, state: QuestionnaireSettableState) {
         guard let answer = answer as? String else { return }
+        self.view.text = answer
+
         switch state {
         case .set:
-            self.view.text = answer
+            self.textFieldDidEndEditing(self.view)
         case .nothing:
-            break
+            debugger("Do nothing for TextField element")
         }
-        self.textFieldDidEndEditing(self.view)
     }
 
     // MARK: - QuestionnaireHasBorder
