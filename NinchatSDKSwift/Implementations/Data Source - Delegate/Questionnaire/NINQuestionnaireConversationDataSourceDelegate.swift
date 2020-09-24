@@ -149,11 +149,11 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         cell.shouldShowNextButton = self.configurations[indexPath.section].buttons?.hasValidNextButton ?? true
         cell.shouldShowBackButton = (self.configurations[indexPath.section].buttons?.hasValidBackButton ?? true) && indexPath.section != 0
         cell.configuration = self.configurations[indexPath.section]
-        cell.requirementsSatisfied = self.requirementsSatisfied
-        cell.disabled = indexPath.section != sectionCount-1
         cell.backgroundColor = .clear
         cell.isUserInteractionEnabled = (self.elements[indexPath.section].first?.isShown ?? true) && (indexPath.section == self.sectionCount-1)
         cell.overrideAssets(with: self.session?.internalDelegate)
+        // Need to check only for the last item if to enable/disable navigation buttons
+        cell.setSatisfaction(self.requirementsSatisfied && indexPath.section == sectionCount-1, lastItem: indexPath.section == sectionCount-1)
 
         cell.onNextButtonTapped = { [weak self] in
             self?.onNextButtonTapped(elements: self?.elements[indexPath.section])

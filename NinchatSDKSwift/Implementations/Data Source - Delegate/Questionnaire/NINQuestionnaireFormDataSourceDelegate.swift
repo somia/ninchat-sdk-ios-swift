@@ -66,8 +66,8 @@ extension NINQuestionnaireFormDataSourceDelegate {
             cell.shouldShowNextButton = configuration.buttons?.hasValidNextButton ?? true
             cell.shouldShowBackButton = (configuration.buttons?.hasValidBackButton ?? true) && self.viewModel.pageNumber != 0
             cell.configuration = configuration
-            cell.requirementsSatisfied = self.viewModel.requirementsSatisfied
             cell.overrideAssets(with: self.session?.internalDelegate)
+            cell.setSatisfaction(self.viewModel.requirementsSatisfied, lastItem: true)
 
             cell.onNextButtonTapped = { [weak self] in
                 do {
