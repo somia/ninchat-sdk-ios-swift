@@ -110,6 +110,7 @@ extension NINQuestionnaireConversationDataSourceDelegate: QuestionnaireConversat
         defer { self.disablePreviousRows(false) }
 
         self.clearCurrentRows()
+        self.clearPreviousRow()
         sectionCount -= 1
         rowCount.remove(at: sectionCount)
         if elements.count > sectionCount { elements.remove(at: sectionCount) }
@@ -128,8 +129,21 @@ extension NINQuestionnaireConversationDataSourceDelegate: QuestionnaireConversat
     }
 
     private func clearCurrentRows() {
-        guard self.elements.count > self.sectionCount else { return }
-        self.elements[sectionCount-1].compactMap({ $0 as? QuestionnaireOptionSelectableElement }).forEach({ $0.deselectAll() })
+        if self.elements.count > self.sectionCount {
+            self.elements[sectionCount-1].forEach({
+                ($0 as? QuestionnaireOptionSelectableElement)?.deselectAll()
+                ($0 as? QuestionnaireFocusableElement)?.clearAll()
+            })
+        }
+    }
+
+    private func clearPreviousRow() {
+        if self.elements.count > self.sectionCount - 1 {
+            self.elements[sectionCount-2].forEach({
+                ($0 as? QuestionnaireOptionSelectableElement)?.deselectAll()
+                ($0 as? QuestionnaireFocusableElement)?.clearAll()
+            })
+        }
     }
 }
 
