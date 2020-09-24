@@ -46,7 +46,6 @@ extension NINQuestionnaireViewModel {
     func logicTargetPage(for dictionary: [String:String], autoApply: Bool = true, performClosures: Bool = true) -> Int? {
         self.logicTargetPage(for: dictionary, autoApply: autoApply, performClosures: performClosures)
     }
-
     func getAnswersForElement(_ element: QuestionnaireElement) -> AnyHashable? {
         self.getAnswersForElement(element, presetOnly: false)
     }

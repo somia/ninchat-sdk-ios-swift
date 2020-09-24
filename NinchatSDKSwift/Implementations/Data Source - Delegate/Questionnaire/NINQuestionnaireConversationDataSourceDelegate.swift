@@ -84,7 +84,6 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
             self.configurations.append(try self.viewModel.getConfiguration())
             self.shouldShowNavigationCells.append(self.shouldShowNavigationCell(at: index.section))
             self.enableCurrentRows()
-            self.clearCurrentRows()
 
             return (index.row == (try self.viewModel.getElements().count)) ? self.navigation(view, cellForRowAt: index) : self.questionnaire(view, cellForRowAt: index)
         } catch {
@@ -109,8 +108,7 @@ extension NINQuestionnaireConversationDataSourceDelegate: QuestionnaireConversat
     func removeSection() -> Int {
         defer { self.disablePreviousRows(false) }
 
-        self.clearCurrentRows()
-        self.clearPreviousRow()
+        self.clearCurrentAndPreviousRows()
         sectionCount -= 1
         rowCount.remove(at: sectionCount)
         if elements.count > sectionCount { elements.remove(at: sectionCount) }
@@ -128,17 +126,14 @@ extension NINQuestionnaireConversationDataSourceDelegate: QuestionnaireConversat
         self.elements[sectionCount-1].forEach({ $0.isShown = true;  $0.alpha = 1.0 })
     }
 
-    private func clearCurrentRows() {
-        if self.elements.count > self.sectionCount {
+    private func clearCurrentAndPreviousRows() {
+        if self.elements.count > self.sectionCount - 1 {
             self.elements[sectionCount-1].forEach({
                 ($0 as? QuestionnaireOptionSelectableElement)?.deselectAll()
                 ($0 as? QuestionnaireFocusableElement)?.clearAll()
             })
         }
-    }
-
-    private func clearPreviousRow() {
-        if self.elements.count > self.sectionCount - 1 {
+        if self.elements.count > self.sectionCount - 2 {
             self.elements[sectionCount-2].forEach({
                 ($0 as? QuestionnaireOptionSelectableElement)?.deselectAll()
                 ($0 as? QuestionnaireFocusableElement)?.clearAll()
