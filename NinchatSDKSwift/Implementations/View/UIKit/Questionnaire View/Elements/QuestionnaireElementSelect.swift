@@ -35,7 +35,7 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
     }
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
-        self.title.frame.origin.y + self.title.intrinsicContentSize.height + self.heightValue + 8.0 + self.padding
+        self.title.frame.origin.y + self.title.intrinsicContentSize.height + self.heightValue + self.padding
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
