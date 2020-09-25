@@ -49,8 +49,8 @@ extension QuestionnaireElementWithTitle {
     }
 
     var padding: CGFloat {
-        guard let title = self.title.text else { return 8.0 }
-        return (self.questionnaireStyle == .form || title.isEmpty) ? 8.0 : 20.0
+        guard let title = self.title.text, !title.isEmpty else { return 8.0 }
+        return self.questionnaireStyle == .form ? 32.0 : 40.0
     }
 
     func addElementViews() {
@@ -116,7 +116,20 @@ extension QuestionnaireElementWithTitle {
 protocol QuestionnaireFocusableElement {
     var onElementFocused: ((QuestionnaireElement) -> Void)? { get set }
     var onElementDismissed: ((QuestionnaireElement) -> Void)? { get set }
+
+    func clearAll()
 }
+extension QuestionnaireFocusableElement where Self:QuestionnaireElementTextArea {
+    func clearAll() {
+        self.view.text = ""
+    }
+}
+extension QuestionnaireFocusableElement where Self:QuestionnaireElementTextField {
+    func clearAll() {
+        self.view.text = ""
+    }
+}
+
 
 /// Add select/deselect closure for applicable elements (e.g. radio, checkbox)
 protocol QuestionnaireOptionSelectableElement {

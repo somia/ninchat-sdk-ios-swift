@@ -9,6 +9,7 @@ import UIKit
 final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireHasBorder, QuestionnaireFocusableElement {
 
     fileprivate var heightValue: CGFloat = 98.0
+    private var answerUpdateWorker: DispatchWorkItem?
 
     // MARK: - QuestionnaireElement
 
@@ -31,7 +32,7 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
     }
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
-        self.title.frame.origin.y + self.title.intrinsicContentSize.height + self.heightValue + 8.0 + self.padding
+        self.title.frame.origin.y + self.title.intrinsicContentSize.height + self.heightValue + self.padding
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
@@ -43,13 +44,15 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
 
     func updateSetAnswers(_ answer: AnyHashable?, state: QuestionnaireSettableState) {
         guard let answer = answer as? String else { return }
+        self.view.text = answer
+
         switch state {
         case .set:
-            self.view.text = answer
+            self.textViewDidEndEditing(self.view)
         case .nothing:
-            break
+            debugger("Do nothing for TextArea element")
         }
-        self.textViewDidEndEditing(self.view)
+
     }
 
     // MARK: - QuestionnaireHasBorder
@@ -124,6 +127,12 @@ extension QuestionnaireElementTextArea: UITextViewDelegate {
     }
 
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        self.answerUpdateWorker?.cancel()
+        self.answerUpdateWorker = DispatchWorkItem { [weak self] in
+            guard let weakSelf = self else { return }
+            weakSelf.onElementDismissed?(weakSelf)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: self.answerUpdateWorker!)
         self.isCompleted = isCompleted(text: (textView.text ?? "") + text)
         return true
     }

@@ -153,12 +153,12 @@ extension SiteConfigurationImpl {
         debugger("Loading keys from environments: \(self.environments)")
         guard let configuration = configuration as? [String:Any] else { return nil }
 
-        /// Use given environments first, if any. Start the lookup from the end of array
-        if let value = self.environments.reversed().compactMap({ (configuration[$0] as? [String:Any])?[key] }).first as? T {
-            return value
+        /// Insert "default" to beginning of given environments and start the lookup from the end of array
+        for env in [["default"], self.environments].joined().filter({ configuration[$0] != nil }).reversed() {
+            if let value = (configuration[env] as? [String:Any])?[key] as? T { return value }
         }
 
-        /// Return value from default environment
-        return (configuration["default"] as? [String : Any])?[key] as? T
+        /// No value was found for given key in "default" + environments
+        return nil
     }
 }

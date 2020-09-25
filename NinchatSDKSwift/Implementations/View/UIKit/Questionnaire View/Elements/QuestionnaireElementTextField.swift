@@ -9,6 +9,7 @@ import UIKit
 final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireHasBorder, QuestionnaireFocusableElement {
 
     fileprivate var heightValue: CGFloat = 45.0
+    private var answerUpdateWorker: DispatchWorkItem?
 
     // MARK: - QuestionnaireElement
 
@@ -31,7 +32,7 @@ final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle
     }
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
-        self.title.frame.origin.y + self.title.intrinsicContentSize.height + self.heightValue + 4.0 + self.padding
+        self.title.frame.origin.y + self.title.intrinsicContentSize.height + self.heightValue + self.padding
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
@@ -43,13 +44,14 @@ final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle
 
     func updateSetAnswers(_ answer: AnyHashable?, state: QuestionnaireSettableState) {
         guard let answer = answer as? String else { return }
+        self.view.text = answer
+
         switch state {
         case .set:
-            self.view.text = answer
+            self.textFieldDidEndEditing(self.view)
         case .nothing:
-            break
+            debugger("Do nothing for TextField element")
         }
-        self.textFieldDidEndEditing(self.view)
     }
 
     // MARK: - QuestionnaireHasBorder
@@ -124,6 +126,12 @@ extension QuestionnaireElementTextField: UITextFieldDelegate {
     }
 
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        self.answerUpdateWorker?.cancel()
+        self.answerUpdateWorker = DispatchWorkItem { [weak self] in
+            guard let weakSelf = self else { return }
+            weakSelf.onElementDismissed?(weakSelf)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: self.answerUpdateWorker!)
         self.isCompleted = isCompleted(text: (textField.text ?? "") + string)
         return true
     }

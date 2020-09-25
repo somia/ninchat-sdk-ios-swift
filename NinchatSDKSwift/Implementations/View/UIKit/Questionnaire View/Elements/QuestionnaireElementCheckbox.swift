@@ -50,14 +50,8 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle,
     // MARK: - QuestionnaireSettable
 
     func updateSetAnswers(_ answer: AnyHashable?, state: QuestionnaireSettableState) {
-        guard let answer = answer as? String, let option = self.elementConfiguration?.options?.first(where: { $0.value == answer }) else { return }
-
-        switch state {
-        case .set:
-            self.select(option: option)
-        case .nothing:
-            break
-        }
+        guard let option = self.elementConfiguration?.options?.first(where: { $0.value == answer as? String }) else { return }
+        self.select(option: option)
     }
 
     // MARK: - QuestionnaireOptionSelectableElement

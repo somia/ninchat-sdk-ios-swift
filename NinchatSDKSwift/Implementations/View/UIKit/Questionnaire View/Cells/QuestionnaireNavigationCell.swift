@@ -20,16 +20,6 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
             self.decorateView()
         }
     }
-    var requirementsSatisfied: Bool = false {
-        didSet {
-            self.setSatisfaction(requirementsSatisfied)
-        }
-    }
-    var disabled: Bool = false {
-        didSet {
-            self.setDisableNavigations(disabled)
-        }
-    }
 
     var requirementSatisfactionUpdater: ((Bool) -> Void)?
     var onNextButtonTapped: (() -> Void)?
@@ -65,6 +55,16 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
             }
             backButton.layer.borderColor = delegate?.override(questionnaireAsset: .navigationBackText)?.cgColor ?? UIColor.QBlueButtonNormal.cgColor
             backButton.backgroundColor = delegate?.override(questionnaireAsset: .navigationBackBackground) ?? .white
+        }
+    }
+
+    func setSatisfaction(_ satisfied: Bool, lastItem: Bool) {
+        self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next })?.isEnabled = satisfied
+        self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next })?.alpha = (satisfied) ? 1.0 : 0.5
+
+        if !lastItem {
+            self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .back })?.isEnabled = satisfied
+            self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .back })?.alpha = (satisfied) ? 1.0 : 0.5
         }
     }
 
@@ -108,12 +108,9 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
     }
 
     private func setSatisfaction(_ satisfied: Bool) {
+        debugger("Set navigation Satisfaction: \(satisfied)")
         self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next })?.isEnabled = satisfied
         self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next })?.alpha = (satisfied) ? 1.0 : 0.5
-    }
-
-    private func setDisableNavigations(_ disable: Bool) {
-        self.buttons.subviews.compactMap({ $0 as? Button }).forEach({ $0.isEnabled = !disable; $0.alpha = (disable) ? 0.5 : 1.0 })
     }
 }
 
@@ -133,8 +130,6 @@ extension QuestionnaireNavigationCell {
     }
 
     func shapeNavigationButtons(_ configuration: QuestionnaireConfiguration?) {
-        self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).forEach({ $0.removeFromSuperview() })
-
         func drawBackButton(isVisible: Bool) {
             if self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).filter({ $0.type == .back }).count > 0 || !isVisible { return }
 
@@ -163,7 +158,6 @@ extension QuestionnaireNavigationCell {
         /// According to `https://github.com/somia/mobile/issues/238`
         /// " Basically you have buttons always displayed unless they are removed in config. "
         /// " But it should omit 'back' for the first element "
-
         drawBackButton(isVisible: self.shouldShowBackButton)
         addSeparator(isVisible: self.shouldShowNextButton || self.shouldShowBackButton)
         drawNextButton(isVisible: self.shouldShowNextButton)
