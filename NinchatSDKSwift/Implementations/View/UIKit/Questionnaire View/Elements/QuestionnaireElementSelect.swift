@@ -50,14 +50,8 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
     // MARK: - QuestionnaireSettable
 
     func updateSetAnswers(_ answer: AnyHashable?, state: QuestionnaireSettableState) {
-        guard let answer = answer as? String, let option = self.elementConfiguration?.options?.first(where: { $0.value == answer }) else { return }
-
-        switch state {
-        case .set:
-            self.select(option: option)
-        case .nothing:
-            break
-        }
+        guard let option = self.elementConfiguration?.options?.first(where: { $0.value == answer as? String }) else { return }
+        self.select(option: option, state: state)
         self.updateBorder()
     }
 
@@ -154,17 +148,24 @@ extension QuestionnaireElementSelect {
                 self?.deselect(option: option)
             case .select(let index):
                 guard let option = self?.elementConfiguration?.options?[index] else { fatalError("Unable to pick selected option") }
-                self?.select(option: option)
+                self?.select(option: option, state: .set)
             }
             self?.updateBorder()
         }
     }
 
-    private func select(option: ElementOption) {
+    private func select(option: ElementOption, state: QuestionnaireSettableState) {
         self.selectedOption.isHighlighted = true
         self.selectedOption.text = option.label
         self.view.backgroundColor = selectedBackgroundColor
-        self.onElementOptionSelected?(option)
+
+        switch state {
+        case .set:
+            self.onElementOptionSelected?(option)
+        case .nothing:
+            debugger("Do nothing for Select element")
+        }
+
     }
 
     func deselect(option: ElementOption) {

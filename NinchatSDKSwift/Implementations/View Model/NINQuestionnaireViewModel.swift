@@ -48,7 +48,7 @@ extension NINQuestionnaireViewModel {
     }
 
     func getAnswersForElement(_ element: QuestionnaireElement) -> AnyHashable? {
-        self.getAnswersForElement(element, presetOnly: false)
+        self.getAnswersForElement(element, presetOnly: true)
     }
 }
 
@@ -60,8 +60,8 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     private var configurations: [QuestionnaireConfiguration] = []
     internal var connector: QuestionnaireElementConnector!
     private var views: [[QuestionnaireElement]] = []
-    internal var answers: [String:AnyHashable]! = [:]
-    internal var preAnswers: [String:AnyHashable]! = [:]
+    internal var answers: [String:AnyHashable]! = [:]    // Contains answers saved by the user in the runtime
+    internal var preAnswers: [String:AnyHashable]! = [:] // Contains answers already given by the server
     private var setPageNumber: Int?
     private var setupConnectorOperation: BlockOperation!
     
@@ -299,17 +299,16 @@ extension NINQuestionnaireViewModelImpl {
 
     func getAnswersForElement(_ element: QuestionnaireElement, presetOnly: Bool = false) -> AnyHashable? {
         guard let configuration = element.elementConfiguration else { return nil }
-        if let value = self.answers[configuration.name], !presetOnly {
-            return value
-        }
         if let value = self.preAnswers[configuration.name] {
+            return value
+        } else if !presetOnly, let value = self.answers[configuration.name] {
             return value
         }
         return nil
     }
 
     func resetAnswer(for element: QuestionnaireElement) -> Bool {
-        guard let value = self.getAnswersForElement(element, presetOnly: true) as? String, self.requirementsSatisfied, element.isUserInteractionEnabled else {
+        guard let value = self.getAnswersForElement(element, presetOnly: false) as? String, self.requirementsSatisfied, element.isUserInteractionEnabled else {
             self.askedPageNumber = nil; return false
         }
 
