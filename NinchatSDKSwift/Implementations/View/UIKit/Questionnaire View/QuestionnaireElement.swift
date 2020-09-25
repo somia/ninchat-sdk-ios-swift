@@ -116,7 +116,20 @@ extension QuestionnaireElementWithTitle {
 protocol QuestionnaireFocusableElement {
     var onElementFocused: ((QuestionnaireElement) -> Void)? { get set }
     var onElementDismissed: ((QuestionnaireElement) -> Void)? { get set }
+
+    func clearAll()
 }
+extension QuestionnaireFocusableElement where Self:QuestionnaireElementTextArea {
+    func clearAll() {
+        self.view.text = ""
+    }
+}
+extension QuestionnaireFocusableElement where Self:QuestionnaireElementTextField {
+    func clearAll() {
+        self.view.text = ""
+    }
+}
+
 
 /// Add select/deselect closure for applicable elements (e.g. radio, checkbox)
 protocol QuestionnaireOptionSelectableElement {
