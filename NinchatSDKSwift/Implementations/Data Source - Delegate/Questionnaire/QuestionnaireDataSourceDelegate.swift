@@ -111,7 +111,7 @@ extension QuestionnaireDataSourceDelegate {
 extension QuestionnaireDataSourceDelegate {
     internal func setupSettable(view: inout QuestionnaireSettable, element: QuestionnaireElement) {
         let setAnswerState: QuestionnaireSettableState = self.viewModel.resetAnswer(for: element) ? .set : .nothing
-        view.updateSetAnswers(self.viewModel.getAnswersForElement(element), state: setAnswerState)
+        view.updateSetAnswers(self.viewModel.getAnswersForElement(element, presetOnly: false), state: setAnswerState)
     }
 
     internal func setupSelectable(view: inout QuestionnaireOptionSelectableElement, element: QuestionnaireElement) {

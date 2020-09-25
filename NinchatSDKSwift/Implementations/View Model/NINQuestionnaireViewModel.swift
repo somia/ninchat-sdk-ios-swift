@@ -299,9 +299,9 @@ extension NINQuestionnaireViewModelImpl {
 
     func getAnswersForElement(_ element: QuestionnaireElement, presetOnly: Bool = false) -> AnyHashable? {
         guard let configuration = element.elementConfiguration else { return nil }
-        if let value = self.preAnswers[configuration.name], presetOnly {
+        if let value = self.preAnswers[configuration.name] {
             return value
-        } else if let value = self.answers[configuration.name] {
+        } else if !presetOnly, let value = self.answers[configuration.name] {
             return value
         }
         return nil
