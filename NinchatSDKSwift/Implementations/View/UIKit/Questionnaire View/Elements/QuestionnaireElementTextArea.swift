@@ -9,6 +9,7 @@ import UIKit
 final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireHasBorder, QuestionnaireFocusableElement {
 
     fileprivate var heightValue: CGFloat = 98.0
+    private var answerUpdateWorker: DispatchWorkItem?
 
     // MARK: - QuestionnaireElement
 
@@ -126,6 +127,12 @@ extension QuestionnaireElementTextArea: UITextViewDelegate {
     }
 
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        self.answerUpdateWorker?.cancel()
+        self.answerUpdateWorker = DispatchWorkItem { [weak self] in
+            guard let weakSelf = self else { return }
+            weakSelf.onElementDismissed?(weakSelf)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: self.answerUpdateWorker!)
         self.isCompleted = isCompleted(text: (textView.text ?? "") + text)
         return true
     }
