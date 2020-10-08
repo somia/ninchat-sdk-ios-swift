@@ -285,8 +285,14 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
                 confirmVideoDialog.showConfirmView(on: self?.view ?? UIView())
             }
         }, onCallInitiated: { [weak self] error, rtcClient in
-            self?.webRTCClient = rtcClient
+            if let error = error as? PermissionError {
+                Toast.show(message: .error("Required permissions for Video call are not granted"), onToastTouched: {
+                    UIApplication.openAppSetting()
+                })
+                return
+            }
 
+            self?.webRTCClient = rtcClient
             DispatchQueue.main.async {
                 self?.closeChatButton.hide = true
                 self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
@@ -391,7 +397,7 @@ extension NINChatViewController {
             // In portrait we make the video cover about the top half of the screen
             // If no video; get rid of the video view
             videoContainerHeight.constant = (self.webRTCClient != nil) ? size.height * 0.45 : 0
-            self.alignInputControlsTopToScreenBottom(false0)
+            self.alignInputControlsTopToScreenBottom(false)
         }
 
         videoContainerHeight.isActive = true
@@ -416,33 +422,23 @@ extension NINChatViewController {
 extension NINChatViewController {
     private func openGallery() {
         Permission.grantPermission(.devicePhotoLibrary) { [weak self] error in
-            if let _ = error {
-                Toast.show(message: .error("Photo Library access is denied."), onToastTouched: {
-                    if #available(iOS 10.0, *) {
-                        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:], completionHandler: nil)
-                    } else {
-                        UIApplication.shared.openURL(URL(string: UIApplication.openSettingsURLString)!)
-                    }
-                })
-            } else {
-                self?.onOpenGallery?(.photoLibrary)
+            if error == nil {
+                self?.onOpenGallery?(.photoLibrary); return
             }
+            Toast.show(message: .error("Camera access is denied"), onToastTouched: {
+                UIApplication.openAppSetting()
+            })
         }
     }
     
     private func openVideo() {
         Permission.grantPermission(.deviceCamera) { [weak self] error in
-            if let _ = error {
-                Toast.show(message: .error("Camera access is denied"), onToastTouched: {
-                    if #available(iOS 10.0, *) {
-                        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:], completionHandler: nil)
-                    } else {
-                        UIApplication.shared.openURL(URL(string: UIApplication.openSettingsURLString)!)
-                    }
-                })
-            } else {
-                self?.onOpenGallery?(.camera)
+            if error == nil {
+                self?.onOpenGallery?(.camera); return
             }
+            Toast.show(message: .error("Camera access is denied"), onToastTouched: {
+                UIApplication.openAppSetting()
+            })
         }
     }
 }
