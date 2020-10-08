@@ -1,9 +1,9 @@
-
 *.lock
 Pods/
 NinchatSDKSwift.xcodeproj/xcuserdata/
 NinchatSDKSwift.xcworkspace/xcuserdata/
 NinchatSDKSwiftServerTests/Secrets.plist
+._*
 .idea/
 .run/
 

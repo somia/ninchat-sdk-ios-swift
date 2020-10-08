@@ -106,7 +106,7 @@ private extension NINInitialViewController {
     private func drawQueueButtons() {
         self.queueButtonsStackView.subviews.forEach { $0.removeFromSuperview() }
 
-        let availableQueues = self.session?.sessionManager.audienceQueues.filter({ !$0.isClosed }) ?? []
+        let availableQueues = self.sessionManager?.audienceQueues.filter({ !$0.isClosed }) ?? []
         let numberOfButtons = min(3, availableQueues.count)
         let buttonHeights: CGFloat = (numberOfButtons > 2) ? 40.0 : 60.0
         for index in 0..<numberOfButtons {
@@ -119,7 +119,7 @@ private extension NINInitialViewController {
             button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
             button.backgroundColor = .defaultBackgroundButton
             button.setTitleColor(.white, for: .normal)
-            button.setTitle(self.session?.sessionManager.translate(key: Constants.kJoinQueueText.rawValue, formatParams: ["audienceQueue.queue_attrs.name": queue.name]) ?? "", for: .normal)
+            button.setTitle(self.sessionManager?.translate(key: Constants.kJoinQueueText.rawValue, formatParams: ["audienceQueue.queue_attrs.name": queue.name]) ?? "", for: .normal)
             button.overrideAssets(with: self.session?.internalDelegate, isPrimary: true)
             
             queueButtonsStackView.addArrangedSubview(button)
@@ -130,6 +130,6 @@ private extension NINInitialViewController {
     private func drawNoQueueText() {
         self.queueButtonsStackView.isHidden = true
         self.noQueueTextView.isHidden = false
-        self.noQueueTextView.setAttributed(text: self.session?.sessionManager.siteConfiguration.noQueueText ?? NSLocalizedString("NoQueueText", tableName: "Localizable", bundle: Bundle.SDKBundle!, value: "", comment: ""), font: self.noQueueTextView.font)
+        self.noQueueTextView.setAttributed(text: self.sessionManager?.siteConfiguration.noQueueText ?? NSLocalizedString("NoQueueText", tableName: "Localizable", bundle: Bundle.SDKBundle!, value: "", comment: ""), font: self.noQueueTextView.font)
     }
 }
