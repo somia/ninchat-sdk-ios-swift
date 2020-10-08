@@ -52,7 +52,7 @@ final class ChatTypingCell: UITableViewCell {
         imageView.isHidden = !(config?.show ?? false)
         if let overrideURL = config?.imageOverrideURL {
             imageView.image(from: overrideURL)
-        } else {
+        } else if let url = url {
             imageView.image(from: url)
         }
     }
@@ -86,8 +86,8 @@ extension ChatTypingCell: TypingCell {
 // MARK: - LoadingCell
 
 extension ChatTypingCell: LoadingCell {
-    func populateLoading(name: String, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?) {
-        self.senderNameLabel.text = name
+    func populateLoading(agentAvatarConfig: AvatarConfig, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?) {
+        self.senderNameLabel.text = agentAvatarConfig.nameOverride
         self.timeLabel.text = ""
 
         /// Make Image view background match the bubble color
@@ -100,7 +100,7 @@ extension ChatTypingCell: LoadingCell {
 
         /// Apply asset overrides
         self.applyCommon(imageAssets: imageAssets, colorAssets: colorAssets)
-        self.imageView?.isHidden = true
+        self.apply(avatar: agentAvatarConfig, imageView: self.leftAvatarImageView, url: nil)
 
         /// Rotate the cell back to the normal
         self.rotate(0.0)
