@@ -37,7 +37,12 @@ protocol NINChatMessageProtocol {
     func loadHistory(completion: @escaping (Error?) -> Void)
 }
 
-protocol NINChatViewModel: NINChatRTCProtocol, NINChatStateProtocol, NINChatMessageProtocol {
+protocol NINChatPermissionsProtocol {
+    func grantLibraryPermission(_ completion: @escaping (Error?) -> Void)
+    func grantCameraPermission(_ completion: @escaping (Error?) -> Void)
+}
+
+protocol NINChatViewModel: NINChatRTCProtocol, NINChatStateProtocol, NINChatMessageProtocol, NINChatPermissionsProtocol {
     var onChannelClosed: (() -> Void)? { get set }
     var onQueueUpdated: (() -> Void)? { get set }
     var onChannelMessage: ((MessageUpdateType) -> Void)? { get set }
@@ -141,16 +146,6 @@ extension NINChatViewModelImpl {
     }
 }
 
-// MARK: - Permissions
-
-extension  NINChatViewModelImpl {
-    private func getAccessForVideoCall(_ completion: @escaping (Error?) -> Void) {
-        Permission.grantPermission(.deviceCamera, .deviceMicrophone) { error in
-            completion(error)
-        }
-    }
-}
-
 // MARK: - NINChatState
 
 extension NINChatViewModelImpl {
@@ -218,5 +213,27 @@ extension NINChatViewModelImpl {
 extension NINChatViewModelImpl: QueueUpdateCapture {
     var desc: String {
         "NINChatViewModel"
+    }
+}
+
+// MARK: - NINChatPermissionsProtocol
+
+extension  NINChatViewModelImpl {
+    private func getAccessForVideoCall(_ completion: @escaping (Error?) -> Void) {
+        Permission.grantPermission(.deviceCamera, .deviceMicrophone) { error in
+            completion(error)
+        }
+    }
+
+    func grantLibraryPermission(_ completion: @escaping (Error?) -> Void) {
+        Permission.grantPermission(.devicePhotoLibrary) { error in
+            completion(error)
+        }
+    }
+
+    func grantCameraPermission(_ completion: @escaping (Error?) -> Void) {
+        Permission.grantPermission(.deviceCamera) { error in
+            completion(error)
+        }
     }
 }

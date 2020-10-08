@@ -421,7 +421,7 @@ extension NINChatViewController {
 
 extension NINChatViewController {
     private func openGallery() {
-        Permission.grantPermission(.devicePhotoLibrary) { [weak self] error in
+        viewModel.grantLibraryPermission { [weak self] error in
             if error == nil {
                 self?.onOpenGallery?(.photoLibrary); return
             }
@@ -432,7 +432,7 @@ extension NINChatViewController {
     }
     
     private func openVideo() {
-        Permission.grantPermission(.deviceCamera) { [weak self] error in
+        viewModel.grantCameraPermission { [weak self] error in
             if error == nil {
                 self?.onOpenGallery?(.camera); return
             }
