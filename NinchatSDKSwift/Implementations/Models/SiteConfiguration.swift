@@ -150,11 +150,20 @@ struct SiteConfigurationImpl: SiteConfiguration {
 
 extension SiteConfigurationImpl {
     private func value<T>(for key: String, ofType type: T.Type = T.self) -> T? {
-        debugger("Loading keys from environments: \(self.environments)")
         guard let configuration = configuration as? [String:Any] else { return nil }
+        var environments = self.environments
 
-        /// Insert "default" to beginning of given environments and start the lookup from the end of array
-        for env in [["default"], self.environments].joined().filter({ configuration[$0] != nil }).reversed() {
+        /// Insert "default" to the beginning of given environments
+        if !environments.contains("default") {
+            environments.insert("default", at: 0)
+        }
+
+        /// Lookup should be done from the last env to the first one
+        environments.reverse()
+        debugger("Loading keys from environments: \(environments)")
+
+        /// Start the lookup
+        for env in environments.filter({ configuration[$0] != nil }) {
             if let value = (configuration[env] as? [String:Any])?[key] as? T { return value }
         }
 

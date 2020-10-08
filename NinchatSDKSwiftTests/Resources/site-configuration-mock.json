@@ -16,7 +16,6 @@
       "noQueuesText": "Liittymiseen ei ole avoimia jonoja (noQueuesText)",
       "motd": "Hieno meno öäå <br>https://ninchat.com/contact",
       "newUI": true,
-      "sendButtonText": "Lähetä",
       "supportFiles": false,
       "supportVideo": false,
       "translations": {
@@ -828,5 +827,635 @@
           }
         }
       ]
+    },
+    "fi": {
+      "welcome": "fi",
+      "motd": "",
+      "postAudienceQuestionnaireStyle": "conversation",
+      "preAudienceQuestionnaireStyle": "conversation",
+      "questionnaireAvatar": "https://ninchat.com/customer/terveystalo/omaterveys/avatar-mieli.png",
+      "questionnaireName": "Mielen-botti",
+      "preAudienceQuestionnaire": [
+        {
+          "element": "textarea",
+          "label": "Tervetuloa Mielen chattiin! Olen Terveystalon chat-robotti. Kysyn sinulta alkuun viisi kysymystä ja ohjaan sinut sitten keskustelemaan hoitajan kanssa. Kerrotko vähän, mitä sinulle kuuluu?",
+          "name": "Syy",
+          "buttons": {
+            "back": false
+          },
+          "redirects": [
+            {
+              "target": "SUD"
+            }
+          ]
+        },
+        {
+          "element": "radio",
+          "label": "Hyvä, kiitos. Kun nyt ajattelet noita mielessäsi pyöriviä asioita, kerrotko kuinka häiritseviltä ne juuri nyt tuntuvat. Merkitse asteikolle häiritsevyyden määrä asteikolla nollasta kymmeneen, jolloin nolla tarkoittaa, että sinulla on neutraali ja rauhallinen olo ja kymmenen tarkoittaa, että asia häiritsee sinua todella kovasti.",
+          "name": "SUD",
+          "buttons": {
+            "back": false,
+            "next": false
+          },
+          "options": [
+            {
+              "value": "0",
+              "label": "0"
+            },
+            {
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "value": "4",
+              "label": "4"
+            },
+            {
+              "value": "5",
+              "label": "5"
+            },
+            {
+              "value": "6",
+              "label": "6"
+            },
+            {
+              "value": "7",
+              "label": "7"
+            },
+            {
+              "value": "8",
+              "label": "8"
+            },
+            {
+              "value": "9",
+              "label": "9"
+            },
+            {
+              "value": "10",
+              "label": "10"
+            }
+          ],
+          "redirects": [
+            {
+              "target": "PHQ 1"
+            }
+          ]
+        },
+        {
+          "element": "radio",
+          "label": "Seuraavat kaksi kysymystä kartoittavat vähän mielialaasi.Oletko viimeisen kahden viikon aikana ollut aiempaa vähemmän kiinnostunut tavallisten asioiden tekemisestä tai saanut niistä vain vähän (tai et juuri lainkaan) mielihyvän tunnetta?",
+          "name": "PHQ 1",
+          "buttons": {
+            "back": false,
+            "next": false
+          },
+          "options": [
+            {
+              "value": "0",
+              "label": "En lainkaan"
+            },
+            {
+              "value": "1",
+              "label": "Useina päivinä"
+            },
+            {
+              "value": "2",
+              "label": "Enemmän kuin puolet ajasta"
+            },
+            {
+              "value": "3",
+              "label": "Lähes joka päivä"
+            }
+          ],
+          "redirects": [
+            {
+              "target": "PHQ 2"
+            }
+          ]
+        },
+        {
+          "element": "radio",
+          "label": "Oletko viimeisen kahden viikon aikana kokenut mielialasi alakuloiseksi, masentuneeksi tai toivottomaksi?",
+          "name": "PHQ 2",
+          "buttons": {
+            "back": false,
+            "next": false
+          },
+          "options": [
+            {
+              "value": "0",
+              "label": "En lainkaan"
+            },
+            {
+              "value": "1",
+              "label": "Useina päivinä"
+            },
+            {
+              "value": "2",
+              "label": "Enemmän kuin puolet ajasta"
+            },
+            {
+              "value": "3",
+              "label": "Lähes joka päivä"
+            }
+          ],
+          "redirects": [
+            {
+              "target": "Hyvät asiat"
+            }
+          ]
+        },
+        {
+          "element": "textarea",
+          "label": "Kerrotko vielä, mitkä asiat ovat elämässäsi tällä hetkellä hyvin? Mistä saat hyvän mielen?",
+          "name": "Hyvät asiat",
+          "buttons": {
+            "back": false,
+            "next": "Aloita chat"
+          }
+        }
+      ],
+      "postAudienceQuestionnaire": [
+        {
+          "element": "textarea",
+          "label": "Haluatko vielä jättää vapaata palautetta meille? Arvostamme kaikenlaista palautetta ja pyrimme kehittämään palvelua sen avulla.",
+          "name": "Palaute",
+          "buttons": {
+            "back": false,
+            "next": "Lähetä"
+          }
+        }
+      ],
+      "agentAvatar": null,
+      "closeConfirmText": "Lopettaminen päättää käydyn keskustelun. Haluatko varmasti lopettaa?",
+      "sendButtonText": null,
+      "translations": {
+        "Join audience queue {{audienceQueue.queue_attrs.name}}": "Aloita chatti",
+        "Join audience queue {{audienceQueue.queue_attrs.name}} (closed)": " ",
+        "Joined audience queue {{audienceQueue.queue_attrs.name}}, you are at position {{audienceQueue.queue_position}}.": "Kiitos! Ohjaan sinut nyt hoitajan chat-vastaanotolle.<br><br>Olet jonossa sijalla {{audienceQueue.queue_position}}.<br>Odota, että Terveystalon asiantuntija poimii sinut jonosta.",
+        "Audience in queue {{queue}} accepted.": "Keskustelu aloitettu.",
+        "Joined audience queue {{audienceQueue.queue_attrs.name}}, you are next.": "Kiitos! Ohjaan sinut nyt hoitajan chat-vastaanotolle.<br>Olet seuraavana vuorossa.<br>Odota, että Terveystalon asiantuntija poimii sinut jonosta.",
+        "Enter your message": "Kirjoita viesti",
+        "Conversation ended": "Keskustelu on päättynyt. Voit sulkea chatin.",
+        "Skip": "Ohita",
+        "You are invited to a video call": "Lääkäri kutsui sinut videokeskusteluun. Klikkaa kamera-ikonia aloittaaksesi.",
+        "Video call declined": "Videokeskustelu hylätty",
+        "Video call answered": "Videokeskustelu aloitettu",
+        "Toggle fullscreen": "Koko ruutu -tila on/off",
+        "Toggle audio": "Ääni on/off",
+        "Toggle microphone": "Mykistä mikrofoni",
+        "Toggle video": "Video on/off",
+        "End video call": "Lopeta videokeskustelu",
+        "Add an emoji": "Lisää emoji",
+        "How was our customer service?": "<strong>Miten asiointisi onnistui?</strong>",
+        "Next": "Jatka",
+        "Close window": "Sulje ikkuna",
+        "Submit": "Lähetä",
+        "Close chat": "Sulje keskustelu",
+        "Continue chat": "Jatka keskustelua",
+        "Good": "Hyvin",
+        "Okay": "Ok",
+        "Poor": "Huonosti",
+        "Accept": "Hyväksy",
+        "Decline": "Hylkää",
+        "You are invited to a video chat": "Sinut on kutsuttu videokeskusteluun",
+        "wants to video chat with you": "haluaa aloittaa videokeskustelun"
+      },
+      "inQueueText": " ",
+      "noQueuesText": " "
+    },
+    "fi-restart": {
+      "audienceRealmId": "5lmphjc200m3g",
+      "audienceQueues": [
+        "5lmpjrbl00m3g"
+      ],
+      "welcome": "fi-restart",
+      "audienceAutoQueue": null
+    },
+    "en": {
+      "preAudienceQuestionnaire": [
+        {
+          "element": "textarea",
+          "label": "Welcome to Mielen chat! I’m Terveystalo’s chatbot, and I’d like to start off by asking you five questions before connecting you with one of our nurses. Firstly, could you tell me a bit about what’s on your mind right now?",
+          "name": "Syy",
+          "buttons": {
+            "back": false
+          },
+          "redirects": [
+            {
+              "target": "SUD"
+            }
+          ]
+        },
+        {
+          "element": "radio",
+          "label": "Thank you. Next, thinking about the issues you have on your mind right now, how much are they bothering you? Please give an estimate on a scale of 0-10, 0 being neutral and calm, and 10 being incredibly worrisome.",
+          "name": "SUD",
+          "buttons": {
+            "back": false,
+            "next": false
+          },
+          "options": [
+            {
+              "value": "0",
+              "label": "0"
+            },
+            {
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "value": "4",
+              "label": "4"
+            },
+            {
+              "value": "5",
+              "label": "5"
+            },
+            {
+              "value": "6",
+              "label": "6"
+            },
+            {
+              "value": "7",
+              "label": "7"
+            },
+            {
+              "value": "8",
+              "label": "8"
+            },
+            {
+              "value": "9",
+              "label": "9"
+            },
+            {
+              "value": "10",
+              "label": "10"
+            }
+          ],
+          "redirects": [
+            {
+              "target": "PHQ 1"
+            }
+          ]
+        },
+        {
+          "element": "radio",
+          "label": "The next two questions are meant to map out your current state of mind. Over the past two weeks, have you felt less interested in doing everyday things, or have you gotten less (or no) pleasure from doing them?",
+          "name": "PHQ 1",
+          "buttons": {
+            "back": false,
+            "next": false
+          },
+          "options": [
+            {
+              "value": "1",
+              "label": "Not at all"
+            },
+            {
+              "value": "2",
+              "label": "On several days"
+            },
+            {
+              "value": "3",
+              "label": "More than half the time"
+            },
+            {
+              "value": "4",
+              "label": "Almost every day"
+            }
+          ],
+          "redirects": [
+            {
+              "target": "PHQ 2"
+            }
+          ]
+        },
+        {
+          "element": "radio",
+          "label": "Over the past two weeks, have you been feeling down, depressed, or hopeless?  ",
+          "name": "PHQ 2",
+          "buttons": {
+            "back": false,
+            "next": false
+          },
+          "options": [
+            {
+              "value": "1",
+              "label": "Not at all"
+            },
+            {
+              "value": "2",
+              "label": "On several days"
+            },
+            {
+              "value": "3",
+              "label": "More than half the time"
+            },
+            {
+              "value": "4",
+              "label": "Almost every day"
+            }
+          ],
+          "redirects": [
+            {
+              "target": "Hyvät asiat"
+            }
+          ]
+        },
+        {
+          "element": "textarea",
+          "label": "Lastly, could you tell me about the things that are well in your life right now? What are the things that make you feel good?",
+          "name": "Hyvät asiat",
+          "buttons": {
+            "back": false,
+            "next": "Aloita chat"
+          }
+        }
+      ],
+      "postAudienceQuestionnaire": [
+        {
+          "element": "text",
+          "label": "Give us feedback!<br>If you want us to contact you, please leave your contact information as well.",
+          "name": "feedbackDescription"
+        },
+        {
+          "element": "textarea",
+          "label": "Feedback",
+          "name": "Palaute"
+        },
+        {
+          "element": "textarea",
+          "label": "Contact information",
+          "name": "Yhteystiedot"
+        }
+      ],
+      "agentAvatar": null,
+      "css": "https://ninchat.com/customer/terveystalo/omaterveys/ninchat-mieli-en.css?v=1.7",
+      "language": "en",
+      "closeConfirmText": "Closing the chat will terminate the discussion. Are you sure you wish to close the chat?",
+      "sendButtonText": "Send",
+      "translations": {
+        "Join audience queue {{audienceQueue.queue_attrs.name}}": "Start the chat",
+        "Join audience queue {{audienceQueue.queue_attrs.name}} (closed)": "The chat is closed",
+        "Joined audience queue {{audienceQueue.queue_attrs.name}}, you are at position {{audienceQueue.queue_position}}.": "Thank you! Next, I’ll connect you with one of our nurses.<br>You are #{{audienceQueue.queue_position}} in line.",
+        "Audience in queue {{queue}} accepted.": "Chat has started.",
+        "Joined audience queue {{audienceQueue.queue_attrs.name}}, you are next.": "Thank you! Next, I’ll connect you with one of our nurses.<b>Just a moment, you are next in line.",
+        "Enter your message": "Enter your message",
+        "Conversation ended": "Chat opened. One of our nurses is reading your messages and will answer you in a moment.",
+        "Skip": "Skip",
+        "You are invited to a video call": "Doctor invited you to video call. Click the camera-symbol to start.",
+        "Video call declined": "Video call declined",
+        "Video call answered": "Video call started",
+        "Toggle fullscreen": "Full screen on/off",
+        "Toggle audio": "Audio on/off",
+        "Toggle microphone": "Mute the microphone",
+        "Toggle video": "Video on/off",
+        "End video call": "Close the video call",
+        "Close chat": "Close conversation",
+        "Add an emoji": "Add an emoji",
+        "How was our customer service?": "<p><strong>How did we succeed in helping you?</strong></p>",
+        "Next": "Continue"
+      },
+      "welcome": " ",
+      "inQueueText": " ",
+      "noQueuesText": " ",
+      "motd": " "
+    },
+    "sv": {
+      "preAudienceQuestionnaire": [
+        {
+          "element": "textarea",
+          "label": "Välkommen till Mielen chat! Jag är Terveystalos chat-robot och börjar med att fråga fem frågor av dig. Därefter hänvisar jag dig till en av våra chat-skötare. Skulle du först kunna berätta om hur du mår?",
+          "name": "Syy",
+          "buttons": {
+            "back": false
+          },
+          "redirects": [
+            {
+              "target": "SUD"
+            }
+          ]
+        },
+        {
+          "element": "radio",
+          "label": "Tack, när du tänker på de saker du skrivit om och som du har i tankarna, hur störande upplever du dem just nu? Bedöm detta på en skala från 0-10, där 0 betyder att du känner dig lugn och neutral och 10 betyder att dessa saker stör dig väldigt mycket.",
+          "name": "SUD",
+          "buttons": {
+            "back": false,
+            "next": false
+          },
+          "options": [
+            {
+              "value": "0",
+              "label": "0"
+            },
+            {
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "value": "4",
+              "label": "4"
+            },
+            {
+              "value": "5",
+              "label": "5"
+            },
+            {
+              "value": "6",
+              "label": "6"
+            },
+            {
+              "value": "7",
+              "label": "7"
+            },
+            {
+              "value": "8",
+              "label": "8"
+            },
+            {
+              "value": "9",
+              "label": "9"
+            },
+            {
+              "value": "10",
+              "label": "10"
+            }
+          ],
+          "redirects": [
+            {
+              "target": "PHQ 1"
+            }
+          ]
+        },
+        {
+          "element": "radio",
+          "label": "De följande två frågorna kartlägger din sinnesstämning. Har du under de två senaste veckorna varit mindre intresserad av attgöra vardagliga saker eller känt enbart lite (eller inte alls) glädje av att göra dem?",
+          "name": "PHQ 1",
+          "buttons": {
+            "back": false,
+            "next": false
+          },
+          "options": [
+            {
+              "value": "1",
+              "label": "Inte alls"
+            },
+            {
+              "value": "2",
+              "label": "Flera dagar"
+            },
+            {
+              "value": "3",
+              "label": "Mera än hälften av dagarna"
+            },
+            {
+              "value": "4",
+              "label": "Nstan varje dag"
+            }
+          ],
+          "redirects": [
+            {
+              "target": "PHQ 2"
+            }
+          ]
+        },
+        {
+          "element": "radio",
+          "label": "Har du känt dig nedstämd, deprimerad eller hopplös under de senaste två veckorna?",
+          "name": "PHQ 2",
+          "buttons": {
+            "back": false,
+            "next": false
+          },
+          "options": [
+            {
+              "value": "1",
+              "label": "Inte alls"
+            },
+            {
+              "value": "2",
+              "label": "Flera dagar"
+            },
+            {
+              "value": "3",
+              "label": "Mera än hälften av dagarna"
+            },
+            {
+              "value": "4",
+              "label": "Nstan varje dag"
+            }
+          ],
+          "redirects": [
+            {
+              "target": "Hyvät asiat"
+            }
+          ]
+        },
+        {
+          "element": "textarea",
+          "label": "Till sist, kan du ännu berätta vilka saker som är bra i ditt liv just nu? Vad ger dig glädje?",
+          "name": "Hyvät asiat",
+          "buttons": {
+            "back": false,
+            "next": "Börja chat"
+          }
+        }
+      ],
+      "postAudienceQuestionnaire": [
+        {
+          "element": "text",
+          "label": "Ge oss feedback!<br>Om du vill att vi kontaktar dig, vänligen ge oss också dina kontaktuppgifter.",
+          "name": "feedbackDescription"
+        },
+        {
+          "element": "textarea",
+          "label": "Feedback",
+          "name": "Palaute"
+        },
+        {
+          "element": "textarea",
+          "label": "Kontaktuppgifter",
+          "name": "Yhteystiedot"
+        }
+      ],
+      "agentAvatar": null,
+      "css": "https://ninchat.com/customer/terveystalo/omaterveys/ninchat-mieli-sv.css?v=1.7",
+      "language": "sv",
+      "closeConfirmText": "Om du stänger chatten avslutar du konversationen. Är du säker på att du vill stänga chatten?",
+      "sendButtonText": "Skicka",
+      "translations": {
+        "Join audience queue {{audienceQueue.queue_attrs.name}}": "Starta chatten",
+        "Join audience queue {{audienceQueue.queue_attrs.name}} (closed)": "Chattmottagningen är stängd",
+        "Joined audience queue {{audienceQueue.queue_attrs.name}}, you are at position {{audienceQueue.queue_position}}.": "Tack! Nu hänvisar jag dig vidare till chat-mottagningen.<br>Du är #{{audienceQueue.queue_position}} i kön.",
+        "Joined audience queue {{audienceQueue.queue_attrs.name}}, you are next.": "Tack! Nu hänvisar jag dig vidare till chat-mottagningen.<br>Ett ögonblick, du är först i kön.",
+        "Audience in queue {{queue}} accepted.": "Chatten är öppen. En av våra chat-skötare läser dina meddelanden och svarar dig snart.",
+        "Enter your message": "Skriv in ditt meddelande",
+        "Conversation ended": "Konversationen är avslutad. Du kan stänga chatten.",
+        "Skip": "Hoppa över",
+        "You are invited to a video call": "Läkare vill starta en video samtal. Klicka en kamera-symbol och börja.",
+        "Video call declined": "Videosamtal nekades",
+        "Video call answered": "Videosamtal har startat",
+        "Toggle fullscreen": "Fullskärm on/off",
+        "Toggle audio": "Audio on/off",
+        "Toggle microphone": "Stäng av mikrofonen",
+        "Toggle video": "Video on/off",
+        "End video call": "Stäng videosamtal",
+        "Add an emoji": "Lägg till emoji",
+        "Close chat": "Avsluta",
+        "Close": "Avsluta",
+        "Back": "Tillbaka",
+        "How was our customer service?": "<p><strong>Hur lyckades vi att hjälpa dig?</strong></p>",
+        "Next": "Fortsätta"
+      },
+      "welcome": " ",
+      "inQueueText": " ",
+      "noQueuesText": " ",
+      "motd": " "
+    },
+    "responsive": {
+      "closeButton": false,
+      "previewFiles": true,
+      "window": {
+        "promoBubble": {
+          "title": null,
+          "description": null,
+          "image": null
+        }
+      }
+    },
+    "offline": {
+      "window": {
+        "promoBubble": {
+          "title": null,
+          "description": null,
+          "image": null
+        }
+      }
     }
   }
