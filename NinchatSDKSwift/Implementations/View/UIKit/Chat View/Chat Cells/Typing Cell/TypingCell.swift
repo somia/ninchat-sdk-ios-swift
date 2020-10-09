@@ -11,5 +11,5 @@ protocol TypingCell: UIView {
 }
 
 protocol LoadingCell: UIView {
-    func populateLoading(name: String, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?)
+    func populateLoading(agentAvatarConfig: AvatarConfig, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?)
 }

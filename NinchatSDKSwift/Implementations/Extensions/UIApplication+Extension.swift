@@ -19,4 +19,12 @@ extension UIApplication {
         }
         return viewController
     }
+
+    class func openAppSetting() {
+        if #available(iOS 10.0, *) {
+            shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:], completionHandler: nil)
+        } else {
+            shared.openURL(URL(string: UIApplication.openSettingsURLString)!)
+        }
+    }
 }

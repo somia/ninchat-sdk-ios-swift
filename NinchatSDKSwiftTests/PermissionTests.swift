@@ -40,4 +40,15 @@ final class PermissionTests: XCTestCase {
         
         waitForExpectations(timeout: 5.0)
     }
+    
+    func test_permissions_multiple() {
+        let expect = self.expectation(description: "Expected to get all permissions with the same errors")
+        Permission.grantPermission(.devicePhotoLibrary, .deviceMicrophone, .deviceCamera) { (error) in
+            XCTAssertNotNil(error)
+            XCTAssertEqual(error, .permissionDenied)
+            expect.fulfill()
+        }
+        
+        waitForExpectations(timeout: 5.0)
+    }
 }

@@ -14,7 +14,7 @@ final class SiteConfigurationTests: XCTestCase {
         super.setUp()
 
         do {
-            siteConfiguration = SiteConfigurationImpl(configuration: try openAsset(forResource: "site-configuration-mock"), environments: ["default"])
+            siteConfiguration = SiteConfigurationImpl(configuration: try openAsset(forResource: "site-configuration-mock"), environments: ["fi-restart", "fi"])
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -30,16 +30,20 @@ final class SiteConfigurationTests: XCTestCase {
     }
 
     func test_11_postQuestionnaire_style() {
-        XCTAssertEqual(siteConfiguration?.preAudienceQuestionnaireStyle, .form)
+        XCTAssertEqual(siteConfiguration?.preAudienceQuestionnaireStyle, .conversation)
         XCTAssertEqual(siteConfiguration?.postAudienceQuestionnaireStyle, .conversation)
     }
 
     func test_12_audienceQuestionnaire_name_avatar() {
-        XCTAssertNotNil(siteConfiguration?.audienceQuestionnaireAvatar)
-        XCTAssertTrue(siteConfiguration?.audienceQuestionnaireAvatar as? Bool ?? false)
+        XCTAssertNotNil(siteConfiguration?.audienceQuestionnaireAvatar as? String)
+        XCTAssertEqual(siteConfiguration?.audienceQuestionnaireUserName, "Mielen-botti")
+    }
 
-        XCTAssertNotNil(siteConfiguration?.audienceQuestionnaireUserName)
-        XCTAssertEqual(siteConfiguration?.audienceQuestionnaireUserName, "Ninchat")
+    func test_20_envPriority() {
+        XCTAssertNil(siteConfiguration?.sendButtonTitle, "The key is missing from all given environments + default")
+        XCTAssertEqual(siteConfiguration?.userName, "Asiakas (öäå)", "The key should be read from 'default' since neither 'fi' nor 'fi-restart' contains that.")
+        XCTAssertEqual(siteConfiguration?.audienceRealm, "5lmphjc200m3g", "They key should be read from 'fi-restart' since 'fi' doesn't contain that.")
+        XCTAssertEqual(siteConfiguration?.welcome, "fi", "The key is present in all env, but it should be read from 'fi' according to the reversed sort of the given array")
     }
 }
 
