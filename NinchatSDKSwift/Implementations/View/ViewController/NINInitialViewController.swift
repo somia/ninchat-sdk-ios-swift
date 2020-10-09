@@ -19,9 +19,9 @@ final class NINInitialViewController: UIViewController {
     
     // MARK: - Outlets
     
-    @IBOutlet private(set) weak var topContainerView: UIView!
-    @IBOutlet private(set) weak var bottomContainerView: UIView!
-    @IBOutlet private(set) weak var welcomeTextView: UITextView! {
+    @IBOutlet private(set) var topContainerView: UIView!
+    @IBOutlet private(set) var bottomContainerView: UIView!
+    @IBOutlet private(set) var welcomeTextView: UITextView! {
         didSet {
             if let welcomeText = self.sessionManager?.siteConfiguration.welcome {
                 welcomeTextView.setAttributed(text: welcomeText, font: .ninchat)
@@ -29,8 +29,8 @@ final class NINInitialViewController: UIViewController {
             }
         }
     }
-    @IBOutlet private(set) weak var queueButtonsStackView: UIStackView!
-    @IBOutlet private(set) weak var closeWindowButton: Button! {
+    @IBOutlet private(set) var queueButtonsStackView: UIStackView!
+    @IBOutlet private(set) var closeWindowButton: Button! {
         didSet {
             if let closeText = self.sessionManager?.translate(key: Constants.kCloseWindowText.rawValue, formatParams: [:]) {
                 closeWindowButton.setTitle(closeText, for: .normal)
@@ -38,7 +38,7 @@ final class NINInitialViewController: UIViewController {
             closeWindowButton.round(borderWidth: 1.0, borderColor: .defaultBackgroundButton)
         }
     }
-    @IBOutlet private(set) weak var motdTextView: UITextView! {
+    @IBOutlet private(set) var motdTextView: UITextView! {
         didSet {
             if let motdText = self.sessionManager?.siteConfiguration.motd {
                 motdTextView.setAttributed(text: motdText, font: .ninchat)
@@ -47,7 +47,7 @@ final class NINInitialViewController: UIViewController {
             motdTextView.textAlignment = .left
         }
     }
-    @IBOutlet private(set) weak var noQueueTextView: UITextView! {
+    @IBOutlet private(set) var noQueueTextView: UITextView! {
         didSet {
             self.noQueueTextView.isHidden = true
         }
@@ -62,7 +62,6 @@ final class NINInitialViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.overrideAssets()
         if self.sessionManager?.audienceQueues.filter({ !$0.isClosed }).count ?? 0 > 0 {
             /// There is at least one open queue to join
             self.drawQueueButtons()
@@ -72,6 +71,11 @@ final class NINInitialViewController: UIViewController {
         }
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        self.overrideAssets()
+    }
+
     // MARK: - User actions
     
     @IBAction private func closeWindowButtonPressed(button: UIButton) {
@@ -83,7 +87,7 @@ final class NINInitialViewController: UIViewController {
 
 private extension NINInitialViewController {
     private func overrideAssets() {
-        closeWindowButton.overrideAssets(with: self.session?.internalDelegate, isPrimary: false)
+        closeWindowButton?.overrideAssets(with: self.session?.internalDelegate, isPrimary: false)
         if let topBackgroundColor = self.session?.internalDelegate?.override(colorAsset: .backgroundTop) {
             topContainerView.backgroundColor = topBackgroundColor
         }
