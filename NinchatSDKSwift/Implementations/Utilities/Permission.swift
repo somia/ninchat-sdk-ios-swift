@@ -7,6 +7,8 @@
 import Foundation
 import Photos
 
+typealias PermissionCompletion = (PermissionError?) -> Void
+
 enum PermissionType {
     case deviceCamera
     case deviceMicrophone
@@ -19,25 +21,44 @@ enum PermissionError: Error {
     case permissionRestricted
 }
 
-struct Permission {
-    typealias PermissionCompletion = ((PermissionError?) -> Void)
-    static func grantPermission(_ type: PermissionType, onCompletion: @escaping PermissionCompletion) {
-        switch type {
-        case .deviceCamera: self.grantDeviceCamera(onCompletion)
-        case .deviceMicrophone: self.grantDeviceMicrophone(onCompletion)
-        case .devicePhotoLibrary: self.grantDevicePhotoLibrary(onCompletion)
-        }
+final class PermissionStatus {
+    var type: PermissionType
+    var error: PermissionError?
+
+    init(type: PermissionType) {
+        self.type = type
     }
-    
-    private static func grantDeviceMicrophone(_ onCompletion: @escaping PermissionCompletion) {
+
+    func grant(queue: DispatchGroup) {
+        queue.enter()
+        switch type {
+            case .deviceCamera:
+                self.grantDeviceCamera { [weak self] error in
+                    self?.error = error
+                    queue.leave()
+                }
+            case .deviceMicrophone:
+                self.grantDeviceMicrophone { [weak self] error in
+                    self?.error = error
+                    queue.leave()
+                }
+            case .devicePhotoLibrary:
+                self.grantDevicePhotoLibrary { [weak self] error in
+                    self?.error = error
+                    queue.leave()
+                }
+            }
+    }
+
+    func grantDeviceMicrophone(_ onCompletion: @escaping PermissionCompletion) {
         self.grantMedia(media: .audio, onCompletion)
     }
-    
-    private static func grantDeviceCamera(_ onCompletion: @escaping PermissionCompletion) {
+
+    func grantDeviceCamera(_ onCompletion: @escaping PermissionCompletion) {
         self.grantMedia(media: .video, onCompletion)
     }
-    
-    private static func grantDevicePhotoLibrary(_ onCompletion: @escaping PermissionCompletion) {
+
+    func grantDevicePhotoLibrary(_ onCompletion: @escaping PermissionCompletion) {
         switch PHPhotoLibrary.authorizationStatus() {
         case .authorized:
             debugger("`Photo library` is authorized.")
@@ -57,10 +78,10 @@ struct Permission {
             onCompletion(.unknown)
         }
     }
-    
+
     // MARK: - Helper
-    
-    private static func grantMedia(media: AVMediaType, _ onCompletion: @escaping PermissionCompletion) {
+
+    func grantMedia(media: AVMediaType, _ onCompletion: @escaping PermissionCompletion) {
         switch AVCaptureDevice.authorizationStatus(for: media) {
         case .authorized:
             debugger("`AVCaptureDevice` is already authorized.")
@@ -78,6 +99,21 @@ struct Permission {
             onCompletion(.permissionDenied)
         default:
             onCompletion(.unknown)
+        }
+    }
+}
+
+struct Permission {
+    static func grantPermission(_ types: PermissionType..., onCompletion: @escaping PermissionCompletion) {
+        let dispatchGroup = DispatchGroup()
+        var permissions = types.compactMap({ PermissionStatus(type: $0) })
+        permissions.forEach { (permission: PermissionStatus) in
+            var permission = permission
+            permission.grant(queue: dispatchGroup)
+        }
+
+        dispatchGroup.notify(queue: .main) {
+            onCompletion( permissions.first(where: { $0.error != nil })?.error )
         }
     }
 }

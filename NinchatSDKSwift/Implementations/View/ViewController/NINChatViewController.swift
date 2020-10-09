@@ -285,8 +285,15 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
                 confirmVideoDialog.showConfirmView(on: self?.view ?? UIView())
             }
         }, onCallInitiated: { [weak self] error, rtcClient in
+            if let error = error as? PermissionError {
+                Toast.show(message: .error("Required permissions for Video call are not granted"), onToastTouched: {
+                    UIApplication.openAppSetting()
+                })
+                return
+            }
+
+            self?.webRTCClient = rtcClient
             DispatchQueue.main.async {
-                self?.webRTCClient = rtcClient
                 self?.closeChatButton.hide = true
                 self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
 
@@ -381,12 +388,12 @@ extension NINChatViewController {
             /// On iPad we won't show full-screen videos as there is enough space to chat and video in parallel
             videoContainerHeight.constant = (self.webRTCClient != nil) ? size.height * 0.45 : 0
             self.alignInputControlsTopToScreenBottom(false)
-        } else if UIDevice.current.orientation == .landscapeLeft || UIDevice.current.orientation == .landscapeRight {
+        } else if UIDevice.current.orientation.isLandscape {
             // In landscape we make video fullscreen ie. hide the chat view + input controls
             // If no video; get rid of the video view. the input container and video (0-height) will dictate size
             videoContainerHeight.constant = (self.webRTCClient != nil) ? size.height : 0
             self.alignInputControlsTopToScreenBottom(self.webRTCClient != nil)
-        } else if UIDevice.current.orientation == .portrait || UIDevice.current.orientation == .portraitUpsideDown {
+        } else if UIDevice.current.orientation.isPortrait || UIDevice.current.orientation.isFlat {
             // In portrait we make the video cover about the top half of the screen
             // If no video; get rid of the video view
             videoContainerHeight.constant = (self.webRTCClient != nil) ? size.height * 0.45 : 0
@@ -414,34 +421,24 @@ extension NINChatViewController {
 
 extension NINChatViewController {
     private func openGallery() {
-        Permission.grantPermission(.devicePhotoLibrary) { [weak self] error in
-            if let _ = error {
-                Toast.show(message: .error("Photo Library access is denied."), onToastTouched: {
-                    if #available(iOS 10.0, *) {
-                        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:], completionHandler: nil)
-                    } else {
-                        UIApplication.shared.openURL(URL(string: UIApplication.openSettingsURLString)!)
-                    }
-                })
-            } else {
-                self?.onOpenGallery?(.photoLibrary)
+        viewModel.grantLibraryPermission { [weak self] error in
+            if error == nil {
+                self?.onOpenGallery?(.photoLibrary); return
             }
+            Toast.show(message: .error("Camera access is denied"), onToastTouched: {
+                UIApplication.openAppSetting()
+            })
         }
     }
     
     private func openVideo() {
-        Permission.grantPermission(.deviceCamera) { [weak self] error in
-            if let _ = error {
-                Toast.show(message: .error("Camera access is denied"), onToastTouched: {
-                    if #available(iOS 10.0, *) {
-                        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:], completionHandler: nil)
-                    } else {
-                        UIApplication.shared.openURL(URL(string: UIApplication.openSettingsURLString)!)
-                    }
-                })
-            } else {
-                self?.onOpenGallery?(.camera)
+        viewModel.grantCameraPermission { [weak self] error in
+            if error == nil {
+                self?.onOpenGallery?(.camera); return
             }
+            Toast.show(message: .error("Camera access is denied"), onToastTouched: {
+                UIApplication.openAppSetting()
+            })
         }
     }
 }

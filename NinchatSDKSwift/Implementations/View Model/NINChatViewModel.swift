@@ -37,7 +37,12 @@ protocol NINChatMessageProtocol {
     func loadHistory(completion: @escaping (Error?) -> Void)
 }
 
-protocol NINChatViewModel: NINChatRTCProtocol, NINChatStateProtocol, NINChatMessageProtocol {
+protocol NINChatPermissionsProtocol {
+    func grantLibraryPermission(_ completion: @escaping (Error?) -> Void)
+    func grantCameraPermission(_ completion: @escaping (Error?) -> Void)
+}
+
+protocol NINChatViewModel: NINChatRTCProtocol, NINChatStateProtocol, NINChatMessageProtocol, NINChatPermissionsProtocol {
     var onChannelClosed: (() -> Void)? { get set }
     var onQueueUpdated: (() -> Void)? { get set }
     var onChannelMessage: ((MessageUpdateType) -> Void)? { get set }
@@ -57,6 +62,9 @@ final class NINChatViewModelImpl: NINChatViewModel {
         self.sessionManager = sessionManager
         
         self.setupListeners()
+        /// Get access to camera and microphone before the call is initiated
+        /// To resolve `https://github.com/somia/mobile/issues/281`
+        self.getAccessForVideoCall { _ in }
     }
     
     private func setupListeners() {
@@ -98,13 +106,12 @@ extension NINChatViewModelImpl {
             
             case .offer:
                 debugger("Got WebRTC offer - initializing WebRTC for video call (answer)")
-                
                 do {
                     try self?.sessionManager.beginICE { error, stunServers, turnServers in
                         do {
                             let client: NINChatWebRTCClient = NINChatWebRTCClientImpl(sessionManager: self?.sessionManager, operatingMode: .callee, stunServers: stunServers, turnServers: turnServers, delegate: delegate)
                             try client.start(with: signal)
-                            
+
                             onCallInitiated(error, client)
                         } catch {
                             onCallInitiated(error, nil)
@@ -206,5 +213,27 @@ extension NINChatViewModelImpl {
 extension NINChatViewModelImpl: QueueUpdateCapture {
     var desc: String {
         "NINChatViewModel"
+    }
+}
+
+// MARK: - NINChatPermissionsProtocol
+
+extension  NINChatViewModelImpl {
+    private func getAccessForVideoCall(_ completion: @escaping (Error?) -> Void) {
+        Permission.grantPermission(.deviceCamera, .deviceMicrophone) { error in
+            completion(error)
+        }
+    }
+
+    func grantLibraryPermission(_ completion: @escaping (Error?) -> Void) {
+        Permission.grantPermission(.devicePhotoLibrary) { error in
+            completion(error)
+        }
+    }
+
+    func grantCameraPermission(_ completion: @escaping (Error?) -> Void) {
+        Permission.grantPermission(.deviceCamera) { error in
+            completion(error)
+        }
     }
 }
