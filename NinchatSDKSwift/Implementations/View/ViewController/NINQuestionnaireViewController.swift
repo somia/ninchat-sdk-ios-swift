@@ -80,9 +80,9 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
                 if let error = error as? NinchatError, error.type == "queue_is_closed" {
                     self?.showRegisteredPage(operation: self?.closedRegisteredOperation); return
                 }
-                Toast.show(message: .error("Error is submitting the answers")) { [weak self] in
+                Toast.show(message: .error("Error is submitting the answers"), onToastTouched: { [weak self] in
                     self?.session?.internalDelegate?.onDidEnd()
-                }
+                })
             }
             viewModel.onQuestionnaireFinished = { [weak self] queue, exit in
                 /// Complete questionnaire and navigate to the queue.
