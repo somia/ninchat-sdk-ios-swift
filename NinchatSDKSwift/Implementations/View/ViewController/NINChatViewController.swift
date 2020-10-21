@@ -260,7 +260,8 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
     
     private func connectRTC() {
         self.viewModel.listenToRTCSignaling(delegate: chatRTCDelegate, onCallReceived: { [weak self] channel in
-            func answerCall(with action: ConfirmAction) {
+            func answerCall(with action: ConfirmAction?) {
+                debugger("accept call: \(action == .confirm)")
                 self?.viewModel.pickup(answer: action == .confirm) { error in
                     if error != nil { Toast.show(message: .error("failed to send WebRTC pickup message")) }
                 }
