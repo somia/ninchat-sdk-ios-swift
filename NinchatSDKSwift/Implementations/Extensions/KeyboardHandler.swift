@@ -19,7 +19,7 @@ extension KeyboardHandler where Self:UIViewController {
             if let weakSelf = self, let keyboardSize = notification.keyboardInfo.endSize, let animationDuration = notification.keyboardInfo.animDuration, weakSelf.shouldBeScrolled(new: keyboardSize) {
                 var height = keyboardSize.height
                 if #available(iOS 11.0, *) {
-                    height -= weakSelf.scrollableView.safeAreaInsets.bottom
+                    height -= weakSelf.view.safeAreaInsets.bottom
                 }
                 weakSelf.scrollView(height: height, duration: animationDuration)
             }
