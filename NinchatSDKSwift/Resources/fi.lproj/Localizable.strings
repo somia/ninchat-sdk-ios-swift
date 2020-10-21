@@ -14,5 +14,5 @@
 "OK" = "Ei samaa eikä eri mieltä";
 "Disagree" = "Jokseenkin eri mieltä";
 "Strongly disagree" = "Täysin eri mieltä";
-"Permission denied" = "Lupa kielletty.";
+"Permission denied" = "Lupa evätty";
 "Update Settings" = "Päivitä asetukset";
