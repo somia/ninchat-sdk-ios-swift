@@ -260,7 +260,8 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
     
     private func connectRTC() {
         self.viewModel.listenToRTCSignaling(delegate: chatRTCDelegate, onCallReceived: { [weak self] channel in
-            func answerCall(with action: ConfirmAction) {
+            func answerCall(with action: ConfirmAction?) {
+                debugger("accept call: \(action == .confirm)")
                 self?.viewModel.pickup(answer: action == .confirm) { error in
                     if error != nil { Toast.show(message: .error("failed to send WebRTC pickup message")) }
                 }
@@ -285,10 +286,12 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
                 confirmVideoDialog.showConfirmView(on: self?.view ?? UIView())
             }
         }, onCallInitiated: { [weak self] error, rtcClient in
-            if let error = error as? PermissionError {
-                Toast.show(message: .error("Required permissions for Video call are not granted"), onToastTouched: {
-                    UIApplication.openAppSetting()
-                })
+            if error as? PermissionError != nil {
+                /// 1. Show toast to notify the user
+                Toast.show(message: .error("\("Permission denied".localized) \("Update Settings".localized)"), onToastTouched: { UIApplication.openAppSetting() })
+                /// 2. Cancel the call
+                self?.viewModel.hangup { _ in  }
+                /// 3. Discard the process
                 return
             }
 
