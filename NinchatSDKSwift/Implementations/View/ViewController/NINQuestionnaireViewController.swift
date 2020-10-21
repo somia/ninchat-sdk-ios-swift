@@ -16,7 +16,7 @@ protocol QuestionnaireConversationController {
     func updateConversationContentView(_ interval: TimeInterval)
 }
 
-final class NINQuestionnaireViewController: UIViewController, ViewController {
+final class NINQuestionnaireViewController: UIViewController, ViewController, KeyboardHandler {
 
     private let operationQueue = OperationQueue.main
     private let dispatchQueue = DispatchQueue.main
@@ -47,6 +47,10 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
             self?.dataSourceDelegate?.addClosedRegisteredSection()
         }
     }
+
+    // MARK: - KeyboardHandler
+
+    var onKeyboardSizeChanged: ((CGFloat) -> Void)?
 
     // MARK: - ViewController
 
