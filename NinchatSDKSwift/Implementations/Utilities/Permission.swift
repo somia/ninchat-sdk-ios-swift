@@ -106,14 +106,12 @@ final class PermissionStatus {
 struct Permission {
     static func grantPermission(_ types: PermissionType..., onCompletion: @escaping PermissionCompletion) {
         let dispatchGroup = DispatchGroup()
-        var permissions = types.compactMap({ PermissionStatus(type: $0) })
-        permissions.forEach { (permission: PermissionStatus) in
-            var permission = permission
-            permission.grant(queue: dispatchGroup)
+        let permissions = types.compactMap({ PermissionStatus(type: $0) }).map { (permission: PermissionStatus) -> PermissionStatus in
+            permission.grant(queue: dispatchGroup); return permission
         }
 
-        dispatchGroup.notify(queue: .main) {
-            onCompletion( permissions.first(where: { $0.error != nil })?.error )
+        dispatchGroup.notify(queue: DispatchQueue.global(qos: .background)) {
+            onCompletion( permissions.compactMap({ $0.error }).first )
         }
     }
 }

@@ -285,10 +285,12 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
                 confirmVideoDialog.showConfirmView(on: self?.view ?? UIView())
             }
         }, onCallInitiated: { [weak self] error, rtcClient in
-            if let error = error as? PermissionError {
-                Toast.show(message: .error("Required permissions for Video call are not granted"), onToastTouched: {
-                    UIApplication.openAppSetting()
-                })
+            if error as? PermissionError != nil {
+                /// 1. Show toast to notify the user
+                Toast.show(message: .error("Required permissions denied. Tap to update Settings"), onToastTouched: { UIApplication.openAppSetting() })
+                /// 2. Cancel the call
+                self?.viewModel.hangup { _ in  }
+                /// 3. Discard the process
                 return
             }
 
