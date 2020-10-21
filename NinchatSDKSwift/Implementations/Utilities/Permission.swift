@@ -22,7 +22,7 @@ enum PermissionError: Error {
 }
 
 final class PermissionStatus {
-    var type: PermissionType
+    private var type: PermissionType
     var error: PermissionError?
 
     init(type: PermissionType) {
@@ -81,7 +81,7 @@ final class PermissionStatus {
 
     // MARK: - Helper
 
-    func grantMedia(media: AVMediaType, _ onCompletion: @escaping PermissionCompletion) {
+    private func grantMedia(media: AVMediaType, _ onCompletion: @escaping PermissionCompletion) {
         switch AVCaptureDevice.authorizationStatus(for: media) {
         case .authorized:
             debugger("`AVCaptureDevice` is already authorized.")
