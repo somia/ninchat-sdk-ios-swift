@@ -28,3 +28,15 @@ end
 
 
 
+post_install do |pi|
+    pi.pods_project.build_configurations.each do |config|
+      config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'YES'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '10'
+    end
+    pi.pods_project.targets.each do |t|
+      t.build_configurations.each do |config|
+        config.build_settings.delete 'IPHONEOS_DEPLOYMENT_TARGET'
+      end
+    end
+end
+
