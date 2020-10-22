@@ -9,16 +9,15 @@ import AutoLayoutSwift
 
 extension UITextView {
     func updateSize(to height: CGFloat) {
-        self.find(attribute: .height)?.constant = height
-        
-        self.superview?.setNeedsLayout()
-        self.superview?.layoutIfNeeded()
+        guard let constraints = self.find(attribute: .height), constraints.constant != height else { return }
+
+        constraints.constant = height
         self.setNeedsLayout()
         self.layoutIfNeeded()
     }
     
-    func newSize(maxHeight: CGFloat = 9999) -> CGFloat {
-        let newHeight = ceil(self.sizeThatFits(CGSize(width: self.bounds.width, height: 9999)).height)
+    func newSize(maxHeight: CGFloat = .greatestFiniteMagnitude) -> CGFloat {
+        let newHeight = ceil(self.sizeThatFits(CGSize(width: self.bounds.width, height: .greatestFiniteMagnitude)).height)
         return min(newHeight, maxHeight)
     }
     

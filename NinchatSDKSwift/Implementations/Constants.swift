@@ -159,5 +159,5 @@ enum Margins: CGFloat {
     case kButtonHeight = 45.0
     case kComposeVerticalMargin = 10.0
     case kComposeHorizontalMargin = 60.0
-    case kTextFieldPaddingHeight = 64.0
+    case kTextFieldPaddingHeight = 61.0
 }
