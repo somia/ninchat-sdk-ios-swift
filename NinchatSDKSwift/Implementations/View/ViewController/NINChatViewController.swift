@@ -77,9 +77,15 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
     // MARK: - KeyboardHandler
     
     var onKeyboardSizeChanged: ((CGFloat) -> Void)?
-    
+    var scrollableView: UIView! {
+        scrollableViewContainer
+    }
+
     // MARK: - Outlets
-    
+
+    @IBOutlet private(set) weak var scrollableViewContainer: UIView!
+    @IBOutlet private(set) weak var backgroundView: UIImageView!     /// <--- to hold page background image, it is more flexible to have a dedicated view
+
     private lazy var videoView: VideoViewProtocol = {
         let view: VideoView = VideoView.loadFromNib()
         view.viewModel = viewModel
@@ -358,9 +364,9 @@ extension NINChatViewController {
         inputControlsView.overrideAssets()
         
         if let backgroundImage = self.session?.internalDelegate?.override(imageAsset: .chatBackground) {
-            self.view.backgroundColor = UIColor(patternImage: backgroundImage)
+            self.backgroundView.backgroundColor = UIColor(patternImage: backgroundImage)
         } else if let bundleImage = UIImage(named: "chat_background_pattern", in: .SDKBundle, compatibleWith: nil) {
-            self.view.backgroundColor = UIColor(patternImage: bundleImage)
+            self.backgroundView.backgroundColor = UIColor(patternImage: bundleImage)
         }
     }
     

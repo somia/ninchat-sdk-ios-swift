@@ -16,7 +16,7 @@ protocol QuestionnaireConversationController {
     func updateConversationContentView(_ interval: TimeInterval)
 }
 
-final class NINQuestionnaireViewController: UIViewController, ViewController {
+final class NINQuestionnaireViewController: UIViewController, ViewController, KeyboardHandler {
 
     private let operationQueue = OperationQueue.main
     private let dispatchQueue = DispatchQueue.main
@@ -48,6 +48,10 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
         }
     }
 
+    // MARK: - KeyboardHandler
+
+    var onKeyboardSizeChanged: ((CGFloat) -> Void)?
+
     // MARK: - ViewController
 
     weak var session: NINChatSession?
@@ -76,9 +80,9 @@ final class NINQuestionnaireViewController: UIViewController, ViewController {
                 if let error = error as? NinchatError, error.type == "queue_is_closed" {
                     self?.showRegisteredPage(operation: self?.closedRegisteredOperation); return
                 }
-                Toast.show(message: .error("Error is submitting the answers")) { [weak self] in
+                Toast.show(message: .error("Error is submitting the answers"), onToastTouched: { [weak self] in
                     self?.session?.internalDelegate?.onDidEnd()
-                }
+                })
             }
             viewModel.onQuestionnaireFinished = { [weak self] queue, exit in
                 /// Complete questionnaire and navigate to the queue.
