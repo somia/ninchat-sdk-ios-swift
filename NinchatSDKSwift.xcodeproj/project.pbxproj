@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5CD4F1C82540CAAF009856AC /* Notification+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD4F1C62540CAAF009856AC /* Notification+Extension.swift */; };
+		5CD4F1C92540CAAF009856AC /* KeyboardHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD4F1C72540CAAF009856AC /* KeyboardHandler.swift */; };
 		7C44F1A84C25C4445CF3B955 /* Pods_NinchatSDKSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 495ADA60487CD354EDC07332 /* Pods_NinchatSDKSwift.framework */; };
 		851E359923B1214E000FA966 /* AutolayouTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851E359823B1214E000FA966 /* AutolayouTests.swift */; };
 		851ECF6423969297006D332F /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 851ECF6323969297006D332F /* README.md */; };
@@ -230,6 +232,8 @@
 		3FEAD27BEEC9ED9A48EB128E /* Pods_NinchatSDKSwiftTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDKSwiftTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		495ADA60487CD354EDC07332 /* Pods_NinchatSDKSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDKSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		51577DDC11F36A3D9573A68C /* Pods_NinchatSDKSwiftUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDKSwiftUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5CD4F1C62540CAAF009856AC /* Notification+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Notification+Extension.swift"; sourceTree = "<group>"; };
+		5CD4F1C72540CAAF009856AC /* KeyboardHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardHandler.swift; sourceTree = "<group>"; };
 		62C8D99D572F0DB4B5E6D255 /* Pods-NinchatSDKSwiftUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftUITests.release.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftUITests/Pods-NinchatSDKSwiftUITests.release.xcconfig"; sourceTree = "<group>"; };
 		7B50C1E321841F3749D5D05A /* Pods-NinchatSDKSwiftServerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftServerTests.release.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftServerTests/Pods-NinchatSDKSwiftServerTests.release.xcconfig"; sourceTree = "<group>"; };
 		832BEC3E467C0EEE45282F1B /* Pods-NinchatSDKSwiftTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftTests.debug.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -660,6 +664,8 @@
 		855CBE202397CBB800A024A7 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				5CD4F1C72540CAAF009856AC /* KeyboardHandler.swift */,
+				5CD4F1C62540CAAF009856AC /* Notification+Extension.swift */,
 				8571D44323C091C000C16758 /* Debugger.swift */,
 				8571D45123C0B48A00C16758 /* Data+Extension.swift */,
 				85A6C9A423CCC16A001CED6D /* Date+Extension.swift */,
@@ -1131,7 +1137,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1130;
-				LastUpgradeCheck = 1120;
+				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = "Hassan Shahbazi";
 				TargetAttributes = {
 					855B9F10238ECDB30081A9C6 = {
@@ -1434,6 +1440,7 @@
 				91A167A80359759A47DB2B11 /* ServiceManager.swift in Sources */,
 				91A16ACFBF8C7E4DF9373C1E /* ServiceRequest.swift in Sources */,
 				91A16A7280B85CB8BD7C87F2 /* SiteConfigRequest.swift in Sources */,
+				5CD4F1C92540CAAF009856AC /* KeyboardHandler.swift in Sources */,
 				91A1638816BBEC6D20425AC2 /* Empty.swift in Sources */,
 				91A1636EC2133F4BE4B586E8 /* ChoiceDialogue.swift in Sources */,
 				91A16B2F768C5422B895C769 /* Toast.swift in Sources */,
@@ -1456,6 +1463,7 @@
 				91A165F1E03C8A728D1EEF12 /* QuestionnaireElementConnector.swift in Sources */,
 				91A1658F97223291E9FBBD4B /* NINQuestionnaireViewModel.swift in Sources */,
 				91A167F485DBCDFEEA0261F6 /* QuestionnaireElementLikert.swift in Sources */,
+				5CD4F1C82540CAAF009856AC /* Notification+Extension.swift in Sources */,
 				91A1674CD64ED14E91D77851 /* QuestionnaireDataSourceDelegate.swift in Sources */,
 				91A16EBD69F3BE407AACAFF4 /* NINQuestionnaireFormDataSourceDelegate.swift in Sources */,
 				91A1685BFB39CDD931E5FCAC /* NINQuestionnaireConversationDataSourceDelegate.swift in Sources */,
@@ -1548,6 +1556,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1570,6 +1579,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1615,6 +1625,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1637,6 +1648,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1772,7 +1784,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 832BEC3E467C0EEE45282F1B /* Pods-NinchatSDKSwiftTests.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86P62K2K2N;
@@ -1803,7 +1815,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CE774BD7EED85980393E55AF /* Pods-NinchatSDKSwiftTests.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86P62K2K2N;

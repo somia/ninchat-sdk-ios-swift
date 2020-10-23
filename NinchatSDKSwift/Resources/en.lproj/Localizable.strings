@@ -14,3 +14,5 @@
 "OK" = "Neither agree nor disagree";
 "Disagree" = "Disagree";
 "Strongly disagree" = "Strongly disagree";
+"Permission denied" = "Permission denied.";
+"Update Settings" = "Tap to update Settings.";

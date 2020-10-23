@@ -22,7 +22,7 @@ enum PermissionError: Error {
 }
 
 final class PermissionStatus {
-    var type: PermissionType
+    private var type: PermissionType
     var error: PermissionError?
 
     init(type: PermissionType) {
@@ -81,7 +81,7 @@ final class PermissionStatus {
 
     // MARK: - Helper
 
-    func grantMedia(media: AVMediaType, _ onCompletion: @escaping PermissionCompletion) {
+    private func grantMedia(media: AVMediaType, _ onCompletion: @escaping PermissionCompletion) {
         switch AVCaptureDevice.authorizationStatus(for: media) {
         case .authorized:
             debugger("`AVCaptureDevice` is already authorized.")
@@ -106,14 +106,12 @@ final class PermissionStatus {
 struct Permission {
     static func grantPermission(_ types: PermissionType..., onCompletion: @escaping PermissionCompletion) {
         let dispatchGroup = DispatchGroup()
-        var permissions = types.compactMap({ PermissionStatus(type: $0) })
-        permissions.forEach { (permission: PermissionStatus) in
-            var permission = permission
-            permission.grant(queue: dispatchGroup)
+        let permissions = types.compactMap({ PermissionStatus(type: $0) }).map { (permission: PermissionStatus) -> PermissionStatus in
+            permission.grant(queue: dispatchGroup); return permission
         }
 
-        dispatchGroup.notify(queue: .main) {
-            onCompletion( permissions.first(where: { $0.error != nil })?.error )
+        dispatchGroup.notify(queue: DispatchQueue.global(qos: .background)) {
+            onCompletion( permissions.compactMap({ $0.error }).first )
         }
     }
 }

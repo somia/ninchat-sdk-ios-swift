@@ -77,9 +77,15 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
     // MARK: - KeyboardHandler
     
     var onKeyboardSizeChanged: ((CGFloat) -> Void)?
-    
+    var scrollableView: UIView! {
+        scrollableViewContainer
+    }
+
     // MARK: - Outlets
-    
+
+    @IBOutlet private(set) weak var scrollableViewContainer: UIView!
+    @IBOutlet private(set) weak var backgroundView: UIImageView!     /// <--- to hold page background image, it is more flexible to have a dedicated view
+
     private lazy var videoView: VideoViewProtocol = {
         let view: VideoView = VideoView.loadFromNib()
         view.viewModel = viewModel
@@ -260,7 +266,8 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
     
     private func connectRTC() {
         self.viewModel.listenToRTCSignaling(delegate: chatRTCDelegate, onCallReceived: { [weak self] channel in
-            func answerCall(with action: ConfirmAction) {
+            func answerCall(with action: ConfirmAction?) {
+                debugger("accept call: \(action == .confirm)")
                 self?.viewModel.pickup(answer: action == .confirm) { error in
                     if error != nil { Toast.show(message: .error("failed to send WebRTC pickup message")) }
                 }
@@ -285,10 +292,12 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
                 confirmVideoDialog.showConfirmView(on: self?.view ?? UIView())
             }
         }, onCallInitiated: { [weak self] error, rtcClient in
-            if let error = error as? PermissionError {
-                Toast.show(message: .error("Required permissions for Video call are not granted"), onToastTouched: {
-                    UIApplication.openAppSetting()
-                })
+            if error as? PermissionError != nil {
+                /// 1. Show toast to notify the user
+                Toast.show(message: .error("\("Permission denied".localized) \("Update Settings".localized)"), onToastTouched: { UIApplication.openAppSetting() })
+                /// 2. Cancel the call
+                self?.viewModel.hangup { _ in  }
+                /// 3. Discard the process
                 return
             }
 
@@ -355,9 +364,9 @@ extension NINChatViewController {
         inputControlsView.overrideAssets()
         
         if let backgroundImage = self.session?.internalDelegate?.override(imageAsset: .chatBackground) {
-            self.view.backgroundColor = UIColor(patternImage: backgroundImage)
+            self.backgroundView.backgroundColor = UIColor(patternImage: backgroundImage)
         } else if let bundleImage = UIImage(named: "chat_background_pattern", in: .SDKBundle, compatibleWith: nil) {
-            self.view.backgroundColor = UIColor(patternImage: bundleImage)
+            self.backgroundView.backgroundColor = UIColor(patternImage: bundleImage)
         }
     }
     
