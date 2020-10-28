@@ -99,12 +99,12 @@ extension NINChatViewModelImpl {
         sessionManager.onRTCSignal = { [weak self] type, user, signal in
             switch type {
             case .call:
-                debugger("Got WebRTC call")
+                debugger("WebRTC: call")
                 onCallReceived(user)
             case .offer:
                 /// Get access to camera and microphone before the call is initiated
                 /// To resolve `https://github.com/somia/mobile/issues/281`
-                debugger("Got WebRTC offer, Check if the call can be initiated with current permissions\n")
+                debugger("WebRTC: offer, Check if the call can be initiated with current permissions\n")
                 self?.grantVideoCallPermissions { error in
                     guard error == nil else { onCallInitiated(error, nil); return }
 
@@ -125,7 +125,7 @@ extension NINChatViewModelImpl {
                     }
                 }
             case .hangup:
-                debugger("Got WebRTC hang-up - closing the video call.")
+                debugger("WebRTC: hang-up - closing the video call.")
                 onCallHangup()
             default:
                 break
@@ -152,7 +152,7 @@ extension NINChatViewModelImpl {
 
     func disconnectRTC(_ client: NINChatWebRTCClient?, completion: (() -> Void)?) {
         if let client = client {
-            debugger("Disconnecting webRTC resources")
+            debugger("webRTC: disconnect resources")
             client.disconnect()
             completion?()
         }

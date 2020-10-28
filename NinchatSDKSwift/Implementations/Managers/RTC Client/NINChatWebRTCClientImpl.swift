@@ -99,11 +99,12 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
         sessionManager?.onRTCClientSignal = { [weak self] type, user, signal in
             switch type {
             case .candidate:
+                debugger("WebRTC: Candidate received")
                 guard let iceCandidate = signal?.candidate?.toRTCIceCandidate else { return }
                 self?.peerConnection?.add(iceCandidate)
             case .answer:
                 guard let sdp = signal?.sdp, sdp.values.count > 0, let description = sdp.toRTCSessionDescription else { return }
-                debugger("Setting remote description from Answer with SDP: \(description)")
+                debugger("WebRTC: Setting remote description from Answer with SDP: \(description)")
                 self?.peerConnection?.setRemoteDescription(description) { error in
                     self?.didSetSessionDescription(with: error)
                 }
@@ -113,7 +114,7 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
         }
         
         /// Configure & create our RTC peer connection
-        debugger("Configuring & initializing RTC Peer Connection")
+        debugger("WebRTC: Configuring & initializing RTC Peer Connection")
         let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: ["DtlsSrtpKeyAgreement": "true"])
         let configuration = RTCConfiguration()
         configuration.iceServers = self.iceServers ?? []
@@ -139,14 +140,14 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
             /// We are the 'caller', ie. the connection initiator; create a connection offer
             debugger("WebRTC: making a call.")
             self.peerConnection?.offer(for: self.defaultOfferOrAnswerConstraints) { [weak self] (sdp, error) in
-                debugger("Created SDK offer with error: \(String(describing: error))")
+                debugger("WebRTC: Created SDK offer with error: \(String(describing: error))")
                 self?.didCreateSessionDescription(sdp: sdp, error: error)
             }
         case .callee:
             /// We are the 'callee', ie. we are answering.
             debugger("WebRTC: answering a call.")
             guard let description = rtc?.sdp?.toRTCSessionDescription else { return }
-            debugger("Setting remote description from Offer.")
+            debugger("WebRTC: Setting remote description from Offer.")
             self.peerConnection?.setRemoteDescription(description) { [weak self] error in
                 self?.didSetSessionDescription(with: error)
             }
@@ -156,7 +157,7 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
     }
     
     func disconnect() {
-        self.sessionDelegate?.log(value: "WebRTC Client disconnecting.")
+        self.sessionDelegate?.log(value: "WebRTC: Client disconnecting.")
         
         self.stopLocalCapture()
         self.deallocate()
@@ -226,7 +227,7 @@ extension NINChatWebRTCClientImpl {
                 self.sessionDelegate?.log(value: "** ERROR No valid formats for device: \(device)"); return
             }
             
-            debugger("Starting local video capturing..")
+            debugger("WebRTC: Starting local video capturing..")
             let fps = fmin(format.videoSupportedFrameRateRanges
                                                         .map({ $0.maxFrameRate })
                                                         .sorted(by: { $0 > $1 })
@@ -243,7 +244,7 @@ extension NINChatWebRTCClientImpl {
     
     private func stopLocalCapture() {
         DispatchQueue.main.async {
-            debugger("Stopping local video capturing..")
+            debugger("WebRTC: Stopping local video capturing..")
             self.localCapture?.stopCapture()
         }
     }
@@ -275,7 +276,7 @@ extension NINChatWebRTCClientImpl {
             }
             
             guard let sdp = sdp, self.peerConnection?.localDescription?.type != sdp.type else { return }
-            debugger("Setting local description")
+            debugger("WebRTC: Setting local description")
             self.peerConnection?.setLocalDescription(sdp) { [weak self] error in
                 self?.didSetSessionDescription(with: error)
             }
@@ -287,7 +288,7 @@ extension NINChatWebRTCClientImpl {
             }
             
             /// Send signaling message about the offer/answer
-            debugger("Sending RTC signaling message of type: \(messageType)")
+            debugger("WebRTC: Sending RTC signaling message of type: \(messageType)")
             do {
                 try self.sessionManager?.send(type: messageType, payload: ["sdp":sdp.toDictionary]) { error in
                     if let error = error {
