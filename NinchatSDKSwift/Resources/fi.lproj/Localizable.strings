@@ -16,3 +16,4 @@
 "Strongly disagree" = "Täysin eri mieltä";
 "Permission denied" = "Lupa evätty";
 "Update Settings" = "Päivitä asetukset";
+"WebRTC pickup fail" = "WebRTC-noutoviestin lähettäminen epäonnistui";

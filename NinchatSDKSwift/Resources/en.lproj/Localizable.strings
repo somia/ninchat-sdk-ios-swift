@@ -16,3 +16,4 @@
 "Strongly disagree" = "Strongly disagree";
 "Permission denied" = "Permission denied.";
 "Update Settings" = "Tap to update Settings.";
+"WebRTC pickup fail" = "failed to send WebRTC pickup message";
