@@ -21,7 +21,7 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
     /// Session manager, used for signaling
     private weak var sessionManager: NINChatSessionManager?
     /// Operation mode; caller or callee.
-    private let operatingMode: OperatingMode!
+    private var operatingMode: OperatingMode!
     /// Factory for creating our RTC peer connections
     private var peerConnectionFactory: RTCPeerConnectionFactory?
     /// List of our ICE servers (STUN, TURN)
@@ -70,8 +70,9 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
         }
     }
     
-    init(sessionManager: NINChatSessionManager?, operatingMode: OperatingMode, stunServers: [WebRTCServerInfo]?, turnServers: [WebRTCServerInfo]?, delegate: NINChatWebRTCClientDelegate?) {
-                
+    init(sessionManager: NINChatSessionManager?, operatingMode: OperatingMode, stunServers: [WebRTCServerInfo]?, turnServers: [WebRTCServerInfo]?, candidates: [RTCIceCandidate]?, delegate: NINChatWebRTCClientDelegate?) {
+        
+        super.init()
         self.delegate = delegate
         self.sessionManager = sessionManager
         self.operatingMode = operatingMode
@@ -86,6 +87,13 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
         }
         self.iceGatheringStates = GatheringState.allCases.reduce(into: [:]) { (dic: inout [Int:String], item: GatheringState) in
             dic[item.rawValue] = item.description
+        }
+        
+        /// Initiate peerConnection and add queued ICE Candidates
+        self.initiatePeerConnection()
+        for candidate in candidates ?? [] {
+            debugger("WebRTC: Adding candidate: \(candidate) to peerConnection: \(String(describing: peerConnection))")
+            self.peerConnection?.add(candidate)
         }
         
         sessionManager?.delegate?.log(value: "Creating new `NINChatWebRTCClient` in the '\(operatingMode.description)' mode")
@@ -113,22 +121,6 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
             }
         }
         
-        /// Configure & create our RTC peer connection
-        debugger("WebRTC: Configuring & initializing RTC Peer Connection")
-        let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: ["DtlsSrtpKeyAgreement": "true"])
-        let configuration = RTCConfiguration()
-        configuration.iceServers = self.iceServers ?? []
-        
-        #if NIN_USE_PLANB_SEMANTICS
-        debugger("WebRTC: Configuring peer connection for PlanB SDP semantics.")
-        configuration.sdpSemantics = .planB /// <-- Legacy RTC impl support
-        #else
-        debugger("WebRTC: Configuring peer connection for Unified Plan SDP semantics.")
-        configuration.sdpSemantics = .unifiedPlan
-        #endif
-        
-        self.peerConnection = self.peerConnectionFactory?.peerConnection(with: configuration, constraints: constraints, delegate: self)
-
         /// Create a stream object; this is used to group the audio/video tracks together.
         self.localStream = self.peerConnectionFactory?.mediaStream(withStreamId: kStreamId)
 
@@ -197,6 +189,24 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
 }
 
 extension NINChatWebRTCClientImpl {
+    private func initiatePeerConnection() {
+        /// Configure & create our RTC peer connection
+        debugger("WebRTC: Configuring & initializing RTC Peer Connection")
+        let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: ["DtlsSrtpKeyAgreement": "true"])
+        let configuration = RTCConfiguration()
+        configuration.iceServers = self.iceServers ?? []
+        
+        #if NIN_USE_PLANB_SEMANTICS
+        debugger("WebRTC: Configuring peer connection for PlanB SDP semantics.")
+        configuration.sdpSemantics = .planB /// <-- Legacy RTC impl support
+        #else
+        debugger("WebRTC: Configuring peer connection for Unified Plan SDP semantics.")
+        configuration.sdpSemantics = .unifiedPlan
+        #endif
+        
+        self.peerConnection = self.peerConnectionFactory?.peerConnection(with: configuration, constraints: constraints, delegate: self)
+    }
+    
     private func startLocalCapture() {
         DispatchQueue.main.async {
             let availableDevices = RTCCameraVideoCapturer.captureDevices()

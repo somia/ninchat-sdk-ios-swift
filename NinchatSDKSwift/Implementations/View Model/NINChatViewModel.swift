@@ -5,6 +5,7 @@
 //
 
 import Foundation
+import WebRTC
 
 enum MessageUpdateType {
     case insert(_ index: Int)
@@ -54,6 +55,8 @@ protocol NINChatViewModel: NINChatRTCProtocol, NINChatStateProtocol, NINChatMess
 
 final class NINChatViewModelImpl: NINChatViewModel {
     private unowned var sessionManager: NINChatSessionManager
+    private var iceCandidates: [RTCIceCandidate] = []
+    
     var onChannelClosed: (() -> Void)?
     var onQueueUpdated: (() -> Void)?
     var onChannelMessage: ((MessageUpdateType) -> Void)?
@@ -96,6 +99,16 @@ final class NINChatViewModelImpl: NINChatViewModel {
 
 extension NINChatViewModelImpl {
     func listenToRTCSignaling(delegate: NINChatWebRTCClientDelegate?, onCallReceived: @escaping RTCCallReceive, onCallInitiated: @escaping RTCCallInitial, onCallHangup: @escaping RTCCallHangup) {
+        sessionManager.onRTCClientSignal = { [weak self] type, user, signal in
+            debugger("WebRTC: Client Signal: \(type)")
+            guard type == .candidate else { return }
+            
+            /// Queue received candidates and inject during initialization
+            guard let iceCandidate = signal?.candidate?.toRTCIceCandidate else { return }
+            debugger("WebRTC: Adding \(iceCandidate) to queue")
+            self?.iceCandidates.append(iceCandidate)
+        }
+        
         sessionManager.onRTCSignal = { [weak self] type, user, signal in
             switch type {
             case .call:
@@ -112,7 +125,7 @@ extension NINChatViewModelImpl {
                     do {
                         try self?.sessionManager.beginICE { error, stunServers, turnServers in
                             do {
-                                let client: NINChatWebRTCClient = NINChatWebRTCClientImpl(sessionManager: self?.sessionManager, operatingMode: .callee, stunServers: stunServers, turnServers: turnServers, delegate: delegate)
+                                let client: NINChatWebRTCClient = NINChatWebRTCClientImpl(sessionManager: self?.sessionManager, operatingMode: .callee, stunServers: stunServers, turnServers: turnServers, candidates: self?.iceCandidates, delegate: delegate)
                                 try client.start(with: signal)
 
                                 onCallInitiated(error, client)
