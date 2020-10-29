@@ -99,7 +99,13 @@ final class NINQueueViewController: UIViewController {
             self.viewModel.connect(queue: queue)
             self.updateQueueInfo(text: self.viewModel.queueTextInfo(queue: queue, 1))
         case .toChannel:
-            self.onQueueActionTapped?(self.sessionManager?.describedQueue)
+            if self.sessionManager?.describedQueue == nil {
+                debugger("error in getting target queue")
+                self.stopSpinWith(message: "Resume error".localized)
+            } else {
+                debugger("target queue is ready: \(String(describing: self.sessionManager?.describedQueue))")
+                self.onQueueActionTapped?(self.sessionManager?.describedQueue)
+            }
         default:
             self.viewModel.connect(queue: self.queue)
             self.updateQueueInfo(text: self.viewModel.queueTextInfo(queue: queue, 1))
@@ -109,9 +115,12 @@ final class NINQueueViewController: UIViewController {
     private func setupClosedQueue() {
         /// `If customer resumes to a session and is already in queue, then show queueing view even if queue is closed`
         guard let queue = queue, queue.isClosed && self.resumeMode == nil else { return }
+        self.stopSpinWith(message: self.session?.sessionManager.siteConfiguration.noQueueText ?? "")
+    }
 
+    private func stopSpinWith(message: String) {
         self.spinnerImageView.isHidden = true
-        self.queueInfoTextView.setAttributed(text: self.session?.sessionManager.siteConfiguration.noQueueText ?? "", font: .ninchat)
+        self.queueInfoTextView.setAttributed(text: message, font: .ninchat)
     }
 }
 

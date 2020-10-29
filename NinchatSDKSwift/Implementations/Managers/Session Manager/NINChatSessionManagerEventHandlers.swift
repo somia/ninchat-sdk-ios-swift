@@ -76,14 +76,23 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                     }
                     /// If not in a queue, check if the session is alive to resume
                     ///     1. update channel members (name, avatar, message threads, etc)
-                    ///     2. describe channel's realm id (to get queues)
+                    ///     2. fetch the list of available queues in order to get target queue's info
+                    ///     3. describe channel's realm id (to get queues)
                     else if self.canResumeSession(param: param) {
-                        try self.describe(channel: self.currentChannelID!) { [weak self] error in
+                        try self.list(queues: nil) { [weak self] error in
                             guard error == nil else { self?.onActionSessionEvent?(credentials, eventType, error); return }
-                            guard let channelID = self?.currentChannelID else { debugger("Error in getting current channel id"); return }
 
-                            self?.didJoinChannel(channelID: channelID)
-                            self?.onActionSessionEvent?(credentials, eventType, nil)
+                            do {
+                                try self?.describe(channel: self?.currentChannelID ?? "") { [weak self] error in
+                                    guard error == nil else { self?.onActionSessionEvent?(credentials, eventType, error); return }
+                                    guard let channelID = self?.currentChannelID else { debugger("Error in getting current channel id"); return }
+
+                                    self?.didJoinChannel(channelID: channelID)
+                                    self?.onActionSessionEvent?(credentials, eventType, nil)
+                                }
+                            } catch {
+                                self?.onActionSessionEvent?(credentials, eventType, error)
+                            }
                         }
                     }
                     /// Otherwise, continue to initiate a new session
