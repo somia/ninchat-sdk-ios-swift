@@ -265,20 +265,46 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
     // MARK: - Helpers
     
     private func connectRTC() {
-        self.viewModel.listenToRTCSignaling(delegate: chatRTCDelegate, onCallReceived: { [weak self] channel in
-            func answerCall(with action: ConfirmAction?) {
-                debugger("accept call: \(action == .confirm)")
-                self?.viewModel.pickup(answer: action == .confirm) { error in
-                    if error != nil { Toast.show(message: .error("failed to send WebRTC pickup message")) }
+        func permissionError(_ error: Error?) -> Bool {
+            if error as? PermissionError != nil {
+                /// 1. Show toast to notify the user
+                Toast.show(message: .error("\("Permission denied".localized) \("Update Settings".localized)"), onToastTouched: { UIApplication.openAppSetting() })
+                /// 2. Cancel the call
+                self.viewModel.hangup { _ in  }
+                /// 3. Discard the process
+                return true
+            }
+            return false
+        }
+
+        /// send .answer response
+        func answerCall(with action: ConfirmAction) {
+            debugger("accept call: \(action == .confirm)")
+
+            switch action {
+            case .cancel:
+                self.viewModel.pickup(answer: false) { error in
+                    if error != nil { Toast.show(message: .error("WebRTC pickup fail".localized)) }
+                }
+            case .confirm:
+                debugger("WebRTC: Grant permission for the video call")
+                self.viewModel.grantVideoCallPermissions { error in
+                    debugger("WebRTC: Permissions granted - initializing the video call (answer)")
+                    self.viewModel.pickup(answer: true) { error in
+                        if error != nil { Toast.show(message: .error("WebRTC pickup fail".localized)) }
+                    }
                 }
             }
+        }
+
+        self.viewModel.listenToRTCSignaling(delegate: chatRTCDelegate, onCallReceived: { [weak self] channel, error in
+            if permissionError(error) { return }
 
             /// accept invite silently when re-invited `https://github.com/somia/mobile/issues/232`
             guard self?.webRTCClient == nil else {
-                debugger("Silently accept the video call")
+                debugger("WebRTC: Silently accept the video call")
                 answerCall(with: .confirm); return
             }
-
             DispatchQueue.main.async {
                 self?.view.endEditing(true)
 
@@ -291,15 +317,9 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
                 }
                 confirmVideoDialog.showConfirmView(on: self?.view ?? UIView())
             }
+            
         }, onCallInitiated: { [weak self] error, rtcClient in
-            if error as? PermissionError != nil {
-                /// 1. Show toast to notify the user
-                Toast.show(message: .error("\("Permission denied".localized) \("Update Settings".localized)"), onToastTouched: { UIApplication.openAppSetting() })
-                /// 2. Cancel the call
-                self?.viewModel.hangup { _ in  }
-                /// 3. Discard the process
-                return
-            }
+            if permissionError(error) { return }
 
             self?.webRTCClient = rtcClient
             DispatchQueue.main.async {

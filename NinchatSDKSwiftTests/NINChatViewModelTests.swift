@@ -37,7 +37,8 @@ class NINChatViewModelTests: XCTestCase, NINChatWebRTCClientDelegate {
     func testRTCSignaling() {
         let expectationCall = self.expectation(description: "Expect to get a fake call")
         let expectationHangup = self.expectation(description: "Expect to get a hangup command")
-        viewModel.listenToRTCSignaling(delegate: self, onCallReceived: { user in
+        viewModel.listenToRTCSignaling(delegate: self, onCallReceived: { user, err in
+            XCTAssertNil(err)
             XCTAssertNil(user)
             expectationCall.fulfill()
         }, onCallInitiated: { error, rtc  in }, onCallHangup: {
@@ -129,6 +130,6 @@ extension NINChatViewModelTests {
 
 extension NINChatWebRTCClientImpl {
     convenience override init() {
-        self.init(sessionManager: nil, operatingMode: .callee, stunServers: nil, turnServers: nil, delegate: nil)
+        self.init(sessionManager: nil, operatingMode: .callee, stunServers: nil, turnServers: nil, candidates: nil, delegate: nil)
     }
 }

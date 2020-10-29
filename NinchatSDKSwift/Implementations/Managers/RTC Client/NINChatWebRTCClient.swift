@@ -102,7 +102,7 @@ protocol NINChatWebRTCClient {
     var disableLocalAudio: Bool! { get set }
     var disableLocalVideo: Bool! { get set }
     
-    init(sessionManager: NINChatSessionManager?, operatingMode: OperatingMode, stunServers: [WebRTCServerInfo]?, turnServers: [WebRTCServerInfo]?, delegate: NINChatWebRTCClientDelegate?)
+    init(sessionManager: NINChatSessionManager?, operatingMode: OperatingMode, stunServers: [WebRTCServerInfo]?, turnServers: [WebRTCServerInfo]?, candidates: [RTCIceCandidate]?, delegate: NINChatWebRTCClientDelegate?)
     
     func start(with rtc: RTCSignal?) throws
     func disconnect()
