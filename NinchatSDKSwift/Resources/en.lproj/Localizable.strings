@@ -16,4 +16,5 @@
 "Strongly disagree" = "Strongly disagree";
 "Permission denied" = "Permission denied.";
 "Update Settings" = "Tap to update Settings.";
+"Resume error" = "Error in connecting to the queue. Please try again.";
 "WebRTC pickup fail" = "Failed to initiate the video call.";
