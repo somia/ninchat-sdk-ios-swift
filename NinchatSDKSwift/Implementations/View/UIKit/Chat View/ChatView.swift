@@ -221,7 +221,7 @@ extension ChatView {
 
 extension ChatView: ChatCellDelegate {
     func onConstraintsUpdate(cell: ChatChannelCell, withAnimation animation: Bool) {
-        guard self.tableView.numberOfRows(inSection: 0) == self.dataSource?.numberOfMessages(for: self), self.tableView.visibleCells.contains(cell) else { return }
+        guard self.tableView.numberOfRows(inSection: 0) == self.dataSource?.numberOfMessages(for: self) else { return }
         defer { cell.isReloading = false; cell.constraintsSet = true }
         cell.isReloading = true
 
