@@ -14,6 +14,7 @@ protocol ChannelMediaCell {
     var cachedImage: [String:UIImage]? { get }
 
     /// Outlets
+    var parentView: UIView! { get set }
     var messageImageViewContainer: UIView! { get set }
     var messageImageView: UIImageView! { get set }
     var videoPlayIndicator: UIImageView! { get set }
@@ -80,47 +81,43 @@ extension ChannelMediaCell where Self:ChatChannelCell {
     private func updateMessageImageView(attachment: FileInfo, imageURL: String?, image: UIImage?, asynchronous: Bool, isSeries: Bool) {
         func updateView() {
             if self.set(aspect: attachment.aspectRatio, isSeries) {
-                guard !self.isReloading && asynchronous else { return }
+                guard !self.constraintsSet, !self.isReloading  else { return }
+                debugger("Cell's constraints are not set and the cell is not loading => reload frames")
                 /// Inform the chat view that our cell might need resizing due to new constraints.
                 /// We do this regardless of fromCache -value as this method may have been called asynchronously
                 /// from `updateInfo(session:completion:)` completion block in populate method.
-                self.onConstraintsUpdate?()
+                self.delegate?.onConstraintsUpdate(cell: self, withAnimation: asynchronous)
             }
         }
 
-        DispatchQueue.main.async {
-            if let image = image {
-                self.messageImageView.image = image
-                (self as? ChannelMediaCellDelegate)?.didLoadAttachment(image)
+        if let image = image {
+            self.messageImageView.image = image
+            (self as? ChannelMediaCellDelegate)?.didLoadAttachment(image)
+            updateView()
+        }
+        /// Load the image from cache first
+        else if let id = self.message?.messageID, let image = self.cachedImage?[id] {
+            self.messageImageView.image = image
+            updateView()
+        }
+        /// Load the image in message image view over HTTP or from local cache
+        else if let imageURL = imageURL {
+            self.messageImageView.fetchImage(from: URL(string: imageURL)) { [weak self, message = self.message] data in
+                if self?.message?.messageID != message?.messageID { debugger("** ** Dismiss unrelated attachment"); return }
+                self?.messageImageView.image = UIImage(data: data)
+                (self as? ChannelMediaCellDelegate)?.didLoadAttachment(UIImage(data: data))
                 updateView()
-            }
-            /// Load the image from cache first
-            else if let id = self.message?.messageID, let image = self.cachedImage?[id] {
-                self.messageImageView.image = image
-                updateView()
-            }
-            /// Load the image in message image view over HTTP or from local cache
-            else if let imageURL = imageURL {
-                let message = self.message
-                self.messageImageView.fetchImage(from: URL(string: imageURL)) { [weak self, message] data in
-                    if self?.message?.messageID != message?.messageID { debugger("** ** Dismiss unrelated attachment"); return }
-                    self?.messageImageView.image = UIImage(data: data)
-                    (self as? ChannelMediaCellDelegate)?.didLoadAttachment(UIImage(data: data))
-                    updateView()
-                }
             }
         }
     }
     
     private func set(aspect ratio: Double?, _ isSeries: Bool, update: Bool = false) -> Bool {
-        /// Return if the constraints are currently set
-        guard self.messageImageViewContainer.width == nil/*, let ratio = ratio, self.contentView.bounds.width > 0*/ else { return false }
+        guard let ratio = ratio, self.contentView.bounds.width > 0 else { return false }
+        let width: CGFloat = min(self.contentView.bounds.width, 400) / 2, height: CGFloat = width / CGFloat(ratio)
+        debugger("attachment constraints: width: \(width), height: \(height)")
 
-        let width: CGFloat = (min(self.contentView.bounds.width, 400) / 3) * 2
-        /// Disable aspect ratio to find a solution to avoid constraints reuse `https://github.com/somia/mobile/issues/271`
-        self.messageImageViewContainer.fix(width: width, height: width * 0.5/*/CGFloat(ratio)*/)
-        self.messageImageViewContainer.height?.priority = .defaultHigh
-        self.messageImageViewContainer.width?.priority = .defaultHigh
+        self.parentView.fix(height: height)
+        self.messageImageView.fix(width: width)
         self.messageImageViewContainer.top?.constant = (isSeries) ? 16 : 8
         return true
     }
@@ -133,6 +130,7 @@ extension ChannelMediaCell where Self:ChatChannelCell {
 
 final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell, ChannelMediaCellDelegate {
     var cachedImage: [String:UIImage]? = [:]
+    @IBOutlet weak var parentView: UIView!
     @IBOutlet weak var messageImageViewContainer: UIView! {
         didSet {
             messageImageViewContainer.round(radius: 10.0)
@@ -141,7 +139,7 @@ final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell, Cha
     @IBOutlet weak var messageImageView: UIImageView! {
         didSet {
             messageImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTappedOnImage)))
-            messageImageView.contentMode = .scaleAspectFill
+            messageImageView.contentMode = .scaleToFill
         }
     }
     @IBOutlet weak var videoPlayIndicator: UIImageView! {
@@ -184,6 +182,7 @@ final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell, Cha
 
 final class ChatChannelMediaOthersCell: ChatChannelOthersCell, ChannelMediaCell, ChannelMediaCellDelegate {
     var cachedImage: [String:UIImage]? = [:]
+    @IBOutlet weak var parentView: UIView!
     @IBOutlet weak var messageImageViewContainer: UIView! {
         didSet {
             messageImageViewContainer.round(radius: 10.0)
@@ -192,7 +191,7 @@ final class ChatChannelMediaOthersCell: ChatChannelOthersCell, ChannelMediaCell,
     @IBOutlet weak var messageImageView: UIImageView! {
         didSet {
             messageImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTappedOnImage)))
-            messageImageView.contentMode = .scaleAspectFill
+            messageImageView.contentMode = .scaleToFill
         }
     }
     @IBOutlet weak var videoPlayIndicator: UIImageView! {

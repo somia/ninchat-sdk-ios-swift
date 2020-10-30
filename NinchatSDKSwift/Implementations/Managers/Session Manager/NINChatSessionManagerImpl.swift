@@ -226,10 +226,17 @@ extension NINChatSessionManagerImpl {
         try self.session?.open()
     }
 
-    func list(queues ID: [String]?, completion: @escaping CompletionWithError) throws {
+    func list(queues: [String]?, completion: @escaping CompletionWithError) throws {
         guard let realmID = self.realmID else { return }
 
-        try self.describe(realm: realmID, queuesID: ID, completion: completion)
+        var queues = queues
+        /// currentQueue != nil
+        if let currentQueue = self.currentQueueID, !currentQueue.isEmpty {
+            queues = (queues ?? [String]())
+            queues?.append(currentQueue)
+        }
+
+        try self.describe(realm: realmID, queuesID: queues, completion: completion)
     }
     
     func join(queue ID: String, progress: @escaping (Queue?, Error?, Int) -> Void, completion: @escaping Completion) throws {

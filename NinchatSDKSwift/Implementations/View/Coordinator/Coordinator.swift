@@ -104,14 +104,14 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         chatViewController.chatMediaPickerDelegate = mediaDelegate
 
         chatViewController.onOpenGallery = { [weak self] source in
-            let controller = UIImagePickerController()
-            controller.sourceType = source
-            controller.mediaTypes = [kUTTypeImage, kUTTypeMovie] as [String]
-            controller.allowsEditing = true
-            controller.delegate = mediaDelegate
-
             DispatchQueue.main.async {
                 guard let weakSelf = self else { return }
+                let controller = UIImagePickerController()
+                controller.sourceType = source
+                controller.mediaTypes = [kUTTypeImage, kUTTypeMovie] as [String]
+                controller.allowsEditing = true
+                controller.delegate = mediaDelegate
+
                 weakSelf.navigationController?.present(controller, animated: true, completion: nil)
             }
         }

@@ -5,6 +5,7 @@
 //
 
 import Foundation
+import WebRTC
 
 enum MessageUpdateType {
     case insert(_ index: Int)
@@ -14,7 +15,7 @@ enum MessageUpdateType {
 }
 
 protocol NINChatRTCProtocol {
-    typealias RTCCallReceive = (ChannelUser?) -> Void
+    typealias RTCCallReceive = (ChannelUser?, Error?) -> Void
     typealias RTCCallInitial = (Error?, NINChatWebRTCClient?) -> Void
     typealias RTCCallHangup = () -> Void
     
@@ -39,6 +40,7 @@ protocol NINChatMessageProtocol {
 }
 
 protocol NINChatPermissionsProtocol {
+    func grantVideoCallPermissions(_ completion: @escaping (Error?) -> Void)
     func grantLibraryPermission(_ completion: @escaping (Error?) -> Void)
     func grantCameraPermission(_ completion: @escaping (Error?) -> Void)
 }
@@ -54,6 +56,8 @@ protocol NINChatViewModel: NINChatRTCProtocol, NINChatStateProtocol, NINChatMess
 
 final class NINChatViewModelImpl: NINChatViewModel {
     private unowned var sessionManager: NINChatSessionManager
+    private var iceCandidates: [RTCIceCandidate] = []
+    
     var onChannelClosed: (() -> Void)?
     var onQueueUpdated: (() -> Void)?
     var onChannelMessage: ((MessageUpdateType) -> Void)?
@@ -96,36 +100,38 @@ final class NINChatViewModelImpl: NINChatViewModel {
 
 extension NINChatViewModelImpl {
     func listenToRTCSignaling(delegate: NINChatWebRTCClientDelegate?, onCallReceived: @escaping RTCCallReceive, onCallInitiated: @escaping RTCCallInitial, onCallHangup: @escaping RTCCallHangup) {
+        sessionManager.onRTCClientSignal = { [weak self] type, user, signal in
+            debugger("WebRTC: Client Signal: \(type)")
+            guard type == .candidate else { return }
+            
+            /// Queue received candidates and inject during initialization
+            guard let iceCandidate = signal?.candidate?.toRTCIceCandidate else { return }
+            debugger("WebRTC: Adding \(iceCandidate) to queue")
+            self?.iceCandidates.append(iceCandidate)
+        }
+        
         sessionManager.onRTCSignal = { [weak self] type, user, signal in
             switch type {
             case .call:
-                debugger("Got WebRTC call")
-                onCallReceived(user)
+                debugger("WebRTC: call")
+                onCallReceived(user, nil)
             case .offer:
-                /// Get access to camera and microphone before the call is initiated
-                /// To resolve `https://github.com/somia/mobile/issues/281`
-                debugger("Got WebRTC offer, Check if the call can be initiated with current permissions\n")
-                self?.grantVideoCallPermissions { error in
-                    guard error == nil else { onCallInitiated(error, nil); return }
+                do {
+                    try self?.sessionManager.beginICE { error, stunServers, turnServers in
+                        do {
+                            let client: NINChatWebRTCClient = NINChatWebRTCClientImpl(sessionManager: self?.sessionManager, operatingMode: .callee, stunServers: stunServers, turnServers: turnServers, candidates: self?.iceCandidates, delegate: delegate)
+                            try client.start(with: signal)
 
-                    debugger("Permissions granted - initializing WebRTC for video call (answer)")
-                    do {
-                        try self?.sessionManager.beginICE { error, stunServers, turnServers in
-                            do {
-                                let client: NINChatWebRTCClient = NINChatWebRTCClientImpl(sessionManager: self?.sessionManager, operatingMode: .callee, stunServers: stunServers, turnServers: turnServers, delegate: delegate)
-                                try client.start(with: signal)
-
-                                onCallInitiated(error, client)
-                            } catch {
-                                onCallInitiated(error, nil)
-                            }
+                            onCallInitiated(error, client)
+                        } catch {
+                            onCallInitiated(error, nil)
                         }
-                    } catch {
-                        onCallInitiated(error, nil)
                     }
+                } catch {
+                    onCallInitiated(error, nil)
                 }
             case .hangup:
-                debugger("Got WebRTC hang-up - closing the video call.")
+                debugger("WebRTC: hang-up - closing the video call.")
                 onCallHangup()
             default:
                 break
@@ -152,7 +158,7 @@ extension NINChatViewModelImpl {
 
     func disconnectRTC(_ client: NINChatWebRTCClient?, completion: (() -> Void)?) {
         if let client = client {
-            debugger("Disconnecting webRTC resources")
+            debugger("webRTC: disconnect resources")
             client.disconnect()
             completion?()
         }
@@ -231,7 +237,7 @@ extension NINChatViewModelImpl: QueueUpdateCapture {
 // MARK: - NINChatPermissionsProtocol
 
 extension  NINChatViewModelImpl {
-    private func grantVideoCallPermissions(_ completion: @escaping (Error?) -> Void) {
+    func grantVideoCallPermissions(_ completion: @escaping (Error?) -> Void) {
         pauseForPermissions = true
         Permission.grantPermission(.deviceCamera, .deviceMicrophone) { [weak self] error in
             debugger("permissions for video call granted with error: \(String(describing: error))")

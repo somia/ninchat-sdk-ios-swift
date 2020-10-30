@@ -16,3 +16,5 @@
 "Strongly disagree" = "Täysin eri mieltä";
 "Permission denied" = "Lupa evätty";
 "Update Settings" = "Päivitä asetukset";
+"Resume error" = "Virhe muodostettaessa yhteyttä jonoon. Yritä uudelleen.";
+"WebRTC pickup fail" = "Videopuhelun aloittaminen epäonnistui.";

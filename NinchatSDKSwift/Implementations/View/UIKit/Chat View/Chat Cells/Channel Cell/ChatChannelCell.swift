@@ -28,14 +28,15 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
     // MARK: - ChatCell
 
     var isReloading: Bool! = false
-    
+    var constraintsSet: Bool! = false
+    var delegate: ChatCellDelegate?
+
     weak var session: NINChatSessionAttachment?
     var videoThumbnailManager: VideoThumbnailManager?
     var onImageTapped: ((FileInfo, UIImage?) -> Void)?
     var onComposeSendTapped: ComposeMessageViewProtocol.OnUIComposeSendActionTapped?
     var onComposeUpdateTapped: ComposeMessageViewProtocol.OnUIComposeUpdateActionTapped?
-    var onConstraintsUpdate: (() -> Void)?
-        
+
     // MARK: - UITableViewCell
     
     override func awakeFromNib() {
