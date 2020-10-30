@@ -14,6 +14,7 @@ protocol ChannelMediaCell {
     var cachedImage: [String:UIImage]? { get }
 
     /// Outlets
+    var parentView: UIView! { get set }
     var messageImageViewContainer: UIView! { get set }
     var messageImageView: UIImageView! { get set }
     var videoPlayIndicator: UIImageView! { get set }
@@ -113,22 +114,10 @@ extension ChannelMediaCell where Self:ChatChannelCell {
     private func set(aspect ratio: Double?, _ isSeries: Bool, update: Bool = false) -> Bool {
         guard self.contentView.bounds.width > 0 else { return false }
         let width: CGFloat = min(self.contentView.bounds.width, 400) / 2, height: CGFloat = width
+        debugger("attachment constraints: width: \(width), height: \(height)")
 
-        self.bubbleImageView.height?.constant = height
-        self.bubbleImageView.width?.constant = width
-        self.bubbleImageView.setNeedsLayout()
-        self.bubbleImageView.layoutIfNeeded()
-
-        self.messageImageView.height?.constant = height
-        self.messageImageView.width?.constant = width
-        self.messageImageView.setNeedsLayout()
-        self.messageImageView.layoutIfNeeded()
-
-        self.messageImageViewContainer.height?.constant = height
-        self.messageImageViewContainer.width?.constant = width
-        self.messageImageViewContainer.setNeedsLayout()
-        self.messageImageViewContainer.layoutIfNeeded()
-
+        self.parentView.fix(height: height)
+        self.messageImageView.fix(width: width)
         self.messageImageViewContainer.top?.constant = (isSeries) ? 16 : 8
         return true
     }
@@ -141,6 +130,7 @@ extension ChannelMediaCell where Self:ChatChannelCell {
 
 final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell, ChannelMediaCellDelegate {
     var cachedImage: [String:UIImage]? = [:]
+    @IBOutlet weak var parentView: UIView!
     @IBOutlet weak var messageImageViewContainer: UIView! {
         didSet {
             messageImageViewContainer.round(radius: 10.0)
@@ -192,6 +182,7 @@ final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell, Cha
 
 final class ChatChannelMediaOthersCell: ChatChannelOthersCell, ChannelMediaCell, ChannelMediaCellDelegate {
     var cachedImage: [String:UIImage]? = [:]
+    @IBOutlet weak var parentView: UIView!
     @IBOutlet weak var messageImageViewContainer: UIView! {
         didSet {
             messageImageViewContainer.round(radius: 10.0)
