@@ -173,6 +173,7 @@ extension ChatView: UITableViewDataSource, UITableViewDelegate {
 extension ChatView {
     private func setupBubbleCell(_ message: ChannelMessage, at indexPath: IndexPath) -> ChatChannelCell {
         let cell = self.cell(message, for: tableView, at: indexPath)
+        cell.delegate = self
         cell.session = self.sessionManager
         cell.videoThumbnailManager = videoThumbnailManager
 
@@ -187,19 +188,6 @@ extension ChatView {
         cell.onImageTapped = { [weak self] attachment, image in
             guard let weakSelf = self else { return }
             weakSelf.delegate?.didSelect(image: image, for: attachment, weakSelf)
-        }
-        cell.onConstraintsUpdate = { [weak self, index = indexPath] in
-            guard self?.tableView.numberOfRows(inSection: 0) == self?.dataSource?.numberOfMessages(for: self!) else { return }
-            cell.isReloading = true
-
-            self?.tableView.beginUpdates()
-            DispatchQueue.global(qos: .userInitiated).async {
-                UIView.animate(withDuration: TimeConstants.kAnimationDuration.rawValue, animations: {
-                    DispatchQueue.main.async { /* self?.tableView.reloadRows(at: [index], with: .none) */ self?.tableView.endUpdates() }
-                }, completion: { finished in
-                    cell.isReloading = !finished
-                })
-            }
         }
         
         cell.populateChannel(message: message, configuration: self.sessionManager?.siteConfiguration, imageAssets: self.imageAssets, colorAssets: self.colorAssets, agentAvatarConfig: self.agentAvatarConfig, userAvatarConfig: self.userAvatarConfig, composeState: self.composeMessageStates?[message.messageID])
@@ -228,5 +216,19 @@ extension ChatView {
         
         cell.populate(message: message, colorAssets: self.colorAssets)
         return cell
+    }
+}
+
+extension ChatView: ChatCellDelegate {
+    func onConstraintsUpdate(cell: ChatChannelCell, withAnimation animation: Bool) {
+        guard self.tableView.numberOfRows(inSection: 0) == self.dataSource?.numberOfMessages(for: self), self.tableView.visibleCells.contains(cell) else { return }
+        defer { cell.isReloading = false; cell.constraintsSet = true }
+        cell.isReloading = true
+
+        debugger("Reload constraints with animation: \(animation)")
+        if animation {
+            self.tableView.beginUpdates()
+            self.tableView.endUpdates()
+        }
     }
 }
