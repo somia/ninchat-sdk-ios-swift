@@ -112,8 +112,8 @@ extension ChannelMediaCell where Self:ChatChannelCell {
     }
     
     private func set(aspect ratio: Double?, _ isSeries: Bool, update: Bool = false) -> Bool {
-        guard self.contentView.bounds.width > 0 else { return false }
-        let width: CGFloat = min(self.contentView.bounds.width, 400) / 2, height: CGFloat = width
+        guard let ratio = ratio, self.contentView.bounds.width > 0 else { return false }
+        let width: CGFloat = min(self.contentView.bounds.width, 400) / 2, height: CGFloat = width / CGFloat(ratio)
         debugger("attachment constraints: width: \(width), height: \(height)")
 
         self.parentView.fix(height: height)
