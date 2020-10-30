@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -14,18 +14,18 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="183" id="o9I-T0-fac" userLabel="ChatBubbleCell" customClass="ChatChannelMediaOthersCell" customModule="NinchatSDKSwift">
-            <rect key="frame" x="0.0" y="0.0" width="770" height="183"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="102" id="o9I-T0-fac" userLabel="ChatBubbleCell" customClass="ChatChannelMediaOthersCell" customModule="NinchatSDKSwift">
+            <rect key="frame" x="0.0" y="0.0" width="341" height="102"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" tag="666" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="o9I-T0-fac" id="4tD-bp-YoY">
-                <rect key="frame" x="0.0" y="0.0" width="770" height="183"/>
+                <rect key="frame" x="0.0" y="0.0" width="341" height="102"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iYf-Df-5Bz" userLabel="Container view">
-                        <rect key="frame" x="0.0" y="0.0" width="770" height="183"/>
+                        <rect key="frame" x="0.0" y="0.0" width="341" height="102"/>
                         <subviews>
                             <view tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IUa-yW-n2k" userLabel="Left avatar container">
-                                <rect key="frame" x="4" y="0.0" width="35" height="183"/>
+                                <rect key="frame" x="4" y="0.0" width="35" height="102"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" image="icon_avatar_other" translatesAutoresizingMaskIntoConstraints="NO" id="TAQ-Ma-oxf">
                                         <rect key="frame" x="0.0" y="12" width="35" height="35"/>
@@ -44,19 +44,19 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bqi-6v-Ki3">
-                                <rect key="frame" x="39" y="0.0" width="723" height="183"/>
+                                <rect key="frame" x="39" y="0.0" width="294" height="102"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="36V-Bg-f8R">
-                                        <rect key="frame" x="16" y="0.0" width="120" height="40"/>
+                                        <rect key="frame" x="16" y="0.0" width="120" height="66"/>
                                         <subviews>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="999" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Dr Koistinen" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IU6-Jc-btB">
-                                                <rect key="frame" x="0.0" y="16" width="76.5" height="16.5"/>
+                                                <rect key="frame" x="0.0" y="29" width="76.5" height="16.5"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="17:18" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RCf-C0-pVn">
-                                                <rect key="frame" x="84.5" y="16" width="35.5" height="16.5"/>
+                                                <rect key="frame" x="84.5" y="29" width="35.5" height="16.5"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
                                                 <color key="textColor" red="0.4549019608" green="0.57254901960000004" blue="0.66666666669999997" alpha="1" colorSpace="calibratedRGB"/>
@@ -76,14 +76,14 @@
                                         </constraints>
                                     </view>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_bubble_right" translatesAutoresizingMaskIntoConstraints="NO" id="ywG-ua-67r">
-                                        <rect key="frame" x="8" y="40" width="62" height="143"/>
+                                        <rect key="frame" x="8" y="66" width="36" height="36"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </imageView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ykv-HC-jMH">
-                                        <rect key="frame" x="16" y="48" width="46" height="127"/>
+                                        <rect key="frame" x="16" y="74" width="20" height="20"/>
                                         <subviews>
                                             <imageView clipsSubviews="YES" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3hZ-a3-mDV">
-                                                <rect key="frame" x="0.0" y="0.0" width="46" height="127"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="20" height="20"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </imageView>
@@ -92,13 +92,15 @@
                                         <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstItem="3hZ-a3-mDV" firstAttribute="leading" secondItem="ykv-HC-jMH" secondAttribute="leading" id="F7C-B5-k0i"/>
+                                            <constraint firstAttribute="height" constant="20" id="SrW-xt-seP"/>
                                             <constraint firstAttribute="bottom" secondItem="3hZ-a3-mDV" secondAttribute="bottom" id="Uxf-Xs-QkY"/>
                                             <constraint firstAttribute="trailing" secondItem="3hZ-a3-mDV" secondAttribute="trailing" id="kIE-hj-xt4"/>
                                             <constraint firstItem="3hZ-a3-mDV" firstAttribute="top" secondItem="ykv-HC-jMH" secondAttribute="top" id="laG-ZW-0xp"/>
+                                            <constraint firstAttribute="width" constant="20" id="tLR-hV-s58"/>
                                         </constraints>
                                     </view>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_play" translatesAutoresizingMaskIntoConstraints="NO" id="KYK-co-6QM">
-                                        <rect key="frame" x="19" y="91.5" width="40" height="40"/>
+                                        <rect key="frame" x="6" y="64" width="40" height="40"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
@@ -109,6 +111,7 @@
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="ywG-ua-67r" secondAttribute="bottom" id="4bp-Z7-ftV"/>
                                     <constraint firstItem="ykv-HC-jMH" firstAttribute="top" secondItem="ywG-ua-67r" secondAttribute="top" constant="8" id="Dsj-wP-kDq"/>
                                     <constraint firstItem="ywG-ua-67r" firstAttribute="top" secondItem="36V-Bg-f8R" secondAttribute="bottom" id="GuX-Uv-PzZ"/>
                                     <constraint firstItem="KYK-co-6QM" firstAttribute="centerY" secondItem="ykv-HC-jMH" secondAttribute="centerY" id="I09-o4-SPm"/>
@@ -156,7 +159,7 @@
                 <outlet property="timeLabel" destination="RCf-C0-pVn" id="v6Q-V8-dZa"/>
                 <outlet property="videoPlayIndicator" destination="KYK-co-6QM" id="rN1-pu-ghX"/>
             </connections>
-            <point key="canvasLocation" x="65" y="-140"/>
+            <point key="canvasLocation" x="-247.10144927536234" y="-167.41071428571428"/>
         </tableViewCell>
     </objects>
     <resources>

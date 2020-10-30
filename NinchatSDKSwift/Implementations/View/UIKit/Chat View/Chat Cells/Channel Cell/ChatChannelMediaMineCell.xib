@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -14,30 +14,30 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="183" id="xz2-41-t1r" userLabel="ChatBubbleCell" customClass="ChatChannelMediaMineCell" customModule="NinchatSDKSwift">
-            <rect key="frame" x="0.0" y="0.0" width="770" height="183"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="91" id="xz2-41-t1r" userLabel="ChatBubbleCell" customClass="ChatChannelMediaMineCell" customModule="NinchatSDKSwift">
+            <rect key="frame" x="0.0" y="0.0" width="349" height="91"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" tag="666" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="xz2-41-t1r" id="Vj9-4B-AdA">
-                <rect key="frame" x="0.0" y="0.0" width="770" height="183"/>
+                <rect key="frame" x="0.0" y="0.0" width="349" height="91"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="WUa-eK-VtZ" userLabel="Container view">
-                        <rect key="frame" x="0.0" y="0.0" width="770" height="183"/>
+                        <rect key="frame" x="0.0" y="0.0" width="349" height="91"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qzj-Lx-UId">
-                                <rect key="frame" x="8" y="0.0" width="723" height="183"/>
+                                <rect key="frame" x="8" y="0.0" width="302" height="91"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Lfa-KG-f9c">
-                                        <rect key="frame" x="587" y="0.0" width="120" height="40"/>
+                                        <rect key="frame" x="166" y="0.0" width="120" height="55"/>
                                         <subviews>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="999" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Dr Koistinen" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wFy-N4-Uu0">
-                                                <rect key="frame" x="0.0" y="16" width="76.5" height="16.5"/>
+                                                <rect key="frame" x="0.0" y="23.5" width="76.5" height="16.5"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="17:18" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="l0N-Z9-x3A">
-                                                <rect key="frame" x="84.5" y="16" width="35.5" height="16.5"/>
+                                                <rect key="frame" x="84.5" y="23.5" width="35.5" height="16.5"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
                                                 <color key="textColor" red="0.4549019608" green="0.57254901960000004" blue="0.66666666669999997" alpha="1" colorSpace="calibratedRGB"/>
@@ -57,14 +57,14 @@
                                         </constraints>
                                     </view>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_bubble_right" translatesAutoresizingMaskIntoConstraints="NO" id="NMj-ts-SXE">
-                                        <rect key="frame" x="653" y="40" width="62" height="143"/>
+                                        <rect key="frame" x="258" y="55" width="36" height="36"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </imageView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MaM-x8-fT4">
-                                        <rect key="frame" x="661" y="48" width="46" height="127"/>
+                                        <rect key="frame" x="266" y="63" width="20" height="20"/>
                                         <subviews>
                                             <imageView clipsSubviews="YES" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="lVv-be-HdN">
-                                                <rect key="frame" x="0.0" y="0.0" width="46" height="127"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="20" height="20"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </imageView>
@@ -74,12 +74,14 @@
                                         <constraints>
                                             <constraint firstItem="lVv-be-HdN" firstAttribute="top" secondItem="MaM-x8-fT4" secondAttribute="top" id="3qV-vI-Olh"/>
                                             <constraint firstItem="lVv-be-HdN" firstAttribute="leading" secondItem="MaM-x8-fT4" secondAttribute="leading" id="PIb-TT-iII"/>
+                                            <constraint firstAttribute="width" constant="20" id="ZIZ-BV-dc9"/>
+                                            <constraint firstAttribute="height" constant="20" id="dpF-FB-q8A"/>
                                             <constraint firstAttribute="trailing" secondItem="lVv-be-HdN" secondAttribute="trailing" id="qBO-Ef-kXw"/>
                                             <constraint firstAttribute="bottom" secondItem="lVv-be-HdN" secondAttribute="bottom" id="zaG-SZ-PZX"/>
                                         </constraints>
                                     </view>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_play" translatesAutoresizingMaskIntoConstraints="NO" id="Yov-9L-jiZ">
-                                        <rect key="frame" x="664" y="91.5" width="40" height="40"/>
+                                        <rect key="frame" x="256" y="53" width="40" height="40"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
@@ -105,7 +107,7 @@
                                 </constraints>
                             </view>
                             <view tag="2" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1sM-pS-1E4" userLabel="Right avatar container">
-                                <rect key="frame" x="731" y="0.0" width="35" height="183"/>
+                                <rect key="frame" x="310" y="0.0" width="35" height="91"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" image="icon_avatar_mine" translatesAutoresizingMaskIntoConstraints="NO" id="idf-Kb-dRL">
                                         <rect key="frame" x="0.0" y="12" width="35" height="35"/>
@@ -156,7 +158,7 @@
                 <outlet property="timeLabel" destination="l0N-Z9-x3A" id="5WY-qQ-KUa"/>
                 <outlet property="videoPlayIndicator" destination="Yov-9L-jiZ" id="bdS-6w-Y9j"/>
             </connections>
-            <point key="canvasLocation" x="-42" y="51"/>
+            <point key="canvasLocation" x="273.1884057971015" y="9.7098214285714288"/>
         </tableViewCell>
     </objects>
     <resources>
