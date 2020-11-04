@@ -18,3 +18,5 @@
 "Update Settings" = "Päivitä asetukset";
 "Resume error" = "Virhe muodostettaessa yhteyttä jonoon. Yritä uudelleen.";
 "WebRTC pickup fail" = "Videopuhelun aloittaminen epäonnistui.";
+"Source not available" = "Lähde ei ole käytettävissä tällä laitteella";
+"Access denied" = "Pääsy evätty";
