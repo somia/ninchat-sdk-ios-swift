@@ -57,12 +57,12 @@ protocol NINChatViewModel: NINChatRTCProtocol, NINChatStateProtocol, NINChatMess
 final class NINChatViewModelImpl: NINChatViewModel {
     private unowned var sessionManager: NINChatSessionManager
     private var iceCandidates: [RTCIceCandidate] = []
-    
+    private var isOnBackgroundTask: Bool = false
+
     var onChannelClosed: (() -> Void)?
     var onQueueUpdated: (() -> Void)?
     var onChannelMessage: ((MessageUpdateType) -> Void)?
     var onComposeActionUpdated: ((_ index: Int, _ action: ComposeUIAction) -> Void)?
-    var pauseForPermissions: Bool = false
 
     init(sessionManager: NINChatSessionManager) {
         self.sessionManager = sessionManager
@@ -169,7 +169,7 @@ extension NINChatViewModelImpl {
 
 extension NINChatViewModelImpl {
     func appDidEnterBackground(completion: @escaping (Error?) -> Void) {
-        guard !pauseForPermissions else { debugger("background for granting permissions, do not hangup"); return }
+        guard !isOnBackgroundTask else { debugger("background for granting permissions, do not hangup"); return }
 
         debugger("background mode, hangup the video call (if there are any)")
         self.hangup(completion: completion)
@@ -238,10 +238,10 @@ extension NINChatViewModelImpl: QueueUpdateCapture {
 
 extension  NINChatViewModelImpl {
     func grantVideoCallPermissions(_ completion: @escaping (Error?) -> Void) {
-        pauseForPermissions = true
+        isOnBackgroundTask = true
         Permission.grantPermission(.deviceCamera, .deviceMicrophone) { [weak self] error in
             debugger("permissions for video call granted with error: \(String(describing: error))")
-            self?.pauseForPermissions = false; completion(error)
+            self?.isOnBackgroundTask = false; completion(error)
         }
     }
 
