@@ -512,7 +512,7 @@ extension NINChatViewController {
             case .select(let index):
                 let source: UIImagePickerController.SourceType = (index == 0) ? .camera : .photoLibrary
                 guard UIImagePickerController.isSourceTypeAvailable(source) else {
-                    Toast.show(message: .error("That source type is not available on this device")); return
+                    Toast.show(message: .error("Source not available".localized)); return
                 }
     
                 switch source {

@@ -18,3 +18,4 @@
 "Update Settings" = "Tap to update Settings.";
 "Resume error" = "Error in connecting to the queue. Please try again.";
 "WebRTC pickup fail" = "Failed to initiate the video call.";
+"Source not available" = "The source is not available on this device";
