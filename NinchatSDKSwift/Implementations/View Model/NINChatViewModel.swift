@@ -41,11 +41,14 @@ protocol NINChatMessageProtocol {
 
 protocol NINChatPermissionsProtocol {
     func grantVideoCallPermissions(_ completion: @escaping (Error?) -> Void)
-    func grantLibraryPermission(_ completion: @escaping (Error?) -> Void)
-    func grantCameraPermission(_ completion: @escaping (Error?) -> Void)
 }
 
-protocol NINChatViewModel: NINChatRTCProtocol, NINChatStateProtocol, NINChatMessageProtocol, NINChatPermissionsProtocol {
+protocol NINChatAttachmentProtocol {
+    typealias AttachmentCompletion = (Error?) -> Void
+    func openAttachment(source: UIImagePickerController.SourceType, completion: @escaping AttachmentCompletion)
+}
+
+protocol NINChatViewModel: NINChatRTCProtocol, NINChatStateProtocol, NINChatMessageProtocol, NINChatPermissionsProtocol, NINChatAttachmentProtocol {
     var onChannelClosed: (() -> Void)? { get set }
     var onQueueUpdated: (() -> Void)? { get set }
     var onChannelMessage: ((MessageUpdateType) -> Void)? { get set }
@@ -236,7 +239,7 @@ extension NINChatViewModelImpl: QueueUpdateCapture {
 
 // MARK: - NINChatPermissionsProtocol
 
-extension  NINChatViewModelImpl {
+extension NINChatViewModelImpl {
     func grantVideoCallPermissions(_ completion: @escaping (Error?) -> Void) {
         isOnBackgroundTask = true
         Permission.grantPermission(.deviceCamera, .deviceMicrophone) { [weak self] error in
@@ -245,15 +248,35 @@ extension  NINChatViewModelImpl {
         }
     }
 
-    func grantLibraryPermission(_ completion: @escaping (Error?) -> Void) {
+    private func grantLibraryPermission(_ completion: @escaping (Error?) -> Void) {
         Permission.grantPermission(.devicePhotoLibrary) { error in
             completion(error)
         }
     }
 
-    func grantCameraPermission(_ completion: @escaping (Error?) -> Void) {
+    private func grantCameraPermission(_ completion: @escaping (Error?) -> Void) {
         Permission.grantPermission(.deviceCamera) { error in
             completion(error)
+        }
+    }
+}
+
+// MARK: - NINChatAttachmentProtocol
+
+extension NINChatViewModelImpl {
+    func openAttachment(source: UIImagePickerController.SourceType, completion: @escaping AttachmentCompletion) {
+        self.isOnBackgroundTask = true
+        switch source {
+        case .photoLibrary:
+            self.grantLibraryPermission { [weak self] error in
+                self?.isOnBackgroundTask = false; completion(error)
+            }
+        case .camera:
+            self.grantCameraPermission { [weak self] error in
+                self?.isOnBackgroundTask = false; completion(error)
+            }
+        default:
+            fatalError("The source cannot be anything else")
         }
     }
 }
