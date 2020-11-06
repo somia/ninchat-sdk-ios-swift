@@ -459,6 +459,9 @@ extension NINChatViewController {
                 guard UIImagePickerController.isSourceTypeAvailable(source) else {
                     Toast.show(message: .error("Source not available".localized)); return
                 }
+                if source == .camera && self?.webRTCClient != nil {
+                    Toast.show(message: .error("Camera not available".localized)); return
+                }
 
                 self?.viewModel.openAttachment(source: source) { [weak self, source] error in
                     if error == nil { self?.onOpenGallery?(source); return }
