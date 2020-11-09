@@ -34,7 +34,7 @@ struct debugger {
             if let queueID = error.queueID, !queueID.isEmpty { log += ",   queue_id: \(queueID)" }
             if let tagID = error.tagID, !tagID.isEmpty { log += ",   tag_id: \(tagID)" }
             if let messageType = error.messageType, !messageType.isEmpty { log += ",   tag_id: \(messageType)" }
-            print(log)
+            debugger(log)
         }
 
         if isDebugOnly {
