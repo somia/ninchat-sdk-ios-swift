@@ -19,4 +19,5 @@
 "Resume error" = "Error in connecting to the queue. Please try again.";
 "WebRTC pickup fail" = "Failed to initiate the video call.";
 "Source not available" = "The source is not available on this device";
+"Camera not available" = "The camera is not available during a video call";
 "Access denied" = "Access denied";
