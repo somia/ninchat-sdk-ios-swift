@@ -162,6 +162,8 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         self.sessionManager = nil
         self.started = false
         self.sessionAlive = false
+        
+        self.internalDelegate?.onDidEnd()
     }
 }
 
