@@ -389,7 +389,7 @@ extension NinchatSDKSwiftAcceptanceTests {
                     XCTAssertNil(error)
                     XCTAssertNotNil(stunServers)
                     XCTAssertNotNil(turnServers)
-                    self.rtcClient = NINChatWebRTCClientImpl(sessionManager: self.sessionManager, operatingMode: .callee, stunServers: stunServers, turnServers: turnServers, delegate: self)
+                    self.rtcClient = NINChatWebRTCClientImpl(sessionManager: self.sessionManager, operatingMode: .callee, stunServers: stunServers, turnServers: turnServers, candidates: [], delegate: self)
 
                     do {
                         try self.rtcClient?.start(with: signal)
