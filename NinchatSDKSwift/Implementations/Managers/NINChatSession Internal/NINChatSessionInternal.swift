@@ -48,6 +48,10 @@ struct InternalDelegate: NINChatSessionInternalDelegate {
     }
     
     internal func onDidEnd() {
+        /// According to https://github.com/somia/mobile/issues/287
+        /// Clear metadata from the UserDefaults on a normal close
+        UserDefaults.remove(forKey: .metadata)
+
         DispatchQueue.main.async {
             guard let session = self.session else { return }
             session.delegate?.ninchatDidEnd(session)

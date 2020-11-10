@@ -273,6 +273,10 @@ extension NINChatSessionManagerImpl {
         func performJoin() throws {
             delegate?.log(value: "Joining queue \(ID)..")
             self.onChannelJoined = {
+                /// According to https://github.com/somia/mobile/issues/287
+                /// Clear metadata from the UserDefaults on a successful join
+                UserDefaults.remove(forKey: .metadata)
+
                 completion()
             }
             
