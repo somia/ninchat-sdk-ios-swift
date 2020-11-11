@@ -92,8 +92,8 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
         set {
             /// If given metadata is not null, it is saved in the UserDefaults
             autoreleasepool {
-                var error: NSErrorPointer = nil
-                if let audienceMetadataJSON = newValue?.marshalJSON(error), error == nil {
+                var error: NSError?
+                if let audienceMetadataJSON = newValue?.marshalJSON(&error), error == nil {
                     UserDefaults.save(audienceMetadataJSON, key: .metadata)
                 }
             }
