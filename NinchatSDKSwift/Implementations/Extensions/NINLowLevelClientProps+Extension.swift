@@ -79,6 +79,7 @@ protocol NINLowLevelSessionProps {
     var name: NINResult<String> { set get }
 
     func setAction(_ action: NINLowLevelClientActions)
+    func setPreAnswers(_ dictionary: [String:AnyHashable])
 }
 
 extension NINLowLevelClientProps: NINLowLevelSessionProps {
@@ -118,6 +119,13 @@ extension NINLowLevelClientProps: NINLowLevelSessionProps {
 
     func setAction(_ action: NINLowLevelClientActions) {
         self.set(value: action.rawValue, forKey: "action")
+    }
+
+    func setPreAnswers(_ dictionary: [String:AnyHashable]) {
+        let metadata = dictionary.reduce(into: NINLowLevelClientProps()) { (metadata: inout NINLowLevelClientProps, tuple: (key: String, value: Any)) in
+            metadata.set(value: tuple.value, forKey: tuple.key)
+        }
+        self.set(value: metadata, forKey: "pre_answers")
     }
 }
 
