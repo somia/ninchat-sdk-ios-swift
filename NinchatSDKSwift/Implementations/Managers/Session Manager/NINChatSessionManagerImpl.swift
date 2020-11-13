@@ -123,12 +123,15 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     var givenConfiguration: NINSiteConfiguration?
     var preAudienceQuestionnaireMetadata: NINLowLevelClientProps! {
         didSet {
-            if let audienceMetadata = self.audienceMetadata {
-                audienceMetadata.set(value: preAudienceQuestionnaireMetadata, forKey: "pre_answers")
+            /// Since metadata is loaded from the UserDefaults instead of memory,
+            /// it is necessary to update its value after pre_answers are set
+            var metadata = self.audienceMetadata
+            if metadata != nil {
+                metadata!.set(value: preAudienceQuestionnaireMetadata, forKey: "pre_answers")
             } else {
-                self.audienceMetadata = NINLowLevelClientProps.initiate(metadata: ["pre_answers": preAudienceQuestionnaireMetadata])
+                metadata = NINLowLevelClientProps.initiate(metadata: ["pre_answers": preAudienceQuestionnaireMetadata])
             }
-
+            self.audienceMetadata = metadata
         }
     }
     var appDetails: String?
