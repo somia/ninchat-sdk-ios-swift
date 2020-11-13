@@ -85,31 +85,11 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     // MARK: - NINChatSessionManager
     
     private(set) var audienceMetadata: NINLowLevelClientProps? {
-        /// According to https://github.com/somia/mobile/issues/287
-        /// When metadata is set and it is not null, it is saved in the UserDefaults
-        /// When metadata is required, it is loaded from UserDefaults
-        ///     if no metadata is saved, it means either it was provided null, or was cleared
         set {
-            /// If given metadata is not null, it is saved in the UserDefaults
-            autoreleasepool {
-                var error: NSError?
-                if let audienceMetadataJSON = newValue?.marshalJSON(&error), error == nil {
-                    UserDefaults.save(audienceMetadataJSON, key: .metadata)
-                }
-            }
+            NINLowLevelClientProps.saveMetadata(newValue)
         }
         get {
-            /// Read saved metadata from UserDefaults
-            if let audienceMetadataJSON: String? = UserDefaults.load(forKey: .metadata) {
-                let audienceMetadata = NINLowLevelClientProps()
-                do {
-                    try audienceMetadata.unmarshalJSON(audienceMetadataJSON)
-                    return audienceMetadata
-                } catch {
-                    return nil
-                }
-            }
-            return nil
+            NINLowLevelClientProps.loadMetadata()
         }
     }
     var delegate: NINChatSessionInternalDelegate?
@@ -123,15 +103,12 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     var givenConfiguration: NINSiteConfiguration?
     var preAudienceQuestionnaireMetadata: NINLowLevelClientProps! {
         didSet {
+            let metadata = self.audienceMetadata ?? NINLowLevelClientProps()
+            metadata.set(value: preAudienceQuestionnaireMetadata, forKey: "pre_answers")
+            
             /// Since metadata is loaded from the UserDefaults instead of memory,
             /// it is necessary to update its value after pre_answers are set
-            var metadata = self.audienceMetadata
-            if metadata != nil {
-                metadata!.set(value: preAudienceQuestionnaireMetadata, forKey: "pre_answers")
-            } else {
-                metadata = NINLowLevelClientProps.initiate(metadata: ["pre_answers": preAudienceQuestionnaireMetadata])
-            }
-            self.audienceMetadata = metadata
+            NINLowLevelClientProps.saveMetadata(metadata)
         }
     }
     var appDetails: String?
