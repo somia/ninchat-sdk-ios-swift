@@ -126,7 +126,17 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
             try self.fetchSiteConfiguration { [weak self] error in
                 DispatchQueue.main.async {
                     do {
-                        try self?.openChatSession(credentials: credentials, completion: completion)
+                        try self?.openChatSession(credentials: credentials) { credentials, error in
+                            guard let weakSelf = self, error == nil else { completion(credentials, error); return }
+                            
+                            /// Prepare coordinator for starting
+                            /// This is quire important to prepare time and memory consuming tasks before the user
+                            /// starts the coordinator, otherwise he/she will face unexpected views
+                            if weakSelf.coordinator == nil { weakSelf.coordinator = NINCoordinator(with: weakSelf) }
+                            weakSelf.coordinator?.prepareNINQuestionnaireViewModel {
+                                completion(credentials, error)
+                            }
+                        }
                     } catch { completion(nil, error) }
                 }
             }
@@ -139,7 +149,6 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         guard !self.sessionAlive else { throw NINExceptions.apiAlive }
 
         self.sessionAlive = true
-        if self.coordinator == nil { self.coordinator = NINCoordinator(with: self) }
         return coordinator?.start(with: self.queueID ?? self.sessionManager.siteConfiguration.audienceAutoQueue, resume: self.resumeMode, within: navigationController)
     }
 
