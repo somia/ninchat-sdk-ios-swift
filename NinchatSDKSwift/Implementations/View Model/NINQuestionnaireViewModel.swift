@@ -203,13 +203,10 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 
     private func registerAudience(queueID: String, completion: @escaping (Error?) -> Void) {
         do {
-            if let audienceMetadata = self.audienceMetadata {
-                audienceMetadata.setPreAnswers(self.answers)
-            } else {
-                audienceMetadata = NINLowLevelClientProps.initiate(preQuestionnaireAnswers: self.answers)
-            }
-
-            try self.sessionManager?.registerQuestionnaire(queue: queueID, answers: audienceMetadata!, completion: completion)
+            let metadata = self.audienceMetadata ?? NINLowLevelClientProps()
+            metadata.set(value: questionnaireAnswers, forKey: "pre_answers")
+            
+            try self.sessionManager?.registerQuestionnaire(queue: queueID, answers: metadata, completion: completion)
         } catch {
             completion(error)
         }
