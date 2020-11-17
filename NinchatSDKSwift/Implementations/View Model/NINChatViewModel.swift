@@ -53,7 +53,7 @@ protocol NINChatViewModel: NINChatRTCProtocol, NINChatStateProtocol, NINChatMess
     var onQueueUpdated: (() -> Void)? { get set }
     var onChannelMessage: ((MessageUpdateType) -> Void)? { get set }
     var onComposeActionUpdated: ((_ index: Int, _ action: ComposeUIAction) -> Void)? { get set }
-    
+
     init(sessionManager: NINChatSessionManager)
 }
 
@@ -61,6 +61,7 @@ final class NINChatViewModelImpl: NINChatViewModel {
     private unowned var sessionManager: NINChatSessionManager
     private var iceCandidates: [RTCIceCandidate] = []
     private var isOnBackgroundTask: Bool = false
+    private var client: NINChatWebRTCClient?
 
     var onChannelClosed: (() -> Void)?
     var onQueueUpdated: (() -> Void)?
@@ -122,10 +123,10 @@ extension NINChatViewModelImpl {
                 do {
                     try self?.sessionManager.beginICE { error, stunServers, turnServers in
                         do {
-                            let client: NINChatWebRTCClient = NINChatWebRTCClientImpl(sessionManager: self?.sessionManager, operatingMode: .callee, stunServers: stunServers, turnServers: turnServers, candidates: self?.iceCandidates, delegate: delegate)
-                            try client.start(with: signal)
+                            self?.client = NINChatWebRTCClientImpl(sessionManager: self?.sessionManager, operatingMode: .callee, stunServers: stunServers, turnServers: turnServers, candidates: self?.iceCandidates, delegate: delegate)
+                            try self?.client?.start(with: signal)
 
-                            onCallInitiated(error, client)
+                            onCallInitiated(error, self?.client)
                         } catch {
                             onCallInitiated(error, nil)
                         }
@@ -151,6 +152,8 @@ extension NINChatViewModelImpl {
     }
 
     func hangup(completion: @escaping (Error?) -> Void) {
+        guard self.client != nil else { debugger("No WebRTC is available, skip hangup instruction"); return }
+
         debugger("hangup the call...")
         do {
             try self.sessionManager.send(type: .hangup, payload: [:], completion: completion)

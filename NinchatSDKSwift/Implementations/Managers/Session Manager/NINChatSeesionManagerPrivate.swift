@@ -406,11 +406,7 @@ extension NINChatSessionManagerImpl {
     
     internal func disconnect() {
         self.delegate?.log(value: "disconnect: Closing Ninchat session.")
-        
-        self.currentChannelID = nil
-        self.backgroundChannelID = nil
-        self.currentQueueID = nil
-        
+
         self.session?.close()
         self.session = nil
     }

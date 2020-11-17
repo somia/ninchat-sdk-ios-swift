@@ -61,7 +61,7 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
         }
         self.timeLabel.text = DateFormatter.shortTime.string(from: message.timestamp)
         self.infoContainerView.height?.constant = (message.series) ? 0 : 40 /// Hide the name and timestamp if it's a part of series message chain
-        self.infoContainerView.height?.priority = .defaultHigh
+        self.infoContainerView.height?.priority = .required
         self.infoContainerView.allSubviews.forEach { $0.isHidden = message.series }
     
         if let cell = self as? ChannelTextCell, let textMessage = message as? TextMessage {
