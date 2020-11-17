@@ -151,6 +151,7 @@
 - (NINLowLevelClientObjects* _Nullable)getObjectArray:(NSString* _Nullable)key error:(NSError* _Nullable* _Nullable)error;
 - (NSString* _Nonnull)getString:(NSString* _Nullable)key error:(NSError* _Nullable* _Nullable)error;
 - (NINLowLevelClientStrings* _Nullable)getStringArray:(NSString* _Nullable)key error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)marshalJSON:(NSError* _Nullable* _Nullable)error;
 - (void)setBool:(NSString* _Nullable)key val:(BOOL)val;
 - (void)setFloat:(NSString* _Nullable)key val:(double)val;
 - (void)setInt:(NSString* _Nullable)key val:(long)val;
@@ -159,6 +160,7 @@
 - (void)setString:(NSString* _Nullable)key val:(NSString* _Nullable)val;
 - (void)setStringArray:(NSString* _Nullable)key ref:(NINLowLevelClientStrings* _Nullable)ref;
 - (NSString* _Nonnull)string;
+- (BOOL)unmarshalJSON:(NSString* _Nullable)data error:(NSError* _Nullable* _Nullable)error;
 @end
 
 @interface NINLowLevelClientSession : NSObject <goSeqRefInterface> {

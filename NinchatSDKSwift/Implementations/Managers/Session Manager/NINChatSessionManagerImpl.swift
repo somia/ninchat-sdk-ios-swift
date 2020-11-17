@@ -84,7 +84,14 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
 
     // MARK: - NINChatSessionManager
     
-    private(set) var audienceMetadata: NINLowLevelClientProps?
+    private(set) var audienceMetadata: NINLowLevelClientProps? {
+        set {
+            NINLowLevelClientProps.saveMetadata(newValue)
+        }
+        get {
+            NINLowLevelClientProps.loadMetadata()
+        }
+    }
     var delegate: NINChatSessionInternalDelegate?
     var queues: [Queue]! = [] {
         didSet {
@@ -96,12 +103,12 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     var givenConfiguration: NINSiteConfiguration?
     var preAudienceQuestionnaireMetadata: NINLowLevelClientProps! {
         didSet {
-            if let audienceMetadata = self.audienceMetadata {
-                audienceMetadata.set(value: preAudienceQuestionnaireMetadata, forKey: "pre_answers")
-            } else {
-                self.audienceMetadata = NINLowLevelClientProps.initiate(metadata: ["pre_answers": preAudienceQuestionnaireMetadata])
-            }
-
+            let metadata = self.audienceMetadata ?? NINLowLevelClientProps()
+            metadata.set(value: preAudienceQuestionnaireMetadata, forKey: "pre_answers")
+            
+            /// Since metadata is loaded from the UserDefaults instead of memory,
+            /// it is necessary to update its value after pre_answers are set
+            NINLowLevelClientProps.saveMetadata(metadata)
         }
     }
     var appDetails: String?
@@ -112,6 +119,8 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     var siteSecret: String?
     
     init(session: NINChatSessionInternalDelegate?, serverAddress: String, audienceMetadata: NINLowLevelClientProps? = nil, configuration: NINSiteConfiguration?) {
+        super.init()
+
         self.delegate = session
         self.serverAddress = serverAddress
         self.givenConfiguration = configuration
@@ -244,6 +253,10 @@ extension NINChatSessionManagerImpl {
         func performJoin() throws {
             delegate?.log(value: "Joining queue \(ID)..")
             self.onChannelJoined = {
+                /// According to https://github.com/somia/mobile/issues/287
+                /// Clear metadata from the UserDefaults on a successful join
+                UserDefaults.remove(forKey: .metadata)
+
                 completion()
             }
             

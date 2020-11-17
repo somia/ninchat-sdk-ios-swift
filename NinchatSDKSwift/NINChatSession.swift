@@ -60,9 +60,9 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
             return Constants.kProductionServerAddress.rawValue
         #endif
     }
-    
+
     // MARK: - NINChatDevHelper
-    
+
     public var serverAddress: String! {
         set { self.sessionManager.serverAddress = newValue }
         get { self.sessionManager.serverAddress }
@@ -73,7 +73,7 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
     }
 
     // MARK: - NINChatSessionProtocol
-    
+
     public weak var delegate: NINChatSessionDelegate?
     public var session: NINResult<NINLowLevelClientSession?> {
         guard self.started else { return .failure(NINExceptions.apiNotStarted) }
@@ -128,12 +128,12 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
                     do {
                         try self?.openChatSession(credentials: credentials) { credentials, error in
                             guard let weakSelf = self, error == nil else { completion(credentials, error); return }
-                            
+
                             /// Prepare coordinator for starting
                             /// This is quire important to prepare time and memory consuming tasks before the user
                             /// starts the coordinator, otherwise he/she will face unexpected views
                             if weakSelf.coordinator == nil { weakSelf.coordinator = NINCoordinator(with: weakSelf) }
-                            weakSelf.coordinator?.prepareNINQuestionnaireViewModel {
+                            weakSelf.coordinator?.prepareNINQuestionnaireViewModel(audienceMetadata: weakSelf.audienceMetadata) {
                                 completion(credentials, error)
                             }
                         }
@@ -162,6 +162,8 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         self.sessionManager = nil
         self.started = false
         self.sessionAlive = false
+
+        self.internalDelegate?.onDidEnd()
     }
 }
 
@@ -194,7 +196,7 @@ extension NINChatSession {
         guard Thread.isMainThread else { throw NINExceptions.mainThread }
         try sessionManager.openSession { [weak self] credentials, canResume, error in
             guard error == nil else { completion(credentials, error); return }
-            
+
             do {
                 /// Find our realm's queues
                 /// Potentially passing a nil queueIds here is intended

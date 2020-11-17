@@ -6,6 +6,7 @@
 
 import UIKit
 import XCTest
+import NinchatLowLevelClient
 @testable import NinchatSDKSwift
 
 final class ExtensionsTests: XCTestCase {
@@ -160,5 +161,32 @@ final class ExtensionsTests: XCTestCase {
 
     func test_thread() {
         XCTAssertTrue(Thread.current.isRunningXCTests)
+    }
+
+    func test_userDefaults_swiftTypes() {
+        let value: [String:Any] = ["key-1": "value-1", "key-2": ["key-21": "value-21", "key-31": 2], "key-3": 5.5]
+        UserDefaults.save(value, key: .metadata)
+
+        let fetchedValue: [String:Any]? = UserDefaults.load(forKey: .metadata)
+        XCTAssertNotNil(fetchedValue)
+        XCTAssertEqual(fetchedValue!["key-1"] as? String, "value-1")
+        XCTAssertEqual((fetchedValue!["key-2"] as? [String:Any])?["key-21"] as? String, "value-21")
+        XCTAssertEqual((fetchedValue!["key-2"] as? [String:Any])?["key-31"] as? Int, 2)
+        XCTAssertEqual(fetchedValue!["key-3"] as? Double, 5.5)
+    }
+
+    func test_userDefaults_lowLevelTypes() {
+        var error: NSErrorPointer = nil
+        let metadata = NINLowLevelClientProps.initiate(metadata: ["key-21": "value-21", "key-31": 2]).marshalJSON(error)
+        XCTAssertNil(error)
+        UserDefaults.save(["key-1": metadata], key: .metadata)
+
+        let fetchedValue: [String:Any]? = UserDefaults.load(forKey: .metadata)
+        XCTAssertNotNil(fetchedValue)
+        XCTAssertEqual(fetchedValue?["key-1"] as? String, "{\"key-21\":\"value-21\",\"key-31\":2}")
+
+        let fetchedMetadata = NINLowLevelClientProps.initiate()
+        XCTAssertNoThrow(try fetchedMetadata.unmarshalJSON(fetchedValue?["key-1"] as? String))
+        XCTAssertEqual(try? fetchedMetadata.getString("key-21"), "value-21")
     }
 }
