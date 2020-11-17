@@ -58,8 +58,8 @@ protocol NINChatSessionConnectionManager: class {
     func registerQuestionnaire(queue ID: String, answers: NINLowLevelClientProps, completion: @escaping CompletionWithError) throws
 
     /** Closes the chat by shutting down the session. Triggers the API delegate method -ninchatDidEndChatSession:. */
-    
     func closeChat(onCompletion: Completion?) throws
+
     /** (Optionally) sends ratings and finishes the current chat from our end. */
     func finishChat(rating status: ChatStatus?) throws
 }
