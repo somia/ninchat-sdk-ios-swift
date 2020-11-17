@@ -227,8 +227,10 @@ extension ChatView: ChatCellDelegate {
 
         debugger("Reload constraints with animation: \(animation)")
         if animation {
-            self.tableView.beginUpdates()
-            self.tableView.endUpdates()
+            DispatchQueue.main.async {
+                self.tableView.beginUpdates()
+                self.tableView.endUpdates()
+            }
         }
     }
 }

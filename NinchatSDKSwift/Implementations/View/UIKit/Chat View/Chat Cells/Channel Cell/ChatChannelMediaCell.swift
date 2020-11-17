@@ -116,7 +116,7 @@ extension ChannelMediaCell where Self:ChatChannelCell {
         let width: CGFloat = min(self.contentView.bounds.width, 400) / 2, height: CGFloat = width / CGFloat(ratio)
         debugger("attachment constraints: width: \(width), height: \(height)")
 
-        self.parentView.fix(height: height)
+        self.parentView.fix(height: max(height, 150.0))
         self.messageImageView.fix(width: width)
         self.messageImageViewContainer.top?.constant = (isSeries) ? 16 : 8
         return true
