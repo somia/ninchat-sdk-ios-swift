@@ -195,7 +195,7 @@ func ninchat(_ session: NINChatSession, onLowLevelEvent params: NINLowLevelClien
       /// Deallocate the session and dismiss/pop the UI
       self.navigationController?.popToViewController(self, animated: true)
       self.ninchatSession.deallocate()
-		default:
+    default:
       break
     }
   }
