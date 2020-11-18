@@ -160,7 +160,7 @@
 		91A167A8436C7DEA859E45C9 /* UIKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16F6CAA073C2B72C58FBF /* UIKitTests.swift */; };
 		91A167D5B0BD96D3FD190F94 /* ComposeMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1689A5BDC25419D67E9BF /* ComposeMessageView.swift */; };
 		91A167F485DBCDFEEA0261F6 /* QuestionnaireElementLikert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16ED021E7CDE32491AE5D /* QuestionnaireElementLikert.swift */; };
-		91A16813665172FFFA81A455 /* NinchatError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A163A915328A44FBCAD0C2 /* NinchatError.swift */; };
+		91A16813665172FFFA81A455 /* NINChatError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A163A915328A44FBCAD0C2 /* NINChatError.swift */; };
 		91A1685BFB39CDD931E5FCAC /* NINQuestionnaireConversationDataSourceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16F08D697EA1A1125CC1E /* NINQuestionnaireConversationDataSourceDelegate.swift */; };
 		91A1686AC0F93B6707C55930 /* QuestionnaireConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16D113215A7C879D84505 /* QuestionnaireConverterTests.swift */; };
 		91A1688A7C316AEDFAF3BFD1 /* NinchatViewModelTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16BD6BFDA5810A0BE45F4 /* NinchatViewModelTestCase.swift */; };
@@ -374,7 +374,7 @@
 		91A1633706071B64D349FD72 /* QuestionnaireElementConnectorLogicTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireElementConnectorLogicTests.swift; sourceTree = "<group>"; };
 		91A163540D74E87CE6247C06 /* QuestionnaireElementSelect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireElementSelect.swift; sourceTree = "<group>"; };
 		91A163542A73487774FB1D3C /* Permission.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Permission.swift; sourceTree = "<group>"; };
-		91A163A915328A44FBCAD0C2 /* NinchatError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatError.swift; sourceTree = "<group>"; };
+		91A163A915328A44FBCAD0C2 /* NINChatError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NINChatError.swift; path = Implementations/Models/NINChatError.swift; sourceTree = "<group>"; };
 		91A163B62D2DBB763D1B850A /* UIFont+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+Extension.swift"; sourceTree = "<group>"; };
 		91A16407D8FAC5AEEDD748C9 /* ServiceManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceManager.swift; sourceTree = "<group>"; };
 		91A16468FB26B3084F03232F /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
@@ -609,6 +609,7 @@
 				91A16FA13B1F62E386352B88 /* NINSessionCredentials.swift */,
 				85DC59CF239E6A38007ABAE3 /* NINSiteConfiguration.swift */,
 				855B9F2E238ECE650081A9C6 /* NINChatSessionDelegate.swift */,
+				91A163A915328A44FBCAD0C2 /* NINChatError.swift */,
 				8543414B239655200078D11A /* Implementations */,
 				85DD6C4723AE0C8A0023FFEF /* Resources */,
 				855B9F14238ECDB30081A9C6 /* NinchatSDKSwift.h */,
@@ -824,7 +825,6 @@
 				91A16BFFA180E7ADBDE99C8D /* InboundMessage.swift */,
 				91A1675E285CCC4A250D77BB /* QuestionnaireConfiguration.swift */,
 				91A16B895B61CE50613D6AD7 /* ComposeUIAction.swift */,
-				91A163A915328A44FBCAD0C2 /* NinchatError.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1474,7 +1474,7 @@
 				91A16DDD3F9AB146FF604EFB /* UITextField+Extension.swift in Sources */,
 				91A16BB0EBC43AB17FBEC7BD /* Array+Extension.swift in Sources */,
 				91A1601A6F8D21DA68AC39A6 /* ComposeUIAction.swift in Sources */,
-				91A16813665172FFFA81A455 /* NinchatError.swift in Sources */,
+				91A16813665172FFFA81A455 /* NINChatError.swift in Sources */,
 				91A162DDA99D9DDB9D0B8436 /* Thread+Extension.swift in Sources */,
 				B704E3E68829ED0963294E84 /* NSUserDefaults+Extension.swift in Sources */,
 			);

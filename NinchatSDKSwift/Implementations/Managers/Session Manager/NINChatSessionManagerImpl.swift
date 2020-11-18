@@ -326,7 +326,13 @@ extension NINChatSessionManagerImpl {
         self.currentQueueID = nil
         self.myUserID = nil
 
-        if self.session != nil { self.disconnect() }
+        if self.session != nil {
+            do {
+                try self.closeChat()
+            } catch {
+                self.disconnect()
+            }
+        }
         self.onSessionDeallocated?()
     }
     

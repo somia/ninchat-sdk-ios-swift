@@ -7,9 +7,19 @@
 import Foundation
 import NinchatLowLevelClient
 
-struct NinchatError: Error {
-    var type: String = "type_not_specified"
-    var reason, sessionID, actionID, userID, identityType, identityName, channelID, realmID, queueID, tagID, messageType: String?
+public extension NINLowLevelClientProps {
+    var ninchatError: NinchatError? {
+        let errorType: NINResult<String> = self.get(forKey: "error_type")
+        if case let .success(error) = errorType {
+            return NinchatError(type: error, props: self)
+        }
+        return nil
+    }
+}
+
+public struct NinchatError: Error {
+    public var type: String = "type_not_specified"
+    public var reason, sessionID, actionID, userID, identityType, identityName, channelID, realmID, queueID, tagID, messageType: String?
 
     init(type: String, props: NINLowLevelClientProps?) {
         self.type = type
