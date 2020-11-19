@@ -144,6 +144,7 @@
 - (nonnull instancetype)initWithRef:(_Nonnull id)ref;
 - (nonnull instancetype)init;
 - (BOOL)accept:(id<NINLowLevelClientPropVisitor> _Nullable)callback error:(NSError* _Nullable* _Nullable)error;
+- (NSString* _Nonnull)encryptToJWT:(NSString* _Nullable)key secret:(NSString* _Nullable)secret error:(NSError* _Nullable* _Nullable)error;
 - (BOOL)getBool:(NSString* _Nullable)key val:(BOOL* _Nullable)val error:(NSError* _Nullable* _Nullable)error;
 - (BOOL)getFloat:(NSString* _Nullable)key val:(double* _Nullable)val error:(NSError* _Nullable* _Nullable)error;
 - (BOOL)getInt:(NSString* _Nullable)key val:(long* _Nullable)val error:(NSError* _Nullable* _Nullable)error;
