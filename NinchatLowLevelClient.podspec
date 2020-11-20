@@ -2,7 +2,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "NinchatLowLevelClient"
-  s.version      = "0.2.8"
+  s.version      = "0.3.10"
   s.summary      = "Low-level communications library for Ninchat messaging."
   s.description  = "For providing low-level communications using Ninchat messaging."
   s.homepage     = "https://ninchat.com/"

@@ -59,6 +59,20 @@ final class NINLowLevelClientPropsTests: XCTestCase {
         XCTAssertEqual(value6.value, 6.8)
     }
 
+    func test_initializer_nested_dictionary() {
+        let level1 = NINLowLevelClientProps.initiate(metadata: ["secure-key": "secure-value"])
+        XCTAssertNotNil(level1)
+        XCTAssertEqual(level1.getString("secure-key", error: nil), "secure-value")
+
+        let level2 = NINLowLevelClientProps.initiate(metadata: ["normal-key": "normal-value", "secure-dic": level1])
+        XCTAssertNotNil(level2)
+        XCTAssertEqual(level2.getString("normal-key", error: nil), "normal-value")
+
+        XCTAssertNoThrow(try level2.getObject("secure-dic"))
+        let secureDic = try! level2.getObject("secure-dic")
+        XCTAssertEqual(secureDic.getString("secure-key", error: nil), "secure-value")
+    }
+
     func test_initializer_preQuestionnaire() {
         let answers: [String:AnyHashable] = ["Koronavirus-jatko": "Näytä muut aiheet", "language": "English", "number-of-messages": 3.2]
         let props = NINLowLevelClientProps.initiate(preQuestionnaireAnswers: answers)

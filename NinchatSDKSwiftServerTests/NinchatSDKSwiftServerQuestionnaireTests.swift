@@ -14,6 +14,7 @@ final class NinchatSDKSwiftServerQuestionnaireTests: XCTestCase {
     func test_0_registerAnswers() {
         let expect = self.expectation(description: "Expected to register audience answers to the queue's statistics")
 
+        sessionManager.updateSecureMetadata()
         sessionManager.fetchSiteConfiguration(config: Session.configurationKey, environments: nil) { error in
             XCTAssertNil(error)
             try! self.sessionManager.openSession { credentials, canResume, error in
@@ -23,7 +24,10 @@ final class NinchatSDKSwiftServerQuestionnaireTests: XCTestCase {
                 try! self.sessionManager.list(queues: self.sessionManager.siteConfiguration.audienceQueues) { error in
                     XCTAssertNil(error)
 
-                    try! self.sessionManager.registerQuestionnaire(queue: Session.suiteQueue, answers: NINLowLevelClientProps.initiate(preQuestionnaireAnswers: ["question":"answer"])) { error in
+                    guard let answers = self.sessionManager.audienceMetadata else { XCTFail("Unable to get audience metadata"); return }
+                    answers.set(value: NINLowLevelClientProps.initiate(preQuestionnaireAnswers: ["question":"answer"]), forKey: "pre_answers")
+
+                    try! self.sessionManager.registerQuestionnaire(queue: Session.suiteQueue, answers: answers) { error in
                         XCTAssertNil(error)
                         expect.fulfill()
                     }
@@ -31,5 +35,11 @@ final class NinchatSDKSwiftServerQuestionnaireTests: XCTestCase {
             }
         }
         waitForExpectations(timeout: 15.0)
+    }
+}
+
+private extension NINChatSessionManagerImpl {
+    func updateSecureMetadata() {
+        NINLowLevelClientProps.saveMetadata(Session.secureMetadata)
     }
 }

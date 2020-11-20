@@ -18,7 +18,7 @@ protocol ChannelMediaCell {
     var messageImageViewContainer: UIView! { get set }
     var messageImageView: UIImageView! { get set }
     var videoPlayIndicator: UIImageView! { get set }
-    
+
     func populateText(message: TextMessage, attachment: FileInfo?)
 }
 
@@ -38,15 +38,15 @@ extension ChannelMediaCell where Self:ChatChannelCell {
             }
         }
     }
-    
+
     func updateAttachment(asynchronous: Bool, fromCache: Bool) throws {
         guard let message = self.message as? TextMessage else { throw NINUIExceptions.noMessage }
         guard let attachment = message.attachment else { throw NINUIExceptions.noAttachment }
         guard attachment.isVideo || attachment.isImage else { throw NINUIExceptions.invalidAttachment }
-        
+
         /// Make sure we have an image tap recognizer in place
         self.resetImageLayout()
-        
+
         if attachment.isImage, let imageURL = attachment.url {
             self.videoPlayIndicator.isHidden = true
             self.messageImageView.contentMode = .scaleAspectFit
@@ -57,7 +57,7 @@ extension ChannelMediaCell where Self:ChatChannelCell {
             try self.updateVideo(from: attachment, videoURL: videoURL, asynchronous, message.series)
         }
     }
-    
+
     /// Update constraints to match new thumbnail image size
     private func updateVideo(from attachment: FileInfo, videoURL: String, _ asynchronous: Bool, _ isSeries: Bool) throws {
         guard let thumbnailManager = self.videoThumbnailManager else { throw NINUIExceptions.noThumbnailManager }
@@ -68,7 +68,7 @@ extension ChannelMediaCell where Self:ChatChannelCell {
             self?.updateMessageImageView(attachment: attachment, imageURL: nil, image: thumbnail, asynchronous: asynchronous, isSeries: isSeries)
         }
     }
-    
+
     /// asynchronous = YES implies we're calling this asynchronously from the
     /// `updateInfo(session:completion:)` completion block (meaning it did a network update)
     private func updateImage(from attachment: FileInfo, imageURL: String, _ fromCache: Bool, _ asynchronous: Bool, _ isSeries: Bool) {
@@ -110,18 +110,18 @@ extension ChannelMediaCell where Self:ChatChannelCell {
             }
         }
     }
-    
+
     private func set(aspect ratio: Double?, _ isSeries: Bool, update: Bool = false) -> Bool {
         guard let ratio = ratio, self.contentView.bounds.width > 0 else { return false }
         let width: CGFloat = min(self.contentView.bounds.width, 400) / 2, height: CGFloat = width / CGFloat(ratio)
         debugger("attachment constraints: width: \(width), height: \(height)")
 
-        self.parentView.fix(height: height)
+        self.parentView.fix(height: max(height, 150.0))
         self.messageImageView.fix(width: width)
         self.messageImageViewContainer.top?.constant = (isSeries) ? 16 : 8
         return true
     }
-    
+
     private func resetImageLayout() {
         self.messageImageView.image = nil
         self.messageImageViewContainer.gestureRecognizers?.forEach { self.messageImageViewContainer.removeGestureRecognizer($0) }
@@ -162,7 +162,7 @@ final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell, Cha
     @objc
     func didTappedOnImage() {
         guard let message = self.message as? TextMessage, let attachment = message.attachment else { return }
-        
+
         if attachment.isVideo {
             /// Will open video player
             self.onImageTapped?(attachment, nil)
@@ -214,7 +214,7 @@ final class ChatChannelMediaOthersCell: ChatChannelOthersCell, ChannelMediaCell,
     @objc
     func didTappedOnImage() {
         guard let message = self.message as? TextMessage, let attachment = message.attachment else { return }
-        
+
         if attachment.isVideo {
             /// Will open video player
             self.onImageTapped?(attachment, nil)

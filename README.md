@@ -97,6 +97,10 @@ try self.ninchatSession.start(credentials: credentials) { (credentials: NINSessi
 }
 ```
 
+##### Resume support for audience metadata
+
+Starting version [0.3.10](https://github.com/somia/ninchat-sdk-ios-swift/releases/tag/0.3.10), the SDK can save and retrive audience metadata directly from the local storage. This makes a host application able to be _resumed_ even if the metadata are not explicitly set. **Please note the SDK raises error if the metadata contains an invalid secure token.** Ensure you catch errors as described in [Catch errors](#catch-errors).
+
 #### Showing the SDK UI
 
 Once you have started the API client, you can retrieve its UI to be displayed in your application's UI stack. Typically you would do this within the `start` callback upon successful completion. The API can be started with and without using `UINavigationController`.  If the iOS application doesn't provide a valid `UINavigationController` the SDK will start its own navigation controller.
@@ -174,6 +178,28 @@ func ninchat(_ session: NINChatSession, didOutputSDKLog message: String) {
 func ninchatDidFail(toResumeSession session: NINChatSession) -> Bool {
      return true
 } 
+```
+
+#### Catch errors
+
+Starting version [0.3.10](https://github.com/somia/ninchat-sdk-ios-swift/releases/tag/0.3.10), the SDK supports a better way to catch and handle errors. As an example, you can catch errors related to invalid _[secure metadata](https://github.com/ninchat/ninchat-api/blob/v2/master.md#secure-metadata)_.
+
+```swift
+func ninchat(_ session: NINChatSession, onLowLevelEvent params: NINLowLevelClientProps, payload: NINLowLevelClientPayload, lastReply: Bool) {
+  if case let .success(event) = params.event {
+    switch event {
+    case "error":
+      /// Check generated error
+      print("\(params.ninchatError?.type): \(params.ninchatError?.reason)")
+
+      /// Deallocate the session and dismiss/pop the UI
+      self.navigationController?.popToViewController(self, animated: true)
+      self.ninchatSession.deallocate()
+    default:
+      break
+    }
+  }
+}
 ```
 
 #### Info.plist keys Required by the SDK

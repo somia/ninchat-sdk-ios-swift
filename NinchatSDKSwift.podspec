@@ -2,7 +2,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "NinchatSDKSwift"
-  s.version      = "0.3.0"
+  s.version      = "0.3.10"
   s.summary      = "iOS SDK for Ninchat, Swift version"
   s.description  = "For building iOS applications using Ninchat messaging."
   s.homepage     = "https://ninchat.com/"
@@ -41,7 +41,7 @@ Pod::Spec.new do |s|
   s.dependency "GoogleWebRTC"
   s.dependency 'AnyCodable-FlightSchool', '~> 0.2.3'
   s.dependency "AutoLayoutSwift", "4.0.0"
-  s.dependency "NinchatLowLevelClient", "~> 0.2.8"
+  s.dependency "NinchatLowLevelClient", "~> 0.3.10"
 
   s.module_name = "NinchatSDKSwift"
 end

@@ -8,17 +8,19 @@ import UIKit
 import AVKit
 import CoreServices
 import WebRTC
+import NinchatLowLevelClient
 
 protocol Coordinator: class {
     init(with session: NINChatSession)
     func start(with queue: String?, resume: ResumeMode?, within navigation: UINavigationController?) -> UIViewController?
+    func prepareNINQuestionnaireViewModel(audienceMetadata: NINLowLevelClientProps?, onCompletion: @escaping (() -> Void))
     func deallocate()
 }
 
 final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControllerDelegate {
-    
+
     // MARK: - Coordinator
-    
+
     internal unowned var session: NINChatSession
     internal weak var navigationController: UINavigationController? {
         didSet {
@@ -34,6 +36,7 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
     internal lazy var sessionManager: NINChatSessionManager = {
         session.sessionManager
     }()
+    private let dispatchGroup = DispatchGroup()
 
     // MARK: - Questionnaire helpers
 
@@ -170,17 +173,14 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
 
     init(with session: NINChatSession) {
         self.session = session
-
-        super.init()
-        self.prepareNINQuestionnaireViewModel()
     }
-    
+
     func start(with queue: String?, resume: ResumeMode?, within navigation: UINavigationController?) -> UIViewController? {
         let topViewController: UIViewController
         if let resume = resume {
             topViewController = self.queueViewController(resume: resume, queue: nil)
-        } else if let queue = queue, let target = self.sessionManager.queues.filter({ $0.queueID == queue }).first, !hasPreAudienceQuestionnaire {
-            topViewController = self.queueViewController(queue: target)
+        } else if let queue = queue, let target = self.sessionManager.queues.filter({ $0.queueID == queue }).first {
+            topViewController = hasPreAudienceQuestionnaire ? self.questionnaireViewController(queue: target, questionnaireType: .pre) : self.queueViewController(queue: target)
         } else {
             topViewController = self.initialViewController
         }
@@ -195,16 +195,24 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
 
     /// In case of heavy questionnaires, there would be a memory-consuming job in instantiation of `NINQuestionnaireViewModel` even though it is implemented in a multi-thread manner using `OperationQueue`.
     /// Thus, we have to do the job in background before the questionnaire page being loaded
-    private func prepareNINQuestionnaireViewModel() {
+    func prepareNINQuestionnaireViewModel(audienceMetadata: NINLowLevelClientProps?, onCompletion: @escaping (() -> Void)) {
         if self.hasPreAudienceQuestionnaire {
+            self.dispatchGroup.enter()
             DispatchQueue.global(qos: .background).async { [weak self] in
-                self?.preQuestionnaireViewModel = NINQuestionnaireViewModelImpl(sessionManager: self?.sessionManager, questionnaireType: .pre)
+                self?.preQuestionnaireViewModel = NINQuestionnaireViewModelImpl(sessionManager: self?.sessionManager, audienceMetadata: audienceMetadata, questionnaireType: .pre)
+                self?.dispatchGroup.leave()
             }
         }
         if self.hasPostAudienceQuestionnaire {
+            self.dispatchGroup.enter()
             DispatchQueue.global(qos: .background).async { [weak self] in
-                self?.postQuestionnaireViewModel = NINQuestionnaireViewModelImpl(sessionManager: self?.sessionManager, questionnaireType: .post)
+                self?.postQuestionnaireViewModel = NINQuestionnaireViewModelImpl(sessionManager: self?.sessionManager, audienceMetadata: audienceMetadata, questionnaireType: .post)
+                self?.dispatchGroup.leave()
             }
+        }
+
+        self.dispatchGroup.notify(queue: .global(qos: .background)) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { onCompletion() }
         }
     }
 }
@@ -282,11 +290,11 @@ extension NINCoordinator {
         }
         return dataSourceDelegate
     }
-        
+
     internal func chatRTCDelegate(_ videoDelegate: NINRTCVideoDelegate) -> NINWebRTCDelegate {
         NINWebRTCDelegateImpl(remoteVideoDelegate: videoDelegate)
     }
-    
+
     internal func chatMediaPicker(_ viewModel: NINChatViewModel) -> NINPickerControllerDelegate {
         NINPickerControllerDelegateImpl(viewModel: viewModel)
     }

@@ -121,6 +121,42 @@ extension NINLowLevelClientProps: NINLowLevelSessionProps {
     }
 }
 
+protocol NINLowLevelMetadataProps {
+    /// According to https://github.com/somia/mobile/issues/287
+    /// When metadata is set and it is not null, it is saved in the UserDefaults
+    /// When metadata is required, it is loaded from UserDefaults
+    ///     if no metadata is saved, it means either it was provided null, or was cleared
+
+    static func saveMetadata(_ metadata: NINLowLevelClientProps?)
+    static func loadMetadata() -> NINLowLevelClientProps?
+}
+
+extension NINLowLevelClientProps: NINLowLevelMetadataProps {
+    static func saveMetadata(_ metadata: NINLowLevelClientProps?) {
+        /// If the metadata is not null, it is saved in the UserDefaults
+        autoreleasepool {
+            var error: NSError?
+            if let audienceMetadataJSON = metadata?.marshalJSON(&error), error == nil {
+                UserDefaults.save(audienceMetadataJSON, key: .metadata)
+            }
+        }
+    }
+    
+    static func loadMetadata() -> NINLowLevelClientProps? {
+        /// Read saved metadata from UserDefaults
+        if let audienceMetadataJSON: String? = UserDefaults.load(forKey: .metadata) {
+            let audienceMetadata = NINLowLevelClientProps()
+            do {
+                try audienceMetadata.unmarshalJSON(audienceMetadataJSON)
+                return audienceMetadata
+            } catch {
+                return nil
+            }
+        }
+        return nil
+    }
+}
+
 protocol NINLowLevelQueueProps {
     var queueName: NINResult<String> { get }
     var realmQueue: NINResult<NINLowLevelClientProps> { get }

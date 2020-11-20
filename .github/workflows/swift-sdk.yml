@@ -20,8 +20,8 @@ jobs:
             - name: Shell Environment
               run: export SHELL=/bin/bash
             
-            - name: Force Xcode 11
-              run: sudo xcode-select -switch /Applications/Xcode_11.4.app
+            - name: Force Xcode 12
+              run: sudo xcode-select -switch /Applications/Xcode_12.2.app
 
             - name: Install Cocoapods
               run: pod update

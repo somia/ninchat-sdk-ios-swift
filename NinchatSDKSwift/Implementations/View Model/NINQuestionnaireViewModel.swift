@@ -21,7 +21,7 @@ protocol NINQuestionnaireViewModel {
     var onSessionFinished: (() -> Void)? { get set }
     var requirementSatisfactionUpdater: ((Bool) -> Void)? { get set }
 
-    init(sessionManager: NINChatSessionManager?, questionnaireType: AudienceQuestionnaireType)
+    init(sessionManager: NINChatSessionManager?, audienceMetadata: NINLowLevelClientProps?, questionnaireType: AudienceQuestionnaireType)
     func isExitElement(_ element: Any?) -> Bool
     func getConfiguration() throws -> QuestionnaireConfiguration
     func getElements() throws -> [QuestionnaireElement]
@@ -59,8 +59,9 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     private var configurations: [QuestionnaireConfiguration] = []
     internal var connector: QuestionnaireElementConnector!
     private var views: [[QuestionnaireElement]] = []
-    internal var answers: [String:AnyHashable]! = [:]    // Contains answers saved by the user in the runtime
-    internal var preAnswers: [String:AnyHashable]! = [:] // Contains answers already given by the server
+    internal var answers: [String:AnyHashable]! = [:]    // Holds answers saved by the user in the runtime
+    internal var preAnswers: [String:AnyHashable]! = [:] // Holds answers already given by the server
+    internal var audienceMetadata: NINLowLevelClientProps? // Holds given metadata during the initialization
     private var setPageNumber: Int?
     private var setupConnectorOperation: BlockOperation!
     
@@ -85,8 +86,9 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     var onQuestionnaireFinished: ((Queue?, _ exit: Bool) -> Void)?
     var requirementSatisfactionUpdater: ((Bool) -> Void)?
 
-    init(sessionManager: NINChatSessionManager?, questionnaireType: AudienceQuestionnaireType) {
+    init(sessionManager: NINChatSessionManager?, audienceMetadata: NINLowLevelClientProps?, questionnaireType: AudienceQuestionnaireType) {
         self.sessionManager = sessionManager
+        self.audienceMetadata = audienceMetadata
 
         let configurationOperation = BlockOperation { [weak self] in
             guard let configurations = (questionnaireType == .pre) ? sessionManager?.siteConfiguration.preAudienceQuestionnaire : sessionManager?.siteConfiguration.postAudienceQuestionnaire else { return }
@@ -201,7 +203,10 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 
     private func registerAudience(queueID: String, completion: @escaping (Error?) -> Void) {
         do {
-            try self.sessionManager?.registerQuestionnaire(queue: queueID, answers: NINLowLevelClientProps.initiate(preQuestionnaireAnswers: self.answers), completion: completion)
+            let metadata = self.audienceMetadata ?? NINLowLevelClientProps()
+            metadata.set(value: questionnaireAnswers, forKey: "pre_answers")
+            
+            try self.sessionManager?.registerQuestionnaire(queue: queueID, answers: metadata, completion: completion)
         } catch {
             completion(error)
         }

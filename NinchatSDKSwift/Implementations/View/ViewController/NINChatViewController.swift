@@ -449,25 +449,27 @@ extension NINChatViewController {
 // MARK: - Media
 
 extension NINChatViewController {
-    private func openGallery() {
-        viewModel.grantLibraryPermission { [weak self] error in
-            if error == nil {
-                self?.onOpenGallery?(.photoLibrary); return
+    private func onAttachmentTapped(with button: UIButton) {
+        ChoiceDialogue.showDialogue(withOptions: ["Camera".localized, "Photo".localized]) { [weak self] result in
+            switch result {
+            case .cancel:
+                break
+            case .select(let index):
+                let source: UIImagePickerController.SourceType = (index == 0) ? .camera : .photoLibrary
+                guard UIImagePickerController.isSourceTypeAvailable(source) else {
+                    Toast.show(message: .error("Source not available".localized)); return
+                }
+                if source == .camera && self?.webRTCClient != nil {
+                    Toast.show(message: .error("Camera not available".localized)); return
+                }
+
+                self?.viewModel.openAttachment(source: source) { [weak self, source] error in
+                    if error == nil { self?.onOpenGallery?(source); return }
+                    Toast.show(message: .error("Access denied".localized), onToastTouched: {
+                        UIApplication.openAppSetting()
+                    })
+                }
             }
-            Toast.show(message: .error("Camera access is denied"), onToastTouched: {
-                UIApplication.openAppSetting()
-            })
-        }
-    }
-    
-    private func openVideo() {
-        viewModel.grantCameraPermission { [weak self] error in
-            if error == nil {
-                self?.onOpenGallery?(.camera); return
-            }
-            Toast.show(message: .error("Camera access is denied"), onToastTouched: {
-                UIApplication.openAppSetting()
-            })
         }
     }
 }
@@ -501,29 +503,6 @@ extension NINChatViewController {
     private func onSendTapped(_ text: String) {
         self.viewModel.send(message: text) { error in
             if error != nil { Toast.show(message: .error("Failed to send message")) }
-        }
-    }
-    
-    private func onAttachmentTapped(with button: UIButton) {
-        ChoiceDialogue.showDialogue(withOptions: ["Camera".localized, "Photo".localized]) { [weak self] result in
-            switch result {
-            case .cancel:
-                break
-            case .select(let index):
-                let source: UIImagePickerController.SourceType = (index == 0) ? .camera : .photoLibrary
-                guard UIImagePickerController.isSourceTypeAvailable(source) else {
-                    Toast.show(message: .error("That source type is not available on this device")); return
-                }
-    
-                switch source {
-                case .camera:
-                    self?.openVideo()
-                case .photoLibrary:
-                    self?.openGallery()
-                default:
-                    fatalError("Invalid attachment type")
-                }
-            }
         }
     }
     

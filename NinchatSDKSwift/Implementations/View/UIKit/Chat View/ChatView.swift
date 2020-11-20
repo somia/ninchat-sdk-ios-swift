@@ -9,22 +9,22 @@ import UIKit
 protocol ChatViewProtocol: UIView {
     /** ChatView data source. */
     var dataSource: ChatViewDataSource? { get set }
-    
+
     /** ChatView delegate. */
     var delegate: ChatViewDelegate? { get set }
-    
+
     /** Chat session manager. */
     var sessionManager: NINChatSessionManager? { get set }
-    
+
     /** A new message was added to given index. Updates the view. */
     func didAddMessage(at index: Int)
-    
+
     /** A message was removed from given index. */
     func didRemoveMessage(from index: Int)
 
     /** A compose message got updates from the server regarding its options. */
     func didUpdateComposeAction(at index: Int, with action: ComposeUIAction)
-    
+
     /** Should update table content offset when keyboard state changes. */
     func updateContentSize(_ value: CGFloat)
 }
@@ -36,14 +36,14 @@ final class ChatView: UIView, ChatViewProtocol {
     * every time a cell needs updating.
     */
     private var imageAssets: NINImageAssetDictionary!
-    
+
     /**
     * The color asset overrides as map. Only contains items used by chat view.
     * These are cached in this fashion to avoid looking them up from the chat delegate
     * every time a cell needs updating.
     */
     private var colorAssets: NINColorAssetDictionary!
-    
+
     /**
     * Current states for the visible ui/compose type messages, tracked across cell
     * recycle. messageID as key, array corresponds to the array of ui/compose objects
@@ -51,13 +51,13 @@ final class ChatView: UIView, ChatViewProtocol {
     * to NINUIComposeElement objects that are responsible for generating and reading it.
     */
     var composeMessageStates: [String:[Bool]]? = [:]
-    
+
     /** Configuration for agent avatar. */
     private var agentAvatarConfig: AvatarConfig!
-    
+
     /** Configuration for user avatar. */
     private var userAvatarConfig: AvatarConfig!
-    
+
     private let videoThumbnailManager = VideoThumbnailManager()
     private var cellConstraints: Array<CGSize> = []
     private var composeCellActions: [Int:ComposeUIAction] = [:]
@@ -66,49 +66,49 @@ final class ChatView: UIView, ChatViewProtocol {
     private let lock = NSLock()
 
     // MARK: - Outlets
-    
+
     @IBOutlet private(set) weak var tableView: UITableView! {
         didSet {
             tableView.register(ChatChannelComposeCell.self)
-            
+
             tableView.register(ChatChannelMediaMineCell.self)
             tableView.register(ChatChannelTextMineCell.self)
-    
+
             tableView.register(ChatChannelMediaOthersCell.self)
             tableView.register(ChatChannelTextOthersCell.self)
-            
+
             tableView.register(ChatTypingCell.self)
             tableView.register(ChatMetaCell.self)
             tableView.dataSource = self
             tableView.delegate = self
-            
+
             /// Rotate the table view 180 degrees; we will use it upside down
             tableView.rotate()
             tableView.contentInset = UIEdgeInsets(top: 8.0, left: 0.0, bottom: 0.0, right: 0.0)
         }
     }
-    
+
     // MARK: - ChatViewProtocol
 
     weak var sessionManager: NINChatSessionManager? {
         didSet {
             self.imageAssets = self.sessionManager?.delegate?.imageAssetsDictionary
             self.colorAssets = self.sessionManager?.delegate?.colorAssetsDictionary
-            
+
             self.agentAvatarConfig = AvatarConfig(avatar: sessionManager?.siteConfiguration.agentAvatar, name: sessionManager?.siteConfiguration.agentName)
             self.userAvatarConfig = AvatarConfig(avatar: sessionManager?.siteConfiguration.userAvatar, name: sessionManager?.siteConfiguration.userName)
         }
     }
     weak var dataSource: ChatViewDataSource?
     weak var delegate: ChatViewDelegate?
-    
+
     func didAddMessage(at index: Int) {
         guard let messageCount = dataSource?.numberOfMessages(for: self), tableView.numberOfRows(inSection: 0) < messageCount else { return }
         lock.lock()
         self.tableView.insertRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
         lock.unlock()
     }
-    
+
     func didRemoveMessage(from index: Int) {
         guard let messageCount = dataSource?.numberOfMessages(for: self), tableView.numberOfRows(inSection: 0) > messageCount else { return }
         lock.lock()
@@ -126,9 +126,9 @@ final class ChatView: UIView, ChatViewProtocol {
     func updateContentSize(_ value: CGFloat) {
         self.tableView.contentInset = UIEdgeInsets(top: 8.0, left: 0.0, bottom: value, right: 0.0)
     }
-    
+
     // MARK: - UIView
-    
+
     deinit {
         debugger("`ChatView` deallocated")
     }
@@ -141,10 +141,10 @@ extension ChatView: UITableViewDataSource, UITableViewDelegate {
         self.cellConstraints.insert(.zero, at: 0)
         return dataSource?.numberOfMessages(for: self) ?? 0
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let message = dataSource?.message(at: indexPath.row, self) else { fatalError("Unable to fetch chat cell") }
-        
+
         if let channelMSG = message as? ChannelMessage {
             return setupBubbleCell(channelMSG, at: indexPath)
         } else if let typingMSG = message as? UserTypingMessage {
@@ -189,7 +189,7 @@ extension ChatView {
             guard let weakSelf = self else { return }
             weakSelf.delegate?.didSelect(image: image, for: attachment, weakSelf)
         }
-        
+
         cell.populateChannel(message: message, configuration: self.sessionManager?.siteConfiguration, imageAssets: self.imageAssets, colorAssets: self.colorAssets, agentAvatarConfig: self.agentAvatarConfig, userAvatarConfig: self.userAvatarConfig, composeState: self.composeMessageStates?[message.messageID])
         if let cell = cell as? ChatChannelComposeCell {
             if let action = self.composeCellActions[indexPath.row] {
@@ -213,7 +213,7 @@ extension ChatView {
             guard let weakSelf = self else { return }
             weakSelf.delegate?.didRequestToClose(weakSelf)
         }
-        
+
         cell.populate(message: message, colorAssets: self.colorAssets)
         return cell
     }
@@ -227,8 +227,10 @@ extension ChatView: ChatCellDelegate {
 
         debugger("Reload constraints with animation: \(animation)")
         if animation {
-            self.tableView.beginUpdates()
-            self.tableView.endUpdates()
+            DispatchQueue.main.async {
+                self.tableView.beginUpdates()
+                self.tableView.endUpdates()
+            }
         }
     }
 }

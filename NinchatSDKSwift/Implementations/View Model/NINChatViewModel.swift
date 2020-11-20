@@ -18,7 +18,7 @@ protocol NINChatRTCProtocol {
     typealias RTCCallReceive = (ChannelUser?, Error?) -> Void
     typealias RTCCallInitial = (Error?, NINChatWebRTCClient?) -> Void
     typealias RTCCallHangup = () -> Void
-    
+
     func listenToRTCSignaling(delegate: NINChatWebRTCClientDelegate?, onCallReceived: @escaping RTCCallReceive, onCallInitiated: @escaping RTCCallInitial, onCallHangup: @escaping RTCCallHangup)
     func pickup(answer: Bool, completion: @escaping (Error?) -> Void)
     func hangup(completion: @escaping (Error?) -> Void)
@@ -41,35 +41,39 @@ protocol NINChatMessageProtocol {
 
 protocol NINChatPermissionsProtocol {
     func grantVideoCallPermissions(_ completion: @escaping (Error?) -> Void)
-    func grantLibraryPermission(_ completion: @escaping (Error?) -> Void)
-    func grantCameraPermission(_ completion: @escaping (Error?) -> Void)
 }
 
-protocol NINChatViewModel: NINChatRTCProtocol, NINChatStateProtocol, NINChatMessageProtocol, NINChatPermissionsProtocol {
+protocol NINChatAttachmentProtocol {
+    typealias AttachmentCompletion = (Error?) -> Void
+    func openAttachment(source: UIImagePickerController.SourceType, completion: @escaping AttachmentCompletion)
+}
+
+protocol NINChatViewModel: NINChatRTCProtocol, NINChatStateProtocol, NINChatMessageProtocol, NINChatPermissionsProtocol, NINChatAttachmentProtocol {
     var onChannelClosed: (() -> Void)? { get set }
     var onQueueUpdated: (() -> Void)? { get set }
     var onChannelMessage: ((MessageUpdateType) -> Void)? { get set }
     var onComposeActionUpdated: ((_ index: Int, _ action: ComposeUIAction) -> Void)? { get set }
-    
+
     init(sessionManager: NINChatSessionManager)
 }
 
 final class NINChatViewModelImpl: NINChatViewModel {
     private unowned var sessionManager: NINChatSessionManager
     private var iceCandidates: [RTCIceCandidate] = []
-    
+    private var isOnBackgroundTask: Bool = false
+    private var client: NINChatWebRTCClient?
+
     var onChannelClosed: (() -> Void)?
     var onQueueUpdated: (() -> Void)?
     var onChannelMessage: ((MessageUpdateType) -> Void)?
     var onComposeActionUpdated: ((_ index: Int, _ action: ComposeUIAction) -> Void)?
-    var pauseForPermissions: Bool = false
 
     init(sessionManager: NINChatSessionManager) {
         self.sessionManager = sessionManager
-        
+
         self.setupListeners()
     }
-    
+
     private func setupListeners() {
         self.sessionManager.onChannelClosed = { [weak self] in
             self?.onChannelClosed?()
@@ -103,13 +107,13 @@ extension NINChatViewModelImpl {
         sessionManager.onRTCClientSignal = { [weak self] type, user, signal in
             debugger("WebRTC: Client Signal: \(type)")
             guard type == .candidate else { return }
-            
+
             /// Queue received candidates and inject during initialization
             guard let iceCandidate = signal?.candidate?.toRTCIceCandidate else { return }
             debugger("WebRTC: Adding \(iceCandidate) to queue")
             self?.iceCandidates.append(iceCandidate)
         }
-        
+
         sessionManager.onRTCSignal = { [weak self] type, user, signal in
             switch type {
             case .call:
@@ -119,10 +123,10 @@ extension NINChatViewModelImpl {
                 do {
                     try self?.sessionManager.beginICE { error, stunServers, turnServers in
                         do {
-                            let client: NINChatWebRTCClient = NINChatWebRTCClientImpl(sessionManager: self?.sessionManager, operatingMode: .callee, stunServers: stunServers, turnServers: turnServers, candidates: self?.iceCandidates, delegate: delegate)
-                            try client.start(with: signal)
+                            self?.client = NINChatWebRTCClientImpl(sessionManager: self?.sessionManager, operatingMode: .callee, stunServers: stunServers, turnServers: turnServers, candidates: self?.iceCandidates, delegate: delegate)
+                            try self?.client?.start(with: signal)
 
-                            onCallInitiated(error, client)
+                            onCallInitiated(error, self?.client)
                         } catch {
                             onCallInitiated(error, nil)
                         }
@@ -138,7 +142,7 @@ extension NINChatViewModelImpl {
             }
         }
     }
-    
+
     func pickup(answer: Bool, completion: @escaping (Error?) -> Void) {
         do {
             try self.sessionManager.send(type: .pickup, payload: ["answer": answer], completion: completion)
@@ -148,6 +152,8 @@ extension NINChatViewModelImpl {
     }
 
     func hangup(completion: @escaping (Error?) -> Void) {
+        guard self.client != nil else { debugger("No WebRTC is available, skip hangup instruction"); completion(nil); return }
+
         debugger("hangup the call...")
         do {
             try self.sessionManager.send(type: .hangup, payload: [:], completion: completion)
@@ -169,12 +175,12 @@ extension NINChatViewModelImpl {
 
 extension NINChatViewModelImpl {
     func appDidEnterBackground(completion: @escaping (Error?) -> Void) {
-        guard !pauseForPermissions else { debugger("background for granting permissions, do not hangup"); return }
+        guard !isOnBackgroundTask else { debugger("background for granting permissions, do not hangup"); return }
 
         debugger("background mode, hangup the video call (if there are any)")
         self.hangup(completion: completion)
     }
-    
+
     func appWillResignActive(completion: @escaping (Error?) -> Void) {}
 }
 
@@ -188,7 +194,7 @@ extension NINChatViewModelImpl {
             completion(error)
         }
     }
-    
+
     func send(action: ComposeContentViewProtocol, completion: @escaping (Error?) -> Void) {
         do {
             try self.sessionManager.send(action: action, completion: completion)
@@ -196,7 +202,7 @@ extension NINChatViewModelImpl {
             completion(error)
         }
     }
-    
+
     func send(attachment: String, data: Data, completion: @escaping (Error?) -> Void) {
         do {
             try self.sessionManager.send(attachment: attachment, data: data, completion: completion)
@@ -204,7 +210,7 @@ extension NINChatViewModelImpl {
             completion(error)
         }
     }
-    
+
     func send(type: MessageType, payload: [String:String], completion: @escaping (Error?) -> Void) {
         do {
             try self.sessionManager.send(type: type, payload: payload, completion: completion)
@@ -212,7 +218,7 @@ extension NINChatViewModelImpl {
             completion(error)
         }
     }
-    
+
     func updateWriting(state: Bool) {
         try? self.sessionManager.update(isWriting: state, completion: { _ in })
     }
@@ -236,24 +242,44 @@ extension NINChatViewModelImpl: QueueUpdateCapture {
 
 // MARK: - NINChatPermissionsProtocol
 
-extension  NINChatViewModelImpl {
+extension NINChatViewModelImpl {
     func grantVideoCallPermissions(_ completion: @escaping (Error?) -> Void) {
-        pauseForPermissions = true
+        isOnBackgroundTask = true
         Permission.grantPermission(.deviceCamera, .deviceMicrophone) { [weak self] error in
             debugger("permissions for video call granted with error: \(String(describing: error))")
-            self?.pauseForPermissions = false; completion(error)
+            self?.isOnBackgroundTask = false; completion(error)
         }
     }
 
-    func grantLibraryPermission(_ completion: @escaping (Error?) -> Void) {
+    private func grantLibraryPermission(_ completion: @escaping (Error?) -> Void) {
         Permission.grantPermission(.devicePhotoLibrary) { error in
             completion(error)
         }
     }
 
-    func grantCameraPermission(_ completion: @escaping (Error?) -> Void) {
+    private func grantCameraPermission(_ completion: @escaping (Error?) -> Void) {
         Permission.grantPermission(.deviceCamera) { error in
             completion(error)
+        }
+    }
+}
+
+// MARK: - NINChatAttachmentProtocol
+
+extension NINChatViewModelImpl {
+    func openAttachment(source: UIImagePickerController.SourceType, completion: @escaping AttachmentCompletion) {
+        self.isOnBackgroundTask = true
+        switch source {
+        case .photoLibrary:
+            self.grantLibraryPermission { [weak self] error in
+                self?.isOnBackgroundTask = false; completion(error)
+            }
+        case .camera:
+            self.grantCameraPermission { [weak self] error in
+                self?.isOnBackgroundTask = false; completion(error)
+            }
+        default:
+            fatalError("The source cannot be anything else")
         }
     }
 }
