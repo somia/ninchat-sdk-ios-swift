@@ -5,6 +5,7 @@
 //
 
 import XCTest
+import NinchatLowLevelClient
 @testable import NinchatSDKSwift
 
 class NinchatXCTestCase: XCTestCase {
@@ -48,10 +49,7 @@ extension NinchatXCTestCase {
 extension NinchatXCTestCase {
     /// open session and join the queue
     private class func initiateSession(_ sessionManager: NINChatSessionManagerImpl, completion: @escaping (() -> Void)) {
-        if let _ = sessionManager.siteConfiguration?.audienceQueues {
-            completion(); return
-        }
-    
+        sessionManager.updateSecureMetadata()
         sessionManager.fetchSiteConfiguration(config: Session.configurationKey, environments: nil) { error in
             try! sessionManager.openSession { credentials, canResume, error in
                 debugger("** ** UnitTest: credentials: \(credentials!)")
@@ -83,5 +81,11 @@ extension NinchatXCTestCase {
     internal func simulateSendAttachment() {
         let image = UIImage(named: "icon_face_happy", in: Bundle.SDKBundle, compatibleWith: nil)?.pngData()
         try! self.sessionManager.send(attachment: "attachment", data: image!) { _ in }
+    }
+}
+
+private extension NINChatSessionManagerImpl {
+    func updateSecureMetadata() {
+        NINLowLevelClientProps.saveMetadata(Session.secureMetadata)
     }
 }

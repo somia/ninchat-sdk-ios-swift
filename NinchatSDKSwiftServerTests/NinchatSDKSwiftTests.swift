@@ -47,17 +47,7 @@ struct Configuration: Codable {
 final class Session {
     static var Manager = initiate()
     static func initiate(_ configuration: NINSiteConfiguration? = nil) -> NINChatSessionManagerImpl {
-        let metadata = NINLowLevelClientProps()
-        
-        if let key = self.metadataKey, !key.isEmpty, let sec = self.metadataSecret, !sec.isEmpty {
-            let secMetadata = NINLowLevelClientProps()
-            try? secMetadata.unmarshalJSON("{\"exp\": \(Double(Date().timeIntervalSince1970) + 1000), \"ninchat.com/metadata\": { \"key\": \"value\" } }")
-            let token = secMetadata.encrypt(toJWT: key, secret: sec, error: nil)
-            
-            metadata.setString("secure", val: token)
-        }
-        
-        return NINChatSessionManagerImpl(session: nil, serverAddress: serverAddress, siteSecret: siteSecret, audienceMetadata: metadata, configuration: configuration)
+        NINChatSessionManagerImpl(session: nil, serverAddress: serverAddress, siteSecret: siteSecret, audienceMetadata: self.secureMetadata, configuration: configuration)
     }
 
     private static var configuration: Configuration {
@@ -87,5 +77,16 @@ final class Session {
     }
     static var metadataSecret: String? {
         configuration.metadataSecret
+    }
+    static var secureMetadata: NINLowLevelClientProps? {
+        guard let key = self.metadataKey, !key.isEmpty, let sec = self.metadataSecret, !sec.isEmpty else { return nil }
+
+        let secMetadata = NINLowLevelClientProps()
+        try? secMetadata.unmarshalJSON("{\"exp\": \(Double(Date().timeIntervalSince1970) + 1000), \"ninchat.com/metadata\": { \"key\": \"value\" } }")
+        let token = secMetadata.encrypt(toJWT: key, secret: sec, error: nil)
+
+        let metadata = NINLowLevelClientProps()
+        metadata.setString("secure", val: token)
+        return metadata
     }
 }

@@ -70,6 +70,7 @@ final class NinchatSDKSwiftServerSessionTests: XCTestCase {
         let expect = self.expectation(description: "Expected to not join the queue")
         expect.assertForOverFulfill = false
 
+        sessionManager.updateSecureMetadata()
         self.sessionManager.fetchSiteConfiguration(config: Session.configurationKey, environments: []) { _ in
             try? self.sessionManager.openSession { _, _, error in
                 XCTAssertNil(error)
@@ -120,6 +121,7 @@ final class NinchatSDKSwiftServerSessionTests: XCTestCase {
 
     func testServer_configuration() {
         let expect = self.expectation(description: "Expected to get pre-questionnaire configurations")
+        sessionManager.updateSecureMetadata()
         self.sessionManager.fetchSiteConfiguration(config: Session.configurationKey, environments: ["default"]) { error in 
             XCTAssertNil(error)
             XCTAssertNotNil(self.sessionManager.siteConfiguration)
@@ -134,6 +136,7 @@ final class NinchatSDKSwiftServerSessionTests: XCTestCase {
     func testServer_ratingAppearance() {
         let expect_close_session = self.expectation(description: "Expected to not show the rating in the conversation")
 
+        sessionManager.updateSecureMetadata()
         self.sessionManager.fetchSiteConfiguration(config: Session.configurationKey, environments: []) { _ in
             self.openSession { credentials1 in
                 do {
@@ -161,6 +164,7 @@ extension NinchatSDKSwiftServerSessionTests: QueueUpdateCapture {
 extension NinchatSDKSwiftServerSessionTests {
     private func openSession(queue: String = Session.suiteQueue, completion: @escaping (NINSessionCredentials?) -> Void) {
         do {
+            sessionManager.updateSecureMetadata()
             try self.sessionManager.openSession { credentials, _, _ in
                 try! self.sessionManager.list(queues: self.sessionManager.siteConfiguration.audienceQueues) { _ in
                     try! self.sessionManager.join(queue: queue, progress: { queue, error, position in }, completion: {
@@ -186,5 +190,11 @@ extension NinchatSDKSwiftServerSessionTests {
 
     internal func simulateTextMessage(_ message: String) throws {
         try self.sessionManager.send(message: message, completion: { _ in })
+    }
+}
+
+private extension NINChatSessionManagerImpl {
+    func updateSecureMetadata() {
+        NINLowLevelClientProps.saveMetadata(Session.secureMetadata)
     }
 }
