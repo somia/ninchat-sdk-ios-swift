@@ -152,7 +152,7 @@ extension NINChatViewModelImpl {
     }
 
     func hangup(completion: @escaping (Error?) -> Void) {
-        guard self.client != nil else { debugger("No WebRTC is available, skip hangup instruction"); return }
+        guard self.client != nil else { debugger("No WebRTC is available, skip hangup instruction"); completion(nil); return }
 
         debugger("hangup the call...")
         do {
