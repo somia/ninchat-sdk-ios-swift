@@ -34,8 +34,12 @@ final class NinchatSDKSwiftServerHelperTests: NinchatXCTestCase {
     }
     
     func testServer_translate() {
-        let translate = self.sessionManager.translate(key: "Join audience queue {{audienceQueue.queue_attrs.name}}", formatParams: ["audienceQueue.queue_attrs.name":"UnitTest"])
-        XCTAssertNotNil(translate)
-        XCTAssertEqual(translate, "Mene jonoon UnitTest")
+        let translate1 = self.sessionManager.translate(key: "Join audience queue {{audienceQueue.queue_attrs.name}}", formatParams: ["audienceQueue.queue_attrs.name":"UnitTest"])
+        XCTAssertNotNil(translate1)
+        XCTAssertEqual(translate1, "Join audience queue UnitTest")
+        
+        let translate2 = self.sessionManager.translate(key: "Audience in queue {{queue}} accepted", formatParams: ["queue":"UnitTest"])
+        XCTAssertNotNil(translate2)
+        XCTAssertEqual(translate2, "Audience in queue UnitTest accepted")
     }
 }

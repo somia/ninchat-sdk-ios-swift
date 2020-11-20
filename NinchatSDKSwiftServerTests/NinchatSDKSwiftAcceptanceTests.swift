@@ -203,8 +203,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase, NINChatWebRTCClientDelegate {
         do {
             self.sessionManager.chatMessages.removeAll()
             self.sessionManager.onHistoryLoaded = { length in
-//                XCTAssertEqual(length, 3)
-                XCTAssertEqual(length, 1)
+                XCTAssertEqual(length, 3)
                 XCTAssertEqual(self.sessionManager.chatMessages.count, length)
                 expect.fulfill()
             }
@@ -287,8 +286,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase, NINChatWebRTCClientDelegate {
         do {
             self.sessionManager.chatMessages.removeAll()
             self.sessionManager.onHistoryLoaded = { length in
-//                XCTAssertEqual(length, 5)
-                XCTAssertEqual(length, 1)
+                XCTAssertEqual(length, 5)
                 XCTAssertEqual(self.sessionManager.chatMessages.count, length)
                 expect.fulfill()
             }

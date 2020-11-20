@@ -621,6 +621,7 @@
 		855B9F1E238ECDB30081A9C6 /* NinchatSDKSwiftTests */ = {
 			isa = PBXGroup;
 			children = (
+				91A16C91D6DE163448C5799B /* Resources */,
 				855B9F21238ECDB30081A9C6 /* Info.plist */,
 				851E359823B1214E000FA966 /* AutolayouTests.swift */,
 				855CBE232397D18900A024A7 /* CoordinatorTests.swift */,
@@ -635,7 +636,6 @@
 				91A164E3B34BBC1E42464AEA /* QuestionnaireTests.swift */,
 				91A16D113215A7C879D84505 /* QuestionnaireConverterTests.swift */,
 				91A16930C7E57664292AC220 /* QuestionnaireElementConnectorRedirectTests.swift */,
-				91A16C91D6DE163448C5799B /* Resources */,
 				91A1633706071B64D349FD72 /* QuestionnaireElementConnectorLogicTests.swift */,
 				91A1679E294ED34564BC455D /* SiteConfigurationTests.swift */,
 				91A164F53F1869A8AC9E8982 /* XCTest+Extension.swift */,
