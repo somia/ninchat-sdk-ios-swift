@@ -99,7 +99,9 @@ try self.ninchatSession.start(credentials: credentials) { (credentials: NINSessi
 
 ##### Resume support for audience metadata
 
-Starting version [0.3.10](https://github.com/somia/ninchat-sdk-ios-swift/releases/tag/0.3.10), the SDK can save and retrive audience metadata directly from the local storage. This makes a host application able to be _resumed_ even if the metadata are not explicitly set. **Please note the SDK raises error if the metadata contains an invalid secure token.** Ensure you catch errors as described in [Catch errors](#catch-errors).
+Starting version [0.3.10](https://github.com/somia/ninchat-sdk-ios-swift/releases/tag/0.3.10), the SDK can save and retrive audience metadata directly from the local storage. This makes a host application able to be *resumed* even if the metadata are not explicitly set. The SDK creates a `UserDefaults` suite with the name `com.ninchat.sdk.swift` to cache the metadata, **so please be aware to not accidentally override the metadata**. 
+
+**Additionally note that the SDK raises error if the metadata contains an invalid secure token.** Ensure you catch errors as described in [Catch errors](https://github.com/somia/ninchat-sdk-ios-swift#catch-errors).
 
 #### Showing the SDK UI
 
