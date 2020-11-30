@@ -206,6 +206,8 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
 // MARK: - 'Form Like' questionnaires
 extension NINQuestionnaireViewController: QuestionnaireFormViewController {
     func updateFormContentView(_ interval: TimeInterval = 0.0) {
+        self.view.endEditing(true)
+        
         self.loadingIndicator.startAnimating()
         contentView?.hide(true, andCompletion: { [weak self] in
             self?.contentView?.removeFromSuperview()
@@ -235,6 +237,8 @@ extension NINQuestionnaireViewController: QuestionnaireFormViewController {
 // MARK: - 'Conversation Like' questionnaires
 extension NINQuestionnaireViewController: QuestionnaireConversationController {
     func updateConversationContentView(_ interval: TimeInterval = 0.0) {
+        self.view.endEditing(true)
+
         var newSection = -1
         let prepareOperation = BlockOperation {
             newSection = self.prepareSection()
