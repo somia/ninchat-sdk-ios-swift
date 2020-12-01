@@ -148,6 +148,8 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
         /// let elements be loaded for a few seconds
         if self.style == .form { self.initiateFormContentView(0.5) }
         else if self.style == .conversation { self.initiateConversationContentView(1.0) }
+
+        NotificationCenter.default.addObserver(self, selector: #selector(didEnterBackground(notification:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -165,6 +167,8 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
         self.operationQueue.cancelAllOperations()
         self.removeKeyboardListeners()
         self.contentView = nil
+
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
 
     private func overrideAssets() {
@@ -202,6 +206,8 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
 // MARK: - 'Form Like' questionnaires
 extension NINQuestionnaireViewController: QuestionnaireFormViewController {
     func updateFormContentView(_ interval: TimeInterval = 0.0) {
+        self.view.endEditing(true)
+        
         self.loadingIndicator.startAnimating()
         contentView?.hide(true, andCompletion: { [weak self] in
             self?.contentView?.removeFromSuperview()
@@ -231,6 +237,8 @@ extension NINQuestionnaireViewController: QuestionnaireFormViewController {
 // MARK: - 'Conversation Like' questionnaires
 extension NINQuestionnaireViewController: QuestionnaireConversationController {
     func updateConversationContentView(_ interval: TimeInterval = 0.0) {
+        self.view.endEditing(true)
+
         var newSection = -1
         let prepareOperation = BlockOperation {
             newSection = self.prepareSection()
@@ -337,5 +345,12 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         self.dataSourceDelegate!.cell(at: indexPath, view: self.contentView!)
+    }
+}
+
+extension NINQuestionnaireViewController {
+    @objc
+    private func didEnterBackground(notification: Notification) {
+        self.view.endEditing(true)
     }
 }

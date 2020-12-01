@@ -90,23 +90,28 @@ extension ChannelMediaCell where Self:ChatChannelCell {
             }
         }
 
-        if let image = image {
-            self.messageImageView.image = image
-            (self as? ChannelMediaCellDelegate)?.didLoadAttachment(image)
-            updateView()
-        }
-        /// Load the image from cache first
-        else if let id = self.message?.messageID, let image = self.cachedImage?[id] {
-            self.messageImageView.image = image
-            updateView()
-        }
-        /// Load the image in message image view over HTTP or from local cache
-        else if let imageURL = imageURL {
-            self.messageImageView.fetchImage(from: URL(string: imageURL)) { [weak self, message = self.message] data in
-                if self?.message?.messageID != message?.messageID { debugger("** ** Dismiss unrelated attachment"); return }
-                self?.messageImageView.image = UIImage(data: data)
-                (self as? ChannelMediaCellDelegate)?.didLoadAttachment(UIImage(data: data))
+        DispatchQueue.main.async {
+            if let image = image {
+                self.messageImageView.image = image
+                (self as? ChannelMediaCellDelegate)?.didLoadAttachment(image)
+                 updateView()
+            }
+            /// Load the image from cache first
+            else if let id = self.message?.messageID, let image = self.cachedImage?[id] {
+                self.messageImageView.image = image
                 updateView()
+            }
+            /// Load the image in message image view over HTTP or from local cache
+            else if let imageURL = imageURL {
+                self.messageImageView.fetchImage(from: URL(string: imageURL)) { [weak self, message = self.message] data in
+                    DispatchQueue.main.async {
+                        if self?.message?.messageID != message?.messageID { debugger("** ** Dismiss unrelated attachment"); return }
+                        self?.messageImageView.image = UIImage(data: data)
+
+                        (self as? ChannelMediaCellDelegate)?.didLoadAttachment(UIImage(data: data))
+                        updateView()
+                    }
+                }
             }
         }
     }
