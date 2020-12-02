@@ -63,7 +63,7 @@ extension Data {
     
     fileprivate func downsample(view: UIView, aspectRatio: CGFloat) -> UIImage? {
         // Create an CGImageSource that represent an image
-        guard let imageSource = CGImageSourceCreateWithData(self as CFData, [kCGImageSourceShouldCache: false] as CFDictionary) else { return nil }
+        guard let imageSource = CGImageSourceCreateWithData(self as CFData, [kCGImageSourceShouldCache: true] as CFDictionary) else { return nil }
                 
         // Perform downsampling
         let downsampleOptions = [
