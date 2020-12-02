@@ -133,7 +133,7 @@ extension ChannelMediaCell where Self:ChatChannelCell {
 
 final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell, ChannelMediaCellDelegate {
     var cachedImage: [String:UIImage]? = [:]
-    var originalImage: UIImage?
+    weak var originalImage: UIImage?
     @IBOutlet weak var parentView: UIView!
     @IBOutlet weak var messageImageViewContainer: UIView! {
         didSet {
@@ -187,7 +187,7 @@ final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell, Cha
 
 final class ChatChannelMediaOthersCell: ChatChannelOthersCell, ChannelMediaCell, ChannelMediaCellDelegate {
     var cachedImage: [String:UIImage]? = [:]
-    var originalImage: UIImage?
+    weak var originalImage: UIImage?
     @IBOutlet weak var parentView: UIView!
     @IBOutlet weak var messageImageViewContainer: UIView! {
         didSet {
