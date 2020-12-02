@@ -7,7 +7,7 @@
 import UIKit
 
 protocol ChannelMediaCellDelegate {
-    func didLoadAttachment(_ image: UIImage?)
+    func didLoadAttachment(_ thumbnail: UIImage?, original: UIImage?)
 }
 
 protocol ChannelMediaCell {
@@ -79,8 +79,8 @@ extension ChannelMediaCell where Self:ChatChannelCell {
     }
 
     private func updateMessageImageView(attachment: FileInfo, imageURL: String?, image: UIImage?, asynchronous: Bool, isSeries: Bool) {
-        func updateView() {
-            if self.set(aspect: attachment.aspectRatio, isSeries) {
+        func updateView(_ update: Bool) {
+            if update {
                 guard !self.constraintsSet, !self.isReloading  else { return }
                 debugger("Cell's constraints are not set and the cell is not loading => reload frames")
                 /// Inform the chat view that our cell might need resizing due to new constraints.
@@ -91,25 +91,23 @@ extension ChannelMediaCell where Self:ChatChannelCell {
         }
 
         DispatchQueue.main.async {
+            /// set constrains first
+            let update = self.set(aspect: attachment.aspectRatio, isSeries)
+            
             if let image = image {
                 self.messageImageView.image = image
-                (self as? ChannelMediaCellDelegate)?.didLoadAttachment(image)
-                 updateView()
-            }
-            /// Load the image from cache first
-            else if let id = self.message?.messageID, let image = self.cachedImage?[id] {
-                self.messageImageView.image = image
-                updateView()
+                (self as? ChannelMediaCellDelegate)?.didLoadAttachment(image, original: image)
+                 updateView(update)
             }
             /// Load the image in message image view over HTTP or from local cache
             else if let imageURL = imageURL {
-                self.messageImageView.fetchImage(from: URL(string: imageURL)) { [weak self, message = self.message] data in
+                self.messageImageView.fetchImage(from: URL(string: imageURL), aspectRatio: 1/CGFloat(attachment.aspectRatio ?? 1)) { [weak self, message = self.message] image, thumbnail in
                     DispatchQueue.main.async {
                         if self?.message?.messageID != message?.messageID { debugger("** ** Dismiss unrelated attachment"); return }
-                        self?.messageImageView.image = UIImage(data: data)
+                        self?.messageImageView.image = thumbnail
 
-                        (self as? ChannelMediaCellDelegate)?.didLoadAttachment(UIImage(data: data))
-                        updateView()
+                        (self as? ChannelMediaCellDelegate)?.didLoadAttachment(thumbnail, original: image)
+                        updateView(update)
                     }
                 }
             }
@@ -135,6 +133,7 @@ extension ChannelMediaCell where Self:ChatChannelCell {
 
 final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell, ChannelMediaCellDelegate {
     var cachedImage: [String:UIImage]? = [:]
+    var originalImage: UIImage?
     @IBOutlet weak var parentView: UIView!
     @IBOutlet weak var messageImageViewContainer: UIView! {
         didSet {
@@ -171,22 +170,24 @@ final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell, Cha
         if attachment.isVideo {
             /// Will open video player
             self.onImageTapped?(attachment, nil)
-        } else if attachment.isImage, let image = self.messageImageView.image {
+        } else if attachment.isImage, let image = originalImage {
             /// Will show full-screen image viewer
             self.onImageTapped?(attachment, image)
         }
     }
 
     // MARK: - ChannelMediaCellDelegate
-    func didLoadAttachment(_ image: UIImage?) {
-        if let image = image, let id = self.message?.messageID {
+    func didLoadAttachment(_ thumbnail: UIImage?, original: UIImage?) {
+        if let image = thumbnail, let id = self.message?.messageID {
             self.cachedImage?[id] = image
         }
+        self.originalImage = original
     }
 }
 
 final class ChatChannelMediaOthersCell: ChatChannelOthersCell, ChannelMediaCell, ChannelMediaCellDelegate {
     var cachedImage: [String:UIImage]? = [:]
+    var originalImage: UIImage?
     @IBOutlet weak var parentView: UIView!
     @IBOutlet weak var messageImageViewContainer: UIView! {
         didSet {
@@ -223,16 +224,17 @@ final class ChatChannelMediaOthersCell: ChatChannelOthersCell, ChannelMediaCell,
         if attachment.isVideo {
             /// Will open video player
             self.onImageTapped?(attachment, nil)
-        } else if attachment.isImage, let image = self.messageImageView.image {
+        } else if attachment.isImage, let image = originalImage {
             /// Will show full-screen image viewer
             self.onImageTapped?(attachment, image)
         }
     }
 
     // MARK: - ChannelMediaCellDelegate
-    func didLoadAttachment(_ image: UIImage?) {
-        if let image = image, let id = self.message?.messageID {
+    func didLoadAttachment(_ thumbnail: UIImage?, original: UIImage?) {
+        if let image = thumbnail, let id = self.message?.messageID {
             self.cachedImage?[id] = image
         }
+        self.originalImage = original
     }
 }
