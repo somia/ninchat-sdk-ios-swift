@@ -92,6 +92,8 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         self.configuration = configuration
         self.serverAddress = Constants.kProductionServerAddress.rawValue
         self.started = false
+        
+        self.coordinator = NINCoordinator(with: self)
     }
 
     deinit {
@@ -108,7 +110,16 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
             try self.fetchSiteConfiguration { [weak self] error in
                 DispatchQueue.main.async {
                     do {
-                        try self?.openChatSession(completion: completion)
+                        try self?.openChatSession() { credentials, error in
+                            guard let weakSelf = self, error == nil else { completion(credentials, error); return }
+
+                            /// Prepare coordinator for starting
+                            /// This is quire important to prepare time and memory consuming tasks before the user
+                            /// starts the coordinator, otherwise he/she will face unexpected views
+                            weakSelf.coordinator?.prepareNINQuestionnaireViewModel(audienceMetadata: weakSelf.audienceMetadata) {
+                                completion(credentials, error)
+                            }
+                        }
                     } catch { completion(nil, error) }
                 }
             }
@@ -132,7 +143,6 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
                             /// Prepare coordinator for starting
                             /// This is quire important to prepare time and memory consuming tasks before the user
                             /// starts the coordinator, otherwise he/she will face unexpected views
-                            if weakSelf.coordinator == nil { weakSelf.coordinator = NINCoordinator(with: weakSelf) }
                             weakSelf.coordinator?.prepareNINQuestionnaireViewModel(audienceMetadata: weakSelf.audienceMetadata) {
                                 completion(credentials, error)
                             }
