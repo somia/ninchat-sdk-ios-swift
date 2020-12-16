@@ -127,6 +127,11 @@ struct ElementRedirect: Codable {
     let pattern: String?
     let target: String
 
+    init(pattern: String?, target: String) {
+        self.pattern = pattern
+        self.target = target
+    }
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
