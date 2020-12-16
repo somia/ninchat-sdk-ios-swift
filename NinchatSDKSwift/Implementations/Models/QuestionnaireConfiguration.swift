@@ -82,8 +82,8 @@ struct ButtonQuestionnaire: Codable {
 
 // MARK: - Logic
 struct LogicQuestionnaire: Codable {
-    let and: Array<[String:String]>?
-    let or: Array<[String:String]>?
+    let and: Array<[String:AnyCodable]>?
+    let or: Array<[String:AnyCodable]>?
     let target: String
     let queue: String?
     let tags: [String]?
@@ -91,19 +91,19 @@ struct LogicQuestionnaire: Codable {
     var andKeys: [String]? {
         self.and?
                 .compactMap({ $0 })
-                .reduce(into: []) { (result: inout [String], dictionary: [String:String]) in
+                .reduce(into: []) { (result: inout [String], dictionary: [String:AnyCodable]) in
                     result.append(contentsOf: dictionary.keys.compactMap({ $0 }))
                 }
     }
     var orKeys: [String]? {
         self.or?
                 .compactMap({ $0 })
-                .reduce(into: []) { (result: inout [String], dictionary: [String:String]) in
+                .reduce(into: []) { (result: inout [String], dictionary: [String:AnyCodable]) in
                     result.append(contentsOf: dictionary.keys.compactMap({ $0 }))
                 }
     }
 
-    func satisfy(dictionary: [String:String]) -> Bool {
+    func satisfy(dictionary: [String:AnyHashable]) -> Bool {
         if let ands = self.and, ands.count > 0 {
             return ands.first(where: { dictionary.filter(based: $0, keys: self.andKeys ?? [])?.count == $0.keys.count }) != nil
         } else if let ors = self.or, ors.count > 0 {
