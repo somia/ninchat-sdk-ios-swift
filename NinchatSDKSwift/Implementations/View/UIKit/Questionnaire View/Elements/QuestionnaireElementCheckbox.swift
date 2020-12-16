@@ -50,8 +50,12 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle,
     // MARK: - QuestionnaireSettable
 
     func updateSetAnswers(_ answer: AnyHashable?, state: QuestionnaireSettableState) {
-        guard let option = self.elementConfiguration?.options?.first(where: { $0.value == answer as? String }) else { return }
-        self.select(option: option)
+        switch state {
+        case .set:
+            self.view.subviews.compactMap({ $0 as? Button }).first?.isSelected = Bool(answer as? String ?? "false") ?? false
+        case .nothing:
+            break
+        }
     }
 
     // MARK: - QuestionnaireOptionSelectableElement
@@ -60,25 +64,13 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle,
     var onElementOptionDeselected: ((ElementOption) -> ())?
 
     private func select(option: ElementOption) {
-        guard let index = self.elementConfiguration?.options?.firstIndex(where: { $0.label == option.label }) else { return }
-        if let button = self.view.subviews.compactMap({ $0 as? Button }).first(where: { $0.tag == index + 100 }) {
-            button.isSelected = true
-        }
-        if let icon = self.view.subviews.first(where: { $0.tag == index + 200 }) {
-            icon.round(radius: 23.0 / 2, borderWidth: 2.0, borderColor: self.iconBorderSelectedColor)
-            (icon.subviews.first(where: { $0 is UIImageView }) as? UIImageView)?.isHighlighted = true
-        }
+        self.view.subviews.compactMap({ $0 as? Button }).first?.isSelected = true
+        self.viewWithTag(100)?.subviews.compactMap({ $0 as? UIImageView }).first?.isHighlighted = true
     }
 
     func deselect(option: ElementOption) {
-        guard let index = self.elementConfiguration?.options?.firstIndex(where: { $0.label == option.label }) else { return }
-        if let button = self.view.subviews.compactMap({ $0 as? Button }).first(where: { $0.tag == index + 100 }) {
-            button.isSelected = false
-        }
-        if let icon = self.view.subviews.first(where: { $0.tag == index + 200 }) {
-            icon.round(radius: 23.0 / 2, borderWidth: 2.0, borderColor: self.iconBorderNormalColor)
-            (icon.subviews.first(where: { $0 is UIImageView }) as? UIImageView)?.isHighlighted = false
-        }
+        self.view.subviews.compactMap({ $0 as? Button }).first?.isSelected = false
+        self.viewWithTag(100)?.subviews.compactMap({ $0 as? UIImageView }).first?.isHighlighted = false
     }
 
     // MARK: - Subviews - QuestionnaireElementWithTitleAndOptions + QuestionnaireElementHasButtons
@@ -150,24 +142,25 @@ extension QuestionnaireElement where Self:QuestionnaireElementCheckbox {
 extension QuestionnaireElementCheckbox {
     func shapeCheckbox(_ configuration: QuestionnaireConfiguration?) {
         var upperView: UIView?
-        configuration?.options?.forEach { [weak self] option in
-            guard let icon = self?.generateIcon(tag: (configuration?.options?.firstIndex(of: option))!) else { return }
-            guard let button = self?.generateButton(for: option, icon: icon, tag: (configuration?.options?.firstIndex(of: option))!) else { return }
-            self?.layout(icon: icon.1, within: icon.0)
-            self?.layout(button: button, icon: icon.0, upperView: &upperView)
-        }
+
+        let icon = self.generateIcon()
+        let button = self.generateButton(label: configuration?.label ?? "", icon: icon)
+        self.layout(icon: icon.1, within: icon.0)
+        self.layout(button: button, icon: icon.0, upperView: &upperView)
     }
 
-    private func generateButton(for option: ElementOption, icon: (UIView, UIImageView), tag: Int) -> Button {
+    private func generateButton(label: String, icon: (UIView, UIImageView)) -> Button {
         let view = Button(frame: .zero) { [weak self] button in
-            self?.applySelection(to: option)
+            button.isSelected = !button.isSelected
+
+            let option = ElementOption(label: label, value: button.isSelected ? "true" : "false")
+            button.isSelected ? self?.select(option: option) : self?.deselect(option: option)
             button.isSelected ? self?.onElementOptionSelected?(option) : self?.onElementOptionDeselected?(option)
         }
 
-        view.tag = tag + 100
-        view.setTitle(option.label, for: .normal)
+        view.setTitle(label, for: .normal)
         view.setTitleColor(.QGrayButton, for: .normal)
-        view.setTitle(option.label, for: .selected)
+        view.setTitle(label, for: .selected)
         view.setTitleColor(.QBlueButtonNormal, for: .selected)
         view.titleLabel?.font = .ninchat
         view.titleLabel?.numberOfLines = 0
@@ -177,12 +170,12 @@ extension QuestionnaireElementCheckbox {
         return view
     }
 
-    private func generateIcon(tag: Int) -> (UIView, UIImageView) {
+    private func generateIcon() -> (UIView, UIImageView) {
         let imgViewContainer = UIView(frame: .zero)
         imgViewContainer.backgroundColor = .clear
         imgViewContainer.isUserInteractionEnabled = false
         imgViewContainer.isExclusiveTouch = false
-        imgViewContainer.tag = tag + 200
+        imgViewContainer.tag = 100
 
         return (imgViewContainer, UIImageView(image: nil, highlightedImage: UIImage(named: "icon_checkbox_selected", in: .SDKBundle, compatibleWith: nil)))
     }
@@ -229,12 +222,5 @@ extension QuestionnaireElementCheckbox {
         }
 
         upperView = button
-    }
-
-    private func applySelection(to option: ElementOption) {
-        self.elementConfiguration?.options?.forEach({ option in
-            self.deselect(option: option)
-        })
-        self.select(option: option)
     }
 }
