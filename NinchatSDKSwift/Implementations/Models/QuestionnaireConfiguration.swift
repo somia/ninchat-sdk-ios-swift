@@ -85,7 +85,7 @@ struct LogicQuestionnaire: Codable {
     let and: Array<[String:AnyCodable]>?
     let or: Array<[String:AnyCodable]>?
     let target: String
-    let queue: String?
+    let queueId: String?
     let tags: [String]?
 
     var andKeys: [String]? {

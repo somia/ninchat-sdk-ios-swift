@@ -133,7 +133,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
             if self?.hasToExitQuestionnaire(redirect) ?? false {
                 self?.onQuestionnaireFinished?(nil, true); return
             }
-            self?.registerAudience(queueID: logic?.queue ?? queue.queueID) { error in
+            self?.registerAudience(queueID: logic?.queueId ?? queue.queueID) { error in
                 if let error = error {
                     self?.onErrorOccurred?(error)
                 } else {
@@ -224,7 +224,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 
 extension NINQuestionnaireViewModelImpl {
     func finishQuestionnaire(for logic: LogicQuestionnaire?, redirect: ElementRedirect?, autoApply: Bool) {
-        guard let queue = self.queue, let target: (canJoin: Bool, queue: Queue?) = self.canJoinGivenQueue(withID: logic?.queue ?? queue.queueID), let targetQueue = target.queue, target.canJoin else {
+        guard let queue = self.queue, let target: (canJoin: Bool, queue: Queue?) = self.canJoinGivenQueue(withID: logic?.queueId ?? queue.queueID), let targetQueue = target.queue, target.canJoin else {
             self.connector.onRegisterTargetReached?(logic, redirect, autoApply); return
         }
 
