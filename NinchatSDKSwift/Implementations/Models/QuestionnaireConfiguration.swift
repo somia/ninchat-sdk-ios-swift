@@ -126,6 +126,17 @@ struct ElementOption: Codable, Equatable {
 struct ElementRedirect: Codable {
     let pattern: String?
     let target: String
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        if let pattern = try? container.decode(Bool.self, forKey: .pattern) {
+            self.pattern = pattern ? "true" : "false"
+        } else {
+            self.pattern = try? container.decode(String.self, forKey: .pattern)
+        }
+        self.target = try container.decode(String.self, forKey: .target)
+    }
 }
 
 // MARK: - QuestionnaireConfigurationTypes
