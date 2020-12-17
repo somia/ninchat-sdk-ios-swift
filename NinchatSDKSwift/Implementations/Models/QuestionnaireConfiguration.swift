@@ -115,7 +115,22 @@ struct LogicQuestionnaire: Codable {
 
 // MARK: - Option
 struct ElementOption: Codable, Equatable {
-    let label, value: String
+    let label: String
+    var value: AnyHashable! {
+        set { _value = AnyCodable(newValue) }
+        get { _value?.value as? AnyHashable }
+    }
+    var _value: AnyCodable!
+
+    enum CodingKeys: String, CodingKey {
+        case _value = "value"
+        case label
+    }
+
+    init(label: String, value: AnyHashable?) {
+        self.label = label
+        self.value = value
+    }
 
     static func ==(lhs: ElementOption, rhs: ElementOption) -> Bool {
         lhs.label == rhs.label
@@ -124,21 +139,21 @@ struct ElementOption: Codable, Equatable {
 
 // MARK: - Redirect
 struct ElementRedirect: Codable {
+    let target: String
     var pattern: AnyHashable? {
         set { _pattern = AnyCodable(newValue) }
         get { _pattern?.value as? AnyHashable }
     }
-    var target: String!
     var _pattern: AnyCodable?
     
     enum CodingKeys: String, CodingKey {
         case _pattern = "pattern"
-        case target = "target"
+        case target
     }
     
     init(pattern: AnyHashable?, target: String) {
-        self.pattern = pattern
         self.target = target
+        self.pattern = pattern
     }
 }
 

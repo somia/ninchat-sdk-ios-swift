@@ -153,7 +153,7 @@ extension QuestionnaireElementCheckbox {
         let view = Button(frame: .zero) { [weak self] button in
             button.isSelected = !button.isSelected
 
-            let option = ElementOption(label: label, value: button.isSelected ? "true" : "false")
+            let option = ElementOption(label: label, value: String(describing: button.isSelected))
             button.isSelected ? self?.select(option: option) : self?.deselect(option: option)
             button.isSelected ? self?.onElementOptionSelected?(option) : self?.onElementOptionDeselected?(option)
         }

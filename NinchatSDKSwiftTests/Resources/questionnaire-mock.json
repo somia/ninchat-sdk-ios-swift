@@ -691,6 +691,33 @@
           "target": "_register"
         }
       ]
+    },
+    {
+      "name": "BOOL_redirect",
+      "element": "checkbox",
+      "label": "Minulla ei ole oireita",
+      "redirects": [
+        {
+          "pattern": true,
+          "target": "Koronavirus"
+        }
+      ]
+    },
+    {
+      "name": "BOOL_logic",
+      "element": "checkbox",
+      "label": "Minulla ei ole oireita"
+    },
+    {
+      "name": "logic",
+      "logic": {
+        "and": [
+          {
+            "BOOL_logic": true
+          }
+        ],
+        "target": "Koronavirus"
+      }
     }
   ]
 }

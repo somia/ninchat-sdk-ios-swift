@@ -50,7 +50,7 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
     // MARK: - QuestionnaireSettable
 
     func updateSetAnswers(_ answer: AnyHashable?, state: QuestionnaireSettableState) {
-        guard let option = self.elementConfiguration?.options?.first(where: { $0.value == answer as? String }) else { return }
+        guard let option = self.elementConfiguration?.options?.first(where: { $0.value == answer }) else { return }
         self.select(option: option, state: state)
         self.updateBorder()
     }
