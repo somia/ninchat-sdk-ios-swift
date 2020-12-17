@@ -40,7 +40,7 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle,
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         self.overrideTitle(delegate: delegate)
         self.view.subviews.compactMap({ $0 as? Button }).forEach({ $0.overrideQuestionnaireAsset(with: delegate, isPrimary: $0.isSelected) })
-        self.view.allSubviews.compactMap({ $0 as? UIImageView }).forEach({ $0.tint = delegate?.override(questionnaireAsset: .checkboxSelectedIndicator) ?? UIColor.QBlueButtonHighlighted })
+        self.viewWithTag(100)?.subviews.compactMap({ $0 as? UIImageView }).forEach({ $0.tint = delegate?.override(questionnaireAsset: .checkboxSelectedIndicator) ?? UIColor.QBlueButtonHighlighted })
 
         self.iconBorderNormalColor = delegate?.override(questionnaireAsset: .checkboxDeselectedIndicator) ?? UIColor.QGrayButton
         self.iconBorderSelectedColor = delegate?.override(questionnaireAsset: .checkboxSelectedIndicator) ?? UIColor.QBlueButtonNormal
@@ -50,12 +50,8 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle,
     // MARK: - QuestionnaireSettable
 
     func updateSetAnswers(_ answer: AnyHashable?, state: QuestionnaireSettableState) {
-        switch state {
-        case .set:
-            self.view.subviews.compactMap({ $0 as? Button }).first?.isSelected = Bool(answer as? String ?? "false") ?? false
-        case .nothing:
-            break
-        }
+        self.view.subviews.compactMap({ $0 as? Button }).first?.isSelected = answer as? Bool ?? false
+        self.viewWithTag(100)?.subviews.compactMap({ $0 as? UIImageView }).first?.isHighlighted = answer as? Bool ?? false
     }
 
     // MARK: - QuestionnaireOptionSelectableElement
@@ -153,7 +149,7 @@ extension QuestionnaireElementCheckbox {
         let view = Button(frame: .zero) { [weak self] button in
             button.isSelected = !button.isSelected
 
-            let option = ElementOption(label: label, value: String(describing: button.isSelected))
+            let option = ElementOption(label: label, value: button.isSelected)
             button.isSelected ? self?.select(option: option) : self?.deselect(option: option)
             button.isSelected ? self?.onElementOptionSelected?(option) : self?.onElementOptionDeselected?(option)
         }

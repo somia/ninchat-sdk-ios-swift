@@ -273,6 +273,7 @@ extension NINQuestionnaireViewModelImpl {
 
     func removeAnswer(key: QuestionnaireElement?) {
         if let configuration = key?.elementConfiguration {
+            self.askedPageNumber = nil
             self.answers.removeValue(forKey: configuration.name)
             self.requirementSatisfactionUpdater?(self.requirementsSatisfied)
         }
@@ -312,7 +313,7 @@ extension NINQuestionnaireViewModelImpl {
     }
 
     func resetAnswer(for element: QuestionnaireElement) -> Bool {
-        guard let value = self.getAnswersForElement(element, presetOnly: false) as? String, self.requirementsSatisfied, element.isUserInteractionEnabled else {
+        guard let value = self.getAnswersForElement(element, presetOnly: false), self.requirementsSatisfied, element.isUserInteractionEnabled else {
             self.askedPageNumber = nil; return false
         }
 
