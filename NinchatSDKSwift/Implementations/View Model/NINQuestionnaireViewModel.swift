@@ -29,8 +29,8 @@ protocol NINQuestionnaireViewModel {
     func resetAnswer(for element: QuestionnaireElement) -> Bool
     func insertRegisteredElement(_ elements: [QuestionnaireElement], configuration: [QuestionnaireConfiguration])
     func clearAnswers() -> Bool
-    func redirectTargetPage(for value: String, autoApply: Bool, performClosures: Bool) -> Int?
-    func logicTargetPage(for dictionary: [String:String], autoApply: Bool, performClosures: Bool) -> Int?
+    func redirectTargetPage(for value: AnyHashable, autoApply: Bool, performClosures: Bool) -> Int?
+    func logicTargetPage(for dictionary: [String:AnyHashable], autoApply: Bool, performClosures: Bool) -> Int?
     func goToNextPage() -> Bool?
     func goToPreviousPage() -> Bool
     func goToPage(_ page: Int) -> Bool
@@ -40,10 +40,10 @@ protocol NINQuestionnaireViewModel {
     func finishQuestionnaire(for logic: LogicQuestionnaire?, redirect: ElementRedirect?, autoApply: Bool)
 }
 extension NINQuestionnaireViewModel {
-    func redirectTargetPage(for value: String, autoApply: Bool = true, performClosures: Bool = true) -> Int? {
+    func redirectTargetPage(for value: AnyHashable, autoApply: Bool = true, performClosures: Bool = true) -> Int? {
         self.redirectTargetPage(for: value, autoApply: autoApply, performClosures: performClosures)
     }
-    func logicTargetPage(for dictionary: [String:String], autoApply: Bool = true, performClosures: Bool = true) -> Int? {
+    func logicTargetPage(for dictionary: [String:AnyHashable], autoApply: Bool = true, performClosures: Bool = true) -> Int? {
         self.logicTargetPage(for: dictionary, autoApply: autoApply, performClosures: performClosures)
     }
     func getAnswersForElement(_ element: QuestionnaireElement) -> AnyHashable? {
@@ -133,7 +133,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
             if self?.hasToExitQuestionnaire(redirect) ?? false {
                 self?.onQuestionnaireFinished?(nil, true); return
             }
-            self?.registerAudience(queueID: logic?.queue ?? queue.queueID) { error in
+            self?.registerAudience(queueID: logic?.queueId ?? queue.queueID) { error in
                 if let error = error {
                     self?.onErrorOccurred?(error)
                 } else {
@@ -224,7 +224,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 
 extension NINQuestionnaireViewModelImpl {
     func finishQuestionnaire(for logic: LogicQuestionnaire?, redirect: ElementRedirect?, autoApply: Bool) {
-        guard let queue = self.queue, let target: (canJoin: Bool, queue: Queue?) = self.canJoinGivenQueue(withID: logic?.queue ?? queue.queueID), let targetQueue = target.queue, target.canJoin else {
+        guard let queue = self.queue, let target: (canJoin: Bool, queue: Queue?) = self.canJoinGivenQueue(withID: logic?.queueId ?? queue.queueID), let targetQueue = target.queue, target.canJoin else {
             self.connector.onRegisterTargetReached?(logic, redirect, autoApply); return
         }
 
@@ -273,6 +273,7 @@ extension NINQuestionnaireViewModelImpl {
 
     func removeAnswer(key: QuestionnaireElement?) {
         if let configuration = key?.elementConfiguration {
+            self.askedPageNumber = nil
             self.answers.removeValue(forKey: configuration.name)
             self.requirementSatisfactionUpdater?(self.requirementsSatisfied)
         }
@@ -312,7 +313,7 @@ extension NINQuestionnaireViewModelImpl {
     }
 
     func resetAnswer(for element: QuestionnaireElement) -> Bool {
-        guard let value = self.getAnswersForElement(element, presetOnly: false) as? String, self.requirementsSatisfied, element.isUserInteractionEnabled else {
+        guard let value = self.getAnswersForElement(element, presetOnly: false), self.requirementsSatisfied, element.isUserInteractionEnabled else {
             self.askedPageNumber = nil; return false
         }
 
@@ -343,7 +344,7 @@ extension NINQuestionnaireViewModelImpl {
         }
     }
 
-    func redirectTargetPage(for value: String, autoApply: Bool, performClosures: Bool) -> Int? {
+    func redirectTargetPage(for value: AnyHashable, autoApply: Bool, performClosures: Bool) -> Int? {
         do {
             return self.connector.findElementAndPageRedirect(for: value, in: try getConfiguration(), autoApply: autoApply, performClosures: performClosures).1
         } catch {
@@ -351,7 +352,7 @@ extension NINQuestionnaireViewModelImpl {
         }
     }
 
-    func logicTargetPage(for dictionary: [String:String], autoApply: Bool, performClosures: Bool) -> Int? {
+    func logicTargetPage(for dictionary: [String:AnyHashable], autoApply: Bool, performClosures: Bool) -> Int? {
         self.connector.findElementAndPageLogic(for: dictionary, in: self.answers, autoApply: autoApply, performClosures: performClosures).1
     }
 

@@ -18,7 +18,6 @@ final class QuestionnaireElementConnectorLogicTests: XCTestCase {
         QuestionnaireElementConnectorImpl(configurations: self.questionnaire_preAudience!.questionnaireConfiguration!, style: .conversation)
     }()
 
-
     override func setUp() {
         super.setUp()
 
@@ -146,5 +145,16 @@ final class QuestionnaireElementConnectorLogicTests: XCTestCase {
         XCTAssertNil(targetElement_2.1)
 
         waitForExpectations(timeout: 2.0)
+    }
+
+    func test_22_acceptance() {
+        let targetElement = connector.findElementAndPageLogic(for: ["BOOL_logic": true], in: ["Riskiryhmät-jatko": "Muut aiheet", "BOOL_logic": true], autoApply: false, performClosures: false)
+        XCTAssertNotNil(targetElement.0)
+        XCTAssertNotNil(targetElement.1)
+
+        XCTAssertEqual(targetElement.0?.count, 2)
+        XCTAssertNotNil(targetElement.0?[0] as? QuestionnaireElementText)
+        XCTAssertNotNil(targetElement.0?[1] as? QuestionnaireElementRadio)
+        XCTAssertEqual(targetElement.1, 1)
     }
 }

@@ -12,8 +12,8 @@ protocol QuestionnaireElementConnector {
     var onCompleteTargetReached: ((LogicQuestionnaire?, ElementRedirect?, _ autoApply: Bool) -> Void)? { get set }
 
     init(configurations: [QuestionnaireConfiguration], style: QuestionnaireStyle)
-    func findElementAndPageRedirect(for input: String, in configuration: QuestionnaireConfiguration, autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?)
-    func findElementAndPageLogic(for dictionary: [String:String], in answers: [String:AnyHashable], autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?)
+    func findElementAndPageRedirect(for input: AnyHashable, in configuration: QuestionnaireConfiguration, autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?)
+    func findElementAndPageLogic(for dictionary: [String:AnyHashable], in answers: [String:AnyHashable], autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?)
     mutating func appendElement(elements: [QuestionnaireElement], configurations: [QuestionnaireConfiguration])
 }
 
@@ -54,7 +54,7 @@ extension QuestionnaireElementConnectorImpl {
     /// - Returns: Returns associated index and QuestionnaireElement for given configuration. If the
         /// index == nil -> No associated elements found
         /// index == -1 -> No associated elements found, but the '_register' or '_complete' block is found.
-    func findElementAndPageRedirect(for input: String, in configuration: QuestionnaireConfiguration, autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?) {
+    func findElementAndPageRedirect(for input: AnyHashable, in configuration: QuestionnaireConfiguration, autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?) {
         if let redirect = self.findAssociatedRedirect(for: input, in: configuration) {
             if redirect.target == "_register", performClosures {
                 self.onRegisterTargetReached?(nil, redirect, autoApply); return (nil, -1)
@@ -74,10 +74,14 @@ extension QuestionnaireElementConnectorImpl {
     /// Returns associated 'redirect' object for the given string
     /// The input could be either the 'name' variable in QuestionnaireConfiguration object
     /// Or 'value' in ElementOption object
-    internal func findAssociatedRedirect(for input: String, in configuration: QuestionnaireConfiguration) -> ElementRedirect? {
-        if let redirect = configuration.redirects?.first(where: { input.extractRegex(withPattern: $0.pattern ?? "")?.count ?? 0 > 0 }) {
+    internal func findAssociatedRedirect(for input: AnyHashable, in configuration: QuestionnaireConfiguration) -> ElementRedirect? {
+        /// The input is 'String'
+        if let strInput = input as? String, let redirect = configuration
+                .redirects?
+                .filter({ ($0.pattern as? String) != nil }) /// filter only redirects with 'String' patterns
+                .first(where: { strInput.extractRegex(withPattern: $0.pattern as! String)?.count ?? 0 > 0 }) {
             return redirect
-        } else if let redirect = configuration.redirects?.first(where: { $0.pattern ?? "" == input }) {
+        } else if let redirect = configuration.redirects?.first(where: { $0.pattern ?? AnyHashable("") == input }) {
             return redirect
         }
         return nil
@@ -106,7 +110,7 @@ extension QuestionnaireElementConnectorImpl {
     /// - Returns: Returns associated index and QuestionnaireElement for the given input in the given answers. If the
         /// index == nil -> No associated elements found
         /// index == -1 -> No associated elements found, but the '_register' or '_complete' block is found.
-    func findElementAndPageLogic(for dictionary: [String:String], in answers: [String:AnyHashable], autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?) {
+    func findElementAndPageLogic(for dictionary: [String:AnyHashable], in answers: [String:AnyHashable], autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?) {
         if let blocks = self.findLogicBlocks(for: Array(dictionary.keys)), blocks.count > 0 {
             let satisfied: (bool: Bool, logic: LogicQuestionnaire?) = areSatisfied(logic: blocks, forAnswers: answers)
             if satisfied.bool, let logic = satisfied.logic {
@@ -143,7 +147,7 @@ extension QuestionnaireElementConnectorImpl {
     /// Determines if the derived 'logic' blocks from the `findLogicBlocks(for:)` API are satisfied
     /// Returns corresponded 'logic' block for given key:value
     internal func areSatisfied(logic blocks: [LogicQuestionnaire], forAnswers answers: [String:AnyHashable]) -> (Bool, LogicQuestionnaire?) {
-        if let theBlock = blocks.first(where: { $0.satisfy(dictionary: answers.filter({ $0.value is String }) as! [String:String] ) }) {
+        if let theBlock = blocks.first(where: { $0.satisfy(dictionary: answers) }) {
             return (true, theBlock)
         }
         return (false, nil)

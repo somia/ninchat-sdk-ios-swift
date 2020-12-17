@@ -32,7 +32,7 @@ extension QuestionnaireElementLikert {
             guard let weakSelf = self else { return }
 
             let option = weakSelf.option(string, weakSelf.options)
-            let button = weakSelf.generateButton(for: option, tag: Int(option.value)!)
+            let button = weakSelf.generateButton(for: option, tag: Int(option.value as! String)!)
             weakSelf.layoutButton(button, upperView: &upperView)
         }
     }
