@@ -124,23 +124,21 @@ struct ElementOption: Codable, Equatable {
 
 // MARK: - Redirect
 struct ElementRedirect: Codable {
-    let pattern: String?
-    let target: String
-
-    init(pattern: String?, target: String) {
+    var pattern: AnyHashable? {
+        set { _pattern = AnyCodable(newValue) }
+        get { _pattern?.value as? AnyHashable }
+    }
+    var target: String!
+    var _pattern: AnyCodable?
+    
+    enum CodingKeys: String, CodingKey {
+        case _pattern = "pattern"
+        case target = "target"
+    }
+    
+    init(pattern: AnyHashable?, target: String) {
         self.pattern = pattern
         self.target = target
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-
-        if let pattern = try? container.decode(Bool.self, forKey: .pattern) {
-            self.pattern = pattern ? "true" : "false"
-        } else {
-            self.pattern = try? container.decode(String.self, forKey: .pattern)
-        }
-        self.target = try container.decode(String.self, forKey: .target)
     }
 }
 
