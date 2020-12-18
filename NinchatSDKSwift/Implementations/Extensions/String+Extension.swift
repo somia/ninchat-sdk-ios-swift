@@ -98,4 +98,9 @@ extension String {
             debugger("Error in extracting regex with pattern: \(pattern): \(error)"); return nil
         }
     }
+
+    func toDictionary<T>() -> T? {
+        guard let data = self.data(using: .utf8) else { return nil }
+        return (try? JSONSerialization.jsonObject(with: data, options: .allowFragments)).flatMap { $0 as? T }
+    }
 }

@@ -27,7 +27,7 @@ protocol NINQuestionnaireViewModel {
     func getElements() throws -> [QuestionnaireElement]
     func getAnswersForElement(_ element: QuestionnaireElement, presetOnly: Bool) -> AnyHashable?
     func resetAnswer(for element: QuestionnaireElement) -> Bool
-    func insertRegisteredElement(_ elements: [QuestionnaireElement], configuration: [QuestionnaireConfiguration])
+    func insertRegisteredElement(_ elements: [[QuestionnaireElement]], configuration: [QuestionnaireConfiguration])
     func clearAnswers() -> Bool
     func redirectTargetPage(for value: AnyHashable, autoApply: Bool, performClosures: Bool) -> Int?
     func logicTargetPage(for dictionary: [String:AnyHashable], autoApply: Bool, performClosures: Bool) -> Int?
@@ -326,10 +326,10 @@ extension NINQuestionnaireViewModelImpl {
         return false
     }
 
-    func insertRegisteredElement(_ elements: [QuestionnaireElement], configuration: [QuestionnaireConfiguration]) {
+    func insertRegisteredElement(_ elements: [[QuestionnaireElement]], configuration: [QuestionnaireConfiguration]) {
         self.connector.appendElement(elements: elements, configurations: configuration)
         self.configurations.append(contentsOf: configuration)
-        self.views.append(elements)
+        self.views.append(contentsOf: elements)
         self.pageNumber = self.views.count-1
     }
 }

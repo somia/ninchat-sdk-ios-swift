@@ -14,7 +14,7 @@ protocol QuestionnaireElementConnector {
     init(configurations: [QuestionnaireConfiguration], style: QuestionnaireStyle)
     func findElementAndPageRedirect(for input: AnyHashable, in configuration: QuestionnaireConfiguration, autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?)
     func findElementAndPageLogic(for dictionary: [String:AnyHashable], in answers: [String:AnyHashable], autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?)
-    mutating func appendElement(elements: [QuestionnaireElement], configurations: [QuestionnaireConfiguration])
+    mutating func appendElement(elements: [[QuestionnaireElement]], configurations: [QuestionnaireConfiguration])
 }
 
 struct QuestionnaireElementConnectorImpl: QuestionnaireElementConnector {
@@ -36,8 +36,8 @@ struct QuestionnaireElementConnectorImpl: QuestionnaireElementConnector {
         (self.elements.first { $0.filter { $0.questionnaireConfiguration == configuration }.count != 0 }, self.elements.firstIndex { $0.filter { $0.questionnaireConfiguration == configuration }.count != 0 })
     }
 
-    mutating func appendElement(elements: [QuestionnaireElement], configurations: [QuestionnaireConfiguration]) {
-        self.elements.append(elements)
+    mutating func appendElement(elements: [[QuestionnaireElement]], configurations: [QuestionnaireConfiguration]) {
+        self.elements.append(contentsOf: elements)
         self.configurations.append(contentsOf: configurations)
     }
 }
@@ -139,8 +139,9 @@ extension QuestionnaireElementConnectorImpl {
     internal func findLogicBlocks(for keys: [String]) -> [LogicQuestionnaire]? {
         let findInAnds = self.logicList.filter({ $0.andKeys?.filter({ keys.contains($0) }).count ?? 0 > 0 })
         let findInOrs = self.logicList.filter({ $0.orKeys?.filter({ keys.contains($0) }).count ?? 0 > 0 })
+        let emptyBlocks = self.logicList.filter({ $0.andKeys == nil && $0.orKeys == nil })
 
-        let results = findInAnds + findInOrs
+        let results = findInAnds + findInOrs + emptyBlocks
         return (results.count > 0) ? results : nil
     }
 

@@ -199,7 +199,7 @@ extension QuestionnaireDataSourceDelegateTests {
         let newConfigurationCount = (conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).configurations.count
 
         XCTAssertEqual(newElementsCount, currentElementsCount+1)
-        XCTAssertEqual(newConfigurationCount, currentConfigurationCount+1)
+        XCTAssertEqual(newConfigurationCount, currentConfigurationCount+2)
         XCTAssertFalse((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).requirementsSatisfied)
         XCTAssertFalse((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).shouldShowNavigationCells.last ?? true)
     }
@@ -213,7 +213,7 @@ extension QuestionnaireDataSourceDelegateTests {
         let newConfigurationCount = (self.conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).configurations.count
 
         XCTAssertEqual(newElementsCount, currentElementsCount+1)
-        XCTAssertEqual(newConfigurationCount, currentConfigurationCount+1)
+        XCTAssertEqual(newConfigurationCount, currentConfigurationCount+2)
         XCTAssertFalse((self.conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).requirementsSatisfied)
         XCTAssertFalse((self.conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).shouldShowNavigationCells.last ?? true)
 

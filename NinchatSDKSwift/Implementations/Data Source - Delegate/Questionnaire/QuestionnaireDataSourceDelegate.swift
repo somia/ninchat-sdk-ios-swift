@@ -174,3 +174,50 @@ extension QuestionnaireDataSourceDelegate {
         return false
     }
 }
+
+// MARK: - Register Audience
+extension QuestionnaireDataSourceDelegate {
+    internal func registerGroup(title: String, registerTitle: String) -> String {
+        let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) ?? "Close Chat"
+
+        /// https://github.com/somia/customer/wiki/Questionnaires#redirect
+        /// Singular element can have a redirect property to tell how we continue from that. Redirect cannot be used with a group or element inside group, but you must utilize logics.
+        return
+        """
+        [
+            {
+                "name": "Epäilys",
+                "type": "group",
+                "buttons": {
+                    "back": false,
+                    "next": false
+                },
+                "elements": [
+                    {
+                        "element": "text",
+                        "name": "\(title)",
+                        "label": "\(registerTitle)"
+                    },
+                    {
+                        "element": "radio",
+                        "name": "\(title)-close",
+                        "label": "",
+                        "options": [
+                            {
+                                "label": "\(closeTitle)",
+                                "value": ""
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "register-logic",
+                "logic": {
+                  "target": "_register"
+                }
+            }
+        ]
+        """
+    }
+}
