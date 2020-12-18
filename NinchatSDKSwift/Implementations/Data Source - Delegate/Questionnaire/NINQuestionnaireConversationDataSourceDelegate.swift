@@ -207,32 +207,31 @@ extension NINQuestionnaireConversationDataSourceDelegate {
 // MARK: - Audience Register Text
 extension NINQuestionnaireConversationDataSourceDelegate {
     func addRegisterSection() {
-        guard let registerTitle = self.sessionManager?.siteConfiguration.audienceRegisteredText else { return }
-        let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) ?? "Close Chat"
-        let registerJSON: [String:AnyHashable] = ["element": "radio", "name": "audienceRegisteredText", "label": registerTitle, "buttons": ["back":false,"next":false], "options":[["label":closeTitle, "value":""]], "redirects":[["target":"_register"]]]
-
-        guard let registerConfiguration = AudienceQuestionnaire(from: [registerJSON]).questionnaireConfiguration, registerConfiguration.count > 0, let element = QuestionnaireElementConverter(configurations: registerConfiguration, style: .conversation).elements.first else { return }
-        element.compactMap({ $0 as? QuestionnaireElementRadio }).first?.isExitElement = true
-
-        self.elements.append(element)
-        self.configurations.append(contentsOf: registerConfiguration)
-        self.requirementsSatisfied = false
-        self.shouldShowNavigationCells.append(false)
-        self.viewModel.insertRegisteredElement(element, configuration: registerConfiguration)
+        guard let registerTitle = self.sessionManager?.siteConfiguration.audienceRegisteredText,
+              let json: Array<[String:AnyHashable]> = registerGroup(title: "register", registerTitle: registerTitle).toDictionary()
+            else { return }
+        json.forEach({ self.addToQuestionnaire(configuration: $0) })
     }
 
     func addClosedRegisteredSection() {
-        guard let registerTitle = self.sessionManager?.siteConfiguration.audienceClosedRegisteredText else { return }
-        let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) ?? "Close Chat"
-        let registerJSON: [String:AnyHashable] = ["element": "radio", "name": "audienceClosedRegisteredText", "label": registerTitle, "buttons": ["back":false,"next":false], "options":[["label":closeTitle, "value":""]], "redirects":[["target":"_register"]]]
+        guard let registerTitle = self.sessionManager?.siteConfiguration.audienceClosedRegisteredText,
+              let json: Array<[String:AnyHashable]> = registerGroup(title: "register", registerTitle: registerTitle).toDictionary()
+            else { return }
+        json.forEach({ self.addToQuestionnaire(configuration: $0) })
+    }
 
-        guard let registerConfiguration = AudienceQuestionnaire(from: [registerJSON]).questionnaireConfiguration, registerConfiguration.count > 0, let element = QuestionnaireElementConverter(configurations: registerConfiguration, style: .conversation).elements.first else { return }
-        element.compactMap({ $0 as? QuestionnaireElementRadio }).first?.isExitElement = true
+    private func addToQuestionnaire(configuration: [String:AnyHashable]) {
+        guard let configuration = AudienceQuestionnaire(from: [configuration]).questionnaireConfiguration,
+              configuration.count > 0
+            else { return }
 
-        self.elements.append(element)
-        self.configurations.append(contentsOf: registerConfiguration)
+        let elements = QuestionnaireElementConverter(configurations: configuration, style: .conversation).elements
+        elements.forEach({ $0.compactMap({ $0 as? QuestionnaireElementRadio }).first?.isExitElement = true })
+
+        self.elements.append(contentsOf: elements)
+        self.configurations.append(contentsOf: configuration)
         self.requirementsSatisfied = false
         self.shouldShowNavigationCells.append(false)
-        self.viewModel.insertRegisteredElement(element, configuration: registerConfiguration)
+        self.viewModel.insertRegisteredElement(elements, configuration: configuration)
     }
 }
