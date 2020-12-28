@@ -678,6 +678,46 @@
       }
     },
     {
+      "element": "radio",
+      "name": "audienceRegisteredText",
+      "label": "Kysely rekisteröity..",
+      "buttons": {
+        "back": false,
+        "next": false
+      },
+      "options": [
+        {
+          "label": "Sulje keskustelu",
+          "value":""
+        }
+      ],
+      "redirects": [
+        {
+          "target":"_register"
+        }
+      ]
+    },
+    {
+      "element": "radio",
+      "name": "audienceCompletedText",
+      "label": "Kysely rekisteröity..",
+      "buttons": {
+        "back": false,
+        "next": false
+      },
+      "options": [
+        {
+          "label": "Sulje keskustelu",
+          "value":""
+        }
+      ],
+      "redirects": [
+        {
+          "target":"_complete"
+        }
+      ]
+    },
+    {
       "element": "text",
       "label": "<p><strong>Soita 112</strong>Jos lapsella on mitä tahansa edellä kuvatuista oireista, <a href='tel:112'>soita välittömästi hätänumeroon 112</a>. Kuvaile lapsen oireet tarkasti ja seuraa hätäkeskuspäivystäjän antamia ohjeita.</p><p>Voit sulkea oirenavigaattori-ikkunan.</p>",
       "name": "soita112",

@@ -13,17 +13,17 @@ protocol QuestionnaireElementConnector {
 
     init(configurations: [QuestionnaireConfiguration], style: QuestionnaireStyle)
     func findElementAndPageRedirect(for input: AnyHashable, in configuration: QuestionnaireConfiguration, autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?)
-    func findElementAndPageLogic(for dictionary: [String:AnyHashable], in answers: [String:AnyHashable], autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?)
-    mutating func appendElement(elements: [[QuestionnaireElement]], configurations: [QuestionnaireConfiguration])
+    func findElementAndPageLogic(logic block: LogicQuestionnaire, in answers: [String:AnyHashable], autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?)
+    mutating func appendElements(_ elements: [QuestionnaireItems], configurations: [QuestionnaireConfiguration])
 }
 
 struct QuestionnaireElementConnectorImpl: QuestionnaireElementConnector {
-    private var elements: [[QuestionnaireElement]] = []
-    private var configurations: [QuestionnaireConfiguration] = []
+    internal var items: [QuestionnaireItems] = []
+    internal var configurations: [QuestionnaireConfiguration] = []
 
     init(configurations: [QuestionnaireConfiguration], style: QuestionnaireStyle) {
         self.configurations = configurations
-        self.elements = QuestionnaireElementConverter(configurations: configurations, style: style).elements
+        self.items = QuestionnaireParser(configurations: configurations, style: style).items
     }
 
     var logicContainsTags: ((LogicQuestionnaire?) -> Void)?
@@ -33,11 +33,16 @@ struct QuestionnaireElementConnectorImpl: QuestionnaireElementConnector {
     /// Returns the element the given configuration associated to
     /// The function is called if the `findTargetRedirectConfiguration(from:)` or `findTargetLogicConfiguration(from:)` returns valid configuration
     internal func findTargetElement(for configuration: QuestionnaireConfiguration) -> ([QuestionnaireElement]?, Int?) {
-        (self.elements.first { $0.filter { $0.questionnaireConfiguration == configuration }.count != 0 }, self.elements.firstIndex { $0.filter { $0.questionnaireConfiguration == configuration }.count != 0 })
+        let targetElement = self.items.compactMap({ $0.elements }).first(where: { $0.filter({ $0.questionnaireConfiguration == configuration }).count != 0 })
+        for counter in 0..<items.count {
+            guard let elements = items[counter].elements?.filter({ $0.questionnaireConfiguration == configuration }), elements.count != 0 else { continue }
+            return (elements, counter)
+        }
+        return (nil,nil)
     }
 
-    mutating func appendElement(elements: [[QuestionnaireElement]], configurations: [QuestionnaireConfiguration]) {
-        self.elements.append(contentsOf: elements)
+    mutating func appendElements(_ item: [QuestionnaireItems], configurations: [QuestionnaireConfiguration]) {
+        self.items.append(contentsOf: item)
         self.configurations.append(contentsOf: configurations)
     }
 }
@@ -63,9 +68,7 @@ extension QuestionnaireElementConnectorImpl {
                 self.onCompleteTargetReached?(nil, redirect, autoApply); return (nil, -1)
             }
             if let configuration = self.findTargetRedirectConfiguration(from: redirect).0 {
-                if let element = self.findTargetElement(for: configuration).0, let page = self.findTargetElement(for: configuration).1 {
-                    return (element, page)
-                }
+                return self.findTargetElement(for: configuration)
             }
         }
         return (nil, nil)
@@ -76,7 +79,8 @@ extension QuestionnaireElementConnectorImpl {
     /// Or 'value' in ElementOption object
     internal func findAssociatedRedirect(for input: AnyHashable, in configuration: QuestionnaireConfiguration) -> ElementRedirect? {
         /// The input is 'String'
-        if let strInput = input as? String, let redirect = configuration
+        if let strInput = input as? String,
+           let redirect = configuration
                 .redirects?
                 .filter({ ($0.pattern as? String) != nil }) /// filter only redirects with 'String' patterns
                 .first(where: { strInput.extractRegex(withPattern: $0.pattern as! String)?.count ?? 0 > 0 }) {
@@ -97,61 +101,35 @@ extension QuestionnaireElementConnectorImpl {
 // MARK: - QuestionnaireElementConnector 'logic'
 
 extension QuestionnaireElementConnectorImpl {
-    internal var logicList: [LogicQuestionnaire] {
-        self.configurations.compactMap({ $0.logic })
-    }
-
     /// The function aims to extract associated index and QuestionnaireElement object for a given LogicQuestionnaire
     /// - Parameters:
-    ///   - dictionary: The dictionary that is supposed to point to a valid element. Both the keys and values must match with at least one logic block.
+    ///   - logic: The logic block that is under lookup.
     ///   - answers: The dictionary of currently saved answers that has to be looked through
     ///   - autoApply: The variable declares if the '_register'/'_complete' closures are automatically applied or not.
     ///   - performClosures: The variable declares if the '_register'/'_complete' closures has to be performed or not.
     /// - Returns: Returns associated index and QuestionnaireElement for the given input in the given answers. If the
         /// index == nil -> No associated elements found
         /// index == -1 -> No associated elements found, but the '_register' or '_complete' block is found.
-    func findElementAndPageLogic(for dictionary: [String:AnyHashable], in answers: [String:AnyHashable], autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?) {
-        if let blocks = self.findLogicBlocks(for: Array(dictionary.keys)), blocks.count > 0 {
-            let satisfied: (bool: Bool, logic: LogicQuestionnaire?) = areSatisfied(logic: blocks, forAnswers: answers)
-            if satisfied.bool, let logic = satisfied.logic {
-                if let tags = logic.tags, tags.count > 0 {
-                    self.logicContainsTags?(logic)
-                }
+    func findElementAndPageLogic(logic block: LogicQuestionnaire, in answers: [String:AnyHashable], autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?) {
+        if block.satisfy(dictionary: answers) {
+            if let tags = block.tags, tags.count > 0 {
+                self.logicContainsTags?(block)
+            }
 
-                if logic.target == "_register", performClosures {
-                    self.onRegisterTargetReached?(logic, nil, autoApply); return (nil, -1)
-                }
-                if logic.target == "_complete", performClosures {
-                    self.onCompleteTargetReached?(logic, nil, autoApply); return (nil, -1)
-                }
-                if let configuration = self.findTargetLogicConfiguration(from: logic).0 {
-                    if let element = self.findTargetElement(for: configuration).0, let page = self.findTargetElement(for: configuration).1 {
-                        return (element, page)
-                    }
-                }
+            if block.target == "_register", performClosures {
+                self.onRegisterTargetReached?(block, nil, autoApply); return (nil, -1)
+            }
+            if block.target == "_complete", performClosures {
+                self.onCompleteTargetReached?(block, nil, autoApply); return (nil, -1)
+            }
+            if block.target == "_exit", performClosures {
+                return (nil, -2)
+            }
+            if let configuration = self.findTargetLogicConfiguration(from: block).0 {
+                return self.findTargetElement(for: configuration)
             }
         }
         return (nil, nil)
-    }
-
-    /// Returns corresponded 'logic' blocks for given input
-    /// The input is the 'key' in the object's dictionary
-    internal func findLogicBlocks(for keys: [String]) -> [LogicQuestionnaire]? {
-        let findInAnds = self.logicList.filter({ $0.andKeys?.filter({ keys.contains($0) }).count ?? 0 > 0 })
-        let findInOrs = self.logicList.filter({ $0.orKeys?.filter({ keys.contains($0) }).count ?? 0 > 0 })
-        let emptyBlocks = self.logicList.filter({ $0.andKeys == nil && $0.orKeys == nil })
-
-        let results = findInAnds + findInOrs + emptyBlocks
-        return (results.count > 0) ? results : nil
-    }
-
-    /// Determines if the derived 'logic' blocks from the `findLogicBlocks(for:)` API are satisfied
-    /// Returns corresponded 'logic' block for given key:value
-    internal func areSatisfied(logic blocks: [LogicQuestionnaire], forAnswers answers: [String:AnyHashable]) -> (Bool, LogicQuestionnaire?) {
-        if let theBlock = blocks.first(where: { $0.satisfy(dictionary: answers) }) {
-            return (true, theBlock)
-        }
-        return (false, nil)
     }
 
     /// Returns the configuration the given 'logic' points to.

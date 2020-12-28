@@ -109,7 +109,9 @@ struct LogicQuestionnaire: Codable {
         } else if let ors = self.or, ors.count > 0 {
             return ors.first(where: { dictionary.filter(based: $0, keys: self.orKeys ?? [])?.count != 0 }) != nil
         }
-        return false
+
+        /// if there is no "and"/"or", the block satisfies everything
+        return true
     }
 }
 

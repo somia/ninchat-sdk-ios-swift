@@ -225,13 +225,13 @@ extension NINQuestionnaireConversationDataSourceDelegate {
               configuration.count > 0
             else { return }
 
-        let elements = QuestionnaireElementConverter(configurations: configuration, style: .conversation).elements
-        elements.forEach({ $0.compactMap({ $0 as? QuestionnaireElementRadio }).first?.isExitElement = true })
+        let items = QuestionnaireParser(configurations: configuration, style: .conversation).items
+        items.forEach({ $0.elements?.compactMap({ $0 as? QuestionnaireElementRadio }).first?.isExitElement = true })
 
-        self.elements.append(contentsOf: elements)
+        self.elements.append(contentsOf: items.compactMap({ $0.elements }))
         self.configurations.append(contentsOf: configuration)
         self.requirementsSatisfied = false
         self.shouldShowNavigationCells.append(false)
-        self.viewModel.insertRegisteredElement(elements, configuration: configuration)
+        self.viewModel.insertRegisteredElement(items, configuration: configuration)
     }
 }

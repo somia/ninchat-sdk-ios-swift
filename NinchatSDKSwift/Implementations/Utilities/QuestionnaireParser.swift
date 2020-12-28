@@ -6,20 +6,24 @@
 
 import UIKit
 
-/// The utility aims to convert `QuestionnaireConfiguration` into corresponded UIViews
-/// The utility is injected with configurations and return an array of [QuestionnaireElement]
+/// The utility aims to convert `QuestionnaireConfiguration` into corresponded UIViews and Logic blocks
+/// It is injected with configurations and return an array of [QuestionnaireItemsConverterTypes]
 
-struct QuestionnaireElementConverter {
+struct QuestionnaireItems {
+    var elements: [QuestionnaireElement]?
+    var logic: LogicQuestionnaire?
+}
+
+struct QuestionnaireParser {
     private let configurations: [QuestionnaireConfiguration]
     private let style: QuestionnaireStyle
+    var items: [QuestionnaireItems] = []
 
     init(configurations: [QuestionnaireConfiguration], style: QuestionnaireStyle) {
         self.configurations = configurations
         self.style = style
-    }
 
-    var elements: [[QuestionnaireElement]] {
-        self.configurations.compactMap { configuration in
+        self.items = self.configurations.reduce(into: [], { (result: inout [QuestionnaireItems], configuration: QuestionnaireConfiguration) in
             func getView(from element: ElementType, index: Int) -> QuestionnaireElement? {
                 switch element {
                 case .text:
@@ -39,20 +43,23 @@ struct QuestionnaireElementConverter {
                 }
             }
 
-            if let element = configuration.element, let view = getView(from: element, index: 0) {
-                return [view]
-            }
-            return configuration.elements?.compactMap { element -> QuestionnaireElement? in
+            if let logic = configuration.logic {
+                result.append(QuestionnaireItems(elements: nil, logic: logic))
+            } else if let element = configuration.element, let view = getView(from: element, index: 0) {
+                result.append(QuestionnaireItems(elements: [view], logic: nil))
+            } else if let elements = configuration.elements?.compactMap { element -> QuestionnaireElement? in
                 if let type = element.element, let index = configuration.elements?.firstIndex(of: element) {
                     return getView(from: type, index: index)
                 }
                 return nil
+            } {
+                result.append(QuestionnaireItems(elements: elements, logic: nil))
             }
-        }
+        })
     }
 }
 
-extension QuestionnaireElementConverter {
+extension QuestionnaireParser {
     func generate<T: QuestionnaireElement>(from configuration: QuestionnaireConfiguration, index: Int, ofType: T.Type) -> T {
         let view = T(frame: .zero)
         view.index = index
