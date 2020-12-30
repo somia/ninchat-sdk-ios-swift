@@ -131,17 +131,17 @@ extension NINQuestionnaireFormDataSourceDelegate {
     func addClosedRegisteredSection() {
         guard let registerTitle = self.sessionManager?.siteConfiguration.audienceClosedRegisteredText,
               let json: Array<[String:AnyHashable]> = registerGroup(title: "register", registerTitle: registerTitle).toDictionary()
-                else { return }
+            else { return }
         json.forEach({ self.addToQuestionnaire(configuration: $0) })
     }
 
     private func addToQuestionnaire(configuration: [String:AnyHashable]) {
         guard let configuration = AudienceQuestionnaire(from: [configuration]).questionnaireConfiguration,
               configuration.count > 0
-                else { return }
+            else { return }
 
-        let elements = QuestionnaireElementConverter(configurations: configuration, style: .conversation).elements
-        elements.forEach({ $0.compactMap({ $0 as? QuestionnaireElementRadio }).first?.isExitElement = true })
-        self.viewModel.insertRegisteredElement(elements, configuration: configuration)
+        let items = QuestionnaireParser(configurations: configuration, style: .conversation).items
+        items.forEach({ $0.elements?.compactMap({ $0 as? QuestionnaireElementRadio }).first?.isExitElement = true })
+        self.viewModel.insertRegisteredElement(items, configuration: configuration)
     }
 }

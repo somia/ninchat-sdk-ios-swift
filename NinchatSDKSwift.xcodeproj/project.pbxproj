@@ -174,7 +174,7 @@
 		91A16AC6366F692190CB7D0D /* QuestionnaireElementTextArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1660AC336314992BDC930 /* QuestionnaireElementTextArea.swift */; };
 		91A16ACFBF8C7E4DF9373C1E /* ServiceRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A160C90332B61FB00EA8D8 /* ServiceRequest.swift */; };
 		91A16AE391177C5A9CE32812 /* QuestionnaireElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16F6AB5D678663E586FD1 /* QuestionnaireElement.swift */; };
-		91A16B2672A4B1509A627A02 /* QuestionnaireElementConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16E69D69A37749EB13539 /* QuestionnaireElementConverter.swift */; };
+		91A16B2672A4B1509A627A02 /* QuestionnaireParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16E69D69A37749EB13539 /* QuestionnaireParser.swift */; };
 		91A16B2F768C5422B895C769 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A169A968E807A8F8D6358A /* Toast.swift */; };
 		91A16B43A0A5F40049590528 /* Permission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A163542A73487774FB1D3C /* Permission.swift */; };
 		91A16BA77083A30EFEBAA469 /* QuestionnaireConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1675E285CCC4A250D77BB /* QuestionnaireConfiguration.swift */; };
@@ -424,7 +424,7 @@
 		91A16E22A6933B9561BDF84E /* Secrets.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Secrets.plist; sourceTree = "<group>"; };
 		91A16E2E2FDA2CB5D3AAA5B7 /* NinchatSDKSwiftServerHelperTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatSDKSwiftServerHelperTests.swift; sourceTree = "<group>"; };
 		91A16E65EA02A328F488F74C /* UIApplication+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extension.swift"; sourceTree = "<group>"; };
-		91A16E69D69A37749EB13539 /* QuestionnaireElementConverter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireElementConverter.swift; sourceTree = "<group>"; };
+		91A16E69D69A37749EB13539 /* QuestionnaireParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireParser.swift; sourceTree = "<group>"; };
 		91A16E7CDA2F9D24FF1BE1DC /* Thread+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Thread+Extension.swift"; sourceTree = "<group>"; };
 		91A16EAC1C68B081618E08E9 /* NINChatClientPropsParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINChatClientPropsParser.swift; sourceTree = "<group>"; };
 		91A16ED021E7CDE32491AE5D /* QuestionnaireElementLikert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireElementLikert.swift; sourceTree = "<group>"; };
@@ -1013,7 +1013,7 @@
 				91A16EAC1C68B081618E08E9 /* NINChatClientPropsParser.swift */,
 				91A163542A73487774FB1D3C /* Permission.swift */,
 				91A16EE2919D93717F843D49 /* VideoThumbnailManager.swift */,
-				91A16E69D69A37749EB13539 /* QuestionnaireElementConverter.swift */,
+				91A16E69D69A37749EB13539 /* QuestionnaireParser.swift */,
 				91A162DE1B788E9D39518E5B /* QuestionnaireElementConnector.swift */,
 			);
 			path = Utilities;
@@ -1452,7 +1452,7 @@
 				91A16BA77083A30EFEBAA469 /* QuestionnaireConfiguration.swift in Sources */,
 				91A1624977615DA2282774D2 /* NINQuestionnaireViewController.swift in Sources */,
 				91A1608136659B4888D49A37 /* UIApplication+Extension.swift in Sources */,
-				91A16B2672A4B1509A627A02 /* QuestionnaireElementConverter.swift in Sources */,
+				91A16B2672A4B1509A627A02 /* QuestionnaireParser.swift in Sources */,
 				91A16AE391177C5A9CE32812 /* QuestionnaireElement.swift in Sources */,
 				91A16E653E0301454E26065E /* QuestionnaireElementText.swift in Sources */,
 				91A165A1E6CD5658530CECCB /* QuestionnaireElementSelect.swift in Sources */,
