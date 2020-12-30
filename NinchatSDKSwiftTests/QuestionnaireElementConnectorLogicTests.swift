@@ -73,7 +73,7 @@ final class QuestionnaireElementConnectorLogicTests: XCTestCase {
     }
 
     func test_22_acceptance() {
-        let block = self.questionnaire_preAudience?.questionnaireConfiguration?.first(where: { $0.name == "Riskiryhmät-jatko" })?.logic
+        let block = self.questionnaire_preAudience?.questionnaireConfiguration?.first(where: { $0.name == "logic" })?.logic
         XCTAssertNotNil(block)
 
         let targetElement = connector.findElementAndPageLogic(logic: block!, in: ["Riskiryhmät-jatko": "Muut aiheet", "BOOL_logic": true], autoApply: false, performClosures: false)
