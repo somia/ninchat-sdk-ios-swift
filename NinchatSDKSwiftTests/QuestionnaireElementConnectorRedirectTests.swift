@@ -88,7 +88,7 @@ final class QuestionnaireElementConnectorRedirectTests: XCTestCase {
         let targetView = connector.findTargetElement(for: targetQuestionnaire!)
         XCTAssertNotNil(targetView.0)
         XCTAssertNotNil(targetView.1)
-        XCTAssertEqual(targetView.1, 9)
+        XCTAssertEqual(targetView.1, 25)
     }
 
     // Acceptance
