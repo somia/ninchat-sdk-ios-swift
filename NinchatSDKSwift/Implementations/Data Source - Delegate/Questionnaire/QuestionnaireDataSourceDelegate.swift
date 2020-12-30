@@ -199,7 +199,7 @@ extension QuestionnaireDataSourceDelegate {
             {
                 "name": "register-logic",
                 "logic": {
-                  "target": "_exit"
+                  "target": "_audienceRegisteredTarget"
                 }
             }
         ]

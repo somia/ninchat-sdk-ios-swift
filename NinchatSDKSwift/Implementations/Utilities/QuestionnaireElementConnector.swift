@@ -122,7 +122,7 @@ extension QuestionnaireElementConnectorImpl {
             if block.target == "_complete", performClosures {
                 self.onCompleteTargetReached?(block, nil, autoApply); return (nil, -1)
             }
-            if block.target == "_exit", performClosures {
+            if block.target == "_audienceRegisteredTarget", performClosures {
                 return (nil, -2)
             }
             if let configuration = self.findTargetLogicConfiguration(from: block).0 {
