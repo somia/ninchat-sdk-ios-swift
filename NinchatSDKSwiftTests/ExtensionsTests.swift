@@ -176,7 +176,7 @@ final class ExtensionsTests: XCTestCase {
     }
 
     func test_userDefaults_lowLevelTypes() {
-        var error: NSErrorPointer = nil
+        let error: NSErrorPointer = nil
         let metadata = NINLowLevelClientProps.initiate(metadata: ["key-21": "value-21", "key-31": 2]).marshalJSON(error)
         XCTAssertNil(error)
         UserDefaults.save(["key-1": metadata], key: .metadata)

@@ -241,7 +241,7 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         }
 
         self.viewModel?.answers = ["wouldRecommendService": "2"]
-        self.viewModel?.logicTargetPage(logic!)
+        _ = self.viewModel?.logicTargetPage(logic!)
         waitForExpectations(timeout: 2.0)
     }
 
@@ -249,13 +249,12 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         let element = self.connector.configurations.first(where: { $0.name == "Tartuntatautipäiväraha-Logic1" })?.logic
         let expect = self.expectation(description: "Expected to reach _register logic")
 
-        var firstRoundDone = true
         self.viewModel?.connector.onRegisterTargetReached = { _, _, autoApply in
             XCTAssertTrue(self.viewModel!.hasToWaitForUserConfirmation(autoApply))
             expect.fulfill()
         }
         self.viewModel?.answers = ["Tartuntatautipäiväraha-jatko": "Sulje"]
-        self.viewModel?.logicTargetPage(element!, autoApply: true)
+        _ = self.viewModel?.logicTargetPage(element!, autoApply: true)
 
         waitForExpectations(timeout: 2.0)
     }
