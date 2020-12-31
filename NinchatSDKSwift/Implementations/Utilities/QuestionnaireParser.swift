@@ -47,12 +47,12 @@ struct QuestionnaireParser {
                 result.append(QuestionnaireItems(elements: nil, logic: logic))
             } else if let element = configuration.element, let view = getView(from: element, index: 0) {
                 result.append(QuestionnaireItems(elements: [view], logic: nil))
-            } else if let elements = configuration.elements?.compactMap { element -> QuestionnaireElement? in
+            } else if let elements = configuration.elements?.compactMap({ element -> QuestionnaireElement? in
                 if let type = element.element, let index = configuration.elements?.firstIndex(of: element) {
                     return getView(from: type, index: index)
                 }
                 return nil
-            } {
+            }) {
                 result.append(QuestionnaireItems(elements: elements, logic: nil))
             }
         })

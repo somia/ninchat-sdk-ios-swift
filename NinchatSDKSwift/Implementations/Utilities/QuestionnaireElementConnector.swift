@@ -33,7 +33,6 @@ struct QuestionnaireElementConnectorImpl: QuestionnaireElementConnector {
     /// Returns the element the given configuration associated to
     /// The function is called if the `findTargetRedirectConfiguration(from:)` or `findTargetLogicConfiguration(from:)` returns valid configuration
     internal func findTargetElement(for configuration: QuestionnaireConfiguration) -> ([QuestionnaireElement]?, Int?) {
-        let targetElement = self.items.compactMap({ $0.elements }).first(where: { $0.filter({ $0.questionnaireConfiguration == configuration }).count != 0 })
         for counter in 0..<items.count {
             guard let elements = items[counter].elements?.filter({ $0.questionnaireConfiguration == configuration }), elements.count != 0 else { continue }
             return (elements, counter)
