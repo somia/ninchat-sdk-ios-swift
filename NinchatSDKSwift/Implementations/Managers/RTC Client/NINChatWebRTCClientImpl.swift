@@ -97,6 +97,7 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
         }
         
         sessionManager?.delegate?.log(value: "Creating new `NINChatWebRTCClient` in the '\(operatingMode.description)' mode")
+        NotificationCenter.default.addObserver(self, selector: #selector(didSessionRouteChange(_:)), name: AVAudioSession.routeChangeNotification, object: nil)
     }
     
     func start(with rtc: RTCSignal?) throws {
@@ -181,6 +182,8 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
         self.iceConnectionStates.removeAll()
         self.iceGatheringStates.removeAll()
         self.iceServers?.removeAll()
+        
+        NotificationCenter.default.removeObserver(self, name: AVAudioSession.routeChangeNotification, object: nil)
     }
 
     deinit {
@@ -368,9 +371,6 @@ extension NINChatWebRTCClientImpl {
         }
         
         #if !NIN_USE_PLANB_SEMANTICS
-        /// The issue with the output: `https://github.com/somia/ninchat-sdk-ios/issues/61`
-        self.setAudioOutputToSpeaker()
-        
         /// Set up remote rendering; once the video frames are received, the video will commence
         if let remoteVideoTrack = self.videoTransceiver?.receiver.track as? RTCVideoTrack {
             self.delegate?.onRemoteVideoTrackReceive?(self, remoteVideoTrack)
@@ -381,48 +381,26 @@ extension NINChatWebRTCClientImpl {
 
 /// Force the audio output to Speaker. Look at issue #61 for `NinchatSDK`
 extension NINChatWebRTCClientImpl {
+    /// The issue with the output: `https://github.com/somia/ninchat-sdk-ios/issues/61` and `https://github.com/somia/mobile/issues/302`
     /// `https://stackoverflow.com/questions/24595579/how-to-redirect-audio-to-speakers-in-the-apprtc-ios-example`
-    private func setAudioOutputToSpeaker() {
-        NotificationCenter.default.addObserver(self, selector: #selector(didSessionRouteChange(_:)), name: AVAudioSession.routeChangeNotification, object: nil)
-        
-        DispatchQueue.global(qos: .background).async {
-            do {
-                RTCAudioSession.sharedInstance().lockForConfiguration()
-                
-                /// Set the audioSession category.
-                /// Needs to be Record or PlayAndRecord to use `audioRouteOverride:`
-                try AVAudioSession.sharedInstance().setCategory(.playAndRecord, options: .defaultToSpeaker)
-                try RTCAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playAndRecord.rawValue, with: .defaultToSpeaker)
-                
-                /// Set the audioSession override
-                try AVAudioSession.sharedInstance().overrideOutputAudioPort(.speaker)
-                try RTCAudioSession.sharedInstance().overrideOutputAudioPort(.speaker)
-                
-                /// Activate the audio session
-                try AVAudioSession.sharedInstance().setActive(true, options: .notifyOthersOnDeactivation)
-                try RTCAudioSession.sharedInstance().setActive(true)
-                
-                RTCAudioSession.sharedInstance().unlockForConfiguration()
-            } catch {
-                debugger("WebRTC: Failed to change the output to device's speaker - `setAudioOutputToSpeaker`: \(error)")
-            }
-        }
-    }
-    
     @objc
     private func didSessionRouteChange(_ notification: Notification) {
         if let userInfo = notification.userInfo, let reasonKey = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt, let reason = AVAudioSession.RouteChangeReason(rawValue: reasonKey) {
-
-            RTCAudioSession.sharedInstance().lockForConfiguration()
-            if reason == .categoryChange {
-                do {
-                    try AVAudioSession.sharedInstance().overrideOutputAudioPort(.speaker)
-                    try RTCAudioSession.sharedInstance().overrideOutputAudioPort(.speaker)
-                } catch {
-                    debugger("WebRTC: Failed to change the output to device's speaker - `didSessionRouteChange(_:)`: \(error)")
+            print("Route Changed: \(userInfo)")
+            
+            /// Force Speaker in case the app tries to use earning as the output
+            if RTCAudioSession.sharedInstance().currentRoute.outputs.first?.portType.rawValue ?? "" == "Receiver" || AVAudioSession.sharedInstance().currentRoute.outputs.first?.portType.rawValue ?? "" == "Receiver" {
+                RTCAudioSession.sharedInstance().lockForConfiguration()
+                if reason == .categoryChange {
+                    do {
+                        try AVAudioSession.sharedInstance().overrideOutputAudioPort(.speaker)
+                        try RTCAudioSession.sharedInstance().overrideOutputAudioPort(.speaker)
+                    } catch {
+                        debugger("WebRTC: Failed to change the output to device's speaker - `didSessionRouteChange(_:)`: \(error)")
+                    }
                 }
+                RTCAudioSession.sharedInstance().unlockForConfiguration()
             }
-            RTCAudioSession.sharedInstance().unlockForConfiguration()
         }
     }
 }
@@ -433,11 +411,6 @@ extension NINChatWebRTCClientImpl: RTCPeerConnectionDelegate {
         
         #if NIN_USE_PLANB_SEMANTICS
         DispatchQueue.main.async {
-            if stream.audioTracks.count > 0 {
-                /// The issue with the output: `https://github.com/somia/ninchat-sdk-ios/issues/61`
-                self.setAudioOutputToSpeaker()
-            }
-            
             if let track = stream.videoTracks.first {
                 self.delegate?.onRemoteVideoTrackReceive?(self, track)
             }
