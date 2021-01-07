@@ -130,7 +130,6 @@ extension QuestionnaireElement where Self:QuestionnaireElementCheckbox {
         if self.didShapedView { return }
 
         self.elementConfiguration = configuration
-        self.shapeTitle(configuration)
         self.shapeCheckbox(configuration)
     }
 }
@@ -198,16 +197,12 @@ extension QuestionnaireElementCheckbox {
         icon.height?.priority = .almostRequired
 
         /// Layout button
-        if let upperView = upperView {
-            button.fix(top: (2.0, upperView), isRelative: true)
-        } else {
-            button.fix(top: (0.0, self.view), isRelative: false)
-        }
         button
             .fix(trailing: (8.0, self.view), relation: .greaterThan)
             .fix(leading: (0.0, icon), isRelative: true)
             .fix(width: button.intrinsicContentSize.width + 32.0)
             .fix(height: max(32.0, button.intrinsicContentSize.height))
+            .center(toY: self.view)
         button.leading?.priority = .required
 
         /// Layout parent view
