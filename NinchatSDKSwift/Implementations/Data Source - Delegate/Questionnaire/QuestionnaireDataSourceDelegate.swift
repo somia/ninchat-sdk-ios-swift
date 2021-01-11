@@ -102,13 +102,20 @@ extension QuestionnaireDataSourceDelegate {
 
 // MARK: - Cell Setup
 extension QuestionnaireDataSourceDelegate {
-    internal func setupSettable(view: inout QuestionnaireSettable, element: QuestionnaireElement) {
+    internal func setupSettable(element: QuestionnaireElement & QuestionnaireSettable) {
         let setAnswerState: QuestionnaireSettableState = (self.viewModel.redirectTargetPage(element, performClosures: false) ?? -1 >= 0) ? .set : .nothing
-        view.updateSetAnswers(self.viewModel.getAnswersForElement(element, presetOnly: false), state: setAnswerState)
+
+        if let checkbox = element as? QuestionnaireElementCheckbox, checkbox.subElements.count > 0 {
+            checkbox.subElements.compactMap({ $0.value as? QuestionnaireElementCheckbox }).forEach({
+                element.updateSetAnswers(viewModel.getAnswersForElement($0, presetOnly: false), configuration: $0.elementConfiguration, state: setAnswerState)
+            })
+        } else {
+            element.updateSetAnswers(viewModel.getAnswersForElement(element, presetOnly: false), configuration: element.elementConfiguration, state: setAnswerState)
+        }
     }
 
-    internal func setupSelectable(view: inout QuestionnaireOptionSelectableElement, element: QuestionnaireElement) {
-        view.onElementOptionSelected = { [view] option in
+    internal func setupSelectable(view: inout QuestionnaireOptionSelectableElement) {
+        view.onElementOptionSelected = { [view] element, option in
             guard self.viewModel.submitAnswer(key: element, value: option.value) else { return }
 
             /// Load the next element if the selected element was a radio or checkbox without any navigation block (redirect/logic)
@@ -119,7 +126,7 @@ extension QuestionnaireDataSourceDelegate {
                 }
             }
         }
-        view.onElementOptionDeselected = { _ in
+        view.onElementOptionDeselected = { element, _ in
             self.viewModel.removeAnswer(key: element)
         }
     }

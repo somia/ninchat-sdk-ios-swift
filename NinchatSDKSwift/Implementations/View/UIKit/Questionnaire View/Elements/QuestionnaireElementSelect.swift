@@ -49,7 +49,7 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
 
     // MARK: - QuestionnaireSettable
 
-    func updateSetAnswers(_ answer: AnyHashable?, state: QuestionnaireSettableState) {
+    func updateSetAnswers(_ answer: AnyHashable?, configuration: QuestionnaireConfiguration?, state: QuestionnaireSettableState) {
         guard let option = self.elementConfiguration?.options?.first(where: { $0.value == answer }) else { return }
         self.select(option: option, state: state)
         self.updateBorder()
@@ -57,8 +57,8 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
 
     // MARK: - QuestionnaireOptionSelectableElement
 
-    var onElementOptionSelected: ((ElementOption) -> ())?
-    var onElementOptionDeselected: ((ElementOption) -> ())?
+    var onElementOptionSelected: ((QuestionnaireElement, ElementOption) -> ())?
+    var onElementOptionDeselected: ((QuestionnaireElement, ElementOption) -> ())?
 
     // MARK: - Subviews - QuestionnaireElementWithTitleAndOptions
 
@@ -161,7 +161,7 @@ extension QuestionnaireElementSelect {
 
         switch state {
         case .set:
-            self.onElementOptionSelected?(option)
+            self.onElementOptionSelected?(self, option)
         case .nothing:
             debugger("Do nothing for Select element")
         }
@@ -172,7 +172,7 @@ extension QuestionnaireElementSelect {
         self.selectedOption.isHighlighted = false
         self.selectedOption.text = "Select".localized
         self.view.backgroundColor = normalBackgroundColor
-        self.onElementOptionDeselected?(option)
+        self.onElementOptionDeselected?(self, option)
     }
 }
 

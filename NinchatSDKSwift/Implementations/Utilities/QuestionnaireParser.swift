@@ -24,8 +24,14 @@ struct QuestionnaireParser {
         self.style = style
 
         self.items = self.configurations.reduce(into: [], { (result: inout [QuestionnaireItems], configuration: QuestionnaireConfiguration) in
-            func getView(from element: ElementType, index: Int) -> QuestionnaireElement? {
-                switch element {
+
+            var checkbox: QuestionnaireElementCheckbox?
+            func getView(from type: ElementType, index: Int) -> QuestionnaireElement? {
+                defer {
+                    if type != .checkbox { checkbox = nil }
+                }
+
+                switch type {
                 case .text:
                     return generate(from: configuration, index: index, ofType: QuestionnaireElementText.self)
                 case .select:
@@ -35,7 +41,16 @@ struct QuestionnaireParser {
                 case .textarea:
                     return generate(from: configuration, index: index, ofType: QuestionnaireElementTextArea.self)
                 case .checkbox:
-                    return generate(from: configuration, index: index, ofType: QuestionnaireElementCheckbox.self)
+                    // if consecutiveCheckboxes == nil => initiate and return
+                    if checkbox == nil {
+                        checkbox = generate(from: configuration, index: index, ofType: QuestionnaireElementCheckbox.self)
+                        return checkbox
+                    }
+
+                    // else => generate a checkbox item and append to the chain
+                    let element = generate(from: configuration, index: checkbox!.index+1, ofType: QuestionnaireElementCheckbox.self)
+                    checkbox?.appendView(element, configuration: configuration)
+                    return nil
                 case .input:
                     return generate(from: configuration, index: index, ofType: QuestionnaireElementTextField.self)
                 case .likert:
