@@ -57,6 +57,7 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
         if let checkbox = self.view.subviews.compactMap({ $0 as? Button }).first(where: { $0.titleLabel?.text == configuration?.label }) {
             checkbox.isSelected = answer as? Bool ?? false
             self.view.allSubviews.filter({ $0.tag == 100+checkbox.tag }).compactMap({ $0 as? UIImageView }).first?.isHighlighted = answer as? Bool ?? false
+            self.view.allSubviews.filter({ $0.tag == 200+checkbox.tag }).forEach({ $0.layer.borderColor = (answer as? Bool ?? false) ? self.iconBorderSelectedColor.cgColor : self.iconBorderNormalColor.cgColor })
         }
     }
 
@@ -69,6 +70,7 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
         if let checkbox = self.view.subviews.compactMap({ $0 as? Button }).first(where: { $0.title(for: .normal) == option.label }) {
             checkbox.isSelected = true
             self.view.allSubviews.filter({ $0.tag == 100+checkbox.tag }).compactMap({ $0 as? UIImageView }).first?.isHighlighted = true
+            self.view.allSubviews.filter({ $0.tag == 200+checkbox.tag }).forEach({ $0.layer.borderColor = self.iconBorderSelectedColor.cgColor })
         }
     }
 
@@ -76,6 +78,7 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
         if let checkbox = self.view.subviews.compactMap({ $0 as? Button }).first(where: { $0.title(for: .normal) == option.label }) {
             checkbox.isSelected = false
             self.view.allSubviews.filter({ $0.tag == 100+checkbox.tag }).compactMap({ $0 as? UIImageView }).first?.isHighlighted = false
+            self.view.allSubviews.filter({ $0.tag == 200+checkbox.tag }).forEach({ $0.layer.borderColor = self.iconBorderNormalColor.cgColor })
         }
     }
 
@@ -198,6 +201,7 @@ extension QuestionnaireElementCheckbox {
         imgViewContainer.isExclusiveTouch = false
         imgViewContainer.isUserInteractionEnabled = true
         imgViewContainer.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.onIconTapped(_:))))
+        imgViewContainer.tag = 300 + index
 
         let imageView = UIImageView(image: nil, highlightedImage: UIImage(named: "icon_checkbox_selected", in: .SDKBundle, compatibleWith: nil))
         imageView.tag = 200 + index
