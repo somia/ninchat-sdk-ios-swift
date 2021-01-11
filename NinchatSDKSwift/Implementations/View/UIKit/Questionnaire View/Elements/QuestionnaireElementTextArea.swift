@@ -42,7 +42,7 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
 
     // MARK: - QuestionnaireSettable
 
-    func updateSetAnswers(_ answer: AnyHashable?, state: QuestionnaireSettableState) {
+    func updateSetAnswers(_ answer: AnyHashable?, configuration: QuestionnaireConfiguration?, state: QuestionnaireSettableState) {
         guard let answer = answer as? String else { return }
         self.view.text = answer
 

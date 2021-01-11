@@ -97,11 +97,11 @@ extension NINQuestionnaireFormDataSourceDelegate {
             element.questionnaireStyle = .form
             element.overrideAssets(with: self.session?.internalDelegate)
 
-            if var view = element as? QuestionnaireSettable {
-                self.setupSettable(view: &view, element: element)
+            if let settableElement = element as? QuestionnaireSettable & QuestionnaireElement {
+                self.setupSettable(element: settableElement)
             }
             if var view = element as? QuestionnaireOptionSelectableElement {
-                self.setupSelectable(view: &view, element: element)
+                self.setupSelectable(view: &view)
             }
             if var view = element as? QuestionnaireFocusableElement {
                 self.setupFocusable(view: &view)

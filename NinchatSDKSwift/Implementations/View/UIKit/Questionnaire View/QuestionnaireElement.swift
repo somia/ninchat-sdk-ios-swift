@@ -133,8 +133,8 @@ extension QuestionnaireFocusableElement where Self:QuestionnaireElementTextField
 
 /// Add select/deselect closure for applicable elements (e.g. radio, checkbox)
 protocol QuestionnaireOptionSelectableElement {
-    var onElementOptionSelected: ((ElementOption) -> Void)? { get set }
-    var onElementOptionDeselected: ((ElementOption) -> Void)? { get set }
+    var onElementOptionSelected: ((QuestionnaireElement, ElementOption) -> Void)? { get set }
+    var onElementOptionDeselected: ((QuestionnaireElement, ElementOption) -> Void)? { get set }
 
     func deselect(option: ElementOption)
     func deselectAll()
@@ -196,5 +196,6 @@ enum QuestionnaireSettableState {
     case nothing
 }
 protocol QuestionnaireSettable {
-    func updateSetAnswers(_ answer: AnyHashable?, state: QuestionnaireSettableState)
+    /// `configuration` parameter is needed for grouped checkboxes where the answer has to be distinguished
+    func updateSetAnswers(_ answer: AnyHashable?, configuration: QuestionnaireConfiguration?, state: QuestionnaireSettableState)
 }
