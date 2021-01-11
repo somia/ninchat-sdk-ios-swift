@@ -36,7 +36,10 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle,
     }
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
-        self.title.frame.origin.y + self.title.intrinsicContentSize.height + CGFloat(self.view.height?.constant ?? 0) + self.padding
+        if self.subElements.count > 0 {
+            return self.title.frame.origin.y + self.title.intrinsicContentSize.height + CGFloat(self.view.height?.constant ?? 0) + self.padding
+        }
+        return CGFloat(self.view.height?.constant ?? 0)
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
@@ -224,7 +227,7 @@ extension QuestionnaireElementCheckbox {
         if let upperView = upperView {
             button.fix(top: (2.0, upperView), isRelative: true)
         } else {
-            button.fix(top: (0.0, self.view), isRelative: false)
+            button.fix(top: (2.0, self.view), isRelative: false)
         }
         button
             .fix(trailing: (8.0, self.view), relation: .greaterThan)
