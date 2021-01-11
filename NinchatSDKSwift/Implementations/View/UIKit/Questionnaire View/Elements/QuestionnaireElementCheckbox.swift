@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireOptionSelectableElement {
+final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, QuestionnaireSettable, QuestionnaireOptionSelectableElement {
 
     private var iconBorderNormalColor: UIColor! = .QGrayButton
     private var iconBorderSelectedColor: UIColor! = .QBlueButtonNormal
@@ -36,14 +36,13 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle,
     }
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
-        if self.subElements.count > 0 {
-            return self.title.frame.origin.y + self.title.intrinsicContentSize.height + CGFloat(self.view.height?.constant ?? 0) + self.padding
-        }
-        return CGFloat(self.view.height?.constant ?? 0)
+        let viewHeight = CGFloat(self.view.height?.constant ?? 0)
+
+        guard self.subElements.count > 0 else { return viewHeight }
+        return viewHeight - 2.0
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
-        self.overrideTitle(delegate: delegate)
         self.view.subviews.compactMap({ $0 as? Button }).forEach({ $0.overrideQuestionnaireAsset(with: delegate, isPrimary: $0.isSelected) })
         self.view.allSubviews.filter({ $0.tag >= 200 }).compactMap({ $0 as? UIImageView }).forEach({ $0.tint = delegate?.override(questionnaireAsset: .checkboxSelectedIndicator) ?? UIColor.QBlueButtonHighlighted })
 
@@ -82,9 +81,6 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle,
 
     // MARK: - Subviews - QuestionnaireElementWithTitleAndOptions + QuestionnaireElementHasButtons
 
-    private(set) lazy var title: UILabel = {
-        UILabel(frame: .zero)
-    }()
     private(set) lazy var view: UIView = {
         UIView(frame: .zero)
     }()
@@ -116,12 +112,18 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElementWithTitle,
     // MARK: - View Setup
 
     private func initiateView() {
-        self.addElementViews()
+        self.addSubview(view)
     }
 
     private func decorateView() {
         if self.view.subviews.count > 0 {
-            self.layoutElementViews()
+            view
+                .fix(leading: (8.0, self), trailing: (8.0, self))
+                .fix(top: (4.0, self), isRelative: false)
+                .fix(width: self.bounds.width)
+                .center(toX: self)
+            view.leading?.priority = .almostRequired
+            view.trailing?.priority = .almostRequired
         }
     }
 }
@@ -224,12 +226,8 @@ extension QuestionnaireElementCheckbox {
         icon.height?.priority = .almostRequired
 
         /// Layout button
-        if let upperView = upperView {
-            button.fix(top: (2.0, upperView), isRelative: true)
-        } else {
-            button.fix(top: (2.0, self.view), isRelative: false)
-        }
         button
+            .fix(top: (2.0, upperView ?? self.view), isRelative: upperView != nil)
             .fix(trailing: (8.0, self.view), relation: .greaterThan)
             .fix(leading: (0.0, icon), isRelative: true)
             .fix(width: button.intrinsicContentSize.width + 32.0)
@@ -237,9 +235,9 @@ extension QuestionnaireElementCheckbox {
 
         /// Layout parent view
         if let height = self.view.height {
-            height.constant += button.height?.constant ?? 0
+            height.constant += (button.height?.constant ?? 0) + 2.0
         } else {
-            self.view.fix(height: (button.height?.constant ?? 0) + 16.0)
+            self.view.fix(height: (button.height?.constant ?? 0) + 8.0)
         }
 
         upperView = button
