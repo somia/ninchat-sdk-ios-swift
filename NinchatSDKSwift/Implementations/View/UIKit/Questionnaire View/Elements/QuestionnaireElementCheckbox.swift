@@ -195,8 +195,9 @@ extension QuestionnaireElementCheckbox {
     private func generateIcon() -> (UIView, UIImageView) {
         let imgViewContainer = UIView(frame: .zero)
         imgViewContainer.backgroundColor = .clear
-        imgViewContainer.isUserInteractionEnabled = false
         imgViewContainer.isExclusiveTouch = false
+        imgViewContainer.isUserInteractionEnabled = true
+        imgViewContainer.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.onIconTapped(_:))))
 
         let imageView = UIImageView(image: nil, highlightedImage: UIImage(named: "icon_checkbox_selected", in: .SDKBundle, compatibleWith: nil))
         imageView.tag = 200 + index
@@ -241,5 +242,14 @@ extension QuestionnaireElementCheckbox {
         }
 
         upperView = button
+    }
+}
+
+// MARK: - Icon tap gestures
+extension QuestionnaireElementCheckbox {
+    @objc
+    private func onIconTapped(_ gesture: UITapGestureRecognizer) {
+        guard let imgView = gesture.view?.subviews.first(where: { $0.tag >= 200 }) as? UIImageView, let button = self.view.viewWithTag(imgView.tag - 100) as? Button else { return }
+        button.closure?(button)
     }
 }
