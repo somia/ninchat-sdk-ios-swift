@@ -9,7 +9,7 @@ import XCTest
 
 extension XCTest {
     func openAsset(forResource name: String, ofType type: String = "json") throws -> [String:AnyHashable]? {
-        let bundle = Bundle(for: QuestionnaireConverterTests.self)
+        let bundle = Bundle(for: QuestionnaireParserTests.self)
         if let path = bundle.path(forResource: name, ofType: type) {
             let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
             let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)

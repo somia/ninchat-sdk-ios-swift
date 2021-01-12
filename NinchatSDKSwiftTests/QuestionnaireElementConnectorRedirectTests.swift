@@ -88,7 +88,7 @@ final class QuestionnaireElementConnectorRedirectTests: XCTestCase {
         let targetView = connector.findTargetElement(for: targetQuestionnaire!)
         XCTAssertNotNil(targetView.0)
         XCTAssertNotNil(targetView.1)
-        XCTAssertEqual(targetView.1, 9)
+        XCTAssertEqual(targetView.1, 25)
     }
 
     // Acceptance
@@ -122,5 +122,17 @@ final class QuestionnaireElementConnectorRedirectTests: XCTestCase {
         XCTAssertNil(targetElement_2.1)
 
         waitForExpectations(timeout: 3.0)
+    }
+
+    func test_22_acceptance() {
+        let configuration = self.questionnaire_preAudience?.questionnaireConfiguration?.first(where: { $0.name == "BOOL_redirect" })
+        let targetElement = connector.findElementAndPageRedirect(for: true, in: configuration!, autoApply: false, performClosures: false)
+        XCTAssertNotNil(targetElement.0)
+        XCTAssertNotNil(targetElement.1)
+
+        XCTAssertEqual(targetElement.0?.count, 2)
+        XCTAssertNotNil(targetElement.0?[0] as? QuestionnaireElementText)
+        XCTAssertNotNil(targetElement.0?[1] as? QuestionnaireElementRadio)
+        XCTAssertEqual(targetElement.1, 1)
     }
 }

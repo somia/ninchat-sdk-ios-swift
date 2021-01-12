@@ -82,18 +82,11 @@ extension QuestionnaireDataSourceDelegate {
     }
 
     internal func onNextButtonTapped(elements: [QuestionnaireElement]?) {
-        /// In case the element's redirect/logic is not reachable through ´QuestionnaireOptionSelectableElement´ protocol
-        if let elements = elements, elements.count > 0, self.viewModel.askedPageNumber == nil {
-            if let page = self.viewModel.redirectTargetPage(for: "", autoApply: false) {
-                if page >= 0, self.showTargetPage(page: page) { return }
-                /// This is a _register or _complete closure
-                if page == -1 { return }
-            } 
-            if let page = self.viewModel.logicTargetPage(for: elements.reduce(into: [:], { $0[$1.elementConfiguration?.name ?? ""] = "" }), autoApply: false) {
-                if page >= 0, self.showTargetPage(page: page) { return }
-                /// This is a _register or _complete closure
-                if page == -1 { return }
-            }
+        /// The 'redirect' is not available for group elements, So if elements.count > 1, skip search for redirects
+        if let elements = elements, elements.count == 1, let page = self.viewModel.redirectTargetPage(elements[0], autoApply: false)  {
+            if page >= 0, self.showTargetPage(page: page) { return }
+            /// This is a _register or _complete closure
+            if page == -1 { return }
         }
 
         guard let nextPage = self.viewModel.goToNextPage() else { return }
@@ -109,32 +102,31 @@ extension QuestionnaireDataSourceDelegate {
 
 // MARK: - Cell Setup
 extension QuestionnaireDataSourceDelegate {
-    internal func setupSettable(view: inout QuestionnaireSettable, element: QuestionnaireElement) {
-        let setAnswerState: QuestionnaireSettableState = self.viewModel.resetAnswer(for: element) ? .set : .nothing
-        view.updateSetAnswers(self.viewModel.getAnswersForElement(element, presetOnly: false), state: setAnswerState)
+    internal func setupSettable(element: QuestionnaireElement & QuestionnaireSettable) {
+        let setAnswerState: QuestionnaireSettableState = (self.viewModel.redirectTargetPage(element, performClosures: false) ?? -1 >= 0) ? .set : .nothing
+
+        if let checkbox = element as? QuestionnaireElementCheckbox, checkbox.subElements.count > 0 {
+            checkbox.subElements.compactMap({ $0.value as? QuestionnaireElementCheckbox }).forEach({
+                element.updateSetAnswers(viewModel.getAnswersForElement($0, presetOnly: false), configuration: $0.elementConfiguration, state: setAnswerState)
+            })
+        } else {
+            element.updateSetAnswers(viewModel.getAnswersForElement(element, presetOnly: false), configuration: element.elementConfiguration, state: setAnswerState)
+        }
     }
 
-    internal func setupSelectable(view: inout QuestionnaireOptionSelectableElement, element: QuestionnaireElement) {
-        view.onElementOptionSelected = { [view] option in
+    internal func setupSelectable(view: inout QuestionnaireOptionSelectableElement) {
+        view.onElementOptionSelected = { [view] element, option in
             guard self.viewModel.submitAnswer(key: element, value: option.value) else { return }
-            if let page = self.viewModel.redirectTargetPage(for: option.value) {
-                if page >= 0, self.showTargetPage(page: page) { return }
-                /// This is a _register or _complete closure
-                if page == -1 { return }
-            }
-            if let page = self.viewModel.logicTargetPage(for: [element.elementConfiguration?.name ?? "": option.value], autoApply: false) {
-                if page >= 0, self.showTargetPage(page: page) { return }
-                /// This is a _register or _complete closure
-                if page == -1 { return }
-            }
+
             /// Load the next element if the selected element was a radio or checkbox without any navigation block (redirect/logic)
             /// It will perform only if the element is not the exit element provided to close the questionnaire
             if (view is QuestionnaireElementRadio || view is QuestionnaireElementCheckbox) {
-                guard !self.viewModel.shouldWaitForNextButton, !self.viewModel.isExitElement(view) else { return }
-                self.onNextButtonTapped(elements: [element])
+                if self.viewModel.isExitElement(view) || !self.viewModel.shouldWaitForNextButton {
+                    self.onNextButtonTapped(elements: [element])
+                }
             }
         }
-        view.onElementOptionDeselected = { _ in
+        view.onElementOptionDeselected = { element, _ in
             self.viewModel.removeAnswer(key: element)
         }
     }
@@ -168,9 +160,56 @@ extension QuestionnaireDataSourceDelegate {
     }
 
     private func showTargetPage(page: Int) -> Bool {
-        if self.viewModel.canGoToPage(page), !self.viewModel.shouldWaitForNextButton, self.viewModel.goToPage(page) {
+        if self.viewModel.requirementsSatisfied, self.viewModel.goToPage(page) {
             self.onUpdateCellContent?(); return true
         }
         return false
+    }
+}
+
+// MARK: - Register Audience
+extension QuestionnaireDataSourceDelegate {
+    internal func registerGroup(title: String, registerTitle: String) -> String {
+        let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) ?? "Close Chat"
+
+        /// https://github.com/somia/customer/wiki/Questionnaires#redirect
+        /// Singular element can have a redirect property to tell how we continue from that. Redirect cannot be used with a group or element inside group, but you must utilize logics.
+        return
+            """
+            [
+                {
+                    "name": "Epäilys",
+                    "type": "group",
+                    "buttons": {
+                        "back": false,
+                        "next": false
+                    },
+                    "elements": [
+                        {
+                            "element": "text",
+                            "name": "\(title)",
+                            "label": "\(registerTitle)"
+                        },
+                        {
+                            "element": "radio",
+                            "name": "\(title)-close",
+                            "label": "",
+                            "options": [
+                                {
+                                    "label": "\(closeTitle)",
+                                    "value": ""
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "register-logic",
+                    "logic": {
+                      "target": "_audienceRegisteredTarget"
+                    }
+                }
+            ]
+            """
     }
 }

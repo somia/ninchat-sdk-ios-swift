@@ -4,6 +4,7 @@
 // license that can be found in the LICENSE file.
 //
 
+import AnyCodable
 import Foundation
 import WebRTC
 
@@ -40,14 +41,17 @@ extension Dictionary where Key==String {
     }
 }
 
-extension Dictionary where Key==String, Value==String {
-    func filter(based dictionary: [String:String], keys: [String]) -> Self? {
+extension Dictionary where Key==String, Value==AnyHashable {
+    func filter<T:Equatable>(based dictionary: [String:T], keys: [String]) -> Self? {
         guard dictionary.keys.count > 0, self.keys.count > 0 else { return nil }
-        let result = self.filter(based: keys).filter { (key: String, value: String) in
-            if let regexPattern = dictionary[key], let regexResult = value.extractRegex(withPattern: regexPattern), regexResult.count > 0 {
+        let result = self.filter(based: keys).filter { (key, value) in
+            let dictValue: AnyHashable? = (dictionary[key] is AnyCodable) ? ((dictionary[key] as? AnyCodable)?.value as? AnyHashable) : dictionary[key] as? AnyHashable
+            let selfValue: AnyHashable? = (value is AnyCodable) ? ((value as? AnyCodable)?.value as? AnyHashable) : value
+
+            if let strValue = selfValue as? String, let regexPattern = dictValue as? String, let regexResult = strValue.extractRegex(withPattern: regexPattern), regexResult.count > 0 {
                 return true
             }
-            return dictionary[key] == value
+            return dictValue == selfValue
         }
 
         return (result.count > 0) ? result : nil

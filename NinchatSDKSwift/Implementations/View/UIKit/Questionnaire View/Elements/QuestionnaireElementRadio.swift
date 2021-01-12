@@ -45,7 +45,7 @@ class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Question
 
     // MARK: - QuestionnaireSettable
 
-    func updateSetAnswers(_ answer: AnyHashable?, state: QuestionnaireSettableState) {
+    func updateSetAnswers(_ answer: AnyHashable?, configuration: QuestionnaireConfiguration?, state: QuestionnaireSettableState) {
         guard let answer = answer as? String, let option = self.elementConfiguration?.options?.first(where: { $0.label == answer }), let button = self.view.subviews.compactMap({ $0 as? Button }).first(where: { $0.titleLabel?.text == option.label }) else { return }
         switch state {
         case .set:
@@ -57,8 +57,8 @@ class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Question
 
     // MARK: - QuestionnaireOptionSelectableElement
 
-    var onElementOptionSelected: ((ElementOption) -> ())?
-    var onElementOptionDeselected: ((ElementOption) -> ())?
+    var onElementOptionSelected: ((QuestionnaireElement, ElementOption) -> ())?
+    var onElementOptionDeselected: ((QuestionnaireElement, ElementOption) -> ())?
 
     func deselect(option: ElementOption) {
         guard let tag = self.elementConfiguration?.options?.firstIndex(where: { $0.label == option.label }) else { return }
@@ -143,9 +143,11 @@ extension QuestionnaireElementRadio {
     }
 
     internal func generateButton(for option: ElementOption, tag: Int) -> Button {
-        let view = Button(frame: .zero) { [weak self] button in
-            self?.applySelection(to: button)
-            button.isSelected ? self?.onElementOptionSelected?(option) : self?.onElementOptionDeselected?(option)
+        let view = Button(frame: .zero) { [weak self, option] button in
+            guard let `self` = self else { return }
+
+            self.applySelection(to: button)
+            button.isSelected ? self.onElementOptionSelected?(self, option) : self.onElementOptionDeselected?(self, option)
         }
 
         view.tag = tag + 1

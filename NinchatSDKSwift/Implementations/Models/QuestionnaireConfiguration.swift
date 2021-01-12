@@ -82,40 +82,57 @@ struct ButtonQuestionnaire: Codable {
 
 // MARK: - Logic
 struct LogicQuestionnaire: Codable {
-    let and: Array<[String:String]>?
-    let or: Array<[String:String]>?
+    let and: Array<[String:AnyCodable]>?
+    let or: Array<[String:AnyCodable]>?
     let target: String
-    let queue: String?
+    let queueId: String?
     let tags: [String]?
 
     var andKeys: [String]? {
         self.and?
                 .compactMap({ $0 })
-                .reduce(into: []) { (result: inout [String], dictionary: [String:String]) in
+                .reduce(into: []) { (result: inout [String], dictionary: [String:AnyCodable]) in
                     result.append(contentsOf: dictionary.keys.compactMap({ $0 }))
                 }
     }
     var orKeys: [String]? {
         self.or?
                 .compactMap({ $0 })
-                .reduce(into: []) { (result: inout [String], dictionary: [String:String]) in
+                .reduce(into: []) { (result: inout [String], dictionary: [String:AnyCodable]) in
                     result.append(contentsOf: dictionary.keys.compactMap({ $0 }))
                 }
     }
 
-    func satisfy(dictionary: [String:String]) -> Bool {
+    func satisfy(dictionary: [String:AnyHashable]) -> Bool {
         if let ands = self.and, ands.count > 0 {
             return ands.first(where: { dictionary.filter(based: $0, keys: self.andKeys ?? [])?.count == $0.keys.count }) != nil
         } else if let ors = self.or, ors.count > 0 {
             return ors.first(where: { dictionary.filter(based: $0, keys: self.orKeys ?? [])?.count != 0 }) != nil
         }
-        return false
+
+        /// if there is no "and"/"or", the block satisfies everything
+        return true
     }
 }
 
 // MARK: - Option
 struct ElementOption: Codable, Equatable {
-    let label, value: String
+    let label: String
+    var value: AnyHashable! {
+        set { _value = AnyCodable(newValue) }
+        get { _value?.value as? AnyHashable }
+    }
+    var _value: AnyCodable!
+
+    enum CodingKeys: String, CodingKey {
+        case _value = "value"
+        case label
+    }
+
+    init(label: String, value: AnyHashable?) {
+        self.label = label
+        self.value = value
+    }
 
     static func ==(lhs: ElementOption, rhs: ElementOption) -> Bool {
         lhs.label == rhs.label
@@ -124,8 +141,22 @@ struct ElementOption: Codable, Equatable {
 
 // MARK: - Redirect
 struct ElementRedirect: Codable {
-    let pattern: String?
     let target: String
+    var pattern: AnyHashable? {
+        set { _pattern = AnyCodable(newValue) }
+        get { _pattern?.value as? AnyHashable }
+    }
+    var _pattern: AnyCodable?
+    
+    enum CodingKeys: String, CodingKey {
+        case _pattern = "pattern"
+        case target
+    }
+    
+    init(pattern: AnyHashable?, target: String) {
+        self.target = target
+        self.pattern = pattern
+    }
 }
 
 // MARK: - QuestionnaireConfigurationTypes
