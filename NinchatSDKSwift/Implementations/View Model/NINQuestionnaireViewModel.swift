@@ -231,7 +231,7 @@ extension NINQuestionnaireViewModelImpl {
 extension NINQuestionnaireViewModelImpl {
     var questionnaireAnswers: NINLowLevelClientProps {
         /// taken from `https://stackoverflow.com/a/43615143/7264553`
-        NINLowLevelClientProps.initiate(metadata: self.answers.merging(self.preAnswers) { (current,new) in new })
+        NINLowLevelClientProps.initiate(metadata: self.answers.filter({ $0.value as? Bool != false }).merging(self.preAnswers) { (current,new) in new })
     }
 
     var requirementsSatisfied: Bool {
