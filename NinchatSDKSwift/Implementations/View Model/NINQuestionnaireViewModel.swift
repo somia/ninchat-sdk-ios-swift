@@ -297,6 +297,11 @@ extension NINQuestionnaireViewModelImpl {
         } else if !presetOnly, let value = self.answers[configuration.name] {
             return value
         }
+        /// Return 'false' answer as default for checkbox
+        /// see `https://github.com/somia/mobile/issues/308`
+        else if element is QuestionnaireElementCheckbox {
+            return false
+        }
         return nil
     }
 
