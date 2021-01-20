@@ -140,7 +140,7 @@ extension Button {
     }
 }
 
-/// QuestionnaireElement and  SubElements
+/// QuestionnaireElement and SubElements
 extension QuestionnaireElementCheckbox {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
         elementConfiguration = configuration
@@ -179,7 +179,7 @@ extension QuestionnaireElementCheckbox {
 
             let option = ElementOption(label: label, value: button.isSelected)
             button.isSelected ? self.select(option: option) : self.deselect(option: option)
-            button.isSelected ? self.onElementOptionSelected?(element, option) : self.onElementOptionDeselected?(element, option)
+            self.onElementOptionSelected?(element, option)
         }
 
         view.tag = 100 + index
