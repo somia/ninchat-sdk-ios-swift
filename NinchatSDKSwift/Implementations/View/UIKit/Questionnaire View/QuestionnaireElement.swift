@@ -199,3 +199,9 @@ protocol QuestionnaireSettable {
     /// `configuration` parameter is needed for grouped checkboxes where the answer has to be distinguished
     func updateSetAnswers(_ answer: AnyHashable?, configuration: QuestionnaireConfiguration?, state: QuestionnaireSettableState)
 }
+
+/// Submit a default answer
+protocol QuestionnaireElementHasDefaultAnswer {
+    var didSubmitDefaultAnswer: Bool { get }
+    var defaultAnswer: Array<(QuestionnaireElement,ElementOption)>? { get }
+}

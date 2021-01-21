@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, QuestionnaireSettable, QuestionnaireOptionSelectableElement {
+final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, QuestionnaireSettable, QuestionnaireOptionSelectableElement, QuestionnaireElementHasDefaultAnswer {
 
     private var iconBorderNormalColor: UIColor! = .QGrayButton
     private var iconBorderSelectedColor: UIColor! = .QBlueButtonNormal
@@ -40,6 +40,18 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
 
         guard self.subElements.count > 0 else { return viewHeight }
         return viewHeight - 2.0
+    }
+
+    // MARK: - QuestionnaireElementHasDefaultAnswer
+
+    var didSubmitDefaultAnswer: Bool = false
+    var defaultAnswer: Array<(QuestionnaireElement,ElementOption)>? {
+        guard !didSubmitDefaultAnswer else { return nil }
+        defer { didSubmitDefaultAnswer = true }
+
+        return self.subElements.values.reduce(into: []) { (answers: inout Array<(QuestionnaireElement,ElementOption)>, element: QuestionnaireElement) in
+            answers.append((element, ElementOption(label: element.elementConfiguration?.label ?? "", value: false)))
+        }
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
