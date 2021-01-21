@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, QuestionnaireSettable, QuestionnaireOptionSelectableElement {
+final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, QuestionnaireSettable, QuestionnaireOptionSelectableElement, QuestionnaireElementHasDefaultAnswer {
 
     private var iconBorderNormalColor: UIColor! = .QGrayButton
     private var iconBorderSelectedColor: UIColor! = .QBlueButtonNormal
@@ -40,6 +40,18 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
 
         guard self.subElements.count > 0 else { return viewHeight }
         return viewHeight - 2.0
+    }
+
+    // MARK: - QuestionnaireElementHasDefaultAnswer
+
+    var didSubmitDefaultAnswer: Bool = false
+    var defaultAnswer: Array<(QuestionnaireElement,ElementOption)>? {
+        guard !didSubmitDefaultAnswer else { return nil }
+        defer { didSubmitDefaultAnswer = true }
+
+        return self.subElements.values.reduce(into: []) { (answers: inout Array<(QuestionnaireElement,ElementOption)>, element: QuestionnaireElement) in
+            answers.append((element, ElementOption(label: element.elementConfiguration?.label ?? "", value: false)))
+        }
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
@@ -140,7 +152,7 @@ extension Button {
     }
 }
 
-/// QuestionnaireElement and  SubElements
+/// QuestionnaireElement and SubElements
 extension QuestionnaireElementCheckbox {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
         elementConfiguration = configuration
@@ -179,7 +191,7 @@ extension QuestionnaireElementCheckbox {
 
             let option = ElementOption(label: label, value: button.isSelected)
             button.isSelected ? self.select(option: option) : self.deselect(option: option)
-            button.isSelected ? self.onElementOptionSelected?(element, option) : self.onElementOptionDeselected?(element, option)
+            self.onElementOptionSelected?(element, option)
         }
 
         view.tag = 100 + index

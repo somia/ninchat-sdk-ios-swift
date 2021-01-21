@@ -105,11 +105,16 @@ struct LogicQuestionnaire: Codable {
 
     func satisfy(dictionary: [String:AnyHashable]) -> Bool {
         if let ands = self.and, ands.count > 0 {
-            return ands.first(where: { dictionary.filter(based: $0, keys: self.andKeys ?? [])?.count == $0.keys.count }) != nil
+            return ands.first(where: {
+                guard let targets = dictionary.filter(based: $0, keys: self.andKeys ?? []) else { return false }
+                return targets.count == $0.keys.count
+            }) != nil
         } else if let ors = self.or, ors.count > 0 {
-            return ors.first(where: { dictionary.filter(based: $0, keys: self.orKeys ?? [])?.count != 0 }) != nil
+            return ors.first(where: {
+                guard let targets = dictionary.filter(based: $0, keys: self.orKeys ?? []) else { return false }
+                return targets.count != 0
+            }) != nil
         }
-
         /// if there is no "and"/"or", the block satisfies everything
         return true
     }

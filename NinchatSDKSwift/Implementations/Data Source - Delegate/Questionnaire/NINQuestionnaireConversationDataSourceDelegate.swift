@@ -185,6 +185,11 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         element.questionnaireStyle = .conversation
         element.overrideAssets(with: self.session?.internalDelegate)
 
+        if let elementWithDefaultAnswers = element as? QuestionnaireElementHasDefaultAnswer {
+            elementWithDefaultAnswers.defaultAnswer?.forEach { [weak self] element, option in
+                self?.setupDefaultAnswers(element: element, option: option)
+            }
+        }
         if let settableElement = element as? QuestionnaireSettable & QuestionnaireElement {
             self.setupSettable(element: settableElement)
         }
