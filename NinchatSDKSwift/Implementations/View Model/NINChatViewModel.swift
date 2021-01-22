@@ -62,6 +62,7 @@ final class NINChatViewModelImpl: NINChatViewModel {
     private var iceCandidates: [RTCIceCandidate] = []
     private var isOnBackgroundTask: Bool = false
     private var client: NINChatWebRTCClient?
+    private var timer: Timer?
 
     var onChannelClosed: (() -> Void)?
     var onQueueUpdated: (() -> Void)?
@@ -221,6 +222,16 @@ extension NINChatViewModelImpl {
     
     func updateWriting(state: Bool) {
         try? self.sessionManager.update(isWriting: state, completion: { _ in })
+        timer?.invalidate()
+        timer = nil
+        
+        /// According to `https://github.com/somia/mobile/issues/306`
+        if state {
+            timer = Timer.scheduledTimer(withTimeInterval: 30.0, repeats: false) { [weak self] timer in
+                debugger("writing indicator timed out")
+                try? self?.sessionManager.update(isWriting: false) { _ in  }
+            }
+        }
     }
 
     func loadHistory(completion: @escaping (Error?) -> Void) {
