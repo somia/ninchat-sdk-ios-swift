@@ -155,9 +155,7 @@ extension ChatInputControls: UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {
         self.updatePlaceholder()
-        if !self.isWriting {
-            self.isWriting = true
-        }
+        self.isWriting = true
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
