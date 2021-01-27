@@ -12,17 +12,19 @@ final class FileInfo: Codable {
     var mimeType: String!
     var size: Int!
     var url: String?
+    var thumbnailUrl: String?
     var urlExpiry: Date?
     var aspectRatio: Double?
     
     // MARK: - Initializer
     
-    init(fileID: String, name: String, mimeType: String, size: Int, url: String? = nil, urlExpiry: Date? = nil) {
+    init(fileID: String, name: String, mimeType: String, size: Int, url: String? = nil, thumbnailUrl: String? = nil, urlExpiry: Date? = nil) {
         self.fileID = fileID
         self.name = name
         self.mimeType = mimeType
         self.size = size
         self.url = url
+        self.thumbnailUrl = thumbnailUrl
         self.urlExpiry = urlExpiry
     }
     
@@ -66,30 +68,15 @@ final class FileInfo: Codable {
                 if let error = error {
                     completion(error, false)
                 } else if let info = fileInfo {
-                    let file = FileInfo(json: info)
-
-                    self?.url = file.url
-                    self?.urlExpiry = file.urlExpiry
-                    self?.aspectRatio = file.aspectRatio
+                    self?.url = info["url"] as? String
+                    self?.urlExpiry = info["urlExpiry"] as? Date
+                    self?.thumbnailUrl = info["thumbnailUrl"] as? String
+                    self?.aspectRatio = info["aspectRatio"] as? Double
                     completion(nil, true)
                 }
             }
         } catch {
             completion(error, false)
-        }
-    }
-    
-    // MARK: - Codable object
-    
-    struct FileInfo: Codable {
-        let url: String?
-        let urlExpiry: Date?
-        let aspectRatio: Double?
-        
-        init(json: [String:Any]) {
-            self.url = json["url"] as? String
-            self.urlExpiry = json["urlExpiry"] as? Date
-            self.aspectRatio = json["aspectRatio"] as? Double
         }
     }
 }
