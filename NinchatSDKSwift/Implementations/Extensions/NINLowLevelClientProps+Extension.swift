@@ -452,6 +452,7 @@ extension NINLowLevelClientProps: NINLowLevelICEInfoProps {
 
 protocol NINLowLevelFileInfoProps {
     var fileURL: NINResult<String> { get }
+    var thumbnailURL: NINResult<String> { get }
     var urlExpiry: NINResult<Date> { get }
     var thumbnail: NINResult<NINLowLevelClientProps> { get }
     var thumbnailSize: NINResult<CGSize> { get }
@@ -463,6 +464,10 @@ protocol NINLowLevelFileInfoProps {
 extension NINLowLevelClientProps: NINLowLevelFileInfoProps {
     var fileURL: NINResult<String> {
         get { self.get(forKey: "file_url") }
+    }
+
+    var thumbnailURL: NINResult<String> {
+        get { self.get(forKey: "thumbnail_url") }
     }
 
     var urlExpiry: NINResult<Date> {
