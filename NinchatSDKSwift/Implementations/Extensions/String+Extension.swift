@@ -104,3 +104,9 @@ extension String {
         return (try? JSONSerialization.jsonObject(with: data, options: .allowFragments)).flatMap { $0 as? T }
     }
 }
+
+extension String {
+    func fetchImage(completion: ((Data) -> Void)? = nil) {
+        URL(string: self)?.fetchImage(completion: completion)
+    }
+}
