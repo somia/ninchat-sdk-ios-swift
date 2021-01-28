@@ -78,6 +78,9 @@ protocol NINChatSessionMessenger: class {
     /* A reference to currently described queue, used for setting queue permissions within the chat view. */
     var describedQueue: Queue? { get }
 
+    /* The realmID that is set when the instance is initiated. **/
+    var realmID: String? { get }
+
     /*
     * The list that keeps a temporary record of `ComposeMessageView` states
     * To satisfy the issue `https://github.com/somia/mobile/issues/218`
@@ -110,6 +113,9 @@ protocol NINChatSessionMessenger: class {
 protocol NINChatSessionAttachment: class {
     /** Describe a file by its ID. */
     func describe(file id: String, completion: @escaping (Error?, [String:Any]?) -> Void) throws
+
+    /* Describe queues for a realm by their IDs. **/
+    func describe(realm id: String, queuesID: [String]?, completion: @escaping CompletionWithError) throws
 }
 
 protocol NINChatSessionTranslation: class {

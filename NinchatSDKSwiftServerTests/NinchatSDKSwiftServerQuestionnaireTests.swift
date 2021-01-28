@@ -36,6 +36,34 @@ final class NinchatSDKSwiftServerQuestionnaireTests: XCTestCase {
         }
         waitForExpectations(timeout: 15.0)
     }
+
+    func test_1_describeQueues() {
+        var viewModel: NINQuestionnaireViewModel!
+        let expect = self.expectation(description: "Expected to describe all queues mentioned in the configurations")
+
+        sessionManager.updateSecureMetadata()
+        sessionManager.fetchSiteConfiguration(config: Session.configurationKey, environments: nil) { error in
+            XCTAssertNil(error)
+
+            try! self.sessionManager.openSession { _, _, error in
+                XCTAssertNil(error)
+
+                try! self.sessionManager.list(queues: self.sessionManager.siteConfiguration.audienceQueues) { error in
+                    XCTAssertNil(error)
+                    XCTAssertFalse(self.sessionManager.queues.contains(where: { $0.queueID == "7s1gafig00ofg" }))
+                    XCTAssertFalse(self.sessionManager.queues.contains(where: { $0.queueID == "76nr0l4m00t5" }))
+
+                    viewModel = NINQuestionnaireViewModelImpl(sessionManager: self.sessionManager, audienceMetadata: self.sessionManager.audienceMetadata, questionnaireType: .pre)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+                        XCTAssertTrue(self.sessionManager.queues.contains(where: { $0.queueID == "7s1gafig00ofg" }))
+                        XCTAssertTrue(self.sessionManager.queues.contains(where: { $0.queueID == "76nr0l4m00t5" }))
+                        expect.fulfill()
+                    }
+                }
+            }
+        }
+        waitForExpectations(timeout: 15.0)
+    }
 }
 
 private extension NINChatSessionManagerImpl {

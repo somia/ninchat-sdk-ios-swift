@@ -70,7 +70,7 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         }
     }
 
-    func test_21_setPreAnswers() throws {
+    func test_21_setPreAnswers() {
         self.viewModel?.pageNumber = 0
 
         do {
