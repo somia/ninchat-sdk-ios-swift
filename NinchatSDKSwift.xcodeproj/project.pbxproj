@@ -208,6 +208,7 @@
 		9810520368704C8E3C7F2D92 /* Pods_NinchatSDKSwiftServerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6176315081A11762D37BC6C /* Pods_NinchatSDKSwiftServerTests.framework */; };
 		A9AB26D31FF8CC4A41698EB5 /* Pods_NinchatSDKSwiftTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FEAD27BEEC9ED9A48EB128E /* Pods_NinchatSDKSwiftTests.framework */; };
 		B704E3E68829ED0963294E84 /* NSUserDefaults+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B704E5FC177573DF56D2369A /* NSUserDefaults+Extension.swift */; };
+		B704E8410F0ECA2A17505879 /* URL+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B704E5C0EFFB626F12366601 /* URL+Extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -440,6 +441,7 @@
 		91A16F9F20590A73609F0DDB /* UITextField+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UITextField+Extension.swift"; sourceTree = "<group>"; };
 		91A16FA13B1F62E386352B88 /* NINSessionCredentials.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINSessionCredentials.swift; sourceTree = "<group>"; };
 		91A16FEAA858008AD23DF96D /* NinchatSDKSwiftServerMessengerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NinchatSDKSwiftServerMessengerTests.swift; sourceTree = "<group>"; };
+		B704E5C0EFFB626F12366601 /* URL+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL+Extension.swift"; sourceTree = "<group>"; };
 		B704E5FC177573DF56D2369A /* NSUserDefaults+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSUserDefaults+Extension.swift"; sourceTree = "<group>"; };
 		CE774BD7EED85980393E55AF /* Pods-NinchatSDKSwiftTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftTests.release.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests.release.xcconfig"; sourceTree = "<group>"; };
 		D463517AB20A2F6A738E2978 /* Pods-NinchatSDKSwiftUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftUITests.debug.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftUITests/Pods-NinchatSDKSwiftUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -700,6 +702,7 @@
 				91A16739D24E30A3D062D285 /* Array+Extension.swift */,
 				91A16E7CDA2F9D24FF1BE1DC /* Thread+Extension.swift */,
 				B704E5FC177573DF56D2369A /* NSUserDefaults+Extension.swift */,
+				B704E5C0EFFB626F12366601 /* URL+Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1477,6 +1480,7 @@
 				91A16813665172FFFA81A455 /* NINChatError.swift in Sources */,
 				91A162DDA99D9DDB9D0B8436 /* Thread+Extension.swift in Sources */,
 				B704E3E68829ED0963294E84 /* NSUserDefaults+Extension.swift in Sources */,
+				B704E8410F0ECA2A17505879 /* URL+Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

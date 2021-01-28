@@ -8,39 +8,20 @@ import UIKit
 
 extension UIImageView {
     func image(from url: String?, completion: ((Data) -> Void)? = nil) {
-        guard let urlStr = url  else { return }
-        self.image(from: URL(string: urlStr), completion: completion)
+        self.image(from: URL(string: url ?? ""), completion: completion)
     }
     
     func image(from url: URL?, completion: ((Data) -> Void)? = nil) {
-        guard let url = url else { return }
-    
-        URLSession.shared.dataTask(with: URLRequest(url: url, cachePolicy: .returnCacheDataElseLoad)) { (data: Data?, response: URLResponse?, error: Error?) in
-            guard
-                let httpURLResponse = response as? HTTPURLResponse, httpURLResponse.statusCode == 200,
-                let mimeType = response?.mimeType, mimeType.hasPrefix("image"),
-                let data = data, error == nil,
-                let image = UIImage(data: data)
-            else { return }
-        
+        url?.fetchImage { [weak self] data in
             DispatchQueue.main.async() {
-                self.image = image
+                self?.image = UIImage(data: data)
                 completion?(data)
             }
-        }.resume()
+        }
     }
 
     func fetchImage(from url: URL?, completion: ((Data) -> Void)? = nil) {
-        guard let url = url else { return }
-        URLSession.shared.dataTask(with: URLRequest(url: url, cachePolicy: .returnCacheDataElseLoad)) { (data: Data?, response: URLResponse?, error: Error?) in
-            guard
-                let httpURLResponse = response as? HTTPURLResponse, httpURLResponse.statusCode == 200,
-                let mimeType = response?.mimeType, mimeType.hasPrefix("image"),
-                let data = data, error == nil
-            else { return }
-
-            DispatchQueue.main.async() { completion?(data) }
-        }.resume()
+        url?.fetchImage(completion: completion)
     }
 
     var tint: UIColor? {

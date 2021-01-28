@@ -103,7 +103,7 @@ extension QuestionnaireDataSourceDelegate {
 // MARK: - Cell Setup
 extension QuestionnaireDataSourceDelegate {
     internal func setupDefaultAnswers(element: QuestionnaireElement, option: ElementOption) {
-        self.viewModel.submitAnswer(key: element, value: option.value)
+        _ = self.viewModel.submitAnswer(key: element, value: option.value)
     }
 
     internal func setupSettable(element: QuestionnaireElement & QuestionnaireSettable) {

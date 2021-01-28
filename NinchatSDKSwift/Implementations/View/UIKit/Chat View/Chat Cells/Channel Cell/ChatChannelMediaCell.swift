@@ -12,6 +12,7 @@ protocol ChannelMediaCellDelegate {
 
 protocol ChannelMediaCell {
     var cachedImage: [String:UIImage]? { get }
+    var originalImage: UIImage? { set get }
 
     /// Outlets
     var parentView: UIView! { get set }
@@ -47,10 +48,10 @@ extension ChannelMediaCell where Self:ChatChannelCell {
         /// Make sure we have an image tap recognizer in place
         self.resetImageLayout()
         
-        if attachment.isImage, let imageURL = attachment.url {
+        if attachment.isImage {
             self.videoPlayIndicator.isHidden = true
             self.messageImageView.contentMode = .scaleAspectFit
-            self.updateImage(from: attachment, imageURL: imageURL, fromCache, asynchronous, message.series)
+            self.updateImage(from: attachment, thumbnailUrl: attachment.thumbnailUrl, imageURL: attachment.url, fromCache, asynchronous, message.series)
         } else if attachment.isVideo, let videoURL = attachment.url {
             self.videoPlayIndicator.isHidden = false
             self.messageImageView.contentMode = .scaleAspectFill
@@ -65,21 +66,59 @@ extension ChannelMediaCell where Self:ChatChannelCell {
         /// For video we must fetch the thumbnail image
         thumbnailManager.fetchVideoThumbnail(fromURL: videoURL) { [weak self] error, fromCache, thumbnail in
             if error != nil { Toast.show(message: .error("Failed to get video thumbnail")); return }
-            self?.updateMessageImageView(attachment: attachment, imageURL: nil, image: thumbnail, asynchronous: asynchronous, isSeries: isSeries)
+            self?.updateMessageImageView(attachment: attachment, thumbnailUrl: nil, imageURL: nil, image: thumbnail, asynchronous: asynchronous, isSeries: isSeries)
         }
     }
     
     /// asynchronous = YES implies we're calling this asynchronously from the
     /// `updateInfo(session:completion:)` completion block (meaning it did a network update)
-    private func updateImage(from attachment: FileInfo, imageURL: String, _ fromCache: Bool, _ asynchronous: Bool, _ isSeries: Bool) {
+    private func updateImage(from attachment: FileInfo, thumbnailUrl: String?, imageURL: String?, _ fromCache: Bool, _ asynchronous: Bool, _ isSeries: Bool) {
         if fromCache, let id = self.message?.messageID, let image = self.cachedImage?[id] {
-            self.updateMessageImageView(attachment: attachment, imageURL: nil, image: image, asynchronous: asynchronous, isSeries: isSeries); return
+            self.updateMessageImageView(attachment: attachment, thumbnailUrl: nil, imageURL: nil, image: image, asynchronous: asynchronous, isSeries: isSeries); return
         }
-        self.updateMessageImageView(attachment: attachment, imageURL: imageURL, image: nil, asynchronous: asynchronous, isSeries: isSeries)
+        self.updateMessageImageView(attachment: attachment, thumbnailUrl: thumbnailUrl, imageURL: imageURL, image: nil, asynchronous: asynchronous, isSeries: isSeries)
     }
 
-    private func updateMessageImageView(attachment: FileInfo, imageURL: String?, image: UIImage?, asynchronous: Bool, isSeries: Bool) {
-        func updateView() {
+    private func updateMessageImageView(attachment: FileInfo, thumbnailUrl: String?, imageURL: String?, image: UIImage?, asynchronous: Bool, isSeries: Bool) {
+        let dispatchGroup = DispatchGroup()
+
+        dispatchGroup.enter()
+        DispatchQueue.main.async {
+            defer { dispatchGroup.leave() }
+
+            if let image = image {
+                self.messageImageView.image = image
+                (self as? ChannelMediaCellDelegate)?.didLoadAttachment(image)
+            }
+            /// Load the image from cache first
+            else if let id = self.message?.messageID, let image = self.cachedImage?[id] {
+                self.messageImageView.image = image
+            }
+            /// Load the thumbnail image in message image view over HTTP or from local cache
+            else if let thumbnailUrl = thumbnailUrl {
+                self.messageImageView.fetchImage(from: URL(string: thumbnailUrl)) { [weak self, message = self.message] data in
+                    DispatchQueue.main.async {
+                        if self?.message?.messageID != message?.messageID { debugger("** ** Dismiss unrelated attachment"); return }
+                        self?.messageImageView.image = UIImage(data: data)
+
+                        (self as? ChannelMediaCellDelegate)?.didLoadAttachment(UIImage(data: data))
+                    }
+                }
+            }
+        }
+
+        /// Load the image in message image view over HTTP in the background for later uses
+        dispatchGroup.enter()
+        if let imageURL = imageURL, image == nil {
+            DispatchQueue.global(qos: .background).async {
+                imageURL.fetchImage { [weak self] data in
+                    self?.originalImage = UIImage(data: data)
+                    dispatchGroup.leave()
+                }
+            }
+        }
+
+        dispatchGroup.notify(queue: DispatchQueue.main) {
             if self.set(aspect: attachment.aspectRatio, isSeries) {
                 guard !self.constraintsSet, !self.isReloading  else { return }
                 debugger("Cell's constraints are not set and the cell is not loading => reload frames")
@@ -87,31 +126,6 @@ extension ChannelMediaCell where Self:ChatChannelCell {
                 /// We do this regardless of fromCache -value as this method may have been called asynchronously
                 /// from `updateInfo(session:completion:)` completion block in populate method.
                 self.delegate?.onConstraintsUpdate(cell: self, withAnimation: asynchronous)
-            }
-        }
-
-        DispatchQueue.main.async {
-            if let image = image {
-                self.messageImageView.image = image
-                (self as? ChannelMediaCellDelegate)?.didLoadAttachment(image)
-                 updateView()
-            }
-            /// Load the image from cache first
-            else if let id = self.message?.messageID, let image = self.cachedImage?[id] {
-                self.messageImageView.image = image
-                updateView()
-            }
-            /// Load the image in message image view over HTTP or from local cache
-            else if let imageURL = imageURL {
-                self.messageImageView.fetchImage(from: URL(string: imageURL)) { [weak self, message = self.message] data in
-                    DispatchQueue.main.async {
-                        if self?.message?.messageID != message?.messageID { debugger("** ** Dismiss unrelated attachment"); return }
-                        self?.messageImageView.image = UIImage(data: data)
-
-                        (self as? ChannelMediaCellDelegate)?.didLoadAttachment(UIImage(data: data))
-                        updateView()
-                    }
-                }
             }
         }
     }
@@ -135,6 +149,7 @@ extension ChannelMediaCell where Self:ChatChannelCell {
 
 final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell, ChannelMediaCellDelegate {
     var cachedImage: [String:UIImage]? = [:]
+    var originalImage: UIImage?
     @IBOutlet weak var parentView: UIView!
     @IBOutlet weak var messageImageViewContainer: UIView! {
         didSet {
@@ -171,7 +186,7 @@ final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell, Cha
         if attachment.isVideo {
             /// Will open video player
             self.onImageTapped?(attachment, nil)
-        } else if attachment.isImage, let image = self.messageImageView.image {
+        } else if attachment.isImage, let image = self.originalImage {
             /// Will show full-screen image viewer
             self.onImageTapped?(attachment, image)
         }
@@ -187,6 +202,7 @@ final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell, Cha
 
 final class ChatChannelMediaOthersCell: ChatChannelOthersCell, ChannelMediaCell, ChannelMediaCellDelegate {
     var cachedImage: [String:UIImage]? = [:]
+    var originalImage: UIImage?
     @IBOutlet weak var parentView: UIView!
     @IBOutlet weak var messageImageViewContainer: UIView! {
         didSet {
@@ -223,7 +239,7 @@ final class ChatChannelMediaOthersCell: ChatChannelOthersCell, ChannelMediaCell,
         if attachment.isVideo {
             /// Will open video player
             self.onImageTapped?(attachment, nil)
-        } else if attachment.isImage, let image = self.messageImageView.image {
+        } else if attachment.isImage, let image = self.originalImage {
             /// Will show full-screen image viewer
             self.onImageTapped?(attachment, image)
         }
