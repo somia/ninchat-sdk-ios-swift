@@ -8,6 +8,7 @@ import UIKit
 
 protocol QuestionnaireElementConnector {
     var logicContainsTags: ((LogicQuestionnaire?) -> Void)? { get set }
+    var logicContainsQueueID: ((LogicQuestionnaire?) -> Void)? { get set }
     var onRegisterTargetReached: ((LogicQuestionnaire?, ElementRedirect?, _ autoApply: Bool) -> Void)? { get set }
     var onCompleteTargetReached: ((LogicQuestionnaire?, ElementRedirect?, _ autoApply: Bool) -> Void)? { get set }
 
@@ -27,6 +28,7 @@ struct QuestionnaireElementConnectorImpl: QuestionnaireElementConnector {
     }
 
     var logicContainsTags: ((LogicQuestionnaire?) -> Void)?
+    var logicContainsQueueID: ((LogicQuestionnaire?) -> Void)?
     var onRegisterTargetReached: ((LogicQuestionnaire?, ElementRedirect?, _ autoApply: Bool) -> Void)?
     var onCompleteTargetReached: ((LogicQuestionnaire?, ElementRedirect?, _ autoApply: Bool) -> Void)?
 
@@ -113,6 +115,9 @@ extension QuestionnaireElementConnectorImpl {
         if block.satisfy(dictionary: answers) {
             if let tags = block.tags, tags.count > 0 {
                 self.logicContainsTags?(block)
+            }
+            if let queueId = block.queueId, !queueId.isEmpty {
+                self.logicContainsQueueID?(block)
             }
 
             if block.target == "_register", performClosures {
