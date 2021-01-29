@@ -40,6 +40,7 @@ class QuestionnaireCell: UITableViewCell {
                 else { return }
 
             usernameLabel.text = sessionManager?.siteConfiguration.audienceQuestionnaireUserName ?? ""
+            usernameLabel.font = .ninchat
             if let avatar = sessionManager?.siteConfiguration.audienceQuestionnaireAvatar as? String, !avatar.isEmpty {
                 userAvatar.image(from: avatar)
             } else {
