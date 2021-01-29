@@ -18,7 +18,7 @@ protocol NINChatRTCProtocol {
     typealias RTCCallReceive = (ChannelUser?, Error?) -> Void
     typealias RTCCallInitial = (Error?, NINChatWebRTCClient?) -> Void
     typealias RTCCallHangup = () -> Void
-    
+
     func listenToRTCSignaling(delegate: NINChatWebRTCClientDelegate?, onCallReceived: @escaping RTCCallReceive, onCallInitiated: @escaping RTCCallInitial, onCallHangup: @escaping RTCCallHangup)
     func pickup(answer: Bool, completion: @escaping (Error?) -> Void)
     func hangup(completion: @escaping (Error?) -> Void)
@@ -71,10 +71,10 @@ final class NINChatViewModelImpl: NINChatViewModel {
 
     init(sessionManager: NINChatSessionManager) {
         self.sessionManager = sessionManager
-        
+
         self.setupListeners()
     }
-    
+
     private func setupListeners() {
         self.sessionManager.onChannelClosed = { [weak self] in
             self?.onChannelClosed?()
@@ -108,13 +108,13 @@ extension NINChatViewModelImpl {
         sessionManager.onRTCClientSignal = { [weak self] type, user, signal in
             debugger("WebRTC: Client Signal: \(type)")
             guard type == .candidate else { return }
-            
+
             /// Queue received candidates and inject during initialization
             guard let iceCandidate = signal?.candidate?.toRTCIceCandidate else { return }
             debugger("WebRTC: Adding \(iceCandidate) to queue")
             self?.iceCandidates.append(iceCandidate)
         }
-        
+
         sessionManager.onRTCSignal = { [weak self] type, user, signal in
             switch type {
             case .call:
@@ -143,7 +143,7 @@ extension NINChatViewModelImpl {
             }
         }
     }
-    
+
     func pickup(answer: Bool, completion: @escaping (Error?) -> Void) {
         do {
             try self.sessionManager.send(type: .pickup, payload: ["answer": answer], completion: completion)
@@ -181,7 +181,7 @@ extension NINChatViewModelImpl {
         debugger("background mode, hangup the video call (if there are any)")
         self.hangup(completion: completion)
     }
-    
+
     func appWillResignActive(completion: @escaping (Error?) -> Void) {}
 }
 
@@ -195,7 +195,7 @@ extension NINChatViewModelImpl {
             completion(error)
         }
     }
-    
+
     func send(action: ComposeContentViewProtocol, completion: @escaping (Error?) -> Void) {
         do {
             try self.sessionManager.send(action: action, completion: completion)
@@ -203,7 +203,7 @@ extension NINChatViewModelImpl {
             completion(error)
         }
     }
-    
+
     func send(attachment: String, data: Data, completion: @escaping (Error?) -> Void) {
         do {
             try self.sessionManager.send(attachment: attachment, data: data, completion: completion)
@@ -211,7 +211,7 @@ extension NINChatViewModelImpl {
             completion(error)
         }
     }
-    
+
     func send(type: MessageType, payload: [String:String], completion: @escaping (Error?) -> Void) {
         do {
             try self.sessionManager.send(type: type, payload: payload, completion: completion)
@@ -219,7 +219,7 @@ extension NINChatViewModelImpl {
             completion(error)
         }
     }
-    
+
     func updateWriting(state: Bool) {
         try? self.sessionManager.update(isWriting: state, completion: { _ in })
         timer?.invalidate()
