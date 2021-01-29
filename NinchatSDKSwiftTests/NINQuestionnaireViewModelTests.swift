@@ -70,7 +70,7 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         }
     }
 
-    func test_21_setPreAnswers() throws {
+    func test_21_setPreAnswers() {
         self.viewModel?.pageNumber = 0
 
         do {
@@ -305,5 +305,45 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         XCTAssertTrue(self.viewModel?.goToPreviousPage() ?? false)
         XCTAssertEqual(self.viewModel?.answers, ["Aiheet": "Mikä on koronavirus"])
         XCTAssertEqual(self.viewModel?.pageNumber, 1)
+    }
+
+    func test_80_logicWithTagsAndCompelte() {
+        let element = self.connector.configurations.first(where: { $0.name == "start-Logic" })?.logic
+        let expect_tags = self.expectation(description: "Expected to submit tags of the logic")
+        let expect_complete = self.expectation(description: "Expected to reach _complete logic")
+
+        self.viewModel?.connector.logicContainsTags = { logic in
+            XCTAssertNotNil(logic?.tags)
+            XCTAssertEqual(logic?.tags?.count ?? 0, 2)
+            expect_tags.fulfill()
+        }
+        self.viewModel?.connector.onCompleteTargetReached = { _, _, autoApply in
+            XCTAssertTrue(self.viewModel!.hasToWaitForUserConfirmation(autoApply))
+            expect_complete.fulfill()
+        }
+        self.viewModel?.answers = ["temp-btn": "Finnish", "temp-btn2": "Finnish"]
+        _ = self.viewModel?.logicTargetPage(element!, autoApply: true)
+
+        waitForExpectations(timeout: 2.0)
+    }
+
+    func test_90_logicWithQueuesAndComplete() {
+        let element = self.connector.configurations.first(where: { $0.name == "start-Logic" })?.logic
+        let expect_queueId = self.expectation(description: "Expected to submit queue id of the logic")
+        let expect_complete = self.expectation(description: "Expected to reach _complete logic")
+
+        self.viewModel?.connector.logicContainsTags = { logic in
+            XCTAssertNotNil(logic?.queueId)
+            XCTAssertEqual(logic?.queueId, "76nr0l4m00t5")
+            expect_queueId.fulfill()
+        }
+        self.viewModel?.connector.onCompleteTargetReached = { _, _, autoApply in
+            XCTAssertTrue(self.viewModel!.hasToWaitForUserConfirmation(autoApply))
+            expect_complete.fulfill()
+        }
+        self.viewModel?.answers = ["temp-btn": "Finnish", "temp-btn2": "Finnish"]
+        _ = self.viewModel?.logicTargetPage(element!, autoApply: true)
+
+        waitForExpectations(timeout: 2.0)
     }
 }

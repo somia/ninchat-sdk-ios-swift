@@ -26,7 +26,6 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     internal var currentChannelID: String?
     internal var backgroundChannelID: String?
     internal var myUserID: String?
-    internal var realmID: String?
     internal var channelClosed: Bool = false
     internal var expectedHistoryLength = -1
 
@@ -58,6 +57,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     
     // MARK: - NINChatSessionManager variables
     
+    var realmID: String?
     var chatMessages: [ChatMessage]! = []
     var describedQueue: Queue?
     var composeActions: [ComposeUIAction] = []

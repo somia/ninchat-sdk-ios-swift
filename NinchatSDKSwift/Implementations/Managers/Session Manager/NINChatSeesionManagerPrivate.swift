@@ -94,6 +94,10 @@ extension NINChatSessionManagerImpl {
             fileInfoDictionary["urlExpiry"] = expire
         }
 
+        if case let .success(url) = param.thumbnailURL {
+            fileInfoDictionary["thumbnailUrl"] = url
+        }
+
         if case let .success(size) = param.thumbnailSize {
             fileInfoDictionary["aspectRatio"] = Double(size.width/size.height)
         }

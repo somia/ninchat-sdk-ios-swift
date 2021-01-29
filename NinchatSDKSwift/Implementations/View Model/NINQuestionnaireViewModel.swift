@@ -66,11 +66,11 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     var queue: Queue? {
         didSet {
             guard let queue = queue else { return }
-            let setupPareConnectorOperation = BlockOperation { [weak self] in
+            let setupPreConnectorOperation = BlockOperation { [weak self] in
                 self?.setupPreConnector(queue: queue)
             }
-            setupPareConnectorOperation.addDependency(self.setupConnectorOperation)
-            self.operationQueue.addOperations([setupPareConnectorOperation], waitUntilFinished: false)
+            setupPreConnectorOperation.addDependency(self.setupConnectorOperation)
+            self.operationQueue.addOperations([setupPreConnectorOperation], waitUntilFinished: false)
         }
     }
     var pageNumber: Int = 0
@@ -107,22 +107,30 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
                 self?.setupPostConnector()
             }
         }
+        let describeQueues = BlockOperation { [weak self] in
+            if questionnaireType == .pre, let realm = self?.sessionManager?.realmID {
+                self?.describeAllQueues(realm: realm)
+            }
+        }
 
         elementsOperation.addDependency(configurationOperation)
         connectorOperation.addDependency(configurationOperation)
         setupConnectorOperation.addDependency(connectorOperation)
-        self.operationQueue.addOperations([configurationOperation, elementsOperation, connectorOperation, setupConnectorOperation], waitUntilFinished: false)
+        self.operationQueue.addOperations([configurationOperation, elementsOperation, connectorOperation, setupConnectorOperation, describeQueues], waitUntilFinished: false)
     }
 
     private func setupPreConnector(queue: Queue) {
         self.connector.logicContainsTags = { [weak self] logic in
             self?.submitTags(logic?.tags ?? [])
         }
+        self.connector.logicContainsQueueID = { [weak self] logic in
+            self?.queue = self?.sessionManager?.queues.first(where: { $0.queueID == logic?.queueId })
+        }
         self.connector.onCompleteTargetReached = { [weak self] logic, redirect, autoApply in
             if self?.hasToWaitForUserConfirmation(autoApply) ?? false { return }
             self?.finishQuestionnaire(for: logic, redirect: redirect, autoApply: autoApply)
         }
-        self.connector.onRegisterTargetReached = { [weak self] logic, redirect, autoApply in
+        self.connector.onRegisterTargetReached = { [weak self, queue] logic, redirect, autoApply in
             if self?.hasToWaitForUserConfirmation(autoApply) ?? false || self?.hasToExitQuestionnaire(logic) ?? false { return }
             self?.registerAudience(queueID: logic?.queueId ?? queue.queueID) { error in
                 if let error = error {
@@ -149,6 +157,14 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
                 self?.onErrorOccurred?(error)
             }
         }
+    }
+
+    internal func describeAllQueues(realm: String) {
+        let uniqueQueues = configurations.compactMap({ $0.logic?.queueId }).filter({ [weak self] queueID in
+            !(self?.sessionManager?.queues.contains(where: { $0.queueID == queueID }) ?? true)
+        })
+
+        try? sessionManager?.describe(realm: realm, queuesID: uniqueQueues) { _ in }
     }
 
     internal func hasToWaitForUserConfirmation(_ autoApply: Bool) -> Bool {
@@ -213,9 +229,12 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 
 extension NINQuestionnaireViewModelImpl {
     func finishQuestionnaire(for logic: LogicQuestionnaire?, redirect: ElementRedirect?, autoApply: Bool) {
-        guard let queue = self.queue, let target: (canJoin: Bool, queue: Queue?) = self.canJoinGivenQueue(withID: logic?.queueId ?? queue.queueID), let targetQueue = target.queue, target.canJoin else {
-            self.connector.onRegisterTargetReached?(logic, redirect, autoApply); return
-        }
+        guard let queue = self.queue,
+              let target: (canJoin: Bool, queue: Queue?) = self.canJoinGivenQueue(withID: queue.queueID),
+              let targetQueue = target.queue, target.canJoin
+            else {
+                self.connector.onRegisterTargetReached?(logic, redirect, autoApply); return
+            }
 
         self.sessionManager?.preAudienceQuestionnaireMetadata = self.questionnaireAnswers
         self.onQuestionnaireFinished?(targetQueue, false)

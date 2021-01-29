@@ -10,8 +10,16 @@ final class ChatTypingCell: UITableViewCell {
     
     // MARK: - Outlets
     
-    @IBOutlet private(set) weak var senderNameLabel: UILabel!
-    @IBOutlet private(set) weak var timeLabel: UILabel!
+    @IBOutlet private(set) weak var senderNameLabel: UILabel! {
+        didSet {
+            senderNameLabel.font = .ninchat
+        }
+    }
+    @IBOutlet private(set) weak var timeLabel: UILabel! {
+        didSet {
+            timeLabel.font = .ninchat
+        }
+    }
     @IBOutlet private(set) weak var bubbleImageView: UIImageView!
     @IBOutlet private(set) weak var leftAvatarImageView: UIImageView!
     @IBOutlet private(set) weak var messageImageView: UIImageView!
