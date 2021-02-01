@@ -5,11 +5,7 @@
 ![Release](https://img.shields.io/github/v/release/somia/ninchat-sdk-ios-swift)
 
 
-This document describes integrating the Ninchat iOS SDK Swift into an iOS application.
-
-
-
-## Usage
+## Wiki
 
 For guides and examples about SDK installation, usages, configurations, and API, visit the wiki accessible on https://github.com/somia/ninchat-sdk-ios-swift/wiki
 
