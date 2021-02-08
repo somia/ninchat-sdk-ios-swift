@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class NINQueueViewController: UIViewController {
+final class NINQueueViewController: UIViewController, ViewController {
     
     // MARK: - Injected
 
@@ -71,6 +71,7 @@ final class NINQueueViewController: UIViewController {
         self.overrideAssets()
 
         NotificationCenter.default.addObserver(self, selector: #selector(spin(notification:)), name: UIApplication.willEnterForegroundNotification, object: nil)
+        self.navigationItem.setHidesBackButton(true, animated: false)
     }
 
     override func viewWillAppear(_ animated: Bool) {

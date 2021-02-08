@@ -61,7 +61,9 @@ final class NINRatingViewController: UIViewController, ViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
         self.overrideAssets()
+        self.navigationItem.setHidesBackButton(true, animated: false)
     }
     
     // MARK: - Setup View
