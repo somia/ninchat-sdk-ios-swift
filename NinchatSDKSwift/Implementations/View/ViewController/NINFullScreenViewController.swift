@@ -63,8 +63,6 @@ final class NINFullScreenViewController: UIViewController, ViewController {
             .fix(top: (0, self.view), toSafeArea: true)
             .fix(leading: (0, self.view), trailing: (0, self.view))
             .fix(height: 60)
-
-        self.navigationItem.setHidesBackButton(true, animated: false)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -72,6 +70,13 @@ final class NINFullScreenViewController: UIViewController, ViewController {
 
         /// Update image
         imageView.image = image
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
     }
 }
 
