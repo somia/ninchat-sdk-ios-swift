@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class NINQueueViewController: UIViewController {
+final class NINQueueViewController: UIViewController, ViewController {
     
     // MARK: - Injected
 
