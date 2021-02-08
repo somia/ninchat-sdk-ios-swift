@@ -150,6 +150,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
         else if self.style == .conversation { self.initiateConversationContentView(1.0) }
 
         NotificationCenter.default.addObserver(self, selector: #selector(didEnterBackground(notification:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        self.navigationItem.setHidesBackButton(true, animated: false)
     }
 
     override func viewDidDisappear(_ animated: Bool) {

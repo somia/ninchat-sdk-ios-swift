@@ -63,6 +63,8 @@ final class NINFullScreenViewController: UIViewController, ViewController {
             .fix(top: (0, self.view), toSafeArea: true)
             .fix(leading: (0, self.view), trailing: (0, self.view))
             .fix(height: 60)
+
+        self.navigationItem.setHidesBackButton(true, animated: false)
     }
 
     override func viewWillAppear(_ animated: Bool) {
