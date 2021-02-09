@@ -116,7 +116,7 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
                             guard let weakSelf = self, error == nil else { completion(credentials, error); return }
 
                             /// Prepare coordinator for starting
-                            /// This is quire important to prepare time and memory consuming tasks before the user
+                            /// This is quite important to prepare time and memory consuming tasks before the user
                             /// starts the coordinator, otherwise he/she will face unexpected views
                             weakSelf.coordinator = NINCoordinator(with: weakSelf.sessionManager, delegate: weakSelf.internalDelegate) {
                                 weakSelf.deallocate()
@@ -146,7 +146,7 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
                             guard let weakSelf = self, error == nil else { completion(credentials, error); return }
 
                             /// Prepare coordinator for starting
-                            /// This is quire important to prepare time and memory consuming tasks before the user
+                            /// This is quite important to prepare time and memory consuming tasks before the user
                             /// starts the coordinator, otherwise he/she will face unexpected views
                             weakSelf.coordinator = NINCoordinator(with: weakSelf.sessionManager, delegate: weakSelf.internalDelegate) {
                                 weakSelf.deallocate()
