@@ -12,7 +12,7 @@ protocol TopBarAction {
 }
 
 protocol TopBarProtocol: UIView, TopBarAction {
-    var session: NINChatSession? { get set }
+    var delegate: InternalDelegate? { get set }
     var fileName: String! { get set }
     
     func overrideAssets()
@@ -21,8 +21,8 @@ protocol TopBarProtocol: UIView, TopBarAction {
 final class TopBar: UIView, TopBarProtocol {
     
     // MARK: - TopBarProtocol
-    
-    weak var session: NINChatSession?
+
+    var delegate: InternalDelegate?
     var fileName: String! {
         didSet {
             fileNameLabel.text = fileName
@@ -51,10 +51,10 @@ final class TopBar: UIView, TopBarProtocol {
     @IBOutlet private(set) weak var closeButton: UIImageView!
     
     func overrideAssets() {
-        if let downloadButton = self.session?.internalDelegate?.override(imageAsset: .iconDownload) {
+        if let downloadButton = self.delegate?.override(imageAsset: .iconDownload) {
             self.downloadButton.image = downloadButton
         }
-        if let closeButton = self.session?.internalDelegate?.override(imageAsset: .iconChatCloseButton) {
+        if let closeButton = self.delegate?.override(imageAsset: .iconChatCloseButton) {
             self.closeButton.image = closeButton
         }
     }

@@ -28,37 +28,37 @@ final class ConfirmCloseChatView: UIView, ConfirmView {
     // MARK: - ConfirmView
     
     var onViewAction: OnViewAction?
-    weak var session: NINChatSession? {
+    var delegate: InternalDelegate?
+    var sessionManager: NINChatSessionManager? {
         didSet {
             self.overrideAssets()
         }
     }
         
     func overrideAssets() {
-        confirmButton.overrideAssets(with: self.session?.internalDelegate, isPrimary: true)
-        cancelButton.overrideAssets(with: self.session?.internalDelegate, isPrimary: false)
+        confirmButton.overrideAssets(with: self.delegate, isPrimary: true)
+        cancelButton.overrideAssets(with: self.delegate, isPrimary: false)
 
-        if let backgroundColor = self.session?.internalDelegate?.override(colorAsset: .modalBackground) {
+        if let backgroundColor = self.delegate?.override(colorAsset: .modalBackground) {
             self.headerContainerView.backgroundColor = backgroundColor
             self.bottomContainerView.backgroundColor = backgroundColor
         }
         
-        if let textColor = self.session?.internalDelegate?.override(colorAsset: .modalText) {
+        if let textColor = self.delegate?.override(colorAsset: .modalText) {
             self.titleLabel.textColor = textColor
             self.infoTextView.textColor = textColor
         }
         
-        guard let sessionManager = self.session?.sessionManager else { return }
-        if let dialogTitle = sessionManager.siteConfiguration.confirmDialogTitle {
+        if let dialogTitle = sessionManager?.siteConfiguration.confirmDialogTitle {
             self.infoTextView.setAttributed(text: dialogTitle, font: .ninchat)
         }
         
-        if let confirmText = sessionManager.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) {
+        if let confirmText = sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) {
             self.titleLabel.text = confirmText
             self.confirmButton.setTitle(confirmText, for: .normal)
         }
         
-        if let cancelText = sessionManager.translate(key: Constants.kCancelDialog.rawValue, formatParams: [:]) {
+        if let cancelText = sessionManager?.translate(key: Constants.kCancelDialog.rawValue, formatParams: [:]) {
             self.cancelButton.setTitle(cancelText, for: .normal)
         }
     }
