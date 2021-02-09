@@ -118,9 +118,6 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
                             /// Prepare coordinator for starting
                             /// This is quite important to prepare time and memory consuming tasks before the user
                             /// starts the coordinator, otherwise he/she will face unexpected views
-                            weakSelf.coordinator = NINCoordinator(with: weakSelf.sessionManager, delegate: weakSelf.internalDelegate) {
-                                weakSelf.deallocate()
-                            }
                             weakSelf.coordinator?.prepareNINQuestionnaireViewModel(audienceMetadata: weakSelf.audienceMetadata) {
                                 completion(credentials, error)
                             }
@@ -148,9 +145,6 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
                             /// Prepare coordinator for starting
                             /// This is quite important to prepare time and memory consuming tasks before the user
                             /// starts the coordinator, otherwise he/she will face unexpected views
-                            weakSelf.coordinator = NINCoordinator(with: weakSelf.sessionManager, delegate: weakSelf.internalDelegate) {
-                                weakSelf.deallocate()
-                            }
                             weakSelf.coordinator?.prepareNINQuestionnaireViewModel(audienceMetadata: weakSelf.audienceMetadata) {
                                 completion(credentials, error)
                             }
@@ -179,7 +173,6 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         self.sessionManager = nil
         self.started = false
         self.sessionAlive = false
-
         self.internalDelegate?.onDidEnd()
     }
 }

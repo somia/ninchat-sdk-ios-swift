@@ -21,14 +21,14 @@ extension NINChatSessionManagerImpl {
             let realmQueues = param.realmQueue.value
             try realmQueues.accept(queuesParser)
 
-            self.queues = queuesParser.properties.keys.compactMap({ key in
+            self.queues.append(contentsOf: queuesParser.properties.keys.compactMap({ key in
                 /// Add the queue only if it is not already available
                 guard !self.queues.contains(where: { $0.queueID == key } ) else { return nil }
                 if let queue = try? realmQueues.getObject(key), case let .success(queueName) = queue.queueName, case let .success(queueClosed) = queue.queueClosed, case let .success(queueUploadPermission) = queue.queueUpload {
                     return Queue(queueID: key, name: queueName, isClosed: queueClosed, permissions: QueuePermissions(upload: queueUploadPermission))
                 }
                 return nil
-            })
+            }))
 
             /// Form the list of audience queues; if audienceQueues is specified in siteConfig, we use those;
             /// if not, we use the complete list of queues.
