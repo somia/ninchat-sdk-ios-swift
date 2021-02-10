@@ -11,7 +11,7 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
 
     // MARK: - ViewController
 
-    weak var session: NINChatSession?
+    var delegate: InternalDelegate?
     weak var sessionManager: NINChatSessionManager?
 
     // MARK: - Injected
@@ -89,7 +89,7 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
     private lazy var videoView: VideoViewProtocol = {
         let view: VideoView = VideoView.loadFromNib()
         view.viewModel = viewModel
-        view.session = session
+        view.delegate = delegate
         view.onCameraTapped = { [weak self] button in
             self?.onVideoCameraTapped(with: button)
         }
@@ -124,7 +124,7 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
     @IBOutlet private(set) weak var closeChatButton: CloseButton! {
         didSet {
             let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
-            closeChatButton.overrideAssets(with: self.session?.internalDelegate)
+            closeChatButton.overrideAssets(with: self.delegate)
             closeChatButton.buttonTitle = closeTitle
             closeChatButton.closure = { [weak self] button in
                 DispatchQueue.main.async {
@@ -137,7 +137,7 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
     private lazy var inputControlsView: ChatInputControlsProtocol = {
         let view: ChatInputControls = ChatInputControls.loadFromNib()
         view.viewModel = viewModel
-        view.session = self.session
+        view.delegate = self.delegate
         view.sessionManager = self.sessionManager
         view.onSendTapped = { [weak self] text in
             self?.onSendTapped(text)
@@ -311,7 +311,8 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
 
                 let confirmVideoDialog: ConfirmVideoCallView = ConfirmVideoCallView.loadFromNib()
                 confirmVideoDialog.user = channel
-                confirmVideoDialog.session = self?.session
+                confirmVideoDialog.delegate = self?.delegate
+                confirmVideoDialog.sessionManager = self?.sessionManager
                 confirmVideoDialog.onViewAction = { action in
                     confirmVideoDialog.hideConfirmView()
                     answerCall(with: action)
@@ -384,7 +385,7 @@ extension NINChatViewController {
         videoView.overrideAssets()
         inputControlsView.overrideAssets()
         
-        if let backgroundImage = self.session?.internalDelegate?.override(imageAsset: .chatBackground) {
+        if let backgroundImage = self.delegate?.override(imageAsset: .chatBackground) {
             self.backgroundView.backgroundColor = UIColor(patternImage: backgroundImage)
         } else if let bundleImage = UIImage(named: "chat_background_pattern", in: .SDKBundle, compatibleWith: nil) {
             self.backgroundView.backgroundColor = UIColor(patternImage: bundleImage)
@@ -488,7 +489,8 @@ extension NINChatViewController {
         debugger("Close chat button pressed!")
         
         let confirmCloseDialog: ConfirmCloseChatView = ConfirmCloseChatView.loadFromNib()
-        confirmCloseDialog.session = self.session
+        confirmCloseDialog.delegate = self.delegate
+        confirmCloseDialog.sessionManager = self.sessionManager
         confirmCloseDialog.onViewAction = { [weak self] action in
             confirmCloseDialog.hideConfirmView()
             guard action == .confirm else { return }
@@ -511,20 +513,20 @@ extension NINChatViewController {
     
     private func onVideoCameraTapped(with button: UIButton) {
         self.webRTCClient?.disableLocalVideo = !button.isSelected
-        self.session?.internalDelegate?.log(value: "Video disabled: \(!button.isSelected)")
+        self.delegate?.log(value: "Video disabled: \(!button.isSelected)")
         
         button.isSelected = !button.isSelected
     }
     
     private func onVideoAudioTapped(with button: UIButton) {
         self.webRTCClient?.disableLocalAudio = !button.isSelected
-        self.session?.internalDelegate?.log(value: "Audio disabled: \(!button.isSelected)")
+        self.delegate?.log(value: "Audio disabled: \(!button.isSelected)")
         
         button.isSelected = !button.isSelected
     }
     
     private func onVideoHangupTapped() {
-        self.session?.internalDelegate?.log(value: "Hang-up button pressed")
+        self.delegate?.log(value: "Hang-up button pressed")
         self.viewModel?.send(type: .hangup, payload: [:]) { [weak self] error in
             self?.disconnectRTC {
                 self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)

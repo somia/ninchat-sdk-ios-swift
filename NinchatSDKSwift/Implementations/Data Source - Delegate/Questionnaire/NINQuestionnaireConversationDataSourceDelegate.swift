@@ -23,7 +23,7 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
 
     // MARK: - NINQuestionnaireFormDelegate
 
-    private weak var session: NINChatSession?
+    private var delegate: InternalDelegate?
 
     var viewModel: NINQuestionnaireViewModel!
     weak var sessionManager: NINChatSessionManager?
@@ -39,8 +39,8 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
         }
     }
 
-    init(viewModel: NINQuestionnaireViewModel, session: NINChatSession, sessionManager: NINChatSessionManager) {
-        self.session = session
+    init(viewModel: NINQuestionnaireViewModel, sessionManager: NINChatSessionManager, delegate: InternalDelegate?) {
+        self.delegate = delegate
         self.sessionManager = sessionManager
         self.viewModel = viewModel
     }
@@ -147,8 +147,8 @@ extension NINQuestionnaireConversationDataSourceDelegate {
     private func loading(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: ChatTypingCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
         cell.populateLoading(agentAvatarConfig: AvatarConfig(avatar: self.sessionManager?.siteConfiguration.audienceQuestionnaireAvatar, name: self.sessionManager?.siteConfiguration.audienceQuestionnaireUserName ?? ""),
-                imageAssets: self.session?.internalDelegate?.imageAssetsDictionary ?? [:],
-                colorAssets: self.session?.internalDelegate?.colorAssetsDictionary ?? [:])
+                imageAssets: self.delegate?.imageAssetsDictionary ?? [:],
+                colorAssets: self.delegate?.colorAssetsDictionary ?? [:])
 
         return cell
     }
@@ -160,7 +160,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         cell.configuration = self.configurations[indexPath.section]
         cell.backgroundColor = .clear
         cell.isUserInteractionEnabled = (self.elements[indexPath.section].first?.isShown ?? true) && (indexPath.section == self.sectionCount-1)
-        cell.overrideAssets(with: self.session?.internalDelegate)
+        cell.overrideAssets(with: self.delegate)
         // Need to check only for the last item if to enable/disable navigation buttons
         cell.setSatisfaction(self.requirementsSatisfied && indexPath.section == sectionCount-1, lastItem: indexPath.section == sectionCount-1)
 
@@ -183,7 +183,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         let element = self.elements[indexPath.section][indexPath.row]
         element.isUserInteractionEnabled = (element.isShown ?? true) && (indexPath.section == self.sectionCount-1)
         element.questionnaireStyle = .conversation
-        element.overrideAssets(with: self.session?.internalDelegate)
+        element.overrideAssets(with: self.delegate)
 
         if let elementWithDefaultAnswers = element as? QuestionnaireElementHasDefaultAnswer {
             elementWithDefaultAnswers.defaultAnswer?.forEach { [weak self] element, option in

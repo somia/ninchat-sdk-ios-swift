@@ -54,7 +54,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
 
     // MARK: - ViewController
 
-    weak var session: NINChatSession?
+    var delegate: InternalDelegate?
     weak var sessionManager: NINChatSessionManager?
 
     // MARK: - Injected
@@ -81,7 +81,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
                     self?.showRegisteredPage(operation: self?.closedRegisteredOperation); return
                 }
                 Toast.show(message: .error("Error is submitting the answers"), onToastTouched: { [weak self] in
-                    self?.session?.internalDelegate?.onDidEnd()
+                    self?.delegate?.onDidEnd()
                 })
             }
             viewModel.onQuestionnaireFinished = { [weak self] queue, exit in
@@ -106,7 +106,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
                 if let ratingViewModel = self?.ratingViewModel, let weakSelf = self {
                     (weakSelf.rating != nil) ? ratingViewModel.rateChat(with: weakSelf.rating!) : ratingViewModel.skipRating()
                 } else {
-                    self?.session?.internalDelegate?.onDidEnd()
+                    self?.delegate?.onDidEnd()
                 }
             }
         }
@@ -173,7 +173,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
     }
 
     private func overrideAssets() {
-        if let backgroundImage = self.session?.internalDelegate?.override(imageAsset: .questionnaireBackground) {
+        if let backgroundImage = self.delegate?.override(imageAsset: .questionnaireBackground) {
             self.view.backgroundColor = UIColor(patternImage: backgroundImage)
         } else if let bundleImage = UIImage(named: "chat_background_pattern", in: .SDKBundle, compatibleWith: nil) {
             self.view.backgroundColor = UIColor(patternImage: bundleImage)

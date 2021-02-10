@@ -15,7 +15,7 @@ final class NINRatingViewController: UIViewController, ViewController {
     
     // MARK: - ViewController
 
-    weak var session: NINChatSession?
+    var delegate: InternalDelegate?
     weak var sessionManager: NINChatSessionManager?
 
     var onRatingFinished: ((ChatStatus?) -> Bool)!
@@ -27,7 +27,7 @@ final class NINRatingViewController: UIViewController, ViewController {
     
     private lazy var facesView: FacesViewProtocol = {
         var view: FacesView = FacesView.loadFromNib()
-        view.session = self.session
+        view.delegate = self.delegate
         view.sessionManager = self.sessionManager
         view.backgroundColor = .clear
         view.onPositiveTapped = { [weak self] button in
@@ -79,18 +79,18 @@ final class NINRatingViewController: UIViewController, ViewController {
             self.skipButton.setTitle(skip, for: .normal)
         }
         
-        if let topBackgroundColor = self.session?.internalDelegate?.override(colorAsset: .backgroundTop) {
+        if let topBackgroundColor = self.delegate?.override(colorAsset: .backgroundTop) {
             self.topViewContainer.backgroundColor = topBackgroundColor
         }
         
-        if let bottomBackgroundColor = self.session?.internalDelegate?.override(colorAsset: .backgroundBottom) {
+        if let bottomBackgroundColor = self.delegate?.override(colorAsset: .backgroundBottom) {
             self.view.backgroundColor = bottomBackgroundColor
         }
-        if let textTopColor = self.session?.internalDelegate?.override(colorAsset: .textTop) {
+        if let textTopColor = self.delegate?.override(colorAsset: .textTop) {
             self.titleTextView.textColor = textTopColor
         }
         
-        if let linkColor = self.session?.internalDelegate?.override(colorAsset: .link) {
+        if let linkColor = self.delegate?.override(colorAsset: .link) {
             self.titleTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
             self.skipButton.setTitleColor(linkColor, for: .normal)
         }

@@ -18,7 +18,7 @@ final class NINQueueViewController: UIViewController, ViewController {
     
     // MARK: - ViewController
     
-    weak var session: NINChatSession?
+    var delegate: InternalDelegate?
     weak var sessionManager: NINChatSessionManager?
     
     // MARK: - Outlets
@@ -28,7 +28,7 @@ final class NINQueueViewController: UIViewController, ViewController {
     @IBOutlet private(set) weak var spinnerImageView: UIImageView!
     @IBOutlet private(set) weak var queueInfoTextView: UITextView! {
         didSet {
-            if let textTopColor = self.session?.internalDelegate?.override(colorAsset: .textTop) {
+            if let textTopColor = self.delegate?.override(colorAsset: .textTop) {
                 self.queueInfoTextView.textColor = textTopColor
             }
             queueInfoTextView.text = nil
@@ -48,7 +48,7 @@ final class NINQueueViewController: UIViewController, ViewController {
     @IBOutlet private(set) weak var closeChatButton: CloseButton! {
         didSet {
             let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
-            closeChatButton.overrideAssets(with: self.session?.internalDelegate)
+            closeChatButton.overrideAssets(with: self.delegate)
             closeChatButton.buttonTitle = closeTitle
             closeChatButton.closure = { [weak self] button in
                 try? self?.sessionManager?.closeChat {
@@ -116,7 +116,7 @@ final class NINQueueViewController: UIViewController, ViewController {
     private func setupClosedQueue() {
         /// `If customer resumes to a session and is already in queue, then show queueing view even if queue is closed`
         guard let queue = queue, queue.isClosed && self.resumeMode == nil else { return }
-        self.stopSpinWith(message: self.session?.sessionManager.siteConfiguration.noQueueText ?? "")
+        self.stopSpinWith(message: self.sessionManager?.siteConfiguration.noQueueText ?? "")
     }
 
     private func stopSpinWith(message: String) {
@@ -148,23 +148,23 @@ extension NINQueueViewController {
 
     private func overrideAssets() {
         
-        closeChatButton.overrideAssets(with: self.session?.internalDelegate)
-        if let spinnerImage = self.session?.internalDelegate?.override(imageAsset: .iconLoader) {
+        closeChatButton.overrideAssets(with: self.delegate)
+        if let spinnerImage = self.delegate?.override(imageAsset: .iconLoader) {
             self.spinnerImageView.image = spinnerImage
         }
-        if let topBackgroundColor = self.session?.internalDelegate?.override(colorAsset: .backgroundTop) {
+        if let topBackgroundColor = self.delegate?.override(colorAsset: .backgroundTop) {
             topContainerView.backgroundColor = topBackgroundColor
         }
-        if let bottomBackgroundColor = self.session?.internalDelegate?.override(colorAsset: .backgroundBottom) {
+        if let bottomBackgroundColor = self.delegate?.override(colorAsset: .backgroundBottom) {
             bottomContainerView.backgroundColor = bottomBackgroundColor
         }
-        if let textTopColor = self.session?.internalDelegate?.override(colorAsset: .textTop) {
+        if let textTopColor = self.delegate?.override(colorAsset: .textTop) {
             queueInfoTextView.textColor = textTopColor
         }
-        if let textBottomColor = self.session?.internalDelegate?.override(colorAsset: .textBottom) {
+        if let textBottomColor = self.delegate?.override(colorAsset: .textBottom) {
             motdTextView.textColor = textBottomColor
         }
-        if let linkColor = self.session?.internalDelegate?.override(colorAsset: .link) {
+        if let linkColor = self.delegate?.override(colorAsset: .link) {
             let attribute = [NSAttributedString.Key.foregroundColor: linkColor]
             queueInfoTextView.linkTextAttributes = attribute
             motdTextView.linkTextAttributes = attribute

@@ -44,7 +44,11 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
     lazy var internalDelegate: InternalDelegate? = {
         InternalDelegate(session: self)
     }()
-    private var coordinator: Coordinator?
+    private lazy var coordinator: Coordinator? = {
+        NINCoordinator(with: self.sessionManager, delegate: self.internalDelegate) { [weak self] in
+            self?.deallocate()
+        }
+    }()
     private let audienceMetadata: NINLowLevelClientProps?
     private let configuration: NINSiteConfiguration?
     private var configKey: String!
@@ -92,8 +96,6 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         self.configuration = configuration
         self.serverAddress = Constants.kProductionServerAddress.rawValue
         self.started = false
-        
-        self.coordinator = NINCoordinator(with: self)
     }
 
     deinit {
@@ -114,7 +116,7 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
                             guard let weakSelf = self, error == nil else { completion(credentials, error); return }
 
                             /// Prepare coordinator for starting
-                            /// This is quire important to prepare time and memory consuming tasks before the user
+                            /// This is quite important to prepare time and memory consuming tasks before the user
                             /// starts the coordinator, otherwise he/she will face unexpected views
                             weakSelf.coordinator?.prepareNINQuestionnaireViewModel(audienceMetadata: weakSelf.audienceMetadata) {
                                 completion(credentials, error)
@@ -141,7 +143,7 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
                             guard let weakSelf = self, error == nil else { completion(credentials, error); return }
 
                             /// Prepare coordinator for starting
-                            /// This is quire important to prepare time and memory consuming tasks before the user
+                            /// This is quite important to prepare time and memory consuming tasks before the user
                             /// starts the coordinator, otherwise he/she will face unexpected views
                             weakSelf.coordinator?.prepareNINQuestionnaireViewModel(audienceMetadata: weakSelf.audienceMetadata) {
                                 completion(credentials, error)
@@ -167,12 +169,10 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
 
         URLSession.shared.invalidateAndCancel()
         self.coordinator?.deallocate()
-        self.coordinator = nil
         self.sessionManager?.deallocateSession()
         self.sessionManager = nil
         self.started = false
         self.sessionAlive = false
-
         self.internalDelegate?.onDidEnd()
     }
 }
