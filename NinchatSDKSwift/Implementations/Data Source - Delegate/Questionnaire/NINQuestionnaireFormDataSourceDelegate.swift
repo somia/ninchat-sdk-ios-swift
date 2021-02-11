@@ -10,7 +10,7 @@ final class NINQuestionnaireFormDataSourceDelegate: QuestionnaireDataSourceDeleg
 
     // MARK: - NINQuestionnaireFormDelegate
 
-    private weak var session: NINChatSession?
+    private var delegate: InternalDelegate?
 
     var viewModel: NINQuestionnaireViewModel!
     weak var sessionManager: NINChatSessionManager?
@@ -21,8 +21,8 @@ final class NINQuestionnaireFormDataSourceDelegate: QuestionnaireDataSourceDeleg
 
     var isLoadingNewElements: Bool! = false
 
-    init(viewModel: NINQuestionnaireViewModel, session: NINChatSession, sessionManager: NINChatSessionManager) {
-        self.session = session
+    init(viewModel: NINQuestionnaireViewModel, sessionManager: NINChatSessionManager, delegate: InternalDelegate?) {
+        self.delegate = delegate
         self.sessionManager = sessionManager
         self.viewModel = viewModel
     }
@@ -66,7 +66,7 @@ extension NINQuestionnaireFormDataSourceDelegate {
             cell.shouldShowNextButton = configuration.buttons?.hasValidNextButton ?? true
             cell.shouldShowBackButton = (configuration.buttons?.hasValidBackButton ?? true) && self.viewModel.pageNumber != 0
             cell.configuration = configuration
-            cell.overrideAssets(with: self.session?.internalDelegate)
+            cell.overrideAssets(with: self.delegate)
             cell.setSatisfaction(self.viewModel.requirementsSatisfied, lastItem: true)
 
             cell.onNextButtonTapped = { [weak self] in
@@ -95,7 +95,7 @@ extension NINQuestionnaireFormDataSourceDelegate {
             let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
             let element = try self.viewModel.getElements()[indexPath.row]
             element.questionnaireStyle = .form
-            element.overrideAssets(with: self.session?.internalDelegate)
+            element.overrideAssets(with: self.delegate)
 
             if let elementWithDefaultAnswers = element as? QuestionnaireElementHasDefaultAnswer {
                 elementWithDefaultAnswers.defaultAnswer?.forEach { [weak self] element, option in

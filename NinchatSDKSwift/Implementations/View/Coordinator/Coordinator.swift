@@ -11,7 +11,7 @@ import WebRTC
 import NinchatLowLevelClient
 
 protocol Coordinator: class {
-    init(with session: NINChatSession)
+    init(with sessionManager: NINChatSessionManager, delegate: InternalDelegate?, onPresentationCompletion: @escaping (() -> Void))
     func start(with queue: String?, resume: ResumeMode?, within navigation: UINavigationController?) -> UIViewController?
     func prepareNINQuestionnaireViewModel(audienceMetadata: NINLowLevelClientProps?, onCompletion: @escaping (() -> Void))
     func deallocate()
@@ -21,7 +21,9 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
 
     // MARK: - Coordinator
 
-    internal unowned var session: NINChatSession
+    internal var delegate: InternalDelegate?
+    internal var sessionManager: NINChatSessionManager!
+    internal var onPresentationCompletion: (() -> Void)?
     internal weak var navigationController: UINavigationController? {
         didSet {
             if #available(iOS 13.0, *) {
@@ -32,9 +34,6 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
     }
     internal lazy var storyboard: UIStoryboard = {
         UIStoryboard(name: "Chat", bundle: .SDKBundle)
-    }()
-    internal lazy var sessionManager: NINChatSessionManager = {
-        session.sessionManager
     }()
     private let dispatchGroup = DispatchGroup()
 
@@ -52,8 +51,8 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
     private var didLoaded_initialViewController = false
     internal lazy var initialViewController: NINInitialViewController = {
         let initialViewController: NINInitialViewController = storyboard.instantiateViewController()
-        initialViewController.session = session
-        initialViewController.sessionManager = sessionManager
+        initialViewController.delegate = self.delegate
+        initialViewController.sessionManager = self.sessionManager
         initialViewController.onQueueActionTapped = { [weak self] queue in
             DispatchQueue.main.async {
                 guard let weakSelf = self else { return }
@@ -70,7 +69,7 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
     private var postQuestionnaireViewModel: NINQuestionnaireViewModel!
     internal var questionnaireViewController: NINQuestionnaireViewController {
         let questionnaireViewController: NINQuestionnaireViewController = storyboard.instantiateViewController()
-        questionnaireViewController.session = self.session
+        questionnaireViewController.delegate = self.delegate
         questionnaireViewController.sessionManager = self.sessionManager
 
         didLoaded_questionnaireViewController = true
@@ -79,8 +78,8 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
     private var didLoaded_queueViewController = false
     internal lazy var queueViewController: NINQueueViewController = {
         let joinViewController: NINQueueViewController = storyboard.instantiateViewController()
-        joinViewController.viewModel = NINQueueViewModelImpl(sessionManager: self.sessionManager, delegate: self.session.internalDelegate)
-        joinViewController.session = session
+        joinViewController.viewModel = NINQueueViewModelImpl(sessionManager: self.sessionManager, delegate: self.delegate)
+        joinViewController.delegate = self.delegate
         joinViewController.sessionManager = sessionManager
         joinViewController.onQueueActionTapped = { [weak self] queue in
             DispatchQueue.main.async {
@@ -99,7 +98,7 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         let mediaDelegate: NINPickerControllerDelegate = chatMediaPicker(viewModel)
         let chatViewController: NINChatViewController = storyboard.instantiateViewController()
         chatViewController.viewModel = viewModel
-        chatViewController.session = self.session
+        chatViewController.delegate = self.delegate
         chatViewController.sessionManager = self.sessionManager
         chatViewController.chatDataSourceDelegate = chatDataSourceDelegate(viewModel)
         chatViewController.chatVideoDelegate = videoDelegate
@@ -138,7 +137,7 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         let viewModel: NINFullScreenViewModel = NINFullScreenViewModelImpl(delegate: nil)
         let previewViewController: NINFullScreenViewController = storyboard.instantiateViewController()
         previewViewController.viewModel = viewModel
-        previewViewController.session = self.session
+        previewViewController.delegate = self.delegate
         previewViewController.sessionManager = self.sessionManager
         previewViewController.onCloseTapped = { [weak self] in
             DispatchQueue.main.async {
@@ -154,7 +153,7 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         let viewModel: NINRatingViewModel = NINRatingViewModelImpl(sessionManager: self.sessionManager)
         let ratingViewController: NINRatingViewController = storyboard.instantiateViewController()
         ratingViewController.viewModel = viewModel
-        ratingViewController.session = self.session
+        ratingViewController.delegate = self.delegate
         ratingViewController.sessionManager = self.sessionManager
         ratingViewController.onRatingFinished = { [weak self] (status: ChatStatus?) -> Bool in
             if !(self?.hasPostAudienceQuestionnaire ?? true) { return true }
@@ -171,8 +170,10 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
 
     // MARK: - Coordinator
 
-    init(with session: NINChatSession) {
-        self.session = session
+    init(with sessionManager: NINChatSessionManager, delegate: InternalDelegate?, onPresentationCompletion: @escaping (() -> Void)) {
+        self.sessionManager = sessionManager
+        self.delegate = delegate
+        self.onPresentationCompletion = onPresentationCompletion
     }
 
     func start(with queue: String?, resume: ResumeMode?, within navigation: UINavigationController?) -> UIViewController? {
@@ -225,12 +226,12 @@ extension NINCoordinator {
         vc.ratingViewModel = ratingViewModel
         vc.viewModel = (questionnaireType == .pre) ? self.preQuestionnaireViewModel : self.postQuestionnaireViewModel
 
-        let style = self.session.sessionManager.siteConfiguration.preAudienceQuestionnaireStyle
+        let style = self.sessionManager.siteConfiguration.preAudienceQuestionnaireStyle
         switch style {
         case .form:
-            vc.dataSourceDelegate = NINQuestionnaireFormDataSourceDelegate(viewModel: (questionnaireType == .pre) ? self.preQuestionnaireViewModel : self.postQuestionnaireViewModel, session: self.session, sessionManager: self.sessionManager)
+            vc.dataSourceDelegate = NINQuestionnaireFormDataSourceDelegate(viewModel: (questionnaireType == .pre) ? self.preQuestionnaireViewModel : self.postQuestionnaireViewModel, sessionManager: self.sessionManager, delegate: self.delegate)
         case .conversation:
-            vc.dataSourceDelegate = NINQuestionnaireConversationDataSourceDelegate(viewModel: (questionnaireType == .pre) ? self.preQuestionnaireViewModel : self.postQuestionnaireViewModel, session: self.session, sessionManager: self.sessionManager)
+            vc.dataSourceDelegate = NINQuestionnaireConversationDataSourceDelegate(viewModel: (questionnaireType == .pre) ? self.preQuestionnaireViewModel : self.postQuestionnaireViewModel, sessionManager: self.sessionManager, delegate: self.delegate)
         }
         vc.style = style
         vc.completeQuestionnaire = { [weak self] queue in
@@ -304,6 +305,6 @@ extension NINCoordinator {
 
 extension NINCoordinator {
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
-        self.session.deallocate()
+        self.onPresentationCompletion?()
     }
 }

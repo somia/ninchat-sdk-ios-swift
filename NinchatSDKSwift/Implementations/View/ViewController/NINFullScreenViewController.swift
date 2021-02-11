@@ -17,14 +17,14 @@ final class NINFullScreenViewController: UIViewController, ViewController {
     
     // MARK: - ViewController
     
-    weak var session: NINChatSession?
+    var delegate: InternalDelegate?
     weak var sessionManager: NINChatSessionManager?
     
     // MARK: - Outlets
     
     private lazy var topBar: TopBarProtocol = {
         var view: TopBar = TopBar.loadFromNib()
-        view.session = session
+        view.delegate = delegate
         view.fileName = attachment.name
         view.onCloseTapped = onCloseTapped
         view.onDownloadTapped = { [weak self] in
@@ -70,6 +70,13 @@ final class NINFullScreenViewController: UIViewController, ViewController {
 
         /// Update image
         imageView.image = image
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
     }
 }
 

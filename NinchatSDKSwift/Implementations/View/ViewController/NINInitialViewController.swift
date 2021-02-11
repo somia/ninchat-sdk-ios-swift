@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class NINInitialViewController: UIViewController {
+final class NINInitialViewController: UIViewController, ViewController {
     
     // MARK: - Injected
     
@@ -14,7 +14,7 @@ final class NINInitialViewController: UIViewController {
     
     // MARK: - ViewController
     
-    weak var session: NINChatSession?
+    var delegate: InternalDelegate?
     weak var sessionManager: NINChatSessionManager?
     
     // MARK: - Outlets
@@ -79,7 +79,7 @@ final class NINInitialViewController: UIViewController {
     // MARK: - User actions
     
     @IBAction private func closeWindowButtonPressed(button: UIButton) {
-        self.session?.internalDelegate?.onDidEnd()
+        delegate?.onDidEnd()
     }
 }
 
@@ -87,20 +87,20 @@ final class NINInitialViewController: UIViewController {
 
 private extension NINInitialViewController {
     private func overrideAssets() {
-        closeWindowButton?.overrideAssets(with: self.session?.internalDelegate, isPrimary: false)
-        if let topBackgroundColor = self.session?.internalDelegate?.override(colorAsset: .backgroundTop) {
+        closeWindowButton?.overrideAssets(with: delegate, isPrimary: false)
+        if let topBackgroundColor = delegate?.override(colorAsset: .backgroundTop) {
             topContainerView.backgroundColor = topBackgroundColor
         }
-        if let bottomBackgroundColor = self.session?.internalDelegate?.override(colorAsset: .backgroundBottom) {
+        if let bottomBackgroundColor = delegate?.override(colorAsset: .backgroundBottom) {
             bottomContainerView.backgroundColor = bottomBackgroundColor
         }
-        if let textTopColor = self.session?.internalDelegate?.override(colorAsset: .textTop) {
+        if let textTopColor = delegate?.override(colorAsset: .textTop) {
             welcomeTextView.textColor = textTopColor
         }
-        if let textBottomColor = self.session?.internalDelegate?.override(colorAsset: .textBottom) {
+        if let textBottomColor = delegate?.override(colorAsset: .textBottom) {
             motdTextView.textColor = textBottomColor
         }
-        if let linkColor = self.session?.internalDelegate?.override(colorAsset: .link) {
+        if let linkColor = delegate?.override(colorAsset: .link) {
             let attribute = [NSAttributedString.Key.foregroundColor: linkColor]
             welcomeTextView.linkTextAttributes = attribute
             motdTextView.linkTextAttributes = attribute
@@ -124,7 +124,7 @@ private extension NINInitialViewController {
             button.backgroundColor = .defaultBackgroundButton
             button.setTitleColor(.white, for: .normal)
             button.setTitle(self.sessionManager?.translate(key: Constants.kJoinQueueText.rawValue, formatParams: ["audienceQueue.queue_attrs.name": queue.name]) ?? "", for: .normal)
-            button.overrideAssets(with: self.session?.internalDelegate, isPrimary: true)
+            button.overrideAssets(with: delegate, isPrimary: true)
             
             queueButtonsStackView.addArrangedSubview(button)
             button.heightAnchor.constraint(equalToConstant: buttonHeights).isActive = true
@@ -134,6 +134,6 @@ private extension NINInitialViewController {
     private func drawNoQueueText() {
         self.queueButtonsStackView.isHidden = true
         self.noQueueTextView.isHidden = false
-        self.noQueueTextView.setAttributed(text: self.sessionManager?.siteConfiguration.noQueueText ?? NSLocalizedString("NoQueueText", tableName: "Localizable", bundle: Bundle.SDKBundle!, value: "", comment: ""), font: self.noQueueTextView.font)
+        self.noQueueTextView.setAttributed(text: self.sessionManager?.siteConfiguration.noQueueText ?? "NoQueueText".localized, font: self.noQueueTextView.font)
     }
 }

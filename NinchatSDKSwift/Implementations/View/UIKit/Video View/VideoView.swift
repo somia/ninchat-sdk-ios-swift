@@ -15,7 +15,7 @@ protocol VideoViewActions {
 }
 
 protocol VideoViewProtocol: UIView, VideoViewActions {
-    var session: NINChatSession? { get set }
+    var delegate: InternalDelegate? { get set }
     var viewModel: NINChatViewModel! { get set }
     var localCapture: RTCCameraVideoCapturer? { get set }
     var remoteCapture: RTCVideoRenderer? { get set }
@@ -32,8 +32,8 @@ final class VideoView: UIView, VideoViewProtocol {
     private var currentVideoSize: CGSize?
     
     // MARK: - VideoViewProtocol
-    
-    weak var session: NINChatSession?
+
+    var delegate: InternalDelegate?
     var viewModel: NINChatViewModel!
     var onHangupTapped: Action?
     var onAudioTapped: Action?
@@ -109,23 +109,23 @@ final class VideoView: UIView, VideoViewProtocol {
     }
     
     func overrideAssets() {
-        if let hangupIcon = self.session?.internalDelegate?.override(imageAsset: .iconVideoHangup) {
+        if let hangupIcon = self.delegate?.override(imageAsset: .iconVideoHangup) {
             self.hangupButton.setImage(hangupIcon, for: .normal)
         }
         
-        if let micOnIcon = self.session?.internalDelegate?.override(imageAsset: .iconVideoMicrophoneOn) {
+        if let micOnIcon = self.delegate?.override(imageAsset: .iconVideoMicrophoneOn) {
             self.microphoneEnabledButton.setImage(micOnIcon, for: .normal)
         }
         
-        if let micOffIcon = self.session?.internalDelegate?.override(imageAsset: .iconVideoMicrophoneOff) {
+        if let micOffIcon = self.delegate?.override(imageAsset: .iconVideoMicrophoneOff) {
             self.microphoneEnabledButton.setImage(micOffIcon, for: .selected)
         }
         
-        if let cameraOnIcon = self.session?.internalDelegate?.override(imageAsset: .iconVideoCameraOn) {
+        if let cameraOnIcon = self.delegate?.override(imageAsset: .iconVideoCameraOn) {
             self.cameraEnabledButton.setImage(cameraOnIcon, for: .normal)
         }
         
-        if let cameraOffIcon = self.session?.internalDelegate?.override(imageAsset: .iconVideoCameraOff) {
+        if let cameraOffIcon = self.delegate?.override(imageAsset: .iconVideoCameraOff) {
             self.cameraEnabledButton.setImage(cameraOffIcon, for: .selected)
         }
     }

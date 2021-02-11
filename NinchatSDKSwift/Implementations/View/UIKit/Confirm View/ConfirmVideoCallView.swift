@@ -41,29 +41,28 @@ final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol {
     // MARK: - ConfirmView
     
     var onViewAction: OnViewAction?
-    weak var session: NINChatSession? {
+    var delegate: InternalDelegate?
+    var sessionManager: NINChatSessionManager? {
         didSet {
             self.overrideAssets()
         }
     }
     
     func overrideAssets() {
-        acceptButton.overrideAssets(with: self.session?.internalDelegate, isPrimary: true)
-        rejectButton.overrideAssets(with: self.session?.internalDelegate, isPrimary: false)
+        acceptButton.overrideAssets(with: self.delegate, isPrimary: true)
+        rejectButton.overrideAssets(with: self.delegate, isPrimary: false)
 
-        if let backgroundColor = self.session?.internalDelegate?.override(colorAsset: .modalBackground) {
+        if let backgroundColor = self.delegate?.override(colorAsset: .modalBackground) {
             self.headerContainerView.backgroundColor = backgroundColor
             self.bottomContainerView.backgroundColor = backgroundColor
         }
         
-        if let textColor = self.session?.internalDelegate?.override(colorAsset: .modalText) {
+        if let textColor = self.delegate?.override(colorAsset: .modalText) {
             self.titleLabel.textColor = textColor
             self.usernameLabel.textColor = textColor
             self.infoLabel.textColor = textColor
         }
-
-        guard let sessionManager = session?.sessionManager else { return }
-        let agentAvatarConfig = AvatarConfig(avatar: sessionManager.siteConfiguration.agentAvatar, name: sessionManager.siteConfiguration.agentName)
+        let agentAvatarConfig = AvatarConfig(avatar: sessionManager?.siteConfiguration.agentAvatar, name: sessionManager?.siteConfiguration.agentName)
         
         /// Caller's Avatar image
         if let overrideURL = agentAvatarConfig.imageOverrideURL {
@@ -84,19 +83,19 @@ final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol {
         }
 
         
-        if let acceptTitle = sessionManager.translate(key: Constants.kAcceptDialog.rawValue, formatParams: [:]) {
+        if let acceptTitle = sessionManager?.translate(key: Constants.kAcceptDialog.rawValue, formatParams: [:]) {
             self.acceptButton.setTitle(acceptTitle, for: .normal)
         }
         
-        if let rejectTitle = sessionManager.translate(key: Constants.kRejectDialog.rawValue, formatParams: [:]) {
+        if let rejectTitle = sessionManager?.translate(key: Constants.kRejectDialog.rawValue, formatParams: [:]) {
             self.rejectButton.setTitle(rejectTitle, for: .normal)
         }
         
-        if let title = sessionManager.translate(key: Constants.kCallInvitationText.rawValue, formatParams: [:]) {
+        if let title = sessionManager?.translate(key: Constants.kCallInvitationText.rawValue, formatParams: [:]) {
             self.titleLabel.text = title
         }
         
-        if let info = sessionManager.translate(key: Constants.kCallInvitationInfoText.rawValue, formatParams: [:]) {
+        if let info = sessionManager?.translate(key: Constants.kCallInvitationInfoText.rawValue, formatParams: [:]) {
             self.infoLabel.text = info
         }
     }
