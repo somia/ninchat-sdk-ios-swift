@@ -40,7 +40,7 @@ protocol NINChatMessageProtocol {
 }
 
 protocol NINChatPermissionsProtocol {
-    func grantVideoCallPermissions(_ completion: @escaping (Error?) -> Void)
+    func grantVideoCallPermissions(onError: ((Error?) -> Bool)?, completion: @escaping (Error?) -> Void)
 }
 
 protocol NINChatAttachmentProtocol {
@@ -68,6 +68,7 @@ final class NINChatViewModelImpl: NINChatViewModel {
     var onQueueUpdated: (() -> Void)?
     var onChannelMessage: ((MessageUpdateType) -> Void)?
     var onComposeActionUpdated: ((_ index: Int, _ action: ComposeUIAction) -> Void)?
+    var onAppResignedActive: (() -> Void)?
 
     init(sessionManager: NINChatSessionManager) {
         self.sessionManager = sessionManager
@@ -182,7 +183,9 @@ extension NINChatViewModelImpl {
         self.hangup(completion: completion)
     }
 
-    func appWillResignActive(completion: @escaping (Error?) -> Void) {}
+    func appWillResignActive(completion: @escaping (Error?) -> Void) {
+        onAppResignedActive?()
+    }
 }
 
 // MARK: - NINChatMessage
@@ -254,11 +257,30 @@ extension NINChatViewModelImpl: QueueUpdateCapture {
 // MARK: - NINChatPermissionsProtocol
 
 extension NINChatViewModelImpl {
-    func grantVideoCallPermissions(_ completion: @escaping (Error?) -> Void) {
+    func grantVideoCallPermissions(onError: ((Error?) -> Bool)?, completion: @escaping (Error?) -> Void) {
         isOnBackgroundTask = true
+
         Permission.grantPermission(.deviceCamera, .deviceMicrophone) { [weak self] error in
-            debugger("permissions for video call granted with error: \(String(describing: error))")
-            self?.isOnBackgroundTask = false; completion(error)
+            self?.isOnBackgroundTask = false
+
+            guard error != nil else {
+                debugger("Permission granted with no errors")
+                completion(error); return
+            }
+
+            debugger("Permissions for video call granted with error: \(String(describing: error))")
+            guard onError?(error) ?? false else {
+                debugger("User denied to update permissions")
+                completion(error); return
+            }
+
+            self?.onAppResignedActive = {
+                debugger("User directed back to the application, checking the permissions again")
+                self?.grantVideoCallPermissions(onError: nil) { error in
+                    debugger("Permissions for video call granted with error: \(String(describing: error))")
+                    completion(error)
+                }
+            }
         }
     }
 

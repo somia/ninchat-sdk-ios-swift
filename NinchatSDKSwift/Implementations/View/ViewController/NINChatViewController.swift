@@ -266,18 +266,6 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
     // MARK: - Helpers
     
     private func connectRTC() {
-        func permissionError(_ error: Error?) -> Bool {
-            if error as? PermissionError != nil {
-                /// 1. Show toast to notify the user
-                Toast.show(message: .error("\("Permission denied".localized) \("Update Settings".localized)"), onToastTouched: { UIApplication.openAppSetting() })
-                /// 2. Cancel the call
-                self.viewModel.hangup { _ in  }
-                /// 3. Discard the process
-                return true
-            }
-            return false
-        }
-
         /// send .answer response
         func answerCall(with action: ConfirmAction) {
             debugger("accept call: \(action == .confirm)")
@@ -288,14 +276,9 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
                     if error != nil { Toast.show(message: .error("WebRTC pickup fail".localized)) }
                 }
             case .confirm:
-                debugger("WebRTC: Grant permission for the video call")
-                self.viewModel.grantVideoCallPermissions { error in
-                    if permissionError(error) { return }
-
-                    debugger("WebRTC: Permissions granted - initializing the video call (answer)")
-                    self.viewModel.pickup(answer: true) { error in
-                        if error != nil { Toast.show(message: .error("WebRTC pickup fail".localized)) }
-                    }
+                debugger("WebRTC: Permissions was granted - initializing the video call (answer)")
+                self.viewModel.pickup(answer: true) { error in
+                    if error != nil { Toast.show(message: .error("WebRTC pickup fail".localized)) }
                 }
             }
         }
@@ -306,20 +289,42 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
                 debugger("WebRTC: Silently accept the video call")
                 answerCall(with: .confirm); return
             }
+
             DispatchQueue.main.async {
                 self?.view.endEditing(true)
 
-                let confirmVideoDialog: ConfirmVideoCallView = ConfirmVideoCallView.loadFromNib()
-                confirmVideoDialog.user = channel
-                confirmVideoDialog.delegate = self?.delegate
-                confirmVideoDialog.sessionManager = self?.sessionManager
-                confirmVideoDialog.onViewAction = { action in
-                    confirmVideoDialog.hideConfirmView()
-                    answerCall(with: action)
-                }
-                confirmVideoDialog.showConfirmView(on: self?.view ?? UIView())
+                /// show permission settings if the user had denied them
+                /// according to `https://github.com/somia/mobile/issues/313`
+                debugger("WebRTC: Grant permission for the video call")
+                self?.viewModel.grantVideoCallPermissions(onError: { perror in
+                    guard perror is PermissionError else { return false }
+
+                    debugger("Show confirm to direct user to app settings")
+                    DispatchQueue.main.async {
+                        /// TODO: add the confirm view for directing to settings page
+                    }
+                    return true
+                }, completion: { error in
+                    if error != nil {
+                        debugger("User did not change the permissions....")
+                        Toast.show(message: .error("\("Permission denied".localized) \("Update Settings".localized)"))
+                        self?.viewModel.hangup { _ in  }
+                    } else {
+                        debugger("User got back from settings, continue the call...")
+                        DispatchQueue.main.async {
+                            let confirmVideoDialog: ConfirmVideoCallView = ConfirmVideoCallView.loadFromNib()
+                            confirmVideoDialog.user = channel
+                            confirmVideoDialog.delegate = self?.delegate
+                            confirmVideoDialog.sessionManager = self?.sessionManager
+                            confirmVideoDialog.onViewAction = { action in
+                                confirmVideoDialog.hideConfirmView()
+                                answerCall(with: action)
+                            }
+                            confirmVideoDialog.showConfirmView(on: self?.view ?? UIView())
+                        }
+                    }
+                })
             }
-            
         }, onCallInitiated: { [weak self] rtcClient, error in
             self?.webRTCClient = rtcClient
             DispatchQueue.main.async {
