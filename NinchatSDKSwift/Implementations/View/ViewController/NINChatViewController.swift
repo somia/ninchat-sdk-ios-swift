@@ -271,7 +271,7 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
                 /// 1. Show toast to notify the user
                 Toast.show(message: .error("\("Permission denied".localized) \("Update Settings".localized)"), onToastTouched: { UIApplication.openAppSetting() })
                 /// 2. Cancel the call
-                self.viewModel.hangup { _ in  }
+                self.viewModel.pickup(answer: false, unsupported: true) { _ in  }
                 /// 3. Discard the process
                 return true
             }

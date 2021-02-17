@@ -20,9 +20,14 @@ protocol NINChatRTCProtocol {
     typealias RTCCallHangup = () -> Void
 
     func listenToRTCSignaling(delegate: NINChatWebRTCClientDelegate?, onCallReceived: @escaping RTCCallReceive, onCallInitiated: @escaping RTCCallInitial, onCallHangup: @escaping RTCCallHangup)
-    func pickup(answer: Bool, completion: @escaping (Error?) -> Void)
+    func pickup(answer: Bool, unsupported: Bool?, completion: @escaping (Error?) -> Void)
     func hangup(completion: @escaping (Error?) -> Void)
     func disconnectRTC(_ client: NINChatWebRTCClient?, completion: (() -> Void)?)
+}
+extension NINChatRTCProtocol {
+    func pickup(answer: Bool, completion: @escaping (Error?) -> ()) {
+        self.pickup(answer: answer, unsupported: nil, completion: completion)
+    }
 }
 
 protocol NINChatStateProtocol {
@@ -144,9 +149,14 @@ extension NINChatViewModelImpl {
         }
     }
 
-    func pickup(answer: Bool, completion: @escaping (Error?) -> Void) {
+    func pickup(answer: Bool, unsupported: Bool? = nil, completion: @escaping (Error?) -> Void) {
         do {
-            try self.sessionManager.send(type: .pickup, payload: ["answer": answer], completion: completion)
+            var payload = ["answer": answer]
+            if unsupported != nil {
+                payload["unsupported"] = unsupported
+            }
+
+            try self.sessionManager.send(type: .pickup, payload: payload, completion: completion)
         } catch {
             completion(error)
         }
