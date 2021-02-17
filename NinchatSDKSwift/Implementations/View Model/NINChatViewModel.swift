@@ -16,7 +16,7 @@ enum MessageUpdateType {
 
 protocol NINChatRTCProtocol {
     typealias RTCCallReceive = (ChannelUser?, Error?) -> Void
-    typealias RTCCallInitial = (Error?, NINChatWebRTCClient?) -> Void
+    typealias RTCCallInitial = (NINChatWebRTCClient?, Error?) -> Void
     typealias RTCCallHangup = () -> Void
 
     func listenToRTCSignaling(delegate: NINChatWebRTCClientDelegate?, onCallReceived: @escaping RTCCallReceive, onCallInitiated: @escaping RTCCallInitial, onCallHangup: @escaping RTCCallHangup)
@@ -127,13 +127,13 @@ extension NINChatViewModelImpl {
                             self?.client = NINChatWebRTCClientImpl(sessionManager: self?.sessionManager, operatingMode: .callee, stunServers: stunServers, turnServers: turnServers, candidates: self?.iceCandidates, delegate: delegate)
                             try self?.client?.start(with: signal)
 
-                            onCallInitiated(error, self?.client)
+                            onCallInitiated(self?.client, error)
                         } catch {
-                            onCallInitiated(error, nil)
+                            onCallInitiated(nil, error)
                         }
                     }
                 } catch {
-                    onCallInitiated(error, nil)
+                    onCallInitiated(nil, error)
                 }
             case .hangup:
                 debugger("WebRTC: hang-up - closing the video call.")
