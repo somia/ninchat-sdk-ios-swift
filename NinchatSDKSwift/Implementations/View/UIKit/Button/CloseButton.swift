@@ -21,7 +21,7 @@ final class CloseButton: UIView, CloseButtonProtocol {
         let view = Button(frame: .zero)
         view.backgroundColor = .clear
         view.setTitleColor(.defaultBackgroundButton, for: .normal)
-        view.titleEdgeInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0.0, right: 24.0)
+        view.titleEdgeInsets = UIEdgeInsets(top: 0.0, left: 12.0, bottom: 0.0, right: 12.0)
         
         return view
     }()
@@ -98,6 +98,7 @@ final class CloseButton: UIView, CloseButtonProtocol {
             .center(toY: self)
             .fix(width: 14.0, height: 14.0)
             .fix(trailing: (16, self))
+            .fix(leading: (0, theButton), isRelative: true)
         self.bringSubviewToFront(closeButtonImageView)
     }
     
