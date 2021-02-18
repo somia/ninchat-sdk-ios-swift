@@ -271,7 +271,7 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
                 /// 1. Show toast to notify the user
                 Toast.show(message: .error("\("Permission denied".localized) \("Update Settings".localized)"), onToastTouched: { UIApplication.openAppSetting() })
                 /// 2. Cancel the call
-                self.viewModel.hangup { _ in  }
+                self.viewModel.pickup(answer: false, unsupported: true) { _ in  }
                 /// 3. Discard the process
                 return true
             }
@@ -290,6 +290,8 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
             case .confirm:
                 debugger("WebRTC: Grant permission for the video call")
                 self.viewModel.grantVideoCallPermissions { error in
+                    if permissionError(error) { return }
+
                     debugger("WebRTC: Permissions granted - initializing the video call (answer)")
                     self.viewModel.pickup(answer: true) { error in
                         if error != nil { Toast.show(message: .error("WebRTC pickup fail".localized)) }
@@ -299,8 +301,6 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
         }
 
         self.viewModel.listenToRTCSignaling(delegate: chatRTCDelegate, onCallReceived: { [weak self] channel, error in
-            if permissionError(error) { return }
-
             /// accept invite silently when re-invited `https://github.com/somia/mobile/issues/232`
             guard self?.webRTCClient == nil else {
                 debugger("WebRTC: Silently accept the video call")
@@ -320,9 +320,7 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
                 confirmVideoDialog.showConfirmView(on: self?.view ?? UIView())
             }
             
-        }, onCallInitiated: { [weak self] error, rtcClient in
-            if permissionError(error) { return }
-
+        }, onCallInitiated: { [weak self] rtcClient, error in
             self?.webRTCClient = rtcClient
             DispatchQueue.main.async {
                 self?.closeChatButton.hide = true
