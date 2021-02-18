@@ -45,6 +45,7 @@ final class CloseButton: UIView, CloseButtonProtocol {
     var buttonTitle: String! {
         didSet {
             self.theButton.setTitle(buttonTitle, for: .normal)
+            self.theButton.sizeToFit()
             self.updateConstraints()
         }
     }
@@ -104,10 +105,11 @@ final class CloseButton: UIView, CloseButtonProtocol {
     override func updateConstraints() {
         super.updateConstraints()
         if let widthAnchor = self.width, let heightAnchor = self.height {
-            widthAnchor.constant = self.frame.width + 40.0
+            widthAnchor.constant = (self.buttonTitle.isEmpty) ? 46.0 : self.theButton.frame.width + 66.0
             heightAnchor.constant = 45.0
         } else {
-            self.fix(width: self.frame.width + 40.0, height: 45.0)
+            /// only to set constraints, values are not important
+            self.fix(width: 0.0, height: 0.0)
         }
         self.setupView()
         
