@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="YpM-11-QhB">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="YpM-11-QhB">
     <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -74,7 +74,9 @@ you are next.</string>
                                     <constraint firstItem="RGm-bx-l81" firstAttribute="leading" secondItem="dkT-tD-Ztq" secondAttribute="leading" constant="20" id="5jM-rZ-3KI"/>
                                     <constraint firstItem="8zZ-5c-Lgm" firstAttribute="centerX" secondItem="dkT-tD-Ztq" secondAttribute="centerX" id="JIZ-bn-UmW"/>
                                     <constraint firstItem="8zZ-5c-Lgm" firstAttribute="top" secondItem="RGm-bx-l81" secondAttribute="bottom" constant="40" id="LG6-AG-RIh"/>
+                                    <constraint firstItem="8zZ-5c-Lgm" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="dkT-tD-Ztq" secondAttribute="leading" constant="8" id="MbF-KM-FLe"/>
                                     <constraint firstAttribute="trailing" secondItem="RGm-bx-l81" secondAttribute="trailing" constant="20" id="Rys-ao-fbe"/>
+                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="8zZ-5c-Lgm" secondAttribute="trailing" constant="8" id="U9x-0B-adb"/>
                                     <constraint firstItem="RGm-bx-l81" firstAttribute="top" secondItem="dkT-tD-Ztq" secondAttribute="top" constant="50" id="jBf-nJ-2tI"/>
                                 </constraints>
                             </view>
@@ -195,6 +197,7 @@ you are next.</string>
                             <constraint firstItem="pew-Xu-b1Q" firstAttribute="trailing" secondItem="Sle-hz-0wC" secondAttribute="trailing" constant="10" id="joD-bx-Hvv"/>
                             <constraint firstItem="IrG-9p-EhR" firstAttribute="top" secondItem="wrn-IT-ZNh" secondAttribute="top" id="mud-hq-zQa"/>
                             <constraint firstItem="pew-Xu-b1Q" firstAttribute="bottom" secondItem="RGh-Mv-yIb" secondAttribute="bottom" id="tjU-8X-d17"/>
+                            <constraint firstItem="Sle-hz-0wC" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="pew-Xu-b1Q" secondAttribute="leading" constant="8" id="ttr-fS-gaZ"/>
                             <constraint firstItem="pew-Xu-b1Q" firstAttribute="trailing" secondItem="IrG-9p-EhR" secondAttribute="trailing" id="u9u-AD-hQD"/>
                             <constraint firstItem="IrG-9p-EhR" firstAttribute="bottom" secondItem="RGh-Mv-yIb" secondAttribute="bottom" id="veA-gX-mfS"/>
                         </constraints>
