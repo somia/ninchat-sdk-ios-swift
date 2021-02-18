@@ -79,8 +79,15 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
         if let sendButtonTitle = self.sessionManager?.siteConfiguration.sendButtonTitle {
             self.sendMessageButtonWidthConstraint.isActive = false
             self.sendMessageButton.setImage(nil, for: .normal)
+            self.sendMessageButton.backgroundColor = .clear
             self.sendMessageButton.setTitle(sendButtonTitle, for: .normal)
             self.sendMessageButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
+            
+            if let backgroundColor = self.delegate?.override(colorAsset: .textareaSubmit) {
+                self.sendMessageButton.backgroundColor = backgroundColor
+                self.sendMessageButton.layer.masksToBounds = true
+                self.sendMessageButton.layer.cornerRadius = 16.0
+            }
             
             if let backgroundImage = self.delegate?.override(imageAsset: .textareaSubmitButton) {
                 self.sendMessageButton.setBackgroundImage(backgroundImage, for: .normal)
