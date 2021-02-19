@@ -64,8 +64,8 @@ you are next.</string>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                         <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
                                     </textView>
-                                    <view contentMode="scaleToFill" placeholderIntrinsicWidth="135" placeholderIntrinsicHeight="45" translatesAutoresizingMaskIntoConstraints="NO" id="8zZ-5c-Lgm" customClass="CloseButton" customModule="NinchatSDKSwift">
-                                        <rect key="frame" x="120" y="146.33333333333331" width="135" height="45"/>
+                                    <view contentMode="scaleToFill" misplaced="YES" placeholderIntrinsicWidth="135" placeholderIntrinsicHeight="45" translatesAutoresizingMaskIntoConstraints="NO" id="8zZ-5c-Lgm" customClass="CloseButton" customModule="NinchatSDKSwift">
+                                        <rect key="frame" x="121" y="146.33333333333331" width="132" height="45"/>
                                         <color key="backgroundColor" red="1" green="0.0" blue="0.2431916516" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </view>
                                 </subviews>
@@ -74,9 +74,7 @@ you are next.</string>
                                     <constraint firstItem="RGm-bx-l81" firstAttribute="leading" secondItem="dkT-tD-Ztq" secondAttribute="leading" constant="20" id="5jM-rZ-3KI"/>
                                     <constraint firstItem="8zZ-5c-Lgm" firstAttribute="centerX" secondItem="dkT-tD-Ztq" secondAttribute="centerX" id="JIZ-bn-UmW"/>
                                     <constraint firstItem="8zZ-5c-Lgm" firstAttribute="top" secondItem="RGm-bx-l81" secondAttribute="bottom" constant="40" id="LG6-AG-RIh"/>
-                                    <constraint firstItem="8zZ-5c-Lgm" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="dkT-tD-Ztq" secondAttribute="leading" constant="8" id="MbF-KM-FLe"/>
                                     <constraint firstAttribute="trailing" secondItem="RGm-bx-l81" secondAttribute="trailing" constant="20" id="Rys-ao-fbe"/>
-                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="8zZ-5c-Lgm" secondAttribute="trailing" constant="8" id="U9x-0B-adb"/>
                                     <constraint firstItem="RGm-bx-l81" firstAttribute="top" secondItem="dkT-tD-Ztq" secondAttribute="top" constant="50" id="jBf-nJ-2tI"/>
                                 </constraints>
                             </view>
@@ -180,7 +178,7 @@ you are next.</string>
                             </view>
                             <view contentMode="scaleToFill" placeholderIntrinsicWidth="132" placeholderIntrinsicHeight="45" translatesAutoresizingMaskIntoConstraints="NO" id="Sle-hz-0wC" customClass="CloseButton" customModule="NinchatSDKSwift">
                                 <rect key="frame" x="233" y="54" width="132" height="45"/>
-                                <color key="backgroundColor" red="0.69019607839999997" green="0.20000000000000001" blue="0.20392156859999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" red="1" green="1.2764413440000001e-05" blue="0.24315434690000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="pew-Xu-b1Q"/>
@@ -197,7 +195,6 @@ you are next.</string>
                             <constraint firstItem="pew-Xu-b1Q" firstAttribute="trailing" secondItem="Sle-hz-0wC" secondAttribute="trailing" constant="10" id="joD-bx-Hvv"/>
                             <constraint firstItem="IrG-9p-EhR" firstAttribute="top" secondItem="wrn-IT-ZNh" secondAttribute="top" id="mud-hq-zQa"/>
                             <constraint firstItem="pew-Xu-b1Q" firstAttribute="bottom" secondItem="RGh-Mv-yIb" secondAttribute="bottom" id="tjU-8X-d17"/>
-                            <constraint firstItem="Sle-hz-0wC" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="pew-Xu-b1Q" secondAttribute="leading" constant="8" id="ttr-fS-gaZ"/>
                             <constraint firstItem="pew-Xu-b1Q" firstAttribute="trailing" secondItem="IrG-9p-EhR" secondAttribute="trailing" id="u9u-AD-hQD"/>
                             <constraint firstItem="IrG-9p-EhR" firstAttribute="bottom" secondItem="RGh-Mv-yIb" secondAttribute="bottom" id="veA-gX-mfS"/>
                         </constraints>

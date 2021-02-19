@@ -21,7 +21,7 @@ final class CloseButton: UIView, CloseButtonProtocol {
         let view = Button(frame: .zero)
         view.backgroundColor = .clear
         view.setTitleColor(.defaultBackgroundButton, for: .normal)
-        view.titleEdgeInsets = UIEdgeInsets(top: 0.0, left: 12.0, bottom: 0.0, right: 12.0)
+        view.titleEdgeInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0.0, right: 24.0)
         
         return view
     }()
@@ -46,7 +46,6 @@ final class CloseButton: UIView, CloseButtonProtocol {
         didSet {
             self.theButton.setTitle(buttonTitle, for: .normal)
             self.theButton.sizeToFit()
-            self.updateConstraints()
         }
     }
     
@@ -79,6 +78,8 @@ final class CloseButton: UIView, CloseButtonProtocol {
             self.closeButtonImageView.tintColor = textColor
             self.layer.borderColor = textColor.cgColor
         }
+
+        self.updateConstraints()
     }
     
     // MARK: - UIView
@@ -97,8 +98,7 @@ final class CloseButton: UIView, CloseButtonProtocol {
         self.closeButtonImageView
             .center(toY: self)
             .fix(width: 14.0, height: 14.0)
-            .fix(trailing: (16, self))
-            .fix(leading: (0, theButton), isRelative: true)
+            .fix(trailing: (15, self))
         self.bringSubviewToFront(closeButtonImageView)
     }
     
@@ -107,14 +107,11 @@ final class CloseButton: UIView, CloseButtonProtocol {
         super.updateConstraints()
         if let widthAnchor = self.width, let heightAnchor = self.height {
             widthAnchor.constant = (self.buttonTitle.isEmpty) ? 46.0 : self.theButton.frame.width + 66.0
-            heightAnchor.constant = 45.0
+            heightAnchor.constant = 46.0
         } else {
             /// only to set constraints, values are not important
             self.fix(width: 0.0, height: 0.0)
         }
         self.setupView()
-        
-        self.setNeedsLayout()
-        self.layoutIfNeeded()
     }
 }

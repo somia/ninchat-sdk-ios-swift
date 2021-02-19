@@ -48,8 +48,8 @@ final class NINQueueViewController: UIViewController, ViewController {
     @IBOutlet private(set) weak var closeChatButton: CloseButton! {
         didSet {
             let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
-            closeChatButton.overrideAssets(with: self.delegate)
             closeChatButton.buttonTitle = closeTitle
+            closeChatButton.overrideAssets(with: self.delegate)
             closeChatButton.closure = { [weak self] button in
                 try? self?.sessionManager?.closeChat {
                     self?.sessionManager?.deallocateSession()
