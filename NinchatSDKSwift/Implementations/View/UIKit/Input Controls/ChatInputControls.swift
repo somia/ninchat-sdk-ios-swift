@@ -41,7 +41,8 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
             self.onWritingStatusChanged?(isWriting)
         }
     }
-    
+    private var timer: Timer?
+
     // MARK: - ChatInputControls
 
     var delegate: InternalDelegate?
@@ -156,13 +157,22 @@ extension ChatInputControls: UITextViewDelegate {
         if textView.text == placeholderText {
             textView.text.removeAll()
         }
-        self.isWriting = true
         return true
     }
     
     func textViewDidChange(_ textView: UITextView) {
         self.updatePlaceholder()
         self.isWriting = true
+
+        if timer != nil {
+            timer?.invalidate()
+            timer = nil
+        }
+        /// send isWriting = false if user stopped typing.
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { t in
+            t.invalidate()
+            self.isWriting = false
+        }
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
@@ -171,7 +181,7 @@ extension ChatInputControls: UITextViewDelegate {
         }
         return true
     }
-    
+
     func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
         self.updatePlaceholder()
         self.isWriting = false
