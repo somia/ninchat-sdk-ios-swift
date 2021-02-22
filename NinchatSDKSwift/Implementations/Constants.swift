@@ -20,7 +20,6 @@ public enum AssetConstants {
     case iconTextareaCamera
     case iconTextareaAttachment
     case iconDownload
-    case iconTextareaSubmitButtonIcon
     case iconVideoToggleFull
     case iconVideoToggleNormal
     case iconVideoSoundOn
