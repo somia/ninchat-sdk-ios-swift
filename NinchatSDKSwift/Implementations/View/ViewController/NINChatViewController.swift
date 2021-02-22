@@ -124,8 +124,8 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
     @IBOutlet private(set) weak var closeChatButton: CloseButton! {
         didSet {
             let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
-            closeChatButton.overrideAssets(with: self.delegate)
             closeChatButton.buttonTitle = closeTitle
+            closeChatButton.overrideAssets(with: self.delegate)
             closeChatButton.closure = { [weak self] button in
                 DispatchQueue.main.async {
                     self?.onCloseChatTapped()

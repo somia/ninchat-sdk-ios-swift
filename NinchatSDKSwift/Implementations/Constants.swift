@@ -33,6 +33,7 @@ public enum AssetConstants {
     case chatWritingIndicator
     case chatBackground
     case chatCloseButton
+    case chatCloseButtonEmpty
     case chatBubbleLeft
     case chatBubbleLeftRepeated
     case chatBubbleRight
