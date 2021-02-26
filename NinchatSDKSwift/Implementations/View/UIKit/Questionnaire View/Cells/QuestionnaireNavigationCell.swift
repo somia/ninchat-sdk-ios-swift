@@ -122,7 +122,7 @@ extension QuestionnaireNavigationCell {
 
     func layoutNavigationButtons() {
         buttons
-            .fix(leading: (8.0, self.contentView), trailing: (8.0, self.contentView))
+            .fix(leading: (15.0, self.contentView), trailing: (15.0, self.contentView))
             .fix(height: 45.0)
             .center(toY: self.contentView)
         buttons.leading?.priority = .almostRequired
