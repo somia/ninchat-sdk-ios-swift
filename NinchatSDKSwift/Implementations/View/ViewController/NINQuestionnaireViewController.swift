@@ -270,7 +270,7 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     private func scrollToBottom(at section: Int) {
         self.dispatchQueue.async {
             guard let contentView = self.contentView, contentView.numberOfSections > section, contentView.numberOfRows(inSection: section) >= 1 else { return }
-            self.contentView?.scrollToRow(at: IndexPath(row: contentView.numberOfRows(inSection: section)-1, section: section), at: .bottom, animated: true)
+            self.contentView?.scrollToRow(at: IndexPath(row: 0, section: section), at: .top, animated: true)
         }
     }
 
