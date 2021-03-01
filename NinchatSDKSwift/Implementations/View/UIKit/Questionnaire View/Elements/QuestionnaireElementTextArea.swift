@@ -8,7 +8,7 @@ import UIKit
 
 final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireHasBorder, QuestionnaireFocusableElement {
 
-    fileprivate var heightValue: CGFloat = 98.0
+    fileprivate var heightValue: CGFloat = 100.0
     private var answerUpdateWorker: DispatchWorkItem?
 
     // MARK: - QuestionnaireElement
@@ -32,7 +32,8 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
     }
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
-        self.title.frame.origin.y + self.title.intrinsicContentSize.height + self.heightValue + self.padding
+        max(CGFloat(self.title.height!.constant), CGFloat(self.title.frame.height)) + CGFloat(self.view.height!.constant)
+                + 64 /// padding from the bottom
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
