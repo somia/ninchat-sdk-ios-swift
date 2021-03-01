@@ -14,22 +14,22 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="183" id="dXc-my-AiB" customClass="QuestionnaireCell" customModule="NinchatSDKSwift">
-            <rect key="frame" x="0.0" y="0.0" width="770" height="183"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="247" id="dXc-my-AiB" customClass="QuestionnaireCell" customModule="NinchatSDKSwift">
+            <rect key="frame" x="0.0" y="0.0" width="770" height="247"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="dXc-my-AiB" id="qLY-OO-QDE">
-                <rect key="frame" x="0.0" y="0.0" width="770" height="183"/>
+                <rect key="frame" x="0.0" y="0.0" width="770" height="247"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uVs-oJ-d1d">
-                        <rect key="frame" x="0.0" y="0.0" width="770" height="183"/>
+                        <rect key="frame" x="0.0" y="0.0" width="770" height="247"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HZn-tJ-Cnk">
-                        <rect key="frame" x="0.0" y="0.0" width="770" height="183"/>
+                        <rect key="frame" x="0.0" y="0.0" width="770" height="247"/>
                         <subviews>
                             <view tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VBt-A4-ei2" userLabel="Left avatar container">
-                                <rect key="frame" x="15" y="0.0" width="35" height="183"/>
+                                <rect key="frame" x="15" y="0.0" width="35" height="247"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" image="icon_avatar_other" translatesAutoresizingMaskIntoConstraints="NO" id="ruI-1u-tFs">
                                         <rect key="frame" x="0.0" y="12" width="35" height="35"/>
@@ -67,29 +67,30 @@
                                 </constraints>
                             </view>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_bubble_left" translatesAutoresizingMaskIntoConstraints="NO" id="taM-Ib-XuF">
-                                <rect key="frame" x="15" y="57.5" width="740" height="117.5"/>
+                                <rect key="frame" x="15" y="55" width="740" height="184"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2LW-sy-DwU">
-                                <rect key="frame" x="23" y="65.5" width="724" height="101.5"/>
+                                <rect key="frame" x="23" y="55" width="724" height="184"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="taM-Ib-XuF" firstAttribute="height" secondItem="2LW-sy-DwU" secondAttribute="height" id="1OC-WM-mxn"/>
                             <constraint firstAttribute="bottom" secondItem="VBt-A4-ei2" secondAttribute="bottom" id="7GX-hv-hZC"/>
                             <constraint firstItem="LKO-kf-xFa" firstAttribute="leading" secondItem="VBt-A4-ei2" secondAttribute="trailing" constant="8" id="7tA-bf-MYJ"/>
                             <constraint firstAttribute="trailing" secondItem="taM-Ib-XuF" secondAttribute="trailing" constant="15" id="9MZ-Yx-2Ge"/>
-                            <constraint firstItem="2LW-sy-DwU" firstAttribute="top" secondItem="taM-Ib-XuF" secondAttribute="top" constant="8" id="9Yo-mu-e25"/>
+                            <constraint firstItem="2LW-sy-DwU" firstAttribute="top" secondItem="taM-Ib-XuF" secondAttribute="top" id="9Yo-mu-e25"/>
                             <constraint firstItem="2LW-sy-DwU" firstAttribute="leading" secondItem="taM-Ib-XuF" secondAttribute="leading" constant="8" id="Qnc-Zr-8nF"/>
                             <constraint firstItem="VBt-A4-ei2" firstAttribute="top" secondItem="HZn-tJ-Cnk" secondAttribute="top" id="ST7-nY-Ys9"/>
-                            <constraint firstItem="2LW-sy-DwU" firstAttribute="bottom" secondItem="taM-Ib-XuF" secondAttribute="bottom" constant="-8" id="Zra-j7-Y3U"/>
+                            <constraint firstItem="2LW-sy-DwU" firstAttribute="bottom" secondItem="taM-Ib-XuF" secondAttribute="bottom" id="Zra-j7-Y3U"/>
+                            <constraint firstItem="taM-Ib-XuF" firstAttribute="top" secondItem="HZn-tJ-Cnk" secondAttribute="top" constant="55" id="kMj-Kz-MMJ"/>
                             <constraint firstItem="LKO-kf-xFa" firstAttribute="centerY" secondItem="ruI-1u-tFs" secondAttribute="centerY" id="rHh-G8-Xe9"/>
                             <constraint firstItem="2LW-sy-DwU" firstAttribute="trailing" secondItem="taM-Ib-XuF" secondAttribute="trailing" constant="-8" id="t0P-Og-XNp"/>
                             <constraint firstItem="taM-Ib-XuF" firstAttribute="leading" secondItem="ruI-1u-tFs" secondAttribute="leading" id="t0r-sP-cxR"/>
                             <constraint firstAttribute="bottom" secondItem="taM-Ib-XuF" secondAttribute="bottom" constant="8" id="toZ-sI-ESc"/>
                             <constraint firstItem="VBt-A4-ei2" firstAttribute="leading" secondItem="HZn-tJ-Cnk" secondAttribute="leading" constant="15" id="y7s-ox-wmK"/>
-                            <constraint firstItem="taM-Ib-XuF" firstAttribute="top" secondItem="LKO-kf-xFa" secondAttribute="bottom" constant="8" id="zKq-CM-Zs0"/>
                         </constraints>
                     </view>
                 </subviews>
@@ -117,7 +118,7 @@
                 <outletCollection property="conversationDetailsView" destination="j4Q-Cd-6sL" collectionClass="NSMutableArray" id="054-SD-hyj"/>
                 <outletCollection property="conversationDetailsView" destination="LKO-kf-xFa" collectionClass="NSMutableArray" id="hsn-gH-uG4"/>
             </connections>
-            <point key="canvasLocation" x="-16.666666666666668" y="-96.763392857142847"/>
+            <point key="canvasLocation" x="-17.39130434782609" y="-75.334821428571431"/>
         </tableViewCell>
     </objects>
     <resources>
