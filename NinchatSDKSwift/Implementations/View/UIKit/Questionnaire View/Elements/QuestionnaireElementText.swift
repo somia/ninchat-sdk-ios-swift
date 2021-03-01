@@ -8,6 +8,7 @@ import UIKit
 
 final class QuestionnaireElementText: UITextView, QuestionnaireElement {
 
+    fileprivate var bottomInset: CGFloat = 40
     fileprivate var conversationStylePadding: CGFloat {
         (self.questionnaireStyle == .conversation) ? 75 : 0
     }
@@ -32,7 +33,7 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
     }
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
-        self.estimateHeight(width: self.estimatedWidth())
+        self.estimateHeight(width: self.estimatedWidth()) + bottomInset
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
@@ -63,6 +64,12 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
     private func initiateView() {
         self.isEditable = false
         self.isScrollEnabled = false
+        self.isSelectable = false
+
+        /// to remove text content paddings
+        /// thanks to `https://stackoverflow.com/a/42333832/7264553`
+        self.textContainerInset = UIEdgeInsets(top: 0.0, left: 0.0, bottom: -bottomInset, right: 0.0)
+        self.textContainer.lineFragmentPadding = 0
     }
 
     func estimateHeight(width: CGFloat) -> CGFloat {
@@ -70,7 +77,7 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
     }
     
     fileprivate func estimatedWidth() -> CGFloat {
-        (UIApplication.topViewController()?.view.bounds ?? UIScreen.main.bounds).width - conversationStylePadding - 2.0
+        (UIApplication.topViewController()?.view.bounds ?? UIScreen.main.bounds).width - conversationStylePadding
     }
 
 }
