@@ -35,7 +35,10 @@ class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Question
     }
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
-        self.title.frame.origin.y + self.title.intrinsicContentSize.height + CGFloat(self.view.height?.constant ?? 0) + self.padding
+        max(CGFloat(self.title.height!.constant), CGFloat(self.title.frame.height)) + CGFloat(self.view.height!.constant)
+                + 8 /// top anchor of View
+                + 8 /// bottom anchor of View
+                + 8 /// padding from the bottom
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
@@ -137,9 +140,7 @@ extension QuestionnaireElementRadio {
         configuration?.options?.forEach { [weak self] option in
             guard let button = self?.generateButton(for: option, tag: (configuration?.options?.firstIndex(of: option))!) else { return }
             self?.layoutButton(button, upperView: &upperView)
-            button.roundButton()
         }
-        upperView?.fix(bottom: (8.0, self.view), isRelative: false)
     }
 
     internal func generateButton(for option: ElementOption, tag: Int) -> Button {
@@ -161,7 +162,8 @@ extension QuestionnaireElementRadio {
         return view
     }
 
-    internal func layoutButton(_ button: UIView, upperView: inout UIView?) {
+    internal func layoutButton(_ button: Button, upperView: inout UIView?) {
+        defer { upperView = button }
         self.view.addSubview(button)
 
         if self.scaleToParent {
@@ -171,22 +173,16 @@ extension QuestionnaireElementRadio {
         } else if self.width?.constant ?? 0 < self.intrinsicContentSize.width + 32.0 {
             button.fix(width: button.intrinsicContentSize.width + 32.0)
         }
-        if let upperView = upperView {
-            button.fix(top: (8.0, upperView), isRelative: true)
-        } else {
-            button.fix(top: (8.0, self.view), isRelative: false)
-        }
         button
+            .fix(top: (8.0, (upperView != nil) ? upperView! : self.view), isRelative: (upperView != nil))
             .fix(height: max(45.0, button.intrinsicContentSize.height + 16.0))
             .center(toX: self.view)
+            .roundButton()
 
-        if let height = self.view.height {
-            height.constant += ((button.height?.constant ?? 0) + 8.0)
-        } else {
-            self.view.fix(height: (button.height?.constant ?? 0) + 16.0)
+        if self.view.height == nil {
+            self.view.fix(height: 0)
         }
-
-        upperView = button
+        view.height?.constant += button.height!.constant + 8
     }
 
     private func applySelection(to button: UIButton) {

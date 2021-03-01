@@ -21,7 +21,7 @@ class QuestionnaireCell: UITableViewCell {
         didSet {
             self.conversationContentViewStyle.image = UIImage(named: (indexPath.row == 0) ? "chat_bubble_left" : "chat_bubble_left_series", in: .SDKBundle, compatibleWith: nil)
             self.conversationDetailsView.compactMap({ $0 as? UIView }).forEach({ $0.isHidden = (indexPath.row != 0) })
-            self.conversationDetailsView.compactMap({ $0 as? NSLayoutConstraint }).forEach({ $0.constant = (indexPath.row == 0) ? 40 : 0 })
+            self.conversationContentViewStyle.top?.constant = (indexPath.row == 0) ? 55 : 0
         }
     }
 
