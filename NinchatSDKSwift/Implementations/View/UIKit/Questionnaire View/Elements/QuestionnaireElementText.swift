@@ -8,9 +8,10 @@ import UIKit
 
 final class QuestionnaireElementText: UITextView, QuestionnaireElement {
 
-    fileprivate var bottomInset: CGFloat = 40
+    fileprivate var topInset: CGFloat = 8.0
+    fileprivate var bottomInset: CGFloat = 8.0
     fileprivate var conversationStylePadding: CGFloat {
-        (self.questionnaireStyle == .conversation) ? 75 : 0
+        (self.questionnaireStyle == .conversation) ? 32 : 0
     }
 
     // MARK: - QuestionnaireElement
@@ -68,7 +69,7 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
 
         /// to remove text content paddings
         /// thanks to `https://stackoverflow.com/a/42333832/7264553`
-        self.textContainerInset = UIEdgeInsets(top: 0.0, left: 0.0, bottom: -bottomInset, right: 0.0)
+        self.textContainerInset = UIEdgeInsets(top: topInset, left: 0.0, bottom: bottomInset, right: 0.0)
         self.textContainer.lineFragmentPadding = 0
     }
 
