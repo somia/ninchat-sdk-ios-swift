@@ -66,12 +66,14 @@ extension QuestionnaireElementWithTitle {
         title
             .fix(leading: (8.0, self), trailing: (8.0, self))
             .fix(top: (0.0, self))
-            .fix(height: title.intrinsicContentSize.height + self.padding)
+        if title.height == nil {
+            title.fix(height: self.title.intrinsicContentSize.height + self.padding)
+        }
+
         view
             .fix(leading: (8.0, self), trailing: (8.0, self))
             .fix(top: (0.0, title), isRelative: true)
             .center(toX: self)
-            .fix(width: self.bounds.width)
         view.leading?.priority = .almostRequired
         view.trailing?.priority = .almostRequired
     }
