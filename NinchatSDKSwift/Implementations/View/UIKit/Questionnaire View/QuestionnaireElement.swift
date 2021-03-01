@@ -65,10 +65,8 @@ extension QuestionnaireElementWithTitle {
         /// Must be called once subviews are added
         title
             .fix(leading: (8.0, self), trailing: (8.0, self))
+            .fix(height: self.title.intrinsicContentSize.height + self.padding)
             .fix(top: (0.0, self))
-        if title.height == nil {
-            title.fix(height: self.title.intrinsicContentSize.height + self.padding)
-        }
 
         view
             .fix(leading: (8.0, self), trailing: (8.0, self))

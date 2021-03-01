@@ -106,12 +106,14 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
         self.addElementViews()
         self.view.addSubview(selectedOption)
         self.view.addSubview(selectionIndicator)
+        self.decorateView()
+
         self.selectedOption.text = "Select".localized
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.onMenuTapped(_:))))
     }
 
     private func decorateView() {
-        if self.view.subviews.count > 0 {
+        if self.subviews.count > 0 {
             self.layoutElementViews()
 
             selectedOption

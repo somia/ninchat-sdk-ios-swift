@@ -129,10 +129,11 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
 
     private func initiateView() {
         self.addSubview(view)
+        self.decorateView()
     }
 
     private func decorateView() {
-        if self.view.subviews.count > 0 {
+        if self.subviews.count > 0 {
             view
                 .fix(leading: (8.0, self), trailing: (8.0, self))
                 .fix(top: (4.0, self), bottom: (0.0, self), isRelative: false)

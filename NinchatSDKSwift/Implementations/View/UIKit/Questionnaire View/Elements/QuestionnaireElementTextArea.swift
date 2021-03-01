@@ -105,12 +105,14 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
 
     private func initiateView() {
         self.addElementViews()
+        self.decorateView()
+
         self.view.delegate = self
         self.view.inputAccessoryView = self.doneButton(selector: #selector(self.onDoneButtonTapped(_:)))
     }
 
     private func decorateView() {
-        if self.view.subviews.count > 0 {
+        if self.subviews.count > 0 {
             self.layoutElementViews()
         }
     }

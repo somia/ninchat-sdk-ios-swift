@@ -110,10 +110,11 @@ class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Question
 
     internal func initiateView() {
         self.addElementViews()
+        self.decorateView()
     }
 
     internal func decorateView() {
-        if self.view.subviews.count > 0 {
+        if self.subviews.count > 0 {
             self.layoutElementViews()
         }
     }
