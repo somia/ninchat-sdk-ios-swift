@@ -32,7 +32,8 @@ final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle
     }
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
-        self.title.frame.origin.y + self.title.intrinsicContentSize.height + self.heightValue + self.padding
+        max(CGFloat(self.title.height!.constant), CGFloat(self.title.frame.height)) + CGFloat(self.view.height!.constant)
+                + 64 /// padding from the bottom
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
