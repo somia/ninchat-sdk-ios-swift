@@ -66,12 +66,12 @@
                                     <constraint firstAttribute="trailing" secondItem="j4Q-Cd-6sL" secondAttribute="trailing" id="woH-SS-9op"/>
                                 </constraints>
                             </view>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_bubble_left" translatesAutoresizingMaskIntoConstraints="NO" id="taM-Ib-XuF">
-                                <rect key="frame" x="15" y="55" width="740" height="184"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_bubble_left_series" translatesAutoresizingMaskIntoConstraints="NO" id="taM-Ib-XuF">
+                                <rect key="frame" x="15" y="55" width="740" height="190"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2LW-sy-DwU">
-                                <rect key="frame" x="23" y="55" width="724" height="184"/>
+                                <rect key="frame" x="23" y="55" width="724" height="190"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                         </subviews>
@@ -89,7 +89,7 @@
                             <constraint firstItem="LKO-kf-xFa" firstAttribute="centerY" secondItem="ruI-1u-tFs" secondAttribute="centerY" id="rHh-G8-Xe9"/>
                             <constraint firstItem="2LW-sy-DwU" firstAttribute="trailing" secondItem="taM-Ib-XuF" secondAttribute="trailing" constant="-8" id="t0P-Og-XNp"/>
                             <constraint firstItem="taM-Ib-XuF" firstAttribute="leading" secondItem="ruI-1u-tFs" secondAttribute="leading" id="t0r-sP-cxR"/>
-                            <constraint firstAttribute="bottom" secondItem="taM-Ib-XuF" secondAttribute="bottom" constant="8" id="toZ-sI-ESc"/>
+                            <constraint firstAttribute="bottom" secondItem="taM-Ib-XuF" secondAttribute="bottom" constant="2" id="toZ-sI-ESc"/>
                             <constraint firstItem="VBt-A4-ei2" firstAttribute="leading" secondItem="HZn-tJ-Cnk" secondAttribute="leading" constant="15" id="y7s-ox-wmK"/>
                         </constraints>
                     </view>
@@ -122,7 +122,7 @@
         </tableViewCell>
     </objects>
     <resources>
-        <image name="chat_bubble_left" width="31" height="45"/>
+        <image name="chat_bubble_left_series" width="31" height="52"/>
         <image name="icon_avatar_other" width="726" height="725"/>
     </resources>
 </document>

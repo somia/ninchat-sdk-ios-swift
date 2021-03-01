@@ -174,7 +174,7 @@ extension QuestionnaireElementRadio {
             button.fix(width: button.intrinsicContentSize.width + 32.0)
         }
         button
-            .fix(top: (8.0, (upperView != nil) ? upperView! : self.view), isRelative: (upperView != nil))
+            .fix(top: (8.0, upperView ?? self.view), isRelative: (upperView != nil))
             .fix(height: max(45.0, button.intrinsicContentSize.height + 16.0))
             .center(toX: self.view)
             .roundButton()
