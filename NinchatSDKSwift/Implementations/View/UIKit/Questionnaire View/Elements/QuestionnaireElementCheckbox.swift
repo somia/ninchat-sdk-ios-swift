@@ -35,11 +35,15 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
         }
     }
     var elementConfiguration: QuestionnaireConfiguration?
-    var elementHeight: CGFloat {
-        let viewHeight = CGFloat(self.view.height?.constant ?? 0)
-
-        guard self.subElements.count > 0 else { return viewHeight }
-        return viewHeight - 2.0
+    internal(set) var elementHeight: CGFloat {
+        get {
+            let viewHeight = CGFloat(self.view.height!.constant) + 16.0
+            if self.subElements.count == 0, index == 0 {
+                self.view.subviews.first(where: { $0 is Button })?.center(toY: self)
+            }
+            return viewHeight
+        }
+        set {}
     }
 
     // MARK: - QuestionnaireElementHasDefaultAnswer
@@ -128,13 +132,14 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
 
     private func initiateView() {
         self.addSubview(view)
+        self.decorateView()
     }
 
     private func decorateView() {
-        if self.view.subviews.count > 0 {
+        if self.subviews.count > 0 {
             view
                 .fix(leading: (8.0, self), trailing: (8.0, self))
-                .fix(top: (4.0, self), isRelative: false)
+                .fix(top: (8.0, self), bottom: (0.0, self), isRelative: false)
                 .fix(width: self.bounds.width)
                 .center(toX: self)
             view.leading?.priority = .almostRequired
@@ -230,6 +235,7 @@ extension QuestionnaireElementCheckbox {
     }
 
     private func layout(button: Button, icon: UIView) {
+        defer { upperView = button }
         self.view.addSubview(button)
         self.view.addSubview(icon)
 
@@ -244,20 +250,17 @@ extension QuestionnaireElementCheckbox {
 
         /// Layout button
         button
-            .fix(top: (2.0, upperView ?? self.view), isRelative: upperView != nil)
+            .fix(top: (4.0, upperView ?? self.view), isRelative: upperView != nil)
             .fix(trailing: (8.0, self.view), relation: .greaterThan)
             .fix(leading: (0.0, icon), isRelative: true)
             .fix(width: button.intrinsicContentSize.width + 32.0)
             .fix(height: max(32.0, button.intrinsicContentSize.height))
 
         /// Layout parent view
-        if let height = self.view.height {
-            height.constant += (button.height?.constant ?? 0) + 2.0
-        } else {
-            self.view.fix(height: (button.height?.constant ?? 0) + 8.0)
+        if self.view.height == nil {
+            self.view.fix(height: 0)
         }
-
-        upperView = button
+        view.height?.constant += button.height!.constant + 4
     }
 }
 

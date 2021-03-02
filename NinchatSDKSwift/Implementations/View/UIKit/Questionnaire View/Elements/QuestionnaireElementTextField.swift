@@ -31,9 +31,7 @@ final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle
         }
     }
     var elementConfiguration: QuestionnaireConfiguration?
-    var elementHeight: CGFloat {
-        self.title.frame.origin.y + self.title.intrinsicContentSize.height + self.heightValue + self.padding
-    }
+    internal(set) var elementHeight: CGFloat = 0
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         self.overrideTitle(delegate: delegate)
@@ -104,12 +102,14 @@ final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle
 
     private func initiateView() {
         self.addElementViews()
+        self.decorateView()
+
         self.view.delegate = self
         self.view.inputAccessoryView = self.doneButton(selector: #selector(self.onDoneButtonTapped(_:)))
     }
 
     private func decorateView() {
-        if self.view.subviews.count > 0 {
+        if self.subviews.count > 0 {
             self.layoutElementViews()
         }
     }
@@ -156,8 +156,8 @@ extension QuestionnaireElement where Self:QuestionnaireElementTextField {
         self.view.addPadding(.equalSpacing(8.0))
         self.view.keyboardType = keyboardType(configuration)
         self.view.font = .ninchat
-        self.view.fix(height: self.heightValue)
         self.updateBorder()
+        self.adjustConstraints(viewHeight: self.heightValue)
     }
 
     private func keyboardType(_ configuration: QuestionnaireConfiguration?) -> UIKeyboardType {

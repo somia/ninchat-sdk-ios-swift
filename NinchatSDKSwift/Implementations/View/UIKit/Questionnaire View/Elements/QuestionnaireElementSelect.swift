@@ -34,9 +34,7 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
         }
     }
     var elementConfiguration: QuestionnaireConfiguration?
-    var elementHeight: CGFloat {
-        self.title.frame.origin.y + self.title.intrinsicContentSize.height + self.heightValue + self.padding
-    }
+    internal(set) var elementHeight: CGFloat = 0
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         self.overrideTitle(delegate: delegate)
@@ -106,12 +104,14 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
         self.addElementViews()
         self.view.addSubview(selectedOption)
         self.view.addSubview(selectionIndicator)
+        self.decorateView()
+
         self.selectedOption.text = "Select".localized
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.onMenuTapped(_:))))
     }
 
     private func decorateView() {
-        if self.view.subviews.count > 0 {
+        if self.subviews.count > 0 {
             self.layoutElementViews()
 
             selectedOption
@@ -183,13 +183,13 @@ extension QuestionnaireElementSelect: QuestionnaireElement {
         self.elementConfiguration = configuration
         self.shapeTitle(configuration)
         self.view.backgroundColor = self.normalBackgroundColor
-        self.view.fix(height: self.heightValue)
         self.selectedOption.font = .ninchat
         self.selectedOption.textAlignment = .left
         self.selectedOption.textColor = .QBlueButtonNormal
         self.selectedOption.highlightedTextColor = .QGrayButton
         self.selectionIndicator.contentMode = .scaleAspectFit
         self.updateBorder()
+        self.adjustConstraints(viewHeight: self.heightValue)
     }
 }
 

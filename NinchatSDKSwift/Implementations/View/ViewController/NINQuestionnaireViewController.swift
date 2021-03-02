@@ -189,6 +189,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
         view.separatorStyle = .none
         view.allowsSelection = false
         view.alpha = isHidden ? 0.0 : 1.0
+        view.sectionHeaderHeight = 0.0
         view.delegate = self
         view.dataSource = self
 
@@ -339,7 +340,7 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let height = self.dataSourceDelegate?.height(at: indexPath) ?? 0.0
         if self.style == .conversation {
-            return height + ((indexPath.row == 0) ? 60.0 : 16.0)
+            return height + ((indexPath.row == 0) ? 55.0 : 0.0)
         }
         return height
     }
