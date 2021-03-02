@@ -36,8 +36,8 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
     }
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat {
-        let viewHeight = CGFloat(self.view.height!.constant) + 8.0
-        if self.subElements.count == 0 {
+        let viewHeight = CGFloat(self.view.height!.constant) + 16.0
+        if self.subElements.count == 0, index == 0 {
             self.view.subviews.first(where: { $0 is Button })?.center(toY: self)
         }
         return viewHeight
@@ -136,7 +136,7 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
         if self.subviews.count > 0 {
             view
                 .fix(leading: (8.0, self), trailing: (8.0, self))
-                .fix(top: (4.0, self), bottom: (0.0, self), isRelative: false)
+                .fix(top: (8.0, self), bottom: (0.0, self), isRelative: false)
                 .fix(width: self.bounds.width)
                 .center(toX: self)
             view.leading?.priority = .almostRequired
