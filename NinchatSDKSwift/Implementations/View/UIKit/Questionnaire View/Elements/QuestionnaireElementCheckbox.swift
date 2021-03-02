@@ -35,12 +35,15 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
         }
     }
     var elementConfiguration: QuestionnaireConfiguration?
-    var elementHeight: CGFloat {
-        let viewHeight = CGFloat(self.view.height!.constant) + 16.0
-        if self.subElements.count == 0, index == 0 {
-            self.view.subviews.first(where: { $0 is Button })?.center(toY: self)
+    internal(set) var elementHeight: CGFloat {
+        get {
+            let viewHeight = CGFloat(self.view.height!.constant) + 16.0
+            if self.subElements.count == 0, index == 0 {
+                self.view.subviews.first(where: { $0 is Button })?.center(toY: self)
+            }
+            return viewHeight
         }
-        return viewHeight
+        set {}
     }
 
     // MARK: - QuestionnaireElementHasDefaultAnswer

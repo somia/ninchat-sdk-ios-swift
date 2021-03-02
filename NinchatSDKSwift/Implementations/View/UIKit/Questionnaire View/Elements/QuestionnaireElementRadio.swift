@@ -34,12 +34,7 @@ class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Question
         }
     }
     var elementConfiguration: QuestionnaireConfiguration?
-    var elementHeight: CGFloat {
-        max(CGFloat(self.title.height!.constant), CGFloat(self.title.frame.height)) + CGFloat(self.view.height!.constant)
-                + 8 /// top anchor of View
-                + 8 /// bottom anchor of View
-                + 8 /// padding from the bottom
-    }
+    internal(set) var elementHeight: CGFloat = 0
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         self.overrideTitle(delegate: delegate)
@@ -142,6 +137,7 @@ extension QuestionnaireElementRadio {
             guard let button = self?.generateButton(for: option, tag: (configuration?.options?.firstIndex(of: option))!) else { return }
             self?.layoutButton(button, upperView: &upperView)
         }
+        view.height?.constant += 16
     }
 
     internal func generateButton(for option: ElementOption, tag: Int) -> Button {
@@ -204,5 +200,6 @@ extension QuestionnaireElement where Self:QuestionnaireElementRadio {
         self.elementConfiguration = configuration
         self.shapeTitle(configuration)
         self.shapeRadioView(configuration)
+        self.adjustConstraints()
     }
 }

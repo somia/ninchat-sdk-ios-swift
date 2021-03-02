@@ -9,16 +9,13 @@ import UIKit
 protocol QuestionnaireElement: UIView {
     var index: Int { get set }
     var isShown: Bool? { get set }
-    var elementHeight: CGFloat { get }
+    var elementHeight: CGFloat { set get }
     var questionnaireStyle: QuestionnaireStyle? { get set }
     var questionnaireConfiguration: QuestionnaireConfiguration? { get set }
     var elementConfiguration: QuestionnaireConfiguration? { get }
 
     func shapeView(_ configuration: QuestionnaireConfiguration?)
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?)
-}
-extension QuestionnaireElement {
-    var elementHeight: CGFloat { 0 }
 }
 
 /// Questionnaire element with
@@ -65,7 +62,6 @@ extension QuestionnaireElementWithTitle {
         /// Must be called once subviews are added
         title
             .fix(leading: (8.0, self), trailing: (8.0, self))
-            .fix(height: self.title.intrinsicContentSize.height + self.padding)
             .fix(top: (0.0, self))
 
         view
@@ -108,6 +104,16 @@ extension QuestionnaireElementWithTitle {
             return !text.isEmpty
         }
         return true
+    }
+
+    func adjustConstraints(viewHeight: CGFloat? = nil) {
+        self.title.fix(height: self.title.intrinsicContentSize.height + self.padding)
+        if let vHeight = viewHeight {
+            self.view.fix(height: vHeight)
+        }
+
+        guard let tHeight = title.height, let vHeight = view.height else { return }
+        elementHeight = CGFloat(tHeight.constant) + CGFloat(vHeight.constant) + 16
     }
 }
 

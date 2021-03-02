@@ -31,10 +31,7 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
         }
     }
     var elementConfiguration: QuestionnaireConfiguration?
-    var elementHeight: CGFloat {
-        max(CGFloat(self.title.height!.constant), CGFloat(self.title.frame.height)) + CGFloat(self.view.height!.constant)
-                + 64 /// padding from the bottom
-    }
+    internal(set) var elementHeight: CGFloat = 0
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         self.overrideTitle(delegate: delegate)
@@ -157,7 +154,7 @@ extension QuestionnaireElement where Self:QuestionnaireElementTextArea {
         self.view.backgroundColor = .clear
         self.view.textAlignment = .left
         self.view.font = .ninchat
-        self.view.fix(height: self.heightValue)
         self.updateBorder()
+        self.adjustConstraints(viewHeight: self.heightValue)
     }
 }

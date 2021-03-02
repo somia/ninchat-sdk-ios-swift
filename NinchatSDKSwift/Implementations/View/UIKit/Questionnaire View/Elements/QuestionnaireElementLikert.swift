@@ -43,5 +43,6 @@ extension QuestionnaireElement where Self:QuestionnaireElementLikert {
         self.elementConfiguration = configuration
         self.shapeTitle(configuration)
         self.shapeLikertView()
+        self.adjustConstraints()
     }
 }
