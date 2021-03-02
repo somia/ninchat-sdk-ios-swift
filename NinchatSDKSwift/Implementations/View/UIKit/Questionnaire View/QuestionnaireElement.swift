@@ -46,7 +46,7 @@ extension QuestionnaireElementWithTitle {
     }
 
     var padding: CGFloat {
-        guard let title = self.title.text, !title.isEmpty else { return 8.0 }
+        guard let title = self.title.text, !title.isEmpty else { return 24.0 }
         return self.questionnaireStyle == .form ? 32.0 : 40.0
     }
 

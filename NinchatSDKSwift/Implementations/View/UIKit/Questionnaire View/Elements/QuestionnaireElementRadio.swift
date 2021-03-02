@@ -137,7 +137,7 @@ extension QuestionnaireElementRadio {
             guard let button = self?.generateButton(for: option, tag: (configuration?.options?.firstIndex(of: option))!) else { return }
             self?.layoutButton(button, upperView: &upperView)
         }
-        view.height?.constant += 16
+        view.height?.constant += 8
     }
 
     internal func generateButton(for option: ElementOption, tag: Int) -> Button {
