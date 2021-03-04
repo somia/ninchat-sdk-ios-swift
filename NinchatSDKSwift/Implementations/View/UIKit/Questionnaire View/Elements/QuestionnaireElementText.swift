@@ -69,7 +69,6 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
     private func initiateView() {
         self.isEditable = false
         self.isScrollEnabled = false
-        self.isSelectable = false
 
         /// to remove text content paddings
         /// thanks to `https://stackoverflow.com/a/42333832/7264553`
