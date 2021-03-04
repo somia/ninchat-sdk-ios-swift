@@ -42,6 +42,9 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
         if let overriddenColor = delegate?.override(questionnaireAsset: .titleTextColor) {
             self.setAttributed(text: self.elementConfiguration?.label ?? "", font: .ninchat, color: overriddenColor, width:  self.estimatedWidth())
         }
+        if let linkColor = delegate?.override(colorAsset: .link) {
+            self.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
+        }
     }
 
     // MARK: - UIView life-cycle
