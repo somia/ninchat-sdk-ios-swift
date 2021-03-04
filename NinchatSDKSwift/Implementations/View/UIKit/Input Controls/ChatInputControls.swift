@@ -41,7 +41,8 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
             self.onWritingStatusChanged?(isWriting)
         }
     }
-    
+    private var timer: Timer?
+
     // MARK: - ChatInputControls
 
     var delegate: InternalDelegate?
@@ -75,13 +76,23 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
     @IBOutlet private(set) weak var sendMessageButton: UIButton!
     @IBOutlet private(set) weak var sendMessageButtonWidthConstraint: NSLayoutConstraint!
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        UIView.applyLayerOverride(view: self.sendMessageButton)
+    }
+    
     func overrideAssets() {
         if let sendButtonTitle = self.sessionManager?.siteConfiguration.sendButtonTitle {
             self.sendMessageButtonWidthConstraint.isActive = false
             self.sendMessageButton.setImage(nil, for: .normal)
+            self.sendMessageButton.backgroundColor = .clear
             self.sendMessageButton.setTitle(sendButtonTitle, for: .normal)
             self.sendMessageButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
             
+            if let backgroundColor = self.delegate?.override(colorAsset: .textareaSubmit) {
+                self.sendMessageButton.backgroundColor = backgroundColor
+            }
+
             if let backgroundImage = self.delegate?.override(imageAsset: .textareaSubmitButton) {
                 self.sendMessageButton.setBackgroundImage(backgroundImage, for: .normal)
             } else if let backgroundBundle = UIImage(named: "icon_send_message_border", in: .SDKBundle, compatibleWith: nil) {
@@ -91,6 +102,11 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
             if let titleColor = self.delegate?.override(colorAsset: .textareaSubmitText) {
                 self.sendMessageButton.setTitleColor(titleColor, for: .normal)
             }
+            
+            if let layer = self.delegate?.override(layerAsset: .ninchatTextareaSubmitButton) {
+                self.sendMessageButton.layer.addSublayer(layer)
+            }
+            
         } else if let buttonImage = self.delegate?.override(imageAsset: .textareaSubmitButton) {
             self.sendMessageButton.setImage(buttonImage, for: .normal)
         }
@@ -102,6 +118,10 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
         if let inputTextColor = self.delegate?.override(colorAsset: .textareaText) {
             self.textInput.textColor = inputTextColor
             textColor = inputTextColor
+        }
+
+        if let placeholderColor = self.delegate?.override(colorAsset: .textareaPlaceholder) {
+            self.placeholderColor = placeholderColor
         }
         self.updatePlaceholder()
     }
@@ -149,13 +169,22 @@ extension ChatInputControls: UITextViewDelegate {
         if textView.text == placeholderText {
             textView.text.removeAll()
         }
-        self.isWriting = true
         return true
     }
     
     func textViewDidChange(_ textView: UITextView) {
         self.updatePlaceholder()
         self.isWriting = true
+
+        if timer != nil {
+            timer?.invalidate()
+            timer = nil
+        }
+        /// send isWriting = false if user stopped typing.
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { t in
+            t.invalidate()
+            self.isWriting = false
+        }
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
@@ -164,7 +193,7 @@ extension ChatInputControls: UITextViewDelegate {
         }
         return true
     }
-    
+
     func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
         self.updatePlaceholder()
         self.isWriting = false

@@ -182,13 +182,14 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
 
     private func generateTableView(isHidden: Bool) -> UITableView  {
         let view = UITableView(frame: .zero)
-        view.register(ChatTypingCell.self)
         view.register(QuestionnaireCell.self)
+        view.register(QuestionnaireTypingCell.self)
         view.registerClass(QuestionnaireNavigationCell.self)
 
         view.separatorStyle = .none
         view.allowsSelection = false
         view.alpha = isHidden ? 0.0 : 1.0
+        view.sectionHeaderHeight = 0.0
         view.delegate = self
         view.dataSource = self
 
@@ -270,7 +271,7 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     private func scrollToBottom(at section: Int) {
         self.dispatchQueue.async {
             guard let contentView = self.contentView, contentView.numberOfSections > section, contentView.numberOfRows(inSection: section) >= 1 else { return }
-            self.contentView?.scrollToRow(at: IndexPath(row: contentView.numberOfRows(inSection: section)-1, section: section), at: .bottom, animated: true)
+            self.contentView?.scrollToRow(at: IndexPath(row: 0, section: section), at: .top, animated: true)
         }
     }
 
@@ -339,7 +340,7 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let height = self.dataSourceDelegate?.height(at: indexPath) ?? 0.0
         if self.style == .conversation {
-            return height + ((indexPath.row == 0) ? 60.0 : 16.0)
+            return height + ((indexPath.row == 0) ? 55.0 : 0.0)
         }
         return height
     }

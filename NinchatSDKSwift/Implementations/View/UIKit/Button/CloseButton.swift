@@ -45,8 +45,13 @@ final class CloseButton: UIView, CloseButtonProtocol {
     var buttonTitle: String! {
         didSet {
             self.theButton.setTitle(buttonTitle, for: .normal)
-            self.updateConstraints()
+            self.theButton.sizeToFit()
         }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        UIView.applyLayerOverride(view: self)
     }
     
     func overrideAssets(with session: NINChatSessionInternalDelegate?) {
@@ -54,17 +59,27 @@ final class CloseButton: UIView, CloseButtonProtocol {
         self.round(borderWidth: 1.0, borderColor: .defaultBackgroundButton)
         self.backgroundColor = .white
 
-        if let overrideImage = session?.override(imageAsset: .chatCloseButton) {
+        func shapeButton(image: UIImage) {
             /// Overriding (setting) the button background image; no border.
-            self.theButton.setBackgroundImage(overrideImage, for: .normal)
+            self.theButton.setBackgroundImage(image, for: .normal)
             self.theButton.contentMode = .scaleAspectFill
             self.theButton.backgroundColor = .clear
             self.theButton.layer.cornerRadius = 0
             self.theButton.layer.borderWidth = 0
+        }
 
-            self.backgroundColor = .clear
-            self.layer.cornerRadius = 0
-            self.layer.borderWidth = 0
+        if let backgroundColor = session?.override(colorAsset: .chatCloseButtonBackground) {
+            self.backgroundColor = backgroundColor
+        }
+
+        if let layer = session?.override(layerAsset: .ninchatChatCloseButton) {
+            self.layer.addSublayer(layer)
+        }
+
+        if buttonTitle.isEmpty, let overrideImage = session?.override(imageAsset: .chatCloseButtonEmpty) {
+            shapeButton(image: overrideImage)
+        } else if let overrideImage = session?.override(imageAsset: .chatCloseButton) {
+            shapeButton(image: overrideImage)
         }
         
         /// Handle overriding the button icon image
@@ -76,8 +91,9 @@ final class CloseButton: UIView, CloseButtonProtocol {
         if let textColor = session?.override(colorAsset: .buttonSecondaryText) {
             self.theButton.setTitleColor(textColor, for: .normal)
             self.closeButtonImageView.tintColor = textColor
-            self.layer.borderColor = textColor.cgColor
         }
+
+        self.updateConstraints()
     }
     
     // MARK: - UIView
@@ -96,7 +112,7 @@ final class CloseButton: UIView, CloseButtonProtocol {
         self.closeButtonImageView
             .center(toY: self)
             .fix(width: 14.0, height: 14.0)
-            .fix(trailing: (16, self))
+            .fix(trailing: (15, self))
         self.bringSubviewToFront(closeButtonImageView)
     }
     
@@ -104,14 +120,12 @@ final class CloseButton: UIView, CloseButtonProtocol {
     override func updateConstraints() {
         super.updateConstraints()
         if let widthAnchor = self.width, let heightAnchor = self.height {
-            widthAnchor.constant = self.frame.width + 40.0
+            widthAnchor.constant = (self.buttonTitle.isEmpty) ? 45.0 : self.theButton.frame.width + 65.0
             heightAnchor.constant = 45.0
         } else {
-            self.fix(width: self.frame.width + 40.0, height: 45.0)
+            /// only to set constraints, values are not important
+            self.fix(width: 0.0, height: 0.0)
         }
         self.setupView()
-        
-        self.setNeedsLayout()
-        self.layoutIfNeeded()
     }
 }

@@ -20,7 +20,6 @@ public enum AssetConstants {
     case iconTextareaCamera
     case iconTextareaAttachment
     case iconDownload
-    case iconTextareaSubmitButtonIcon
     case iconVideoToggleFull
     case iconVideoToggleNormal
     case iconVideoSoundOn
@@ -33,6 +32,7 @@ public enum AssetConstants {
     case chatWritingIndicator
     case chatBackground
     case chatCloseButton
+    case chatCloseButtonEmpty
     case chatBubbleLeft
     case chatBubbleLeftRepeated
     case chatBubbleRight
@@ -56,8 +56,13 @@ public enum ColorConstants {
     case chatTimestamp
     case chatBubbleLeftText
     case chatBubbleRightText
+    case chatBubbleLeftTint
+    case chatBubbleRightTint
+    case chatCloseButtonBackground
     case textareaText
+    case textareaSubmit
     case textareaSubmitText
+    case textareaPlaceholder
     case chatBubbleLeftLink
     case chatBubbleRightLink
     case modalText
@@ -70,6 +75,14 @@ public enum ColorConstants {
     case ratingPositiveText
     case ratingNeutralText
     case ratingNegativeText
+}
+
+/// Color override keys
+public typealias NINLayerAssetDictionary = [CALayerConstant:CALayer]
+public let LAYER_NAME = "_ninchat-asset"
+public enum CALayerConstant {
+    case ninchatChatCloseButton
+    case ninchatTextareaSubmitButton
 }
 
 /// Questionnaire override keys

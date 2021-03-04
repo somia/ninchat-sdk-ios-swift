@@ -8,7 +8,7 @@ import UIKit
 
 final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireHasBorder, QuestionnaireFocusableElement {
 
-    fileprivate var heightValue: CGFloat = 98.0
+    fileprivate var heightValue: CGFloat = 100.0
     private var answerUpdateWorker: DispatchWorkItem?
 
     // MARK: - QuestionnaireElement
@@ -31,9 +31,7 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
         }
     }
     var elementConfiguration: QuestionnaireConfiguration?
-    var elementHeight: CGFloat {
-        self.title.frame.origin.y + self.title.intrinsicContentSize.height + self.heightValue + self.padding
-    }
+    var elementHeight: CGFloat = 0
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         self.overrideTitle(delegate: delegate)
@@ -105,12 +103,14 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
 
     private func initiateView() {
         self.addElementViews()
+        self.decorateView()
+
         self.view.delegate = self
         self.view.inputAccessoryView = self.doneButton(selector: #selector(self.onDoneButtonTapped(_:)))
     }
 
     private func decorateView() {
-        if self.view.subviews.count > 0 {
+        if self.subviews.count > 0 {
             self.layoutElementViews()
         }
     }
@@ -154,7 +154,7 @@ extension QuestionnaireElement where Self:QuestionnaireElementTextArea {
         self.view.backgroundColor = .clear
         self.view.textAlignment = .left
         self.view.font = .ninchat
-        self.view.fix(height: self.heightValue)
         self.updateBorder()
+        self.adjustConstraints(viewHeight: self.heightValue)
     }
 }

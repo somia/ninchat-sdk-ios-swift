@@ -18,7 +18,6 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
     fileprivate var rowCount: [Int] = []
     internal var elements: [[QuestionnaireElement]] = []
     internal var configurations: [QuestionnaireConfiguration] = []
-    internal var requirementsSatisfied: Bool = false
     internal var shouldShowNavigationCells: [Bool] = []
 
     // MARK: - NINQuestionnaireFormDelegate
@@ -79,7 +78,6 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
             if self.elements.count > index.section {
                 return (index.row == self.elements[index.section].count) ? self.navigation(view, cellForRowAt: index) : self.questionnaire(view, cellForRowAt: index)
             }
-            self.requirementsSatisfied = self.viewModel.requirementsSatisfied
             self.elements.append(contentsOf: [try self.viewModel.getElements()])
             self.configurations.append(try self.viewModel.getConfiguration())
             self.shouldShowNavigationCells.append(self.shouldShowNavigationCell(at: index.section))
@@ -145,7 +143,7 @@ extension NINQuestionnaireConversationDataSourceDelegate: QuestionnaireConversat
 // MARK: - Helper
 extension NINQuestionnaireConversationDataSourceDelegate {
     private func loading(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: ChatTypingCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
+        let cell: QuestionnaireTypingCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
         cell.populateLoading(agentAvatarConfig: AvatarConfig(avatar: self.sessionManager?.siteConfiguration.audienceQuestionnaireAvatar, name: self.sessionManager?.siteConfiguration.audienceQuestionnaireUserName ?? ""),
                 imageAssets: self.delegate?.imageAssetsDictionary ?? [:],
                 colorAssets: self.delegate?.colorAssetsDictionary ?? [:])
@@ -162,7 +160,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         cell.isUserInteractionEnabled = (self.elements[indexPath.section].first?.isShown ?? true) && (indexPath.section == self.sectionCount-1)
         cell.overrideAssets(with: self.delegate)
         // Need to check only for the last item if to enable/disable navigation buttons
-        cell.setSatisfaction(self.requirementsSatisfied && indexPath.section == sectionCount-1, lastItem: indexPath.section == sectionCount-1)
+        cell.setSatisfaction(self.viewModel.requirementsSatisfied && indexPath.section == sectionCount-1, lastItem: indexPath.section == sectionCount-1)
 
         cell.onNextButtonTapped = { [weak self] in
             self?.onNextButtonTapped(elements: self?.elements[indexPath.section])
@@ -171,7 +169,6 @@ extension NINQuestionnaireConversationDataSourceDelegate {
             self?.onBackButtonTapped(completion: self?.onRemoveCellContent)
         }
         self.viewModel.requirementSatisfactionUpdater = { [weak self] satisfied in
-            self?.requirementsSatisfied = satisfied
             self?.onRequirementsUpdated(satisfied, for: cell)
         }
 
@@ -235,7 +232,6 @@ extension NINQuestionnaireConversationDataSourceDelegate {
 
         self.elements.append(contentsOf: items.compactMap({ $0.elements }))
         self.configurations.append(contentsOf: configuration)
-        self.requirementsSatisfied = false
         self.shouldShowNavigationCells.append(false)
         self.viewModel.insertRegisteredElement(items, configuration: configuration)
     }

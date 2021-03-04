@@ -8,8 +8,13 @@ import UIKit
 
 final class QuestionnaireElementText: UITextView, QuestionnaireElement {
 
+    fileprivate var topInset: CGFloat = 8.0
+    fileprivate var bottomInset: CGFloat = 8.0
+    fileprivate var sidesInset: CGFloat {
+        (self.questionnaireStyle == .conversation) ? 0.0 : 8.0
+    }
     fileprivate var conversationStylePadding: CGFloat {
-        (self.questionnaireStyle == .conversation) ? 75 : 0
+        (self.questionnaireStyle == .conversation) ? 32 : 0
     }
 
     // MARK: - QuestionnaireElement
@@ -31,13 +36,14 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
         }
     }
     var elementConfiguration: QuestionnaireConfiguration?
-    var elementHeight: CGFloat {
-        self.estimateHeight(width: self.estimatedWidth())
-    }
+    var elementHeight: CGFloat = 0
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         if let overriddenColor = delegate?.override(questionnaireAsset: .titleTextColor) {
             self.setAttributed(text: self.elementConfiguration?.label ?? "", font: .ninchat, color: overriddenColor, width:  self.estimatedWidth())
+        }
+        if let linkColor = delegate?.override(colorAsset: .link) {
+            self.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
         }
     }
 
@@ -63,6 +69,11 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
     private func initiateView() {
         self.isEditable = false
         self.isScrollEnabled = false
+
+        /// to remove text content paddings
+        /// thanks to `https://stackoverflow.com/a/42333832/7264553`
+        self.textContainerInset = UIEdgeInsets(top: topInset, left: sidesInset, bottom: bottomInset, right: sidesInset)
+        self.textContainer.lineFragmentPadding = 0
     }
 
     func estimateHeight(width: CGFloat) -> CGFloat {
@@ -70,7 +81,7 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
     }
     
     fileprivate func estimatedWidth() -> CGFloat {
-        (UIApplication.topViewController()?.view.bounds ?? UIScreen.main.bounds).width - conversationStylePadding - 2.0
+        (UIApplication.topViewController()?.view.bounds ?? UIScreen.main.bounds).width - conversationStylePadding
     }
 
 }
@@ -81,5 +92,6 @@ extension QuestionnaireElement where Self:QuestionnaireElementText {
         self.backgroundColor = .clear
         self.setAttributed(text: configuration?.label ?? "", font: .ninchat, width: self.estimatedWidth())
         self.elementConfiguration = configuration
+        self.elementHeight = self.estimateHeight(width: self.estimatedWidth()) + bottomInset
     }
 }

@@ -9,16 +9,13 @@ import UIKit
 protocol QuestionnaireElement: UIView {
     var index: Int { get set }
     var isShown: Bool? { get set }
-    var elementHeight: CGFloat { get }
+    var elementHeight: CGFloat { set get }
     var questionnaireStyle: QuestionnaireStyle? { get set }
     var questionnaireConfiguration: QuestionnaireConfiguration? { get set }
     var elementConfiguration: QuestionnaireConfiguration? { get }
 
     func shapeView(_ configuration: QuestionnaireConfiguration?)
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?)
-}
-extension QuestionnaireElement {
-    var elementHeight: CGFloat { 0 }
 }
 
 /// Questionnaire element with
@@ -49,7 +46,7 @@ extension QuestionnaireElementWithTitle {
     }
 
     var padding: CGFloat {
-        guard let title = self.title.text, !title.isEmpty else { return 8.0 }
+        guard let title = self.title.text, !title.isEmpty else { return 24.0 }
         return self.questionnaireStyle == .form ? 32.0 : 40.0
     }
 
@@ -66,12 +63,11 @@ extension QuestionnaireElementWithTitle {
         title
             .fix(leading: (8.0, self), trailing: (8.0, self))
             .fix(top: (0.0, self))
-            .fix(height: title.intrinsicContentSize.height + self.padding)
+
         view
             .fix(leading: (8.0, self), trailing: (8.0, self))
             .fix(top: (0.0, title), isRelative: true)
             .center(toX: self)
-            .fix(width: self.bounds.width)
         view.leading?.priority = .almostRequired
         view.trailing?.priority = .almostRequired
     }
@@ -108,6 +104,16 @@ extension QuestionnaireElementWithTitle {
             return !text.isEmpty
         }
         return true
+    }
+
+    func adjustConstraints(viewHeight: CGFloat? = nil) {
+        self.title.fix(height: self.title.intrinsicContentSize.height + self.padding)
+        if let vHeight = viewHeight {
+            self.view.fix(height: vHeight)
+        }
+
+        guard let tHeight = title.height, let vHeight = view.height else { return }
+        elementHeight = CGFloat(tHeight.constant) + CGFloat(vHeight.constant) + 16
     }
 }
 

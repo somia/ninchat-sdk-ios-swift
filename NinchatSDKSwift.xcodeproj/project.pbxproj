@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5C5658CD25EF780F004ED98F /* QuestionnaireTypingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C5658CC25EF780F004ED98F /* QuestionnaireTypingCell.xib */; };
+		5C5658D225EF7F77004ED98F /* QuestionnaireTypingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C5658D125EF7F77004ED98F /* QuestionnaireTypingCell.swift */; };
 		5CD4F1C82540CAAF009856AC /* Notification+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD4F1C62540CAAF009856AC /* Notification+Extension.swift */; };
 		5CD4F1C92540CAAF009856AC /* KeyboardHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD4F1C72540CAAF009856AC /* KeyboardHandler.swift */; };
 		7C44F1A84C25C4445CF3B955 /* Pods_NinchatSDKSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 495ADA60487CD354EDC07332 /* Pods_NinchatSDKSwift.framework */; };
@@ -234,6 +236,8 @@
 		3FEAD27BEEC9ED9A48EB128E /* Pods_NinchatSDKSwiftTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDKSwiftTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		495ADA60487CD354EDC07332 /* Pods_NinchatSDKSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDKSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		51577DDC11F36A3D9573A68C /* Pods_NinchatSDKSwiftUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDKSwiftUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C5658CC25EF780F004ED98F /* QuestionnaireTypingCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = QuestionnaireTypingCell.xib; sourceTree = "<group>"; };
+		5C5658D125EF7F77004ED98F /* QuestionnaireTypingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionnaireTypingCell.swift; sourceTree = "<group>"; };
 		5CD4F1C62540CAAF009856AC /* Notification+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Notification+Extension.swift"; sourceTree = "<group>"; };
 		5CD4F1C72540CAAF009856AC /* KeyboardHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardHandler.swift; sourceTree = "<group>"; };
 		62C8D99D572F0DB4B5E6D255 /* Pods-NinchatSDKSwiftUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftUITests.release.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftUITests/Pods-NinchatSDKSwiftUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -511,6 +515,8 @@
 				91A1648B47113F8332CE820C /* QuestionnaireNavigationCell.swift */,
 				857F12C024752CA400337F7A /* QuestionnaireCell.swift */,
 				857F12BE24752C9000337F7A /* QuestionnaireCell.xib */,
+				5C5658CC25EF780F004ED98F /* QuestionnaireTypingCell.xib */,
+				5C5658D125EF7F77004ED98F /* QuestionnaireTypingCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -1202,6 +1208,7 @@
 				85DC59D2239E7850007ABAE3 /* Media.xcassets in Resources */,
 				858F521B24100E3C00C9530A /* ChatChannelMediaMineCell.xib in Resources */,
 				853C53E223C3991F00DF37D0 /* ChatChannelCell.xib in Resources */,
+				5C5658CD25EF780F004ED98F /* QuestionnaireTypingCell.xib in Resources */,
 				85DD6C5E23AE0CBC0023FFEF /* SourceSansPro-SemiBold.ttf in Resources */,
 				8563004E23B2886F0098A7B0 /* FacesView.xib in Resources */,
 				85DD6C6023AE0CBC0023FFEF /* SourceSansPro-Italic.ttf in Resources */,
@@ -1413,6 +1420,7 @@
 				8563004C23B286FB0098A7B0 /* FacesView.swift in Sources */,
 				8571D45023C0B47300C16758 /* FileInfo.swift in Sources */,
 				8530EC8A23AD405C00BAA52A /* ChatInputControls.swift in Sources */,
+				5C5658D225EF7F77004ED98F /* QuestionnaireTypingCell.swift in Sources */,
 				8597316C240A61A0002F0346 /* ChatChannelComposeCell.swift in Sources */,
 				8561EAD823C2805900943C72 /* NINChatSessionManagerClosures.swift in Sources */,
 				855B9F32238ECE650081A9C6 /* NINChatSessionDelegate.swift in Sources */,

@@ -17,6 +17,7 @@ protocol NINChatSessionInternalDelegate {
     func onResumeFailed() -> Bool
     func override(imageAsset key: AssetConstants) -> UIImage?
     func override(colorAsset key: ColorConstants) -> UIColor?
+    func override(layerAsset key: CALayerConstant) -> CALayer?
     func override(questionnaireAsset key: QuestionnaireColorConstants) -> UIColor?
 }
 
@@ -73,6 +74,14 @@ struct InternalDelegate: NINChatSessionInternalDelegate {
         return session.delegate?.ninchat(session, overrideColorAssetForKey: key)
     }
 
+    internal func override(layerAsset key: CALayerConstant) -> CALayer? {
+        guard let session = self.session else { return nil }
+        let layer = session.delegate?.ninchat(session, overrideLayer: key)
+        layer?.name = LAYER_NAME
+        
+        return layer
+    }
+    
     internal func override(questionnaireAsset key: QuestionnaireColorConstants) -> UIColor? {
         guard let session = self.session else { return nil }
         return session.delegate?.ninchat(session, overrideQuestionnaireColorAssetKey: key)
@@ -97,7 +106,7 @@ extension NINChatSessionInternalDelegate {
     }
 
     var colorAssetsDictionary: [ColorConstants:UIColor] {
-        let colorKeys: [ColorConstants] = [.infoText, .chatName, .chatTimestamp, .chatBubbleLeftText, .chatBubbleRightText, .chatBubbleLeftLink, .chatBubbleRightLink]
+        let colorKeys: [ColorConstants] = [.infoText, .chatName, .chatTimestamp, .chatBubbleLeftText, .chatBubbleLeftTint, .chatBubbleRightText, .chatBubbleRightTint, .chatBubbleLeftLink, .chatBubbleRightLink]
         return colorKeys.compactMap({ ($0, self.override(colorAsset: $0)) }).reduce(into: [:]) { (colorAsset: inout [ColorConstants:UIColor], tuple: (key: ColorConstants, color: UIColor?)) in
             colorAsset[tuple.key] = tuple.color
         }

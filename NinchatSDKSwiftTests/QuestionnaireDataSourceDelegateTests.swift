@@ -33,8 +33,8 @@ final class QuestionnaireDataSourceDelegateTests: XCTestCase {
 
     private lazy var tableView: UITableView = {
         let view = UITableView(frame: .zero)
-        view.register(ChatTypingCell.self)
         view.register(QuestionnaireCell.self)
+        view.register(QuestionnaireTypingCell.self)
         view.registerClass(QuestionnaireNavigationCell.self)
 
         return view
@@ -140,7 +140,7 @@ extension QuestionnaireDataSourceDelegateTests {
 
         conversationQuestionnaireDataSource.isLoadingNewElements = true
         XCTAssertEqual(conversationQuestionnaireDataSource.height(at: IndexPath(row: 0, section: 0)), 75.0)
-        XCTAssertTrue(conversationQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) is ChatTypingCell)
+        XCTAssertTrue(conversationQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) is QuestionnaireTypingCell)
     }
 
     func test_008_questionnaireCell() {
@@ -159,7 +159,7 @@ extension QuestionnaireDataSourceDelegateTests {
 
         XCTAssertEqual((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).configurations.count, 1)
         XCTAssertEqual((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).configurations.first?.name, "Aiheet")
-        XCTAssertEqual((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).requirementsSatisfied, false)
+        XCTAssertEqual(viewModel.requirementsSatisfied, false)
 
         XCTAssertEqual((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).shouldShowNavigationCells.count, 1)
         XCTAssertEqual((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).shouldShowNavigationCells.first, true)
@@ -200,7 +200,6 @@ extension QuestionnaireDataSourceDelegateTests {
 
         XCTAssertEqual(newElementsCount, currentElementsCount+1)
         XCTAssertEqual(newConfigurationCount, currentConfigurationCount+2)
-        XCTAssertFalse((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).requirementsSatisfied)
         XCTAssertFalse((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).shouldShowNavigationCells.last ?? true)
     }
 
@@ -214,7 +213,6 @@ extension QuestionnaireDataSourceDelegateTests {
 
         XCTAssertEqual(newElementsCount, currentElementsCount+1)
         XCTAssertEqual(newConfigurationCount, currentConfigurationCount+2)
-        XCTAssertFalse((self.conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).requirementsSatisfied)
         XCTAssertFalse((self.conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).shouldShowNavigationCells.last ?? true)
 
     }
