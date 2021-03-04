@@ -129,7 +129,7 @@ class ChatChannelMineCell: ChatChannelCell {
         self.bubbleImageView.image = (series) ? imageAssets?[.chatBubbleRightRepeated] : imageAssets?[.chatBubbleRight]
         
         /// White text on black bubble
-        self.bubbleImageView.tintColor = .black
+        self.bubbleImageView.tintColor = colorAssets?[.chatBubbleRightTint] ?? .black
         if let name = config?.nameOverride, !name.isEmpty {
             self.senderNameLabel.text = name
         }
@@ -175,7 +175,7 @@ class ChatChannelOthersCell: ChatChannelCell {
         self.bubbleImageView.image = (series) ? imageAssets?[.chatBubbleLeftRepeated] : imageAssets?[.chatBubbleLeft]
         
         /// Black text on white bubble
-        self.bubbleImageView.tintColor = .white
+        self.bubbleImageView.tintColor = colorAssets?[.chatBubbleLeftTint] ?? .white
         if let name = config?.nameOverride, !name.isEmpty {
             self.senderNameLabel.text = name
         }
