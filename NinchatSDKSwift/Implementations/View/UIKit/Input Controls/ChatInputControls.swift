@@ -111,6 +111,10 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
             self.textInput.textColor = inputTextColor
             textColor = inputTextColor
         }
+
+        if let placeholderColor = self.delegate?.override(colorAsset: .textareaPlaceholder) {
+            self.placeholderColor = placeholderColor
+        }
         self.updatePlaceholder()
     }
 
