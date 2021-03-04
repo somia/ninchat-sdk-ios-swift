@@ -49,6 +49,17 @@ public protocol NINChatSessionDelegate: class {
     func ninchat(_ session: NINChatSession, overrideColorAssetForKey assetKey: ColorConstants) -> UIColor?
 
     /**
+    * This method allows the SDK user to override CALayer for UIKit components used in the SDK UI.
+    * If the implementation does not wish to override a specific asset, nil should
+    * be returned for that key.
+    *
+    * For available asset key constants, see documentation.
+    *
+    * Optional method.
+    */
+    func ninchat(_ session: NINChatSession, overrideLayer assetKey: CALayerConstant) -> CALayer?
+    
+    /**
     * This method allows the SDK user to override color assets for questionnaires used in the SDK UI.
     * If the implementation does not wish to override a specific asset, nil should
     * be returned for that key.

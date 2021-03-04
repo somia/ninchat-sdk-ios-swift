@@ -76,6 +76,11 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
     @IBOutlet private(set) weak var sendMessageButton: UIButton!
     @IBOutlet private(set) weak var sendMessageButtonWidthConstraint: NSLayoutConstraint!
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        UIView.applyLayerOverride(view: self.sendMessageButton)
+    }
+    
     func overrideAssets() {
         if let sendButtonTitle = self.sessionManager?.siteConfiguration.sendButtonTitle {
             self.sendMessageButtonWidthConstraint.isActive = false
@@ -86,14 +91,8 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
             
             if let backgroundColor = self.delegate?.override(colorAsset: .textareaSubmit) {
                 self.sendMessageButton.backgroundColor = backgroundColor
-                self.sendMessageButton.layer.masksToBounds = true
             }
 
-            if let borderColor = self.delegate?.override(colorAsset: .textareaSubmitBorder) {
-                self.sendMessageButton.layer.borderWidth = 1.0
-                self.sendMessageButton.layer.borderColor = borderColor.cgColor
-            }
-            
             if let backgroundImage = self.delegate?.override(imageAsset: .textareaSubmitButton) {
                 self.sendMessageButton.setBackgroundImage(backgroundImage, for: .normal)
             } else if let backgroundBundle = UIImage(named: "icon_send_message_border", in: .SDKBundle, compatibleWith: nil) {
@@ -103,6 +102,11 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
             if let titleColor = self.delegate?.override(colorAsset: .textareaSubmitText) {
                 self.sendMessageButton.setTitleColor(titleColor, for: .normal)
             }
+            
+            if let layer = self.delegate?.override(layerAsset: .textareaSubmitLayer) {
+                self.sendMessageButton.layer.addSublayer(layer)
+            }
+            
         } else if let buttonImage = self.delegate?.override(imageAsset: .textareaSubmitButton) {
             self.sendMessageButton.setImage(buttonImage, for: .normal)
         }
