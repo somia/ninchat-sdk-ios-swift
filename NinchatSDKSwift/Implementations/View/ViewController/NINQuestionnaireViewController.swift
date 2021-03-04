@@ -182,8 +182,8 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
 
     private func generateTableView(isHidden: Bool) -> UITableView  {
         let view = UITableView(frame: .zero)
-        view.register(ChatTypingCell.self)
         view.register(QuestionnaireCell.self)
+        view.register(QuestionnaireTypingCell.self)
         view.registerClass(QuestionnaireNavigationCell.self)
 
         view.separatorStyle = .none

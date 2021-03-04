@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class ChatTypingCell: UITableViewCell {
+class ChatTypingCell: UITableViewCell {
     
     // MARK: - Outlets
     
@@ -15,9 +15,9 @@ final class ChatTypingCell: UITableViewCell {
             senderNameLabel.font = .ninchat
         }
     }
-    @IBOutlet private(set) weak var timeLabel: UILabel! {
+    @IBOutlet private(set) weak var timeLabel: UILabel? {
         didSet {
-            timeLabel.font = .ninchat
+            timeLabel?.font = .ninchat
         }
     }
     @IBOutlet private(set) weak var bubbleImageView: UIImageView!
@@ -52,7 +52,7 @@ final class ChatTypingCell: UITableViewCell {
         }
         
         if let timeColor = colorAssets?[.chatTimestamp] {
-            self.timeLabel.textColor = timeColor
+            self.timeLabel?.textColor = timeColor
         }
     }
 
@@ -75,7 +75,7 @@ extension ChatTypingCell: TypingCell {
         } else if let user = message.user, !user.displayName.isEmpty {
             self.senderNameLabel.text = user.displayName
         }
-        self.timeLabel.text = DateFormatter.shortTime.string(from: message.timestamp)
+        self.timeLabel?.text = DateFormatter.shortTime.string(from: message.timestamp)
 
         /// Make Image view background match the bubble color
         self.bubbleImageView.tintColor = .white
@@ -96,7 +96,7 @@ extension ChatTypingCell: TypingCell {
 extension ChatTypingCell: LoadingCell {
     func populateLoading(agentAvatarConfig: AvatarConfig, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?) {
         self.senderNameLabel.text = agentAvatarConfig.nameOverride
-        self.timeLabel.text = ""
+        self.timeLabel?.text = ""
 
         /// Make Image view background match the bubble color
         self.bubbleImageView.tintColor = .white

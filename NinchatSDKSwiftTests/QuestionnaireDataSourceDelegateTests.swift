@@ -33,8 +33,8 @@ final class QuestionnaireDataSourceDelegateTests: XCTestCase {
 
     private lazy var tableView: UITableView = {
         let view = UITableView(frame: .zero)
-        view.register(ChatTypingCell.self)
         view.register(QuestionnaireCell.self)
+        view.register(QuestionnaireTypingCell.self)
         view.registerClass(QuestionnaireNavigationCell.self)
 
         return view
@@ -140,7 +140,7 @@ extension QuestionnaireDataSourceDelegateTests {
 
         conversationQuestionnaireDataSource.isLoadingNewElements = true
         XCTAssertEqual(conversationQuestionnaireDataSource.height(at: IndexPath(row: 0, section: 0)), 75.0)
-        XCTAssertTrue(conversationQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) is ChatTypingCell)
+        XCTAssertTrue(conversationQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) is QuestionnaireTypingCell)
     }
 
     func test_008_questionnaireCell() {
