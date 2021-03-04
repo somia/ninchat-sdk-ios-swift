@@ -61,21 +61,17 @@ final class CloseButton: UIView, CloseButtonProtocol {
             self.theButton.backgroundColor = .clear
             self.theButton.layer.cornerRadius = 0
             self.theButton.layer.borderWidth = 0
-
-            self.backgroundColor = .clear
-            self.layer.cornerRadius = 0
-            self.layer.borderWidth = 0
         }
 
         if let backgroundColor = session?.override(colorAsset: .chatCloseButtonBackground) {
             self.backgroundColor = backgroundColor
-
-            if let borderColor = session?.override(colorAsset: .chatCloseButtonBorder) {
-                self.layer.borderColor = borderColor.cgColor
-            }
         }
-        /// Set images only if the button has no bakground color
-        else if buttonTitle.isEmpty, let overrideImage = session?.override(imageAsset: .chatCloseButtonEmpty) {
+
+        if let borderColor = session?.override(colorAsset: .chatCloseButtonBorder) {
+            self.layer.borderColor = borderColor.cgColor
+        }
+
+        if buttonTitle.isEmpty, let overrideImage = session?.override(imageAsset: .chatCloseButtonEmpty) {
             shapeButton(image: overrideImage)
         } else if let overrideImage = session?.override(imageAsset: .chatCloseButton) {
             shapeButton(image: overrideImage)
