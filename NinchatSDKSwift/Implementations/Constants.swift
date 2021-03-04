@@ -81,8 +81,8 @@ public enum ColorConstants {
 public typealias NINLayerAssetDictionary = [CALayerConstant:CALayer]
 public let LAYER_NAME = "_ninchat-asset"
 public enum CALayerConstant {
-    case chatCloseButtonLayer
-    case textareaSubmitLayer
+    case ninchatChatCloseButton
+    case ninchatTextareaSubmitButton
 }
 
 /// Questionnaire override keys

@@ -72,7 +72,7 @@ final class CloseButton: UIView, CloseButtonProtocol {
             self.backgroundColor = backgroundColor
         }
 
-        if let layer = session?.override(layerAsset: .chatCloseButtonLayer) {
+        if let layer = session?.override(layerAsset: .ninchatChatCloseButton) {
             self.layer.addSublayer(layer)
         }
 
