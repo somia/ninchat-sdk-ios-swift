@@ -67,7 +67,15 @@ final class CloseButton: UIView, CloseButtonProtocol {
             self.layer.borderWidth = 0
         }
 
-        if buttonTitle.isEmpty, let overrideImage = session?.override(imageAsset: .chatCloseButtonEmpty) {
+        if let backgroundColor = session?.override(colorAsset: .chatCloseButtonBackground) {
+            self.backgroundColor = backgroundColor
+
+            if let borderColor = session?.override(colorAsset: .chatCloseButtonBorder) {
+                self.layer.borderColor = borderColor.cgColor
+            }
+        }
+        /// Set images only if the button has no bakground color
+        else if buttonTitle.isEmpty, let overrideImage = session?.override(imageAsset: .chatCloseButtonEmpty) {
             shapeButton(image: overrideImage)
         } else if let overrideImage = session?.override(imageAsset: .chatCloseButton) {
             shapeButton(image: overrideImage)
@@ -82,7 +90,6 @@ final class CloseButton: UIView, CloseButtonProtocol {
         if let textColor = session?.override(colorAsset: .buttonSecondaryText) {
             self.theButton.setTitleColor(textColor, for: .normal)
             self.closeButtonImageView.tintColor = textColor
-            self.layer.borderColor = textColor.cgColor
         }
 
         self.updateConstraints()
