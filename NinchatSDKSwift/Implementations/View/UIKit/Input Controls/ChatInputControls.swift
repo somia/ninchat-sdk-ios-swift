@@ -103,7 +103,7 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
                 self.sendMessageButton.setTitleColor(titleColor, for: .normal)
             }
             
-            if let layer = self.delegate?.override(layerAsset: .textareaSubmitLayer) {
+            if let layer = self.delegate?.override(layerAsset: .ninchatTextareaSubmitButton) {
                 self.sendMessageButton.layer.addSublayer(layer)
             }
             
