@@ -63,6 +63,7 @@ public enum ColorConstants {
     case textareaText
     case textareaSubmit
     case textareaSubmitText
+    case textareaSubmitBorder
     case textareaPlaceholder
     case chatBubbleLeftLink
     case chatBubbleRightLink
