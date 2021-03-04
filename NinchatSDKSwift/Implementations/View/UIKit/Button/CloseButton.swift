@@ -49,6 +49,11 @@ final class CloseButton: UIView, CloseButtonProtocol {
         }
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        UIView.applyLayerOverride(view: self)
+    }
+    
     func overrideAssets(with session: NINChatSessionInternalDelegate?) {
         self.theButton.titleLabel?.font = .ninchat
         self.round(borderWidth: 1.0, borderColor: .defaultBackgroundButton)
@@ -67,8 +72,8 @@ final class CloseButton: UIView, CloseButtonProtocol {
             self.backgroundColor = backgroundColor
         }
 
-        if let borderColor = session?.override(colorAsset: .chatCloseButtonBorder) {
-            self.layer.borderColor = borderColor.cgColor
+        if let layer = session?.override(layerAsset: .chatCloseButtonLayer) {
+            self.layer.addSublayer(layer)
         }
 
         if buttonTitle.isEmpty, let overrideImage = session?.override(imageAsset: .chatCloseButtonEmpty) {

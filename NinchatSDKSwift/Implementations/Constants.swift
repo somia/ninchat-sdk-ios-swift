@@ -59,11 +59,9 @@ public enum ColorConstants {
     case chatBubbleLeftTint
     case chatBubbleRightTint
     case chatCloseButtonBackground
-    case chatCloseButtonBorder
     case textareaText
     case textareaSubmit
     case textareaSubmitText
-    case textareaSubmitBorder
     case textareaPlaceholder
     case chatBubbleLeftLink
     case chatBubbleRightLink
@@ -77,6 +75,14 @@ public enum ColorConstants {
     case ratingPositiveText
     case ratingNeutralText
     case ratingNegativeText
+}
+
+/// Color override keys
+public typealias NINLayerAssetDictionary = [CALayerConstant:CALayer]
+public let LAYER_NAME = "_ninchat-asset"
+public enum CALayerConstant {
+    case chatCloseButtonLayer
+    case textareaSubmitLayer
 }
 
 /// Questionnaire override keys

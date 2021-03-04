@@ -93,3 +93,11 @@ extension UIView {
         }
     }
 }
+
+extension UIView {
+    static func applyLayerOverride(view: UIView) {
+        view.layer.sublayers?.filter({ $0.name == LAYER_NAME }).forEach({
+            $0.frame = view.bounds
+        })
+    }
+}

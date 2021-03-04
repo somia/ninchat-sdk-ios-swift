@@ -17,6 +17,7 @@ protocol NINChatSessionInternalDelegate {
     func onResumeFailed() -> Bool
     func override(imageAsset key: AssetConstants) -> UIImage?
     func override(colorAsset key: ColorConstants) -> UIColor?
+    func override(layerAsset key: CALayerConstant) -> CALayer?
     func override(questionnaireAsset key: QuestionnaireColorConstants) -> UIColor?
 }
 
@@ -73,6 +74,14 @@ struct InternalDelegate: NINChatSessionInternalDelegate {
         return session.delegate?.ninchat(session, overrideColorAssetForKey: key)
     }
 
+    internal func override(layerAsset key: CALayerConstant) -> CALayer? {
+        guard let session = self.session else { return nil }
+        let layer = session.delegate?.ninchat(session, overrideLayer: key)
+        layer?.name = LAYER_NAME
+        
+        return layer
+    }
+    
     internal func override(questionnaireAsset key: QuestionnaireColorConstants) -> UIColor? {
         guard let session = self.session else { return nil }
         return session.delegate?.ninchat(session, overrideQuestionnaireColorAssetKey: key)
