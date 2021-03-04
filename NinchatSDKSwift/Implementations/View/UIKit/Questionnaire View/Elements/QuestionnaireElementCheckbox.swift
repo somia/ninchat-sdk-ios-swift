@@ -35,7 +35,7 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
         }
     }
     var elementConfiguration: QuestionnaireConfiguration?
-    internal(set) var elementHeight: CGFloat {
+    var elementHeight: CGFloat {
         get {
             let viewHeight = CGFloat(self.view.height!.constant) + 16.0
             if self.subElements.count == 0, index == 0 {

@@ -87,7 +87,11 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
             if let backgroundColor = self.delegate?.override(colorAsset: .textareaSubmit) {
                 self.sendMessageButton.backgroundColor = backgroundColor
                 self.sendMessageButton.layer.masksToBounds = true
-                self.sendMessageButton.layer.cornerRadius = 16.0
+            }
+
+            if let borderColor = self.delegate?.override(colorAsset: .textareaSubmitBorder) {
+                self.sendMessageButton.layer.borderWidth = 1.0
+                self.sendMessageButton.layer.borderColor = borderColor.cgColor
             }
             
             if let backgroundImage = self.delegate?.override(imageAsset: .textareaSubmitButton) {
@@ -110,6 +114,10 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
         if let inputTextColor = self.delegate?.override(colorAsset: .textareaText) {
             self.textInput.textColor = inputTextColor
             textColor = inputTextColor
+        }
+
+        if let placeholderColor = self.delegate?.override(colorAsset: .textareaPlaceholder) {
+            self.placeholderColor = placeholderColor
         }
         self.updatePlaceholder()
     }

@@ -97,7 +97,7 @@ extension NINChatSessionInternalDelegate {
     }
 
     var colorAssetsDictionary: [ColorConstants:UIColor] {
-        let colorKeys: [ColorConstants] = [.infoText, .chatName, .chatTimestamp, .chatBubbleLeftText, .chatBubbleRightText, .chatBubbleLeftLink, .chatBubbleRightLink]
+        let colorKeys: [ColorConstants] = [.infoText, .chatName, .chatTimestamp, .chatBubbleLeftText, .chatBubbleLeftTint, .chatBubbleRightText, .chatBubbleRightTint, .chatBubbleLeftLink, .chatBubbleRightLink]
         return colorKeys.compactMap({ ($0, self.override(colorAsset: $0)) }).reduce(into: [:]) { (colorAsset: inout [ColorConstants:UIColor], tuple: (key: ColorConstants, color: UIColor?)) in
             colorAsset[tuple.key] = tuple.color
         }

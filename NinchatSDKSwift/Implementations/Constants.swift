@@ -56,9 +56,15 @@ public enum ColorConstants {
     case chatTimestamp
     case chatBubbleLeftText
     case chatBubbleRightText
+    case chatBubbleLeftTint
+    case chatBubbleRightTint
+    case chatCloseButtonBackground
+    case chatCloseButtonBorder
     case textareaText
     case textareaSubmit
     case textareaSubmitText
+    case textareaSubmitBorder
+    case textareaPlaceholder
     case chatBubbleLeftLink
     case chatBubbleRightLink
     case modalText

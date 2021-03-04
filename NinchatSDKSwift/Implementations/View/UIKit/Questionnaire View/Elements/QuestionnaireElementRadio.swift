@@ -34,7 +34,7 @@ class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Question
         }
     }
     var elementConfiguration: QuestionnaireConfiguration?
-    internal(set) var elementHeight: CGFloat = 0
+    var elementHeight: CGFloat = 0
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         self.overrideTitle(delegate: delegate)
