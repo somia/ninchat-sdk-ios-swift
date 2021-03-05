@@ -12,7 +12,7 @@ final class NINRatingViewController: UIViewController, ViewController {
     // MARK: - Injected
     
     var viewModel: NINRatingViewModel!
-    var style: QuestionnaireStyle!
+    var style: QuestionnaireStyle? = .form
     
     // MARK: - ViewController
 
