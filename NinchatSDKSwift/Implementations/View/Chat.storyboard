@@ -294,14 +294,97 @@ you are next.</string>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="230" id="UFL-6A-Bof"/>
                                         </constraints>
                                     </stackView>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zhu-12-0xh">
+                                        <rect key="frame" x="16" y="4" width="343" height="402"/>
+                                        <subviews>
+                                            <view tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Vt6-hF-T0g" userLabel="Left avatar container">
+                                                <rect key="frame" x="15" y="0.0" width="35" height="402"/>
+                                                <subviews>
+                                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" image="icon_avatar_other" translatesAutoresizingMaskIntoConstraints="NO" id="Yfi-1D-cO5">
+                                                        <rect key="frame" x="0.0" y="12" width="35" height="35"/>
+                                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" secondItem="Yfi-1D-cO5" secondAttribute="height" id="3sr-3b-rIE"/>
+                                                            <constraint firstAttribute="width" constant="35" id="blB-TK-lPe"/>
+                                                        </constraints>
+                                                    </imageView>
+                                                </subviews>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstItem="Yfi-1D-cO5" firstAttribute="top" secondItem="Vt6-hF-T0g" secondAttribute="top" constant="12" id="hab-29-NWh"/>
+                                                    <constraint firstItem="Yfi-1D-cO5" firstAttribute="centerX" secondItem="Vt6-hF-T0g" secondAttribute="centerX" id="m3M-TF-zS1"/>
+                                                    <constraint firstAttribute="width" constant="35" id="nQ7-MQ-r9d"/>
+                                                </constraints>
+                                            </view>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hb8-60-TGG">
+                                                <rect key="frame" x="58.000000000000007" y="9.6666666666666643" width="76.666666666666686" height="40"/>
+                                                <subviews>
+                                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="999" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Dr Koistinen" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vdr-sU-emu">
+                                                        <rect key="frame" x="0.0" y="11.666666666666663" width="76.666666666666671" height="16.333333333333329"/>
+                                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                </subviews>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstItem="vdr-sU-emu" firstAttribute="height" secondItem="hb8-60-TGG" secondAttribute="height" priority="250" id="1Qy-nX-U1q"/>
+                                                    <constraint firstAttribute="trailing" secondItem="vdr-sU-emu" secondAttribute="trailing" id="aWP-JH-bWe"/>
+                                                    <constraint firstItem="vdr-sU-emu" firstAttribute="leading" secondItem="hb8-60-TGG" secondAttribute="leading" id="cTv-Xl-9Lq"/>
+                                                    <constraint firstItem="vdr-sU-emu" firstAttribute="centerY" secondItem="hb8-60-TGG" secondAttribute="centerY" id="cuH-3N-Ayf"/>
+                                                    <constraint firstAttribute="height" priority="750" constant="40" id="ygO-Gy-qiw"/>
+                                                </constraints>
+                                            </view>
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_bubble_left_series" translatesAutoresizingMaskIntoConstraints="NO" id="lpr-Ub-6OM">
+                                                <rect key="frame" x="15" y="55" width="313" height="55.333333333333343"/>
+                                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            </imageView>
+                                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="How was our customer service?" translatesAutoresizingMaskIntoConstraints="NO" id="DbE-mm-dcs">
+                                                <rect key="frame" x="23" y="67" width="313" height="35.333333333333343"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
+                                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
+                                            </textView>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dEa-pc-H2B">
+                                                <rect key="frame" x="15" y="126.33333333333334" width="313" height="130.00000000000003"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="130" id="PD8-mV-QrE"/>
+                                                </constraints>
+                                            </view>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstItem="DbE-mm-dcs" firstAttribute="trailing" secondItem="lpr-Ub-6OM" secondAttribute="trailing" constant="8" id="BrU-ah-SSD"/>
+                                            <constraint firstItem="hb8-60-TGG" firstAttribute="centerY" secondItem="Yfi-1D-cO5" secondAttribute="centerY" id="Ivy-j4-Mv0"/>
+                                            <constraint firstAttribute="trailing" secondItem="lpr-Ub-6OM" secondAttribute="trailing" constant="15" id="Jn8-kJ-NCV"/>
+                                            <constraint firstItem="DbE-mm-dcs" firstAttribute="bottom" secondItem="lpr-Ub-6OM" secondAttribute="bottom" constant="-8" id="LJ9-jf-2FP"/>
+                                            <constraint firstItem="dEa-pc-H2B" firstAttribute="leading" secondItem="lpr-Ub-6OM" secondAttribute="leading" id="Umo-cR-RIt"/>
+                                            <constraint firstItem="lpr-Ub-6OM" firstAttribute="top" secondItem="Zhu-12-0xh" secondAttribute="top" constant="55" id="ZrC-0j-UeC"/>
+                                            <constraint firstItem="lpr-Ub-6OM" firstAttribute="leading" secondItem="Yfi-1D-cO5" secondAttribute="leading" id="ar1-td-xxe"/>
+                                            <constraint firstItem="Vt6-hF-T0g" firstAttribute="leading" secondItem="Zhu-12-0xh" secondAttribute="leading" constant="15" id="cZc-p1-IPz"/>
+                                            <constraint firstItem="dEa-pc-H2B" firstAttribute="top" secondItem="lpr-Ub-6OM" secondAttribute="bottom" constant="16" id="f26-LB-ZH6"/>
+                                            <constraint firstItem="hb8-60-TGG" firstAttribute="leading" secondItem="Vt6-hF-T0g" secondAttribute="trailing" constant="8" id="fav-ef-l6O"/>
+                                            <constraint firstAttribute="bottom" secondItem="Vt6-hF-T0g" secondAttribute="bottom" id="hb2-TM-R2W"/>
+                                            <constraint firstItem="Vt6-hF-T0g" firstAttribute="top" secondItem="Zhu-12-0xh" secondAttribute="top" id="iDr-MJ-vkZ"/>
+                                            <constraint firstItem="DbE-mm-dcs" firstAttribute="leading" secondItem="lpr-Ub-6OM" secondAttribute="leading" constant="8" id="iVh-g3-910"/>
+                                            <constraint firstItem="dEa-pc-H2B" firstAttribute="trailing" secondItem="lpr-Ub-6OM" secondAttribute="trailing" id="pxn-7U-yar"/>
+                                            <constraint firstItem="DbE-mm-dcs" firstAttribute="top" secondItem="lpr-Ub-6OM" secondAttribute="top" constant="12" id="yGC-2b-b9P"/>
+                                        </constraints>
+                                    </view>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstItem="qj1-1U-Y4U" firstAttribute="top" relation="greaterThanOrEqual" secondItem="L5U-F0-l9Y" secondAttribute="top" constant="4" id="3yh-j3-yC3"/>
                                     <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="qj1-1U-Y4U" secondAttribute="bottom" id="6ME-kd-umm"/>
+                                    <constraint firstItem="Zhu-12-0xh" firstAttribute="top" secondItem="L5U-F0-l9Y" secondAttribute="top" constant="4" id="6gJ-xn-wen"/>
                                     <constraint firstItem="qj1-1U-Y4U" firstAttribute="leading" secondItem="L5U-F0-l9Y" secondAttribute="leading" constant="16" id="CIl-qa-20p"/>
                                     <constraint firstItem="qj1-1U-Y4U" firstAttribute="centerY" secondItem="L5U-F0-l9Y" secondAttribute="centerY" id="CsP-6S-1DP"/>
+                                    <constraint firstAttribute="bottom" secondItem="Zhu-12-0xh" secondAttribute="bottom" id="OdD-X9-nCn"/>
                                     <constraint firstAttribute="trailing" secondItem="qj1-1U-Y4U" secondAttribute="trailing" constant="16" id="Wqt-dR-goe"/>
+                                    <constraint firstItem="Zhu-12-0xh" firstAttribute="leading" secondItem="L5U-F0-l9Y" secondAttribute="leading" constant="16" id="g0K-By-o5x"/>
+                                    <constraint firstAttribute="trailing" secondItem="Zhu-12-0xh" secondAttribute="trailing" constant="16" id="nho-Da-cI8"/>
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PLV-Oi-4sR">
@@ -332,15 +415,22 @@ you are next.</string>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="facesViewContainer" destination="B6F-ML-XSh" id="kg3-Et-Ydv"/>
+                        <outlet property="conversationStyleView" destination="Zhu-12-0xh" id="O3y-WT-lcF"/>
+                        <outlet property="facesConversationViewContainer" destination="dEa-pc-H2B" id="xIK-6e-VP4"/>
+                        <outlet property="facesFormViewContainer" destination="B6F-ML-XSh" id="kg3-Et-Ydv"/>
+                        <outlet property="formStyleView" destination="qj1-1U-Y4U" id="6TR-GJ-EzI"/>
                         <outlet property="skipButton" destination="PLV-Oi-4sR" id="BII-Eo-jaz"/>
-                        <outlet property="titleTextView" destination="Ikj-NF-Jwm" id="0CS-jr-358"/>
+                        <outlet property="titleConversationBubble" destination="lpr-Ub-6OM" id="IfA-N2-MTN"/>
+                        <outlet property="titleConversationTextView" destination="DbE-mm-dcs" id="3gU-ir-XwY"/>
+                        <outlet property="titleFormTextView" destination="Ikj-NF-Jwm" id="0CS-jr-358"/>
                         <outlet property="topViewContainer" destination="L5U-F0-l9Y" id="L0c-wH-tU0"/>
+                        <outlet property="userAvatar" destination="Yfi-1D-cO5" id="Btl-NB-cDx"/>
+                        <outlet property="userTitle" destination="vdr-sU-emu" id="6Rs-ny-yeZ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xNA-rk-MTU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2538" y="149"/>
+            <point key="canvasLocation" x="2536.8000000000002" y="148.52216748768473"/>
         </scene>
         <!--Initial View Controller-->
         <scene sceneID="XHh-YP-k7w">
@@ -515,6 +605,8 @@ you are next.</string>
         </scene>
     </scenes>
     <resources>
+        <image name="chat_bubble_left_series" width="31" height="52"/>
+        <image name="icon_avatar_other" width="726" height="725"/>
         <image name="icon_progress_whirl" width="800" height="800"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
