@@ -12,18 +12,13 @@ final class NINRatingViewController: UIViewController, ViewController {
     // MARK: - Injected
     
     var viewModel: NINRatingViewModel!
+    var style: QuestionnaireStyle!
     
     // MARK: - ViewController
 
     var delegate: InternalDelegate?
     weak var sessionManager: NINChatSessionManager?
-
     var onRatingFinished: ((ChatStatus?) -> Bool)!
-    
-    // MARK: - Outlets
-    
-    @IBOutlet private(set) weak var topViewContainer: UIView!
-    @IBOutlet private(set) weak var titleTextView: UITextView!
     
     private lazy var facesView: FacesViewProtocol = {
         var view: FacesView = FacesView.loadFromNib()
@@ -42,16 +37,30 @@ final class NINRatingViewController: UIViewController, ViewController {
         
         return view
     }()
-    @IBOutlet private(set) weak var facesViewContainer: UIView! {
+    
+    // MARK: - Shared Outlets
+    
+    @IBOutlet private(set) weak var topViewContainer: UIView!
+    @IBOutlet private(set) weak var conversationStyleView: UIView!
+    @IBOutlet private(set) weak var formStyleView: UIView!
+    @IBOutlet private(set) weak var skipButton: UIButton!
+
+    // MARK: - Conversation Style Outlets
+    
+    @IBOutlet private(set) weak var userAvatar: UIImageView!
+    @IBOutlet private(set) weak var userTitle: UILabel! {
         didSet {
-            facesViewContainer.addSubview(facesView)
-            facesView
-                .fix(leading: (0, facesViewContainer), trailing: (0, facesViewContainer))
-                .fix(top: (0, facesViewContainer), bottom: (0, facesViewContainer))
+            userTitle.font = .ninchat
         }
     }
+    @IBOutlet private(set) weak var titleConversationBubble: UIImageView!
+    @IBOutlet private(set) weak var titleConversationTextView: UITextView!
+    @IBOutlet private(set) weak var facesConversationViewContainer: UIView!
     
-    @IBOutlet private(set) weak var skipButton: UIButton!
+    // MARK: - Form Style Outlets
+    
+    @IBOutlet private(set) weak var titleFormTextView: UITextView!
+    @IBOutlet private(set) weak var facesFormViewContainer: UIView!
      
     // MARK: - UIViewController
     
@@ -62,6 +71,16 @@ final class NINRatingViewController: UIViewController, ViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        /// Show conversation-style rating view
+        /// according to `https://github.com/somia/mobile/issues/314`
+        conversationStyleView.isHidden = (style != .conversation)
+        formStyleView.isHidden = !conversationStyleView.isHidden
+        if style == .conversation {
+            self.adjustFaceView(parent: facesConversationViewContainer)
+        } else if style == .form {
+            self.adjustFaceView(parent: facesFormViewContainer)
+        }
+        
         self.overrideAssets()
         self.navigationItem.setHidesBackButton(true, animated: false)
     }
@@ -71,29 +90,53 @@ final class NINRatingViewController: UIViewController, ViewController {
     func overrideAssets() {
         facesView.overrideAssets()
         
-        if let title = self.sessionManager?.translate(key: Constants.kRatingTitleText.rawValue, formatParams: [:]) {
-            self.titleTextView.setAttributed(text: title, font: .ninchat)
-        }
-        
-        if let skip = self.sessionManager?.translate(key: Constants.kRatingSkipText.rawValue, formatParams: [:]) {
-            self.skipButton.setTitle(skip, for: .normal)
+        if style == .conversation {
+            topViewContainer.backgroundColor = .clear
+            
+            userTitle.text = self.sessionManager?.siteConfiguration.audienceQuestionnaireUserName ?? ""
+            if let avatar = self.sessionManager?.siteConfiguration.audienceQuestionnaireAvatar as? String, !avatar.isEmpty {
+                userAvatar.image(from: avatar)
+            } else {
+                userAvatar.image = UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)
+            }
+            
         }
         
         if let topBackgroundColor = self.delegate?.override(colorAsset: .backgroundTop) {
             self.topViewContainer.backgroundColor = topBackgroundColor
         }
-        
         if let bottomBackgroundColor = self.delegate?.override(colorAsset: .backgroundBottom) {
             self.view.backgroundColor = bottomBackgroundColor
         }
+        if let bubbleColor = self.delegate?.override(colorAsset: .chatBubbleLeftTint) {
+            self.titleConversationBubble.tintColor = bubbleColor
+        }
         if let textTopColor = self.delegate?.override(colorAsset: .textTop) {
-            self.titleTextView.textColor = textTopColor
+            self.titleFormTextView.textColor = textTopColor
+            titleConversationTextView.textColor = textTopColor
         }
         
         if let linkColor = self.delegate?.override(colorAsset: .link) {
-            self.titleTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
+            self.titleFormTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
+            titleConversationTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
             self.skipButton.setTitleColor(linkColor, for: .normal)
         }
+        
+        if let skip = self.sessionManager?.translate(key: Constants.kRatingSkipText.rawValue, formatParams: [:]) {
+            self.skipButton.setTitle(skip, for: .normal)
+        }
+        if let title = self.sessionManager?.translate(key: Constants.kRatingTitleText.rawValue, formatParams: [:]) {
+            self.titleFormTextView.setAttributed(text: title, font: .ninchat)
+            titleConversationTextView.setAttributed(text: title, font: .ninchat)
+        }
+    }
+    
+    func adjustFaceView(parent: UIView) {
+        parent.addSubview(facesView)
+        facesView
+            .fix(leading: (0, parent), trailing: (0, parent))
+            .fix(top: (0, parent), bottom: (0, parent))
+
     }
 }
 
