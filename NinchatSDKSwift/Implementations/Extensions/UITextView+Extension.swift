@@ -10,7 +10,7 @@ import AutoLayoutSwift
 extension UITextView {
     func updateSize(to height: CGFloat) {
         guard let constraints = self.find(attribute: .height), constraints.constant != height else { return }
-
+        
         constraints.constant = height
         self.setNeedsLayout()
         self.layoutIfNeeded()

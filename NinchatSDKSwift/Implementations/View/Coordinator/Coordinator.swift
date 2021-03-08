@@ -155,6 +155,7 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         ratingViewController.viewModel = viewModel
         ratingViewController.delegate = self.delegate
         ratingViewController.sessionManager = self.sessionManager
+        ratingViewController.style = self.sessionManager.siteConfiguration?.postAudienceQuestionnaireStyle
         ratingViewController.onRatingFinished = { [weak self] (status: ChatStatus?) -> Bool in
             if !(self?.hasPostAudienceQuestionnaire ?? true) { return true }
             DispatchQueue.main.async {
