@@ -351,6 +351,13 @@ extension NINQuestionnaireViewModelImpl {
         connector.findElementAndPageLogic(logic: logic, in: self.answers, autoApply: autoApply, performClosures: performClosures).1
     }
 
+    func resetAnswers(for page: Int) {
+        guard let elements = self.items[page].elements else { return }
+        elements.compactMap({ $0.elementConfiguration?.name })
+                .filter({ self.answers.keys.contains($0) })
+                .forEach({ self.answers.removeValue(forKey: $0) })
+    }
+
     func goToNextPage() -> Bool? {
         guard self.requirementsSatisfied else { return nil }
         guard self.items.count > self.pageNumber + 1 else { return false }
@@ -391,6 +398,11 @@ extension NINQuestionnaireViewModelImpl {
 
     func goToPage(_ page: Int) -> Bool {
         guard self.requirementsSatisfied, page >= 0 else { return false }
+
+        /// Check if the page has an answer submitted
+        /// if so, it must be cleared to let re-selection
+        /// as reported in `https://github.com/somia/mobile/issues/321`
+        resetAnswers(for: page)
 
         self.pageNumber = page
         self.visitedPages.append(page)
