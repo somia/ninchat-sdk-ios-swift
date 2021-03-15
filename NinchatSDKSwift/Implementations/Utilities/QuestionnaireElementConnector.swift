@@ -88,6 +88,10 @@ extension QuestionnaireElementConnectorImpl {
             return redirect
         } else if let redirect = configuration.redirects?.first(where: { $0.pattern ?? AnyHashable("") == input }) {
             return redirect
+        } else if let redirect = configuration.redirects?.first(where: { $0.pattern == nil }) {
+            /// if the input was not matched with the redirect with a valid pattern,
+            /// use the one that has no patterns if there is any (which is applied to all inputs)
+            return redirect
         }
         return nil
     }
