@@ -94,7 +94,8 @@ extension QuestionnaireDataSourceDelegate {
     }
 
     internal func onBackButtonTapped(completion: (() -> Void)?) {
-        if self.viewModel.clearAnswers(), self.viewModel.goToPreviousPage() {
+        if self.viewModel.clearAnswers(), self.viewModel.canGoToPreviousPage() {
+            self.viewModel.goToPreviousPage()
             completion?()
         }
     }

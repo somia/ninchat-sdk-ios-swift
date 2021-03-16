@@ -30,7 +30,8 @@ protocol NINQuestionnaireViewModel {
     func redirectTargetPage(_ element: QuestionnaireElement, autoApply: Bool, performClosures: Bool) -> Int?
     func logicTargetPage(_ logic: LogicQuestionnaire, autoApply: Bool, performClosures: Bool) -> Int?
     func goToNextPage() -> Bool?
-    func goToPreviousPage() -> Bool
+    func canGoToPreviousPage() -> Bool
+    func goToPreviousPage()
     func goToPage(_ page: Int) -> Bool
     func submitAnswer(key: QuestionnaireElement?, value: AnyHashable) -> Bool
     func removeAnswer(key: QuestionnaireElement?)
@@ -295,11 +296,8 @@ extension NINQuestionnaireViewModelImpl {
     }
 
     func clearAnswers() -> Bool {
-        if self.visitedPages.count <= 1 {
-            return clearAnswersAtPage(self.pageNumber)
-        }
         self.visitedPages.removeLast()
-        return clearAnswersAtPage(self.pageNumber) && self.clearAnswersAtPage(self.visitedPages.last ?? -1)
+        return clearAnswersAtPage(self.pageNumber)
     }
 }
 
@@ -388,11 +386,12 @@ extension NINQuestionnaireViewModelImpl {
         return false
     }
 
-    func goToPreviousPage() -> Bool {
-        if self.pageNumber > 0, self.visitedPages.count > 0, let previousPage = self.visitedPages.last {
-            self.pageNumber = previousPage; return true
-        }
-        return false
+    func canGoToPreviousPage() -> Bool {
+        (self.pageNumber > 0) && (self.visitedPages.count > 0) && (self.visitedPages.last != nil)
+    }
+
+    func goToPreviousPage() {
+        self.pageNumber = self.visitedPages.last!
     }
 
     func goToPage(_ page: Int) -> Bool {
