@@ -184,10 +184,10 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         if let settableElement = element as? QuestionnaireSettable & QuestionnaireElement {
             self.setupSettable(element: settableElement)
         }
-        if var view = element as? QuestionnaireOptionSelectableElement {
+        if var view = element as? QuestionnaireOptionSelectableElement & QuestionnaireElement {
             self.setupSelectable(view: &view)
         }
-        if var view = element as? QuestionnaireFocusableElement {
+        if var view = element as? QuestionnaireFocusableElement & QuestionnaireElement {
             self.setupFocusable(view: &view)
         }
         cell.style = .conversation

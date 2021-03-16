@@ -33,7 +33,7 @@ protocol NINQuestionnaireViewModel {
     func canGoToPreviousPage() -> Bool
     func goToPreviousPage()
     func goToPage(_ page: Int) -> Bool
-    func submitAnswer(key: QuestionnaireElement?, value: AnyHashable) -> Bool
+    func submitAnswer(key: QuestionnaireElement?, value: AnyHashable, allowUpdate: Bool?) -> Bool
     func removeAnswer(key: QuestionnaireElement?)
     func finishQuestionnaire(for logic: LogicQuestionnaire?, redirect: ElementRedirect?, autoApply: Bool)
 }
@@ -274,11 +274,13 @@ extension NINQuestionnaireViewModelImpl {
         }).filter({ self.getAnswersForElement($0) == nil }).count == 0
     }
 
-    func submitAnswer(key: QuestionnaireElement?, value: AnyHashable) -> Bool {
+    func submitAnswer(key: QuestionnaireElement?, value: AnyHashable, allowUpdate: Bool?) -> Bool {
         guard !self.isExitElement(key) else { return true }
 
         if let configuration = key?.elementConfiguration {
-            if let currentValue = self.answers[configuration.name], value == currentValue { return false }
+            /// The check below intended to avoid executing closures that had been executed before
+            /// But, this wouldn't be the case for the last item in the page
+            if !(allowUpdate ?? true), let currentValue = self.answers[configuration.name], value == currentValue { return false }
 
             self.answers[configuration.name] = value
             self.preAnswers.removeValue(forKey: configuration.name) // clear preset answers if there is a matched one
@@ -399,7 +401,6 @@ extension NINQuestionnaireViewModelImpl {
 
         self.pageNumber = page
         self.visitedPages.append(page)
-        _ = self.clearAnswersAtPage(page)
         return true
     }
 }
