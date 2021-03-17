@@ -298,8 +298,11 @@ extension NINQuestionnaireViewModelImpl {
     }
 
     func clearAnswers() -> Bool {
-        self.visitedPages.removeLast()
-        return clearAnswersAtPage(self.pageNumber)
+        if self.visitedPages.count > 0 {
+            self.visitedPages.removeLast()
+            return clearAnswersAtPage(self.pageNumber)
+        }
+        return false
     }
 }
 
@@ -389,7 +392,7 @@ extension NINQuestionnaireViewModelImpl {
     }
 
     func canGoToPreviousPage() -> Bool {
-        (self.pageNumber > 0) && (self.visitedPages.count > 0) && (self.visitedPages.last != nil)
+        (self.visitedPages.count > 0) && (self.visitedPages.last != nil)
     }
 
     func goToPreviousPage() {
