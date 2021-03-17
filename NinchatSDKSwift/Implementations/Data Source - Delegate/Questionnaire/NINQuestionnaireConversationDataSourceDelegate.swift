@@ -106,7 +106,7 @@ extension NINQuestionnaireConversationDataSourceDelegate: QuestionnaireConversat
     func removeSection() -> Int {
         defer { self.disablePreviousRows(false) }
 
-        self.clearCurrentAndPreviousRows()
+        self.clearCurrentRow()
         sectionCount -= 1
         rowCount.remove(at: sectionCount)
         if elements.count > sectionCount { elements.remove(at: sectionCount) }
@@ -124,15 +124,9 @@ extension NINQuestionnaireConversationDataSourceDelegate: QuestionnaireConversat
         self.elements[sectionCount-1].forEach({ $0.isShown = true;  $0.alpha = 1.0 })
     }
 
-    private func clearCurrentAndPreviousRows() {
+    private func clearCurrentRow() {
         if self.elements.count > self.sectionCount - 1 {
             self.elements[sectionCount-1].forEach({
-                ($0 as? QuestionnaireOptionSelectableElement)?.deselectAll()
-                ($0 as? QuestionnaireFocusableElement)?.clearAll()
-            })
-        }
-        if self.elements.count > self.sectionCount - 2 {
-            self.elements[sectionCount-2].forEach({
                 ($0 as? QuestionnaireOptionSelectableElement)?.deselectAll()
                 ($0 as? QuestionnaireFocusableElement)?.clearAll()
             })
@@ -168,9 +162,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         cell.onBackButtonTapped = { [weak self] in
             self?.onBackButtonTapped(completion: self?.onRemoveCellContent)
         }
-        self.viewModel.requirementSatisfactionUpdater = { [weak self] satisfied in
-            self?.onRequirementsUpdated(satisfied, for: cell)
-        }
+        self.viewModel.requirementSatisfactionUpdater = cell.requirementSatisfactionUpdater
 
         return cell
     }
@@ -190,10 +182,10 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         if let settableElement = element as? QuestionnaireSettable & QuestionnaireElement {
             self.setupSettable(element: settableElement)
         }
-        if var view = element as? QuestionnaireOptionSelectableElement {
+        if var view = element as? QuestionnaireOptionSelectableElement & QuestionnaireElement {
             self.setupSelectable(view: &view)
         }
-        if var view = element as? QuestionnaireFocusableElement {
+        if var view = element as? QuestionnaireFocusableElement & QuestionnaireElement {
             self.setupFocusable(view: &view)
         }
         cell.style = .conversation

@@ -69,8 +69,35 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
             XCTFail(error.localizedDescription)
         }
     }
+    
+    func test_21_updateAnswers() {
+        self.viewModel?.answers["Phone"] = self.viewModel?.preAnswers["Phone"]
+        
+        do {
+            self.viewModel?.pageNumber = 28
+            let elements = try self.viewModel?.getElements()
+            XCTAssertEqual(elements?.count ?? 0, 6)
+            
+            let startElement = elements?.first(where: { $0.elementConfiguration?.name == "Phone" })
+            XCTAssertNotNil(startElement)
+            
+            let old_answer = self.viewModel?.getAnswersForElement(startElement!) as? String
+            XCTAssertNotNil(old_answer)
+            XCTAssertEqual(old_answer, "+358123456789")
+            
+            XCTAssertTrue(self.viewModel?.submitAnswer(key: startElement!, value: "123456", allowUpdate: false) ?? false, "The new value is not equal to old value, it will be updated")
+            XCTAssertFalse(self.viewModel?.submitAnswer(key: startElement!, value: "123456", allowUpdate: false) ?? true, "The new value is equal to old value and update is not allowed, should return false")
+            let updated_answer = self.viewModel?.getAnswersForElement(startElement!) as? String
+            XCTAssertNotNil(updated_answer)
+            XCTAssertNotEqual(updated_answer, old_answer)
+            
+            _ = self.viewModel?.submitAnswer(key: startElement!, value: "+358123456789", allowUpdate: true)
+        }  catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
 
-    func test_21_setPreAnswers() {
+    func test_22_setPreAnswers() {
         self.viewModel?.pageNumber = 0
 
         do {
@@ -90,7 +117,7 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         XCTAssertFalse(self.viewModel?.requirementsSatisfied ?? true)
 
         let element = try? self.viewModel?.getElements().first
-        _ = self.viewModel?.submitAnswer(key: element!, value: "Mikä on koronavirus")
+        _ = self.viewModel?.submitAnswer(key: element!, value: "Mikä on koronavirus", allowUpdate: true)
         XCTAssertTrue(self.viewModel?.requirementsSatisfied ?? false)
     }
 
@@ -99,11 +126,11 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         XCTAssertFalse(self.viewModel?.requirementsSatisfied ?? false)
 
         let textField = try? self.viewModel?.getElements().first(where: { $0 is QuestionnaireElementTextField })
-        _ = self.viewModel?.submitAnswer(key: textField!, value: "+358123456789")
+        _ = self.viewModel?.submitAnswer(key: textField!, value: "+358123456789", allowUpdate: true)
         XCTAssertFalse(self.viewModel?.requirementsSatisfied ?? false)
 
         let textView = try? self.viewModel?.getElements().first(where: { $0 is QuestionnaireElementTextArea })
-        _ = self.viewModel?.submitAnswer(key: textView!, value: "This is a sample input")
+        _ = self.viewModel?.submitAnswer(key: textView!, value: "This is a sample input", allowUpdate: true)
         XCTAssertTrue(self.viewModel?.requirementsSatisfied ?? false)
     }
 
@@ -111,7 +138,7 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         XCTAssertFalse(self.viewModel?.goToPage(8) ?? true)
 
         let element = try? self.viewModel?.getElements().first
-        _ = self.viewModel?.submitAnswer(key: element!, value: "Mikä on koronavirus")
+        _ = self.viewModel?.submitAnswer(key: element!, value: "Mikä on koronavirus", allowUpdate: true)
         XCTAssertTrue(self.viewModel?.goToPage(8) ?? false)
     }
 
@@ -266,7 +293,7 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
 
         self.viewModel?.answers = ["Aiheet": "Mikä on koronavirus"]
         XCTAssertTrue(self.viewModel?.clearAnswers() ?? false)
-        XCTAssertFalse(self.viewModel?.goToPreviousPage() ?? true)
+        XCTAssertFalse(self.viewModel?.canGoToPreviousPage() ?? true)
         XCTAssertEqual(self.viewModel?.answers, [:])
         XCTAssertEqual(self.viewModel?.pageNumber, 0)
     }
@@ -278,8 +305,10 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
 
         self.viewModel?.answers = ["Aiheet": "Mikä on koronavirus", "Koronavirus-jatko": "Sulje"]
         XCTAssertTrue(self.viewModel?.clearAnswers() ?? false)
-        XCTAssertTrue(self.viewModel?.goToPreviousPage() ?? false)
-        XCTAssertEqual(self.viewModel?.answers, [:])
+        XCTAssertTrue(self.viewModel?.canGoToPreviousPage() ?? false)
+        
+        self.viewModel?.goToPreviousPage()
+        XCTAssertEqual(self.viewModel?.answers, ["Aiheet": "Mikä on koronavirus"])
         XCTAssertEqual(self.viewModel?.pageNumber, 0)
     }
 
@@ -290,8 +319,10 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
 
         self.viewModel?.answers = ["Aiheet": "Mikä on koronavirus", "Koronavirus-jatko": "Sulje"]
         XCTAssertTrue(self.viewModel?.clearAnswers() ?? false)
-        XCTAssertTrue(self.viewModel?.goToPreviousPage() ?? false)
-        XCTAssertEqual(self.viewModel?.answers, [:])
+        XCTAssertTrue(self.viewModel?.canGoToPreviousPage() ?? false)
+        
+        self.viewModel?.goToPreviousPage()
+        XCTAssertEqual(self.viewModel?.answers, ["Aiheet": "Mikä on koronavirus"])
         XCTAssertEqual(self.viewModel?.pageNumber, 0)
     }
 
@@ -302,8 +333,10 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
 
         self.viewModel?.answers = ["Aiheet": "Mikä on koronavirus", "Koronavirus-jatko": "Sulje", "Epäilys-jatko": "Muut aiheet"]
         XCTAssertTrue(self.viewModel?.clearAnswers() ?? false)
-        XCTAssertTrue(self.viewModel?.goToPreviousPage() ?? false)
-        XCTAssertEqual(self.viewModel?.answers, ["Aiheet": "Mikä on koronavirus"])
+        XCTAssertTrue(self.viewModel?.canGoToPreviousPage() ?? false)
+        
+        self.viewModel?.goToPreviousPage()
+        XCTAssertEqual(self.viewModel?.answers, ["Aiheet": "Mikä on koronavirus", "Koronavirus-jatko": "Sulje"])
         XCTAssertEqual(self.viewModel?.pageNumber, 1)
     }
 
