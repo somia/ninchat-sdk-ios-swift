@@ -80,9 +80,7 @@ extension NINQuestionnaireFormDataSourceDelegate {
                 self?.onBackButtonTapped(completion: self?.onUpdateCellContent)
             }
             cell.backgroundColor = .clear
-            self.viewModel.requirementSatisfactionUpdater = { [weak self] satisfied in
-                self?.onRequirementsUpdated(satisfied, for: cell)
-            }
+            self.viewModel.requirementSatisfactionUpdater = cell.requirementSatisfactionUpdater
 
             return cell
         } catch {

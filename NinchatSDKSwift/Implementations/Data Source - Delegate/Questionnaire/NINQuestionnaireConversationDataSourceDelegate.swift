@@ -162,9 +162,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         cell.onBackButtonTapped = { [weak self] in
             self?.onBackButtonTapped(completion: self?.onRemoveCellContent)
         }
-        self.viewModel.requirementSatisfactionUpdater = { [weak self] satisfied in
-            self?.onRequirementsUpdated(satisfied, for: cell)
-        }
+        self.viewModel.requirementSatisfactionUpdater = cell.requirementSatisfactionUpdater
 
         return cell
     }
