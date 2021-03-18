@@ -8,7 +8,9 @@ import UIKit
 
 final class QuestionnaireElementText: UITextView, QuestionnaireElement {
 
-    fileprivate var topInset: CGFloat = 8.0
+    fileprivate var topInset: CGFloat {
+        index == 0 ? 10.0 : 18.0
+    }
     fileprivate var bottomInset: CGFloat = 8.0
     fileprivate var sidesInset: CGFloat {
         (self.questionnaireStyle == .conversation) ? 0.0 : 8.0
@@ -69,11 +71,6 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
     private func initiateView() {
         self.isEditable = false
         self.isScrollEnabled = false
-
-        /// to remove text content paddings
-        /// thanks to `https://stackoverflow.com/a/42333832/7264553`
-        self.textContainerInset = UIEdgeInsets(top: topInset, left: sidesInset, bottom: bottomInset, right: sidesInset)
-        self.textContainer.lineFragmentPadding = 0
     }
 
     func estimateHeight(width: CGFloat) -> CGFloat {
@@ -83,7 +80,6 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
     fileprivate func estimatedWidth() -> CGFloat {
         (UIApplication.topViewController()?.view.bounds ?? UIScreen.main.bounds).width - conversationStylePadding
     }
-
 }
 
 extension QuestionnaireElement where Self:QuestionnaireElementText {
@@ -92,6 +88,12 @@ extension QuestionnaireElement where Self:QuestionnaireElementText {
         self.backgroundColor = .clear
         self.setAttributed(text: configuration?.label ?? "", font: .ninchat, width: self.estimatedWidth())
         self.elementConfiguration = configuration
+
+        /// to remove text content paddings
+        /// thanks to `https://stackoverflow.com/a/42333832/7264553`
+        self.textContainerInset = UIEdgeInsets(top: topInset, left: sidesInset, bottom: bottomInset, right: sidesInset)
+        self.textContainer.lineFragmentPadding = 0
+
         self.elementHeight = self.estimateHeight(width: self.estimatedWidth()) + bottomInset
     }
 }
