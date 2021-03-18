@@ -61,6 +61,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     internal var answers: [String:AnyHashable]! = [:]    // Holds answers saved by the user in the runtime
     internal var preAnswers: [String:AnyHashable]! = [:] // Holds answers already given by the server
     internal var audienceMetadata: NINLowLevelClientProps? // Holds given metadata during the initialization
+    private var preventAutoRedirect: Bool = false
 
     // MARK: - NINQuestionnaireViewModel
 
@@ -282,6 +283,7 @@ extension NINQuestionnaireViewModelImpl {
             /// But, this wouldn't be the case for the last item in the page
             if !(allowUpdate ?? true), let currentValue = self.answers[configuration.name], value == currentValue { return false }
 
+            self.preventAutoRedirect = false
             self.answers[configuration.name] = value
             self.preAnswers.removeValue(forKey: configuration.name) // clear preset answers if there is a matched one
             self.requirementSatisfactionUpdater?(self.requirementsSatisfied)
@@ -292,6 +294,10 @@ extension NINQuestionnaireViewModelImpl {
 
     func removeAnswer(key: QuestionnaireElement?) {
         if let configuration = key?.elementConfiguration {
+            /// To stop redirect-loop when an item is removed
+            /// and the previous answers make a valid redirect/logic case
+            self.preventAutoRedirect = true
+
             self.answers.removeValue(forKey: configuration.name)
             self.requirementSatisfactionUpdater?(self.requirementsSatisfied)
         }
@@ -352,8 +358,9 @@ extension NINQuestionnaireViewModelImpl {
     }
 
     func redirectTargetPage(_ element: QuestionnaireElement, autoApply: Bool, performClosures: Bool) -> Int? {
-        guard let configuration = element.questionnaireConfiguration else { return nil }
-        return connector.findElementAndPageRedirect(for: self.getAnswersForElement(element, presetOnly: false) ?? AnyHashable(""), in: configuration, autoApply: autoApply, performClosures: performClosures).1
+        guard !self.preventAutoRedirect, let configuration = element.questionnaireConfiguration else { return nil }
+        return connector.findElementAndPageRedirect(for: self.getAnswersForElement(element, presetOnly: false)
+                ?? AnyHashable(""), in: configuration, autoApply: autoApply, performClosures: performClosures).1
     }
 
     func logicTargetPage(_ logic: LogicQuestionnaire, autoApply: Bool, performClosures: Bool) -> Int? {
@@ -361,7 +368,7 @@ extension NINQuestionnaireViewModelImpl {
     }
 
     func goToNextPage() -> Bool? {
-        guard self.requirementsSatisfied else { return nil }
+        guard !self.preventAutoRedirect, self.requirementsSatisfied else { return nil }
         guard self.items.count > self.pageNumber + 1 else { return false }
 
         if let logic = self.items[self.pageNumber + 1].logic {
