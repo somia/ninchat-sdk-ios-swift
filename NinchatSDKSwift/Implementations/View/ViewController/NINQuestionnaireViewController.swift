@@ -29,8 +29,8 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
                     }), 0.0)
         case .conversation:
             return ((BlockOperation { [weak self] in
-                        self?.updateConversationContentView(0.5)
-                    }), 0.5)
+                        self?.updateConversationContentView(1.0)
+                    }), 1.0)
         default:
             return nil
         }
@@ -69,7 +69,8 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
             }
             dataSourceDelegate?.onRemoveCellContent = { [weak self] in
                 guard self?.style == .conversation else { return }
-                self?.removeQuestionnaireSection()
+                guard let updateOperationTuple: (_: BlockOperation, interval: TimeInterval) = self?.updateOperationBlock else { return }
+                self?.removeQuestionnaireSection(updateOperationTuple.interval)
             }
         }
     }
@@ -242,23 +243,29 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
         self.view.endEditing(true)
 
         var newSection = -1
-        let prepareOperation = BlockOperation {
-            newSection = self.prepareSection()
-            self.addLoadingRow(at: newSection)
-            self.scrollToBottom(at: newSection)     /// Scroll to bottom
+        let prepareOperation = BlockOperation { [weak self] in
+            guard let weakSelf = self else { return }
+
+            newSection = weakSelf.prepareSection()
+            weakSelf.addLoadingRow(at: newSection)
+            weakSelf.scrollToBottom(at: newSection, delay: 0.0)     /// Scroll to bottom
+        }
+        let removeLoadingRowOperation = BlockOperation { [weak self] in
+            self?.removeLoadingRow(at: newSection)
         }
         let updateContentViewOperation = BlockOperation { [weak self] in
-            guard let contentView = self?.contentView else { return }
+            guard let weakSelf = self, let contentView = weakSelf.contentView else { return }
 
-            self?.removeLoadingRow(at: newSection)
             contentView.beginUpdates()              /// Start loading questionnaires
-            self?.addQuestionnaireRows(at: newSection)
-            self?.addNavigationRow(at: newSection)
+            weakSelf.addQuestionnaireRows(at: newSection)
+            weakSelf.addNavigationRow(at: newSection)
             contentView.endUpdates()                /// Finish loading questionnaires
-            self?.scrollToBottom(at: newSection)     /// Scroll to bottom
+            weakSelf.scrollToBottom(at: newSection, delay: 0.5)     /// Scroll to bottom
         }
 
         updateContentViewOperation.addDependency(prepareOperation)
+        updateContentViewOperation.addDependency(removeLoadingRowOperation)
+        self.dispatchQueue.asyncAfter(deadline: .now() + interval) { self.operationQueue.addOperation(removeLoadingRowOperation) }
         self.dispatchQueue.asyncAfter(deadline: .now() + interval) { self.operationQueue.addOperation(updateContentViewOperation) }
         self.operationQueue.addOperation(prepareOperation)
     }
@@ -268,8 +275,8 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
         self.updateConversationContentView(interval)
     }
 
-    private func scrollToBottom(at section: Int) {
-        self.dispatchQueue.async {
+    private func scrollToBottom(at section: Int, delay: Double) {
+        self.dispatchQueue.asyncAfter(deadline: .now() + delay) {
             guard let contentView = self.contentView, contentView.numberOfSections > section, contentView.numberOfRows(inSection: section) >= 1 else { return }
             self.contentView?.scrollToRow(at: IndexPath(row: 0, section: section), at: .top, animated: true)
         }
@@ -284,19 +291,25 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     }
 
     private func addLoadingRow(at section: Int) {
-        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` is not conformed to `QuestionnaireConversationHelpers`") }
+        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers
+            else { fatalError("`dataSourceDelegate` is not conformed to `QuestionnaireConversationHelpers`") }
+
         conversationDataSource.isLoadingNewElements = true
-        contentView.insertRows(at: [IndexPath(row: 0, section: section)], with: .automatic)
+        contentView.insertRows(at: [IndexPath(row: 0, section: section)], with: .fade)
     }
 
     private func removeLoadingRow(at section: Int) {
-        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("Not conformed") }
+        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers
+            else { fatalError("Not conformed") }
+
         conversationDataSource.isLoadingNewElements = false
-        contentView.deleteRows(at: [IndexPath(row: 0, section: section)], with: .automatic)
+        contentView.deleteRows(at: [IndexPath(row: 0, section: section)], with: .fade)
     }
 
     private func addQuestionnaireRows(at section: Int) {
-        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` is not conformed to `QuestionnaireConversationHelpers`") }
+        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers
+            else { fatalError("`dataSourceDelegate` is not conformed to `QuestionnaireConversationHelpers`") }
+
         do {
             let elements = try self.viewModel.getElements()
             elements.forEach { element in
@@ -319,11 +332,25 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
         }
     }
 
-    private func removeQuestionnaireSection() {
-        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` is not conformed to `QuestionnaireConversationHelpers`") }
+    private func removeQuestionnaireSection(_ interval: TimeInterval) {
+        guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers
+            else { fatalError("`dataSourceDelegate` is not conformed to `QuestionnaireConversationHelpers`") }
+
         let section = conversationDataSource.removeSection()
-        contentView.deleteSections(IndexSet(integer: section), with: .fade)
-        contentView.reloadSections(IndexSet(integer: section-1), with: .none)
+        let removeOperation = BlockOperation { [weak self] in
+            self?.dispatchQueue.async {
+                contentView.deleteSections(IndexSet(integer: section), with: .top)
+            }
+        }
+        let updateOperation = BlockOperation { [weak self] in
+            self?.dispatchQueue.async {
+                contentView.reloadSections(IndexSet(integer: section-1), with: .none)
+            }
+        }
+
+        updateOperation.addDependency(removeOperation)
+        self.dispatchQueue.asyncAfter(deadline: .now() + interval) { self.operationQueue.addOperation(updateOperation) }
+        self.operationQueue.addOperation(removeOperation)
     }
 }
 
