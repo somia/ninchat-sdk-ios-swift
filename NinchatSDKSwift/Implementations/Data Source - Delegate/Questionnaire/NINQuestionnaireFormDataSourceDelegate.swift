@@ -67,7 +67,7 @@ extension NINQuestionnaireFormDataSourceDelegate {
             cell.shouldShowBackButton = (configuration.buttons?.hasValidBackButton ?? true) && self.viewModel.pageNumber != 0
             cell.configuration = configuration
             cell.overrideAssets(with: self.delegate)
-            cell.setSatisfaction(self.viewModel.requirementsSatisfied, lastItem: true)
+            cell.setSatisfaction(self.viewModel.requirementsSatisfied)
 
             cell.onNextButtonTapped = { [weak self] in
                 do {
@@ -80,9 +80,7 @@ extension NINQuestionnaireFormDataSourceDelegate {
                 self?.onBackButtonTapped(completion: self?.onUpdateCellContent)
             }
             cell.backgroundColor = .clear
-            self.viewModel.requirementSatisfactionUpdater = { [weak self] satisfied in
-                self?.onRequirementsUpdated(satisfied, for: cell)
-            }
+            self.viewModel.requirementSatisfactionUpdater = cell.requirementSatisfactionUpdater
 
             return cell
         } catch {
@@ -105,10 +103,10 @@ extension NINQuestionnaireFormDataSourceDelegate {
             if let settableElement = element as? QuestionnaireSettable & QuestionnaireElement {
                 self.setupSettable(element: settableElement)
             }
-            if var view = element as? QuestionnaireOptionSelectableElement {
+            if var view = element as? QuestionnaireOptionSelectableElement & QuestionnaireElement {
                 self.setupSelectable(view: &view)
             }
-            if var view = element as? QuestionnaireFocusableElement {
+            if var view = element as? QuestionnaireFocusableElement & QuestionnaireElement {
                 self.setupFocusable(view: &view)
             }
             cell.style = .form

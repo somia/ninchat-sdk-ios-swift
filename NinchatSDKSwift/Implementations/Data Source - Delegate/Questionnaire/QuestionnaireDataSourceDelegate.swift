@@ -94,7 +94,8 @@ extension QuestionnaireDataSourceDelegate {
     }
 
     internal func onBackButtonTapped(completion: (() -> Void)?) {
-        if self.viewModel.clearAnswers(), self.viewModel.goToPreviousPage() {
+        if self.viewModel.clearAnswers(), self.viewModel.canGoToPreviousPage() {
+            self.viewModel.goToPreviousPage()
             completion?()
         }
     }
@@ -103,7 +104,7 @@ extension QuestionnaireDataSourceDelegate {
 // MARK: - Cell Setup
 extension QuestionnaireDataSourceDelegate {
     internal func setupDefaultAnswers(element: QuestionnaireElement, option: ElementOption) {
-        _ = self.viewModel.submitAnswer(key: element, value: option.value)
+        _ = self.viewModel.submitAnswer(key: element, value: option.value, allowUpdate: false)
     }
 
     internal func setupSettable(element: QuestionnaireElement & QuestionnaireSettable) {
@@ -118,9 +119,9 @@ extension QuestionnaireDataSourceDelegate {
         }
     }
 
-    internal func setupSelectable(view: inout QuestionnaireOptionSelectableElement) {
+    internal func setupSelectable(view: inout  QuestionnaireElement & QuestionnaireOptionSelectableElement) {
         view.onElementOptionSelected = { [view] element, option in
-            guard self.viewModel.submitAnswer(key: element, value: option.value) else { return }
+            guard self.viewModel.submitAnswer(key: element, value: option.value, allowUpdate: view.isShown) else { return }
 
             /// Load the next element if the selected element was a radio or checkbox without any navigation block (redirect/logic)
             /// It will perform only if the element is not the exit element provided to close the questionnaire
@@ -135,7 +136,7 @@ extension QuestionnaireDataSourceDelegate {
         }
     }
 
-    internal func setupFocusable(view: inout QuestionnaireFocusableElement) {
+    internal func setupFocusable(view: inout QuestionnaireElement & QuestionnaireFocusableElement) {
         view.onElementFocused = { _ in }
         view.onElementDismissed = { [view] element in
             /// First ensure that the element is completed properly, otherwise remove any submitted answer for it
@@ -146,9 +147,9 @@ extension QuestionnaireDataSourceDelegate {
 
             /// Now that the element is completed properly, save the answer
             else if let textView = element as? QuestionnaireElementTextArea, let text = textView.view.text, !text.isEmpty, (textView.isCompleted ?? true) {
-                _ = self.viewModel.submitAnswer(key: element, value: textView.view.text)
+                _ = self.viewModel.submitAnswer(key: element, value: textView.view.text, allowUpdate: view.isShown)
             } else if let textField = element as? QuestionnaireElementTextField, let text = textField.view.text, !text.isEmpty, (textField.isCompleted ?? true) {
-                _ = self.viewModel.submitAnswer(key: element, value: textField.view.text)
+                _ = self.viewModel.submitAnswer(key: element, value: textField.view.text, allowUpdate: view.isShown)
             } else {
                 self.viewModel.removeAnswer(key: element)
             }

@@ -11,6 +11,7 @@ protocol NINQuestionnaireViewModel {
     var queue: Queue? { get set }
     var pageNumber: Int { get set }
     var visitedPages: [Int] { set get }
+    var preventAutoRedirect: Bool { get set }
     var requirementsSatisfied: Bool { get }
     var shouldWaitForNextButton: Bool { get }
     var questionnaireAnswers: NINLowLevelClientProps { get }
@@ -30,9 +31,10 @@ protocol NINQuestionnaireViewModel {
     func redirectTargetPage(_ element: QuestionnaireElement, autoApply: Bool, performClosures: Bool) -> Int?
     func logicTargetPage(_ logic: LogicQuestionnaire, autoApply: Bool, performClosures: Bool) -> Int?
     func goToNextPage() -> Bool?
-    func goToPreviousPage() -> Bool
+    func canGoToPreviousPage() -> Bool
+    func goToPreviousPage()
     func goToPage(_ page: Int) -> Bool
-    func submitAnswer(key: QuestionnaireElement?, value: AnyHashable) -> Bool
+    func submitAnswer(key: QuestionnaireElement?, value: AnyHashable, allowUpdate: Bool?) -> Bool
     func removeAnswer(key: QuestionnaireElement?)
     func finishQuestionnaire(for logic: LogicQuestionnaire?, redirect: ElementRedirect?, autoApply: Bool)
 }
@@ -75,6 +77,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     }
     var pageNumber: Int = 0
     var visitedPages: [Int] = [0] /// keep track of visited pages for navigation purposes
+    var preventAutoRedirect: Bool = false
 
     // MARK: - Closures
     var onSessionFinished: (() -> Void)?
@@ -217,10 +220,16 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
         }
     }
 
+    /// Check if the page has an answer submitted
+    /// if so, it must be cleared to let re-selection
+    /// as reported in `https://github.com/somia/mobile/issues/321`
     private func clearAnswersAtPage(_ page: Int) -> Bool {
         guard self.items.count > page, page >= 0, !self.answers.isEmpty else { return false }
-        self.items[page].elements?.filter({ $0.questionnaireConfiguration != nil || $0.elementConfiguration != nil }).forEach({ self.removeAnswer(key: $0) })
 
+        self.items[page]
+                .elements?
+                .filter({ $0.questionnaireConfiguration != nil || $0.elementConfiguration != nil })
+                .forEach({ self.removeAnswer(key: $0) })
         return true
     }
 }
@@ -267,12 +276,15 @@ extension NINQuestionnaireViewModelImpl {
         }).filter({ self.getAnswersForElement($0) == nil }).count == 0
     }
 
-    func submitAnswer(key: QuestionnaireElement?, value: AnyHashable) -> Bool {
+    func submitAnswer(key: QuestionnaireElement?, value: AnyHashable, allowUpdate: Bool?) -> Bool {
         guard !self.isExitElement(key) else { return true }
 
         if let configuration = key?.elementConfiguration {
-            if let currentValue = self.answers[configuration.name], value == currentValue { return false }
+            /// The check below intended to avoid executing closures that had been executed before
+            /// But, this wouldn't be the case for the last item in the page
+            if !(allowUpdate ?? true), let currentValue = self.answers[configuration.name], value == currentValue { return false }
 
+            self.preventAutoRedirect = false
             self.answers[configuration.name] = value
             self.preAnswers.removeValue(forKey: configuration.name) // clear preset answers if there is a matched one
             self.requirementSatisfactionUpdater?(self.requirementsSatisfied)
@@ -283,17 +295,21 @@ extension NINQuestionnaireViewModelImpl {
 
     func removeAnswer(key: QuestionnaireElement?) {
         if let configuration = key?.elementConfiguration {
+            /// To stop redirect-loop when an item is removed
+            /// and the previous answers make a valid redirect/logic case
+            self.preventAutoRedirect = true
+
             self.answers.removeValue(forKey: configuration.name)
             self.requirementSatisfactionUpdater?(self.requirementsSatisfied)
         }
     }
 
     func clearAnswers() -> Bool {
-        if self.visitedPages.count <= 1 {
+        if self.visitedPages.count > 0 {
+            self.visitedPages.removeLast()
             return clearAnswersAtPage(self.pageNumber)
         }
-        self.visitedPages.removeLast()
-        return clearAnswersAtPage(self.pageNumber) && self.clearAnswersAtPage(self.visitedPages.last ?? -1)
+        return false
     }
 }
 
@@ -343,8 +359,9 @@ extension NINQuestionnaireViewModelImpl {
     }
 
     func redirectTargetPage(_ element: QuestionnaireElement, autoApply: Bool, performClosures: Bool) -> Int? {
-        guard let configuration = element.questionnaireConfiguration else { return nil }
-        return connector.findElementAndPageRedirect(for: self.getAnswersForElement(element, presetOnly: false) ?? AnyHashable(""), in: configuration, autoApply: autoApply, performClosures: performClosures).1
+        guard !self.preventAutoRedirect, let configuration = element.questionnaireConfiguration else { return nil }
+        return connector.findElementAndPageRedirect(for: self.getAnswersForElement(element, presetOnly: false)
+                ?? AnyHashable(""), in: configuration, autoApply: autoApply, performClosures: performClosures).1
     }
 
     func logicTargetPage(_ logic: LogicQuestionnaire, autoApply: Bool, performClosures: Bool) -> Int? {
@@ -352,7 +369,7 @@ extension NINQuestionnaireViewModelImpl {
     }
 
     func goToNextPage() -> Bool? {
-        guard self.requirementsSatisfied else { return nil }
+        guard !self.preventAutoRedirect, self.requirementsSatisfied else { return nil }
         guard self.items.count > self.pageNumber + 1 else { return false }
 
         if let logic = self.items[self.pageNumber + 1].logic {
@@ -382,11 +399,12 @@ extension NINQuestionnaireViewModelImpl {
         return false
     }
 
-    func goToPreviousPage() -> Bool {
-        if self.pageNumber > 0, self.visitedPages.count > 0, let previousPage = self.visitedPages.last {
-            self.pageNumber = previousPage; return true
-        }
-        return false
+    func canGoToPreviousPage() -> Bool {
+        (self.visitedPages.count > 0) && (self.visitedPages.last != nil)
+    }
+
+    func goToPreviousPage() {
+        self.pageNumber = self.visitedPages.last!
     }
 
     func goToPage(_ page: Int) -> Bool {
