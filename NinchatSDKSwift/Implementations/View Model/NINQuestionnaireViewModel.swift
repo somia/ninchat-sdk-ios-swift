@@ -11,6 +11,7 @@ protocol NINQuestionnaireViewModel {
     var queue: Queue? { get set }
     var pageNumber: Int { get set }
     var visitedPages: [Int] { set get }
+    var preventAutoRedirect: Bool { get set }
     var requirementsSatisfied: Bool { get }
     var shouldWaitForNextButton: Bool { get }
     var questionnaireAnswers: NINLowLevelClientProps { get }
@@ -61,7 +62,6 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     internal var answers: [String:AnyHashable]! = [:]    // Holds answers saved by the user in the runtime
     internal var preAnswers: [String:AnyHashable]! = [:] // Holds answers already given by the server
     internal var audienceMetadata: NINLowLevelClientProps? // Holds given metadata during the initialization
-    private var preventAutoRedirect: Bool = false
 
     // MARK: - NINQuestionnaireViewModel
 
@@ -77,6 +77,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     }
     var pageNumber: Int = 0
     var visitedPages: [Int] = [0] /// keep track of visited pages for navigation purposes
+    var preventAutoRedirect: Bool = false
 
     // MARK: - Closures
     var onSessionFinished: (() -> Void)?

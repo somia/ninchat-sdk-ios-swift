@@ -147,21 +147,22 @@ extension NINQuestionnaireConversationDataSourceDelegate {
 
     private func navigation(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: QuestionnaireNavigationCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
+        cell.isLastItemInTable = indexPath.section == sectionCount-1
         cell.shouldShowNextButton = self.configurations[indexPath.section].buttons?.hasValidNextButton ?? true
         cell.shouldShowBackButton = (self.configurations[indexPath.section].buttons?.hasValidBackButton ?? true) && indexPath.section != 0
         cell.configuration = self.configurations[indexPath.section]
         cell.backgroundColor = .clear
-        cell.isUserInteractionEnabled = (self.elements[indexPath.section].first?.isShown ?? true) && (indexPath.section == self.sectionCount-1)
+        cell.isUserInteractionEnabled = (self.elements[indexPath.section].first?.isShown ?? true) && (cell.isLastItemInTable)
         cell.overrideAssets(with: self.delegate)
-        // Need to check only for the last item if to enable/disable navigation buttons
-        cell.setSatisfaction(self.viewModel.requirementsSatisfied && indexPath.section == sectionCount-1, lastItem: indexPath.section == sectionCount-1)
 
         cell.onNextButtonTapped = { [weak self] in
+            self?.viewModel.preventAutoRedirect = false
             self?.onNextButtonTapped(elements: self?.elements[indexPath.section])
         }
         cell.onBackButtonTapped = { [weak self] in
             self?.onBackButtonTapped(completion: self?.onRemoveCellContent)
         }
+        cell.setSatisfaction(self.viewModel.requirementsSatisfied)
         self.viewModel.requirementSatisfactionUpdater = cell.requirementSatisfactionUpdater
 
         return cell
