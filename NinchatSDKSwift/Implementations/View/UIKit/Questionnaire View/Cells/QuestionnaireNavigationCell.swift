@@ -13,6 +13,7 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
 
     var shouldShowNextButton: Bool! = false
     var shouldShowBackButton: Bool! = false
+    var isLastItemInTable: Bool! = true
     var configuration: QuestionnaireConfiguration? {
         didSet {
             self.buttons.arrangedSubviews.forEach({ $0.removeFromSuperview() })
@@ -58,14 +59,10 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
         }
     }
 
-    func setSatisfaction(_ satisfied: Bool, lastItem: Bool) {
-        self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next })?.isEnabled = satisfied
-        self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next })?.alpha = (satisfied) ? 1.0 : 0.5
-
-        if !lastItem {
-            self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .back })?.isEnabled = satisfied
-            self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .back })?.alpha = (satisfied) ? 1.0 : 0.5
-        }
+    func setSatisfaction(_ satisfied: Bool) {
+        debugger("Set navigation Satisfaction: \(satisfied && self.isLastItemInTable)")
+        self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).forEach({ $0.isEnabled = satisfied && self.isLastItemInTable })
+        self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).forEach({ $0.alpha = (satisfied && self.isLastItemInTable) ? 1.0 : 0.5 })
     }
 
     // MARK: - UIView life-cycle
@@ -105,12 +102,6 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
         self.requirementSatisfactionUpdater = { [weak self] satisfied in
             self?.setSatisfaction(satisfied)
         }
-    }
-
-    private func setSatisfaction(_ satisfied: Bool) {
-        debugger("Set navigation Satisfaction: \(satisfied)")
-        self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next })?.isEnabled = satisfied
-        self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next })?.alpha = (satisfied) ? 1.0 : 0.5
     }
 }
 
