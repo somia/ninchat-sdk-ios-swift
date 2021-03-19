@@ -278,6 +278,8 @@ extension NINQuestionnaireViewModelImpl {
 
     func submitAnswer(key: QuestionnaireElement?, value: AnyHashable, allowUpdate: Bool?) -> Bool {
         guard !self.isExitElement(key) else { return true }
+        debugger("TT: submit answer \(key?.elementConfiguration?.name): \(value). Allow update: \(allowUpdate)")
+        debugger("TT: current answers: \(self.answers)")
 
         if let configuration = key?.elementConfiguration {
             /// The check below intended to avoid executing closures that had been executed before
@@ -371,9 +373,11 @@ extension NINQuestionnaireViewModelImpl {
     func goToNextPage() -> Bool? {
         guard !self.preventAutoRedirect, self.requirementsSatisfied else { return nil }
         guard self.items.count > self.pageNumber + 1 else { return false }
+        debugger("TT: going to the next page with answers: \(self.answers)")
 
         if let logic = self.items[self.pageNumber + 1].logic {
             let target = logicTargetPage(logic, autoApply: false)
+            debugger("TT: at page: \(self.pageNumber+1) logic: \(logic), target: \(target)")
 
             switch target {
             case -2:

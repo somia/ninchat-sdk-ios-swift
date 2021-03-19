@@ -82,14 +82,21 @@ extension QuestionnaireDataSourceDelegate {
     }
 
     internal func onNextButtonTapped(elements: [QuestionnaireElement]?) {
+        debugger("TT: Next Button Tapped: \(elements)")
+
         /// The 'redirect' is not available for group elements, So if elements.count > 1, skip search for redirects
         if let elements = elements, elements.count == 1, let page = self.viewModel.redirectTargetPage(elements[0], autoApply: false)  {
+            debugger("TT: Next Button redirect target: \(page)")
+
             if page >= 0, self.showTargetPage(page: page) { return }
             /// This is a _register or _complete closure
             if page == -1 { return }
         }
 
+        debugger("TT: Check if it can go to the next page")
         guard let nextPage = self.viewModel.goToNextPage() else { return }
+
+        debugger("TT: heading to the page: \(nextPage)")
         (nextPage) ? self.onUpdateCellContent?() : self.viewModel.finishQuestionnaire(for: nil, redirect: nil, autoApply: false)
     }
 
