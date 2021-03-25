@@ -161,7 +161,15 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         guard !self.sessionAlive else { throw NINExceptions.apiAlive }
 
         self.sessionAlive = true
-        return coordinator?.start(with: self.queueID ?? self.sessionManager.siteConfiguration.audienceAutoQueue, resume: self.resumeMode, within: navigationController)
+        /// use "audienceAutoQueue" if queue is an empty (not null) string
+        if self.queueID?.trimmingCharacters(in: .whitespacesAndNewlines).count == 0 {
+            self.queueID = self.sessionManager.siteConfiguration.audienceAutoQueue
+        }
+        return coordinator?.start(
+                with: self.queueID?.trimmingCharacters(in: .whitespacesAndNewlines),
+                resume: self.resumeMode,
+                within: navigationController
+        )
     }
 
     public func deallocate() {
@@ -190,7 +198,17 @@ extension NINChatSession {
     private func listAllQueues(credentials: NINSessionCredentials?, resumeMode: ResumeMode?, completion: @escaping NinchatSessionCompletion) throws {
         guard Thread.isMainThread else { throw NINExceptions.mainThread }
         var allQueues = sessionManager.siteConfiguration.audienceQueues ?? []
-        if let queue = queueID { allQueues.append(queue) }
+
+        /// describe_queue for the injected queue
+        if let queue = queueID?.trimmingCharacters(in: .whitespacesAndNewlines),
+           queue.count > 0 {
+            allQueues.append(queue)
+        }
+        /// describe_queue for "audienceAutoQueue"
+        if let autoQueue = self.sessionManager.siteConfiguration.audienceAutoQueue?.trimmingCharacters(in: .whitespacesAndNewlines),
+           autoQueue.count > 0 {
+            allQueues.append(autoQueue)
+        }
 
         try sessionManager.list(queues: allQueues) { [weak self] error in
             self?.started = (error == nil)
