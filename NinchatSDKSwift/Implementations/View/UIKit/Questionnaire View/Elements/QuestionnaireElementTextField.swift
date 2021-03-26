@@ -129,10 +129,12 @@ extension QuestionnaireElementTextField: UITextFieldDelegate {
         self.answerUpdateWorker?.cancel()
         self.answerUpdateWorker = DispatchWorkItem { [weak self] in
             guard let weakSelf = self else { return }
+
+            weakSelf.isCompleted = weakSelf.isCompleted(text: (textField.text ?? "") + string)
             weakSelf.onElementDismissed?(weakSelf)
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: self.answerUpdateWorker!)
-        self.isCompleted = isCompleted(text: (textField.text ?? "") + string)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: self.answerUpdateWorker!)
+
         return true
     }
 }
