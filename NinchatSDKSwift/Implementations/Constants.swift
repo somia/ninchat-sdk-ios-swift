@@ -208,47 +208,75 @@ public enum CALayerConstant {
     case ninchatTextareaSubmitButton
     case ninchatModal
     case ninchatBackground
+    case ninchatQuestionnaireRadioSelected
+    case ninchatQuestionnaireRadioUnselected
+    case ninchatQuestionnaireCheckboxSelectedIndicator
+    case ninchatQuestionnaireCheckboxUnselectedIndicator
+    case ninchatQuestionnaireSelectSelected
+    case ninchatQuestionnaireUnselectSelected
+    case ninchatQuestionnaireNavigationNext
+    case ninchatQuestionnaireNavigationBack
 }
 
 /// Questionnaire override keys
 public typealias NINQuestionnaireDictionary = [QuestionnaireColorConstants:String]
 public enum QuestionnaireColorConstants {
-    /// Title
+    case ninchatQuestionnaireColorTitleText
+    case ninchatQuestionnaireColorTextInput
+    case ninchatQuestionnaireColorRadioSelectedText
+    case ninchatQuestionnaireColorRadioUnselectedText
+    case ninchatQuestionnaireColorCheckboxSelectedText
+    case ninchatQuestionnaireColorCheckboxUnselectedText
+    case ninchatQuestionnaireColorSelectSelectedText
+    case ninchatQuestionnaireColorSelectUnselectText
+    case ninchatQuestionnaireColorNavigationNextText
+    case ninchatQuestionnaireColorNavigationBackText
+
+    /* DEPRECATED
+     * Use new keys above or CALayerConstant instead
+    */
+    @available(*, deprecated, renamed: "ninchatQuestionnaireColorTitleText")
     case titleTextColor
-
-    /// Input
-    case textInputColor     /// Text color for all inputs
-
-    /// Radio
-    case radioPrimaryText   /// Text color for selected elements
-    case radioSecondaryText /// Text color for deselected elements
-    case radioPrimaryBackground     /// Background color for selected elements
-    case radioSecondaryBackground   /// Background color for deselected elements
-
-    /// Checkbox
-    case checkboxPrimaryText    /// Text color for selected elements
-    case checkboxSecondaryText  /// Text color for deselected elements
-    case checkboxSelectedIndicator      /// Tint and border color for selected element's indicator
-    case checkboxDeselectedIndicator    /// Tint and border color for deselected element's indicator
-
-    /// Select
-    case selectSelectedText /// Text, indicator, and border color for selected state
-    case selectNormalText   /// Text, indicator, and border color for normal state
-    case selectSelectedBackground   /// Background color for selected state
-    case selectDeselectedBackground /// Background color for deselected state
-
-    /// Navigation
-    case navigationNextText     /// Text and border color for the next button
-    case navigationBackText     /// Text and border color for the back button
-    case navigationNextBackground   /// Background color for the next button
-    case navigationBackBackground   /// Background color for the back button
+    @available(*, deprecated, renamed: "ninchatQuestionnaireColorTextInput")
+    case textInputColor
+    @available(*, deprecated, renamed: "ninchatQuestionnaireColorRadioSelectedText")
+    case radioPrimaryText
+    @available(*, deprecated, renamed: "ninchatQuestionnaireColorRadioUnselectedText")
+    case radioSecondaryText
+    @available(*, deprecated, message: "use CALayerConstant.ninchatQuestionnaireRadioSelected")
+    case radioPrimaryBackground
+    @available(*, deprecated, message: "use CALayerConstant.ninchatQuestionnaireRadioUnselected")
+    case radioSecondaryBackground
+    @available(*, deprecated, renamed: "ninchatQuestionnaireColorCheckboxSelectedText")
+    case checkboxPrimaryText
+    @available(*, deprecated, renamed: "ninchatQuestionnaireColorCheckboxUnselectedText")
+    case checkboxSecondaryText
+    @available(*, deprecated, message: "use CALayerConstant.ninchatQuestionnaireCheckboxSelectedIndicator")
+    case checkboxSelectedIndicator
+    @available(*, deprecated, message: "use CALayerConstant.ninchatQuestionnaireCheckboxUnselectedIndicator")
+    case checkboxDeselectedIndicator
+    @available(*, deprecated, renamed: "ninchatQuestionnaireColorSelectSelectedText")
+    case selectSelectedText
+    @available(*, deprecated, renamed: "ninchatQuestionnaireColorSelectUnselectText")
+    case selectNormalText
+    @available(*, deprecated, message: "use CALayerConstant.ninchatQuestionnaireSelectSelected")
+    case selectSelectedBackground
+    @available(*, deprecated, message: "use CALayerConstant.ninchatQuestionnaireUnselectSelected")
+    case selectDeselectedBackground
+    @available(*, deprecated, renamed: "ninchatQuestionnaireColorNavigationNextText")
+    case navigationNextText
+    @available(*, deprecated, renamed: "ninchatQuestionnaireColorNavigationBackText")
+    case navigationBackText
+    @available(*, deprecated, message: "use CALayerConstant.ninchatQuestionnaireNavigationNext")
+    case navigationNextBackground
+    @available(*, deprecated, message: "use CALayerConstant.ninchatQuestionnaireNavigationBack")
+    case navigationBackBackground
 }
 
 public enum QuestionnaireAssetConstants {
     /// Background image
     case questionnaireBackground
 }
-
 
 // MARK: - Constants used within the SDK
 

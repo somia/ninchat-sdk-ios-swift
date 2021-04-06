@@ -142,7 +142,25 @@ struct InternalDelegate: NINChatSessionInternalDelegate {
     
     internal func override(questionnaireAsset key: QuestionnaireColorConstants) -> UIColor? {
         guard let session = self.session else { return nil }
-        return session.delegate?.ninchat(session, overrideQuestionnaireColorAssetKey: key)
+
+        /// TODO: REMOVE legacy keys
+        let deprecatedKeys: [QuestionnaireColorConstants:QuestionnaireColorConstants] = [
+            .ninchatQuestionnaireColorTitleText: .titleTextColor,
+            .ninchatQuestionnaireColorTextInput: .textInputColor,
+            .ninchatQuestionnaireColorRadioSelectedText: .radioPrimaryText,
+            .ninchatQuestionnaireColorRadioUnselectedText: .radioSecondaryText,
+            .ninchatQuestionnaireColorCheckboxSelectedText: .checkboxPrimaryText,
+            .ninchatQuestionnaireColorCheckboxUnselectedText: .checkboxSecondaryText,
+            .ninchatQuestionnaireColorSelectSelectedText: .selectSelectedText,
+            .ninchatQuestionnaireColorSelectUnselectText: .selectNormalText,
+            .ninchatQuestionnaireColorNavigationNextText: .navigationNextText,
+            .ninchatQuestionnaireColorNavigationBackText: .navigationBackText,
+        ]
+
+        if let color = session.delegate?.ninchat(session, overrideQuestionnaireColorAssetKey: key) {
+            return color
+        }
+        return session.delegate?.ninchat(session, overrideQuestionnaireColorAssetKey: deprecatedKeys[key]!)
     }
 }
 

@@ -124,10 +124,10 @@ extension Button {
         self.titleLabel?.font = .ninchat
 
         self.setBackgroundImage((delegate?.override(questionnaireAsset: .radioSecondaryBackground) ?? .white).toImage, for: .normal)
-        self.setTitleColor(delegate?.override(questionnaireAsset: .radioSecondaryText) ?? .QGrayButton, for: .normal)
+        self.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorRadioUnselectedText) ?? .QGrayButton, for: .normal)
 
         self.setBackgroundImage((delegate?.override(questionnaireAsset: .radioPrimaryBackground) ?? .white).toImage, for: .selected)
-        self.setTitleColor(delegate?.override(questionnaireAsset: .radioPrimaryText) ?? .QBlueButtonNormal, for: .selected)
+        self.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorRadioSelectedText) ?? .QBlueButtonNormal, for: .selected)
 
         self.roundButton()
     }

@@ -49,7 +49,7 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
     var elementHeight: CGFloat = 0
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
-        if let overriddenColor = delegate?.override(questionnaireAsset: .titleTextColor) {
+        if let overriddenColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorTitleText) {
             self.setAttributed(text: self.elementConfiguration?.label ?? "", font: .ninchat, color: overriddenColor, width:  self.estimatedWidth())
         }
         if let linkColor = delegate?.override(colorAsset: .ninchatColorLink) {

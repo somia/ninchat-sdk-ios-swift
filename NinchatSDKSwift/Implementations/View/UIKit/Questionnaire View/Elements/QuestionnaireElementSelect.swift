@@ -41,12 +41,12 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
 
         normalBackgroundColor = delegate?.override(questionnaireAsset: .selectDeselectedBackground) ?? .white
         selectedBackgroundColor = delegate?.override(questionnaireAsset: .selectSelectedBackground) ?? .white
-        selectedOption.textColor = delegate?.override(questionnaireAsset: .selectNormalText) ?? .QGrayButton
+        selectedOption.textColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorSelectUnselectText) ?? .QGrayButton
 
         /// On scrolling the table, the `selectedOption` highlight status changes back to 'false'
         /// We should reset it to avoid breaking the UI
         selectedOption.isHighlighted = (selectionIndicator.tint != selectedOption.textColor) && (self.isCompleted ?? false)
-        selectedOption.highlightedTextColor = delegate?.override(questionnaireAsset: .selectSelectedText) ?? .QBlueButtonNormal
+        selectedOption.highlightedTextColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorSelectSelectedText) ?? .QBlueButtonNormal
     }
 
     // MARK: - QuestionnaireSettable
