@@ -82,7 +82,7 @@ extension ChatTypingCell: TypingCell {
         self.bubbleImageView.image = imageAssets?[.chatBubbleLeft]
 
         self.messageImageView.backgroundColor = .white
-        self.messageImageView.image = imageAssets?[.chatWritingIndicator]
+        self.messageImageView.image = imageAssets?[.ninchatIconChatWritingIndicator]
         self.messageImageView.tintColor = .black
 
         /// Apply asset overrides
@@ -103,7 +103,7 @@ extension ChatTypingCell: LoadingCell {
         self.bubbleImageView.image = imageAssets?[.chatBubbleLeft]
 
         self.messageImageView.backgroundColor = .white
-        self.messageImageView.image = imageAssets?[.chatWritingIndicator]
+        self.messageImageView.image = imageAssets?[.ninchatIconChatWritingIndicator]
         self.messageImageView.tintColor = .black
 
         /// Apply asset overrides

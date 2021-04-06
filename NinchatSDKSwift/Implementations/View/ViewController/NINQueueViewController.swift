@@ -149,7 +149,7 @@ extension NINQueueViewController {
     private func overrideAssets() {
         
         closeChatButton.overrideAssets(with: self.delegate)
-        if let spinnerImage = self.delegate?.override(imageAsset: .iconLoader) {
+        if let spinnerImage = self.delegate?.override(imageAsset: .ninchatIconLoader) {
             self.spinnerImageView.image = spinnerImage
         }
         if let topBackgroundColor = self.delegate?.override(colorAsset: .backgroundTop) {

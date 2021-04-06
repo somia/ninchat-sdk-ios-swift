@@ -51,7 +51,7 @@ final class TopBar: UIView, TopBarProtocol {
     @IBOutlet private(set) weak var closeButton: UIImageView!
     
     func overrideAssets() {
-        if let downloadButton = self.delegate?.override(imageAsset: .iconDownload) {
+        if let downloadButton = self.delegate?.override(imageAsset: .ninchatIconDownload) {
             self.downloadButton.image = downloadButton
         }
         if let closeButton = self.delegate?.override(imageAsset: .iconChatCloseButton) {

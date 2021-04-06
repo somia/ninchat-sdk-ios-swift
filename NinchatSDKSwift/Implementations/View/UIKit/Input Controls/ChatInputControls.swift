@@ -110,7 +110,7 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
             self.sendMessageButton.setImage(buttonImage, for: .normal)
         }
         
-        if let attachmentIcon = self.delegate?.override(imageAsset: .iconTextareaAttachment) {
+        if let attachmentIcon = self.delegate?.override(imageAsset: .ninchatIconTextareaAttachment) {
             self.attachmentButton.setImage(attachmentIcon, for: .normal)
         }
         

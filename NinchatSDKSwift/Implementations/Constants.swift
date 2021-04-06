@@ -12,38 +12,103 @@ import UIKit
 /// Assets override keys
 public typealias NINImageAssetDictionary = [AssetConstants:UIImage]
 public enum AssetConstants {
+    case ninchatIconLoader
+    case ninchatIconChatWritingIndicator
+    case ninchatChatBackground
+    case ninchatChatAvatarRight
+    case ninchatChatAvatarLeft
+    case ninchatChatPlayVideo
+    case ninchatIconTextareaCamera
+    case ninchatIconTextareaAttachment
+    case ninchatIconDownload
+    case ninchatIconVideoToggleFull
+    case ninchatIconVideoToggleNormal
+    case ninchatIconVideoSoundOn
+    case ninchatIconVideoSoundOff
+    case ninchatIconVideoMicrophoneOn
+    case ninchatIconVideoMicrophoneOff
+    case ninchatIconVideoCameraOn
+    case ninchatIconVideoCameraOff
+    case ninchatIconVideoHangup
+    case ninchatIconRatingPositive
+    case ninchatIconRatingNeutral
+    case ninchatIconRatingNegative
+
+    /* DEPRECATED
+     * Use new keys above or CALayerConstant instead
+    */
+    @available(*, deprecated, renamed: "ninchatIconLoader")
     case iconLoader
-    case iconChatCloseButton
-    case iconRatingPositive
-    case iconRatingNeutral
-    case iconRatingNegative
-    case iconTextareaCamera
-    case iconTextareaAttachment
-    case iconDownload
-    case iconVideoToggleFull
-    case iconVideoToggleNormal
-    case iconVideoSoundOn
-    case iconVideoSoundOff
-    case iconVideoMicrophoneOn
-    case iconVideoMicrophoneOff
-    case iconVideoCameraOn
-    case iconVideoCameraOff
-    case iconVideoHangup
+    @available(*, deprecated, renamed: "ninchatIconChatWritingIndicator")
     case chatWritingIndicator
+    @available(*, deprecated, renamed: "ninchatChatBackground")
     case chatBackground
-    case chatCloseButton
-    case chatCloseButtonEmpty
-    case chatBubbleLeft
-    case chatBubbleLeftRepeated
-    case chatBubbleRight
-    case chatBubbleRightRepeated
-    case chatAvatarRight
-    case chatAvatarLeft
-    case chatPlayVideo
-    case textareaSubmitButton
+    @available(*, deprecated, message: "use CALayerConstant.ninchatPrimaryButton")
     case primaryButton
+    @available(*, deprecated, message: "use CALayerConstant.ninchatSecondaryButton")
     case secondaryButton
+    @available(*, deprecated, message: "use CALayerConstant.ninchatChatCloseButton")
+    case chatCloseButton
+    @available(*, deprecated, message: "use CALayerConstant.ninchatChatCloseButton")
+    case chatCloseButtonEmpty
+    @available(*, deprecated, message: "use CALayerConstant.ninchatChatCloseButton")
+    case iconChatCloseButton
+    @available(*, deprecated, message: "use CALayerConstant.ninchatChatBubbleLeft")
+    case chatBubbleLeft
+    @available(*, deprecated, message: "use CALayerConstant.ninchatChatBubbleLeftRepeated")
+    case chatBubbleLeftRepeated
+    @available(*, deprecated, message: "use CALayerConstant.ninchatChatBubbleRight")
+    case chatBubbleRight
+    @available(*, deprecated, message: "use CALayerConstant.ninchatChatBubbleRightRepeated")
+    case chatBubbleRightRepeated
+    @available(*, deprecated, renamed: "ninchatChatAvatarRight")
+    case chatAvatarRight
+    @available(*, deprecated, renamed: "ninchatChatAvatarLeft")
+    case chatAvatarLeft
+    @available(*, deprecated, renamed: "ninchatChatPlayVideo")
+    case chatPlayVideo
+    @available(*, deprecated, renamed: "ninchatIconTextareaCamera")
+    case iconTextareaCamera
+    @available(*, deprecated, renamed: "ninchatIconTextareaAttachment")
+    case iconTextareaAttachment
+    @available(*, deprecated, renamed: "ninchatIconDownload")
+    case iconDownload
+    @available(*, deprecated, message: "use CALayerConstant.ninchatTextareaSubmitButton")
+    case textareaSubmitButton
+    @available(*, deprecated, renamed: "ninchatIconVideoToggleFull")
+    case iconVideoToggleFull
+    @available(*, deprecated, renamed: "ninchatIconVideoToggleNormal")
+    case iconVideoToggleNormal
+    @available(*, deprecated, renamed: "ninchatIconVideoSoundOn")
+    case iconVideoSoundOn
+    @available(*, deprecated, renamed: "ninchatIconVideoSoundOff")
+    case iconVideoSoundOff
+    @available(*, deprecated, renamed: "ninchatIconVideoMicrophoneOn")
+    case iconVideoMicrophoneOn
+    @available(*, deprecated, renamed: "ninchatIconVideoMicrophoneOff")
+    case iconVideoMicrophoneOff
+    @available(*, deprecated, renamed: "ninchatIconVideoCameraOn")
+    case iconVideoCameraOn
+    @available(*, deprecated, renamed: "ninchatIconVideoCameraOff")
+    case iconVideoCameraOff
+    @available(*, deprecated, renamed: "ninchatIconVideoHangup")
+    case iconVideoHangup
+    @available(*, deprecated, renamed: "ninchatIconRatingPositive")
+    case iconRatingPositive
+    @available(*, deprecated, renamed: "ninchatIconRatingNeutral")
+    case iconRatingNeutral
+    @available(*, deprecated, renamed: "ninchatIconRatingNegative")
+    case iconRatingNegative
+
+
+    @available(*, deprecated, message: "use QuestionnaireAssetConstants.questionnaireBackground")
     case questionnaireBackground
+    /*
+     * ninchat_icon_textarea_submit_button
+     * ninchat_ui_compose_select_button
+     * ninchat_ui_compose_select_button_selected
+     * ninchat_ui_compose_select_submit
+     */
 }
 
 /// Color override keys
@@ -81,6 +146,12 @@ public enum ColorConstants {
 public typealias NINLayerAssetDictionary = [CALayerConstant:CALayer]
 public let LAYER_NAME = "_ninchat-asset"
 public enum CALayerConstant {
+    case ninchatPrimaryButton
+    case ninchatSecondaryButton
+    case ninchatChatBubbleLeft
+    case ninchatChatBubbleRight
+    case ninchatChatBubbleLeftRepeated
+    case ninchatChatBubbleRightRepeated
     case ninchatChatCloseButton
     case ninchatTextareaSubmitButton
 }
@@ -117,6 +188,11 @@ public enum QuestionnaireColorConstants {
     case navigationBackText     /// Text and border color for the back button
     case navigationNextBackground   /// Background color for the next button
     case navigationBackBackground   /// Background color for the back button
+}
+
+public enum QuestionnaireAssetConstants {
+    /// Background image
+    case questionnaireBackground
 }
 
 

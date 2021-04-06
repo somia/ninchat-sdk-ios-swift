@@ -385,7 +385,7 @@ extension NINChatViewController {
         videoView.overrideAssets()
         inputControlsView.overrideAssets()
         
-        if let backgroundImage = self.delegate?.override(imageAsset: .chatBackground) {
+        if let backgroundImage = self.delegate?.override(imageAsset: .ninchatChatBackground) {
             self.backgroundView.backgroundColor = UIColor(patternImage: backgroundImage)
         } else if let bundleImage = UIImage(named: "chat_background_pattern", in: .SDKBundle, compatibleWith: nil) {
             self.backgroundView.backgroundColor = UIColor(patternImage: bundleImage)

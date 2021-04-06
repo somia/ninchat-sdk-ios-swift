@@ -109,23 +109,23 @@ final class VideoView: UIView, VideoViewProtocol {
     }
     
     func overrideAssets() {
-        if let hangupIcon = self.delegate?.override(imageAsset: .iconVideoHangup) {
+        if let hangupIcon = self.delegate?.override(imageAsset: .ninchatIconVideoHangup) {
             self.hangupButton.setImage(hangupIcon, for: .normal)
         }
         
-        if let micOnIcon = self.delegate?.override(imageAsset: .iconVideoMicrophoneOn) {
+        if let micOnIcon = self.delegate?.override(imageAsset: .ninchatIconVideoMicrophoneOn) {
             self.microphoneEnabledButton.setImage(micOnIcon, for: .normal)
         }
         
-        if let micOffIcon = self.delegate?.override(imageAsset: .iconVideoMicrophoneOff) {
+        if let micOffIcon = self.delegate?.override(imageAsset: .ninchatIconVideoMicrophoneOff) {
             self.microphoneEnabledButton.setImage(micOffIcon, for: .selected)
         }
         
-        if let cameraOnIcon = self.delegate?.override(imageAsset: .iconVideoCameraOn) {
+        if let cameraOnIcon = self.delegate?.override(imageAsset: .ninchatIconVideoCameraOn) {
             self.cameraEnabledButton.setImage(cameraOnIcon, for: .normal)
         }
         
-        if let cameraOffIcon = self.delegate?.override(imageAsset: .iconVideoCameraOff) {
+        if let cameraOffIcon = self.delegate?.override(imageAsset: .ninchatIconVideoCameraOff) {
             self.cameraEnabledButton.setImage(cameraOffIcon, for: .selected)
         }
     }
