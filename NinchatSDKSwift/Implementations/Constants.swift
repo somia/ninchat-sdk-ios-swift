@@ -114,31 +114,83 @@ public enum AssetConstants {
 /// Color override keys
 public typealias NINColorAssetDictionary = [ColorConstants:UIColor]
 public enum ColorConstants {
+    case ninchatColorButtonPrimaryText
+    case ninchatColorButtonSecondaryText
+    case ninchatColorInfoText
+    case ninchatColorChatName
+    case ninchatColorChatTimestamp
+    case ninchatColorChatBubbleLeftText
+    case ninchatColorChatBubbleRightText
+    case ninchatColorChatBubbleLeftTint
+    case ninchatColorChatBubbleRightTint
+    case ninchatColorTextareaText
+    case ninchatColorTextareaPlaceholder
+    case ninchatColorTextareaSubmitText
+    case ninchatColorChatBubbleLeftLink
+    case ninchatColorChatBubbleRightLink
+    case ninchatColorModalTitleText
+    case ninchatColorTextTop
+    case ninchatColorTextBottom
+    case ninchatColorLink
+    case ninchatColorRatingPositiveText
+    case ninchatColorRatingNeutralText
+    case ninchatColorRatingNegativeText
+
+
+    /* DEPRECATED
+     * Use new keys above or CALayerConstant instead
+    */
+    @available(*, deprecated, renamed: "ninchatColorButtonPrimaryText")
     case buttonPrimaryText
+    @available(*, deprecated, renamed: "ninchatColorButtonSecondaryText")
     case buttonSecondaryText
+    @available(*, deprecated, renamed: "ninchatColorInfoText")
     case infoText
+    @available(*, deprecated, renamed: "ninchatColorChatName")
     case chatName
+    @available(*, deprecated, renamed: "ninchatColorChatTimestamp")
     case chatTimestamp
+    @available(*, deprecated, renamed: "ninchatColorChatBubbleLeftText")
     case chatBubbleLeftText
+    @available(*, deprecated, renamed: "ninchatColorChatBubbleRightText")
     case chatBubbleRightText
+    @available(*, deprecated, renamed: "ninchatColorChatBubbleLeftTint")
     case chatBubbleLeftTint
+    @available(*, deprecated, renamed: "ninchatColorChatBubbleRightTint")
     case chatBubbleRightTint
+    @available(*, deprecated, message: "use CALayerConstant.ninchatChatCloseButton")
     case chatCloseButtonBackground
+    @available(*, deprecated, renamed: "ninchatColorTextareaText")
     case textareaText
+    @available(*, deprecated, message: "use CALayerConstant.ninchatTextareaSubmitButton")
     case textareaSubmit
+    @available(*, deprecated, renamed: "ninchatColorTextareaSubmitText")
     case textareaSubmitText
+    @available(*, deprecated, renamed: "ninchatColorTextareaPlaceholder")
     case textareaPlaceholder
+    @available(*, deprecated, renamed: "ninchatColorChatBubbleLeftLink")
     case chatBubbleLeftLink
+    @available(*, deprecated, renamed: "ninchatColorChatBubbleRightLink")
     case chatBubbleRightLink
+    @available(*, deprecated, renamed: "ninchatColorModalTitleText")
     case modalText
+    @available(*, deprecated, message: "use CALayerConstant.ninchatModal")
     case modalBackground
+    @available(*, deprecated, message: "use CALayerConstant.ninchatBackground")
     case backgroundTop
+    @available(*, deprecated, renamed: "ninchatColorTextTop")
     case textTop
+    @available(*, deprecated, renamed: "ninchatColorTextBottom")
     case textBottom
+    @available(*, deprecated, renamed: "ninchatColorLink")
     case link
+    @available(*, deprecated, message: "use CALayerConstant.ninchatBackground")
     case backgroundBottom
+    @available(*, deprecated, renamed: "ninchatColorRatingPositiveText")
     case ratingPositiveText
+    @available(*, deprecated, renamed: "ninchatColorRatingNeutralText")
     case ratingNeutralText
+    @available(*, deprecated, renamed: "ninchatColorRatingNegativeText")
     case ratingNegativeText
 }
 
@@ -154,6 +206,8 @@ public enum CALayerConstant {
     case ninchatChatBubbleRightRepeated
     case ninchatChatCloseButton
     case ninchatTextareaSubmitButton
+    case ninchatModal
+    case ninchatBackground
 }
 
 /// Questionnaire override keys

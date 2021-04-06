@@ -28,7 +28,7 @@ final class NINQueueViewController: UIViewController, ViewController {
     @IBOutlet private(set) weak var spinnerImageView: UIImageView!
     @IBOutlet private(set) weak var queueInfoTextView: UITextView! {
         didSet {
-            if let textTopColor = self.delegate?.override(colorAsset: .textTop) {
+            if let textTopColor = self.delegate?.override(colorAsset: .ninchatColorTextTop) {
                 self.queueInfoTextView.textColor = textTopColor
             }
             queueInfoTextView.text = nil
@@ -158,13 +158,13 @@ extension NINQueueViewController {
         if let bottomBackgroundColor = self.delegate?.override(colorAsset: .backgroundBottom) {
             bottomContainerView.backgroundColor = bottomBackgroundColor
         }
-        if let textTopColor = self.delegate?.override(colorAsset: .textTop) {
+        if let textTopColor = self.delegate?.override(colorAsset: .ninchatColorTextTop) {
             queueInfoTextView.textColor = textTopColor
         }
-        if let textBottomColor = self.delegate?.override(colorAsset: .textBottom) {
+        if let textBottomColor = self.delegate?.override(colorAsset: .ninchatColorTextBottom) {
             motdTextView.textColor = textBottomColor
         }
-        if let linkColor = self.delegate?.override(colorAsset: .link) {
+        if let linkColor = self.delegate?.override(colorAsset: .ninchatColorLink) {
             let attribute = [NSAttributedString.Key.foregroundColor: linkColor]
             queueInfoTextView.linkTextAttributes = attribute
             motdTextView.linkTextAttributes = attribute

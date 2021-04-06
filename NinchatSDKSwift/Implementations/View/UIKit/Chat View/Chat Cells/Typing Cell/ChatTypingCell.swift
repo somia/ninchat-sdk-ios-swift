@@ -47,11 +47,11 @@ class ChatTypingCell: UITableViewCell {
 
     /// Performs asset customizations independent of message sender
     private func applyCommon(imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?) {
-        if let nameColor = colorAssets?[.chatName] {
+        if let nameColor = colorAssets?[.ninchatColorChatName] {
             self.senderNameLabel.textColor = nameColor
         }
         
-        if let timeColor = colorAssets?[.chatTimestamp] {
+        if let timeColor = colorAssets?[.ninchatColorChatTimestamp] {
             self.timeLabel?.textColor = timeColor
         }
     }

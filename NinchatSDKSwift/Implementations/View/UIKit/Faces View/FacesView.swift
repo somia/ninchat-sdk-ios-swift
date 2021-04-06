@@ -48,7 +48,7 @@ final class FacesView: UIView, FacesViewProtocol {
         if let positive = self.delegate?.override(imageAsset: .ninchatIconRatingPositive) {
             self.positiveButton.setImage(positive, for: .normal)
         }
-        if let positiveColor = self.delegate?.override(colorAsset: .ratingPositiveText) {
+        if let positiveColor = self.delegate?.override(colorAsset: .ninchatColorRatingPositiveText) {
             self.positiveLabel.textColor = positiveColor
         }
         
@@ -58,7 +58,7 @@ final class FacesView: UIView, FacesViewProtocol {
         if let neutral = self.delegate?.override(imageAsset: .ninchatIconRatingNeutral) {
             self.neutralButton.setImage(neutral, for: .normal)
         }
-        if let neutralColor = self.delegate?.override(colorAsset: .ratingNeutralText) {
+        if let neutralColor = self.delegate?.override(colorAsset: .ninchatColorRatingNeutralText) {
             self.neutralLabel.textColor = neutralColor
         }
 
@@ -68,7 +68,7 @@ final class FacesView: UIView, FacesViewProtocol {
         if let negative = self.delegate?.override(imageAsset: .ninchatIconRatingNegative) {
             self.negativeButton.setImage(negative, for: .normal)
         }
-        if let negativeColor = self.delegate?.override(colorAsset: .ratingNegativeText) {
+        if let negativeColor = self.delegate?.override(colorAsset: .ninchatColorRatingNegativeText) {
             self.negativeLabel.textColor = negativeColor
         }
     }

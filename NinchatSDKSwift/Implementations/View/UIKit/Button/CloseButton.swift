@@ -88,7 +88,7 @@ final class CloseButton: UIView, CloseButtonProtocol {
         }
         
         /// Handle overriding the button text & border color
-        if let textColor = session?.override(colorAsset: .buttonSecondaryText) {
+        if let textColor = session?.override(colorAsset: .ninchatColorButtonSecondaryText) {
             self.theButton.setTitleColor(textColor, for: .normal)
             self.closeButtonImageView.tintColor = textColor
         }

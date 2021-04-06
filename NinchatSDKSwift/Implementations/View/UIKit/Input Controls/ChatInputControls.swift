@@ -98,7 +98,7 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
                 self.sendMessageButton.setBackgroundImage(backgroundBundle, for: .normal)
             }
             
-            if let titleColor = self.delegate?.override(colorAsset: .textareaSubmitText) {
+            if let titleColor = self.delegate?.override(colorAsset: .ninchatColorTextareaSubmitText) {
                 self.sendMessageButton.setTitleColor(titleColor, for: .normal)
             }
             
@@ -114,12 +114,12 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
             self.attachmentButton.setImage(attachmentIcon, for: .normal)
         }
         
-        if let inputTextColor = self.delegate?.override(colorAsset: .textareaText) {
+        if let inputTextColor = self.delegate?.override(colorAsset: .ninchatColorTextareaText) {
             self.textInput.textColor = inputTextColor
             textColor = inputTextColor
         }
 
-        if let placeholderColor = self.delegate?.override(colorAsset: .textareaPlaceholder) {
+        if let placeholderColor = self.delegate?.override(colorAsset: .ninchatColorTextareaPlaceholder) {
             self.placeholderColor = placeholderColor
         }
         self.updatePlaceholder()

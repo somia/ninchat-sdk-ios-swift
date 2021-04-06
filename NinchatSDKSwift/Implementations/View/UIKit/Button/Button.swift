@@ -46,7 +46,7 @@ class Button: UIButton {
             self.layer.cornerRadius = 0
             self.layer.borderWidth = 0
         }
-        if let overrideColor = delegate?.override(colorAsset: primary ? .buttonPrimaryText : .buttonSecondaryText) {
+        if let overrideColor = delegate?.override(colorAsset: primary ? .ninchatColorButtonPrimaryText : .ninchatColorButtonSecondaryText) {
             self.setTitleColor(overrideColor, for: .normal)
         }
     }

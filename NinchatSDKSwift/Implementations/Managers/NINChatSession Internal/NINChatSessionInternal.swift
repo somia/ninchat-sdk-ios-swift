@@ -100,7 +100,36 @@ struct InternalDelegate: NINChatSessionInternalDelegate {
     
     internal func override(colorAsset key: ColorConstants) -> UIColor? {
         guard let session = self.session else { return nil }
-        return session.delegate?.ninchat(session, overrideColorAssetForKey: key)
+
+        /// TODO: REMOVE legacy keys
+        let deprecatedKeys: [ColorConstants:ColorConstants] = [
+            .ninchatColorButtonPrimaryText: .buttonPrimaryText,
+            .ninchatColorButtonSecondaryText: .buttonSecondaryText,
+            .ninchatColorInfoText: .infoText,
+            .ninchatColorChatName: .chatName,
+            .ninchatColorChatTimestamp: .chatTimestamp,
+            .ninchatColorChatBubbleLeftText: .chatBubbleLeftText,
+            .ninchatColorChatBubbleRightText: .chatBubbleRightText,
+            .ninchatColorChatBubbleLeftTint: .chatBubbleLeftTint,
+            .ninchatColorChatBubbleRightTint: .chatBubbleRightTint,
+            .ninchatColorTextareaText: .textareaText,
+            .ninchatColorTextareaSubmitText: .textareaSubmitText,
+            .ninchatColorTextareaPlaceholder: .textareaPlaceholder,
+            .ninchatColorChatBubbleLeftLink: .chatBubbleLeftLink,
+            .ninchatColorChatBubbleRightLink: .chatBubbleRightLink,
+            .ninchatColorModalTitleText: .modalText,
+            .ninchatColorTextTop: .textTop,
+            .ninchatColorTextBottom: .textBottom,
+            .ninchatColorLink: .link,
+            .ninchatColorRatingPositiveText: .ratingPositiveText,
+            .ninchatColorRatingNeutralText: .ratingNeutralText,
+            .ninchatColorRatingNegativeText: .ratingNegativeText
+        ]
+
+        if let color = session.delegate?.ninchat(session, overrideColorAssetForKey: key) {
+            return color
+        }
+        return session.delegate?.ninchat(session, overrideColorAssetForKey: deprecatedKeys[key]!)
     }
 
     internal func override(layerAsset key: CALayerConstant) -> CALayer? {
@@ -135,7 +164,7 @@ extension NINChatSessionInternalDelegate {
     }
 
     var colorAssetsDictionary: [ColorConstants:UIColor] {
-        let colorKeys: [ColorConstants] = [.infoText, .chatName, .chatTimestamp, .chatBubbleLeftText, .chatBubbleLeftTint, .chatBubbleRightText, .chatBubbleRightTint, .chatBubbleLeftLink, .chatBubbleRightLink]
+        let colorKeys: [ColorConstants] = [.ninchatColorInfoText, .ninchatColorChatName, .ninchatColorChatTimestamp, .ninchatColorChatBubbleLeftText, .ninchatColorChatBubbleLeftTint, .ninchatColorChatBubbleRightText, .ninchatColorChatBubbleRightTint, .ninchatColorChatBubbleLeftLink, .ninchatColorChatBubbleRightLink]
         return colorKeys.compactMap({ ($0, self.override(colorAsset: $0)) }).reduce(into: [:]) { (colorAsset: inout [ColorConstants:UIColor], tuple: (key: ColorConstants, color: UIColor?)) in
             colorAsset[tuple.key] = tuple.color
         }

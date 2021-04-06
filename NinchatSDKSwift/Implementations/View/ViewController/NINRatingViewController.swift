@@ -108,15 +108,15 @@ final class NINRatingViewController: UIViewController, ViewController {
         if let bottomBackgroundColor = self.delegate?.override(colorAsset: .backgroundBottom) {
             self.view.backgroundColor = bottomBackgroundColor
         }
-        if let bubbleColor = self.delegate?.override(colorAsset: .chatBubbleLeftTint) {
+        if let bubbleColor = self.delegate?.override(colorAsset: .ninchatColorChatBubbleLeftTint) {
             self.titleConversationBubble.tintColor = bubbleColor
         }
-        if let textTopColor = self.delegate?.override(colorAsset: .textTop) {
+        if let textTopColor = self.delegate?.override(colorAsset: .ninchatColorTextTop) {
             self.titleFormTextView.textColor = textTopColor
             titleConversationTextView.textColor = textTopColor
         }
         
-        if let linkColor = self.delegate?.override(colorAsset: .link) {
+        if let linkColor = self.delegate?.override(colorAsset: .ninchatColorLink) {
             self.titleFormTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
             titleConversationTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
             self.skipButton.setTitleColor(linkColor, for: .normal)

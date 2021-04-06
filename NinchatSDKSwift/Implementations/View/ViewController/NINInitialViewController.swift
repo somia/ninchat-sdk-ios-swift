@@ -94,13 +94,13 @@ private extension NINInitialViewController {
         if let bottomBackgroundColor = delegate?.override(colorAsset: .backgroundBottom) {
             bottomContainerView.backgroundColor = bottomBackgroundColor
         }
-        if let textTopColor = delegate?.override(colorAsset: .textTop) {
+        if let textTopColor = delegate?.override(colorAsset: .ninchatColorTextTop) {
             welcomeTextView.textColor = textTopColor
         }
-        if let textBottomColor = delegate?.override(colorAsset: .textBottom) {
+        if let textBottomColor = delegate?.override(colorAsset: .ninchatColorTextBottom) {
             motdTextView.textColor = textBottomColor
         }
-        if let linkColor = delegate?.override(colorAsset: .link) {
+        if let linkColor = delegate?.override(colorAsset: .ninchatColorLink) {
             let attribute = [NSAttributedString.Key.foregroundColor: linkColor]
             welcomeTextView.linkTextAttributes = attribute
             motdTextView.linkTextAttributes = attribute

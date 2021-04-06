@@ -44,7 +44,7 @@ final class ConfirmCloseChatView: UIView, ConfirmView {
             self.bottomContainerView.backgroundColor = backgroundColor
         }
         
-        if let textColor = self.delegate?.override(colorAsset: .modalText) {
+        if let textColor = self.delegate?.override(colorAsset: .ninchatColorModalTitleText) {
             self.titleLabel.textColor = textColor
             self.infoTextView.textColor = textColor
         }
