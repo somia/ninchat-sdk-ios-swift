@@ -60,7 +60,7 @@ final class NINInitialViewController: UIViewController, HasCustomLayer, ViewCont
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         if self.sessionManager?.audienceQueues.filter({ !$0.isClosed }).count ?? 0 > 0 {
             /// There is at least one open queue to join
             self.drawQueueButtons()
@@ -68,11 +68,11 @@ final class NINInitialViewController: UIViewController, HasCustomLayer, ViewCont
             /// Show no queue text
             self.drawNoQueueText()
         }
+        self.overrideAssets()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        self.overrideAssets()
     }
 
     override func viewWillLayoutSubviews() {
