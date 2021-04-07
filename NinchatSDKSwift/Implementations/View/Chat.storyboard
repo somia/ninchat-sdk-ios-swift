@@ -295,10 +295,10 @@ you are next.</string>
                                         </constraints>
                                     </stackView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zhu-12-0xh">
-                                        <rect key="frame" x="16" y="44" width="343" height="362"/>
+                                        <rect key="frame" x="16" y="58" width="343" height="348"/>
                                         <subviews>
                                             <view tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Vt6-hF-T0g" userLabel="Left avatar container">
-                                                <rect key="frame" x="15" y="0.0" width="35" height="362"/>
+                                                <rect key="frame" x="15" y="0.0" width="35" height="348"/>
                                                 <subviews>
                                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" image="icon_avatar_other" translatesAutoresizingMaskIntoConstraints="NO" id="Yfi-1D-cO5">
                                                         <rect key="frame" x="0.0" y="12" width="35" height="35"/>
@@ -317,10 +317,10 @@ you are next.</string>
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hb8-60-TGG">
-                                                <rect key="frame" x="57.999999999999993" y="9.6666666666666643" width="71.333333333333314" height="40"/>
+                                                <rect key="frame" x="57.999999999999993" y="9.6666666666666714" width="71.333333333333314" height="40"/>
                                                 <subviews>
                                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="999" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Dr Koistinen" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vdr-sU-emu">
-                                                        <rect key="frame" x="0.0" y="11.000000000000009" width="71.333333333333329" height="17.666666666666671"/>
+                                                        <rect key="frame" x="0.0" y="11.000000000000002" width="71.333333333333329" height="17.666666666666671"/>
                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
                                                         <nil key="highlightedColor"/>
@@ -378,7 +378,7 @@ you are next.</string>
                                 <constraints>
                                     <constraint firstItem="qj1-1U-Y4U" firstAttribute="top" relation="greaterThanOrEqual" secondItem="L5U-F0-l9Y" secondAttribute="top" constant="44" id="3yh-j3-yC3"/>
                                     <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="qj1-1U-Y4U" secondAttribute="bottom" id="6ME-kd-umm"/>
-                                    <constraint firstItem="Zhu-12-0xh" firstAttribute="top" secondItem="L5U-F0-l9Y" secondAttribute="top" constant="44" id="6gJ-xn-wen"/>
+                                    <constraint firstItem="Zhu-12-0xh" firstAttribute="top" secondItem="L5U-F0-l9Y" secondAttribute="top" constant="58" id="6gJ-xn-wen"/>
                                     <constraint firstItem="qj1-1U-Y4U" firstAttribute="leading" secondItem="L5U-F0-l9Y" secondAttribute="leading" constant="16" id="CIl-qa-20p"/>
                                     <constraint firstItem="qj1-1U-Y4U" firstAttribute="centerY" secondItem="L5U-F0-l9Y" secondAttribute="centerY" id="CsP-6S-1DP"/>
                                     <constraint firstAttribute="bottom" secondItem="Zhu-12-0xh" secondAttribute="bottom" id="OdD-X9-nCn"/>
