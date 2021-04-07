@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5C06A648261DB1EA00873B33 /* UIResponder+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C06A647261DB1EA00873B33 /* UIResponder+Extension.swift */; };
 		5C5658CD25EF780F004ED98F /* QuestionnaireTypingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C5658CC25EF780F004ED98F /* QuestionnaireTypingCell.xib */; };
 		5C5658D225EF7F77004ED98F /* QuestionnaireTypingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C5658D125EF7F77004ED98F /* QuestionnaireTypingCell.swift */; };
 		5CD4F1C82540CAAF009856AC /* Notification+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD4F1C62540CAAF009856AC /* Notification+Extension.swift */; };
@@ -236,6 +237,7 @@
 		3FEAD27BEEC9ED9A48EB128E /* Pods_NinchatSDKSwiftTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDKSwiftTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		495ADA60487CD354EDC07332 /* Pods_NinchatSDKSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDKSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		51577DDC11F36A3D9573A68C /* Pods_NinchatSDKSwiftUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDKSwiftUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C06A647261DB1EA00873B33 /* UIResponder+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIResponder+Extension.swift"; sourceTree = "<group>"; };
 		5C5658CC25EF780F004ED98F /* QuestionnaireTypingCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = QuestionnaireTypingCell.xib; sourceTree = "<group>"; };
 		5C5658D125EF7F77004ED98F /* QuestionnaireTypingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionnaireTypingCell.swift; sourceTree = "<group>"; };
 		5CD4F1C62540CAAF009856AC /* Notification+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Notification+Extension.swift"; sourceTree = "<group>"; };
@@ -709,6 +711,7 @@
 				91A16E7CDA2F9D24FF1BE1DC /* Thread+Extension.swift */,
 				B704E5FC177573DF56D2369A /* NSUserDefaults+Extension.swift */,
 				B704E5C0EFFB626F12366601 /* URL+Extension.swift */,
+				5C06A647261DB1EA00873B33 /* UIResponder+Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1456,6 +1459,7 @@
 				91A16A7280B85CB8BD7C87F2 /* SiteConfigRequest.swift in Sources */,
 				5CD4F1C92540CAAF009856AC /* KeyboardHandler.swift in Sources */,
 				91A1638816BBEC6D20425AC2 /* Empty.swift in Sources */,
+				5C06A648261DB1EA00873B33 /* UIResponder+Extension.swift in Sources */,
 				91A1636EC2133F4BE4B586E8 /* ChoiceDialogue.swift in Sources */,
 				91A16B2F768C5422B895C769 /* Toast.swift in Sources */,
 				91A161EC840C41258CBA12A4 /* NINSessionCredentials.swift in Sources */,

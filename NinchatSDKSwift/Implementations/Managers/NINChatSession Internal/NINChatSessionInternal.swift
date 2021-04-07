@@ -96,7 +96,8 @@ struct InternalDelegate: NINChatSessionInternalDelegate {
         if let asset = session.delegate?.ninchat(session, overrideImageAssetForKey: key) {
             return asset
         }
-        return session.delegate?.ninchat(session, overrideImageAssetForKey: deprecatedKeys[key]!)
+        guard let depKey = deprecatedKeys[key] else { return nil }
+        return session.delegate?.ninchat(session, overrideImageAssetForKey: depKey)
     }
     
     internal func override(colorAsset key: ColorConstants) -> UIColor? {
@@ -130,7 +131,8 @@ struct InternalDelegate: NINChatSessionInternalDelegate {
         if let color = session.delegate?.ninchat(session, overrideColorAssetForKey: key) {
             return color
         }
-        return session.delegate?.ninchat(session, overrideColorAssetForKey: deprecatedKeys[key]!)
+        guard let depKey = deprecatedKeys[key] else { return nil }
+        return session.delegate?.ninchat(session, overrideColorAssetForKey: depKey)
     }
 
     internal func override(layerAsset key: CALayerConstant) -> CALayer? {
@@ -161,7 +163,8 @@ struct InternalDelegate: NINChatSessionInternalDelegate {
         if let color = session.delegate?.ninchat(session, overrideQuestionnaireColorAssetKey: key) {
             return color
         }
-        return session.delegate?.ninchat(session, overrideQuestionnaireColorAssetKey: deprecatedKeys[key]!)
+        guard let depKey = deprecatedKeys[key] else { return nil }
+        return session.delegate?.ninchat(session, overrideQuestionnaireColorAssetKey: depKey)
     }
 }
 

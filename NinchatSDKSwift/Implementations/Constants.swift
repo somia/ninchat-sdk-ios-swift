@@ -18,13 +18,13 @@ public enum AssetConstants {
     case ninchatChatAvatarRight
     case ninchatChatAvatarLeft
     case ninchatChatPlayVideo
-    case ninchatIconTextareaCamera
+    case ninchatIconTextareaCamera      /* not used */
     case ninchatIconTextareaAttachment
     case ninchatIconDownload
-    case ninchatIconVideoToggleFull
-    case ninchatIconVideoToggleNormal
-    case ninchatIconVideoSoundOn
-    case ninchatIconVideoSoundOff
+    case ninchatIconVideoToggleFull     /* not used */
+    case ninchatIconVideoToggleNormal   /* not used */
+    case ninchatIconVideoSoundOn        /* not used */
+    case ninchatIconVideoSoundOff       /* not used */
     case ninchatIconVideoMicrophoneOn
     case ninchatIconVideoMicrophoneOff
     case ninchatIconVideoCameraOn
@@ -50,7 +50,7 @@ public enum AssetConstants {
     case secondaryButton
     @available(*, deprecated, message: "use CALayerConstant.ninchatChatCloseButton")
     case chatCloseButton
-    @available(*, deprecated, message: "use CALayerConstant.ninchatChatCloseButton")
+    @available(*, deprecated, message: "use CALayerConstant.ninchatChatCloseEmptyButton")
     case chatCloseButtonEmpty
     @available(*, deprecated, message: "use CALayerConstant.ninchatChatCloseButton")
     case iconChatCloseButton
@@ -167,9 +167,9 @@ public enum ColorConstants {
     case chatBubbleRightLink
     @available(*, deprecated, renamed: "ninchatColorModalTitleText")
     case modalText
-    @available(*, deprecated, message: "use CALayerConstant.ninchatModal")
+    @available(*, deprecated, message: "use CALayerConstant.ninchatModalTop and CALayerConstant.ninchatModalBottom")
     case modalBackground
-    @available(*, deprecated, message: "use CALayerConstant.ninchatBackground")
+    @available(*, deprecated, message: "use CALayerConstant.ninchatBackgroundTop")
     case backgroundTop
     @available(*, deprecated, renamed: "ninchatColorTextTop")
     case textTop
@@ -177,7 +177,7 @@ public enum ColorConstants {
     case textBottom
     @available(*, deprecated, renamed: "ninchatColorLink")
     case link
-    @available(*, deprecated, message: "use CALayerConstant.ninchatBackground")
+    @available(*, deprecated, message: "use CALayerConstant.ninchatBackgroundBottom")
     case backgroundBottom
     @available(*, deprecated, renamed: "ninchatColorRatingPositiveText")
     case ratingPositiveText
@@ -197,9 +197,12 @@ public enum CALayerConstant {
     case ninchatChatBubbleLeftRepeated
     case ninchatChatBubbleRightRepeated
     case ninchatChatCloseButton
+    case ninchatChatCloseEmptyButton
     case ninchatTextareaSubmitButton
-    case ninchatModal
-    case ninchatBackground
+    case ninchatModalTop
+    case ninchatModalBottom
+    case ninchatBackgroundTop
+    case ninchatBackgroundBottom
     case ninchatQuestionnaireRadioSelected
     case ninchatQuestionnaireRadioUnselected
     case ninchatQuestionnaireCheckboxSelectedIndicator

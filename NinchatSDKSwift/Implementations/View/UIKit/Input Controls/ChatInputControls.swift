@@ -24,7 +24,7 @@ protocol ChatInputControlsProtocol: UIView, ChatInputActions {
     func overrideAssets()
 }
 
-final class ChatInputControls: UIView, ChatInputControlsProtocol {
+final class ChatInputControls: UIView, HasCustomLayer, ChatInputControlsProtocol {
     
     private var isOnPlaceholderMode: Bool = true {
         didSet {
@@ -77,48 +77,47 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        UIView.applyLayerOverride(view: self.sendMessageButton)
+        applyLayerOverride(view: sendMessageButton)
     }
     
     func overrideAssets() {
+        self.sendMessageButton.backgroundColor = .clear
+        self.sendMessageButton.setImage(nil, for: .normal)
+        self.sendMessageButton.contentVerticalAlignment = .center
+        self.sendMessageButton.contentHorizontalAlignment = .center
         if let sendButtonTitle = self.sessionManager?.siteConfiguration.sendButtonTitle {
             self.sendMessageButtonWidthConstraint.isActive = false
-            self.sendMessageButton.setImage(nil, for: .normal)
-            self.sendMessageButton.backgroundColor = .clear
             self.sendMessageButton.setTitle(sendButtonTitle, for: .normal)
             self.sendMessageButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
-            
+        }
+
+        if let layer = delegate?.override(layerAsset: .ninchatTextareaSubmitButton) {
+            sendMessageButton.layer.insertSublayer(layer, below: sendMessageButton.titleLabel?.layer)
+        }
+        /// TODO: REMOVE legacy delegate
+        else if let sendButtonTitle = self.sessionManager?.siteConfiguration.sendButtonTitle {
             if let backgroundColor = self.delegate?.override(colorAsset: .textareaSubmit) {
                 self.sendMessageButton.backgroundColor = backgroundColor
             }
-
             if let backgroundImage = self.delegate?.override(imageAsset: .textareaSubmitButton) {
                 self.sendMessageButton.setBackgroundImage(backgroundImage, for: .normal)
             } else if let backgroundBundle = UIImage(named: "icon_send_message_border", in: .SDKBundle, compatibleWith: nil) {
                 self.sendMessageButton.setBackgroundImage(backgroundBundle, for: .normal)
             }
-            
-            if let titleColor = self.delegate?.override(colorAsset: .ninchatColorTextareaSubmitText) {
-                self.sendMessageButton.setTitleColor(titleColor, for: .normal)
-            }
-            
-            if let layer = self.delegate?.override(layerAsset: .ninchatTextareaSubmitButton) {
-                self.sendMessageButton.layer.addSublayer(layer)
-            }
-            
         } else if let buttonImage = self.delegate?.override(imageAsset: .textareaSubmitButton) {
             self.sendMessageButton.setImage(buttonImage, for: .normal)
         }
-        
+
+        if let titleColor = self.delegate?.override(colorAsset: .ninchatColorTextareaSubmitText) {
+            self.sendMessageButton.setTitleColor(titleColor, for: .normal)
+        }
         if let attachmentIcon = self.delegate?.override(imageAsset: .ninchatIconTextareaAttachment) {
             self.attachmentButton.setImage(attachmentIcon, for: .normal)
         }
-        
         if let inputTextColor = self.delegate?.override(colorAsset: .ninchatColorTextareaText) {
             self.textInput.textColor = inputTextColor
             textColor = inputTextColor
         }
-
         if let placeholderColor = self.delegate?.override(colorAsset: .ninchatColorTextareaPlaceholder) {
             self.placeholderColor = placeholderColor
         }

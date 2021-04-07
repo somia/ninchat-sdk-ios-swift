@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class NINInitialViewController: UIViewController, ViewController {
+final class NINInitialViewController: UIViewController, HasCustomLayer, ViewController {
     
     // MARK: - Injected
     
@@ -35,7 +35,6 @@ final class NINInitialViewController: UIViewController, ViewController {
             if let closeText = self.sessionManager?.translate(key: Constants.kCloseWindowText.rawValue, formatParams: [:]) {
                 closeWindowButton.setTitle(closeText, for: .normal)
             }
-            closeWindowButton.round(borderWidth: 1.0, borderColor: .defaultBackgroundButton)
         }
     }
     @IBOutlet private(set) var motdTextView: UITextView! {
@@ -76,6 +75,13 @@ final class NINInitialViewController: UIViewController, ViewController {
         self.overrideAssets()
     }
 
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+
+        applyLayerOverride(view: self.topContainerView)
+        applyLayerOverride(view: self.bottomContainerView)
+    }
+
     // MARK: - User actions
     
     @IBAction private func closeWindowButtonPressed(button: UIButton) {
@@ -88,9 +94,18 @@ final class NINInitialViewController: UIViewController, ViewController {
 private extension NINInitialViewController {
     private func overrideAssets() {
         closeWindowButton?.overrideAssets(with: delegate, isPrimary: false)
-        if let topBackgroundColor = delegate?.override(colorAsset: .backgroundTop) {
+
+        if let layer = delegate?.override(layerAsset: .ninchatBackgroundTop) {
+            topContainerView.layer.insertSublayer(layer, at: 0)
+        }
+        /// TODO: REMOVE legacy delegate
+        else if let topBackgroundColor = delegate?.override(colorAsset: .backgroundTop) {
             topContainerView.backgroundColor = topBackgroundColor
         }
+        if let layer = delegate?.override(layerAsset: .ninchatBackgroundBottom) {
+            bottomContainerView.layer.insertSublayer(layer, at: 0)
+        }
+        /// TODO: REMOVE legacy delegate
         if let bottomBackgroundColor = delegate?.override(colorAsset: .backgroundBottom) {
             bottomContainerView.backgroundColor = bottomBackgroundColor
         }

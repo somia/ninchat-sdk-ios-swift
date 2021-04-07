@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class ConfirmCloseChatView: UIView, ConfirmView {
+final class ConfirmCloseChatView: UIView, HasCustomLayer, ConfirmView {
     
     // MARK: - Outlets
     
@@ -14,17 +14,17 @@ final class ConfirmCloseChatView: UIView, ConfirmView {
     @IBOutlet private(set) weak var bottomContainerView: UIView!
     @IBOutlet private(set) weak var titleLabel: UILabel!
     @IBOutlet private(set) weak var infoTextView: UITextView!
-    @IBOutlet private(set) weak var confirmButton: Button! {
-        didSet {
-            confirmButton.round(borderWidth: 1.0)
-        }
+    @IBOutlet private(set) weak var confirmButton: Button!
+    @IBOutlet private(set) weak var cancelButton: Button!
+
+    // MARK: - UIView
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        applyLayerOverride(view: headerContainerView)
+        applyLayerOverride(view: bottomContainerView)
     }
-    @IBOutlet private(set) weak var cancelButton: Button! {
-        didSet {
-            cancelButton.round(borderWidth: 1.0, borderColor: .defaultBackgroundButton)
-        }
-    }
-    
+
     // MARK: - ConfirmView
     
     var onViewAction: OnViewAction?
@@ -34,16 +34,22 @@ final class ConfirmCloseChatView: UIView, ConfirmView {
             self.overrideAssets()
         }
     }
-        
+
     func overrideAssets() {
         confirmButton.overrideAssets(with: self.delegate, isPrimary: true)
         cancelButton.overrideAssets(with: self.delegate, isPrimary: false)
 
-        if let backgroundColor = self.delegate?.override(colorAsset: .modalBackground) {
+        if let layer = self.delegate?.override(layerAsset: .ninchatModalTop) {
+            self.headerContainerView.layer.insertSublayer(layer, at: 0)
+        }
+        if let layer = self.delegate?.override(layerAsset: .ninchatModalBottom) {
+            self.bottomContainerView.layer.insertSublayer(layer, at: 0)
+        }
+        /// TODO: REMOVE legacy delegate
+        else if let backgroundColor = self.delegate?.override(colorAsset: .modalBackground) {
             self.headerContainerView.backgroundColor = backgroundColor
             self.bottomContainerView.backgroundColor = backgroundColor
         }
-        
         if let textColor = self.delegate?.override(colorAsset: .ninchatColorModalTitleText) {
             self.titleLabel.textColor = textColor
             self.infoTextView.textColor = textColor
@@ -52,12 +58,10 @@ final class ConfirmCloseChatView: UIView, ConfirmView {
         if let dialogTitle = sessionManager?.siteConfiguration.confirmDialogTitle {
             self.infoTextView.setAttributed(text: dialogTitle, font: .ninchat)
         }
-        
         if let confirmText = sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:]) {
             self.titleLabel.text = confirmText
             self.confirmButton.setTitle(confirmText, for: .normal)
         }
-        
         if let cancelText = sessionManager?.translate(key: Constants.kCancelDialog.rawValue, formatParams: [:]) {
             self.cancelButton.setTitle(cancelText, for: .normal)
         }
