@@ -17,13 +17,13 @@
         <!--Queue View Controller-->
         <scene sceneID="KNa-t7-ctL">
             <objects>
-                <viewController storyboardIdentifier="NINQueueViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="XUt-Du-Jff" customClass="NINQueueViewController" customModule="NinchatSwiftSDKUI" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NINQueueViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="XUt-Du-Jff" customClass="NINQueueViewController" customModule="NinchatSDKSwift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Uao-Kk-UXV">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cVi-ux-Foo" userLabel="Top content view">
-                                <rect key="frame" x="0.0" y="44" width="375" height="256.66666666666669"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="256.66666666666669"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_progress_whirl" translatesAutoresizingMaskIntoConstraints="NO" id="9Zh-Yi-kTD">
                                         <rect key="frame" x="162.66666666666666" y="70" width="50" height="50"/>
@@ -54,7 +54,7 @@ you are next.</string>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dkT-tD-Ztq" userLabel="Bottom content view">
-                                <rect key="frame" x="0.0" y="300.66666666666674" width="375" height="477.33333333333326"/>
+                                <rect key="frame" x="0.0" y="256.66666666666669" width="375" height="555.33333333333326"/>
                                 <subviews>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed " textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="RGm-bx-l81">
                                         <rect key="frame" x="20" y="50" width="335" height="56.333333333333343"/>
@@ -86,8 +86,8 @@ you are next.</string>
                             <constraint firstItem="yzb-y7-ihz" firstAttribute="trailing" secondItem="dkT-tD-Ztq" secondAttribute="trailing" id="DfQ-9P-pYT"/>
                             <constraint firstItem="cVi-ux-Foo" firstAttribute="leading" secondItem="yzb-y7-ihz" secondAttribute="leading" id="X7w-6Q-z6Z"/>
                             <constraint firstItem="cVi-ux-Foo" firstAttribute="trailing" secondItem="yzb-y7-ihz" secondAttribute="trailing" id="dR2-V7-RCJ"/>
-                            <constraint firstItem="cVi-ux-Foo" firstAttribute="top" secondItem="yzb-y7-ihz" secondAttribute="top" id="gFe-DM-y7a"/>
-                            <constraint firstItem="yzb-y7-ihz" firstAttribute="bottom" secondItem="dkT-tD-Ztq" secondAttribute="bottom" id="sHY-xV-w09"/>
+                            <constraint firstItem="cVi-ux-Foo" firstAttribute="top" secondItem="Uao-Kk-UXV" secondAttribute="top" id="gFe-DM-y7a"/>
+                            <constraint firstAttribute="bottom" secondItem="dkT-tD-Ztq" secondAttribute="bottom" id="sHY-xV-w09"/>
                             <constraint firstItem="dkT-tD-Ztq" firstAttribute="leading" secondItem="yzb-y7-ihz" secondAttribute="leading" id="wWz-ed-3zZ"/>
                         </constraints>
                     </view>
@@ -107,7 +107,7 @@ you are next.</string>
         <!--Chat View Controller-->
         <scene sceneID="5s0-Qq-Gee">
             <objects>
-                <viewController storyboardIdentifier="NINChatViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="bZ9-oP-wEd" customClass="NINChatViewController" customModule="NinchatSwiftSDKUI" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NINChatViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="bZ9-oP-wEd" customClass="NINChatViewController" customModule="NinchatSDKSwift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="wrn-IT-ZNh">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -118,7 +118,7 @@ you are next.</string>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RGh-Mv-yIb">
                                 <rect key="frame" x="0.0" y="44" width="375" height="734"/>
                                 <subviews>
-                                    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="brw-f0-DOL" userLabel="Chat view" customClass="ChatView" customModule="NinchatSwiftSDKUI" customModuleProvider="target">
+                                    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="brw-f0-DOL" userLabel="Chat view" customClass="ChatView" customModule="NinchatSDKSwift" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="614"/>
                                         <subviews>
                                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="g76-kj-vdH">
@@ -266,13 +266,13 @@ you are next.</string>
         <!--Rating View Controller-->
         <scene sceneID="AoA-TJ-9Dd">
             <objects>
-                <viewController storyboardIdentifier="NINRatingViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="sVb-C5-GLO" customClass="NINRatingViewController" customModule="NinchatSwiftSDKUI" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NINRatingViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="sVb-C5-GLO" customClass="NINRatingViewController" customModule="NinchatSDKSwift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="YOl-0M-h20">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L5U-F0-l9Y" userLabel="Top part container view">
-                                <rect key="frame" x="0.0" y="44" width="375" height="406"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="406"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="qj1-1U-Y4U">
                                         <rect key="frame" x="16" y="65" width="343" height="276"/>
@@ -295,10 +295,10 @@ you are next.</string>
                                         </constraints>
                                     </stackView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zhu-12-0xh">
-                                        <rect key="frame" x="16" y="4" width="343" height="402"/>
+                                        <rect key="frame" x="16" y="44" width="343" height="362"/>
                                         <subviews>
                                             <view tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Vt6-hF-T0g" userLabel="Left avatar container">
-                                                <rect key="frame" x="15" y="0.0" width="35" height="402"/>
+                                                <rect key="frame" x="15" y="0.0" width="35" height="362"/>
                                                 <subviews>
                                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" image="icon_avatar_other" translatesAutoresizingMaskIntoConstraints="NO" id="Yfi-1D-cO5">
                                                         <rect key="frame" x="0.0" y="12" width="35" height="35"/>
@@ -317,10 +317,10 @@ you are next.</string>
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hb8-60-TGG">
-                                                <rect key="frame" x="58.000000000000007" y="9.6666666666666643" width="76.666666666666686" height="40"/>
+                                                <rect key="frame" x="57.999999999999993" y="9.6666666666666643" width="71.333333333333314" height="40"/>
                                                 <subviews>
                                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="999" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Dr Koistinen" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vdr-sU-emu">
-                                                        <rect key="frame" x="0.0" y="11.666666666666663" width="76.666666666666671" height="16.333333333333329"/>
+                                                        <rect key="frame" x="0.0" y="11.000000000000009" width="71.333333333333329" height="17.666666666666671"/>
                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
                                                         <nil key="highlightedColor"/>
@@ -336,18 +336,18 @@ you are next.</string>
                                                 </constraints>
                                             </view>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_bubble_left_series" translatesAutoresizingMaskIntoConstraints="NO" id="lpr-Ub-6OM">
-                                                <rect key="frame" x="15" y="55" width="313" height="55.333333333333343"/>
+                                                <rect key="frame" x="15" y="55" width="313" height="56.333333333333343"/>
                                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </imageView>
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="How was our customer service?" translatesAutoresizingMaskIntoConstraints="NO" id="DbE-mm-dcs">
-                                                <rect key="frame" x="23" y="67" width="313" height="35.333333333333343"/>
+                                                <rect key="frame" x="23" y="67" width="313" height="36.333333333333343"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                 <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
                                             </textView>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dEa-pc-H2B">
-                                                <rect key="frame" x="15" y="126.33333333333334" width="313" height="130.00000000000003"/>
+                                                <rect key="frame" x="15" y="127.33333333333334" width="313" height="130.00000000000003"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="130" id="PD8-mV-QrE"/>
@@ -376,9 +376,9 @@ you are next.</string>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstItem="qj1-1U-Y4U" firstAttribute="top" relation="greaterThanOrEqual" secondItem="L5U-F0-l9Y" secondAttribute="top" constant="4" id="3yh-j3-yC3"/>
+                                    <constraint firstItem="qj1-1U-Y4U" firstAttribute="top" relation="greaterThanOrEqual" secondItem="L5U-F0-l9Y" secondAttribute="top" constant="44" id="3yh-j3-yC3"/>
                                     <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="qj1-1U-Y4U" secondAttribute="bottom" id="6ME-kd-umm"/>
-                                    <constraint firstItem="Zhu-12-0xh" firstAttribute="top" secondItem="L5U-F0-l9Y" secondAttribute="top" constant="4" id="6gJ-xn-wen"/>
+                                    <constraint firstItem="Zhu-12-0xh" firstAttribute="top" secondItem="L5U-F0-l9Y" secondAttribute="top" constant="44" id="6gJ-xn-wen"/>
                                     <constraint firstItem="qj1-1U-Y4U" firstAttribute="leading" secondItem="L5U-F0-l9Y" secondAttribute="leading" constant="16" id="CIl-qa-20p"/>
                                     <constraint firstItem="qj1-1U-Y4U" firstAttribute="centerY" secondItem="L5U-F0-l9Y" secondAttribute="centerY" id="CsP-6S-1DP"/>
                                     <constraint firstAttribute="bottom" secondItem="Zhu-12-0xh" secondAttribute="bottom" id="OdD-X9-nCn"/>
@@ -404,7 +404,7 @@ you are next.</string>
                         <viewLayoutGuide key="safeArea" id="oWm-rW-0NV"/>
                         <color key="backgroundColor" red="0.9137254901960784" green="0.9137254901960784" blue="0.9137254901960784" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="L5U-F0-l9Y" firstAttribute="top" secondItem="oWm-rW-0NV" secondAttribute="top" id="484-Gt-Qg4"/>
+                            <constraint firstItem="L5U-F0-l9Y" firstAttribute="top" secondItem="YOl-0M-h20" secondAttribute="top" id="484-Gt-Qg4"/>
                             <constraint firstItem="L5U-F0-l9Y" firstAttribute="trailing" secondItem="oWm-rW-0NV" secondAttribute="trailing" id="6zw-zO-mF8"/>
                             <constraint firstItem="L5U-F0-l9Y" firstAttribute="leading" secondItem="oWm-rW-0NV" secondAttribute="leading" id="MIS-tu-hqe"/>
                             <constraint firstItem="oWm-rW-0NV" firstAttribute="bottom" secondItem="PLV-Oi-4sR" secondAttribute="bottom" constant="60" id="Nfl-pb-NbK"/>
@@ -435,13 +435,13 @@ you are next.</string>
         <!--Initial View Controller-->
         <scene sceneID="XHh-YP-k7w">
             <objects>
-                <viewController storyboardIdentifier="NINInitialViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="YpM-11-QhB" customClass="NINInitialViewController" customModule="NinchatSwiftSDKUI" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NINInitialViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="YpM-11-QhB" customClass="NINInitialViewController" customModule="NinchatSDKSwift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="w6e-s4-vNx">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wa1-0U-Lj7" userLabel="Top container view">
-                                <rect key="frame" x="0.0" y="44" width="375" height="316.33333333333331"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="316.33333333333331"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wXY-o9-goJ" userLabel="Welcome text container view">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="136.33333333333334"/>
@@ -469,7 +469,7 @@ you are next.</string>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="kgP-Ty-5vY">
                                                 <rect key="frame" x="67.666666666666686" y="5" width="240" height="60"/>
                                                 <subviews>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mti-Jm-Fuc" customClass="Button" customModule="NinchatSwiftSDKUI" customModuleProvider="target">
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mti-Jm-Fuc" customClass="Button" customModule="NinchatSDKSwift" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="0.0" width="240" height="60"/>
                                                         <color key="backgroundColor" red="0.28627450980392155" green="0.67450980392156867" blue="0.99215686274509807" alpha="1" colorSpace="calibratedRGB"/>
                                                         <constraints>
@@ -500,8 +500,8 @@ you are next.</string>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                 <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
                                             </textView>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ign-ZR-Zu6" customClass="Button" customModule="NinchatSwiftSDKUI" customModuleProvider="target">
-                                                <rect key="frame" x="67.666666666666686" y="79.999999999999972" width="240" height="60"/>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ign-ZR-Zu6" customClass="Button" customModule="NinchatSDKSwift" customModuleProvider="target">
+                                                <rect key="frame" x="67.666666666666686" y="80" width="240" height="60"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="60" id="FmF-rn-Al0"/>
@@ -541,7 +541,7 @@ you are next.</string>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3xg-1C-FCR" userLabel="Bottom container view">
-                                <rect key="frame" x="0.0" y="360.33333333333326" width="375" height="417.66666666666674"/>
+                                <rect key="frame" x="0.0" y="316.33333333333326" width="375" height="495.66666666666674"/>
                                 <subviews>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="D4q-k8-gpN">
                                         <rect key="frame" x="20" y="40" width="335" height="137"/>
@@ -567,8 +567,8 @@ you are next.</string>
                             <constraint firstItem="3xg-1C-FCR" firstAttribute="top" secondItem="Wa1-0U-Lj7" secondAttribute="bottom" id="4T6-uF-e7I"/>
                             <constraint firstItem="R8Q-s8-woL" firstAttribute="trailing" secondItem="Wa1-0U-Lj7" secondAttribute="trailing" id="BA9-zs-Y4m"/>
                             <constraint firstItem="Wa1-0U-Lj7" firstAttribute="leading" secondItem="R8Q-s8-woL" secondAttribute="leading" id="Dmp-X2-LC5"/>
-                            <constraint firstItem="R8Q-s8-woL" firstAttribute="bottom" secondItem="3xg-1C-FCR" secondAttribute="bottom" id="GQU-M6-6le"/>
-                            <constraint firstItem="Wa1-0U-Lj7" firstAttribute="top" secondItem="R8Q-s8-woL" secondAttribute="top" id="TBb-F8-hd4"/>
+                            <constraint firstAttribute="bottom" secondItem="3xg-1C-FCR" secondAttribute="bottom" id="GQU-M6-6le"/>
+                            <constraint firstItem="Wa1-0U-Lj7" firstAttribute="top" secondItem="w6e-s4-vNx" secondAttribute="top" id="TBb-F8-hd4"/>
                             <constraint firstItem="R8Q-s8-woL" firstAttribute="trailing" secondItem="3xg-1C-FCR" secondAttribute="trailing" id="drz-l5-mNW"/>
                         </constraints>
                     </view>
@@ -591,7 +591,7 @@ you are next.</string>
         <!--Questionnaire View Controller-->
         <scene sceneID="aa4-SC-Gqp">
             <objects>
-                <viewController storyboardIdentifier="NINQuestionnaireViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="2fr-nW-Pce" customClass="NINQuestionnaireViewController" customModule="NinchatSwiftSDKUI" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NINQuestionnaireViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="2fr-nW-Pce" customClass="NINQuestionnaireViewController" customModule="NinchatSDKSwift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="4SI-g6-pAy">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
