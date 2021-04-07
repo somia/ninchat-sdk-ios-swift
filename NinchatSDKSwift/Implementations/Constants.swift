@@ -201,10 +201,6 @@ public enum CALayerConstant {
     case ninchatBackgroundBottom
     case ninchatQuestionnaireRadioSelected
     case ninchatQuestionnaireRadioUnselected
-    case ninchatQuestionnaireCheckboxSelectedIndicator
-    case ninchatQuestionnaireCheckboxUnselectedIndicator
-    case ninchatQuestionnaireSelectSelected
-    case ninchatQuestionnaireUnselectSelected
     case ninchatQuestionnaireNavigationNext
     case ninchatQuestionnaireNavigationBack
 }
@@ -216,9 +212,13 @@ public enum QuestionnaireColorConstants {
     case ninchatQuestionnaireColorRadioSelectedText
     case ninchatQuestionnaireColorRadioUnselectedText
     case ninchatQuestionnaireColorCheckboxSelectedText
+    case ninchatQuestionnaireCheckboxSelectedIndicator
     case ninchatQuestionnaireColorCheckboxUnselectedText
+    case ninchatQuestionnaireCheckboxUnselectedIndicator
     case ninchatQuestionnaireColorSelectSelectedText
+    case ninchatQuestionnaireSelectSelected
     case ninchatQuestionnaireColorSelectUnselectText
+    case ninchatQuestionnaireSelectUnselected
     case ninchatQuestionnaireColorNavigationNextText
     case ninchatQuestionnaireColorNavigationBackText
 
@@ -241,17 +241,17 @@ public enum QuestionnaireColorConstants {
     case checkboxPrimaryText
     @available(*, deprecated, renamed: "ninchatQuestionnaireColorCheckboxUnselectedText")
     case checkboxSecondaryText
-    @available(*, deprecated, message: "use CALayerConstant.ninchatQuestionnaireCheckboxSelectedIndicator")
+    @available(*, deprecated, renamed: "ninchatQuestionnaireCheckboxSelectedIndicator")
     case checkboxSelectedIndicator
-    @available(*, deprecated, message: "use CALayerConstant.ninchatQuestionnaireCheckboxUnselectedIndicator")
+    @available(*, deprecated, renamed: "ninchatQuestionnaireCheckboxUnselectedIndicator")
     case checkboxDeselectedIndicator
     @available(*, deprecated, renamed: "ninchatQuestionnaireColorSelectSelectedText")
     case selectSelectedText
     @available(*, deprecated, renamed: "ninchatQuestionnaireColorSelectUnselectText")
     case selectNormalText
-    @available(*, deprecated, message: "use CALayerConstant.ninchatQuestionnaireSelectSelected")
+    @available(*, deprecated, renamed: "ninchatQuestionnaireSelectSelected")
     case selectSelectedBackground
-    @available(*, deprecated, message: "use CALayerConstant.ninchatQuestionnaireUnselectSelected")
+    @available(*, deprecated, renamed: "ninchatQuestionnaireSelectUnselected")
     case selectDeselectedBackground
     @available(*, deprecated, renamed: "ninchatQuestionnaireColorNavigationNextText")
     case navigationNextText

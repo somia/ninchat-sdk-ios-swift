@@ -158,6 +158,10 @@ struct InternalDelegate: NINChatSessionInternalDelegate {
             .ninchatQuestionnaireColorSelectUnselectText: .selectNormalText,
             .ninchatQuestionnaireColorNavigationNextText: .navigationNextText,
             .ninchatQuestionnaireColorNavigationBackText: .navigationBackText,
+            .ninchatQuestionnaireCheckboxSelectedIndicator: .checkboxSelectedIndicator,
+            .ninchatQuestionnaireCheckboxUnselectedIndicator: .checkboxDeselectedIndicator,
+            .ninchatQuestionnaireSelectSelected: .selectSelectedBackground,
+            .ninchatQuestionnaireSelectUnselected: .selectDeselectedBackground
         ]
 
         if let color = session.delegate?.ninchat(session, overrideQuestionnaireColorAssetKey: key) {

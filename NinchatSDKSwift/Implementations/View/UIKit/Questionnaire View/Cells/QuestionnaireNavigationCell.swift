@@ -7,7 +7,7 @@
 import UIKit
 import AnyCodable
 
-final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigationButtons {
+final class QuestionnaireNavigationCell: UITableViewCell, HasCustomLayer, QuestionnaireNavigationButtons {
 
     // MARK: - QuestionnaireElementWithNavigationButtons
 
@@ -36,6 +36,17 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
         UIView(frame: .zero)
     }()
 
+    override func layoutSublayers(of layer: CALayer) {
+        super.layoutSublayers(of: layer)
+
+        if let nextButton = self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next }) {
+            applyLayerOverride(view: nextButton)
+        }
+        if let backButton = self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .back }) {
+            applyLayerOverride(view: backButton)
+        }
+    }
+
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         if let nextButton = self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next }) {
             if nextButton.titleLabel?.text?.isEmpty ?? true {
@@ -44,8 +55,16 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
                 nextButton.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorNavigationNextText) ?? .white, for: .normal)
                 nextButton.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorNavigationNextText) ?? .white, for: .selected)
             }
-            nextButton.layer.borderColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorNavigationNextText)?.cgColor ?? UIColor.QBlueButtonNormal.cgColor
-            nextButton.backgroundColor = delegate?.override(questionnaireAsset: .navigationNextBackground) ?? .QBlueButtonNormal
+
+            if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireNavigationNext) {
+                nextButton.layer.insertSublayer(layer, at: 0)
+            }
+            /// TODO: REMOVE legacy delegate
+            else {
+                nextButton.layer.borderColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorNavigationNextText)?.cgColor ?? UIColor.QBlueButtonNormal.cgColor
+                nextButton.backgroundColor = delegate?.override(questionnaireAsset: .navigationNextBackground) ?? .QBlueButtonNormal
+                nextButton.round(radius: 45.0 / 2, borderWidth: 1.0, borderColor: .QBlueButtonNormal)
+            }
         }
         if let backButton = self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .back }) {
             if backButton.titleLabel?.text?.isEmpty ?? true {
@@ -54,8 +73,16 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
                 backButton.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorNavigationBackText) ?? .QBlueButtonNormal, for: .normal)
                 backButton.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorNavigationBackText) ?? .QBlueButtonNormal, for: .selected)
             }
-            backButton.layer.borderColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorNavigationBackText)?.cgColor ?? UIColor.QBlueButtonNormal.cgColor
-            backButton.backgroundColor = delegate?.override(questionnaireAsset: .navigationBackBackground) ?? .white
+
+            if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireNavigationBack) {
+                backButton.layer.insertSublayer(layer, at: 0)
+            }
+            /// TODO: REMOVE legacy delegate
+            else {
+                backButton.layer.borderColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorNavigationBackText)?.cgColor ?? UIColor.QBlueButtonNormal.cgColor
+                backButton.backgroundColor = delegate?.override(questionnaireAsset: .navigationBackBackground) ?? .white
+                backButton.round(radius: 45.0 / 2, borderWidth: 1.0, borderColor: .QBlueButtonNormal)
+            }
         }
     }
 
@@ -168,7 +195,6 @@ extension QuestionnaireNavigationCell {
         button.titleLabel?.lineBreakMode = .byTruncatingTail
         button
             .fix(width: button.intrinsicContentSize.width + 32.0, height: 45.0)
-            .round(radius: 45.0 / 2, borderWidth: 1.0, borderColor: .QBlueButtonNormal)
             .width?.priority = .almostRequired
     }
 
