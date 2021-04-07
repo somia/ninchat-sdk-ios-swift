@@ -54,13 +54,13 @@ public enum AssetConstants {
     case chatCloseButtonEmpty
     @available(*, deprecated, message: "use CALayerConstant.ninchatChatCloseButton")
     case iconChatCloseButton
-    @available(*, deprecated, message: "use CALayerConstant.ninchatChatBubbleLeft")
+    @available(*, unavailable, message: "the item cannot be overridden by images. use ColorConstants.ninchatColorChatBubbleLeftText and ColorConstants.ninchatColorChatBubbleLeftTint instead")
     case chatBubbleLeft
-    @available(*, deprecated, message: "use CALayerConstant.ninchatChatBubbleLeftRepeated")
+    @available(*, unavailable, message: "the item cannot be overridden by images. use ColorConstants.ninchatColorChatBubbleLeftText and ColorConstants.ninchatColorChatBubbleLeftTint instead")
     case chatBubbleLeftRepeated
-    @available(*, deprecated, message: "use CALayerConstant.ninchatChatBubbleRight")
+    @available(*, unavailable, message: "the item cannot be overridden by images. use ColorConstants.ninchatColorChatBubbleRightText and ColorConstants.ninchatColorChatBubbleRightTint instead")
     case chatBubbleRight
-    @available(*, deprecated, message: "use CALayerConstant.ninchatChatBubbleRightRepeated")
+    @available(*, unavailable, message: "the item cannot be overridden by images. use ColorConstants.ninchatColorChatBubbleRightText and ColorConstants.ninchatColorChatBubbleRightTint instead")
     case chatBubbleRightRepeated
     @available(*, deprecated, renamed: "ninchatChatAvatarRight")
     case chatAvatarRight
@@ -192,10 +192,6 @@ public let LAYER_NAME = "_ninchat-asset"
 public enum CALayerConstant {
     case ninchatPrimaryButton
     case ninchatSecondaryButton
-    case ninchatChatBubbleLeft
-    case ninchatChatBubbleRight
-    case ninchatChatBubbleLeftRepeated
-    case ninchatChatBubbleRightRepeated
     case ninchatChatCloseButton
     case ninchatChatCloseEmptyButton
     case ninchatTextareaSubmitButton

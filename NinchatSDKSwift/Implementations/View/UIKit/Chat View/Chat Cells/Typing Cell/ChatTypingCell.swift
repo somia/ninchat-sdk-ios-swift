@@ -79,7 +79,7 @@ extension ChatTypingCell: TypingCell {
 
         /// Make Image view background match the bubble color
         self.bubbleImageView.tintColor = .white
-        self.bubbleImageView.image = imageAssets?[.chatBubbleLeft]
+        self.bubbleImageView.image = UIImage(named: "chat_bubble_left", in: .SDKBundle, compatibleWith: nil)
 
         self.messageImageView.backgroundColor = .white
         self.messageImageView.image = imageAssets?[.ninchatIconChatWritingIndicator]
@@ -100,7 +100,7 @@ extension ChatTypingCell: LoadingCell {
 
         /// Make Image view background match the bubble color
         self.bubbleImageView.tintColor = .white
-        self.bubbleImageView.image = imageAssets?[.chatBubbleLeft]
+        self.bubbleImageView.image = UIImage(named: "chat_bubble_left", in: .SDKBundle, compatibleWith: nil)
 
         self.messageImageView.backgroundColor = .white
         self.messageImageView.image = imageAssets?[.ninchatIconChatWritingIndicator]

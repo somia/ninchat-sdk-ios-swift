@@ -172,16 +172,11 @@ struct InternalDelegate: NINChatSessionInternalDelegate {
 extension NINChatSessionInternalDelegate {
     var imageAssetsDictionary: NINImageAssetDictionary {
         let userTypingIndicator = self.override(imageAsset: .ninchatIconChatWritingIndicator) ?? UIImage.animatedImage(with: [Int](0...23).compactMap({ UIImage(named: "icon_writing_\($0)", in: .SDKBundle, compatibleWith: nil) }), duration: 1.0)
-        let leftSideBubble = self.override(imageAsset: .chatBubbleLeft) ?? UIImage(named: "chat_bubble_left", in: .SDKBundle, compatibleWith: nil)
-        let leftSideBubbleSeries = self.override(imageAsset: .chatBubbleLeftRepeated) ?? UIImage(named: "chat_bubble_left_series", in: .SDKBundle, compatibleWith: nil)
-        let rightSideBubble = self.override(imageAsset: .chatBubbleRight) ?? UIImage(named: "chat_bubble_right", in: .SDKBundle, compatibleWith: nil)
-        let rightSideBubbleSeries = self.override(imageAsset: .chatBubbleRightRepeated) ?? UIImage(named: "chat_bubble_right_series", in: .SDKBundle, compatibleWith: nil)
         let leftSideAvatar = self.override(imageAsset: .ninchatChatAvatarLeft) ?? UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)
         let rightSideAvatar = self.override(imageAsset: .ninchatChatAvatarRight) ?? UIImage(named: "icon_avatar_mine", in: .SDKBundle, compatibleWith: nil)
         let playVideoIcon = self.override(imageAsset: .ninchatChatPlayVideo) ?? UIImage(named: "icon_play", in: .SDKBundle, compatibleWith: nil)
 
-        return [.ninchatIconChatWritingIndicator: userTypingIndicator!, .chatBubbleLeft: leftSideBubble!, .chatBubbleLeftRepeated: leftSideBubbleSeries!,
-                .chatBubbleRight: rightSideBubble!, .chatBubbleRightRepeated: rightSideBubbleSeries!, .ninchatChatAvatarLeft: leftSideAvatar!,
+        return [.ninchatIconChatWritingIndicator: userTypingIndicator!, .ninchatChatAvatarLeft: leftSideAvatar!,
                 .ninchatChatAvatarRight: rightSideAvatar!, .ninchatChatPlayVideo: playVideoIcon!]
     }
 
