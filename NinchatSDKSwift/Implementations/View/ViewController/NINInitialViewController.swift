@@ -70,10 +70,6 @@ final class NINInitialViewController: UIViewController, HasCustomLayer, ViewCont
         }
         self.overrideAssets()
     }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-    }
 
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()

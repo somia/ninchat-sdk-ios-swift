@@ -7,7 +7,7 @@
 import UIKit
 import AutoLayoutSwift
 
-final class NINRatingViewController: UIViewController, ViewController {
+final class NINRatingViewController: UIViewController, HasCustomLayer, ViewController {
     
     // MARK: - Injected
     
@@ -84,7 +84,14 @@ final class NINRatingViewController: UIViewController, ViewController {
         self.overrideAssets()
         self.navigationItem.setHidesBackButton(true, animated: false)
     }
-    
+
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+
+        applyLayerOverride(view: topViewContainer)
+        applyLayerOverride(view: view)
+    }
+
     // MARK: - Setup View
     
     func overrideAssets() {
@@ -101,13 +108,23 @@ final class NINRatingViewController: UIViewController, ViewController {
             }
             
         }
-        
-        if let topBackgroundColor = self.delegate?.override(colorAsset: .backgroundTop) {
+
+        if let layer = delegate?.override(layerAsset: .ninchatBackgroundTop) {
+            topViewContainer.layer.insertSublayer(layer, at: 0)
+        }
+        /// TODO: REMOVE legacy delegate
+        else if let topBackgroundColor = self.delegate?.override(colorAsset: .backgroundTop) {
             self.topViewContainer.backgroundColor = topBackgroundColor
         }
-        if let bottomBackgroundColor = self.delegate?.override(colorAsset: .backgroundBottom) {
+
+        if let layer = delegate?.override(layerAsset: .ninchatBackgroundBottom) {
+            view.layer.insertSublayer(layer, at: 0)
+        }
+        /// TODO: REMOVE legacy delegate
+        else if let bottomBackgroundColor = self.delegate?.override(colorAsset: .backgroundBottom) {
             self.view.backgroundColor = bottomBackgroundColor
         }
+
         if let bubbleColor = self.delegate?.override(colorAsset: .ninchatColorChatBubbleLeftTint) {
             self.titleConversationBubble.tintColor = bubbleColor
         }
@@ -115,7 +132,6 @@ final class NINRatingViewController: UIViewController, ViewController {
             self.titleFormTextView.textColor = textTopColor
             titleConversationTextView.textColor = textTopColor
         }
-        
         if let linkColor = self.delegate?.override(colorAsset: .ninchatColorLink) {
             self.titleFormTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
             titleConversationTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
