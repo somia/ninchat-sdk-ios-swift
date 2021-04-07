@@ -33,6 +33,7 @@ public enum AssetConstants {
     case ninchatIconRatingPositive
     case ninchatIconRatingNeutral
     case ninchatIconRatingNegative
+    case ninchatQuestionnaireBackground
 
     /* DEPRECATED
      * Use new keys above or CALayerConstant instead
@@ -99,16 +100,8 @@ public enum AssetConstants {
     case iconRatingNeutral
     @available(*, deprecated, renamed: "ninchatIconRatingNegative")
     case iconRatingNegative
-
-
-    @available(*, deprecated, message: "use QuestionnaireAssetConstants.questionnaireBackground")
+    @available(*, deprecated, renamed: "ninchatQuestionnaireBackground")
     case questionnaireBackground
-    /*
-     * ninchat_icon_textarea_submit_button
-     * ninchat_ui_compose_select_button
-     * ninchat_ui_compose_select_button_selected
-     * ninchat_ui_compose_select_submit
-     */
 }
 
 /// Color override keys
@@ -194,8 +187,7 @@ public enum ColorConstants {
     case ratingNegativeText
 }
 
-/// Color override keys
-public typealias NINLayerAssetDictionary = [CALayerConstant:CALayer]
+/// Layer override keys
 public let LAYER_NAME = "_ninchat-asset"
 public enum CALayerConstant {
     case ninchatPrimaryButton
@@ -218,8 +210,7 @@ public enum CALayerConstant {
     case ninchatQuestionnaireNavigationBack
 }
 
-/// Questionnaire override keys
-public typealias NINQuestionnaireDictionary = [QuestionnaireColorConstants:String]
+/// Questionnaire color override keys
 public enum QuestionnaireColorConstants {
     case ninchatQuestionnaireColorTitleText
     case ninchatQuestionnaireColorTextInput
@@ -271,11 +262,6 @@ public enum QuestionnaireColorConstants {
     case navigationNextBackground
     @available(*, deprecated, message: "use CALayerConstant.ninchatQuestionnaireNavigationBack")
     case navigationBackBackground
-}
-
-public enum QuestionnaireAssetConstants {
-    /// Background image
-    case questionnaireBackground
 }
 
 // MARK: - Constants used within the SDK

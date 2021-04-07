@@ -89,7 +89,8 @@ struct InternalDelegate: NINChatSessionInternalDelegate {
             .ninchatIconVideoHangup: .iconVideoHangup,
             .ninchatIconRatingPositive: .iconRatingPositive,
             .ninchatIconRatingNeutral: .iconRatingNeutral,
-            .ninchatIconRatingNegative: .iconRatingNegative
+            .ninchatIconRatingNegative: .iconRatingNegative,
+            .ninchatQuestionnaireBackground: .questionnaireBackground
         ]
 
         if let asset = session.delegate?.ninchat(session, overrideImageAssetForKey: key) {

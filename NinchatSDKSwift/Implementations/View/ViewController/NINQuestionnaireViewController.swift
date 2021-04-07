@@ -174,7 +174,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
     }
 
     private func overrideAssets() {
-        if let backgroundImage = self.delegate?.override(imageAsset: .questionnaireBackground) {
+        if let backgroundImage = self.delegate?.override(imageAsset: .ninchatQuestionnaireBackground) {
             self.view.backgroundColor = UIColor(patternImage: backgroundImage)
         } else if let bundleImage = UIImage(named: "chat_background_pattern", in: .SDKBundle, compatibleWith: nil) {
             self.view.backgroundColor = UIColor(patternImage: bundleImage)
