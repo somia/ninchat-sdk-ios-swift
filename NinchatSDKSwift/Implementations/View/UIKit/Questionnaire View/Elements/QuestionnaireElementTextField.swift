@@ -35,7 +35,7 @@ final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         self.overrideTitle(delegate: delegate)
-        self.view.textColor = delegate?.override(questionnaireAsset: .textInputColor) ?? .black
+        self.view.textColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorTextInput) ?? .black
     }
 
     // MARK: - QuestionnaireSettable

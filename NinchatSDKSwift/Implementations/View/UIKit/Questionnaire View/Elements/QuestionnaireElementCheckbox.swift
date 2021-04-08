@@ -152,8 +152,8 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
 extension Button {
     fileprivate func overrideQuestionnaireAsset(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         self.titleLabel?.font = .ninchat
-        self.setTitleColor(delegate?.override(questionnaireAsset: .checkboxSecondaryText) ?? UIColor.QGrayButton, for: .normal)
-        self.setTitleColor(delegate?.override(questionnaireAsset: .checkboxPrimaryText) ?? UIColor.QBlueButtonNormal, for: .selected)
+        self.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorCheckboxUnselectedText) ?? UIColor.QGrayButton, for: .normal)
+        self.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorCheckboxSelectedText) ?? UIColor.QBlueButtonNormal, for: .selected)
     }
 }
 

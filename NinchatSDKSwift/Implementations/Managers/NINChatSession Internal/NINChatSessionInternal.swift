@@ -66,12 +66,73 @@ struct InternalDelegate: NINChatSessionInternalDelegate {
 
     internal func override(imageAsset key: AssetConstants) -> UIImage? {
         guard let session = self.session else { return nil }
-        return session.delegate?.ninchat(session, overrideImageAssetForKey: key)
+
+        /// TODO: REMOVE legacy keys
+        let deprecatedKeys: [AssetConstants:AssetConstants] = [
+            .ninchatIconLoader: .iconLoader,
+            .ninchatIconChatWritingIndicator: .chatWritingIndicator,
+            .ninchatChatBackground: .chatBackground,
+            .ninchatChatAvatarRight: .chatAvatarRight,
+            .ninchatChatAvatarLeft: .chatAvatarLeft,
+            .ninchatChatPlayVideo: .chatPlayVideo,
+            .ninchatIconTextareaCamera: .iconTextareaCamera,
+            .ninchatIconTextareaAttachment: .iconTextareaAttachment,
+            .ninchatIconDownload: .iconDownload,
+            .ninchatIconVideoToggleFull: .iconVideoToggleFull,
+            .ninchatIconVideoToggleNormal: .iconVideoToggleNormal,
+            .ninchatIconVideoSoundOn: .iconVideoSoundOn,
+            .ninchatIconVideoSoundOff: .iconVideoSoundOff,
+            .ninchatIconVideoMicrophoneOn: .iconVideoMicrophoneOn,
+            .ninchatIconVideoMicrophoneOff: .iconVideoMicrophoneOff,
+            .ninchatIconVideoCameraOn: .iconVideoCameraOn,
+            .ninchatIconVideoCameraOff: .iconVideoCameraOff,
+            .ninchatIconVideoHangup: .iconVideoHangup,
+            .ninchatIconRatingPositive: .iconRatingPositive,
+            .ninchatIconRatingNeutral: .iconRatingNeutral,
+            .ninchatIconRatingNegative: .iconRatingNegative,
+            .ninchatQuestionnaireBackground: .questionnaireBackground
+        ]
+
+        if let asset = session.delegate?.ninchat(session, overrideImageAssetForKey: key) {
+            return asset
+        }
+        guard let depKey = deprecatedKeys[key] else { return nil }
+        return session.delegate?.ninchat(session, overrideImageAssetForKey: depKey)
     }
     
     internal func override(colorAsset key: ColorConstants) -> UIColor? {
         guard let session = self.session else { return nil }
-        return session.delegate?.ninchat(session, overrideColorAssetForKey: key)
+
+        /// TODO: REMOVE legacy keys
+        let deprecatedKeys: [ColorConstants:ColorConstants] = [
+            .ninchatColorButtonPrimaryText: .buttonPrimaryText,
+            .ninchatColorButtonSecondaryText: .buttonSecondaryText,
+            .ninchatColorInfoText: .infoText,
+            .ninchatColorChatName: .chatName,
+            .ninchatColorChatTimestamp: .chatTimestamp,
+            .ninchatColorChatBubbleLeftText: .chatBubbleLeftText,
+            .ninchatColorChatBubbleRightText: .chatBubbleRightText,
+            .ninchatColorChatBubbleLeftTint: .chatBubbleLeftTint,
+            .ninchatColorChatBubbleRightTint: .chatBubbleRightTint,
+            .ninchatColorTextareaText: .textareaText,
+            .ninchatColorTextareaSubmitText: .textareaSubmitText,
+            .ninchatColorTextareaPlaceholder: .textareaPlaceholder,
+            .ninchatColorChatBubbleLeftLink: .chatBubbleLeftLink,
+            .ninchatColorChatBubbleRightLink: .chatBubbleRightLink,
+            .ninchatColorModalTitleText: .modalText,
+            .ninchatColorTextTop: .textTop,
+            .ninchatColorTextBottom: .textBottom,
+            .ninchatColorLink: .link,
+            .ninchatColorRatingPositiveText: .ratingPositiveText,
+            .ninchatColorRatingNeutralText: .ratingNeutralText,
+            .ninchatColorRatingNegativeText: .ratingNegativeText
+        ]
+
+        if let color = session.delegate?.ninchat(session, overrideColorAssetForKey: key) {
+            return color
+        }
+        guard let depKey = deprecatedKeys[key] else { return nil }
+        return session.delegate?.ninchat(session, overrideColorAssetForKey: depKey)
     }
 
     internal func override(layerAsset key: CALayerConstant) -> CALayer? {
@@ -84,29 +145,47 @@ struct InternalDelegate: NINChatSessionInternalDelegate {
     
     internal func override(questionnaireAsset key: QuestionnaireColorConstants) -> UIColor? {
         guard let session = self.session else { return nil }
-        return session.delegate?.ninchat(session, overrideQuestionnaireColorAssetKey: key)
+
+        /// TODO: REMOVE legacy keys
+        let deprecatedKeys: [QuestionnaireColorConstants:QuestionnaireColorConstants] = [
+            .ninchatQuestionnaireColorTitleText: .titleTextColor,
+            .ninchatQuestionnaireColorTextInput: .textInputColor,
+            .ninchatQuestionnaireColorRadioSelectedText: .radioPrimaryText,
+            .ninchatQuestionnaireColorRadioUnselectedText: .radioSecondaryText,
+            .ninchatQuestionnaireColorCheckboxSelectedText: .checkboxPrimaryText,
+            .ninchatQuestionnaireColorCheckboxUnselectedText: .checkboxSecondaryText,
+            .ninchatQuestionnaireColorSelectSelectedText: .selectSelectedText,
+            .ninchatQuestionnaireColorSelectUnselectText: .selectNormalText,
+            .ninchatQuestionnaireColorNavigationNextText: .navigationNextText,
+            .ninchatQuestionnaireColorNavigationBackText: .navigationBackText,
+            .ninchatQuestionnaireCheckboxSelectedIndicator: .checkboxSelectedIndicator,
+            .ninchatQuestionnaireCheckboxUnselectedIndicator: .checkboxDeselectedIndicator,
+            .ninchatQuestionnaireSelectSelected: .selectSelectedBackground,
+            .ninchatQuestionnaireSelectUnselected: .selectDeselectedBackground
+        ]
+
+        if let color = session.delegate?.ninchat(session, overrideQuestionnaireColorAssetKey: key) {
+            return color
+        }
+        guard let depKey = deprecatedKeys[key] else { return nil }
+        return session.delegate?.ninchat(session, overrideQuestionnaireColorAssetKey: depKey)
     }
 }
 
 /// Dictionaries for typing/loading cells
 extension NINChatSessionInternalDelegate {
     var imageAssetsDictionary: NINImageAssetDictionary {
-        let userTypingIndicator = self.override(imageAsset: .chatWritingIndicator) ?? UIImage.animatedImage(with: [Int](0...23).compactMap({ UIImage(named: "icon_writing_\($0)", in: .SDKBundle, compatibleWith: nil) }), duration: 1.0)
-        let leftSideBubble = self.override(imageAsset: .chatBubbleLeft) ?? UIImage(named: "chat_bubble_left", in: .SDKBundle, compatibleWith: nil)
-        let leftSideBubbleSeries = self.override(imageAsset: .chatBubbleLeftRepeated) ?? UIImage(named: "chat_bubble_left_series", in: .SDKBundle, compatibleWith: nil)
-        let rightSideBubble = self.override(imageAsset: .chatBubbleRight) ?? UIImage(named: "chat_bubble_right", in: .SDKBundle, compatibleWith: nil)
-        let rightSideBubbleSeries = self.override(imageAsset: .chatBubbleRightRepeated) ?? UIImage(named: "chat_bubble_right_series", in: .SDKBundle, compatibleWith: nil)
-        let leftSideAvatar = self.override(imageAsset: .chatAvatarLeft) ?? UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)
-        let rightSideAvatar = self.override(imageAsset: .chatAvatarRight) ?? UIImage(named: "icon_avatar_mine", in: .SDKBundle, compatibleWith: nil)
-        let playVideoIcon = self.override(imageAsset: .chatPlayVideo) ?? UIImage(named: "icon_play", in: .SDKBundle, compatibleWith: nil)
+        let userTypingIndicator = self.override(imageAsset: .ninchatIconChatWritingIndicator) ?? UIImage.animatedImage(with: [Int](0...23).compactMap({ UIImage(named: "icon_writing_\($0)", in: .SDKBundle, compatibleWith: nil) }), duration: 1.0)
+        let leftSideAvatar = self.override(imageAsset: .ninchatChatAvatarLeft) ?? UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)
+        let rightSideAvatar = self.override(imageAsset: .ninchatChatAvatarRight) ?? UIImage(named: "icon_avatar_mine", in: .SDKBundle, compatibleWith: nil)
+        let playVideoIcon = self.override(imageAsset: .ninchatChatPlayVideo) ?? UIImage(named: "icon_play", in: .SDKBundle, compatibleWith: nil)
 
-        return [.chatWritingIndicator: userTypingIndicator!, .chatBubbleLeft: leftSideBubble!, .chatBubbleLeftRepeated: leftSideBubbleSeries!,
-                .chatBubbleRight: rightSideBubble!, .chatBubbleRightRepeated: rightSideBubbleSeries!, .chatAvatarLeft: leftSideAvatar!,
-                .chatAvatarRight: rightSideAvatar!, .chatPlayVideo: playVideoIcon!]
+        return [.ninchatIconChatWritingIndicator: userTypingIndicator!, .ninchatChatAvatarLeft: leftSideAvatar!,
+                .ninchatChatAvatarRight: rightSideAvatar!, .ninchatChatPlayVideo: playVideoIcon!]
     }
 
     var colorAssetsDictionary: [ColorConstants:UIColor] {
-        let colorKeys: [ColorConstants] = [.infoText, .chatName, .chatTimestamp, .chatBubbleLeftText, .chatBubbleLeftTint, .chatBubbleRightText, .chatBubbleRightTint, .chatBubbleLeftLink, .chatBubbleRightLink]
+        let colorKeys: [ColorConstants] = [.ninchatColorInfoText, .ninchatColorChatName, .ninchatColorChatTimestamp, .ninchatColorChatBubbleLeftText, .ninchatColorChatBubbleLeftTint, .ninchatColorChatBubbleRightText, .ninchatColorChatBubbleRightTint, .ninchatColorChatBubbleLeftLink, .ninchatColorChatBubbleRightLink]
         return colorKeys.compactMap({ ($0, self.override(colorAsset: $0)) }).reduce(into: [:]) { (colorAsset: inout [ColorConstants:UIColor], tuple: (key: ColorConstants, color: UIColor?)) in
             colorAsset[tuple.key] = tuple.color
         }
