@@ -266,12 +266,17 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
     // MARK: - Helpers
     
     private func connectRTC() {
-        func permissionError(_ error: Error?) -> Bool {
+        func permissionError(_ error: Error?, callPickedUp: Bool = true) -> Bool {
             if error as? PermissionError != nil {
                 /// 1. Show toast to notify the user
-                Toast.show(message: .error("\("Permission denied".localized) \("Update Settings".localized)"), onToastTouched: { UIApplication.openAppSetting() })
-                /// 2. Cancel the call
-                self.viewModel.hangup { _ in  }
+                Toast.show(message: .error("\("Permission denied".localized)\n\("Update Settings".localized)"))
+                /// 2. Disconnect the request
+
+                if !callPickedUp {
+                    /// If the call has not been answered yet, send 'false' as the pick up message
+                    self.viewModel.pickup(answer: false) { _ in  }
+                }
+                self.viewModel.disconnectRTC(self.webRTCClient) { }
                 /// 3. Discard the process
                 return true
             }
@@ -290,6 +295,8 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
             case .confirm:
                 debugger("WebRTC: Grant permission for the video call")
                 self.viewModel.grantVideoCallPermissions { error in
+                    if permissionError(error, callPickedUp: false) { return }
+
                     debugger("WebRTC: Permissions granted - initializing the video call (answer)")
                     self.viewModel.pickup(answer: true) { error in
                         if error != nil { Toast.show(message: .error("WebRTC pickup fail".localized)) }
@@ -452,7 +459,7 @@ extension NINChatViewController {
 
 extension NINChatViewController {
     private func onAttachmentTapped(with button: UIButton) {
-        ChoiceDialogue.showDialogue(withOptions: ["Camera".localized, "Photo".localized]) { [weak self] result in
+        ChoiceDialogue.showDialogue(withOptions: ["Camera".localized, "Photo Library".localized]) { [weak self] result in
             switch result {
             case .cancel:
                 break
@@ -467,9 +474,7 @@ extension NINChatViewController {
 
                 self?.viewModel.openAttachment(source: source) { [weak self, source] error in
                     if error == nil { self?.onOpenGallery?(source); return }
-                    Toast.show(message: .error("Access denied".localized), onToastTouched: {
-                        UIApplication.openAppSetting()
-                    })
+                    Toast.show(message: .error("\("Access denied".localized)\n\("Update Settings".localized)"))
                 }
             }
         }
