@@ -14,10 +14,11 @@
 "OK" = "Neither agree nor disagree";
 "Disagree" = "Disagree";
 "Strongly disagree" = "Strongly disagree";
-"Permission denied" = "Permission denied.";
-"Update Settings" = "Tap to update Settings.";
+"Permission denied" = "Unable to start the video: permission denied.";
+"Update Settings" = "Change permissions from Settings (warning: the app will be reloaded)";
 "Resume error" = "Error in connecting to the queue. Please try again.";
 "WebRTC pickup fail" = "Failed to initiate the video call.";
 "Source not available" = "The source is not available on this device";
 "Camera not available" = "The camera is not available during a video call";
 "Access denied" = "Access denied";
+"Submission Error" = "An error occurred in submitting answers";
