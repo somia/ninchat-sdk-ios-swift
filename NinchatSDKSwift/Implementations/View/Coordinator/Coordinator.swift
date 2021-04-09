@@ -249,8 +249,11 @@ extension NINCoordinator {
     internal func queueViewController(resume: ResumeMode? = nil, queue: Queue?) -> NINQueueViewController {
         let vc = self.queueViewController
         vc.resumeMode = resume
-        if let queue = queue { vc.queue = queue }
-        else if case let .toQueue(target) = resume, let queue = target { vc.queue = queue }
+        if let queue = queue {
+            vc.queue = queue
+        } else if case let .toQueue(target) = resume, let queue = target {
+            vc.queue = queue
+        }
 
         return vc
     }
