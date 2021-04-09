@@ -308,6 +308,7 @@ enum TimeConstants: TimeInterval {
     case kTimerTickInterval = 0.05
     case kMessageMaxAge = 1.0
     case kAnimationDuration = 0.3
+    case kBannerAnimationDuration = 5.0
     case kAnimationDelay = 1.5
 }
 
