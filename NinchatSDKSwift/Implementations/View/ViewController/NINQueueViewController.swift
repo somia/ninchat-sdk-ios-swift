@@ -37,11 +37,6 @@ final class NINQueueViewController: UIViewController, ViewController {
     }
     @IBOutlet private(set) weak var motdTextView: UITextView! {
         didSet {
-            if let queueText = self.sessionManager?.siteConfiguration.inQueue {
-                motdTextView.setAttributed(text: queueText, font: .ninchat)
-            } else if let motdText = self.sessionManager?.siteConfiguration.motd {
-                motdTextView.setAttributed(text: motdText, font: .ninchat)
-            }
             motdTextView.delegate = self
         }
     }
@@ -66,12 +61,16 @@ final class NINQueueViewController: UIViewController, ViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.setupClosedQueue()
-        self.setupViewModel()
         self.overrideAssets()
 
         NotificationCenter.default.addObserver(self, selector: #selector(spin(notification:)), name: UIApplication.willEnterForegroundNotification, object: nil)
         self.navigationItem.setHidesBackButton(true, animated: false)
+
+        /// When the queue is not usable, do not try to connect
+        /// or initiate the view model
+        if self.setupClosedQueue() { return }
+        self.setupOpenQueue()
+        self.setupViewModel()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -102,7 +101,7 @@ final class NINQueueViewController: UIViewController, ViewController {
         case .toChannel:
             if self.sessionManager?.describedQueue == nil {
                 debugger("error in getting target queue")
-                self.stopSpinWith(message: "Resume error".localized)
+                self.updateSpinWith(message: "Resume error".localized, spin: false)
             } else {
                 debugger("target queue is ready: \(String(describing: self.sessionManager?.describedQueue))")
                 self.onQueueActionTapped?(self.sessionManager?.describedQueue)
@@ -113,15 +112,23 @@ final class NINQueueViewController: UIViewController, ViewController {
         }
     }
 
-    private func setupClosedQueue() {
+    private func setupClosedQueue() -> Bool {
         /// `If customer resumes to a session and is already in queue, then show queueing view even if queue is closed`
-        guard let queue = queue, queue.isClosed && self.resumeMode == nil else { return }
-        self.stopSpinWith(message: self.sessionManager?.siteConfiguration.noQueueText ?? "")
+        if let queue = queue, queue.isClosed, queue.position == 0 {
+            self.queueInfoTextView.setAttributed(text: self.sessionManager?.siteConfiguration.noQueueText ?? "", font: .ninchat)
+            self.updateSpinWith(message: self.sessionManager?.siteConfiguration.motd ?? self.sessionManager?.siteConfiguration.noQueueText ?? "", spin: false)
+            return true
+        }
+        return false
     }
 
-    private func stopSpinWith(message: String) {
-        self.spinnerImageView.isHidden = true
-        self.queueInfoTextView.setAttributed(text: message, font: .ninchat)
+    private func setupOpenQueue() {
+        self.updateSpinWith(message: self.sessionManager?.siteConfiguration.motd ?? self.sessionManager?.siteConfiguration.inQueue ?? "", spin: true)
+    }
+
+    private func updateSpinWith(message: String, spin: Bool) {
+        self.spinnerImageView.isHidden = !spin
+        self.motdTextView.setAttributed(text: message, font: .ninchat)
     }
 }
 
@@ -147,7 +154,6 @@ extension NINQueueViewController {
     }
 
     private func overrideAssets() {
-        
         closeChatButton.overrideAssets(with: self.delegate)
         if let spinnerImage = self.delegate?.override(imageAsset: .ninchatIconLoader) {
             self.spinnerImageView.image = spinnerImage

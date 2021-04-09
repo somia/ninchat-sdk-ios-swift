@@ -24,8 +24,17 @@ extension NINChatSessionManagerImpl {
             self.queues.append(contentsOf: queuesParser.properties.keys.compactMap({ key in
                 /// Add the queue only if it is not already available
                 guard !self.queues.contains(where: { $0.queueID == key } ) else { return nil }
-                if let queue = try? realmQueues.getObject(key), case let .success(queueName) = queue.queueName, case let .success(queueClosed) = queue.queueClosed, case let .success(queueUploadPermission) = queue.queueUpload {
-                    return Queue(queueID: key, name: queueName, isClosed: queueClosed, permissions: QueuePermissions(upload: queueUploadPermission))
+                if let queue = try? realmQueues.getObject(key),
+                   case let .success(queueName) = queue.queueName,
+                   case let .success(queueClosed) = queue.queueClosed,
+                   case let .success(queueUploadPermission) = queue.queueUpload {
+                    var target = Queue(queueID: key, name: queueName, isClosed: queueClosed, permissions: QueuePermissions(upload: queueUploadPermission), position: 0)
+                    /// According to the api document on `https://github.com/ninchat/ninchat-api/blob/v2/api.md#realm_queues_found`,
+                    /// 'queue_position' is an optional parameter
+                    if case let .success(queuePosition) = queue.queuePosition {
+                        target.position = queuePosition
+                    }
+                    return target
                 }
                 return nil
             }))

@@ -15,6 +15,7 @@ struct Queue {
     let name: String
     let isClosed: Bool
     let permissions: QueuePermissions
+    var position: Int
 }
 
 struct QueuePermissions {
