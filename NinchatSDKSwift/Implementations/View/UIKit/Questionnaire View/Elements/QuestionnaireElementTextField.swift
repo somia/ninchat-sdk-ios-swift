@@ -163,6 +163,12 @@ extension QuestionnaireElement where Self:QuestionnaireElementTextField {
     }
 
     private func keyboardType(_ configuration: QuestionnaireConfiguration?) -> UIKeyboardType {
+        /// to address `https://github.com/somia/mobile/issues/332`
+        if let keyboard = configuration?.inputMode?.keyboard {
+            return keyboard
+        }
+
+        /// in case the input mode was not set, we can guess the keyboard type based on the given regex
         switch configuration?.pattern ?? "" {
         case "^(1[0-9]|[0-9])$":
             return .numberPad

@@ -37,9 +37,15 @@ struct QuestionnaireConfiguration: Codable, Equatable {
     let logic: LogicQuestionnaire?
     let redirects: [ElementRedirect]?
     let element: ElementType?
+    let inputMode: QuestionnaireInputMode?
     let required: Bool?
     let options: [ElementOption]?
     let elements: [QuestionnaireConfiguration]?
+
+    enum CodingKeys: String, CodingKey {
+        case name, label, pattern, type, buttons, logic, redirects, element, required, options, elements
+        case inputMode = "inputmode"
+    }
 
     static func ==(lhs: QuestionnaireConfiguration, rhs: QuestionnaireConfiguration) -> Bool {
         if let elements_lhs = lhs.elements, let elements_rhs = rhs.elements {
@@ -185,4 +191,32 @@ enum ElementType: String, Codable {
 enum QuestionnaireButtonType {
     case next
     case back
+}
+
+// MARK: - InputMode
+enum QuestionnaireInputMode: String, Codable {
+    case text
+    case email
+    case numeric
+    case decimal
+    case tel
+    case url
+}
+extension QuestionnaireInputMode {
+    var keyboard: UIKeyboardType {
+        switch self {
+        case .text:
+            return .default
+        case .email:
+            return .emailAddress
+        case .numeric:
+            return .numberPad
+        case .decimal:
+            return .decimalPad
+        case .tel:
+            return .phonePad
+        case .url:
+            return .URL
+        }
+    }
 }
