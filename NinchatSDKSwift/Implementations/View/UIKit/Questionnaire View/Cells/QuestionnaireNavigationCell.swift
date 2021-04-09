@@ -88,8 +88,11 @@ final class QuestionnaireNavigationCell: UITableViewCell, HasCustomLayer, Questi
 
     func setSatisfaction(_ satisfied: Bool) {
         debugger("Set navigation Satisfaction: \(satisfied && self.isLastItemInTable)")
-        self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).forEach({ $0.isEnabled = satisfied && self.isLastItemInTable })
-        self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).forEach({ $0.alpha = (satisfied && self.isLastItemInTable) ? 1.0 : 0.5 })
+        self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next })?.isEnabled = satisfied && self.isLastItemInTable
+        /// back button should not get disabled according to user inputs
+        /// it is always enabled for the last item
+        self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .back })?.isEnabled = self.isLastItemInTable
+        self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).forEach({ $0.alpha = $0.isEnabled ? 1.0 : 0.5 })
     }
 
     // MARK: - UIView life-cycle
