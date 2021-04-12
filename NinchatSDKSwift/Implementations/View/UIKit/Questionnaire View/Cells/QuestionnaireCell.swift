@@ -10,6 +10,7 @@ class QuestionnaireCell: UITableViewCell {
     @IBOutlet private(set) weak var conversationView: UIView!
     @IBOutlet private(set) weak var conversationContentView: UIView!
     @IBOutlet private(set) weak var conversationContentViewStyle: UIImageView!
+    @IBOutlet private(set) weak var leftAvatarContainerView: UIView!
     @IBOutlet private(set) var conversationDetailsView: [Any]!
     @IBOutlet private(set) weak var formContentView: UIView!
 
@@ -35,17 +36,30 @@ class QuestionnaireCell: UITableViewCell {
     weak var sessionManager: NINChatSessionManager? {
         didSet {
             guard self.style == .conversation,
-                  let usernameLabel = self.conversationDetailsView.compactMap({ $0 as? UILabel }).first,
-                  let userAvatar = self.conversationDetailsView.compactMap({ $0 as? UIImageView }).first
+                  let usernameLabel = self.conversationDetailsView.first(where: { $0 is UILabel }) as? UILabel,
+                  let userAvatar = self.conversationDetailsView.first(where: { $0 is UIImageView }) as? UIImageView
                 else { return }
 
-            usernameLabel.text = sessionManager?.siteConfiguration.audienceQuestionnaireUserName ?? ""
-            usernameLabel.font = .ninchat
-            if let avatar = sessionManager?.siteConfiguration.audienceQuestionnaireAvatar as? String, !avatar.isEmpty {
-                userAvatar.image(from: avatar)
-            } else {
-                userAvatar.image = UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)
-            }
+            setupTitles(usernameLabel)
+            setupAvatar(userAvatar)
+        }
+    }
+
+    private func setupTitles(_ usernameLabel: UILabel) {
+        usernameLabel.text = sessionManager?.siteConfiguration.audienceQuestionnaireUserName ?? ""
+        usernameLabel.font = .ninchat
+    }
+
+    private func setupAvatar(_ userAvatar: UIImageView) {
+        let avatar = AvatarConfig(session: self.sessionManager)
+
+        userAvatar.isHidden = !avatar.show
+        leftAvatarContainerView.width?.constant = (userAvatar.isHidden) ? 0 : 35
+        
+        if let url = avatar.imageOverrideURL, !url.isEmpty {
+            userAvatar.image(from: url)
+        } else {
+            userAvatar.image = UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)
         }
     }
 }
