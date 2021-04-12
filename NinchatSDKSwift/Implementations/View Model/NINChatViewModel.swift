@@ -31,6 +31,8 @@ protocol NINChatStateProtocol {
 }
 
 protocol NINChatMessageProtocol {
+    var onErrorOccurred: ((Error) -> Void)? { get set }
+
     func updateWriting(state: Bool)
     func send(message: String, completion: @escaping (Error?) -> Void)
     func send(action: ComposeContentViewProtocol, completion: @escaping (Error?) -> Void)
@@ -64,8 +66,9 @@ final class NINChatViewModelImpl: NINChatViewModel {
     private var client: NINChatWebRTCClient?
     private var timer: Timer?
 
-    var onChannelClosed: (() -> Void)?
     var onQueueUpdated: (() -> Void)?
+    var onChannelClosed: (() -> Void)?
+    var onErrorOccurred: ((Error) -> Void)?
     var onChannelMessage: ((MessageUpdateType) -> Void)?
     var onComposeActionUpdated: ((_ index: Int, _ action: ComposeUIAction) -> Void)?
 

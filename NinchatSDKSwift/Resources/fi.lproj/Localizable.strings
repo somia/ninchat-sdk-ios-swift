@@ -22,3 +22,4 @@
 "Camera not available" = "Kamera ei ole käytettävissä videopuhelun aikana";
 "Access denied" = "Pääsy evätty";
 "Submission Error" = "Vastausten lähettämisessä tapahtui virhe";
+"Unsupported attachment" = "Muotoa ei tueta";

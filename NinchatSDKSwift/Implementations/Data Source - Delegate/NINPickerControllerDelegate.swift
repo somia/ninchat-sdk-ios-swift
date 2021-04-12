@@ -8,6 +8,17 @@ import UIKit
 import Photos
 import CoreServices
 
+enum AttachmentError: Error {
+    case unsupported
+
+    var localizedDescription: String {
+        switch self {
+        case .unsupported:
+            return "Unsupported attachment".localized
+        }
+    }
+}
+
 protocol NINPickerControllerAction {
     var onMediaSent: ((Error?) -> Void)? { get set }
     var onDismissPicker: (() -> Void)? { get set }
@@ -37,15 +48,28 @@ final class NINPickerControllerDelegateImpl: NSObject, NINPickerControllerDelega
 
 extension NINPickerControllerDelegateImpl {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        var fileName = "photo.jpg"
+        defer { self.onDismissPicker?() }
+        var fileName = "attachment"
         
-        // Photos from photo library have file names; extract it
+        /// Photos from photo library have file names; extract it
         if #available(iOS 11, *) {
             if picker.sourceType == .photoLibrary,
                 let asset = info[UIImagePickerController.InfoKey.phAsset] as? PHAsset,
                 let assetResource = PHAssetResource.assetResources(for: asset).last {
-                
-                fileName = assetResource.originalFilename
+
+                /// other types are not supported
+                /// PDF documents cannot be selected from 'photo library'
+                guard assetResource.type == .video || assetResource.type == .photo else {
+                    self.viewModel.onErrorOccurred?(AttachmentError.unsupported)
+                    return
+                }
+
+                /// avoid sending file's original extension to avoid confusion
+                /// in the following lines we convert the image to jpg
+                let fileExtension = (assetResource.type == .video) ? ".mp4" : ".jpg"
+
+                /// use asset UUID to get the unique name for the asset
+                fileName = assetResource.assetLocalIdentifier.components(separatedBy: "/").first! + fileExtension
             }
         } else {
             if picker.sourceType == .photoLibrary,
@@ -75,7 +99,6 @@ extension NINPickerControllerDelegateImpl {
                 fatalError("Invalid media type!")
             }
         }
-        self.onDismissPicker?()
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
