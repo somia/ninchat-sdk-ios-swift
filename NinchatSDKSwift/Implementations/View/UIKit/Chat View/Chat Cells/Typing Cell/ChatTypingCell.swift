@@ -51,7 +51,7 @@ class ChatTypingCell: UITableViewCell {
             self.senderNameLabel.textColor = nameColor
         }
         
-        if let timeColor = colorAssets?[.chatTimestamp] {
+        if let timeColor = colorAssets?[.ninchatColorChatTimestamp] {
             self.timeLabel?.textColor = timeColor
         }
     }
