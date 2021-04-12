@@ -47,16 +47,16 @@
                                 <rect key="frame" x="39" y="0.0" width="278" height="115"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lyG-k3-udZ">
-                                        <rect key="frame" x="16" y="0.0" width="128" height="40"/>
+                                        <rect key="frame" x="16" y="0.0" width="119" height="40"/>
                                         <subviews>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="999" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Dr Koistinen" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xP0-sf-mrS">
-                                                <rect key="frame" x="0.0" y="0.0" width="76.5" height="40"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="71.5" height="40"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="17:18" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Zc-Nz-Phg">
-                                                <rect key="frame" x="92.5" y="0.0" width="35.5" height="40"/>
+                                                <rect key="frame" x="87.5" y="0.0" width="31.5" height="40"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
                                                 <color key="textColor" red="0.4549019608" green="0.57254901960000004" blue="0.66666666669999997" alpha="1" colorSpace="calibratedRGB"/>
@@ -148,6 +148,7 @@
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <connections>
                 <outlet property="bubbleImageView" destination="7Fs-1h-Yhk" id="19e-MV-wXS"/>
+                <outlet property="leftAvatarContainerView" destination="RiU-nY-2xW" id="CTL-HS-dg9"/>
                 <outlet property="leftAvatarImageView" destination="u0y-9T-rKC" id="ntd-Hm-WSs"/>
                 <outlet property="messageImageView" destination="AT6-FO-21O" id="xF1-mx-oiv"/>
                 <outlet property="senderNameLabel" destination="xP0-sf-mrS" id="iZu-cE-SPj"/>

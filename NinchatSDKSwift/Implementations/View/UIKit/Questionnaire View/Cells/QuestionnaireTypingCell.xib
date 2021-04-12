@@ -116,6 +116,7 @@
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <connections>
                 <outlet property="bubbleImageView" destination="Qb1-Ka-rHL" id="JTc-Xb-Der"/>
+                <outlet property="leftAvatarContainerView" destination="R0o-MX-FBw" id="Qwa-kg-cxA"/>
                 <outlet property="leftAvatarImageView" destination="H6o-gW-gkz" id="UKS-3b-7mu"/>
                 <outlet property="messageImageView" destination="9ca-Pa-lK8" id="e3c-7c-2u3"/>
                 <outlet property="senderNameLabel" destination="Bhh-Jz-21a" id="8HJ-Kw-q5Q"/>

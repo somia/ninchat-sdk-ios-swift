@@ -22,6 +22,7 @@ class ChatTypingCell: UITableViewCell {
     }
     @IBOutlet private(set) weak var bubbleImageView: UIImageView!
     @IBOutlet private(set) weak var leftAvatarImageView: UIImageView!
+    @IBOutlet private(set) weak var leftAvatarContainerView: UIView!
     @IBOutlet private(set) weak var messageImageView: UIImageView!
     
     // MARK: - UITableViewCell
@@ -51,13 +52,15 @@ class ChatTypingCell: UITableViewCell {
             self.senderNameLabel.textColor = nameColor
         }
         
-        if let timeColor = colorAssets?[.chatTimestamp] {
+        if let timeColor = colorAssets?[.ninchatColorChatTimestamp] {
             self.timeLabel?.textColor = timeColor
         }
     }
 
     private func apply(avatar config: AvatarConfig?, imageView: UIImageView, url: String?) {
         imageView.isHidden = !(config?.show ?? false)
+        leftAvatarContainerView.width?.constant = (imageView.isHidden) ? 0 : 35
+        
         if let overrideURL = config?.imageOverrideURL {
             imageView.image(from: overrideURL)
         } else if let url = url {
