@@ -111,7 +111,8 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
                 let controller = UIImagePickerController()
                 controller.sourceType = source
                 controller.mediaTypes = [kUTTypeImage, kUTTypeMovie] as [String]
-                controller.allowsEditing = true
+                controller.allowsEditing = false
+                controller.videoQuality = .typeMedium
                 controller.delegate = mediaDelegate
 
                 weakSelf.navigationController?.present(controller, animated: true, completion: nil)
