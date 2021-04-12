@@ -126,7 +126,7 @@ class ChatChannelMineCell: ChatChannelCell {
     
     internal func configureMyMessage(avatar url: String?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, config: AvatarConfig?, series: Bool) {
         self.senderNameLabel.textAlignment = .right
-        self.bubbleImageView.image = UIImage(named: (series) ? "chat_bubble_left_series" : "chat_bubble_left", in: .SDKBundle, compatibleWith: nil)
+        self.bubbleImageView.image = UIImage(named: (series) ? "chat_bubble_right_series" : "chat_bubble_right", in: .SDKBundle, compatibleWith: nil)
 
         /// White text on black bubble
         self.bubbleImageView.tintColor = colorAssets?[.ninchatColorChatBubbleRightTint] ?? .black
@@ -172,7 +172,7 @@ class ChatChannelOthersCell: ChatChannelCell {
     
     internal func configureOtherMessage(avatar url: String?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, config: AvatarConfig?, series: Bool) {
         self.senderNameLabel.textAlignment = .left
-        self.bubbleImageView.image = UIImage(named: (series) ? "chat_bubble_right_series" : "chat_bubble_right", in: .SDKBundle, compatibleWith: nil)
+        self.bubbleImageView.image = UIImage(named: (series) ? "chat_bubble_left_series" : "chat_bubble_left", in: .SDKBundle, compatibleWith: nil)
         
         /// Black text on white bubble
         self.bubbleImageView.tintColor = colorAssets?[.ninchatColorChatBubbleLeftTint] ?? .white
