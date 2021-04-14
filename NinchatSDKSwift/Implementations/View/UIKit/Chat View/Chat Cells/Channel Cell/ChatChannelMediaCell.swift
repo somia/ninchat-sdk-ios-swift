@@ -25,12 +25,18 @@ protocol ChannelMediaCell {
 
 extension ChannelMediaCell where Self:ChatChannelCell {
     func populateText(message: TextMessage, attachment: FileInfo?) {
+        /// setup the aspect ratio doesn't need to be done async
+        guard let message = message as? TextMessage, let attachment = message.attachment else { return }
+        self.set(aspect: attachment.aspectRatio, message.series)
+
         /// early return to avoid rendering performance issues.
-        guard attachment?.fileExpired ?? false else {
-            try? self.updateAttachment(asynchronous: self.messageImageView.height == nil, fromCache: true); return
+        if !attachment.fileExpired {
+            try? self.updateAttachment(asynchronous: self.messageImageView.height == nil, fromCache: true);
+            return
         }
 
-        attachment?.updateInfo(session: self.session) { [weak self] error, didRefreshNetwork in
+        /// attachment needs to be updated, it was probably expired
+        attachment.updateInfo(session: self.session) { [weak self] error, didRefreshNetwork in
             guard error == nil else { return }
             do {
                 try self?.updateAttachment(asynchronous: didRefreshNetwork || self?.messageImageView.height == nil, fromCache: false)
@@ -79,19 +85,14 @@ extension ChannelMediaCell where Self:ChatChannelCell {
     }
 
     private func updateMessageImageView(attachment: FileInfo, thumbnailUrl: String?, imageURL: String?, image: UIImage?, asynchronous: Bool, isSeries: Bool) {
-        let dispatchGroup = DispatchGroup()
-
-        dispatchGroup.enter()
         DispatchQueue.main.async {
             if let image = image {
                 self.messageImageView.image = image
                 (self as? ChannelMediaCellDelegate)?.didLoadAttachment(image)
-                dispatchGroup.leave()
             }
             /// Load the image from cache first
             else if let id = self.message?.messageID, let image = self.cachedImage?[id] {
                 self.messageImageView.image = image
-                dispatchGroup.leave()
             }
             /// Load the thumbnail image in message image view over HTTP or from local cache
             else if let thumbnailUrl = thumbnailUrl {
@@ -101,7 +102,6 @@ extension ChannelMediaCell where Self:ChatChannelCell {
                         self?.messageImageView.image = UIImage(data: data)
 
                         (self as? ChannelMediaCellDelegate)?.didLoadAttachment(UIImage(data: data))
-                        dispatchGroup.leave()
                     }
                 }
             }
@@ -109,36 +109,22 @@ extension ChannelMediaCell where Self:ChatChannelCell {
 
         /// Load the image in message image view over HTTP in the background for later uses
         if let messageID = self.message?.messageID, self.originalImage?[messageID] == nil, let imageURL = imageURL, image == nil {
-            dispatchGroup.enter()
             DispatchQueue.global(qos: .background).async {
                 imageURL.fetchImage { [weak self, messageID] data in
                     self?.originalImage?[messageID] = UIImage(data: data)
-                    dispatchGroup.leave()
                 }
-            }
-        }
-
-        dispatchGroup.notify(queue: DispatchQueue.main) {
-            if self.set(aspect: attachment.aspectRatio, isSeries) {
-                guard !self.constraintsSet, !self.isReloading else { debugger("skipp reloading cell's constraints"); return }
-                debugger("Cell's constraints are not set and the cell is not loading => reload frames")
-                /// Inform the chat view that our cell might need resizing due to new constraints.
-                /// We do this regardless of fromCache -value as this method may have been called asynchronously
-                /// from `updateInfo(session:completion:)` completion block in populate method.
-                self.delegate?.onConstraintsUpdate(cell: self, withAnimation: asynchronous)
             }
         }
     }
 
-    private func set(aspect ratio: Double?, _ isSeries: Bool, update: Bool = false) -> Bool {
-        guard !self.constraintsSet, let ratio = ratio, self.messageImageView.width?.constant ?? 0 > 0 else { return false }
+    private func set(aspect ratio: Double?, _ isSeries: Bool) {
+        guard let ratio = ratio, self.contentView.frame.width > 0 else { return }
         let width: CGFloat = min(self.contentView.bounds.width, 400) / 2, height: CGFloat = width / CGFloat(ratio)
         debugger("attachment constraints: width: \(width), height: \(height)")
 
         self.parentView.fix(height: max(height, 150.0))
         self.messageImageView.fix(width: width)
         self.messageImageViewContainer.top?.constant = (isSeries) ? 16 : 8
-        return true
     }
 
     private func resetImageLayout() {
@@ -177,6 +163,7 @@ final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell, Cha
             self.messageImageView.image = nil
         }
         self.videoPlayIndicator.isHidden = true
+        self.layoutIfNeeded()
     }
 
     @objc
@@ -230,6 +217,7 @@ final class ChatChannelMediaOthersCell: ChatChannelOthersCell, ChannelMediaCell,
             self.messageImageView.image = nil
         }
         self.videoPlayIndicator.isHidden = true
+        self.layoutIfNeeded()
     }
 
     @objc

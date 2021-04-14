@@ -7,18 +7,11 @@
 import UIKit
 
 protocol ChatCell: UIView {
-    var isReloading: Bool! { get set }
-    var delegate: ChatCellDelegate? { get set }
-
     var session: NINChatSessionAttachment? { get set }
     var videoThumbnailManager: VideoThumbnailManager? { get set }
     var onImageTapped: ((_ attachment: FileInfo, _ image: UIImage?) -> Void)? { get set }
     var onComposeSendTapped: ComposeMessageViewProtocol.OnUIComposeSendActionTapped? { get set }
     var onComposeUpdateTapped: ComposeMessageViewProtocol.OnUIComposeUpdateActionTapped? { get set }
-}
-
-protocol ChatCellDelegate {
-    func onConstraintsUpdate(cell: ChatChannelCell, withAnimation animation: Bool)
 }
 
 protocol ChannelCell: UIView {

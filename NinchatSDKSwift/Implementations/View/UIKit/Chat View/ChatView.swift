@@ -173,7 +173,6 @@ extension ChatView: UITableViewDataSource, UITableViewDelegate {
 extension ChatView {
     private func setupBubbleCell(_ message: ChannelMessage, at indexPath: IndexPath) -> ChatChannelCell {
         let cell = self.cell(message, for: tableView, at: indexPath)
-        cell.delegate = self
         cell.session = self.sessionManager
         cell.videoThumbnailManager = videoThumbnailManager
 
@@ -216,21 +215,5 @@ extension ChatView {
 
         cell.populate(message: message, colorAssets: self.colorAssets)
         return cell
-    }
-}
-
-extension ChatView: ChatCellDelegate {
-    func onConstraintsUpdate(cell: ChatChannelCell, withAnimation animation: Bool) {
-        guard self.tableView.numberOfRows(inSection: 0) == self.dataSource?.numberOfMessages(for: self) else { return }
-        defer { cell.isReloading = false; cell.constraintsSet = true }
-        cell.isReloading = true
-
-        debugger("Reload constraints with animation: \(animation)")
-        if animation {
-            DispatchQueue.main.async {
-                self.tableView.beginUpdates()
-                self.tableView.endUpdates()
-            }
-        }
     }
 }

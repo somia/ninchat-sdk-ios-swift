@@ -27,10 +27,6 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
     
     // MARK: - ChatCell
 
-    var isReloading: Bool! = false
-    var constraintsSet: Bool! = false
-    var delegate: ChatCellDelegate?
-
     weak var session: NINChatSessionAttachment?
     var videoThumbnailManager: VideoThumbnailManager?
     var onImageTapped: ((FileInfo, UIImage?) -> Void)?
@@ -133,7 +129,7 @@ class ChatChannelMineCell: ChatChannelCell {
         if let name = config?.nameOverride, !name.isEmpty {
             self.senderNameLabel.text = name
         }
-        
+
         /// Apply asset overrides
         self.applyCommon(imageAssets: imageAssets, colorAssets: colorAssets)
         self.apply(avatar: config, imageView: self.rightAvatarImageView, url: url)
@@ -164,7 +160,7 @@ class ChatChannelOthersCell: ChatChannelCell {
         self.bubbleImageView.height?.isActive = false
         self.bubbleImageView.width?.isActive = false
     }
-    
+
     override func populateChannel(message: ChannelMessage, configuration: SiteConfiguration?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, agentAvatarConfig: AvatarConfig?, userAvatarConfig: AvatarConfig?, composeState: [Bool]?) {
         super.populateChannel(message: message, configuration: configuration, imageAssets: imageAssets, colorAssets: colorAssets, agentAvatarConfig: agentAvatarConfig, userAvatarConfig: userAvatarConfig, composeState: composeState)
         self.configureOtherMessage(avatar: message.sender?.iconURL, imageAssets: imageAssets, colorAssets: colorAssets, config: agentAvatarConfig, series: message.series)
