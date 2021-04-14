@@ -59,17 +59,14 @@ extension NINPickerControllerDelegateImpl {
 
                     /// other types are not supported
                     /// PDF documents cannot be selected from 'photo library'
-                    guard assetResource.type == .video || assetResource.type == .photo else {
+                    guard assetResource.type != .audio && assetResource.type != .adjustmentData else {
                         self.viewModel.onErrorOccurred?(AttachmentError.unsupported)
                         return
                     }
 
                     /// avoid sending file's original extension to avoid confusion
-                    /// in the following lines we convert the image to jpg
-                    let fileExtension = (assetResource.type == .video) ? ".mp4" : ".jpg"
-
                     /// use asset UUID to get the unique name for the asset
-                    fileName = assetResource.assetLocalIdentifier.components(separatedBy: "/").first! + fileExtension
+                    fileName = assetResource.assetLocalIdentifier.components(separatedBy: "/").first! + assetResource.type.fileExtension!
                 }
             } else {
                 if let url = info[UIImagePickerController.InfoKey.referenceURL] as? URL,

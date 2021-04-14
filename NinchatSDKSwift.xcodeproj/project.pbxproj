@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5C06A648261DB1EA00873B33 /* UIResponder+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C06A647261DB1EA00873B33 /* UIResponder+Extension.swift */; };
+		5C08BD6E2626CC3100AB9397 /* PHAssetResourceType+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C08BD6D2626CC3100AB9397 /* PHAssetResourceType+Extension.swift */; };
 		5C5658CD25EF780F004ED98F /* QuestionnaireTypingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C5658CC25EF780F004ED98F /* QuestionnaireTypingCell.xib */; };
 		5C5658D225EF7F77004ED98F /* QuestionnaireTypingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C5658D125EF7F77004ED98F /* QuestionnaireTypingCell.swift */; };
 		5CD4F1C82540CAAF009856AC /* Notification+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD4F1C62540CAAF009856AC /* Notification+Extension.swift */; };
@@ -238,6 +239,7 @@
 		495ADA60487CD354EDC07332 /* Pods_NinchatSDKSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDKSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		51577DDC11F36A3D9573A68C /* Pods_NinchatSDKSwiftUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDKSwiftUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C06A647261DB1EA00873B33 /* UIResponder+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIResponder+Extension.swift"; sourceTree = "<group>"; };
+		5C08BD6D2626CC3100AB9397 /* PHAssetResourceType+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PHAssetResourceType+Extension.swift"; sourceTree = "<group>"; };
 		5C5658CC25EF780F004ED98F /* QuestionnaireTypingCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = QuestionnaireTypingCell.xib; sourceTree = "<group>"; };
 		5C5658D125EF7F77004ED98F /* QuestionnaireTypingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionnaireTypingCell.swift; sourceTree = "<group>"; };
 		5CD4F1C62540CAAF009856AC /* Notification+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Notification+Extension.swift"; sourceTree = "<group>"; };
@@ -712,6 +714,7 @@
 				B704E5FC177573DF56D2369A /* NSUserDefaults+Extension.swift */,
 				B704E5C0EFFB626F12366601 /* URL+Extension.swift */,
 				5C06A647261DB1EA00873B33 /* UIResponder+Extension.swift */,
+				5C08BD6D2626CC3100AB9397 /* PHAssetResourceType+Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1478,6 +1481,7 @@
 				91A16ECAF6CDA6AA355A4D98 /* QuestionnaireNavigationCell.swift in Sources */,
 				91A1631CB9FB0E611E88DD99 /* WKWebView+Extension.swift in Sources */,
 				91A1621313714ACDFE35E97C /* NSAttributedString+Extension.swift in Sources */,
+				5C08BD6E2626CC3100AB9397 /* PHAssetResourceType+Extension.swift in Sources */,
 				91A165F1E03C8A728D1EEF12 /* QuestionnaireElementConnector.swift in Sources */,
 				91A1658F97223291E9FBBD4B /* NINQuestionnaireViewModel.swift in Sources */,
 				91A167F485DBCDFEEA0261F6 /* QuestionnaireElementLikert.swift in Sources */,
