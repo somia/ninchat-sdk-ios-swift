@@ -12,7 +12,7 @@ protocol ChannelMediaCellDelegate {
 
 protocol ChannelMediaCell {
     var cachedImage: [String:UIImage]? { get }
-    var originalImage: UIImage? { set get }
+    var originalImage: [String:UIImage]? { set get }
 
     /// Outlets
     var parentView: UIView! { get set }
@@ -63,7 +63,7 @@ extension ChannelMediaCell where Self:ChatChannelCell {
         guard let thumbnailManager = self.videoThumbnailManager else { throw NINUIExceptions.noThumbnailManager }
 
         /// For video we must fetch the thumbnail image
-        thumbnailManager.fetchVideoThumbnail(fromURL: videoURL) { [weak self] error, fromCache, thumbnail in
+        thumbnailManager.fetchVideoThumbnail(fromURL: videoURL) { [weak self, message = message] error, fromCache, thumbnail in
             if error != nil { Toast.show(message: .error("Failed to get video thumbnail")); return }
             self?.updateMessageImageView(attachment: attachment, thumbnailUrl: nil, imageURL: nil, image: thumbnail, asynchronous: asynchronous, isSeries: isSeries)
         }
@@ -108,11 +108,11 @@ extension ChannelMediaCell where Self:ChatChannelCell {
         }
 
         /// Load the image in message image view over HTTP in the background for later uses
-        if let imageURL = imageURL, image == nil {
+        if let messageID = self.message?.messageID, self.originalImage?[messageID] == nil, let imageURL = imageURL, image == nil {
             dispatchGroup.enter()
             DispatchQueue.global(qos: .background).async {
-                imageURL.fetchImage { [weak self] data in
-                    self?.originalImage = UIImage(data: data)
+                imageURL.fetchImage { [weak self, messageID] data in
+                    self?.originalImage?[messageID] = UIImage(data: data)
                     dispatchGroup.leave()
                 }
             }
@@ -149,7 +149,7 @@ extension ChannelMediaCell where Self:ChatChannelCell {
 
 final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell, ChannelMediaCellDelegate {
     var cachedImage: [String:UIImage]? = [:]
-    var originalImage: UIImage?
+    var originalImage: [String:UIImage]? = [:]
     @IBOutlet weak var parentView: UIView!
     @IBOutlet weak var messageImageViewContainer: UIView! {
         didSet {
@@ -186,7 +186,7 @@ final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell, Cha
         if attachment.isVideo {
             /// Will open video player
             self.onImageTapped?(attachment, nil)
-        } else if attachment.isImage, let image = self.originalImage {
+        } else if attachment.isImage, let image = self.originalImage?[message.messageID] {
             /// Will show full-screen image viewer
             self.onImageTapped?(attachment, image)
         }
@@ -202,7 +202,7 @@ final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell, Cha
 
 final class ChatChannelMediaOthersCell: ChatChannelOthersCell, ChannelMediaCell, ChannelMediaCellDelegate {
     var cachedImage: [String:UIImage]? = [:]
-    var originalImage: UIImage?
+    var originalImage: [String:UIImage]? = [:]
     @IBOutlet weak var parentView: UIView!
     @IBOutlet weak var messageImageViewContainer: UIView! {
         didSet {
@@ -239,7 +239,7 @@ final class ChatChannelMediaOthersCell: ChatChannelOthersCell, ChannelMediaCell,
         if attachment.isVideo {
             /// Will open video player
             self.onImageTapped?(attachment, nil)
-        } else if attachment.isImage, let image = self.originalImage {
+        } else if attachment.isImage, let image = self.originalImage?[message.messageID] {
             /// Will show full-screen image viewer
             self.onImageTapped?(attachment, image)
         }
