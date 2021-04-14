@@ -113,12 +113,20 @@ extension ChannelMediaCell where Self:ChatChannelCell {
     }
 
     private func set(aspect ratio: Double?, _ isSeries: Bool) {
-        guard let ratio = ratio, self.messageImageView.width == nil else { return }
-        let width: CGFloat = min(self.contentView.bounds.width, 400) / 2, height: CGFloat = width / CGFloat(ratio)
+        let width: CGFloat = min(self.contentView.bounds.width, 400) / 2, height: CGFloat = width / CGFloat(ratio ?? 1.0)
         debugger("attachment constraints: width: \(width), height: \(height)")
 
-        self.parentView.fix(height: max(height, 150.0))
-        self.messageImageView.fix(width: width)
+        /// Defensive approach to avoid problems on cell reuse cases
+        if let parentHeight = self.parentView.height {
+            self.parentView.height?.constant = max(height, 150.0)
+        } else {
+            self.parentView.fix(height: max(height, 150.0))
+        }
+        if let messageWidth = self.messageImageView.width {
+            self.messageImageView.width?.constant = width
+        } else {
+            self.messageImageView.fix(width: width)
+        }
         self.messageImageViewContainer.top?.constant = (isSeries) ? 16 : 8
     }
 }
