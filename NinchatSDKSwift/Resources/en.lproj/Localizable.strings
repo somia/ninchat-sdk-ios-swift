@@ -22,3 +22,4 @@
 "Camera not available" = "The camera is not available during a video call";
 "Access denied" = "Access denied";
 "Submission Error" = "An error occurred in submitting answers";
+"Unsupported attachment" = "The format is not supported";

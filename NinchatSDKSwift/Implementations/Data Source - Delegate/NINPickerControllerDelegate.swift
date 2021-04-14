@@ -8,6 +8,17 @@ import UIKit
 import Photos
 import CoreServices
 
+enum AttachmentError: Error {
+    case unsupported
+
+    var localizedDescription: String {
+        switch self {
+        case .unsupported:
+            return "Unsupported attachment".localized
+        }
+    }
+}
+
 protocol NINPickerControllerAction {
     var onMediaSent: ((Error?) -> Void)? { get set }
     var onDismissPicker: (() -> Void)? { get set }
@@ -37,45 +48,64 @@ final class NINPickerControllerDelegateImpl: NSObject, NINPickerControllerDelega
 
 extension NINPickerControllerDelegateImpl {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        var fileName = "photo.jpg"
-        
-        // Photos from photo library have file names; extract it
-        if #available(iOS 11, *) {
-            if picker.sourceType == .photoLibrary,
-                let asset = info[UIImagePickerController.InfoKey.phAsset] as? PHAsset,
-                let assetResource = PHAssetResource.assetResources(for: asset).last {
-                
-                fileName = assetResource.originalFilename
-            }
-        } else {
-            if picker.sourceType == .photoLibrary,
-                let url = info[UIImagePickerController.InfoKey.referenceURL] as? URL,
-                let phAsset = PHAsset.fetchAssets(withALAssetURLs: [url], options: nil).lastObject,
-                let name = phAsset.value(forKey: "filename") as? String {
-                
-                fileName = name
+        defer { self.onDismissPicker?() }
+        var fileName = UUID().uuidString
+
+        /// Photos from photo library have file names; extract it
+        if picker.sourceType == .photoLibrary {
+            if #available(iOS 11, *) {
+                if let asset = info[UIImagePickerController.InfoKey.phAsset] as? PHAsset,
+                   let assetResource = PHAssetResource.assetResources(for: asset).last {
+
+                    /// other types are not supported
+                    /// PDF documents cannot be selected from 'photo library'
+                    guard assetResource.type != .audio && assetResource.type != .adjustmentData else {
+                        self.viewModel.onErrorOccurred?(AttachmentError.unsupported)
+                        return
+                    }
+
+                    /// avoid sending file's original extension to avoid confusion
+                    /// use asset UUID to get the unique name for the asset
+                    fileName = assetResource.assetLocalIdentifier.components(separatedBy: "/").first! + assetResource.type.fileExtension!
+                }
+            } else {
+                if let url = info[UIImagePickerController.InfoKey.referenceURL] as? URL,
+                   let phAsset = PHAsset.fetchAssets(withALAssetURLs: [url], options: nil).lastObject,
+                   let name = phAsset.value(forKey: "filename") as? String {
+
+                    fileName = name
+                }
             }
         }
         
         DispatchQueue.global(qos: .background).async {
             switch info[UIImagePickerController.InfoKey.mediaType] as! CFString {
             case kUTTypeImage:
-                if let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage, let data = image.jpegData(compressionQuality: 1.0) {
+                if fileName.components(separatedBy: ".").count == 1 {
+                    /// extension was not set
+                    fileName += ".jpg"
+                }
+
+                if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage, let data = image.jpegData(compressionQuality: 0.5) {
                     self.viewModel.send(attachment: fileName, data: data) { [weak self] error in
                         self?.onMediaSent?(error)
                     }
                 }
             case kUTTypeMovie:
+                if fileName.components(separatedBy: ".").count == 1 {
+                    /// extension was not set
+                    fileName += ".mp4"
+                }
+
                 if let videoURL = info[UIImagePickerController.InfoKey.mediaURL] as? URL, let data = try? Data(contentsOf: videoURL) {
                     self.viewModel.send(attachment: fileName, data: data) { [weak self] error in
                         self?.onMediaSent?(error)
                     }
                 }
             default:
-                fatalError("Invalid media type!")
+                self.viewModel.onErrorOccurred?(AttachmentError.unsupported)
             }
         }
-        self.onDismissPicker?()
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {

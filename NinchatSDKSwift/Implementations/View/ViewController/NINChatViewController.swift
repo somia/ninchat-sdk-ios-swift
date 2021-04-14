@@ -240,6 +240,11 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
     // MARK: - Setup ViewModel
     
     private func setupViewModel() {
+        self.viewModel.onErrorOccurred = { error in
+            if let error = error as? AttachmentError {
+                Toast.show(message: .error(error.localizedDescription))
+            }
+        }
         self.viewModel.onChannelClosed = { [weak self] in
             self?.disableView(true)
         }
@@ -473,7 +478,9 @@ extension NINChatViewController {
                 }
 
                 self?.viewModel.openAttachment(source: source) { [weak self, source] error in
-                    if error == nil { self?.onOpenGallery?(source); return }
+                    if error == nil {
+                        self?.onOpenGallery?(source); return
+                    }
                     Toast.show(message: .error("\("Access denied".localized)\n\("Update Settings".localized)"))
                 }
             }
