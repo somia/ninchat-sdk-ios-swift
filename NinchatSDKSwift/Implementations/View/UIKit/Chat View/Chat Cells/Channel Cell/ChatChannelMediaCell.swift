@@ -49,7 +49,7 @@ extension ChannelMediaCell where Self:ChatChannelCell {
         self.resetImageLayout()
         if attachment.isImage {
             self.videoPlayIndicator.isHidden = true
-            self.messageImageView.contentMode = .scaleAspectFit
+            self.messageImageView.contentMode = .scaleAspectFill
             self.updateImage(from: attachment, thumbnailUrl: attachment.thumbnailUrl, imageURL: attachment.url, fromCache, asynchronous, message.series)
         } else if attachment.isVideo, let videoURL = attachment.url {
             self.videoPlayIndicator.isHidden = false
@@ -83,15 +83,15 @@ extension ChannelMediaCell where Self:ChatChannelCell {
 
         dispatchGroup.enter()
         DispatchQueue.main.async {
-            defer { dispatchGroup.leave() }
-
             if let image = image {
                 self.messageImageView.image = image
                 (self as? ChannelMediaCellDelegate)?.didLoadAttachment(image)
+                dispatchGroup.leave()
             }
             /// Load the image from cache first
             else if let id = self.message?.messageID, let image = self.cachedImage?[id] {
                 self.messageImageView.image = image
+                dispatchGroup.leave()
             }
             /// Load the thumbnail image in message image view over HTTP or from local cache
             else if let thumbnailUrl = thumbnailUrl {
@@ -101,14 +101,15 @@ extension ChannelMediaCell where Self:ChatChannelCell {
                         self?.messageImageView.image = UIImage(data: data)
 
                         (self as? ChannelMediaCellDelegate)?.didLoadAttachment(UIImage(data: data))
+                        dispatchGroup.leave()
                     }
                 }
             }
         }
 
         /// Load the image in message image view over HTTP in the background for later uses
-        dispatchGroup.enter()
         if let imageURL = imageURL, image == nil {
+            dispatchGroup.enter()
             DispatchQueue.global(qos: .background).async {
                 imageURL.fetchImage { [weak self] data in
                     self?.originalImage = UIImage(data: data)
@@ -119,7 +120,7 @@ extension ChannelMediaCell where Self:ChatChannelCell {
 
         dispatchGroup.notify(queue: DispatchQueue.main) {
             if self.set(aspect: attachment.aspectRatio, isSeries) {
-                guard !self.constraintsSet, !self.isReloading  else { return }
+                guard !self.constraintsSet, !self.isReloading else { debugger("skipp reloading cell's constraints"); return }
                 debugger("Cell's constraints are not set and the cell is not loading => reload frames")
                 /// Inform the chat view that our cell might need resizing due to new constraints.
                 /// We do this regardless of fromCache -value as this method may have been called asynchronously
@@ -130,7 +131,7 @@ extension ChannelMediaCell where Self:ChatChannelCell {
     }
 
     private func set(aspect ratio: Double?, _ isSeries: Bool, update: Bool = false) -> Bool {
-        guard let ratio = ratio, self.contentView.bounds.width > 0 else { return false }
+        guard !self.constraintsSet, let ratio = ratio, self.messageImageView.width?.constant ?? 0 > 0 else { return false }
         let width: CGFloat = min(self.contentView.bounds.width, 400) / 2, height: CGFloat = width / CGFloat(ratio)
         debugger("attachment constraints: width: \(width), height: \(height)")
 
