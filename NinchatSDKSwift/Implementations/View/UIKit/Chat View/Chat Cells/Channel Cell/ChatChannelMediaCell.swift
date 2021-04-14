@@ -7,7 +7,7 @@
 import UIKit
 
 protocol ChannelMediaCellDelegate {
-    func didLoadAttachment(_ image: UIImage?)
+    func didLoadAttachment(_ image: UIImage?, messageID: String?) -> Bool
 }
 
 protocol ChannelMediaCell {
@@ -52,7 +52,9 @@ extension ChannelMediaCell where Self:ChatChannelCell {
         guard attachment.isVideo || attachment.isImage else { throw NINUIExceptions.invalidAttachment }
 
         /// Make sure we have an image tap recognizer in place
-        self.resetImageLayout()
+        self.messageImageView.image = nil
+        self.messageImageViewContainer.gestureRecognizers?.forEach { self.messageImageViewContainer.removeGestureRecognizer($0) }
+
         if attachment.isImage {
             self.videoPlayIndicator.isHidden = true
             self.messageImageView.contentMode = .scaleAspectFill
@@ -86,22 +88,15 @@ extension ChannelMediaCell where Self:ChatChannelCell {
 
     private func updateMessageImageView(attachment: FileInfo, thumbnailUrl: String?, imageURL: String?, image: UIImage?, asynchronous: Bool, isSeries: Bool) {
         DispatchQueue.main.async {
-            if let image = image {
-                self.messageImageView.image = image
-                (self as? ChannelMediaCellDelegate)?.didLoadAttachment(image)
-            }
             /// Load the image from cache first
-            else if let id = self.message?.messageID, let image = self.cachedImage?[id] {
-                self.messageImageView.image = image
+            if (self as? ChannelMediaCellDelegate)?.didLoadAttachment(image, messageID: self.message?.messageID) ?? false {
+               return
             }
             /// Load the thumbnail image in message image view over HTTP or from local cache
-            else if let thumbnailUrl = thumbnailUrl {
-                self.messageImageView.fetchImage(from: URL(string: thumbnailUrl)) { [weak self, message = self.message] data in
+            else if let thumbnailUrl = thumbnailUrl, let messageID = self.message?.messageID {
+                self.messageImageView.fetchImage(from: URL(string: thumbnailUrl)) { [weak self, messageID] data in
                     DispatchQueue.main.async {
-                        if self?.message?.messageID != message?.messageID { debugger("** ** Dismiss unrelated attachment"); return }
-                        self?.messageImageView.image = UIImage(data: data)
-
-                        (self as? ChannelMediaCellDelegate)?.didLoadAttachment(UIImage(data: data))
+                        (self as? ChannelMediaCellDelegate)?.didLoadAttachment(UIImage(data: data), messageID: messageID)
                     }
                 }
             }
@@ -118,18 +113,13 @@ extension ChannelMediaCell where Self:ChatChannelCell {
     }
 
     private func set(aspect ratio: Double?, _ isSeries: Bool) {
-        guard let ratio = ratio, self.contentView.frame.width > 0 else { return }
+        guard let ratio = ratio, self.messageImageView.width == nil else { return }
         let width: CGFloat = min(self.contentView.bounds.width, 400) / 2, height: CGFloat = width / CGFloat(ratio)
         debugger("attachment constraints: width: \(width), height: \(height)")
 
         self.parentView.fix(height: max(height, 150.0))
         self.messageImageView.fix(width: width)
         self.messageImageViewContainer.top?.constant = (isSeries) ? 16 : 8
-    }
-
-    private func resetImageLayout() {
-        self.messageImageView.image = nil
-        self.messageImageViewContainer.gestureRecognizers?.forEach { self.messageImageViewContainer.removeGestureRecognizer($0) }
     }
 }
 
@@ -154,18 +144,6 @@ final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell, Cha
         }
     }
 
-    override func prepareForReuse() {
-        super.prepareForReuse()
-
-        if let id = self.message?.messageID, let image = cachedImage?[id] {
-            self.messageImageView.image = image
-        } else {
-            self.messageImageView.image = nil
-        }
-        self.videoPlayIndicator.isHidden = true
-        self.layoutIfNeeded()
-    }
-
     @objc
     func didTappedOnImage() {
         guard let message = self.message as? TextMessage, let attachment = message.attachment else { return }
@@ -180,10 +158,16 @@ final class ChatChannelMediaMineCell: ChatChannelMineCell, ChannelMediaCell, Cha
     }
 
     // MARK: - ChannelMediaCellDelegate
-    func didLoadAttachment(_ image: UIImage?) {
-        if let image = image, let id = self.message?.messageID {
+
+    @discardableResult
+    func didLoadAttachment(_ image: UIImage?, messageID: String?) -> Bool {
+        guard self.messageImageView.image == nil else { return true }
+        if let image = image, let id = self.message?.messageID, messageID == id {
             self.cachedImage?[id] = image
+            self.messageImageView.image = image
+            return true
         }
+        return false
     }
 }
 
@@ -208,18 +192,6 @@ final class ChatChannelMediaOthersCell: ChatChannelOthersCell, ChannelMediaCell,
         }
     }
 
-    override func prepareForReuse() {
-        super.prepareForReuse()
-
-        if let id = self.message?.messageID, let image = cachedImage?[id] {
-            self.messageImageView.image = image
-        } else {
-            self.messageImageView.image = nil
-        }
-        self.videoPlayIndicator.isHidden = true
-        self.layoutIfNeeded()
-    }
-
     @objc
     func didTappedOnImage() {
         guard let message = self.message as? TextMessage, let attachment = message.attachment else { return }
@@ -234,9 +206,15 @@ final class ChatChannelMediaOthersCell: ChatChannelOthersCell, ChannelMediaCell,
     }
 
     // MARK: - ChannelMediaCellDelegate
-    func didLoadAttachment(_ image: UIImage?) {
-        if let image = image, let id = self.message?.messageID {
+
+    @discardableResult
+    func didLoadAttachment(_ image: UIImage?, messageID: String?) -> Bool {
+        guard self.messageImageView.image == nil else { return true }
+        if let image = image, let id = self.message?.messageID, messageID == id {
             self.cachedImage?[id] = image
+            self.messageImageView.image = image
+            return true
         }
+        return false
     }
 }
