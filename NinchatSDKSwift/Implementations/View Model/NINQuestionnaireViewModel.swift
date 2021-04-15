@@ -214,7 +214,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
             let metadata = self.audienceMetadata ?? NINLowLevelClientProps()
             metadata.set(value: questionnaireAnswers, forKey: "pre_answers")
             
-            try self.sessionManager?.registerQuestionnaire(queue: queueID, answers: metadata, completion: completion)
+            try self.sessionManager?.registerAudience(queue: queueID, answers: metadata, completion: completion)
         } catch {
             completion(error)
         }

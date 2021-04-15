@@ -350,7 +350,7 @@ extension NINChatSessionManagerImpl {
     }
     
     /// Register audience questionnaire answers
-    func registerQuestionnaire(queue ID: String, answers: NINLowLevelClientProps, completion: @escaping CompletionWithError) throws {
+    func registerAudience(queue ID: String, answers: NINLowLevelClientProps, completion: @escaping CompletionWithError) throws {
         guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
 
         let param = NINLowLevelClientProps.initiate(action: .registerAudience)
