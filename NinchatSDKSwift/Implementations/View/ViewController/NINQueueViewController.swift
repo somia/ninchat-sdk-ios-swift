@@ -67,10 +67,16 @@ final class NINQueueViewController: UIViewController, ViewController {
         self.navigationItem.setHidesBackButton(true, animated: false)
 
         /// When the queue is not usable, do not try to connect
-        /// or initiate the view model
-        if self.setupClosedQueue() { return }
+        /// instead, try to register audience if it is set in the config
+        /// `https://github.com/somia/mobile/issues/337`
+        if self.setupClosedQueue() {
+            if let audienceRegister = self.sessionManager?.siteConfiguration.audienceRegisteredText, !audienceRegister.isEmpty {
+                self.setupViewModel(.registerAudience)
+            }
+            return
+        }
         self.setupOpenQueue()
-        self.setupViewModel()
+        self.setupViewModel(self.resumeMode)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -83,52 +89,58 @@ final class NINQueueViewController: UIViewController, ViewController {
         NotificationCenter.default.removeObserver(self, name: UIApplication.willEnterForegroundNotification, object: nil)
     }
 
-    private func setupViewModel() {
-        self.viewModel.resumeMode = self.resumeMode != nil
+    private func setupViewModel(_ resumeMode: ResumeMode?) {
         self.viewModel.onInfoTextUpdate = { [weak self] text in
-            self?.updateQueueInfo(text: text)
+            DispatchQueue.main.async {
+                self?.queueInfoTextView.setAttributed(text: text ?? "", font: .ninchat)
+            }
         }
         self.viewModel.onQueueJoin = { [weak self] error in
             guard error == nil else { return }
             self?.onQueueActionTapped?(self?.sessionManager?.describedQueue)
         }
         /// Directly open chat page if it is a session resumption condition
-        switch self.resumeMode {
+        switch resumeMode {
         case .toQueue(let target):
             guard let queue = target else { return }
+            self.viewModel.resumeMode = true
             self.viewModel.connect(queue: queue)
-            self.updateQueueInfo(text: self.viewModel.queueTextInfo(queue: queue, 1))
+            self.queueInfoTextView.setAttributed(text: self.viewModel.queueTextInfo(queue: queue, 1) ?? "", font: .ninchat)
         case .toChannel:
-            if self.sessionManager?.describedQueue == nil {
+            self.viewModel.resumeMode = true
+            guard let describedQueue = self.sessionManager?.describedQueue else {
                 debugger("error in getting target queue")
-                self.updateSpinWith(message: "Resume error".localized, spin: false)
-            } else {
-                debugger("target queue is ready: \(String(describing: self.sessionManager?.describedQueue))")
-                self.onQueueActionTapped?(self.sessionManager?.describedQueue)
+                self.spinnerImageView.isHidden = true
+                self.queueInfoTextView.setAttributed(text: "Resume error".localized, font: .ninchat)
+                return
             }
+            debugger("target queue is ready: \(String(describing: self.sessionManager?.describedQueue))")
+            self.onQueueActionTapped?(self.sessionManager?.describedQueue)
+        case .registerAudience:
+            self.viewModel.resumeMode = false
+            self.viewModel.registerAudience(queue: self.queue)
         default:
+            self.viewModel.resumeMode = false
             self.viewModel.connect(queue: self.queue)
-            self.updateQueueInfo(text: self.viewModel.queueTextInfo(queue: queue, 1))
+            self.queueInfoTextView.setAttributed(text: self.viewModel.queueTextInfo(queue: queue, 1) ?? "", font: .ninchat)
         }
     }
 
     private func setupClosedQueue() -> Bool {
         /// `If customer resumes to a session and is already in queue, then show queueing view even if queue is closed`
         if let queue = queue, queue.isClosed, queue.position == 0 {
-            self.queueInfoTextView.setAttributed(text: self.sessionManager?.siteConfiguration.noQueueText ?? "", font: .ninchat)
-            self.updateSpinWith(message: self.sessionManager?.siteConfiguration.motd ?? self.sessionManager?.siteConfiguration.noQueueText ?? "", spin: false)
+            /// Currently, we do not have a key for closed-queue situations, leave it empty
+            self.spinnerImageView.isHidden = true
+            self.queueInfoTextView.setAttributed(text: "", font: .ninchat)
+            self.motdTextView.setAttributed(text: self.sessionManager?.siteConfiguration.motd ?? "", font: .ninchat)
             return true
         }
         return false
     }
 
     private func setupOpenQueue() {
-        self.updateSpinWith(message: self.sessionManager?.siteConfiguration.motd ?? self.sessionManager?.siteConfiguration.inQueue ?? "", spin: true)
-    }
-
-    private func updateSpinWith(message: String, spin: Bool) {
-        self.spinnerImageView.isHidden = !spin
-        self.motdTextView.setAttributed(text: message, font: .ninchat)
+        self.spinnerImageView.isHidden = false
+        self.motdTextView.setAttributed(text: self.sessionManager?.siteConfiguration.motd ?? self.sessionManager?.siteConfiguration.inQueue ?? "", font: .ninchat)
     }
 }
 
@@ -145,12 +157,6 @@ extension NINQueueViewController {
         animation.duration = 3.0
         animation.repeatCount = .infinity
         spinnerImageView.layer.add(animation, forKey: "SpinAnimation")
-    }
-    
-    private func updateQueueInfo(text: String?) {
-        DispatchQueue.main.async {
-            self.queueInfoTextView.setAttributed(text: text ?? "", font: .ninchat)
-        }
     }
 
     private func overrideAssets() {
