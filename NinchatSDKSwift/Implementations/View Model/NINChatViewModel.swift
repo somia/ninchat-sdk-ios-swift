@@ -16,13 +16,18 @@ enum MessageUpdateType {
 
 protocol NINChatRTCProtocol {
     typealias RTCCallReceive = (ChannelUser?, Error?) -> Void
-    typealias RTCCallInitial = (Error?, NINChatWebRTCClient?) -> Void
+    typealias RTCCallInitial = (NINChatWebRTCClient?, Error?) -> Void
     typealias RTCCallHangup = () -> Void
 
     func listenToRTCSignaling(delegate: NINChatWebRTCClientDelegate?, onCallReceived: @escaping RTCCallReceive, onCallInitiated: @escaping RTCCallInitial, onCallHangup: @escaping RTCCallHangup)
-    func pickup(answer: Bool, completion: @escaping (Error?) -> Void)
+    func pickup(answer: Bool, unsupported: Bool?, completion: @escaping (Error?) -> Void)
     func hangup(completion: @escaping (Error?) -> Void)
     func disconnectRTC(_ client: NINChatWebRTCClient?, completion: (() -> Void)?)
+}
+extension NINChatRTCProtocol {
+    func pickup(answer: Bool, completion: @escaping (Error?) -> ()) {
+        self.pickup(answer: answer, unsupported: nil, completion: completion)
+    }
 }
 
 protocol NINChatStateProtocol {
@@ -130,13 +135,13 @@ extension NINChatViewModelImpl {
                             self?.client = NINChatWebRTCClientImpl(sessionManager: self?.sessionManager, operatingMode: .callee, stunServers: stunServers, turnServers: turnServers, candidates: self?.iceCandidates, delegate: delegate)
                             try self?.client?.start(with: signal)
 
-                            onCallInitiated(error, self?.client)
+                            onCallInitiated(self?.client, error)
                         } catch {
-                            onCallInitiated(error, nil)
+                            onCallInitiated(nil, error)
                         }
                     }
                 } catch {
-                    onCallInitiated(error, nil)
+                    onCallInitiated(nil, error)
                 }
             case .hangup:
                 debugger("WebRTC: hang-up - closing the video call.")
@@ -147,9 +152,14 @@ extension NINChatViewModelImpl {
         }
     }
 
-    func pickup(answer: Bool, completion: @escaping (Error?) -> Void) {
+    func pickup(answer: Bool, unsupported: Bool? = nil, completion: @escaping (Error?) -> Void) {
         do {
-            try self.sessionManager.send(type: .pickup, payload: ["answer": answer], completion: completion)
+            var payload = ["answer": answer]
+            if unsupported != nil {
+                payload["unsupported"] = unsupported
+            }
+
+            try self.sessionManager.send(type: .pickup, payload: payload, completion: completion)
         } catch {
             completion(error)
         }
