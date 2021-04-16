@@ -13,6 +13,7 @@ protocol NINQueueViewModel {
 
     init(sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?)
     func connect(queue: Queue)
+    func registerAudience(queue: Queue)
     func queueTextInfo(queue: Queue?, _ progress: Int) -> String?
 }
 
@@ -55,6 +56,22 @@ final class NINQueueViewModelImpl: NINQueueViewModel {
             })
         } catch {
             self.onQueueJoin?(error)
+        }
+    }
+
+    func registerAudience(queue: Queue) {
+        guard let metadata = self.sessionManager.audienceMetadata else { return }
+
+        do {
+            try self.sessionManager?.registerAudience(queue: queue.queueID, answers: metadata) { [weak self] error in
+                if let error = error {
+                    self?.onInfoTextUpdate?(error.localizedDescription); return
+                }
+
+                self?.onInfoTextUpdate?(self?.sessionManager.siteConfiguration.audienceRegisteredText)
+            }
+        } catch {
+            self.onInfoTextUpdate?(error.localizedDescription)
         }
     }
 

@@ -10,7 +10,7 @@ protocol QuestionnaireExitElement {
     var isExitElement: Bool { set get }
 }
 
-class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireOptionSelectableElement, QuestionnaireExitElement {
+class QuestionnaireElementRadio: UIView, HasCustomLayer, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireOptionSelectableElement, QuestionnaireExitElement {
 
     // MARK: - QuestionnaireElement
 
@@ -37,6 +37,7 @@ class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Question
     var elementHeight: CGFloat = 0
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
+        self.delegate = delegate
         self.overrideTitle(delegate: delegate)
         self.view.subviews.compactMap({ $0 as? Button }).forEach({ $0.overrideQuestionnaireAsset(with: delegate, isPrimary: $0.isSelected) })
     }
@@ -73,6 +74,7 @@ class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Question
 
     // MARK: - Subviews - QuestionnaireElementWithTitleAndOptions + QuestionnaireElementHasButtons
 
+    private var delegate: NINChatSessionInternalDelegate?
     private(set) lazy var title: UILabel = {
         UILabel(frame: .zero)
     }()
@@ -99,6 +101,7 @@ class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Question
 
     override func layoutSubviews() {
         super.layoutSubviews()
+        applyLayerOverride(view: self)
 
         self.decorateView()
         self.layoutIfNeeded()
@@ -123,13 +126,37 @@ extension Button {
     fileprivate func overrideQuestionnaireAsset(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         self.titleLabel?.font = .ninchat
 
-        self.setBackgroundImage((delegate?.override(questionnaireAsset: .radioSecondaryBackground) ?? .white).toImage, for: .normal)
-        self.setTitleColor(delegate?.override(questionnaireAsset: .radioSecondaryText) ?? .QGrayButton, for: .normal)
+        switch isPrimary {
+        case false:
+            if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireRadioUnselected) {
+                if let old = self.layer.sublayers?.first(where: { $0.name == LAYER_NAME }) {
+                    self.layer.replaceSublayer(old, with: layer)
+                } else {
+                    self.layer.insertSublayer(layer, at: 0)
+                }
+            }
+            /// TODO: REMOVE legacy delegate
+            else {
+                self.setBackgroundImage((delegate?.override(questionnaireAsset: .radioSecondaryBackground) ?? .white).toImage, for: .normal)
+                self.roundButton()
+            }
+        case true:
+            if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireRadioSelected) {
+                if let old = self.layer.sublayers?.first(where: { $0.name == LAYER_NAME }) {
+                    self.layer.replaceSublayer(old, with: layer)
+                } else {
+                    self.layer.insertSublayer(layer, at: 0)
+                }
+            }
+                /// TODO: REMOVE legacy delegate
+            else {
+                self.setBackgroundImage((delegate?.override(questionnaireAsset: .radioPrimaryBackground) ?? .white).toImage, for: .selected)
+                self.roundButton()
+            }
+        }
 
-        self.setBackgroundImage((delegate?.override(questionnaireAsset: .radioPrimaryBackground) ?? .white).toImage, for: .selected)
-        self.setTitleColor(delegate?.override(questionnaireAsset: .radioPrimaryText) ?? .QBlueButtonNormal, for: .selected)
-
-        self.roundButton()
+        self.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorRadioUnselectedText) ?? .QGrayButton, for: .normal)
+        self.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorRadioSelectedText) ?? .QBlueButtonNormal, for: .selected)
     }
 }
 
@@ -177,7 +204,6 @@ extension QuestionnaireElementRadio {
             .fix(top: (8.0, upperView ?? self.view), isRelative: (upperView != nil))
             .fix(height: max(45.0, button.intrinsicContentSize.height + 16.0))
             .center(toX: self.view)
-            .roundButton()
 
         if self.view.height == nil {
             self.view.fix(height: 0)
@@ -186,12 +212,13 @@ extension QuestionnaireElementRadio {
     }
 
     private func applySelection(to button: UIButton) {
-        self.view.subviews.compactMap({ $0 as? Button }).forEach { button in
-            button.isSelected = false
-            (button as Button).roundButton()
-        }
+        self.view.subviews.compactMap({ $0 as? Button }).forEach({
+            $0.isSelected = false
+            $0.overrideQuestionnaireAsset(with: self.delegate, isPrimary: $0.isSelected)
+        })
+
         button.isSelected = true
-        (button as? Button)?.roundButton()
+        (button as! Button).overrideQuestionnaireAsset(with: self.delegate, isPrimary: button.isSelected)
     }
 }
 

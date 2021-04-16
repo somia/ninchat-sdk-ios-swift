@@ -14,10 +14,12 @@
 "OK" = "Ei samaa eikä eri mieltä";
 "Disagree" = "Jokseenkin eri mieltä";
 "Strongly disagree" = "Täysin eri mieltä";
-"Permission denied" = "Lupa evätty";
-"Update Settings" = "Päivitä asetukset";
+"Permission denied" = "Videota ei voi aloittaa: lupa evätty.";
+"Update Settings" = "Muuta käyttöoikeuksia Asetuksista (varoitus: sovellus ladataan uudelleen)";
 "Resume error" = "Virhe muodostettaessa yhteyttä jonoon. Yritä uudelleen.";
 "WebRTC pickup fail" = "Videopuhelun aloittaminen epäonnistui.";
 "Source not available" = "Lähde ei ole käytettävissä tällä laitteella";
 "Camera not available" = "Kamera ei ole käytettävissä videopuhelun aikana";
 "Access denied" = "Pääsy evätty";
+"Submission Error" = "Vastausten lähettämisessä tapahtui virhe";
+"Unsupported attachment" = "Muotoa ei tueta";

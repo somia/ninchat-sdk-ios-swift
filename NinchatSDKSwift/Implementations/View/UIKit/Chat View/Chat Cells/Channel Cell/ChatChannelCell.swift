@@ -27,10 +27,6 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
     
     // MARK: - ChatCell
 
-    var isReloading: Bool! = false
-    var constraintsSet: Bool! = false
-    var delegate: ChatCellDelegate?
-
     weak var session: NINChatSessionAttachment?
     var videoThumbnailManager: VideoThumbnailManager?
     var onImageTapped: ((FileInfo, UIImage?) -> Void)?
@@ -75,7 +71,7 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
     
     /// Performs asset customizations independent of message sender
     internal func applyCommon(imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?) {
-        if let nameColor = colorAssets?[.chatName] {
+        if let nameColor = colorAssets?[.ninchatColorChatName] {
             self.senderNameLabel.textColor = nameColor
         }
         
@@ -126,14 +122,14 @@ class ChatChannelMineCell: ChatChannelCell {
     
     internal func configureMyMessage(avatar url: String?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, config: AvatarConfig?, series: Bool) {
         self.senderNameLabel.textAlignment = .right
-        self.bubbleImageView.image = (series) ? imageAssets?[.chatBubbleRightRepeated] : imageAssets?[.chatBubbleRight]
-        
+        self.bubbleImageView.image = UIImage(named: (series) ? "chat_bubble_right_series" : "chat_bubble_right", in: .SDKBundle, compatibleWith: nil)
+
         /// White text on black bubble
-        self.bubbleImageView.tintColor = colorAssets?[.chatBubbleRightTint] ?? .black
+        self.bubbleImageView.tintColor = colorAssets?[.ninchatColorChatBubbleRightTint] ?? .black
         if let name = config?.nameOverride, !name.isEmpty {
             self.senderNameLabel.text = name
         }
-        
+
         /// Apply asset overrides
         self.applyCommon(imageAssets: imageAssets, colorAssets: colorAssets)
         self.apply(avatar: config, imageView: self.rightAvatarImageView, url: url)
@@ -164,7 +160,7 @@ class ChatChannelOthersCell: ChatChannelCell {
         self.bubbleImageView.height?.isActive = false
         self.bubbleImageView.width?.isActive = false
     }
-    
+
     override func populateChannel(message: ChannelMessage, configuration: SiteConfiguration?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, agentAvatarConfig: AvatarConfig?, userAvatarConfig: AvatarConfig?, composeState: [Bool]?) {
         super.populateChannel(message: message, configuration: configuration, imageAssets: imageAssets, colorAssets: colorAssets, agentAvatarConfig: agentAvatarConfig, userAvatarConfig: userAvatarConfig, composeState: composeState)
         self.configureOtherMessage(avatar: message.sender?.iconURL, imageAssets: imageAssets, colorAssets: colorAssets, config: agentAvatarConfig, series: message.series)
@@ -172,10 +168,10 @@ class ChatChannelOthersCell: ChatChannelCell {
     
     internal func configureOtherMessage(avatar url: String?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, config: AvatarConfig?, series: Bool) {
         self.senderNameLabel.textAlignment = .left
-        self.bubbleImageView.image = (series) ? imageAssets?[.chatBubbleLeftRepeated] : imageAssets?[.chatBubbleLeft]
+        self.bubbleImageView.image = UIImage(named: (series) ? "chat_bubble_left_series" : "chat_bubble_left", in: .SDKBundle, compatibleWith: nil)
         
         /// Black text on white bubble
-        self.bubbleImageView.tintColor = colorAssets?[.chatBubbleLeftTint] ?? .white
+        self.bubbleImageView.tintColor = colorAssets?[.ninchatColorChatBubbleLeftTint] ?? .white
         if let name = config?.nameOverride, !name.isEmpty {
             self.senderNameLabel.text = name
         }

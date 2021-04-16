@@ -22,6 +22,7 @@ class ChatTypingCell: UITableViewCell {
     }
     @IBOutlet private(set) weak var bubbleImageView: UIImageView!
     @IBOutlet private(set) weak var leftAvatarImageView: UIImageView!
+    @IBOutlet private(set) weak var leftAvatarContainerView: UIView!
     @IBOutlet private(set) weak var messageImageView: UIImageView!
     
     // MARK: - UITableViewCell
@@ -47,17 +48,19 @@ class ChatTypingCell: UITableViewCell {
 
     /// Performs asset customizations independent of message sender
     private func applyCommon(imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?) {
-        if let nameColor = colorAssets?[.chatName] {
+        if let nameColor = colorAssets?[.ninchatColorChatName] {
             self.senderNameLabel.textColor = nameColor
         }
         
-        if let timeColor = colorAssets?[.chatTimestamp] {
+        if let timeColor = colorAssets?[.ninchatColorChatTimestamp] {
             self.timeLabel?.textColor = timeColor
         }
     }
 
     private func apply(avatar config: AvatarConfig?, imageView: UIImageView, url: String?) {
         imageView.isHidden = !(config?.show ?? false)
+        leftAvatarContainerView.width?.constant = (imageView.isHidden) ? 0 : 35
+        
         if let overrideURL = config?.imageOverrideURL {
             imageView.image(from: overrideURL)
         } else if let url = url {
@@ -79,10 +82,10 @@ extension ChatTypingCell: TypingCell {
 
         /// Make Image view background match the bubble color
         self.bubbleImageView.tintColor = .white
-        self.bubbleImageView.image = imageAssets?[.chatBubbleLeft]
+        self.bubbleImageView.image = UIImage(named: "chat_bubble_left", in: .SDKBundle, compatibleWith: nil)
 
         self.messageImageView.backgroundColor = .white
-        self.messageImageView.image = imageAssets?[.chatWritingIndicator]
+        self.messageImageView.image = imageAssets?[.ninchatIconChatWritingIndicator]
         self.messageImageView.tintColor = .black
 
         /// Apply asset overrides
@@ -100,10 +103,10 @@ extension ChatTypingCell: LoadingCell {
 
         /// Make Image view background match the bubble color
         self.bubbleImageView.tintColor = .white
-        self.bubbleImageView.image = imageAssets?[.chatBubbleLeft]
+        self.bubbleImageView.image = UIImage(named: "chat_bubble_left", in: .SDKBundle, compatibleWith: nil)
 
         self.messageImageView.backgroundColor = .white
-        self.messageImageView.image = imageAssets?[.chatWritingIndicator]
+        self.messageImageView.image = imageAssets?[.ninchatIconChatWritingIndicator]
         self.messageImageView.tintColor = .black
 
         /// Apply asset overrides

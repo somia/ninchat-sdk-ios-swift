@@ -42,7 +42,7 @@ final class ChatMetaCell: UITableViewCell, ChatMeta {
     }
     
     private func applyAssets(_ message: MetaMessage, _ colorAssets: NINColorAssetDictionary?) {
-        if let labelColor = colorAssets?[.infoText] {
+        if let labelColor = colorAssets?[.ninchatColorInfoText] {
             self.metaTextLabel.textColor = labelColor
         }
         if let title = message.closeChatButtonTitle {

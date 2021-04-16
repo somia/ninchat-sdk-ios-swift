@@ -10,7 +10,13 @@ struct AvatarConfig {
     let show: Bool
     let imageOverrideURL: String?
     let nameOverride: String
-    
+
+    init(session: NINChatSessionManager?) {
+        self.imageOverrideURL = session?.siteConfiguration.audienceQuestionnaireAvatar as? String
+        self.show = (session?.siteConfiguration.audienceQuestionnaireAvatar as? Bool) ?? true
+        self.nameOverride = session?.siteConfiguration.audienceQuestionnaireUserName ?? ""
+    }
+
     init(avatar: AnyHashable?, name: String?) {
         self.imageOverrideURL = avatar as? String
         self.show = (avatar as? Bool) ?? true

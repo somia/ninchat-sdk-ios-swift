@@ -2,7 +2,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "NinchatSDKSwift"
-  s.version      = "0.3.12"
+  s.version      = "0.4.4"
   s.summary      = "iOS SDK for Ninchat, Swift version"
   s.description  = "For building iOS applications using Ninchat messaging."
   s.homepage     = "https://ninchat.com/"
@@ -31,7 +31,8 @@ Pod::Spec.new do |s|
   # In addition we must suppress 'illegal text relocation' error for i386 platform
   s.pod_target_xcconfig = {
     "OTHER_LDFLAGS[arch=i386]" => "-Wl,-read_only_relocs,suppress -lstdc++",
-    "ENABLE_BITCODE" => "NO"
+    "ENABLE_BITCODE" => "NO",
+    "SWIFT_SUPPRESS_WARNINGS" => "YES"
   }
   s.user_target_xcconfig = {
       "ENABLE_BITCODE" => "NO"

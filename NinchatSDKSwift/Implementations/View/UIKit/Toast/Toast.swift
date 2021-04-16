@@ -14,8 +14,8 @@ enum ToastType {
         switch self {
         case .info:
             return .toastInfoBackground
-        default:
-            return nil
+        case .error:
+            return .toastErrBackground
         }
     }
     
@@ -33,66 +33,45 @@ final class Toast: UIView {
 
     // MARK: - Outlets
 
-    @IBOutlet private(set) weak var containerView: UIView!
     @IBOutlet private(set) weak var messageLabel: UILabel!
-
+    
     // MARK: - Toast
-
-    private var onToastTouched: (() -> Void)?
-    private var onToastDismissed: (() -> Void)?
-
-    class func show(message: ToastType, onToastTouched: (() -> Void)? = nil, onToastDismissed: (() -> Void)? = nil) {
+    
+    @discardableResult
+    class func show(message: ToastType, onToastDismissed: (() -> Void)? = nil) -> Toast {
+        let view: Toast = Toast.loadFromNib()
+        
         DispatchQueue.main.async {
-            let view: Toast = Toast.loadFromNib()
-            view.show(message: message, onToastTouched: onToastTouched, onToastDismissed: onToastDismissed)
-        }
-    }
+            view.messageLabel.text = message.value
+            view.backgroundColor = message.backgroundColor ?? .gray
 
-    internal func show(message: ToastType, onToastTouched: (() -> Void)?, onToastDismissed: (() -> Void)?) {
-        self.onToastTouched = onToastTouched
-        self.onToastDismissed = onToastDismissed
-        self.transform = CGAffineTransform(translationX: 0, y: -bounds.height)
-        self.messageLabel.text = message.value
-        if let bgColor = message.backgroundColor {
-            self.containerView.backgroundColor = bgColor
-        }
-
-        self.addView(to: UIApplication.shared.keyWindow)
-        self.animateDialogue(hide: false, delay: 0.0) {
-            /// After a delay, animate the toast out of sight again
-            self.animateDialogue(hide: true, delay: TimeConstants.kAnimationDelay.rawValue) {
-                self.onViewDismissed()
+            add(view, to: UIApplication.shared.keyWindow)
+            animateDialogue(view, hide: false, delay: 0.0) {
+                /// After a delay, animate the toast out of sight again
+                animateDialogue(view, hide: true, delay: TimeConstants.kBannerAnimationDuration.rawValue) {
+                    onToastDismissed?()
+                }
             }
         }
+        return view
     }
 
-    private func addView(to window: UIWindow?) {
+    private class func add(_ view: UIView, to window: UIWindow?) {
         guard let parent = window else { return }
 
-        parent.addSubview(self)
-        self
-            .fix(top: (0, parent), toSafeArea: true)
+        parent.addSubview(view)
+        view
+            .fix(top: (0, parent), toSafeArea: false)
             .fix(leading: (0, parent), trailing: (0, parent))
-            .addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(onViewTapped(_:))))
+            .transform = CGAffineTransform(translationX: 0, y: -view.bounds.height)
     }
 
-    private func animateDialogue(hide: Bool, delay: Double, completion: (() -> Void)? = nil) {
-        self.hide(hide, delay: delay, withActions: { [weak self] in
-            self?.transform = (hide) ? CGAffineTransform(translationX: 0, y: -(self?.bounds.height ?? 0)) : .identity
+    private class func animateDialogue(_ view: UIView, hide: Bool, delay: Double, completion: (() -> Void)? = nil) {
+        view.hide(hide, delay: delay, withActions: { [weak view] in
+            guard let `view` = view else { return }
+            view.transform = (hide) ? CGAffineTransform(translationX: 0, y: -view.bounds.height) : .identity
         }, andCompletion: {
             completion?()
         })
-    }
-
-    // MARK: - User actions
-
-    @objc
-    internal func onViewTapped(_ sender: UIGestureRecognizer?) {
-        self.onToastTouched?()
-    }
-
-    internal func onViewDismissed() {
-        self.removeFromSuperview()
-        self.onToastDismissed?()
     }
 }

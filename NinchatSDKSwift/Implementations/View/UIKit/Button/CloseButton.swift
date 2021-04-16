@@ -13,7 +13,7 @@ protocol CloseButtonProtocol {
     func overrideAssets(with session: NINChatSessionInternalDelegate?)
 }
 
-final class CloseButton: UIView, CloseButtonProtocol {
+final class CloseButton: UIView, HasCustomLayer, CloseButtonProtocol {
     
     // MARK: - Outlets
     
@@ -41,7 +41,6 @@ final class CloseButton: UIView, CloseButtonProtocol {
             self.theButton.closure = closure
         }
     }
-    
     var buttonTitle: String! {
         didSet {
             self.theButton.setTitle(buttonTitle, for: .normal)
@@ -51,44 +50,45 @@ final class CloseButton: UIView, CloseButtonProtocol {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        UIView.applyLayerOverride(view: self)
+        applyLayerOverride(view: self)
     }
     
     func overrideAssets(with session: NINChatSessionInternalDelegate?) {
         self.theButton.titleLabel?.font = .ninchat
-        self.round(borderWidth: 1.0, borderColor: .defaultBackgroundButton)
-        self.backgroundColor = .white
+        self.backgroundColor = .clear
 
-        func shapeButton(image: UIImage) {
-            /// Overriding (setting) the button background image; no border.
-            self.theButton.setBackgroundImage(image, for: .normal)
-            self.theButton.contentMode = .scaleAspectFill
-            self.theButton.backgroundColor = .clear
-            self.theButton.layer.cornerRadius = 0
-            self.theButton.layer.borderWidth = 0
-        }
-
-        if let backgroundColor = session?.override(colorAsset: .chatCloseButtonBackground) {
-            self.backgroundColor = backgroundColor
-        }
-
-        if let layer = session?.override(layerAsset: .ninchatChatCloseButton) {
+        if buttonTitle.isEmpty, let layer = session?.override(layerAsset: .ninchatChatCloseEmptyButton) {
             self.layer.addSublayer(layer)
-        }
+        } else if let layer = session?.override(layerAsset: .ninchatChatCloseButton) {
+            self.layer.addSublayer(layer)
+        } else {
+            /// TODO: REMOVE legacy delegates
 
-        if buttonTitle.isEmpty, let overrideImage = session?.override(imageAsset: .chatCloseButtonEmpty) {
-            shapeButton(image: overrideImage)
-        } else if let overrideImage = session?.override(imageAsset: .chatCloseButton) {
-            shapeButton(image: overrideImage)
+            func shapeButton(image: UIImage) {
+                /// Overriding (setting) the button background image; no border.
+                self.theButton.setBackgroundImage(image, for: .normal)
+                self.theButton.contentMode = .scaleAspectFill
+                self.theButton.backgroundColor = .clear
+                self.theButton.layer.cornerRadius = 0
+                self.theButton.layer.borderWidth = 0
+            }
+
+            self.round(borderWidth: 1.0, borderColor: .defaultBackgroundButton)
+            self.backgroundColor = .white
+
+            if let backgroundColor = session?.override(colorAsset: .chatCloseButtonBackground) {
+                self.backgroundColor = backgroundColor
+            }
+            if buttonTitle.isEmpty, let overrideImage = session?.override(imageAsset: .chatCloseButtonEmpty) {
+                shapeButton(image: overrideImage)
+            } else if let overrideImage = session?.override(imageAsset: .chatCloseButton) {
+                shapeButton(image: overrideImage)
+            }
+            if let icon = session?.override(imageAsset: .iconChatCloseButton) {
+                self.closeButtonImageView.image = icon
+            }
         }
-        
-        /// Handle overriding the button icon image
-        if let icon = session?.override(imageAsset: .iconChatCloseButton) {
-            self.closeButtonImageView.image = icon
-        }
-        
-        /// Handle overriding the button text & border color
-        if let textColor = session?.override(colorAsset: .buttonSecondaryText) {
+        if let textColor = session?.override(colorAsset: .ninchatColorButtonSecondaryText) {
             self.theButton.setTitleColor(textColor, for: .normal)
             self.closeButtonImageView.tintColor = textColor
         }

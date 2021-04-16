@@ -28,7 +28,7 @@ final class NINQueueViewController: UIViewController, ViewController {
     @IBOutlet private(set) weak var spinnerImageView: UIImageView!
     @IBOutlet private(set) weak var queueInfoTextView: UITextView! {
         didSet {
-            if let textTopColor = self.delegate?.override(colorAsset: .textTop) {
+            if let textTopColor = self.delegate?.override(colorAsset: .ninchatColorTextTop) {
                 self.queueInfoTextView.textColor = textTopColor
             }
             queueInfoTextView.text = nil
@@ -37,11 +37,6 @@ final class NINQueueViewController: UIViewController, ViewController {
     }
     @IBOutlet private(set) weak var motdTextView: UITextView! {
         didSet {
-            if let queueText = self.sessionManager?.siteConfiguration.inQueue {
-                motdTextView.setAttributed(text: queueText, font: .ninchat)
-            } else if let motdText = self.sessionManager?.siteConfiguration.motd {
-                motdTextView.setAttributed(text: motdText, font: .ninchat)
-            }
             motdTextView.delegate = self
         }
     }
@@ -66,12 +61,22 @@ final class NINQueueViewController: UIViewController, ViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.setupClosedQueue()
-        self.setupViewModel()
         self.overrideAssets()
 
         NotificationCenter.default.addObserver(self, selector: #selector(spin(notification:)), name: UIApplication.willEnterForegroundNotification, object: nil)
         self.navigationItem.setHidesBackButton(true, animated: false)
+
+        /// When the queue is not usable, do not try to connect
+        /// instead, try to register audience if it is set in the config
+        /// `https://github.com/somia/mobile/issues/337`
+        if self.setupClosedQueue() {
+            if let audienceRegister = self.sessionManager?.siteConfiguration.audienceRegisteredText, !audienceRegister.isEmpty {
+                self.setupViewModel(.registerAudience)
+            }
+            return
+        }
+        self.setupOpenQueue()
+        self.setupViewModel(self.resumeMode)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -84,44 +89,58 @@ final class NINQueueViewController: UIViewController, ViewController {
         NotificationCenter.default.removeObserver(self, name: UIApplication.willEnterForegroundNotification, object: nil)
     }
 
-    private func setupViewModel() {
-        self.viewModel.resumeMode = self.resumeMode != nil
+    private func setupViewModel(_ resumeMode: ResumeMode?) {
         self.viewModel.onInfoTextUpdate = { [weak self] text in
-            self?.updateQueueInfo(text: text)
+            DispatchQueue.main.async {
+                self?.queueInfoTextView.setAttributed(text: text ?? "", font: .ninchat)
+            }
         }
         self.viewModel.onQueueJoin = { [weak self] error in
             guard error == nil else { return }
             self?.onQueueActionTapped?(self?.sessionManager?.describedQueue)
         }
         /// Directly open chat page if it is a session resumption condition
-        switch self.resumeMode {
+        switch resumeMode {
         case .toQueue(let target):
             guard let queue = target else { return }
+            self.viewModel.resumeMode = true
             self.viewModel.connect(queue: queue)
-            self.updateQueueInfo(text: self.viewModel.queueTextInfo(queue: queue, 1))
+            self.queueInfoTextView.setAttributed(text: self.viewModel.queueTextInfo(queue: queue, 1) ?? "", font: .ninchat)
         case .toChannel:
-            if self.sessionManager?.describedQueue == nil {
+            self.viewModel.resumeMode = true
+            guard let describedQueue = self.sessionManager?.describedQueue else {
                 debugger("error in getting target queue")
-                self.stopSpinWith(message: "Resume error".localized)
-            } else {
-                debugger("target queue is ready: \(String(describing: self.sessionManager?.describedQueue))")
-                self.onQueueActionTapped?(self.sessionManager?.describedQueue)
+                self.spinnerImageView.isHidden = true
+                self.queueInfoTextView.setAttributed(text: "Resume error".localized, font: .ninchat)
+                return
             }
+            debugger("target queue is ready: \(String(describing: self.sessionManager?.describedQueue))")
+            self.onQueueActionTapped?(self.sessionManager?.describedQueue)
+        case .registerAudience:
+            self.viewModel.resumeMode = false
+            self.viewModel.registerAudience(queue: self.queue)
         default:
+            self.viewModel.resumeMode = false
             self.viewModel.connect(queue: self.queue)
-            self.updateQueueInfo(text: self.viewModel.queueTextInfo(queue: queue, 1))
+            self.queueInfoTextView.setAttributed(text: self.viewModel.queueTextInfo(queue: queue, 1) ?? "", font: .ninchat)
         }
     }
 
-    private func setupClosedQueue() {
+    private func setupClosedQueue() -> Bool {
         /// `If customer resumes to a session and is already in queue, then show queueing view even if queue is closed`
-        guard let queue = queue, queue.isClosed && self.resumeMode == nil else { return }
-        self.stopSpinWith(message: self.sessionManager?.siteConfiguration.noQueueText ?? "")
+        if let queue = queue, queue.isClosed, queue.position == 0 {
+            /// Currently, we do not have a key for closed-queue situations, leave it empty
+            self.spinnerImageView.isHidden = true
+            self.queueInfoTextView.setAttributed(text: "", font: .ninchat)
+            self.motdTextView.setAttributed(text: self.sessionManager?.siteConfiguration.motd ?? "", font: .ninchat)
+            return true
+        }
+        return false
     }
 
-    private func stopSpinWith(message: String) {
-        self.spinnerImageView.isHidden = true
-        self.queueInfoTextView.setAttributed(text: message, font: .ninchat)
+    private func setupOpenQueue() {
+        self.spinnerImageView.isHidden = false
+        self.motdTextView.setAttributed(text: self.sessionManager?.siteConfiguration.motd ?? self.sessionManager?.siteConfiguration.inQueue ?? "", font: .ninchat)
     }
 }
 
@@ -139,17 +158,10 @@ extension NINQueueViewController {
         animation.repeatCount = .infinity
         spinnerImageView.layer.add(animation, forKey: "SpinAnimation")
     }
-    
-    private func updateQueueInfo(text: String?) {
-        DispatchQueue.main.async {
-            self.queueInfoTextView.setAttributed(text: text ?? "", font: .ninchat)
-        }
-    }
 
     private func overrideAssets() {
-        
         closeChatButton.overrideAssets(with: self.delegate)
-        if let spinnerImage = self.delegate?.override(imageAsset: .iconLoader) {
+        if let spinnerImage = self.delegate?.override(imageAsset: .ninchatIconLoader) {
             self.spinnerImageView.image = spinnerImage
         }
         if let topBackgroundColor = self.delegate?.override(colorAsset: .backgroundTop) {
@@ -158,13 +170,13 @@ extension NINQueueViewController {
         if let bottomBackgroundColor = self.delegate?.override(colorAsset: .backgroundBottom) {
             bottomContainerView.backgroundColor = bottomBackgroundColor
         }
-        if let textTopColor = self.delegate?.override(colorAsset: .textTop) {
+        if let textTopColor = self.delegate?.override(colorAsset: .ninchatColorTextTop) {
             queueInfoTextView.textColor = textTopColor
         }
-        if let textBottomColor = self.delegate?.override(colorAsset: .textBottom) {
+        if let textBottomColor = self.delegate?.override(colorAsset: .ninchatColorTextBottom) {
             motdTextView.textColor = textBottomColor
         }
-        if let linkColor = self.delegate?.override(colorAsset: .link) {
+        if let linkColor = self.delegate?.override(colorAsset: .ninchatColorLink) {
             let attribute = [NSAttributedString.Key.foregroundColor: linkColor]
             queueInfoTextView.linkTextAttributes = attribute
             motdTextView.linkTextAttributes = attribute

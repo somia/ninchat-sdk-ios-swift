@@ -76,7 +76,7 @@ extension QuestionnaireElementWithTitle {
         guard let titleComponents = self.title.text?.components(separatedBy: self.requiredIndicator) else { return }
 
         let attributedString = NSMutableAttributedString(string: self.title.text!)
-        let defaultColor = delegate?.override(questionnaireAsset: .titleTextColor) ?? UIColor.black
+        let defaultColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorTitleText) ?? UIColor.black
         if let restComponent = titleComponents.filter({ !$0.isEmpty }).first, restComponent != self.requiredIndicator {
             attributedString.applyUpdates(to: restComponent, color: defaultColor)
         }

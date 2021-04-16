@@ -6,7 +6,7 @@
 
 import UIKit
 
-class Button: UIButton {
+class Button: UIButton, HasCustomLayer {
     var closure: ((Button) -> Void)?
     var type: QuestionnaireButtonType?
 
@@ -23,7 +23,12 @@ class Button: UIButton {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
-    
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        applyLayerOverride(view: self)
+    }
+
     // MARK: - User actions
     
     override func sendActions(for controlEvents: UIControl.Event) {
@@ -40,13 +45,21 @@ class Button: UIButton {
     
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?, isPrimary primary: Bool) {
         self.titleLabel?.font = .ninchat
-        if let overrideImage = delegate?.override(imageAsset: primary ? .primaryButton : .secondaryButton) {
-            self.setBackgroundImage(overrideImage, for: .normal)
-            self.backgroundColor = .clear
-            self.layer.cornerRadius = 0
-            self.layer.borderWidth = 0
+        self.backgroundColor = .clear
+
+        if let layer = delegate?.override(layerAsset: primary ? .ninchatPrimaryButton : .ninchatSecondaryButton) {
+            self.layer.insertSublayer(layer, below: self.titleLabel?.layer)
         }
-        if let overrideColor = delegate?.override(colorAsset: primary ? .buttonPrimaryText : .buttonSecondaryText) {
+        /// TODO: REMOVE legacy delegate
+        else if let overrideImage = delegate?.override(imageAsset: primary ? .primaryButton : .secondaryButton) {
+            self.setBackgroundImage(overrideImage, for: .normal)
+            self.roundButton()
+        } else {
+            self.setTitleColor(primary ? .white : .defaultBackgroundButton, for: .normal)
+            self.backgroundColor = primary ? .defaultBackgroundButton : .white
+            self.roundButton()
+        }
+        if let overrideColor = delegate?.override(colorAsset: primary ? .ninchatColorButtonPrimaryText : .ninchatColorButtonSecondaryText) {
             self.setTitleColor(overrideColor, for: .normal)
         }
     }

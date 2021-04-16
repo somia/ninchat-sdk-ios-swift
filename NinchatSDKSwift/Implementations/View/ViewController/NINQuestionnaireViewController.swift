@@ -81,7 +81,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
                 if let error = error as? NinchatError, error.type == "queue_is_closed" {
                     self?.showRegisteredPage(operation: self?.closedRegisteredOperation); return
                 }
-                Toast.show(message: .error("Error is submitting the answers"), onToastTouched: { [weak self] in
+                Toast.show(message: .error("Submission Error".localized), onToastDismissed: { [weak self] in
                     self?.delegate?.onDidEnd()
                 })
             }
@@ -174,7 +174,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
     }
 
     private func overrideAssets() {
-        if let backgroundImage = self.delegate?.override(imageAsset: .questionnaireBackground) {
+        if let backgroundImage = self.delegate?.override(imageAsset: .ninchatQuestionnaireBackground) {
             self.view.backgroundColor = UIColor(patternImage: backgroundImage)
         } else if let bundleImage = UIImage(named: "chat_background_pattern", in: .SDKBundle, compatibleWith: nil) {
             self.view.backgroundColor = UIColor(patternImage: bundleImage)

@@ -247,19 +247,18 @@ final class UIKitTests: XCTestCase {
     }
 
     func test_toast() {
-        let view: Toast = Toast.loadFromNib()
-
-        let expect_touch = self.expectation(description: "Expected to get the toast touched")
         let expect_dismiss = self.expectation(description: "Expected to get the toast dismissed")
-        view.show(message: .info("This is a toast"), onToastTouched: {
-            expect_touch.fulfill()
-        }, onToastDismissed: {
+        let expect_ui_update = self.expectation(description: "Expected to see changes applied to the view")
+        let view = Toast.show(message: .info("This is a toast"), onToastDismissed: {
             expect_dismiss.fulfill()
         })
-        XCTAssertEqual(view.messageLabel.text, "This is a toast")
-        XCTAssertEqual(view.containerView.backgroundColor, UIColor.toastInfoBackground)
-
-        view.onViewTapped(nil)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            XCTAssertEqual(view.messageLabel.text, "This is a toast")
+            XCTAssertEqual(view.backgroundColor, UIColor.toastInfoBackground)
+            
+            expect_ui_update.fulfill()
+        }
+        
         waitForExpectations(timeout: 5.0)
     }
 }

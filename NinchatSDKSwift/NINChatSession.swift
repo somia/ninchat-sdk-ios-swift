@@ -206,7 +206,7 @@ extension NINChatSession {
         }
         /// describe_queue for "audienceAutoQueue"
         if let autoQueue = self.sessionManager.siteConfiguration.audienceAutoQueue?.trimmingCharacters(in: .whitespacesAndNewlines),
-           autoQueue.count > 0 {
+           autoQueue.count > 0, !allQueues.contains(autoQueue) {
             allQueues.append(autoQueue)
         }
 

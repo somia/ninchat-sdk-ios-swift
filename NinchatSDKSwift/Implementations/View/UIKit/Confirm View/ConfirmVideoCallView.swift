@@ -57,7 +57,7 @@ final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol {
             self.bottomContainerView.backgroundColor = backgroundColor
         }
         
-        if let textColor = self.delegate?.override(colorAsset: .modalText) {
+        if let textColor = self.delegate?.override(colorAsset: .ninchatColorModalTitleText) {
             self.titleLabel.textColor = textColor
             self.usernameLabel.textColor = textColor
             self.infoLabel.textColor = textColor

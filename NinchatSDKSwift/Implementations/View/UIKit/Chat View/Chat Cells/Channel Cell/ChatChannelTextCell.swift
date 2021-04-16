@@ -39,10 +39,10 @@ final class ChatChannelTextMineCell: ChatChannelMineCell, ChannelTextCell {
         self.messageTextView.textColor = .white
         self.messageTextView.textAlignment = .right
         self.messageTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.blue]
-        if let bubbleTextColor = colorAssets?[.chatBubbleRightText] {
+        if let bubbleTextColor = colorAssets?[.ninchatColorChatBubbleRightText] {
             self.messageTextView.textColor = bubbleTextColor
         }
-        if let linkColor = colorAssets?[.chatBubbleRightLink] {
+        if let linkColor = colorAssets?[.ninchatColorChatBubbleRightLink] {
             self.messageTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
         }
         
@@ -63,10 +63,10 @@ final class ChatChannelTextOthersCell: ChatChannelOthersCell, ChannelTextCell {
         self.messageTextView.textAlignment = .left
         self.messageTextView.textColor = .black
         self.messageTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.blue]
-        if let bubbleTextColor = colorAssets?[.chatBubbleLeftText] {
+        if let bubbleTextColor = colorAssets?[.ninchatColorChatBubbleLeftText] {
             self.messageTextView.textColor = bubbleTextColor
         }
-        if let linkColor = colorAssets?[.chatBubbleLeftLink] {
+        if let linkColor = colorAssets?[.ninchatColorChatBubbleLeftLink] {
             self.messageTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
         }
     }

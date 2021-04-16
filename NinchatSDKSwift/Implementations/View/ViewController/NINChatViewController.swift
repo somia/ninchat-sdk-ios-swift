@@ -240,6 +240,11 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
     // MARK: - Setup ViewModel
     
     private func setupViewModel() {
+        self.viewModel.onErrorOccurred = { error in
+            if let error = error as? AttachmentError {
+                Toast.show(message: .error(error.localizedDescription))
+            }
+        }
         self.viewModel.onChannelClosed = { [weak self] in
             self?.disableView(true)
         }
@@ -266,10 +271,10 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
     // MARK: - Helpers
     
     private func connectRTC() {
-        func permissionError(_ error: Error?) -> Bool {
+        func permissionError(_ error: Error?, callPickedUp: Bool = true) -> Bool {
             if error as? PermissionError != nil {
                 /// 1. Show toast to notify the user
-                Toast.show(message: .error("\("Permission denied".localized) \("Update Settings".localized)"), onToastTouched: { UIApplication.openAppSetting() })
+                Toast.show(message: .error("\("Permission denied".localized)\n\("Update Settings".localized)"))
                 /// 2. Cancel the call
                 self.viewModel.pickup(answer: false, unsupported: true) { _ in  }
                 /// 3. Discard the process
@@ -383,7 +388,7 @@ extension NINChatViewController {
         videoView.overrideAssets()
         inputControlsView.overrideAssets()
         
-        if let backgroundImage = self.delegate?.override(imageAsset: .chatBackground) {
+        if let backgroundImage = self.delegate?.override(imageAsset: .ninchatChatBackground) {
             self.backgroundView.backgroundColor = UIColor(patternImage: backgroundImage)
         } else if let bundleImage = UIImage(named: "chat_background_pattern", in: .SDKBundle, compatibleWith: nil) {
             self.backgroundView.backgroundColor = UIColor(patternImage: bundleImage)
@@ -450,7 +455,7 @@ extension NINChatViewController {
 
 extension NINChatViewController {
     private func onAttachmentTapped(with button: UIButton) {
-        ChoiceDialogue.showDialogue(withOptions: ["Camera".localized, "Photo".localized]) { [weak self] result in
+        ChoiceDialogue.showDialogue(withOptions: ["Camera".localized, "Photo Library".localized]) { [weak self] result in
             switch result {
             case .cancel:
                 break
@@ -464,10 +469,10 @@ extension NINChatViewController {
                 }
 
                 self?.viewModel.openAttachment(source: source) { [weak self, source] error in
-                    if error == nil { self?.onOpenGallery?(source); return }
-                    Toast.show(message: .error("Access denied".localized), onToastTouched: {
-                        UIApplication.openAppSetting()
-                    })
+                    if error == nil {
+                        self?.onOpenGallery?(source); return
+                    }
+                    Toast.show(message: .error("\("Access denied".localized)\n\("Update Settings".localized)"))
                 }
             }
         }

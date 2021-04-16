@@ -138,7 +138,7 @@ final class ComposeContentView: UIView, ComposeContentViewProtocol {
         /// Title label
         self.titleLabel = UILabel(frame: .zero)
         self.titleLabel?.font = .ninchat
-        self.titleLabel?.textColor = colorAssets?[.chatBubbleLeftText] ?? .black
+        self.titleLabel?.textColor = colorAssets?[.ninchatColorChatBubbleLeftText] ?? .black
         self.addSubview(self.titleLabel!)
     
         /// Send button
