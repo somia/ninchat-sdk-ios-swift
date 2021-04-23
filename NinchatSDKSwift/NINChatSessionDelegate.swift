@@ -11,7 +11,7 @@ import NinchatLowLevelClient
 * Delegate protocol for NINChatSession class. All the methods are called on
 * the main thread.
 */
-public protocol NINChatSessionDelegate: class {
+public protocol NINChatSessionDelegate: AnyObject {
     /**
     * Implement this if you want to receive debug/error logging from the SDK.
     *
@@ -86,7 +86,7 @@ public protocol NINChatSessionDelegate: class {
     func ninchatDidFail(toResumeSession session: NINChatSession) -> Bool
 }
 
-extension NINChatSessionDelegate {
+public extension NINChatSessionDelegate {
     func ninchat(_ session: NINChatSession, didOutputSDKLog message: String) { }
 
     func ninchat(_ session: NINChatSession, onLowLevelEvent params: NINLowLevelClientProps, payload: NINLowLevelClientPayload, lastReply: Bool) { }
@@ -94,6 +94,8 @@ extension NINChatSessionDelegate {
     func ninchat(_ session: NINChatSession, overrideImageAssetForKey assetKey: AssetConstants) -> UIImage? { nil }
 
     func ninchat(_ session: NINChatSession, overrideColorAssetForKey assetKey: ColorConstants) -> UIColor? { nil }
+
+    func ninchat(_ session: NINChatSession, overrideLayer assetKey: CALayerConstant) -> CALayer? { nil }
 
     func ninchat(_ session: NINChatSession, overrideQuestionnaireColorAssetKey assetKey: QuestionnaireColorConstants) -> UIColor? { nil }
 
