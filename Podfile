@@ -26,7 +26,14 @@ target 'NinchatSDKSwift' do
   end
 end
 
+target 'NinchatSDKSwiftUI' do
+  libraries
 
+  target 'NinchatSDKSwiftUITests' do
+    inherit! :search_paths
+    libraries
+  end
+end
 
 post_install do |pi|
     pi.pods_project.build_configurations.each do |config|
@@ -40,3 +47,19 @@ post_install do |pi|
     end
 end
 
+class Pod::Target::BuildSettings::AggregateTargetSettings
+    alias_method :ld_runpath_search_paths_original, :ld_runpath_search_paths
+
+    def ld_runpath_search_paths
+        return ld_runpath_search_paths_original unless configuration_name == "Debug"
+        return ld_runpath_search_paths_original + framework_search_paths
+    end
+end
+
+class Pod::Target::BuildSettings::PodTargetSettings
+    alias_method :ld_runpath_search_paths_original, :ld_runpath_search_paths
+
+    def ld_runpath_search_paths
+        return (ld_runpath_search_paths_original || []) + framework_search_paths
+    end
+end
