@@ -11,6 +11,9 @@
 		5C08BD6E2626CC3100AB9397 /* PHAssetResourceType+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C08BD6D2626CC3100AB9397 /* PHAssetResourceType+Extension.swift */; };
 		5C5658CD25EF780F004ED98F /* QuestionnaireTypingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C5658CC25EF780F004ED98F /* QuestionnaireTypingCell.xib */; };
 		5C5658D225EF7F77004ED98F /* QuestionnaireTypingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C5658D125EF7F77004ED98F /* QuestionnaireTypingCell.swift */; };
+		5C791E35263820D700654715 /* NinchatSDKSwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C791E2C263820D700654715 /* NinchatSDKSwiftUI.framework */; };
+		5C791E3A263820D700654715 /* NinchatSDKSwiftUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C791E39263820D700654715 /* NinchatSDKSwiftUITests.swift */; };
+		5C791E3C263820D700654715 /* NinchatSDKSwiftUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C791E2E263820D700654715 /* NinchatSDKSwiftUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5CD4F1C82540CAAF009856AC /* Notification+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD4F1C62540CAAF009856AC /* Notification+Extension.swift */; };
 		5CD4F1C92540CAAF009856AC /* KeyboardHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD4F1C72540CAAF009856AC /* KeyboardHandler.swift */; };
 		7C44F1A84C25C4445CF3B955 /* Pods_NinchatSDKSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 495ADA60487CD354EDC07332 /* Pods_NinchatSDKSwift.framework */; };
@@ -216,6 +219,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		5C791E36263820D700654715 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 855B9F08238ECDB30081A9C6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5C791E2B263820D700654715;
+			remoteInfo = NinchatSDKSwiftUI;
+		};
 		855B9F1C238ECDB30081A9C6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 855B9F08238ECDB30081A9C6 /* Project object */;
@@ -242,6 +252,12 @@
 		5C08BD6D2626CC3100AB9397 /* PHAssetResourceType+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PHAssetResourceType+Extension.swift"; sourceTree = "<group>"; };
 		5C5658CC25EF780F004ED98F /* QuestionnaireTypingCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = QuestionnaireTypingCell.xib; sourceTree = "<group>"; };
 		5C5658D125EF7F77004ED98F /* QuestionnaireTypingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionnaireTypingCell.swift; sourceTree = "<group>"; };
+		5C791E2C263820D700654715 /* NinchatSDKSwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NinchatSDKSwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C791E2E263820D700654715 /* NinchatSDKSwiftUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NinchatSDKSwiftUI.h; sourceTree = "<group>"; };
+		5C791E2F263820D700654715 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5C791E34263820D700654715 /* NinchatSDKSwiftUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NinchatSDKSwiftUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C791E39263820D700654715 /* NinchatSDKSwiftUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NinchatSDKSwiftUITests.swift; sourceTree = "<group>"; };
+		5C791E3B263820D700654715 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5CD4F1C62540CAAF009856AC /* Notification+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Notification+Extension.swift"; sourceTree = "<group>"; };
 		5CD4F1C72540CAAF009856AC /* KeyboardHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardHandler.swift; sourceTree = "<group>"; };
 		62C8D99D572F0DB4B5E6D255 /* Pods-NinchatSDKSwiftUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftUITests.release.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftUITests/Pods-NinchatSDKSwiftUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -458,6 +474,21 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		5C791E29263820D700654715 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5C791E31263820D700654715 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5C791E35263820D700654715 /* NinchatSDKSwiftUI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		855B9F0E238ECDB30081A9C6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -511,6 +542,24 @@
 				7B50C1E321841F3749D5D05A /* Pods-NinchatSDKSwiftServerTests.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		5C791E2D263820D700654715 /* NinchatSDKSwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				5C791E2E263820D700654715 /* NinchatSDKSwiftUI.h */,
+				5C791E2F263820D700654715 /* Info.plist */,
+			);
+			path = NinchatSDKSwiftUI;
+			sourceTree = "<group>";
+		};
+		5C791E38263820D700654715 /* NinchatSDKSwiftUITests */ = {
+			isa = PBXGroup;
+			children = (
+				5C791E39263820D700654715 /* NinchatSDKSwiftUITests.swift */,
+				5C791E3B263820D700654715 /* Info.plist */,
+			);
+			path = NinchatSDKSwiftUITests;
 			sourceTree = "<group>";
 		};
 		852DB4DB247D370B001EAC2C /* Cells */ = {
@@ -595,7 +644,9 @@
 				852751DA238EE67800B6A44A /* BUILDING.md */,
 				851ECF6323969297006D332F /* README.md */,
 				855B9F13238ECDB30081A9C6 /* NinchatSDKSwift */,
+				5C791E2D263820D700654715 /* NinchatSDKSwiftUI */,
 				855B9F1E238ECDB30081A9C6 /* NinchatSDKSwiftTests */,
+				5C791E38263820D700654715 /* NinchatSDKSwiftUITests */,
 				85B72A9423F57ADF00D1C4BC /* NinchatSDKSwiftServerTests */,
 				855B9F12238ECDB30081A9C6 /* Products */,
 				51F561339DA2FBB7CF2F5A02 /* Pods */,
@@ -610,6 +661,8 @@
 				855B9F11238ECDB30081A9C6 /* NinchatSDKSwift.framework */,
 				855B9F1A238ECDB30081A9C6 /* NinchatSDKSwiftTests.xctest */,
 				85B72A9323F57ADF00D1C4BC /* NinchatSDKSwiftServerTests.xctest */,
+				5C791E2C263820D700654715 /* NinchatSDKSwiftUI.framework */,
+				5C791E34263820D700654715 /* NinchatSDKSwiftUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1078,6 +1131,14 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		5C791E27263820D700654715 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5C791E3C263820D700654715 /* NinchatSDKSwiftUI.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		855B9F0C238ECDB30081A9C6 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -1089,6 +1150,42 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		5C791E2B263820D700654715 /* NinchatSDKSwiftUI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5C791E41263820D700654715 /* Build configuration list for PBXNativeTarget "NinchatSDKSwiftUI" */;
+			buildPhases = (
+				5C791E27263820D700654715 /* Headers */,
+				5C791E28263820D700654715 /* Sources */,
+				5C791E29263820D700654715 /* Frameworks */,
+				5C791E2A263820D700654715 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NinchatSDKSwiftUI;
+			productName = NinchatSDKSwiftUI;
+			productReference = 5C791E2C263820D700654715 /* NinchatSDKSwiftUI.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		5C791E33263820D700654715 /* NinchatSDKSwiftUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5C791E42263820D700654715 /* Build configuration list for PBXNativeTarget "NinchatSDKSwiftUITests" */;
+			buildPhases = (
+				5C791E30263820D700654715 /* Sources */,
+				5C791E31263820D700654715 /* Frameworks */,
+				5C791E32263820D700654715 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5C791E37263820D700654715 /* PBXTargetDependency */,
+			);
+			name = NinchatSDKSwiftUITests;
+			productName = NinchatSDKSwiftUITests;
+			productReference = 5C791E34263820D700654715 /* NinchatSDKSwiftUITests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		855B9F10238ECDB30081A9C6 /* NinchatSDKSwift */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 855B9F25238ECDB30081A9C6 /* Build configuration list for PBXNativeTarget "NinchatSDKSwift" */;
@@ -1154,10 +1251,17 @@
 		855B9F08238ECDB30081A9C6 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1130;
+				LastSwiftUpdateCheck = 1250;
 				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = "Hassan Shahbazi";
 				TargetAttributes = {
+					5C791E2B263820D700654715 = {
+						CreatedOnToolsVersion = 12.5;
+						LastSwiftMigration = 1250;
+					};
+					5C791E33263820D700654715 = {
+						CreatedOnToolsVersion = 12.5;
+					};
 					855B9F10238ECDB30081A9C6 = {
 						CreatedOnToolsVersion = 11.2.1;
 						LastSwiftMigration = 1120;
@@ -1186,13 +1290,29 @@
 			projectRoot = "";
 			targets = (
 				855B9F10238ECDB30081A9C6 /* NinchatSDKSwift */,
+				5C791E2B263820D700654715 /* NinchatSDKSwiftUI */,
 				855B9F19238ECDB30081A9C6 /* NinchatSDKSwiftTests */,
+				5C791E33263820D700654715 /* NinchatSDKSwiftUITests */,
 				85B72A9223F57ADF00D1C4BC /* NinchatSDKSwiftServerTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		5C791E2A263820D700654715 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5C791E32263820D700654715 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		855B9F0F238ECDB30081A9C6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1360,6 +1480,21 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5C791E28263820D700654715 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5C791E30263820D700654715 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5C791E3A263820D700654715 /* NinchatSDKSwiftUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		855B9F0D238ECDB30081A9C6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1544,6 +1679,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		5C791E37263820D700654715 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5C791E2B263820D700654715 /* NinchatSDKSwiftUI */;
+			targetProxy = 5C791E36263820D700654715 /* PBXContainerItemProxy */;
+		};
 		855B9F1D238ECDB30081A9C6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 855B9F10238ECDB30081A9C6 /* NinchatSDKSwift */;
@@ -1576,6 +1716,97 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		5C791E3D263820D700654715 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 86P62K2K2N;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = NinchatSDKSwiftUI/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ninchat.NinchatSDKSwiftUI;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5C791E3E263820D700654715 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 86P62K2K2N;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = NinchatSDKSwiftUI/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ninchat.NinchatSDKSwiftUI;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		5C791E3F263820D700654715 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 86P62K2K2N;
+				INFOPLIST_FILE = NinchatSDKSwiftUITests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ninchat.NinchatSDKSwiftUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5C791E40263820D700654715 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 86P62K2K2N;
+				INFOPLIST_FILE = NinchatSDKSwiftUITests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ninchat.NinchatSDKSwiftUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		855B9F23238ECDB30081A9C6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1912,6 +2143,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		5C791E41263820D700654715 /* Build configuration list for PBXNativeTarget "NinchatSDKSwiftUI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5C791E3D263820D700654715 /* Debug */,
+				5C791E3E263820D700654715 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5C791E42263820D700654715 /* Build configuration list for PBXNativeTarget "NinchatSDKSwiftUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5C791E3F263820D700654715 /* Debug */,
+				5C791E40263820D700654715 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		855B9F0B238ECDB30081A9C6 /* Build configuration list for PBXProject "NinchatSDKSwift" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
