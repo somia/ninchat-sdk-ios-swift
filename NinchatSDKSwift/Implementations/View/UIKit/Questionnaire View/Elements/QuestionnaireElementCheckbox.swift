@@ -59,11 +59,15 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
-        self.view.subviews.compactMap({ $0 as? Button }).forEach({ $0.overrideQuestionnaireAsset(with: delegate, isPrimary: $0.isSelected) })
-        self.view.allSubviews.filter({ $0.tag >= 200 }).compactMap({ $0 as? UIImageView }).forEach({ $0.tint = delegate?.override(questionnaireAsset: .checkboxSelectedIndicator) ?? UIColor.QBlueButtonHighlighted })
+        self.view.subviews.compactMap({ $0 as? Button }).forEach({
+            $0.overrideQuestionnaireAsset(with: delegate, isPrimary: $0.isSelected)
+        })
+        self.view.allSubviews.filter({ $0.tag >= 200 }).compactMap({ $0 as? UIImageView }).forEach({
+            $0.tint = delegate?.override(questionnaireAsset: .ninchatQuestionnaireCheckboxSelectedIndicator) ?? UIColor.QBlueButtonHighlighted
+        })
 
-        self.iconBorderNormalColor = delegate?.override(questionnaireAsset: .checkboxDeselectedIndicator) ?? UIColor.QGrayButton
-        self.iconBorderSelectedColor = delegate?.override(questionnaireAsset: .checkboxSelectedIndicator) ?? UIColor.QBlueButtonNormal
+        self.iconBorderNormalColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireCheckboxUnselectedIndicator) ?? UIColor.QGrayButton
+        self.iconBorderSelectedColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireCheckboxSelectedIndicator) ?? UIColor.QBlueButtonNormal
         self.view.subviews.filter({ !($0 is Button) }).forEach({ $0.round(radius: 23.0 / 2, borderWidth: 2.0, borderColor: self.iconBorderNormalColor) })
     }
 
@@ -220,7 +224,7 @@ extension QuestionnaireElementCheckbox {
         imgViewContainer.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.onIconTapped(_:))))
         imgViewContainer.tag = 300 + index
 
-        let imageView = UIImageView(image: nil, highlightedImage: UIImage(named: "icon_checkbox_selected", in: .SDKBundle, compatibleWith: nil))
+        let imageView = UIImageView(image: nil, highlightedImage: UIImage(named: "icon_checkbox_selected", in: .SDKBundle, compatibleWith: nil)?.withRenderingMode(.alwaysTemplate))
         imageView.tag = 200 + index
 
         return (imgViewContainer, imageView)
