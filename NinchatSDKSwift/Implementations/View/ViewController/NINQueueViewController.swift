@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class NINQueueViewController: UIViewController, ViewController {
+final class NINQueueViewController: UIViewController, HasCustomLayer, ViewController {
     
     // MARK: - Injected
 
@@ -79,6 +79,13 @@ final class NINQueueViewController: UIViewController, ViewController {
         self.setupViewModel(self.resumeMode)
     }
 
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+
+        applyLayerOverride(view: self.topContainerView)
+        applyLayerOverride(view: self.bottomContainerView)
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.spin(notification: nil)
@@ -114,8 +121,8 @@ final class NINQueueViewController: UIViewController, ViewController {
                 self.queueInfoTextView.setAttributed(text: "Resume error".localized, font: .ninchat)
                 return
             }
-            debugger("target queue is ready: \(String(describing: self.sessionManager?.describedQueue))")
-            self.onQueueActionTapped?(self.sessionManager?.describedQueue)
+            debugger("target queue is ready: \(String(describing: describedQueue))")
+            self.onQueueActionTapped?(describedQueue)
         case .registerAudience:
             self.viewModel.resumeMode = false
             self.viewModel.registerAudience(queue: self.queue)
@@ -164,18 +171,30 @@ extension NINQueueViewController {
         if let spinnerImage = self.delegate?.override(imageAsset: .ninchatIconLoader) {
             self.spinnerImageView.image = spinnerImage
         }
-        if let topBackgroundColor = self.delegate?.override(colorAsset: .backgroundTop) {
+        
+        if let layer = self.delegate?.override(layerAsset: .ninchatBackgroundTop) {
+            topContainerView.layer.insertSublayer(layer, at: 0)
+        }
+        /// TODO: REMOVE legacy delegate
+        else if let topBackgroundColor = self.delegate?.override(colorAsset: .backgroundTop) {
             topContainerView.backgroundColor = topBackgroundColor
         }
-        if let bottomBackgroundColor = self.delegate?.override(colorAsset: .backgroundBottom) {
+        
+        if let layer = self.delegate?.override(layerAsset: .ninchatBackgroundBottom) {
+            bottomContainerView.layer.insertSublayer(layer, at: 0)
+        }
+        /// TODO: REMOVE legacy delegate
+        else if let bottomBackgroundColor = self.delegate?.override(colorAsset: .backgroundBottom) {
             bottomContainerView.backgroundColor = bottomBackgroundColor
         }
+        
         if let textTopColor = self.delegate?.override(colorAsset: .ninchatColorTextTop) {
             queueInfoTextView.textColor = textTopColor
         }
         if let textBottomColor = self.delegate?.override(colorAsset: .ninchatColorTextBottom) {
             motdTextView.textColor = textBottomColor
         }
+        
         if let linkColor = self.delegate?.override(colorAsset: .ninchatColorLink) {
             let attribute = [NSAttributedString.Key.foregroundColor: linkColor]
             queueInfoTextView.linkTextAttributes = attribute
