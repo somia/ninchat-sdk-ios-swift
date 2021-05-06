@@ -88,7 +88,11 @@ final class CloseButton: UIView, HasCustomLayer, CloseButtonProtocol {
                 self.closeButtonImageView.image = icon
             }
         }
-        if let textColor = session?.override(colorAsset: .ninchatColorButtonSecondaryText) {
+        
+        if let textColor = session?.override(colorAsset: .ninchatColorButtonCloseChatText) {
+            self.theButton.setTitleColor(textColor, for: .normal)
+            self.closeButtonImageView.tintColor = textColor
+        } else if let textColor = session?.override(colorAsset: .ninchatColorButtonSecondaryText) {
             self.theButton.setTitleColor(textColor, for: .normal)
             self.closeButtonImageView.tintColor = textColor
         }

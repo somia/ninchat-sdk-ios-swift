@@ -109,6 +109,7 @@ public typealias NINColorAssetDictionary = [ColorConstants:UIColor]
 public enum ColorConstants {
     case ninchatColorButtonPrimaryText
     case ninchatColorButtonSecondaryText
+    case ninchatColorButtonCloseChatText
     case ninchatColorInfoText
     case ninchatColorChatName
     case ninchatColorChatTimestamp

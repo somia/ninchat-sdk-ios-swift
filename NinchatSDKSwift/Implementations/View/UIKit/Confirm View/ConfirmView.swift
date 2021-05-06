@@ -24,11 +24,6 @@ protocol ConfirmView where Self:UIView {
 
 final class FadeView: UIView {
     var onViewAction: ((ConfirmAction) -> Void)?
-    
-    @objc
-    public func onViewTapped(_ sender: UITapGestureRecognizer) {
-        self.onViewAction?(.cancel)
-    }
 }
 
 extension ConfirmView {
@@ -56,7 +51,6 @@ extension ConfirmView {
         let view = FadeView(frame: target.bounds)
         view.backgroundColor = UIColor(white: 0.0, alpha: 0.5)
         view.onViewAction = self.onViewAction
-        view.addGestureRecognizer(UITapGestureRecognizer(target: view, action: #selector(view.onViewTapped(_:))))
         
         return view
     }
