@@ -121,8 +121,8 @@ final class NINQueueViewController: UIViewController, HasCustomLayer, ViewContro
                 self.queueInfoTextView.setAttributed(text: "Resume error".localized, font: .ninchat)
                 return
             }
-            debugger("target queue is ready: \(String(describing: self.sessionManager?.describedQueue))")
-            self.onQueueActionTapped?(self.sessionManager?.describedQueue)
+            debugger("target queue is ready: \(String(describing: describedQueue))")
+            self.onQueueActionTapped?(describedQueue)
         case .registerAudience:
             self.viewModel.resumeMode = false
             self.viewModel.registerAudience(queue: self.queue)
