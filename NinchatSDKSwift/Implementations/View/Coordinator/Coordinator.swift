@@ -4,16 +4,19 @@
 // license that can be found in the LICENSE file.
 //
 
-import UIKit
 import AVKit
-import CoreServices
+import UIKit
 import WebRTC
+import SwiftUI
+import CoreServices
 import NinchatLowLevelClient
 
 protocol Coordinator: class {
-    init(with sessionManager: NINChatSessionManager, delegate: InternalDelegate?, onPresentationCompletion: @escaping (() -> Void))
-    func start(with queue: String?, resume: ResumeMode?, within navigation: UINavigationController?) -> UIViewController?
-    func prepareNINQuestionnaireViewModel(audienceMetadata: NINLowLevelClientProps?, onCompletion: @escaping (() -> Void))
+    typealias Completion = (() -> Void)
+    
+    init(with sessionManager: NINChatSessionManager, delegate: InternalDelegate?, delegateSwiftUI: InternalSwiftUIDelegate?, onPresentationCompletion: @escaping Completion)
+    func start(with queue: String?, resume: ResumeMode?, within navigation: UINavigationController?, useSwiftUI: Bool) -> UIViewController?
+    func prepareNINQuestionnaireViewModel(audienceMetadata: NINLowLevelClientProps?, onCompletion: @escaping Completion)
     func deallocate()
 }
 
@@ -22,6 +25,8 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
     // MARK: - Coordinator
 
     internal var delegate: InternalDelegate?
+    internal var delegateSwiftUI: NinchatSwiftUIInternalDelegate?
+    internal var useSwiftUI: Bool!
     internal var sessionManager: NINChatSessionManager!
     internal var onPresentationCompletion: (() -> Void)?
     internal weak var navigationController: UINavigationController? {
@@ -30,6 +35,7 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
                 navigationController?.overrideUserInterfaceStyle = .light
             }
             navigationController?.presentationController?.delegate = self
+            navigationController?.setNavigationBarHidden(true, animated: true)
         }
     }
     internal lazy var storyboard: UIStoryboard = {
@@ -62,6 +68,25 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
 
         didLoaded_initialViewController = true
         return initialViewController
+    }()
+    internal lazy var initialHostController: NINInitialHostController = {
+        let initialHostController: NINInitialHostController = storyboard.instantiateViewController()
+        let initialViewModel = NINInitialViewModel(session: sessionManager)
+        initialViewModel.onCancelTapped = { [weak self] in
+            self?.delegate?.onDidEnd()
+        }
+        initialViewModel.onQueueTapped = { [weak self] queue in
+            guard let `self` = self else { return }
+            DispatchQueue.main.async {
+                let target = (self.hasPreAudienceQuestionnaire) ? self.questionnaireViewController : self.queueViewController(queue: queue)
+                self.navigationController?.pushViewController(target, animated: true)
+            }
+        }
+
+        let initialView = NINInitialView(viewModel: initialViewModel, delegate: delegateSwiftUI)
+        initialHostController.hostController = UIHostingController(rootView: initialView)
+
+        return initialHostController
     }()
     /// Since it is pushed more than once, it cannot be defined as `lazy`
     private var didLoaded_questionnaireViewController = false
@@ -170,22 +195,32 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         return ratingViewController
     }()
 
-    // MARK: - Coordinator
+    init(with sessionManager: NINChatSessionManager, delegate: InternalDelegate?, delegateSwiftUI: NinchatSwiftUIInternalDelegate?, onPresentationCompletion: @escaping Completion) {
+    
+    self.sessionManager = sessionManager
+    self.delegate = delegate
+    self.delegateSwiftUI = delegateSwiftUI
+    self.onPresentationCompletion = onPresentationCompletion
+}
+}
 
-    init(with sessionManager: NINChatSessionManager, delegate: InternalDelegate?, onPresentationCompletion: @escaping (() -> Void)) {
-        self.sessionManager = sessionManager
-        self.delegate = delegate
-        self.onPresentationCompletion = onPresentationCompletion
-    }
+// MARK: - Initializers
 
-    func start(with queue: String?, resume: ResumeMode?, within navigation: UINavigationController?) -> UIViewController? {
+extension NINCoordinator {
+    func start(with queue: String?, resume: ResumeMode?, within navigation: UINavigationController?, useSwiftUI: Bool) -> UIViewController? {
         let topViewController: UIViewController
+        self.useSwiftUI = useSwiftUI
+        
         if let resume = resume {
             topViewController = self.queueViewController(resume: resume, queue: nil)
         } else if let queue = queue, let target = self.sessionManager.queues.filter({ $0.queueID == queue }).first {
             topViewController = hasPreAudienceQuestionnaire ? self.questionnaireViewController(queue: target, questionnaireType: .pre) : self.queueViewController(queue: target)
         } else {
-            topViewController = self.initialViewController
+            if #available(iOS 13.0, *), self.useSwiftUI {
+                topViewController = self.initialHostController
+            } else {
+                topViewController = self.initialViewController
+            }
         }
         self.navigationController = navigation ?? UINavigationController(rootViewController: topViewController)
         return (navigation == nil) ? self.navigationController : topViewController
@@ -196,9 +231,10 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         if self.didLoaded_chatViewController { self.chatViewController.deallocate() }
     }
 
-    /// In case of heavy questionnaires, there would be a memory-consuming job in instantiation of `NINQuestionnaireViewModel` even though it is implemented in a multi-thread manner using `OperationQueue`.
+    /// In case of heavy questionnaires, there would be a memory-consuming job in instantiation of `NINQuestionnaireViewModel` 
+    /// even though it is implemented in a multi-thread manner using `OperationQueue`.
     /// Thus, we have to do the job in background before the questionnaire page being loaded
-    func prepareNINQuestionnaireViewModel(audienceMetadata: NINLowLevelClientProps?, onCompletion: @escaping (() -> Void)) {
+    func prepareNINQuestionnaireViewModel(audienceMetadata: NINLowLevelClientProps?, onCompletion: @escaping Completion) {
         if self.hasPreAudienceQuestionnaire {
             self.dispatchGroup.enter()
             DispatchQueue.global(qos: .background).async { [weak self] in
@@ -219,6 +255,8 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         }
     }
 }
+
+// MARK: - ViewControllers
 
 extension NINCoordinator {
     internal func questionnaireViewController(queue: Queue? = nil, ratingViewModel: NINRatingViewModel? = nil, rating: ChatStatus? = nil, questionnaireType: AudienceQuestionnaireType) -> NINQuestionnaireViewController {

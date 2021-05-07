@@ -19,11 +19,12 @@ public protocol NINChatSessionProtocol {
     var appDetails: String? { get set }
     var session: NINResult<NINLowLevelClientSession?> { get }
     var delegate: NINChatSessionDelegate? { get set }
+    var delegateSwiftUI: NinchatSwiftUIDelegate? { get set }
 
     init(configKey: String, queueID: String?, environments: [String]?, metadata: NINLowLevelClientProps?, configuration: NINSiteConfiguration?)
     func start(completion: @escaping NinchatSessionCompletion) throws
     func start(credentials: NINSessionCredentials, completion: @escaping NinchatSessionCompletion) throws
-    func chatSession(within navigationController: UINavigationController?) throws -> UIViewController?
+    func chatSession(within navigationController: UINavigationController?, useSwiftUI: Bool) throws -> UIViewController?
     func deallocate()
 }
 extension NINChatSessionProtocol {
@@ -39,8 +40,11 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
     lazy var internalDelegate: InternalDelegate? = {
         InternalDelegate(session: self)
     }()
+    lazy var internalSwiftUIDelegate: InternalSwiftUIDelegate? = {
+        InternalSwiftUIDelegate(session: self)
+    }()
     private lazy var coordinator: Coordinator? = {
-        NINCoordinator(with: self.sessionManager, delegate: self.internalDelegate) { [weak self] in
+        NINCoordinator(with: self.sessionManager, delegate: self.internalDelegate, delegateSwiftUI: self.internalSwiftUIDelegate) { [weak self] in
             self?.deallocate()
         }
     }()
@@ -74,6 +78,7 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
     // MARK: - NINChatSessionProtocol
 
     public weak var delegate: NINChatSessionDelegate?
+    public weak var delegateSwiftUI: NinchatSwiftUIDelegate?
     public var session: NINResult<NINLowLevelClientSession?> {
         guard self.started else { return .failure(NINExceptions.apiNotStarted) }
         return .success(self.sessionManager.session)
@@ -83,7 +88,7 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         get { sessionManager.appDetails }
     }
 
-    public init(configKey: String, queueID: String? = nil, environments: [String]? = nil, metadata: NINLowLevelClientProps? = nil, configuration: NINSiteConfiguration? = nil) {
+    required public init(configKey: String, queueID: String? = nil, environments: [String]? = nil, metadata: NINLowLevelClientProps? = nil, configuration: NINSiteConfiguration? = nil) {
         self.configKey = configKey
         self.queueID = queueID
         self.environments = environments
@@ -150,7 +155,7 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         } catch { completion(nil, error) }
     }
 
-    public func chatSession(within navigationController: UINavigationController?) throws -> UIViewController? {
+    public func chatSession(within navigationController: UINavigationController?, useSwiftUI: Bool = false) throws -> UIViewController? {
         guard Thread.isMainThread else { throw NINExceptions.mainThread }
         guard self.started else { throw NINExceptions.apiNotStarted }
         guard !self.sessionAlive else { throw NINExceptions.apiAlive }
@@ -160,11 +165,8 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         if self.queueID?.trimmingCharacters(in: .whitespacesAndNewlines).count == 0 {
             self.queueID = self.sessionManager.siteConfiguration.audienceAutoQueue
         }
-        return coordinator?.start(
-                with: self.queueID?.trimmingCharacters(in: .whitespacesAndNewlines),
-                resume: self.resumeMode,
-                within: navigationController
-        )
+        return coordinator?.start(with: self.queueID?.trimmingCharacters(in: .whitespacesAndNewlines),
+                                  resume: self.resumeMode, within: navigationController, useSwiftUI: useSwiftUI)
     }
 
     public func deallocate() {
