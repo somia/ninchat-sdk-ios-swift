@@ -12,11 +12,170 @@
 		5C08BD6E2626CC3100AB9397 /* PHAssetResourceType+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C08BD6D2626CC3100AB9397 /* PHAssetResourceType+Extension.swift */; };
 		5C5658CD25EF780F004ED98F /* QuestionnaireTypingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C5658CC25EF780F004ED98F /* QuestionnaireTypingCell.xib */; };
 		5C5658D225EF7F77004ED98F /* QuestionnaireTypingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C5658D125EF7F77004ED98F /* QuestionnaireTypingCell.swift */; };
+		5C6625AB26442E7D002F3625 /* Override+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C6625AA26442E7D002F3625 /* Override+Extension.swift */; };
 		5C791E35263820D700654715 /* NinchatSDKSwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C791E2C263820D700654715 /* NinchatSDKSwiftUI.framework */; };
 		5C791E3A263820D700654715 /* NinchatSDKSwiftUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C791E39263820D700654715 /* NinchatSDKSwiftUITests.swift */; };
 		5C791E3C263820D700654715 /* NinchatSDKSwiftUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C791E2E263820D700654715 /* NinchatSDKSwiftUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5C791E4C2638227900654715 /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855CBE412399060900A024A7 /* UIColor+Extension.swift */; };
+		5C791E4F26384A2A00654715 /* NINnitialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C791E4E26384A2A00654715 /* NINnitialView.swift */; };
+		5C791E5226384A9900654715 /* NINAttributedText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C791E5126384A9900654715 /* NINAttributedText.swift */; };
+		5C791E5326384B3100654715 /* NSUserDefaults+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B704E5FC177573DF56D2369A /* NSUserDefaults+Extension.swift */; };
+		5C791E5426384B3100654715 /* UITextField+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16F9F20590A73609F0DDB /* UITextField+Extension.swift */; };
+		5C791E5626384B3100654715 /* NSMutableAttributedString+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1652A485CCE644E39135E /* NSMutableAttributedString+Extension.swift */; };
+		5C791E5726384B3100654715 /* RTCSessionDescription+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1665602ED586F1BD60785 /* RTCSessionDescription+Extension.swift */; };
+		5C791E5826384B3100654715 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16501A258D1244E52AD23 /* String+Extension.swift */; };
+		5C791E5A26384B3100654715 /* NINLowLevelClientSession+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D45423C0B48A00C16758 /* NINLowLevelClientSession+Extension.swift */; };
+		5C791E5B26384B3100654715 /* Storyboard+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855CBE212397CCA800A024A7 /* Storyboard+Extension.swift */; };
+		5C791E5C26384B3100654715 /* URL+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B704E5C0EFFB626F12366601 /* URL+Extension.swift */; };
+		5C791E5D26384B3100654715 /* UIButton+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8530EC9123ADFE9800BAA52A /* UIButton+Extension.swift */; };
+		5C791E5E26384B3100654715 /* NSAttributedString+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16EDB1E05655FA925BCCB /* NSAttributedString+Extension.swift */; };
+		5C791E5F26384B3100654715 /* Bundle+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855CBE4323990CB100A024A7 /* Bundle+Extension.swift */; };
+		5C791E6026384B3100654715 /* UILayoutPriority+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A161F49CF87AD53CF4E199 /* UILayoutPriority+Extension.swift */; };
+		5C791E6126384B3100654715 /* Thread+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16E7CDA2F9D24FF1BE1DC /* Thread+Extension.swift */; };
+		5C791E6226384B3100654715 /* UIFont+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A163B62D2DBB763D1B850A /* UIFont+Extension.swift */; };
+		5C791E6326384B3100654715 /* Data+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D45123C0B48A00C16758 /* Data+Extension.swift */; };
+		5C791E6426384B3100654715 /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A6C9A423CCC16A001CED6D /* Date+Extension.swift */; };
+		5C791E6526384B3100654715 /* UIDevice+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CC095C23DC4C9B00482956 /* UIDevice+Extension.swift */; };
+		5C791E6626384B3100654715 /* KeyboardHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD4F1C72540CAAF009856AC /* KeyboardHandler.swift */; };
+		5C791E6726384B3100654715 /* UITextView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DD6C6123AF6F5A0023FFEF /* UITextView+Extension.swift */; };
+		5C791E6826384B3100654715 /* PHAssetResourceType+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C08BD6D2626CC3100AB9397 /* PHAssetResourceType+Extension.swift */; };
+		5C791E6926384B3100654715 /* Encodable+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85CC096323DC66D300482956 /* Encodable+Extension.swift */; };
+		5C791E6A26384B3100654715 /* RTCIceCandidate+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16241F1BD25005BE48B83 /* RTCIceCandidate+Extension.swift */; };
+		5C791E6B26384B3100654715 /* UIViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855CBE2E2397E3AB00A024A7 /* UIViewController+Extension.swift */; };
+		5C791E6C26384B3100654715 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8530EC9023ADFE9800BAA52A /* UIView+Extension.swift */; };
+		5C791E6D26384B3100654715 /* Dictionary+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1601709224C6C90482745 /* Dictionary+Extension.swift */; };
+		5C791E6E26384B3100654715 /* UIImageView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16A99A8F815E0C72B0AAE /* UIImageView+Extension.swift */; };
+		5C791E6F26384B3100654715 /* NINLowLevelClientProps+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D45323C0B48A00C16758 /* NINLowLevelClientProps+Extension.swift */; };
+		5C791E7026384B3100654715 /* UITableViewCell+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855FA2A423C7378500A2FB41 /* UITableViewCell+Extension.swift */; };
+		5C791E7126384B3100654715 /* Notification+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD4F1C62540CAAF009856AC /* Notification+Extension.swift */; };
+		5C791E7226384B3100654715 /* UITableView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8561EADD23C37C3000943C72 /* UITableView+Extension.swift */; };
+		5C791E7326384B3100654715 /* UIApplication+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16E65EA02A328F488F74C /* UIApplication+Extension.swift */; };
+		5C791E7426384B3100654715 /* Debugger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D44323C091C000C16758 /* Debugger.swift */; };
+		5C791E7526384B3100654715 /* Array+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16739D24E30A3D062D285 /* Array+Extension.swift */; };
+		5C791E7626384B3F00654715 /* UIResponder+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C06A647261DB1EA00873B33 /* UIResponder+Extension.swift */; };
+		5C791E7726384B4700654715 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855B9F2C238ECE650081A9C6 /* Constants.swift */; };
+		5C791E7826384B7A00654715 /* RTCSignal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D44723C0B47300C16758 /* RTCSignal.swift */; };
+		5C791E7926384B8200654715 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16120032609820A06185E /* Queue.swift */; };
+		5C791E7A26384B8A00654715 /* NINChatError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A163A915328A44FBCAD0C2 /* NINChatError.swift */; };
+		5C791E7B26384B9D00654715 /* NINSessionCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16FA13B1F62E386352B88 /* NINSessionCredentials.swift */; };
+		5C791E7F26384E3400654715 /* Font+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C791E7E26384E3400654715 /* Font+Extension.swift */; };
+		5C791E80263857B400654715 /* SourceSansPro-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C5323AE0CBC0023FFEF /* SourceSansPro-ExtraLightItalic.ttf */; };
+		5C791E81263857B400654715 /* SourceSansPro-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C5023AE0CBC0023FFEF /* SourceSansPro-ExtraLight.ttf */; };
+		5C791E82263857B400654715 /* SourceSansPro-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C5223AE0CBC0023FFEF /* SourceSansPro-SemiBold.ttf */; };
+		5C791E83263857B400654715 /* SourceSansPro-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C4A23AE0CBC0023FFEF /* SourceSansPro-SemiBoldItalic.ttf */; };
+		5C791E84263857B400654715 /* SourceSansPro-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C4E23AE0CBC0023FFEF /* SourceSansPro-Light.ttf */; };
+		5C791E85263857B400654715 /* SourceSansPro-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C5123AE0CBC0023FFEF /* SourceSansPro-BoldItalic.ttf */; };
+		5C791E86263857B400654715 /* SourceSansPro-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C4C23AE0CBC0023FFEF /* SourceSansPro-Bold.ttf */; };
+		5C791E87263857B400654715 /* SourceSansPro-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C5423AE0CBC0023FFEF /* SourceSansPro-Italic.ttf */; };
+		5C791E88263857B400654715 /* SourceSansPro-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C4B23AE0CBC0023FFEF /* SourceSansPro-Regular.ttf */; };
+		5C791E89263857B400654715 /* SourceSansPro-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C4D23AE0CBC0023FFEF /* SourceSansPro-LightItalic.ttf */; };
+		5C791E8A263857B400654715 /* SourceSansPro-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C4F23AE0CBC0023FFEF /* SourceSansPro-Black.ttf */; };
+		5C791E8B263857B400654715 /* SourceSansPro-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85DD6C4923AE0CBC0023FFEF /* SourceSansPro-BlackItalic.ttf */; };
+		5C791E912639429D00654715 /* NINInitialViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C791E902639429D00654715 /* NINInitialViewModel.swift */; };
+		5C791E922639453700654715 /* NINChatSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8561EAD023C2805900943C72 /* NINChatSessionManager.swift */; };
+		5C791E932639454F00654715 /* NINChatSessionManagerClosures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8561EAD223C2805900943C72 /* NINChatSessionManagerClosures.swift */; };
+		5C791E952639454F00654715 /* NINChatSessionManagerEventHandlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8561EAD323C2805900943C72 /* NINChatSessionManagerEventHandlers.swift */; };
+		5C791E962639454F00654715 /* NINChatSeesionManagerPrivate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8561EAD123C2805900943C72 /* NINChatSeesionManagerPrivate.swift */; };
+		5C791E972639457A00654715 /* QuestionnaireConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1675E285CCC4A250D77BB /* QuestionnaireConfiguration.swift */; };
+		5C791E982639457A00654715 /* SiteConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A164E1E7207BA353BF6418 /* SiteConfiguration.swift */; };
+		5C791E992639457A00654715 /* AvatarConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16A31C53EAB230510289A /* AvatarConfig.swift */; };
+		5C791E9A2639457A00654715 /* ChannelUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A165370F88E5B62075CFB2 /* ChannelUser.swift */; };
+		5C791E9B2639457A00654715 /* WebRTCServerInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A166E121EFB4764BE628C8 /* WebRTCServerInfo.swift */; };
+		5C791E9C2639457A00654715 /* InboundMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16BFFA180E7ADBDE99C8D /* InboundMessage.swift */; };
+		5C791E9D2639457A00654715 /* ChatMessagePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D44623C0B47300C16758 /* ChatMessagePayload.swift */; };
+		5C791E9E2639457A00654715 /* ComposeUIAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16B895B61CE50613D6AD7 /* ComposeUIAction.swift */; };
+		5C791E9F2639457A00654715 /* ChannelMessagePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854843BA23D77C81006DC9CE /* ChannelMessagePayload.swift */; };
+		5C791EA02639457A00654715 /* FileInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D44B23C0B47300C16758 /* FileInfo.swift */; };
+		5C791EA12639458600654715 /* NINSiteConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59CF239E6A38007ABAE3 /* NINSiteConfiguration.swift */; };
+		5C791EA4263945CF00654715 /* ChannelMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1621FC457EFE156F90335 /* ChannelMessage.swift */; };
+		5C791EA5263945CF00654715 /* UserTypingMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16F13A0720D3E96E59373 /* UserTypingMessage.swift */; };
+		5C791EA6263945CF00654715 /* TextMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8571D44923C0B47300C16758 /* TextMessage.swift */; };
+		5C791EA7263945CF00654715 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16EF006023D3561854D8B /* ChatMessage.swift */; };
+		5C791EA8263945CF00654715 /* MetaMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1608187147D83945341AF /* MetaMessage.swift */; };
+		5C791EA9263945CF00654715 /* ComposeMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A162A3A1B95DCF935DA47E /* ComposeMessage.swift */; };
+		5C791EAA2639460500654715 /* NINChatClientPropsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16EAC1C68B081618E08E9 /* NINChatClientPropsParser.swift */; };
+		5C791EAB2639461900654715 /* NINChatExceptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855B9F2B238ECE650081A9C6 /* NINChatExceptions.swift */; };
+		5C791EAC2639463800654715 /* Empty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A168531329D3A76BDE1249 /* Empty.swift */; };
+		5C791EAD2639465800654715 /* SiteConfigRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16B835075C42016E35338 /* SiteConfigRequest.swift */; };
+		5C791EAE2639465C00654715 /* CloseSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16F8780577EFC04190614 /* CloseSession.swift */; };
+		5C791EB22639466B00654715 /* ServiceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16407D8FAC5AEEDD748C9 /* ServiceManager.swift */; };
+		5C791EB32639466B00654715 /* ServiceRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A160C90332B61FB00EA8D8 /* ServiceRequest.swift */; };
+		5C791EB52639468B00654715 /* NINChatSessionManagerImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8561EACF23C2805900943C72 /* NINChatSessionManagerImpl.swift */; };
+		5C791EB8263947D100654715 /* NINChatDevHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C791EB7263947D100654715 /* NINChatDevHelper.swift */; };
+		5C791EB9263947E800654715 /* NINChatDevHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C791EB7263947D100654715 /* NINChatDevHelper.swift */; };
+		5C791EBA2639485800654715 /* NINChatSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855B9F2D238ECE650081A9C6 /* NINChatSession.swift */; };
+		5C791EBB2639485800654715 /* NINChatSessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855B9F2E238ECE650081A9C6 /* NINChatSessionDelegate.swift */; };
+		5C791EBC2639485800654715 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855CBE1E2397C4F600A024A7 /* Coordinator.swift */; };
+		5C791EBD2639485800654715 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855CBE2C2397DF5700A024A7 /* ViewController.swift */; };
+		5C791EBE2639485800654715 /* NINInitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855CBE2A2397DEA300A024A7 /* NINInitialViewController.swift */; };
+		5C791EBF2639485800654715 /* NINQuestionnaireViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1611EF0E38FD4DEB8B4AC /* NINQuestionnaireViewController.swift */; };
+		5C791EC02639485800654715 /* NINQueueViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855CBE3D2397FAE900A024A7 /* NINQueueViewController.swift */; };
+		5C791EC12639485800654715 /* NINChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8530EC8023AD3FC300BAA52A /* NINChatViewController.swift */; };
+		5C791EC22639485800654715 /* NINFullScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563003F23B230350098A7B0 /* NINFullScreenViewController.swift */; };
+		5C791EC32639485800654715 /* NINRatingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563004823B286360098A7B0 /* NINRatingViewController.swift */; };
+		5C791EC42639485800654715 /* ConfirmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DDD22323D4CC0800E00844 /* ConfirmView.swift */; };
+		5C791EC52639485800654715 /* ConfirmCloseChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DDD22123D4CBD900E00844 /* ConfirmCloseChatView.swift */; };
+		5C791EC62639485800654715 /* ConfirmVideoCallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854843B123D5ED4C006DC9CE /* ConfirmVideoCallView.swift */; };
+		5C791EC72639485800654715 /* MetaCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 855FA2A023C735CD00A2FB41 /* MetaCell.swift */; };
+		5C791EC82639485800654715 /* ChatMetaCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8561EAE223C393A500943C72 /* ChatMetaCell.swift */; };
+		5C791EC92639485800654715 /* ChatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8561EAE023C3937600943C72 /* ChatCell.swift */; };
+		5C791ECA2639485800654715 /* ChatChannelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853C53DB23C3980C00DF37D0 /* ChatChannelCell.swift */; };
+		5C791ECB2639485800654715 /* ChatChannelMediaCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85973167240A6179002F0346 /* ChatChannelMediaCell.swift */; };
+		5C791ECC2639485800654715 /* ChatChannelTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85973169240A6190002F0346 /* ChatChannelTextCell.swift */; };
+		5C791ECD2639485800654715 /* ChatChannelComposeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8597316B240A61A0002F0346 /* ChatChannelComposeCell.swift */; };
+		5C791ECE2639485800654715 /* TypingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A168B0495C5D2BBF7733D0 /* TypingCell.swift */; };
+		5C791ECF2639485800654715 /* ChatTypingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A167BAE1C0F6F9466CE1D6 /* ChatTypingCell.swift */; };
+		5C791ED02639485800654715 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8561EADB23C3598E00943C72 /* ChatView.swift */; };
+		5C791ED12639485800654715 /* ComposeMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1689A5BDC25419D67E9BF /* ComposeMessageView.swift */; };
+		5C791ED22639485800654715 /* ComposeContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1689894322817E8A84EE1 /* ComposeContentView.swift */; };
+		5C791ED32639485800654715 /* FacesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563004B23B286FB0098A7B0 /* FacesView.swift */; };
+		5C791ED42639485800654715 /* TopBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563004223B231350098A7B0 /* TopBar.swift */; };
+		5C791ED52639485800654715 /* ChatInputControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8530EC8823AD405C00BAA52A /* ChatInputControls.swift */; };
+		5C791ED62639485800654715 /* VideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8530EC8423AD405200BAA52A /* VideoView.swift */; };
+		5C791ED72639485800654715 /* NINButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59CB239E4C42007ABAE3 /* NINButton.swift */; };
+		5C791ED82639485800654715 /* CloseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A6C9A723CE35F7001CED6D /* CloseButton.swift */; };
+		5C791ED92639485800654715 /* ChoiceDialogue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16984C5BA331DFFCB6EDA /* ChoiceDialogue.swift */; };
+		5C791EDA2639485800654715 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A169A968E807A8F8D6358A /* Toast.swift */; };
+		5C791EDB2639485800654715 /* QuestionnaireElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16F6AB5D678663E586FD1 /* QuestionnaireElement.swift */; };
+		5C791EDC2639485800654715 /* QuestionnaireNavigationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1648B47113F8332CE820C /* QuestionnaireNavigationCell.swift */; };
+		5C791EDD2639485800654715 /* QuestionnaireCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 857F12C024752CA400337F7A /* QuestionnaireCell.swift */; };
+		5C791EDE2639485800654715 /* QuestionnaireTypingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C5658D125EF7F77004ED98F /* QuestionnaireTypingCell.swift */; };
+		5C791EDF2639485800654715 /* QuestionnaireElementSelect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A163540D74E87CE6247C06 /* QuestionnaireElementSelect.swift */; };
+		5C791EE02639485800654715 /* QuestionnaireElementTextArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1660AC336314992BDC930 /* QuestionnaireElementTextArea.swift */; };
+		5C791EE12639485900654715 /* QuestionnaireElementTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A161CED30CF077F137B719 /* QuestionnaireElementTextField.swift */; };
+		5C791EE22639485900654715 /* QuestionnaireElementCheckbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16009B294E8960F6094D5 /* QuestionnaireElementCheckbox.swift */; };
+		5C791EE32639485900654715 /* QuestionnaireElementRadio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A161EE9C9467CBC886D9B1 /* QuestionnaireElementRadio.swift */; };
+		5C791EE42639485900654715 /* QuestionnaireElementText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16AE14079CD3F38C9E09D /* QuestionnaireElementText.swift */; };
+		5C791EE52639485900654715 /* QuestionnaireElementLikert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16ED021E7CDE32491AE5D /* QuestionnaireElementLikert.swift */; };
+		5C791EE62639485900654715 /* NINChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8530EC9423ADFEA600BAA52A /* NINChatViewModel.swift */; };
+		5C791EE72639485900654715 /* NINQueueViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DC59D4239E7C3B007ABAE3 /* NINQueueViewModel.swift */; };
+		5C791EE82639485900654715 /* NINFullScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563004623B249010098A7B0 /* NINFullScreenViewModel.swift */; };
+		5C791EE92639485900654715 /* NINRatingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563004F23B291600098A7B0 /* NINRatingViewModel.swift */; };
+		5C791EEA2639485900654715 /* NINQuestionnaireViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16C0FB85958855318340A /* NINQuestionnaireViewModel.swift */; };
+		5C791EEB2639485900654715 /* NINChatDataSourceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563007A23B3846B0098A7B0 /* NINChatDataSourceDelegate.swift */; };
+		5C791EEC2639485900654715 /* NINWebRTCDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563007C23B391840098A7B0 /* NINWebRTCDelegate.swift */; };
+		5C791EED2639485900654715 /* NINRTCVideoDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563007E23B393D00098A7B0 /* NINRTCVideoDelegate.swift */; };
+		5C791EEE2639485900654715 /* NINPickerControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563008023B398AB0098A7B0 /* NINPickerControllerDelegate.swift */; };
+		5C791EEF2639485900654715 /* QuestionnaireDataSourceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A169DF3F0EF74990AD7036 /* QuestionnaireDataSourceDelegate.swift */; };
+		5C791EF02639485900654715 /* NINQuestionnaireFormDataSourceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A1601A471AB9D2A4F94CA4 /* NINQuestionnaireFormDataSourceDelegate.swift */; };
+		5C791EF12639485900654715 /* NINQuestionnaireConversationDataSourceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16F08D697EA1A1125CC1E /* NINQuestionnaireConversationDataSourceDelegate.swift */; };
+		5C791EF22639485900654715 /* NINChatSessionInternal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8561EACD23C2805900943C72 /* NINChatSessionInternal.swift */; };
+		5C791EF32639485900654715 /* NINChatWebRTCClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854843B623D60EEF006DC9CE /* NINChatWebRTCClient.swift */; };
+		5C791EF42639485900654715 /* NINChatWebRTCClientImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854843B823D610D7006DC9CE /* NINChatWebRTCClientImpl.swift */; };
+		5C791EF52639485900654715 /* Permission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A163542A73487774FB1D3C /* Permission.swift */; };
+		5C791EF62639485900654715 /* VideoThumbnailManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16EE2919D93717F843D49 /* VideoThumbnailManager.swift */; };
+		5C791EF72639485900654715 /* QuestionnaireParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A16E69D69A37749EB13539 /* QuestionnaireParser.swift */; };
+		5C791EF82639485900654715 /* QuestionnaireElementConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91A162DE1B788E9D39518E5B /* QuestionnaireElementConnector.swift */; };
+		5CD114C026396D77008BC196 /* site-configuration-mock.json in Resources */ = {isa = PBXBuildFile; fileRef = 91A16C64D29D2D2F1D8E2C02 /* site-configuration-mock.json */; };
+		5CD114C226396EF9008BC196 /* NINInitialHostController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD114C126396EF9008BC196 /* NINInitialHostController.swift */; };
 		5CD4F1C82540CAAF009856AC /* Notification+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD4F1C62540CAAF009856AC /* Notification+Extension.swift */; };
 		5CD4F1C92540CAAF009856AC /* KeyboardHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD4F1C72540CAAF009856AC /* KeyboardHandler.swift */; };
+		5CF799A72640326A009A7E2B /* View+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CF799A62640326A009A7E2B /* View+Extension.swift */; };
+		5CF799B726427A06009A7E2B /* NINPrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CF799B626427A06009A7E2B /* NINPrimaryButton.swift */; };
+		5CF799B926428A9A009A7E2B /* NinchatSwiftUIModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CF799B826428A9A009A7E2B /* NinchatSwiftUIModifier.swift */; };
+		5CF799BB2643D0AB009A7E2B /* NINSecondaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CF799BA2643D0AB009A7E2B /* NINSecondaryButton.swift */; };
+		5CF799BD2643D1A6009A7E2B /* NinchatSwiftUIDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CF799BC2643D1A6009A7E2B /* NinchatSwiftUIDelegate.swift */; };
+		5CF799C02643D3F2009A7E2B /* NinchatSwiftUIInternalDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CF799BF2643D3F2009A7E2B /* NinchatSwiftUIInternalDelegate.swift */; };
 		7C44F1A84C25C4445CF3B955 /* Pods_NinchatSDKSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 495ADA60487CD354EDC07332 /* Pods_NinchatSDKSwift.framework */; };
 		851E359923B1214E000FA966 /* AutolayouTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851E359823B1214E000FA966 /* AutolayouTests.swift */; };
 		851ECF6423969297006D332F /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 851ECF6323969297006D332F /* README.md */; };
@@ -255,14 +414,28 @@
 		5C08BD6D2626CC3100AB9397 /* PHAssetResourceType+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PHAssetResourceType+Extension.swift"; sourceTree = "<group>"; };
 		5C5658CC25EF780F004ED98F /* QuestionnaireTypingCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = QuestionnaireTypingCell.xib; sourceTree = "<group>"; };
 		5C5658D125EF7F77004ED98F /* QuestionnaireTypingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionnaireTypingCell.swift; sourceTree = "<group>"; };
+		5C6625AA26442E7D002F3625 /* Override+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Override+Extension.swift"; sourceTree = "<group>"; };
 		5C791E2C263820D700654715 /* NinchatSDKSwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NinchatSDKSwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C791E2E263820D700654715 /* NinchatSDKSwiftUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NinchatSDKSwiftUI.h; sourceTree = "<group>"; };
 		5C791E2F263820D700654715 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5C791E34263820D700654715 /* NinchatSDKSwiftUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NinchatSDKSwiftUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C791E39263820D700654715 /* NinchatSDKSwiftUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NinchatSDKSwiftUITests.swift; sourceTree = "<group>"; };
 		5C791E3B263820D700654715 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5C791E4E26384A2A00654715 /* NINnitialView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINnitialView.swift; sourceTree = "<group>"; };
+		5C791E5126384A9900654715 /* NINAttributedText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINAttributedText.swift; sourceTree = "<group>"; };
+		5C791E7E26384E3400654715 /* Font+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font+Extension.swift"; sourceTree = "<group>"; };
+		5C791E902639429D00654715 /* NINInitialViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINInitialViewModel.swift; sourceTree = "<group>"; };
+		5C791EB7263947D100654715 /* NINChatDevHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINChatDevHelper.swift; sourceTree = "<group>"; };
+		5CD114C126396EF9008BC196 /* NINInitialHostController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINInitialHostController.swift; sourceTree = "<group>"; };
 		5CD4F1C62540CAAF009856AC /* Notification+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Notification+Extension.swift"; sourceTree = "<group>"; };
 		5CD4F1C72540CAAF009856AC /* KeyboardHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardHandler.swift; sourceTree = "<group>"; };
+		5CF799A5263FE583009A7E2B /* NinchatSDKSwiftUI.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = NinchatSDKSwiftUI.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		5CF799A62640326A009A7E2B /* View+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extension.swift"; sourceTree = "<group>"; };
+		5CF799B626427A06009A7E2B /* NINPrimaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINPrimaryButton.swift; sourceTree = "<group>"; };
+		5CF799B826428A9A009A7E2B /* NinchatSwiftUIModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NinchatSwiftUIModifier.swift; sourceTree = "<group>"; };
+		5CF799BA2643D0AB009A7E2B /* NINSecondaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NINSecondaryButton.swift; sourceTree = "<group>"; };
+		5CF799BC2643D1A6009A7E2B /* NinchatSwiftUIDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NinchatSwiftUIDelegate.swift; sourceTree = "<group>"; };
+		5CF799BF2643D3F2009A7E2B /* NinchatSwiftUIInternalDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NinchatSwiftUIInternalDelegate.swift; sourceTree = "<group>"; };
 		62C8D99D572F0DB4B5E6D255 /* Pods-NinchatSDKSwiftUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftUITests.release.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftUITests/Pods-NinchatSDKSwiftUITests.release.xcconfig"; sourceTree = "<group>"; };
 		7B50C1E321841F3749D5D05A /* Pods-NinchatSDKSwiftServerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftServerTests.release.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftServerTests/Pods-NinchatSDKSwiftServerTests.release.xcconfig"; sourceTree = "<group>"; };
 		832BEC3E467C0EEE45282F1B /* Pods-NinchatSDKSwiftTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftTests.debug.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -557,6 +730,12 @@
 		5C791E2D263820D700654715 /* NinchatSDKSwiftUI */ = {
 			isa = PBXGroup;
 			children = (
+				5CF799B826428A9A009A7E2B /* NinchatSwiftUIModifier.swift */,
+				5CF799BC2643D1A6009A7E2B /* NinchatSwiftUIDelegate.swift */,
+				5CF799BE2643D3DE009A7E2B /* Internal */,
+				5C791E4D26384A1500654715 /* NinInitialView */,
+				5C791E5026384A6300654715 /* SwiftUI */,
+				5C791E7D26384E1F00654715 /* Extensions */,
 				5C791E2E263820D700654715 /* NinchatSDKSwiftUI.h */,
 				5C791E2F263820D700654715 /* Info.plist */,
 			);
@@ -570,6 +749,44 @@
 				5C791E3B263820D700654715 /* Info.plist */,
 			);
 			path = NinchatSDKSwiftUITests;
+			sourceTree = "<group>";
+		};
+		5C791E4D26384A1500654715 /* NinInitialView */ = {
+			isa = PBXGroup;
+			children = (
+				5C791E4E26384A2A00654715 /* NINnitialView.swift */,
+				5C791E902639429D00654715 /* NINInitialViewModel.swift */,
+				5CD114C126396EF9008BC196 /* NINInitialHostController.swift */,
+			);
+			path = NinInitialView;
+			sourceTree = "<group>";
+		};
+		5C791E5026384A6300654715 /* SwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				5C791E5126384A9900654715 /* NINAttributedText.swift */,
+				5CF799B626427A06009A7E2B /* NINPrimaryButton.swift */,
+				5CF799BA2643D0AB009A7E2B /* NINSecondaryButton.swift */,
+			);
+			path = SwiftUI;
+			sourceTree = "<group>";
+		};
+		5C791E7D26384E1F00654715 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				5C791E7E26384E3400654715 /* Font+Extension.swift */,
+				5CF799A62640326A009A7E2B /* View+Extension.swift */,
+				5C6625AA26442E7D002F3625 /* Override+Extension.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		5CF799BE2643D3DE009A7E2B /* Internal */ = {
+			isa = PBXGroup;
+			children = (
+				5CF799BF2643D3F2009A7E2B /* NinchatSwiftUIInternalDelegate.swift */,
+			);
+			path = Internal;
 			sourceTree = "<group>";
 		};
 		852DB4DB247D370B001EAC2C /* Cells */ = {
@@ -651,6 +868,7 @@
 			children = (
 				855B9F9D238ED9DC0081A9C6 /* Podfile */,
 				852751D8238EE67000B6A44A /* NinchatSDKSwift.podspec */,
+				5CF799A5263FE583009A7E2B /* NinchatSDKSwiftUI.podspec */,
 				852751DA238EE67800B6A44A /* BUILDING.md */,
 				851ECF6323969297006D332F /* README.md */,
 				855B9F13238ECDB30081A9C6 /* NinchatSDKSwift */,
@@ -1317,6 +1535,19 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5C791E8B263857B400654715 /* SourceSansPro-BlackItalic.ttf in Resources */,
+				5C791E82263857B400654715 /* SourceSansPro-SemiBold.ttf in Resources */,
+				5C791E85263857B400654715 /* SourceSansPro-BoldItalic.ttf in Resources */,
+				5C791E81263857B400654715 /* SourceSansPro-ExtraLight.ttf in Resources */,
+				5C791E83263857B400654715 /* SourceSansPro-SemiBoldItalic.ttf in Resources */,
+				5C791E84263857B400654715 /* SourceSansPro-Light.ttf in Resources */,
+				5C791E8A263857B400654715 /* SourceSansPro-Black.ttf in Resources */,
+				5C791E89263857B400654715 /* SourceSansPro-LightItalic.ttf in Resources */,
+				5C791E86263857B400654715 /* SourceSansPro-Bold.ttf in Resources */,
+				5CD114C026396D77008BC196 /* site-configuration-mock.json in Resources */,
+				5C791E87263857B400654715 /* SourceSansPro-Italic.ttf in Resources */,
+				5C791E80263857B400654715 /* SourceSansPro-ExtraLightItalic.ttf in Resources */,
+				5C791E88263857B400654715 /* SourceSansPro-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1559,6 +1790,151 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5C791EBA2639485800654715 /* NINChatSession.swift in Sources */,
+				5C791EBB2639485800654715 /* NINChatSessionDelegate.swift in Sources */,
+				5C791EBC2639485800654715 /* Coordinator.swift in Sources */,
+				5C791EBD2639485800654715 /* ViewController.swift in Sources */,
+				5C791EBE2639485800654715 /* NINInitialViewController.swift in Sources */,
+				5C791EBF2639485800654715 /* NINQuestionnaireViewController.swift in Sources */,
+				5C791EC02639485800654715 /* NINQueueViewController.swift in Sources */,
+				5C791EC12639485800654715 /* NINChatViewController.swift in Sources */,
+				5C791EC22639485800654715 /* NINFullScreenViewController.swift in Sources */,
+				5C791EC32639485800654715 /* NINRatingViewController.swift in Sources */,
+				5C791EC42639485800654715 /* ConfirmView.swift in Sources */,
+				5C791EC52639485800654715 /* ConfirmCloseChatView.swift in Sources */,
+				5C791EC62639485800654715 /* ConfirmVideoCallView.swift in Sources */,
+				5C791EC72639485800654715 /* MetaCell.swift in Sources */,
+				5C791EC82639485800654715 /* ChatMetaCell.swift in Sources */,
+				5C791EC92639485800654715 /* ChatCell.swift in Sources */,
+				5C791ECA2639485800654715 /* ChatChannelCell.swift in Sources */,
+				5C791ECB2639485800654715 /* ChatChannelMediaCell.swift in Sources */,
+				5C791ECC2639485800654715 /* ChatChannelTextCell.swift in Sources */,
+				5C791ECD2639485800654715 /* ChatChannelComposeCell.swift in Sources */,
+				5C791ECE2639485800654715 /* TypingCell.swift in Sources */,
+				5C791ECF2639485800654715 /* ChatTypingCell.swift in Sources */,
+				5C791ED02639485800654715 /* ChatView.swift in Sources */,
+				5C791ED12639485800654715 /* ComposeMessageView.swift in Sources */,
+				5C791ED22639485800654715 /* ComposeContentView.swift in Sources */,
+				5C791ED32639485800654715 /* FacesView.swift in Sources */,
+				5C791ED42639485800654715 /* TopBar.swift in Sources */,
+				5C791ED52639485800654715 /* ChatInputControls.swift in Sources */,
+				5C791ED62639485800654715 /* VideoView.swift in Sources */,
+				5C791ED72639485800654715 /* NINButton.swift in Sources */,
+				5CF799B926428A9A009A7E2B /* NinchatSwiftUIModifier.swift in Sources */,
+				5C791ED82639485800654715 /* CloseButton.swift in Sources */,
+				5C791ED92639485800654715 /* ChoiceDialogue.swift in Sources */,
+				5C791EDA2639485800654715 /* Toast.swift in Sources */,
+				5C791EDB2639485800654715 /* QuestionnaireElement.swift in Sources */,
+				5C791EDC2639485800654715 /* QuestionnaireNavigationCell.swift in Sources */,
+				5C791EDD2639485800654715 /* QuestionnaireCell.swift in Sources */,
+				5C791EDE2639485800654715 /* QuestionnaireTypingCell.swift in Sources */,
+				5C791EDF2639485800654715 /* QuestionnaireElementSelect.swift in Sources */,
+				5C791EE02639485800654715 /* QuestionnaireElementTextArea.swift in Sources */,
+				5C791EE12639485900654715 /* QuestionnaireElementTextField.swift in Sources */,
+				5C791EE22639485900654715 /* QuestionnaireElementCheckbox.swift in Sources */,
+				5C791EE32639485900654715 /* QuestionnaireElementRadio.swift in Sources */,
+				5C791EE42639485900654715 /* QuestionnaireElementText.swift in Sources */,
+				5C791EE52639485900654715 /* QuestionnaireElementLikert.swift in Sources */,
+				5C791EE62639485900654715 /* NINChatViewModel.swift in Sources */,
+				5C791EE72639485900654715 /* NINQueueViewModel.swift in Sources */,
+				5C791EE82639485900654715 /* NINFullScreenViewModel.swift in Sources */,
+				5C791EE92639485900654715 /* NINRatingViewModel.swift in Sources */,
+				5C791EEA2639485900654715 /* NINQuestionnaireViewModel.swift in Sources */,
+				5C791EEB2639485900654715 /* NINChatDataSourceDelegate.swift in Sources */,
+				5C791EEC2639485900654715 /* NINWebRTCDelegate.swift in Sources */,
+				5C791EED2639485900654715 /* NINRTCVideoDelegate.swift in Sources */,
+				5C791EEE2639485900654715 /* NINPickerControllerDelegate.swift in Sources */,
+				5C791EEF2639485900654715 /* QuestionnaireDataSourceDelegate.swift in Sources */,
+				5C791EF02639485900654715 /* NINQuestionnaireFormDataSourceDelegate.swift in Sources */,
+				5C791EF12639485900654715 /* NINQuestionnaireConversationDataSourceDelegate.swift in Sources */,
+				5C791EF22639485900654715 /* NINChatSessionInternal.swift in Sources */,
+				5C791EF32639485900654715 /* NINChatWebRTCClient.swift in Sources */,
+				5C791EF42639485900654715 /* NINChatWebRTCClientImpl.swift in Sources */,
+				5C6625AB26442E7D002F3625 /* Override+Extension.swift in Sources */,
+				5C791EF52639485900654715 /* Permission.swift in Sources */,
+				5C791EF62639485900654715 /* VideoThumbnailManager.swift in Sources */,
+				5C791EF72639485900654715 /* QuestionnaireParser.swift in Sources */,
+				5C791EF82639485900654715 /* QuestionnaireElementConnector.swift in Sources */,
+				5C791E9A2639457A00654715 /* ChannelUser.swift in Sources */,
+				5C791E922639453700654715 /* NINChatSessionManager.swift in Sources */,
+				5CF799BD2643D1A6009A7E2B /* NinchatSwiftUIDelegate.swift in Sources */,
+				5C791E7626384B3F00654715 /* UIResponder+Extension.swift in Sources */,
+				5C791E9E2639457A00654715 /* ComposeUIAction.swift in Sources */,
+				5C791EAC2639463800654715 /* Empty.swift in Sources */,
+				5C791E7826384B7A00654715 /* RTCSignal.swift in Sources */,
+				5C791E7F26384E3400654715 /* Font+Extension.swift in Sources */,
+				5C791EA9263945CF00654715 /* ComposeMessage.swift in Sources */,
+				5C791E5426384B3100654715 /* UITextField+Extension.swift in Sources */,
+				5CF799BB2643D0AB009A7E2B /* NINSecondaryButton.swift in Sources */,
+				5C791E7B26384B9D00654715 /* NINSessionCredentials.swift in Sources */,
+				5C791EA02639457A00654715 /* FileInfo.swift in Sources */,
+				5C791E6C26384B3100654715 /* UIView+Extension.swift in Sources */,
+				5C791EB52639468B00654715 /* NINChatSessionManagerImpl.swift in Sources */,
+				5C791EB22639466B00654715 /* ServiceManager.swift in Sources */,
+				5C791E7226384B3100654715 /* UITableView+Extension.swift in Sources */,
+				5C791E912639429D00654715 /* NINInitialViewModel.swift in Sources */,
+				5C791E6226384B3100654715 /* UIFont+Extension.swift in Sources */,
+				5C791E5A26384B3100654715 /* NINLowLevelClientSession+Extension.swift in Sources */,
+				5C791E6626384B3100654715 /* KeyboardHandler.swift in Sources */,
+				5CF799A72640326A009A7E2B /* View+Extension.swift in Sources */,
+				5C791E972639457A00654715 /* QuestionnaireConfiguration.swift in Sources */,
+				5C791E992639457A00654715 /* AvatarConfig.swift in Sources */,
+				5C791E6B26384B3100654715 /* UIViewController+Extension.swift in Sources */,
+				5C791E6526384B3100654715 /* UIDevice+Extension.swift in Sources */,
+				5C791E5B26384B3100654715 /* Storyboard+Extension.swift in Sources */,
+				5C791E9C2639457A00654715 /* InboundMessage.swift in Sources */,
+				5C791E5F26384B3100654715 /* Bundle+Extension.swift in Sources */,
+				5C791E5826384B3100654715 /* String+Extension.swift in Sources */,
+				5CF799C02643D3F2009A7E2B /* NinchatSwiftUIInternalDelegate.swift in Sources */,
+				5C791E7526384B3100654715 /* Array+Extension.swift in Sources */,
+				5C791EA6263945CF00654715 /* TextMessage.swift in Sources */,
+				5C791E932639454F00654715 /* NINChatSessionManagerClosures.swift in Sources */,
+				5C791E5726384B3100654715 /* RTCSessionDescription+Extension.swift in Sources */,
+				5C791EB9263947E800654715 /* NINChatDevHelper.swift in Sources */,
+				5C791EA12639458600654715 /* NINSiteConfiguration.swift in Sources */,
+				5C791E6F26384B3100654715 /* NINLowLevelClientProps+Extension.swift in Sources */,
+				5C791E7A26384B8A00654715 /* NINChatError.swift in Sources */,
+				5C791E7126384B3100654715 /* Notification+Extension.swift in Sources */,
+				5C791E962639454F00654715 /* NINChatSeesionManagerPrivate.swift in Sources */,
+				5C791EAB2639461900654715 /* NINChatExceptions.swift in Sources */,
+				5C791EAA2639460500654715 /* NINChatClientPropsParser.swift in Sources */,
+				5C791E5226384A9900654715 /* NINAttributedText.swift in Sources */,
+				5C791EAD2639465800654715 /* SiteConfigRequest.swift in Sources */,
+				5C791E6A26384B3100654715 /* RTCIceCandidate+Extension.swift in Sources */,
+				5C791E6726384B3100654715 /* UITextView+Extension.swift in Sources */,
+				5C791EA7263945CF00654715 /* ChatMessage.swift in Sources */,
+				5CD114C226396EF9008BC196 /* NINInitialHostController.swift in Sources */,
+				5C791E7726384B4700654715 /* Constants.swift in Sources */,
+				5C791E982639457A00654715 /* SiteConfiguration.swift in Sources */,
+				5C791E5C26384B3100654715 /* URL+Extension.swift in Sources */,
+				5C791E9B2639457A00654715 /* WebRTCServerInfo.swift in Sources */,
+				5C791EB32639466B00654715 /* ServiceRequest.swift in Sources */,
+				5C791E7926384B8200654715 /* Queue.swift in Sources */,
+				5C791EAE2639465C00654715 /* CloseSession.swift in Sources */,
+				5C791E6426384B3100654715 /* Date+Extension.swift in Sources */,
+				5C791E7426384B3100654715 /* Debugger.swift in Sources */,
+				5C791EA5263945CF00654715 /* UserTypingMessage.swift in Sources */,
+				5C791E5326384B3100654715 /* NSUserDefaults+Extension.swift in Sources */,
+				5C791EA4263945CF00654715 /* ChannelMessage.swift in Sources */,
+				5C791E7326384B3100654715 /* UIApplication+Extension.swift in Sources */,
+				5C791E5626384B3100654715 /* NSMutableAttributedString+Extension.swift in Sources */,
+				5C791E6926384B3100654715 /* Encodable+Extension.swift in Sources */,
+				5C791EA8263945CF00654715 /* MetaMessage.swift in Sources */,
+				5C791E6026384B3100654715 /* UILayoutPriority+Extension.swift in Sources */,
+				5C791E9D2639457A00654715 /* ChatMessagePayload.swift in Sources */,
+				5C791E4F26384A2A00654715 /* NINnitialView.swift in Sources */,
+				5C791E6E26384B3100654715 /* UIImageView+Extension.swift in Sources */,
+				5C791E5E26384B3100654715 /* NSAttributedString+Extension.swift in Sources */,
+				5C791E6126384B3100654715 /* Thread+Extension.swift in Sources */,
+				5C791E6326384B3100654715 /* Data+Extension.swift in Sources */,
+				5CF799B726427A06009A7E2B /* NINPrimaryButton.swift in Sources */,
+				5C791E952639454F00654715 /* NINChatSessionManagerEventHandlers.swift in Sources */,
+				5C791E7026384B3100654715 /* UITableViewCell+Extension.swift in Sources */,
+				5C791E6826384B3100654715 /* PHAssetResourceType+Extension.swift in Sources */,
+				5C791E9F2639457A00654715 /* ChannelMessagePayload.swift in Sources */,
+				5C791E4C2638227900654715 /* UIColor+Extension.swift in Sources */,
+				5C791E5D26384B3100654715 /* UIButton+Extension.swift in Sources */,
+				5C791E6D26384B3100654715 /* Dictionary+Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1796,6 +2172,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 263A1AA1FD9EE17C892BD7CA /* Pods-NinchatSDKSwiftUI.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -1803,6 +2180,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = NinchatSDKSwiftUI/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
@@ -1814,6 +2192,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ninchat.NinchatSDKSwiftUI;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1824,6 +2203,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E9F1372B5AB31A9B1212F4FF /* Pods-NinchatSDKSwiftUI.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -1831,6 +2211,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = NinchatSDKSwiftUI/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
@@ -1842,6 +2223,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ninchat.NinchatSDKSwiftUI;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1851,6 +2233,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D463517AB20A2F6A738E2978 /* Pods-NinchatSDKSwiftUITests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86P62K2K2N;
 				INFOPLIST_FILE = NinchatSDKSwiftUITests/Info.plist;
@@ -1871,6 +2254,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 62C8D99D572F0DB4B5E6D255 /* Pods-NinchatSDKSwiftUITests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86P62K2K2N;
 				INFOPLIST_FILE = NinchatSDKSwiftUITests/Info.plist;
@@ -1941,7 +2325,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -2005,7 +2389,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = "";

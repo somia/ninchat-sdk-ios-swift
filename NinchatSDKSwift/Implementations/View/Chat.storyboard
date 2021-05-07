@@ -603,6 +603,21 @@ you are next.</string>
             </objects>
             <point key="canvasLocation" x="-215.19999999999999" y="148.87556221889056"/>
         </scene>
+        <!--Initial Host Controller-->
+        <scene sceneID="xC1-9V-8qv">
+            <objects>
+                <viewController storyboardIdentifier="NINInitialHostController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="zEs-FC-sOv" customClass="NINInitialHostController" customModule="NinchatSDKSwift" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="h3j-qF-C0Q">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="ZM9-SR-NcR"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="RaT-gS-tXb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1074" y="839"/>
+        </scene>
     </scenes>
     <resources>
         <image name="chat_bubble_left_series" width="31" height="52"/>
