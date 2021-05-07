@@ -6,9 +6,11 @@
 
 import Foundation
 
+private final class BundlePathIdentifier {}
+
 extension Bundle {
     static var SDKBundle: Bundle? {
-        let classBundle = Bundle(for: NINChatSession.self)
+        let classBundle = Bundle(for: BundlePathIdentifier.self)
         guard let bundleURL = classBundle.url(forResource: "NinchatSwiftSDKUI", withExtension: "bundle") else {
             return classBundle
         }
