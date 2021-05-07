@@ -7,11 +7,6 @@
 import UIKit
 import NinchatLowLevelClient
 
-public protocol NINChatDevHelper {
-    var serverAddress: String! { get set }
-    var siteSecret: String? { get set }
-}
-
 public protocol NINChatSessionProtocol {
     typealias NinchatSessionCompletion = (NINSessionCredentials?, Error?) -> Void
 

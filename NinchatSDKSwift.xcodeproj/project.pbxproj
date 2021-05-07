@@ -681,8 +681,9 @@
 			isa = PBXGroup;
 			children = (
 				855B9F2D238ECE650081A9C6 /* NINChatSession.swift */,
-				91A16FA13B1F62E386352B88 /* NINSessionCredentials.swift */,
+				5C791EB7263947D100654715 /* NINChatDevHelper.swift */,
 				85DC59CF239E6A38007ABAE3 /* NINSiteConfiguration.swift */,
+				91A16FA13B1F62E386352B88 /* NINSessionCredentials.swift */,
 				855B9F2E238ECE650081A9C6 /* NINChatSessionDelegate.swift */,
 				91A163A915328A44FBCAD0C2 /* NINChatError.swift */,
 				8543414B239655200078D11A /* Implementations */,
@@ -1702,6 +1703,7 @@
 				91A16DDD3F9AB146FF604EFB /* UITextField+Extension.swift in Sources */,
 				91A16BB0EBC43AB17FBEC7BD /* Array+Extension.swift in Sources */,
 				91A1601A6F8D21DA68AC39A6 /* ComposeUIAction.swift in Sources */,
+				5C791EB8263947D100654715 /* NINChatDevHelper.swift in Sources */,
 				91A16813665172FFFA81A455 /* NINChatError.swift in Sources */,
 				91A162DDA99D9DDB9D0B8436 /* Thread+Extension.swift in Sources */,
 				B704E3E68829ED0963294E84 /* NSUserDefaults+Extension.swift in Sources */,
