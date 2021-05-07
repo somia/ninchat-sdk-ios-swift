@@ -19,7 +19,7 @@ jobs:
 
             - name: Shell Environment
               run: export SHELL=/bin/bash
-            
+
             - name: Force Xcode 12
               run: sudo xcode-select -switch /Applications/Xcode_12.2.app
 
@@ -30,7 +30,7 @@ jobs:
               run: xcodebuild clean
 
             - name: Build SDK
-              run: xcodebuild -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -configuration "Release" -destination "platform=iOS Simulator,name=iPhone 8" "OTHER_LDFLAGS=\$(OTHER_LDFLAGS) -read_only_relocs suppress" CODE_SIGNING_ALLOWED=NO ONLY_ACTIVE_ARCH=YES
-            
+              run: xcodebuild -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwiftUI -configuration "Release" -destination "platform=iOS Simulator,name=iPhone 8" "OTHER_LDFLAGS=\$(OTHER_LDFLAGS) -read_only_relocs suppress" CODE_SIGNING_ALLOWED=NO ONLY_ACTIVE_ARCH=YES
+
             - name: Run SDK Tests
-              run: xcodebuild test -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -destination "platform=iOS Simulator,name=iPhone 8" "OTHER_LDFLAGS=\$(OTHER_LDFLAGS) -read_only_relocs suppress" ONLY_ACTIVE_ARCH=YES
+              run: xcodebuild test -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwiftUI -destination "platform=iOS Simulator,name=iPhone 8" "OTHER_LDFLAGS=\$(OTHER_LDFLAGS) -read_only_relocs suppress" ONLY_ACTIVE_ARCH=YES
