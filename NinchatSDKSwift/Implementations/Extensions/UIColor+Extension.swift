@@ -17,6 +17,8 @@ extension UIColor {
     
     static var toastErrBackground: UIColor { #colorLiteral(red: 0.6868622449, green: 0.1491314173, blue: 0, alpha: 1) }
     
+    static var initialBottomDefaultBackground: UIColor { #colorLiteral(red: 0.9293405414, green: 0.929452002, blue: 0.9293025136, alpha: 1) }
+    
     // MARK: - Questionnaire colors
     
     static var QGrayButton: UIColor { #colorLiteral(red: 0.6, green: 0.6, blue: 0.6, alpha: 1) }
