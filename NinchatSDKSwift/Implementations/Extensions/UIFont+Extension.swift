@@ -37,7 +37,7 @@ extension UIFont {
     }
 
     @discardableResult
-    private static func register(font: String) -> Bool {
+    static func register(font: String) -> Bool {
         guard let pathForResourceString = Bundle.SDKBundle?.path(forResource: font, ofType: "ttf"),
               let fontData = NSData(contentsOfFile: pathForResourceString),
               let dataProvider = CGDataProvider(data: fontData),
