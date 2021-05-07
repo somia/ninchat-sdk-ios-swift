@@ -23,12 +23,12 @@ final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol {
     }
     @IBOutlet private(set) weak var usernameLabel: UILabel!
     @IBOutlet private(set) weak var infoLabel: UILabel!
-    @IBOutlet private(set) weak var acceptButton: Button! {
+    @IBOutlet private(set) weak var acceptButton: NINButton! {
         didSet {
             acceptButton.round(borderWidth: 1.0)
         }
     }
-    @IBOutlet private(set) weak var rejectButton: Button! {
+    @IBOutlet private(set) weak var rejectButton: NINButton! {
         didSet {
             rejectButton.round(borderWidth: 1.0, borderColor: .defaultBackgroundButton)
         }

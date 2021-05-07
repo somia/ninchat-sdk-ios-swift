@@ -39,16 +39,16 @@ final class QuestionnaireNavigationCell: UITableViewCell, HasCustomLayer, Questi
     override func layoutSublayers(of layer: CALayer) {
         super.layoutSublayers(of: layer)
 
-        if let nextButton = self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next }) {
+        if let nextButton = self.buttons.arrangedSubviews.compactMap({ $0 as? NINButton }).first(where: { $0.type == .next }) {
             applyLayerOverride(view: nextButton)
         }
-        if let backButton = self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .back }) {
+        if let backButton = self.buttons.arrangedSubviews.compactMap({ $0 as? NINButton }).first(where: { $0.type == .back }) {
             applyLayerOverride(view: backButton)
         }
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
-        if let nextButton = self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next }) {
+        if let nextButton = self.buttons.arrangedSubviews.compactMap({ $0 as? NINButton }).first(where: { $0.type == .next }) {
             if nextButton.titleLabel?.text?.isEmpty ?? true {
                 nextButton.imageView?.tint = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorNavigationNextText) ?? .white
             } else {
@@ -66,7 +66,7 @@ final class QuestionnaireNavigationCell: UITableViewCell, HasCustomLayer, Questi
                 nextButton.round(radius: 45.0 / 2, borderWidth: 1.0, borderColor: .QBlueButtonNormal)
             }
         }
-        if let backButton = self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .back }) {
+        if let backButton = self.buttons.arrangedSubviews.compactMap({ $0 as? NINButton }).first(where: { $0.type == .back }) {
             if backButton.titleLabel?.text?.isEmpty ?? true {
                 backButton.imageView?.tint = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorNavigationBackText) ?? .QBlueButtonNormal
             } else {
@@ -88,11 +88,11 @@ final class QuestionnaireNavigationCell: UITableViewCell, HasCustomLayer, Questi
 
     func setSatisfaction(_ satisfied: Bool) {
         debugger("Set navigation Satisfaction: \(satisfied && self.isLastItemInTable)")
-        self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .next })?.isEnabled = satisfied && self.isLastItemInTable
+        self.buttons.arrangedSubviews.compactMap({ $0 as? NINButton }).first(where: { $0.type == .next })?.isEnabled = satisfied && self.isLastItemInTable
         /// back button should not get disabled according to user inputs
         /// it is always enabled for the last item
-        self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).first(where: { $0.type == .back })?.isEnabled = self.isLastItemInTable
-        self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).forEach({ $0.alpha = $0.isEnabled ? 1.0 : 0.5 })
+        self.buttons.arrangedSubviews.compactMap({ $0 as? NINButton }).first(where: { $0.type == .back })?.isEnabled = self.isLastItemInTable
+        self.buttons.arrangedSubviews.compactMap({ $0 as? NINButton }).forEach({ $0.alpha = $0.isEnabled ? 1.0 : 0.5 })
     }
 
     // MARK: - UIView life-cycle
@@ -152,9 +152,9 @@ extension QuestionnaireNavigationCell {
 
     func shapeNavigationButtons(_ configuration: QuestionnaireConfiguration?) {
         func drawBackButton(isVisible: Bool) {
-            if self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).filter({ $0.type == .back }).count > 0 || !isVisible { return }
+            if self.buttons.arrangedSubviews.compactMap({ $0 as? NINButton }).filter({ $0.type == .back }).count > 0 || !isVisible { return }
 
-            let button = Button(frame: .zero) { [weak self] button in
+            let button = NINButton(frame: .zero) { [weak self] button in
                 button.isSelected = !button.isSelected
                 self?.onBackButtonTapped?()
             }
@@ -164,9 +164,9 @@ extension QuestionnaireNavigationCell {
             self.layoutButton(button, configuration: configuration?.buttons, type: .back)
         }
         func drawNextButton(isVisible: Bool) {
-            if self.buttons.arrangedSubviews.compactMap({ $0 as? Button }).filter({ $0.type == .next }).count > 0 || !isVisible { return }
+            if self.buttons.arrangedSubviews.compactMap({ $0 as? NINButton }).filter({ $0.type == .next }).count > 0 || !isVisible { return }
 
-            let button = Button(frame: .zero) { [weak self] button in
+            let button = NINButton(frame: .zero) { [weak self] button in
                 button.isSelected = !button.isSelected
                 self?.onNextButtonTapped?()
             }
@@ -202,7 +202,7 @@ extension QuestionnaireNavigationCell {
     }
 
     private func addSeparator(isVisible: Bool) {
-        guard isVisible, self.buttons.arrangedSubviews.filter({ !($0 is Button) }).count == 0 else { return }
+        guard isVisible, self.buttons.arrangedSubviews.filter({ !($0 is NINButton) }).count == 0 else { return }
         self.buttons.addArrangedSubview(self.separator)
     }
 

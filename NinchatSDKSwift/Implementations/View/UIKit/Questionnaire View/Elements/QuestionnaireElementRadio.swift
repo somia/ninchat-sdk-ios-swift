@@ -39,14 +39,14 @@ class QuestionnaireElementRadio: UIView, HasCustomLayer, QuestionnaireElementWit
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         self.delegate = delegate
         self.overrideTitle(delegate: delegate)
-        self.view.subviews.compactMap({ $0 as? Button }).forEach({ $0.overrideQuestionnaireAsset(with: delegate, isPrimary: $0.isSelected) })
+        self.view.subviews.compactMap({ $0 as? NINButton }).forEach({ $0.overrideQuestionnaireAsset(with: delegate, isPrimary: $0.isSelected) })
     }
 
     // MARK: - QuestionnaireSettable
 
     func updateSetAnswers(_ answer: AnyHashable?, configuration: QuestionnaireConfiguration?, state: QuestionnaireSettableState) {
         guard let option = self.elementConfiguration?.options?.first(where: { $0.value == answer }),
-              let button = self.view.subviews.compactMap({ $0 as? Button }).first(where: { $0.titleLabel?.text == option.label })
+              let button = self.view.subviews.compactMap({ $0 as? NINButton }).first(where: { $0.titleLabel?.text == option.label })
             else { return }
 
         switch state {
@@ -64,8 +64,8 @@ class QuestionnaireElementRadio: UIView, HasCustomLayer, QuestionnaireElementWit
 
     func deselect(option: ElementOption) {
         guard let tag = self.elementConfiguration?.options?.firstIndex(where: { $0.label == option.label }) else { return }
-        (self.view.viewWithTag(tag + 1) as? Button)?.isSelected = false
-        (self.view.viewWithTag(tag + 1) as? Button)?.roundButton()
+        (self.view.viewWithTag(tag + 1) as? NINButton)?.isSelected = false
+        (self.view.viewWithTag(tag + 1) as? NINButton)?.roundButton()
     }
 
     // MARK: - QuestionnaireExitElement
@@ -122,7 +122,7 @@ class QuestionnaireElementRadio: UIView, HasCustomLayer, QuestionnaireElementWit
 }
 
 /// Subviews assets override
-extension Button {
+extension NINButton {
     fileprivate func overrideQuestionnaireAsset(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         self.titleLabel?.font = .ninchat
 
@@ -170,8 +170,8 @@ extension QuestionnaireElementRadio {
         view.height?.constant += 8
     }
 
-    internal func generateButton(for option: ElementOption, tag: Int) -> Button {
-        let view = Button(frame: .zero) { [weak self, option] button in
+    internal func generateButton(for option: ElementOption, tag: Int) -> NINButton {
+        let view = NINButton(frame: .zero) { [weak self, option] button in
             guard let `self` = self else { return }
 
             self.applySelection(to: button)
@@ -189,7 +189,7 @@ extension QuestionnaireElementRadio {
         return view
     }
 
-    internal func layoutButton(_ button: Button, upperView: inout UIView?) {
+    internal func layoutButton(_ button: NINButton, upperView: inout UIView?) {
         defer { upperView = button }
         self.view.addSubview(button)
 
@@ -212,13 +212,13 @@ extension QuestionnaireElementRadio {
     }
 
     private func applySelection(to button: UIButton) {
-        self.view.subviews.compactMap({ $0 as? Button }).forEach({
+        self.view.subviews.compactMap({ $0 as? NINButton }).forEach({
             $0.isSelected = false
             $0.overrideQuestionnaireAsset(with: self.delegate, isPrimary: $0.isSelected)
         })
 
         button.isSelected = true
-        (button as! Button).overrideQuestionnaireAsset(with: self.delegate, isPrimary: button.isSelected)
+        (button as! NINButton).overrideQuestionnaireAsset(with: self.delegate, isPrimary: button.isSelected)
     }
 }
 
