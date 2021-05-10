@@ -5,10 +5,6 @@ on:
         branches:
             - '*'
             - '*/*'
-    pull_request:
-        branches:
-            - '*'
-            - '*/*'
 
 jobs:
     build_test_SDK:
@@ -19,18 +15,12 @@ jobs:
 
             - name: Shell Environment
               run: export SHELL=/bin/bash
-            
+
             - name: Force Xcode 12
-              run: sudo xcode-select -switch /Applications/Xcode_12.2.app
+              run: sudo xcode-select -switch /Applications/Xcode_12.4.app
 
             - name: Install Cocoapods
               run: pod update
 
-            - name: Clean-up workspace
-              run: xcodebuild clean
-
-            - name: Build SDK
-              run: xcodebuild -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -configuration "Release" -destination "platform=iOS Simulator,name=iPhone 8" "OTHER_LDFLAGS=\$(OTHER_LDFLAGS) -read_only_relocs suppress" CODE_SIGNING_ALLOWED=NO ONLY_ACTIVE_ARCH=YES
-            
-            - name: Run SDK Tests
-              run: xcodebuild test -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -destination "platform=iOS Simulator,name=iPhone 8" "OTHER_LDFLAGS=\$(OTHER_LDFLAGS) -read_only_relocs suppress" ONLY_ACTIVE_ARCH=YES
+            - name: Build SDK. Run Tests
+              run: xcodebuild test -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -destination "platform=iOS Simulator,name=iPhone 11" "OTHER_LDFLAGS=\$(OTHER_LDFLAGS) -read_only_relocs suppress" ONLY_ACTIVE_ARCH=YES
