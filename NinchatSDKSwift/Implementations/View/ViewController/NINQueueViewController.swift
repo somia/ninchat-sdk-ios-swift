@@ -79,8 +79,8 @@ final class NINQueueViewController: UIViewController, HasCustomLayer, ViewContro
         self.setupViewModel(self.resumeMode)
     }
 
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
 
         applyLayerOverride(view: self.topContainerView)
         applyLayerOverride(view: self.bottomContainerView)
