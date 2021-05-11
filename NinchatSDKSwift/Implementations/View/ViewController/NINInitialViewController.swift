@@ -71,9 +71,10 @@ final class NINInitialViewController: UIViewController, HasCustomLayer, ViewCont
         self.overrideAssets()
     }
 
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
         applyLayerOverride(view: self.topContainerView)
         applyLayerOverride(view: self.bottomContainerView)
     }
@@ -98,6 +99,7 @@ private extension NINInitialViewController {
         else if let topBackgroundColor = delegate?.override(colorAsset: .backgroundTop) {
             topContainerView.backgroundColor = topBackgroundColor
         }
+        
         if let layer = delegate?.override(layerAsset: .ninchatBackgroundBottom) {
             bottomContainerView.layer.insertSublayer(layer, at: 0)
         }
