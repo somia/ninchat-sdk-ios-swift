@@ -115,8 +115,11 @@ struct SiteConfigurationImpl: SiteConfiguration {
 
     // MARK: - PreAudience Questionnaire
     var preAudienceQuestionnaireStyle: QuestionnaireStyle {
-        guard let style: String? = self.value(for: "preAudienceQuestionnaireStyle"), style != nil else { return .form }
-        return QuestionnaireStyle(rawValue: style!.lowercased()) ?? .form
+        guard let style = self.value(for: "preAudienceQuestionnaireStyle", ofType: String.self),
+              style != nil
+        else { return .form }
+        
+        return QuestionnaireStyle(rawValue: style.lowercased()) ?? .form
     }
     var preAudienceQuestionnaire: [QuestionnaireConfiguration]? {
         if let questionnaire = self.value(for: "preAudienceQuestionnaire", ofType: Array<[String: AnyHashable]>.self) {
@@ -127,8 +130,11 @@ struct SiteConfigurationImpl: SiteConfiguration {
 
     // MARK: - PostAudience Questionnaire
     var postAudienceQuestionnaireStyle: QuestionnaireStyle {
-        guard let style: String? = self.value(for: "postAudienceQuestionnaireStyle"), style != nil else { return .form }
-        return QuestionnaireStyle(rawValue: style!.lowercased()) ?? .form
+        guard let style = self.value(for: "postAudienceQuestionnaireStyle", ofType: String.self),
+              style != nil
+        else { return .form }
+        
+        return QuestionnaireStyle(rawValue: style.lowercased()) ?? .form
     }
     var postAudienceQuestionnaire: [QuestionnaireConfiguration]? {
         if let questionnaire = self.value(for: "postAudienceQuestionnaire", ofType: Array<[String: AnyHashable]>.self) {
