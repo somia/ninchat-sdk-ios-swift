@@ -163,11 +163,6 @@ extension SiteConfigurationImpl {
         debugger("Loading keys from environments: \(environments)")
 
         /// Start the lookup
-        for env in environments.filter({ configuration[$0] != nil }) {
-            if let value = (configuration[env] as? [String:Any])?[key] as? T { return value }
-        }
-
-        /// No value was found for given key in "default" + environments
-        return nil
+        return environments.compactMap({ (configuration[$0] as? [String:Any])?[key] as? T }).first(where: { $0 != nil })
     }
 }
