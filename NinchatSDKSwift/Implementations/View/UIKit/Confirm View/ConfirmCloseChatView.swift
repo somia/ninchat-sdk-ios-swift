@@ -39,14 +39,18 @@ final class ConfirmCloseChatView: UIView, HasCustomLayer, ConfirmView {
         confirmButton.overrideAssets(with: self.delegate, isPrimary: true)
         cancelButton.overrideAssets(with: self.delegate, isPrimary: false)
 
+        var useLegacyOverride = true
+        
         if let layer = self.delegate?.override(layerAsset: .ninchatModalTop) {
             self.headerContainerView.layer.insertSublayer(layer, at: 0)
+            useLegacyOverride = false
         }
         if let layer = self.delegate?.override(layerAsset: .ninchatModalBottom) {
             self.bottomContainerView.layer.insertSublayer(layer, at: 0)
+            useLegacyOverride = false
         }
         /// TODO: REMOVE legacy delegate
-        else if let backgroundColor = self.delegate?.override(colorAsset: .modalBackground) {
+        else if useLegacyOverride, let backgroundColor = self.delegate?.override(colorAsset: .modalBackground) {
             self.headerContainerView.backgroundColor = backgroundColor
             self.bottomContainerView.backgroundColor = backgroundColor
         }

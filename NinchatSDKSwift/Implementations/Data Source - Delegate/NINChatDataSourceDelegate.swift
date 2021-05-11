@@ -7,7 +7,7 @@
 import UIKit
 
 /** Delegate for the chat view. */
-protocol ChatViewDelegate: class {
+protocol ChatViewDelegate: AnyObject {
     /** An image in a cell was selected (tapped). */
     func didSelect(image: UIImage?, for attachment: FileInfo?, _ view: ChatView)
     
@@ -25,7 +25,7 @@ protocol NINChatDelegate: ChatViewDelegate {
 }
 
 /** Data source for the chat view. */
-protocol ChatViewDataSource: class {
+protocol ChatViewDataSource: AnyObject {
     /** How many messages there are. */
     func numberOfMessages(for view: ChatView) -> Int
     

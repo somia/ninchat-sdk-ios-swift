@@ -10,7 +10,7 @@ protocol ConfirmVideoCallViewProtocol: ConfirmView {
     var user: ChannelUser? { get set }
 }
 
-final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol {
+final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol, HasCustomLayer {
     
     // MARK: - Outlets
     @IBOutlet private(set) weak var headerContainerView: UIView!
@@ -38,6 +38,14 @@ final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol {
     
     var user: ChannelUser?
     
+    // MARK: - UIView
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        applyLayerOverride(view: headerContainerView)
+        applyLayerOverride(view: bottomContainerView)
+    }
+    
     // MARK: - ConfirmView
     
     var onViewAction: OnViewAction?
@@ -51,8 +59,20 @@ final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol {
     func overrideAssets() {
         acceptButton.overrideAssets(with: self.delegate, isPrimary: true)
         rejectButton.overrideAssets(with: self.delegate, isPrimary: false)
-
-        if let backgroundColor = self.delegate?.override(colorAsset: .modalBackground) {
+        
+        var useLegacyOverride = true
+        
+        if let backgroundHeaderLayer = self.delegate?.override(layerAsset: .ninchatModalTop) {
+            self.headerContainerView.layer.insertSublayer(backgroundHeaderLayer, at: 0)
+            useLegacyOverride = false
+        }
+        if let backgroundBottomLayer = self.delegate?.override(layerAsset: .ninchatModalBottom) {
+            self.bottomContainerView.layer.insertSublayer(backgroundBottomLayer, at: 0)
+            useLegacyOverride = false
+        }
+        
+        /// TODO: REMOVE legacy delegate
+        if useLegacyOverride, let backgroundColor = self.delegate?.override(colorAsset: .modalBackground) {
             self.headerContainerView.backgroundColor = backgroundColor
             self.bottomContainerView.backgroundColor = backgroundColor
         }

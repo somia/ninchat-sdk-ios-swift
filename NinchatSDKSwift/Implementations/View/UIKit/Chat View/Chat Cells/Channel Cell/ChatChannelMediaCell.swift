@@ -7,6 +7,7 @@
 import UIKit
 
 protocol ChannelMediaCellDelegate {
+    @discardableResult
     func didLoadAttachment(_ image: UIImage?, messageID: String?) -> Bool
 }
 
@@ -26,7 +27,7 @@ protocol ChannelMediaCell {
 extension ChannelMediaCell where Self:ChatChannelCell {
     func populateText(message: TextMessage, attachment: FileInfo?) {
         /// setup the aspect ratio doesn't need to be done async
-        guard let message = message as? TextMessage, let attachment = message.attachment else { return }
+        guard let attachment = message.attachment else { return }
         self.set(aspect: attachment.aspectRatio, message.series)
 
         /// early return to avoid rendering performance issues.
@@ -71,7 +72,7 @@ extension ChannelMediaCell where Self:ChatChannelCell {
         guard let thumbnailManager = self.videoThumbnailManager else { throw NINUIExceptions.noThumbnailManager }
 
         /// For video we must fetch the thumbnail image
-        thumbnailManager.fetchVideoThumbnail(fromURL: videoURL) { [weak self, message = message] error, fromCache, thumbnail in
+        thumbnailManager.fetchVideoThumbnail(fromURL: videoURL) { [weak self] error, fromCache, thumbnail in
             if error != nil { Toast.show(message: .error("Failed to get video thumbnail")); return }
             self?.updateMessageImageView(attachment: attachment, thumbnailUrl: nil, imageURL: nil, image: thumbnail, asynchronous: asynchronous, isSeries: isSeries)
         }
@@ -117,12 +118,12 @@ extension ChannelMediaCell where Self:ChatChannelCell {
         debugger("attachment constraints: width: \(width), height: \(height)")
 
         /// Defensive approach to avoid problems on cell reuse cases
-        if let parentHeight = self.parentView.height {
+        if self.parentView.height != nil {
             self.parentView.height?.constant = max(height, 150.0)
         } else {
             self.parentView.fix(height: max(height, 150.0))
         }
-        if let messageWidth = self.messageImageView.width {
+        if self.messageImageView.width != nil {
             self.messageImageView.width?.constant = width
         } else {
             self.messageImageView.fix(width: width)

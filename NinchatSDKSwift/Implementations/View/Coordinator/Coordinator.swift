@@ -10,7 +10,7 @@ import CoreServices
 import WebRTC
 import NinchatLowLevelClient
 
-protocol Coordinator: class {
+protocol Coordinator: AnyObject {
     init(with sessionManager: NINChatSessionManager, delegate: InternalDelegate?, onPresentationCompletion: @escaping (() -> Void))
     func start(with queue: String?, resume: ResumeMode?, within navigation: UINavigationController?) -> UIViewController?
     func prepareNINQuestionnaireViewModel(audienceMetadata: NINLowLevelClientProps?, onCompletion: @escaping (() -> Void))

@@ -7,7 +7,7 @@
 import UIKit
 
 /** Delegate for the questionnaire view. */
-protocol QuestionnaireDelegate: class {
+protocol QuestionnaireDelegate: AnyObject {
     var isLoadingNewElements: Bool! { get set }
     var onUpdateCellContent: (() -> Void)? { get set }
     var onRemoveCellContent: (() -> Void)? { get set }
@@ -16,7 +16,7 @@ protocol QuestionnaireDelegate: class {
 }
 
 /** Data source for the questionnaire view. */
-protocol QuestionnaireDataSource: class {
+protocol QuestionnaireDataSource: AnyObject {
     /** How many pages are available. */
     func numberOfPages() -> Int
 
