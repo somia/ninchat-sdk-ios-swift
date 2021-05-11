@@ -58,9 +58,9 @@ final class CloseButton: UIView, HasCustomLayer, CloseButtonProtocol {
         self.backgroundColor = .clear
 
         if buttonTitle.isEmpty, let layer = session?.override(layerAsset: .ninchatChatCloseEmptyButton) {
-            self.layer.addSublayer(layer)
+            self.layer.insertSublayer(layer, at: 0)
         } else if let layer = session?.override(layerAsset: .ninchatChatCloseButton) {
-            self.layer.addSublayer(layer)
+            self.layer.insertSublayer(layer, at: 0)
         } else {
             /// TODO: REMOVE legacy delegates
 
