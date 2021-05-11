@@ -85,8 +85,8 @@ final class NINRatingViewController: UIViewController, HasCustomLayer, ViewContr
         self.navigationItem.setHidesBackButton(true, animated: false)
     }
 
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
 
         applyLayerOverride(view: topViewContainer)
         applyLayerOverride(view: view)
