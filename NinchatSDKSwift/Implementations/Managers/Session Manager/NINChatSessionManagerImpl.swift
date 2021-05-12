@@ -569,9 +569,9 @@ extension NINChatSessionManagerImpl {
 
         let param = NINLowLevelClientProps.initiate(action: .describeRealmQueues)
         param.realmID = .success(id)
+        
         if let queuesID = queuesID {
-            /// Parameter should be set only if there are any queues passed to the function
-            param.queuesID = .success(queuesID.reduce(into: NINLowLevelClientStrings()) { list, id in
+            param.queuesID = .success(queuesID.uniqued().reduce(into: NINLowLevelClientStrings()) { list, id in
                 list.append(id)
             })
         }
