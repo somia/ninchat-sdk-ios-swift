@@ -54,8 +54,15 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         initialViewController.sessionManager = self.sessionManager
         initialViewController.onQueueActionTapped = { [weak self] queue in
             DispatchQueue.main.async {
-                guard let weakSelf = self else { return }
-                weakSelf.navigationController?.pushViewController((weakSelf.hasPreAudienceQuestionnaire) ? weakSelf.questionnaireViewController(queue: queue, questionnaireType: .pre) : weakSelf.queueViewController(queue: queue), animated: true)
+                guard let `self` = self else { return }
+                
+                var viewController: UIViewController
+                if self.hasPreAudienceQuestionnaire {
+                    viewController = self.questionnaireViewController(questionnaireType: .pre)
+                } else {
+                    viewController = self.queueViewController(queue: queue)
+                }
+                self.navigationController?.pushViewController(viewController, animated: true)
             }
         }
 
