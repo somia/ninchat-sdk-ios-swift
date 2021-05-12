@@ -10,15 +10,23 @@ enum QueuePermissionType: String {
     case member
 }
 
-struct Queue {
+struct Queue: Hashable {
     let queueID: String
     let name: String
     let isClosed: Bool
     let permissions: QueuePermissions
     var position: Int
+    
+    static func == (lhs: Queue, rhs: Queue) -> Bool {
+        lhs.queueID == rhs.queueID
+    }
 }
 
-struct QueuePermissions {
+struct QueuePermissions: Hashable {
     let upload: Bool
     let video: Bool = true
+    
+    static func == (lhs: QueuePermissions, rhs: QueuePermissions) -> Bool {
+        lhs.upload == rhs.upload && lhs.video == rhs.video
+    }
 }
