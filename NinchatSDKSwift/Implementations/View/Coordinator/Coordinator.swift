@@ -48,7 +48,6 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
 
     // MARK: - ViewControllers
 
-    private var didLoaded_initialViewController = false
     internal lazy var initialViewController: NINInitialViewController = {
         let initialViewController: NINInitialViewController = storyboard.instantiateViewController()
         initialViewController.delegate = self.delegate
@@ -60,7 +59,6 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
             }
         }
 
-        didLoaded_initialViewController = true
         return initialViewController
     }()
     /// Since it is pushed more than once, it cannot be defined as `lazy`
@@ -75,7 +73,6 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         didLoaded_questionnaireViewController = true
         return questionnaireViewController
     }
-    private var didLoaded_queueViewController = false
     internal lazy var queueViewController: NINQueueViewController = {
         let joinViewController: NINQueueViewController = storyboard.instantiateViewController()
         joinViewController.viewModel = NINQueueViewModelImpl(sessionManager: self.sessionManager, delegate: self.delegate)
@@ -88,7 +85,6 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
             }
         }
 
-        didLoaded_queueViewController = true
         return joinViewController
     }()
     private var didLoaded_chatViewController = false
@@ -133,7 +129,6 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         didLoaded_chatViewController = true
         return chatViewController
     }()
-    private var didLoaded_fullScreenViewController = false
     internal lazy var fullScreenViewController: NINFullScreenViewController = {
         let viewModel: NINFullScreenViewModel = NINFullScreenViewModelImpl(delegate: nil)
         let previewViewController: NINFullScreenViewController = storyboard.instantiateViewController()
@@ -146,10 +141,8 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
             }
         }
 
-        didLoaded_fullScreenViewController = true
         return previewViewController
     }()
-    private var didLoaded_ratingViewController = false
     internal lazy var ratingViewController: NINRatingViewController = {
         let viewModel: NINRatingViewModel = NINRatingViewModelImpl(sessionManager: self.sessionManager)
         let ratingViewController: NINRatingViewController = storyboard.instantiateViewController()
@@ -166,7 +159,6 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
             return false
         }
 
-        didLoaded_ratingViewController = true
         return ratingViewController
     }()
 
