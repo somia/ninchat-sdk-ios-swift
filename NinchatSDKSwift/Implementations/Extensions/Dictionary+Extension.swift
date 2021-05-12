@@ -57,3 +57,18 @@ extension Dictionary where Key==String, Value==AnyHashable {
         return (result.count > 0) ? result : nil
     }
 }
+
+extension Dictionary where Key==String {
+    func find<T>(_ key: String) -> [T] {
+        var keys: [T] = []
+        
+        if let value = self[key] as? T {
+            keys.append(value)
+        }
+        self.values.compactMap({ $0 as? [String:Any] }).forEach({
+            keys.append(contentsOf: $0.find(key))
+        })
+        
+        return keys
+    }
+}
