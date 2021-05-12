@@ -104,9 +104,10 @@ private extension NINInitialViewController {
             bottomContainerView.layer.insertSublayer(layer, at: 0)
         }
         /// TODO: REMOVE legacy delegate
-        if let bottomBackgroundColor = delegate?.override(colorAsset: .backgroundBottom) {
+        else if let bottomBackgroundColor = delegate?.override(colorAsset: .backgroundBottom) {
             bottomContainerView.backgroundColor = bottomBackgroundColor
         }
+        
         if let textTopColor = delegate?.override(colorAsset: .ninchatColorTextTop) {
             welcomeTextView.textColor = textTopColor
         }
