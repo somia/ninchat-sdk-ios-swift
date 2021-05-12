@@ -235,17 +235,25 @@ extension NINChatSessionManagerImpl {
         try self.session?.open()
     }
 
-    func list(queues: [String]?, completion: @escaping CompletionWithError) throws {
-        guard let realmID = self.realmID else { return }
+    func describe(queuesID: [String]?, completion: @escaping CompletionWithError) throws {
+        guard let realmID = self.realmID, let session = self.session else { throw NINSessionExceptions.noActiveSession }
 
-        var queues = queues
-        /// currentQueue != nil
-        if let currentQueue = self.currentQueueID, !currentQueue.isEmpty {
-            queues = (queues ?? [String]())
-            queues?.append(currentQueue)
+        let param = NINLowLevelClientProps.initiate(action: .describeRealmQueues)
+        param.realmID = .success(realmID)
+        
+        if let queuesID = queuesID {
+            /// Parameter should be set only if there are any queues passed to the function
+            param.queuesID = .success(queuesID.reduce(into: NINLowLevelClientStrings()) { list, id in
+                list.append(id)
+            })
         }
 
-        try self.describe(realm: realmID, queuesID: queues, completion: completion)
+        do {
+            let actionID = try session.send(param)
+            self.bind(action: actionID, closure: completion)
+        } catch {
+            completion(error)
+        }
     }
     
     func join(queue ID: String, progress: @escaping (Queue?, Error?, Int) -> Void, completion: @escaping Completion) throws {
@@ -555,26 +563,6 @@ extension NINChatSessionManagerImpl {
 
         let param = NINLowLevelClientProps.initiate(action: .describeChannel)
         param.channelID = .success(id)
-
-        do {
-            let actionID = try session.send(param)
-            self.bind(action: actionID, closure: completion)
-        } catch {
-            completion(error)
-        }
-    }
-
-    func describe(realm id: String, queuesID: [String]?, completion: @escaping CompletionWithError) throws {
-        guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
-
-        let param = NINLowLevelClientProps.initiate(action: .describeRealmQueues)
-        param.realmID = .success(id)
-        
-        if let queuesID = queuesID {
-            param.queuesID = .success(queuesID.uniqued().reduce(into: NINLowLevelClientStrings()) { list, id in
-                list.append(id)
-            })
-        }
 
         do {
             let actionID = try session.send(param)

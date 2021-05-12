@@ -41,8 +41,8 @@ protocol NINChatSessionConnectionManager: AnyObject {
     /** Continues to an existing session using given user credentials. Completes with an asynchronous completion callback. */
     func continueSession(credentials: NINSessionCredentials, completion: @escaping CompletionWithCredentials) throws
 
-    /** List queues with specified ids for this realm, all available ones if queueIds is nil. */
-    func list(queues ID: [String]?, completion: @escaping CompletionWithError) throws
+    /** Describe queues with specified ids for this realm. */
+    func describe(queuesID: [String]?, completion: @escaping CompletionWithError) throws
     
     /** Joins a chat queue. */
     func join(queue ID: String, progress: @escaping (Queue?, Error?, Int) -> Void, completion: @escaping Completion) throws
@@ -114,9 +114,6 @@ protocol NINChatSessionMessenger: AnyObject {
 protocol NINChatSessionAttachment: AnyObject {
     /** Describe a file by its ID. */
     func describe(file id: String, completion: @escaping (Error?, [String:Any]?) -> Void) throws
-
-    /* Describe queues for a realm by their IDs. **/
-    func describe(realm id: String, queuesID: [String]?, completion: @escaping CompletionWithError) throws
 }
 
 protocol NINChatSessionTranslation: AnyObject {
