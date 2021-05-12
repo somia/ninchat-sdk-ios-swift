@@ -30,3 +30,10 @@ extension Array where Element==Int {
                 })
     }
 }
+
+extension Sequence where Element: Hashable {
+    func uniqued() -> [Element] {
+        var set = Set<Element>()
+        return filter { set.insert($0).inserted }
+    }
+}
