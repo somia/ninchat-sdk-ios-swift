@@ -35,8 +35,7 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
     internal lazy var storyboard: UIStoryboard = {
         UIStoryboard(name: "Chat", bundle: .SDKBundle)
     }()
-    private let dispatchGroup = DispatchGroup()
-
+    
     // MARK: - Questionnaire helpers
 
     private var hasPreAudienceQuestionnaire: Bool {
@@ -45,7 +44,9 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
     private var hasPostAudienceQuestionnaire: Bool {
         self.sessionManager.siteConfiguration?.postAudienceQuestionnaire?.count ?? 0 > 0
     }
-
+    private let operationQueue = OperationQueue.main
+    private let dispatchQueue = DispatchQueue.main
+    
     // MARK: - ViewControllers
 
     internal lazy var initialViewController: NINInitialViewController = {
@@ -198,24 +199,28 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
     /// In case of heavy questionnaires, there would be a memory-consuming job in instantiation of `NINQuestionnaireViewModel` even though it is implemented in a multi-thread manner using `OperationQueue`.
     /// Thus, we have to do the job in background before the questionnaire page being loaded
     func prepareNINQuestionnaireViewModel(audienceMetadata: NINLowLevelClientProps?, onCompletion: @escaping (() -> Void)) {
+        let completionOperation = BlockOperation {
+            onCompletion()
+        }
+        
         if self.hasPreAudienceQuestionnaire {
-            self.dispatchGroup.enter()
-            DispatchQueue.global(qos: .background).async { [weak self] in
+            let operation = BlockOperation { [weak self] in
                 self?.preQuestionnaireViewModel = NINQuestionnaireViewModelImpl(sessionManager: self?.sessionManager, audienceMetadata: audienceMetadata, questionnaireType: .pre)
-                self?.dispatchGroup.leave()
             }
+            
+            completionOperation.addDependency(operation)
+            self.operationQueue.addOperation(operation)
         }
         if self.hasPostAudienceQuestionnaire {
-            self.dispatchGroup.enter()
-            DispatchQueue.global(qos: .background).async { [weak self] in
+            let operation = BlockOperation { [weak self] in
                 self?.postQuestionnaireViewModel = NINQuestionnaireViewModelImpl(sessionManager: self?.sessionManager, audienceMetadata: audienceMetadata, questionnaireType: .post)
-                self?.dispatchGroup.leave()
             }
+            
+            completionOperation.addDependency(operation)
+            self.operationQueue.addOperation(operation)
         }
-
-        self.dispatchGroup.notify(queue: .global(qos: .background)) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { onCompletion() }
-        }
+        
+        self.dispatchQueue.asyncAfter(deadline: .now() + 0.2) { self.operationQueue.addOperation(completionOperation) }
     }
 }
 
