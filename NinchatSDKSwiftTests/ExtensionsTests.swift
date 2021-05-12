@@ -189,4 +189,11 @@ final class ExtensionsTests: XCTestCase {
         XCTAssertNoThrow(try fetchedMetadata.unmarshalJSON(fetchedValue?["key-1"] as? String))
         XCTAssertEqual(try? fetchedMetadata.getString("key-21"), "value-21")
     }
+    
+    func test_ordered_set() {
+        let array = [1, 3, 1, 4, 2, 3, 6, 1]
+        let expected = [1, 3, 4, 2, 6]
+        
+        XCTAssertEqual(array.uniqued(), expected)
+    }
 }
