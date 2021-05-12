@@ -124,11 +124,13 @@ private extension NINInitialViewController {
     private func drawQueueButtons() {
         self.queueButtonsStackView.subviews.forEach { $0.removeFromSuperview() }
 
-        let availableQueues = self.sessionManager?.audienceQueues.filter({ !$0.isClosed }) ?? []
-        let numberOfButtons = min(3, availableQueues.count)
+        guard let queues = self.sessionManager?.audienceQueues.filter({ !$0.isClosed }) else { return }
+        let uniqueQueus = queues.uniqued()
+        
+        let numberOfButtons = min(3, uniqueQueus.count)
         let buttonHeights: CGFloat = (numberOfButtons > 2) ? 40.0 : 60.0
         for index in 0..<numberOfButtons {
-            let queue = availableQueues[index]
+            let queue = uniqueQueus[index]
             let button = Button(frame: .zero) { [weak self] _ in
                 self?.onQueueActionTapped?(queue)
             }
