@@ -48,6 +48,11 @@ class QuestionnaireCell: UITableViewCell {
     private func setupTitles(_ usernameLabel: UILabel) {
         usernameLabel.text = sessionManager?.siteConfiguration.audienceQuestionnaireUserName ?? ""
         usernameLabel.font = .ninchat
+        
+        guard let delegate = sessionManager?.delegate else { return }
+        if let usernameColor = delegate.override(colorAsset: .ninchatColorChatName) {
+            usernameLabel.textColor = usernameColor
+        }
     }
 
     private func setupAvatar(_ userAvatar: UIImageView) {
