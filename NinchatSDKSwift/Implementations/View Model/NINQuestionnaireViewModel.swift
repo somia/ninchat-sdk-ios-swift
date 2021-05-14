@@ -110,16 +110,11 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
                 self?.setupPostConnector()
             }
         }
-        let describeQueues = BlockOperation { [weak self] in
-            if questionnaireType == .pre, let realm = self?.sessionManager?.realmID {
-                self?.describeAllQueues(realm: realm)
-            }
-        }
 
         elementsOperation.addDependency(configurationOperation)
         connectorOperation.addDependency(configurationOperation)
         setupConnectorOperation.addDependency(connectorOperation)
-        self.operationQueue.addOperations([configurationOperation, elementsOperation, connectorOperation, setupConnectorOperation, describeQueues], waitUntilFinished: false)
+        self.operationQueue.addOperations([configurationOperation, elementsOperation, connectorOperation, setupConnectorOperation], waitUntilFinished: false)
     }
 
     private func setupPreConnector(queue: Queue) {
@@ -160,14 +155,6 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
                 self?.onErrorOccurred?(error)
             }
         }
-    }
-
-    internal func describeAllQueues(realm: String) {
-        let uniqueQueues = configurations.compactMap({ $0.logic?.queueId }).filter({ [weak self] queueID in
-            !(self?.sessionManager?.queues.contains(where: { $0.queueID == queueID }) ?? true)
-        })
-
-        try? sessionManager?.describe(realm: realm, queuesID: uniqueQueues) { _ in }
     }
 
     internal func hasToWaitForUserConfirmation(_ autoApply: Bool) -> Bool {

@@ -138,6 +138,33 @@ final class ExtensionsTests: XCTestCase {
         let dictionary_5: [String:AnyHashable] = ["key2":"invalid"]
         XCTAssertNil(dictionary_5.filter(based: target, keys: keys))
     }
+    
+    func test_find_key_nested_dictionary() {
+        let dict1 = ["key1":"value1"]
+        let dict1_bro = ["key1":"value2"]
+        let dict1_parent1 = ["pkey1": dict1]
+        let dict1_parent2 = ["pkey2": dict1_parent1]
+        let dict1_parent3: [String:Any] = ["pkey3": dict1_parent2, "pkey3_bro": dict1_bro]
+        let dict_mixed: [String:Any] = ["mkey1": dict1_parent3, "mkey2": 2, "k": 3.5]
+        
+        var res: [String] = ["":""].find("key1")
+        XCTAssertEqual(res, [])
+        
+        res = dict1.find("key1")
+        XCTAssertEqual(res, ["value1"])
+        
+        res = dict1_parent1.find("key1")
+        XCTAssertEqual(res, ["value1"])
+        
+        res = dict1_parent2.find("key1")
+        XCTAssertEqual(res, ["value1"])
+        
+        res = dict1_parent3.find("key1")
+        XCTAssertEqual(res.sorted(), ["value1", "value2"])
+        
+        res = dict_mixed.find("key1")
+        XCTAssertEqual(res.sorted(), ["value1", "value2"])
+    }
 
     func test_color_to_image() {
         XCTAssertNotNil(UIColor.blueButton.toImage)

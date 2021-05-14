@@ -195,22 +195,35 @@ extension NINChatSession {
         }
     }
 
-    private func listAllQueues(credentials: NINSessionCredentials?, resumeMode: ResumeMode?, completion: @escaping NinchatSessionCompletion) throws {
+    private func describeAllQueues(credentials: NINSessionCredentials?, resumeMode: ResumeMode?, completion: @escaping NinchatSessionCompletion) throws {
         guard Thread.isMainThread else { throw NINExceptions.mainThread }
-        var allQueues = sessionManager.siteConfiguration.audienceQueues ?? []
-
-        /// describe_queue for the injected queue
-        if let queue = queueID?.trimmingCharacters(in: .whitespacesAndNewlines),
-           queue.count > 0 {
-            allQueues.append(queue)
+        var queues: [String] = []
+        
+        /// queues already mentioned in the site config under "audienceQueues" key
+        self.sessionManager.siteConfiguration.audienceQueues?.filter({ !$0.isEmpty }).forEach({ queues.append($0) })
+        /// queue already mentioned in the site config under "audienceAutoQueue" key
+        if let autoQueue = self.sessionManager.siteConfiguration.audienceAutoQueue?.trimmingCharacters(in: .whitespaces), !autoQueue.isEmpty {
+            queues.append(autoQueue)
         }
-        /// describe_queue for "audienceAutoQueue"
-        if let autoQueue = self.sessionManager.siteConfiguration.audienceAutoQueue?.trimmingCharacters(in: .whitespacesAndNewlines),
-           autoQueue.count > 0, !allQueues.contains(autoQueue) {
-            allQueues.append(autoQueue)
+        /// queues not mentioned in the site config, but are injected by the host application during session initialization
+        if let injectedQueue = self.queueID?.trimmingCharacters(in: .whitespaces), !injectedQueue.isEmpty {
+            queues.append(injectedQueue)
+        }
+        /// queues mentioned in "preAudienceQuestionnaire" as a target under the "queueId" key
+        if let preAuestionnaireQueues = self.sessionManager.siteConfiguration.preAudienceQuestionnaireDictionary?.reduce(into: [], { (queues: inout [String], dict) in
+            queues.append(contentsOf: dict.find("queueId"))
+        }).compactMap({ $0 as? String }), !preAuestionnaireQueues.isEmpty {
+            queues.append(contentsOf: preAuestionnaireQueues)
+        }
+        /// queues mentioned in "postAudienceQuestionnaire" as a target under the "queueId" key
+        if let postAuestionnaireQueues = self.sessionManager.siteConfiguration.preAudienceQuestionnaireDictionary?.reduce(into: [], { (queues: inout [String], dict) in
+            queues.append(contentsOf: dict.find("queueId"))
+        }).compactMap({ $0 as? String }), !postAuestionnaireQueues.isEmpty {
+            queues.append(contentsOf: postAuestionnaireQueues)
         }
 
-        try sessionManager.list(queues: allQueues) { [weak self] error in
+        /// describe all queues above
+        try sessionManager.describe(queuesID: queues.uniqued()) { [weak self] error in
             self?.started = (error == nil)
             self?.resumeMode = resumeMode
             completion(credentials, error)
@@ -227,8 +240,7 @@ extension NINChatSession {
 
             do {
                 /// Find our realm's queues
-                /// Potentially passing a nil queueIds here is intended
-                try self?.listAllQueues(credentials: credentials, resumeMode: nil, completion: completion)
+                try self?.describeAllQueues(credentials: credentials, resumeMode: nil, completion: completion)
             } catch {
                 completion(nil, error)
             }
