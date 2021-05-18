@@ -39,8 +39,8 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         self.overrideTitle(delegate: delegate)
 
-        normalBackgroundColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireSelectSelected) ?? .white
-        selectedBackgroundColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireSelectUnselected) ?? .white
+        normalBackgroundColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireSelectUnselected) ?? .white
+        selectedBackgroundColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireSelectSelected) ?? .white
         selectedOption.textColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorSelectUnselectText) ?? .QGrayButton
 
         /// On scrolling the table, the `selectedOption` highlight status changes back to 'false'
