@@ -235,6 +235,7 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
             self.inputControlsView.updatePermissions(queue.permissions)
         }
         self.disableView(false)
+        self.chatView.tableView.reloadData()
     }
 
     // MARK: - Setup ViewModel
