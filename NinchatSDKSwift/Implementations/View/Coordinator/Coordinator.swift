@@ -159,10 +159,15 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         ratingViewController.sessionManager = self.sessionManager
         ratingViewController.style = self.sessionManager.siteConfiguration?.postAudienceQuestionnaireStyle
         ratingViewController.onRatingFinished = { [weak self] (status: ChatStatus?) -> Bool in
-            if !(self?.hasPostAudienceQuestionnaire ?? true) { return true }
+            guard let `self` = self else { return true }
+            
+            /// skip post questionnaire if the user skip rating.
+            /// according to `https://github.com/somia/mobile/issues/342`
+            if status == nil { return true }
+            
+            if !self.hasPostAudienceQuestionnaire { return true }
             DispatchQueue.main.async {
-                guard let weakSelf = self else { return }
-                weakSelf.navigationController?.pushViewController(weakSelf.questionnaireViewController(ratingViewModel: viewModel, rating: status, questionnaireType: .post), animated: true)
+                self.navigationController?.pushViewController(self.questionnaireViewController(ratingViewModel: viewModel, rating: status, questionnaireType: .post), animated: true)
             }
             return false
         }
