@@ -347,12 +347,12 @@ extension NINQuestionnaireViewModelImpl {
 
     func redirectTargetPage(_ element: QuestionnaireElement, autoApply: Bool, performClosures: Bool) -> Int? {
         guard !self.preventAutoRedirect, let configuration = element.questionnaireConfiguration else { return nil }
-        return connector.findElementAndPageRedirect(for: self.getAnswersForElement(element, presetOnly: false)
+        return self.connector.findElementAndPageRedirect(for: self.getAnswersForElement(element, presetOnly: false)
                 ?? AnyHashable(""), in: configuration, autoApply: autoApply, performClosures: performClosures).1
     }
 
     func logicTargetPage(_ logic: LogicQuestionnaire, autoApply: Bool, performClosures: Bool) -> Int? {
-        connector.findElementAndPageLogic(logic: logic, in: self.answers, autoApply: autoApply, performClosures: performClosures).1
+        self.connector.findElementAndPageLogic(logic: logic, in: self.answers, autoApply: autoApply, performClosures: performClosures).1
     }
 
     func goToNextPage() -> Bool? {

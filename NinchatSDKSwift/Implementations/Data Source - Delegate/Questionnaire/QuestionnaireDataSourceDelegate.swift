@@ -121,7 +121,8 @@ extension QuestionnaireDataSourceDelegate {
     }
 
     internal func setupSelectable(view: inout  QuestionnaireElement & QuestionnaireOptionSelectableElement) {
-        view.onElementOptionSelected = { [view] element, option in
+        view.onElementOptionSelected = { [weak self, view] element, option in
+            guard let `self` = self else { return }
             guard self.viewModel.submitAnswer(key: element, value: option.value, allowUpdate: view.isShown) else { return }
 
             /// Load the next element if the selected element was a radio or checkbox without any navigation block (redirect/logic)
@@ -132,14 +133,17 @@ extension QuestionnaireDataSourceDelegate {
                 }
             }
         }
-        view.onElementOptionDeselected = { element, _ in
+        view.onElementOptionDeselected = { [weak self] element, _ in
+            guard let `self` = self else { return }
             self.viewModel.removeAnswer(key: element)
         }
     }
 
     internal func setupFocusable(view: inout QuestionnaireElement & QuestionnaireFocusableElement) {
         view.onElementFocused = { _ in }
-        view.onElementDismissed = { [view] element in
+        view.onElementDismissed = { [weak self, view] element in
+            guard let `self` = self else { return }
+            
             /// First ensure that the element is completed properly, otherwise remove any submitted answer for it
             if let isCompleted = self.isCompletedBorder(view: view as? QuestionnaireHasBorder), !isCompleted {
                 self.viewModel.removeAnswer(key: element)
