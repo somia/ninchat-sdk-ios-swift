@@ -59,7 +59,7 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
                 
                 var viewController: UIViewController
                 if self.hasPreAudienceQuestionnaire {
-                    viewController = self.questionnaireViewController(questionnaireType: .pre)
+                    viewController = self.questionnaireViewController(queue: queue, questionnaireType: .pre)
                 } else {
                     viewController = self.queueViewController(queue: queue)
                 }
