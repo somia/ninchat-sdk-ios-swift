@@ -22,7 +22,7 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
     // MARK: - Coordinator
 
     internal var delegate: InternalDelegate?
-    internal var sessionManager: NINChatSessionManager!
+    internal weak var sessionManager: NINChatSessionManager!
     internal var onPresentationCompletion: (() -> Void)?
     internal weak var navigationController: UINavigationController? {
         didSet {
@@ -88,8 +88,8 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         joinViewController.sessionManager = sessionManager
         joinViewController.onQueueActionTapped = { [weak self] queue in
             DispatchQueue.main.async {
-                guard let weakSelf = self else { return }
-                weakSelf.navigationController?.pushViewController(weakSelf.chatViewController(queue: queue), animated: true)
+                guard let `self` = self else { return }
+                self.navigationController?.pushViewController(self.chatViewController(queue: queue), animated: true)
             }
         }
 
@@ -178,8 +178,8 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
     // MARK: - Coordinator
 
     init(with sessionManager: NINChatSessionManager, delegate: InternalDelegate?, onPresentationCompletion: @escaping (() -> Void)) {
-        self.sessionManager = sessionManager
         self.delegate = delegate
+        self.sessionManager = sessionManager
         self.onPresentationCompletion = onPresentationCompletion
     }
 
@@ -295,11 +295,13 @@ extension NINCoordinator {
                 weakSelf.navigationController?.pushViewController(weakSelf.fullScreenViewController(image: image, attachment: attachment), animated: true)
             }
         }
-        dataSourceDelegate.onOpenVideoAttachment = { attachment in
+        dataSourceDelegate.onOpenVideoAttachment = { [weak self] attachment in
             guard let attachmentURL = attachment.url, let playerURL = URL(string: attachmentURL) else { return }
+            
             let playerViewController = AVPlayerViewController()
             playerViewController.player = AVPlayer(url: playerURL)
-            self.navigationController?.present(playerViewController, animated: true) {
+            
+            self?.navigationController?.present(playerViewController, animated: true) {
                 playerViewController.player?.play()
             }
         }
