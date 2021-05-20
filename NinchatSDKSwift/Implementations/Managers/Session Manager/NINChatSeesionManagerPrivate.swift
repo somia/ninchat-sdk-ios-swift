@@ -21,7 +21,9 @@ extension NINChatSessionManagerImpl {
             let realmQueues = param.realmQueue.value
             try realmQueues.accept(queuesParser)
 
-            self.queues.append(contentsOf: queuesParser.properties.keys.compactMap({ key in
+            self.queues.append(contentsOf: queuesParser.properties.keys.compactMap({ [weak self] key in
+                guard let `self` = self else { return nil }
+                
                 /// Add the queue only if it is not already available
                 guard !self.queues.contains(where: { $0.queueID == key } ) else { return nil }
                 
@@ -203,7 +205,8 @@ extension NINChatSessionManagerImpl {
         self.channelClosed = param.channelClosed.value || param.channelSuspended.value
         /// In case of "channel transfer", the corresponded function: "didPartChannel(param:)" is called after this function.
         /// Thus, We will send meta message only if the channel was actually closed, not parted.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            guard let `self` = self else { return }
             guard self.channelClosed else { return }
 
             let text = self.translate(key: Constants.kConversationEnded.rawValue, formatParams: [:])

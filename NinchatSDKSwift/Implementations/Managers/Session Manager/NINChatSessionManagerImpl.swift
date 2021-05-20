@@ -84,7 +84,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
 
     // MARK: - NINChatSessionManager
     
-    private(set) var audienceMetadata: NINLowLevelClientProps? {
+    private(set) weak var audienceMetadata: NINLowLevelClientProps? {
         set {
             NINLowLevelClientProps.saveMetadata(newValue)
         }
@@ -101,7 +101,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     var audienceQueues: [Queue]! = []
     var siteConfiguration: SiteConfiguration!
     var givenConfiguration: NINSiteConfiguration?
-    var preAudienceQuestionnaireMetadata: NINLowLevelClientProps! {
+    weak var preAudienceQuestionnaireMetadata: NINLowLevelClientProps! {
         didSet {
             let metadata = self.audienceMetadata ?? NINLowLevelClientProps()
             metadata.set(value: preAudienceQuestionnaireMetadata, forKey: "pre_answers")
@@ -166,7 +166,10 @@ extension NINChatSessionManagerImpl {
     
     func fetchSiteConfiguration(config key: String, environments: [String]?, completion: @escaping CompletionWithError) {
         let request = SiteConfigRequest(serverAddress: self.serverAddress, configKey: key)
-        self.serviceManager.perform(request) { result in
+        
+        self.serviceManager.perform(request) { [weak self] result in
+            guard let `self` = self else { return }
+            
             switch result {
             case .success(let config):
                 debugger("Got site config: \(String(describing: config.toDictionary))")
@@ -191,7 +194,9 @@ extension NINChatSessionManagerImpl {
 
     internal func initiateSession(params: NINLowLevelClientProps, completion: @escaping CompletionWithCredentials) throws {
         /// Wait for the session creation event
-        self.onActionSessionEvent = { credentials, event, error in
+        self.onActionSessionEvent = { [weak self] credentials, event, error in
+            guard let `self` = self else { return }
+            
             if event == .sessionCreated {
                 if self.currentChannelID != nil {
                     completion(credentials, .toChannel, error); return
@@ -206,7 +211,9 @@ extension NINChatSessionManagerImpl {
         }
 
         /// Make sure our site configuration contains a realm_id
-        guard let realmId = self.siteConfiguration?.audienceRealm else { throw NINSessionExceptions.invalidRealmConfiguration }
+        guard let realmId = self.siteConfiguration?.audienceRealm else {
+            throw NINSessionExceptions.invalidRealmConfiguration
+        }
         self.realmID = realmId
 
         if let secret = self.siteSecret {

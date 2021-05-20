@@ -19,12 +19,11 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
         self.actionBoundClosures[id] = closure
         
         if self.onActionID == nil {
-            self.onActionID = { [weak self] result, error in
+            self.onActionID = { [weak self, id, closure] result, error in
                 if let targetClosure = self?.actionBoundClosures.filter({
                     guard case let .success(id) = result else { return false }
                     return $0.key == id
                 }).first?.value {
-                    
                     targetClosure(error)
                 }
             }
@@ -36,12 +35,11 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
         self.actionFileBoundClosures[id] = closure
         
         if self.onActionFileInfo == nil {
-            self.onActionFileInfo = { [weak self] result, fileInfo, error in
+            self.onActionFileInfo = { [weak self, id, closure] result, fileInfo, error in
                 if let targetClosure = self?.actionFileBoundClosures.filter({
                     guard case let .success(id) = result else { return false }
                     return $0.key == id
                 }).first?.value {
-
                     targetClosure(error, fileInfo)
                 }
             }
@@ -53,12 +51,11 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
         self.actionChannelBoundClosures[id] = closure
 
         if self.onActionChannel == nil {
-            self.onActionChannel = { [weak self] result, channelID in
+            self.onActionChannel = { [weak self, id, closure] result, channelID in
                 if let targetClosure = self?.actionChannelBoundClosures.filter({
                     guard case let .success(id) = result else { return false }
                     return $0.key == id
                 }).first?.value {
-
                     targetClosure(nil)
                 }
             }
@@ -70,7 +67,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
         self.actionICEServersBoundClosures[id] = closure
 
         if self.onActionSevers == nil {
-            self.onActionSevers = { [weak self] result, stunServers, turnServers in
+            self.onActionSevers = { [weak self, id, closure] result, stunServers, turnServers in
                 if let targetClosure = self?.actionICEServersBoundClosures.filter({
                     guard case let .success(id) = result else { return false }
                     return $0.key == id

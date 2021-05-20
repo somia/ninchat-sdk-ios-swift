@@ -46,8 +46,8 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
             self?.deallocate()
         }
     }()
-    private let audienceMetadata: NINLowLevelClientProps?
-    private let configuration: NINSiteConfiguration?
+    private weak var audienceMetadata: NINLowLevelClientProps?
+    private var configuration: NINSiteConfiguration?
     private var configKey: String!
     private var queueID: String?
     private var environments: [String]?
@@ -109,13 +109,13 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
             try self.fetchSiteConfiguration { [weak self] error in
                 DispatchQueue.main.async {
                     do {
-                        try self?.openChatSession() { credentials, error in
-                            guard let weakSelf = self, error == nil else { completion(credentials, error); return }
+                        try self?.openChatSession() { [weak self] credentials, error in
+                            guard let `self` = self, error == nil else { completion(credentials, error); return }
 
                             /// Prepare coordinator for starting
                             /// This is quite important to prepare time and memory consuming tasks before the user
                             /// starts the coordinator, otherwise he/she will face unexpected views
-                            weakSelf.coordinator?.prepareNINQuestionnaireViewModel(audienceMetadata: weakSelf.audienceMetadata) {
+                            self.coordinator?.prepareNINQuestionnaireViewModel(audienceMetadata: self.audienceMetadata) {
                                 completion(credentials, error)
                             }
                         }
@@ -136,13 +136,13 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
             try self.fetchSiteConfiguration { [weak self] error in
                 DispatchQueue.main.async {
                     do {
-                        try self?.openChatSession(credentials: credentials) { credentials, error in
-                            guard let weakSelf = self, error == nil else { completion(credentials, error); return }
+                        try self?.openChatSession(credentials: credentials) { [weak self] credentials, error in
+                            guard let `self` = self, error == nil else { completion(credentials, error); return }
 
                             /// Prepare coordinator for starting
                             /// This is quite important to prepare time and memory consuming tasks before the user
                             /// starts the coordinator, otherwise he/she will face unexpected views
-                            weakSelf.coordinator?.prepareNINQuestionnaireViewModel(audienceMetadata: weakSelf.audienceMetadata) {
+                            self.coordinator?.prepareNINQuestionnaireViewModel(audienceMetadata: self.audienceMetadata) {
                                 completion(credentials, error)
                             }
                         }
