@@ -13,23 +13,36 @@ enum ServiceResultError: Error {
 }
 
 struct ServiceManager {
-    private let session = URLSession.shared
+    private var session: URLSession?
+    private var configuration: URLSessionConfiguration {
+        let configuration = URLSessionConfiguration.default
+        configuration.allowsCellularAccess = true
+        configuration.httpShouldSetCookies = true
+        configuration.httpShouldUsePipelining = true
+        configuration.timeoutIntervalForRequest = 20.0
+        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+        configuration.urlCredentialStorage = nil
+        configuration.urlCache = nil
+        return configuration
+    }
     
-    func perform<T: ServiceRequest>(_ request: T, completion: @escaping (NINResult<T.ReturnType>) -> Void) {
+    mutating func perform<T: ServiceRequest>(_ request: T, completion: @escaping (NINResult<T.ReturnType>) -> Void) {
         guard let request = self.request(request) else {
             completion(.failure(ServiceResultError.invalidRequest)); return
         }
         
-        let task = session.dataTask(with: request) { responseData, response, responseError in
+        if let session = self.session { session.invalidateAndCancel() }
+        session = URLSession(configuration: configuration)
+        
+        self.session?.dataTask(with: request) { [self] responseData, response, responseError in
             switch self.validate(responseData, response: response, responseError: responseError) {
             case .success:
                 completion(self.parse(responseData))
             case .failure(let error):
                 completion(.failure(error))
             }
-        }
-    
-        task.resume()
+        }.resume()
+        session?.finishTasksAndInvalidate()
     }
     
     private func request<T: ServiceRequest>(_ request: T) -> URLRequest? {
@@ -39,7 +52,9 @@ struct ServiceManager {
         urlRequest.httpMethod = request.httpMethod.rawValue
         urlRequest.allHTTPHeaderFields = request.headers
         urlRequest.httpBody = request.body
-        urlRequest.cachePolicy = .useProtocolCachePolicy
+        urlRequest.cachePolicy = .reloadIgnoringLocalCacheData
+        urlRequest.allowsCellularAccess = true
+        urlRequest.httpShouldUsePipelining = true
         
         return urlRequest
     }
