@@ -39,7 +39,7 @@ protocol QuestionnaireDataSource: AnyObject {
 
     var viewModel: NINQuestionnaireViewModel! { get set }
     var sessionManager: NINChatSessionManager? { get set }
-    init(viewModel: NINQuestionnaireViewModel, sessionManager: NINChatSessionManager, delegate: InternalDelegate?)
+    init(viewModel: NINQuestionnaireViewModel, sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?)
 }
 
 protocol QuestionnaireDataSourceDelegate: QuestionnaireDataSource, QuestionnaireDelegate {}

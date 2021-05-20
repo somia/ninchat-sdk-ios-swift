@@ -16,7 +16,7 @@ final class NINRatingViewController: UIViewController, HasCustomLayer, ViewContr
     
     // MARK: - ViewController
 
-    var delegate: InternalDelegate?
+    weak var delegate: NINChatSessionInternalDelegate?
     weak var sessionManager: NINChatSessionManager?
     var onRatingFinished: ((ChatStatus?) -> Bool)!
     

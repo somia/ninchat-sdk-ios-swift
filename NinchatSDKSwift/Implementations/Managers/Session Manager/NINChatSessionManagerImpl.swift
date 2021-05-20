@@ -92,7 +92,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
             NINLowLevelClientProps.loadMetadata()
         }
     }
-    var delegate: NINChatSessionInternalDelegate?
+    weak var delegate: NINChatSessionInternalDelegate?
     var queues: [Queue]! = [] {
         didSet {
             self.audienceQueues = self.queues

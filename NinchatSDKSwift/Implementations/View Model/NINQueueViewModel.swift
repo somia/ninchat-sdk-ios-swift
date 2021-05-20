@@ -20,7 +20,7 @@ protocol NINQueueViewModel {
 final class NINQueueViewModelImpl: NINQueueViewModel {
     
     private unowned var sessionManager: NINChatSessionManager!
-    private var delegate: NINChatSessionInternalDelegate?
+    private weak var delegate: NINChatSessionInternalDelegate?
     private var readyToJoin: Bool = false
 
     // MARK: - NINQueueViewModel

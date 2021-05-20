@@ -11,7 +11,7 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
 
     // MARK: - ViewController
 
-    var delegate: InternalDelegate?
+    weak var delegate: NINChatSessionInternalDelegate?
     weak var sessionManager: NINChatSessionManager?
 
     // MARK: - Injected

@@ -9,7 +9,7 @@ import NinchatLowLevelClient
 
 // MARK: - Internal helper methods
 
-protocol NINChatSessionInternalDelegate {
+protocol NINChatSessionInternalDelegate: AnyObject {
     func log(value: String)
     func log(format: String, _ args: CVarArg...)
     func onLowLevelEvent(event: NINLowLevelClientProps, payload: NINLowLevelClientPayload, lastReply: Bool)
@@ -21,52 +21,46 @@ protocol NINChatSessionInternalDelegate {
     func override(questionnaireAsset key: QuestionnaireColorConstants) -> UIColor?
 }
 
-struct InternalDelegate: NINChatSessionInternalDelegate {
-    weak var session: NINChatSession?
-    init(session: NINChatSession) {
-        self.session = session
+extension NINChatSession: NINChatSessionInternalDelegate {
+    func log(value: String) {
+        DispatchQueue.main.async { [weak self] in
+            guard let `self` = self else { return }
+            self.delegate?.ninchat(self, didOutputSDKLog: value)
+        }
     }
 
-    internal func log(value: String) {
-        DispatchQueue.main.async {
-            guard let session = self.session else { return }
-            session.delegate?.ninchat(session, didOutputSDKLog: value)
+    func log(format: String, _ args: CVarArg...) {
+        DispatchQueue.main.async { [weak self] in
+            guard let `self` = self else { return }
+            self.delegate?.ninchat(self, didOutputSDKLog: String(format: format, args))
+        }
+    }
+
+    func onLowLevelEvent(event: NINLowLevelClientProps, payload: NINLowLevelClientPayload, lastReply: Bool) {
+        DispatchQueue.main.async { [weak self] in
+            guard let `self` = self else { return }
+            self.delegate?.ninchat(self, onLowLevelEvent: event, payload: payload, lastReply: lastReply)
         }
     }
     
-    internal func log(format: String, _ args: CVarArg...) {
-        DispatchQueue.main.async {
-            guard let session = self.session else { return }
-            session.delegate?.ninchat(session, didOutputSDKLog: String(format: format, args))
-        }
-    }
-    
-    internal func onLowLevelEvent(event: NINLowLevelClientProps, payload: NINLowLevelClientPayload, lastReply: Bool) {
-        DispatchQueue.main.async {
-            guard let session = self.session else { return }
-            session.delegate?.ninchat(session, onLowLevelEvent: event, payload: payload, lastReply: lastReply)
-        }
-    }
-    
-    internal func onDidEnd() {
+    func onDidEnd() {
         /// According to https://github.com/somia/mobile/issues/287
         /// Clear metadata from the UserDefaults on a normal close
         UserDefaults.remove(forKey: .metadata)
 
-        DispatchQueue.main.async {
-            guard let session = self.session else { return }
-            session.delegate?.ninchatDidEnd(session)
+        DispatchQueue.main.async { [weak self] in
+            guard let `self` = self else { return }
+            self.delegate?.ninchatDidEnd(self)
         }
     }
 
-    internal func onResumeFailed() -> Bool {
-        guard let session = self.session else { return false }
-        return session.delegate?.ninchatDidFail(toResumeSession: session) ?? false
+    func onResumeFailed() -> Bool {
+        weak var `self` = self
+        guard let `self` = self else { return false }
+        return self.delegate?.ninchatDidFail(toResumeSession: self) ?? false
     }
 
-    internal func override(imageAsset key: AssetConstants) -> UIImage? {
-        guard let session = self.session else { return nil }
-
+    func override(imageAsset key: AssetConstants) -> UIImage? {
         /// TODO: REMOVE legacy keys
         let deprecatedKeys: [AssetConstants:AssetConstants] = [
             .ninchatIconLoader: .iconLoader,
@@ -93,16 +87,17 @@ struct InternalDelegate: NINChatSessionInternalDelegate {
             .ninchatQuestionnaireBackground: .questionnaireBackground
         ]
 
-        if let asset = session.delegate?.ninchat(session, overrideImageAssetForKey: key) {
+        weak var `self` = self
+        guard let `self` = self else { return nil }
+        
+        if let asset = self.delegate?.ninchat(self, overrideImageAssetForKey: key) {
             return asset
         }
         guard let depKey = deprecatedKeys[key] else { return nil }
-        return session.delegate?.ninchat(session, overrideImageAssetForKey: depKey)
+        return self.delegate?.ninchat(self, overrideImageAssetForKey: depKey)
     }
-    
-    internal func override(colorAsset key: ColorConstants) -> UIColor? {
-        guard let session = self.session else { return nil }
 
+    func override(colorAsset key: ColorConstants) -> UIColor? {
         /// TODO: REMOVE legacy keys
         let deprecatedKeys: [ColorConstants:ColorConstants] = [
             .ninchatColorButtonPrimaryText: .buttonPrimaryText,
@@ -128,24 +123,26 @@ struct InternalDelegate: NINChatSessionInternalDelegate {
             .ninchatColorRatingNegativeText: .ratingNegativeText
         ]
 
-        if let color = session.delegate?.ninchat(session, overrideColorAssetForKey: key) {
+        weak var `self` = self
+        guard let `self` = self else { return nil }
+        
+        if let color = self.delegate?.ninchat(self, overrideColorAssetForKey: key) {
             return color
         }
         guard let depKey = deprecatedKeys[key] else { return nil }
-        return session.delegate?.ninchat(session, overrideColorAssetForKey: depKey)
+        return self.delegate?.ninchat(self, overrideColorAssetForKey: depKey)
     }
 
-    internal func override(layerAsset key: CALayerConstant) -> CALayer? {
-        guard let session = self.session else { return nil }
-        let layer = session.delegate?.ninchat(session, overrideLayer: key)
-        layer?.name = LAYER_NAME
+    func override(layerAsset key: CALayerConstant) -> CALayer? {
+        weak var `self` = self
+        guard let `self` = self else { return nil }
         
+        let layer = self.delegate?.ninchat(self, overrideLayer: key)
+        layer?.name = LAYER_NAME
         return layer
     }
-    
-    internal func override(questionnaireAsset key: QuestionnaireColorConstants) -> UIColor? {
-        guard let session = self.session else { return nil }
 
+    func override(questionnaireAsset key: QuestionnaireColorConstants) -> UIColor? {
         /// TODO: REMOVE legacy keys
         let deprecatedKeys: [QuestionnaireColorConstants:QuestionnaireColorConstants] = [
             .ninchatQuestionnaireColorTitleText: .titleTextColor,
@@ -163,12 +160,15 @@ struct InternalDelegate: NINChatSessionInternalDelegate {
             .ninchatQuestionnaireSelectSelected: .selectSelectedBackground,
             .ninchatQuestionnaireSelectUnselected: .selectDeselectedBackground
         ]
-
-        if let color = session.delegate?.ninchat(session, overrideQuestionnaireColorAssetKey: key) {
+        
+        weak var `self` = self
+        guard let `self` = self else { return nil }
+        
+        if let color = self.delegate?.ninchat(self, overrideQuestionnaireColorAssetKey: key) {
             return color
         }
         guard let depKey = deprecatedKeys[key] else { return nil }
-        return session.delegate?.ninchat(session, overrideQuestionnaireColorAssetKey: depKey)
+        return self.delegate?.ninchat(self, overrideQuestionnaireColorAssetKey: depKey)
     }
 }
 

@@ -18,7 +18,7 @@ final class NINQueueViewController: UIViewController, HasCustomLayer, ViewContro
     
     // MARK: - ViewController
     
-    var delegate: InternalDelegate?
+    weak var delegate: NINChatSessionInternalDelegate?
     weak var sessionManager: NINChatSessionManager?
     
     // MARK: - Outlets

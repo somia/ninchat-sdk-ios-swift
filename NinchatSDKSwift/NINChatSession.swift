@@ -39,13 +39,10 @@ extension NINChatSessionProtocol {
 
 public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
     lazy var sessionManager: NINChatSessionManager! = {
-        NINChatSessionManagerImpl(session: self.internalDelegate, serverAddress: self.defaultServerAddress, audienceMetadata: self.audienceMetadata, configuration: self.configuration)
-    }()
-    lazy var internalDelegate: InternalDelegate? = {
-        InternalDelegate(session: self)
+        NINChatSessionManagerImpl(session: self, serverAddress: self.defaultServerAddress, audienceMetadata: self.audienceMetadata, configuration: self.configuration)
     }()
     private lazy var coordinator: Coordinator? = {
-        NINCoordinator(with: self.sessionManager, delegate: self.internalDelegate) { [weak self] in
+        NINCoordinator(with: self.sessionManager, delegate: self) { [weak self] in
             self?.deallocate()
         }
     }()
@@ -181,7 +178,7 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         self.sessionManager = nil
         self.started = false
         self.sessionAlive = false
-        self.internalDelegate?.onDidEnd()
+        self.onDidEnd()
     }
 }
 
@@ -273,7 +270,7 @@ extension NINChatSession {
     }
 
     private func handleResumptionFailure(completion: @escaping NinchatSessionCompletion) throws {
-        if self.internalDelegate?.onResumeFailed() ?? false {
+        if self.onResumeFailed() {
             /// Automatically start a new session
             try self.openChatSession(completion: completion)
         } else {

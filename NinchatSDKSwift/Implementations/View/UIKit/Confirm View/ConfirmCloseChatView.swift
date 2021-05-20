@@ -28,8 +28,8 @@ final class ConfirmCloseChatView: UIView, HasCustomLayer, ConfirmView {
     // MARK: - ConfirmView
     
     var onViewAction: OnViewAction?
-    var delegate: InternalDelegate?
-    var sessionManager: NINChatSessionManager? {
+    weak var delegate: NINChatSessionInternalDelegate?
+    weak var sessionManager: NINChatSessionManager? {
         didSet {
             self.overrideAssets()
         }

@@ -10,7 +10,7 @@ final class NINQuestionnaireFormDataSourceDelegate: QuestionnaireDataSourceDeleg
 
     // MARK: - NINQuestionnaireFormDelegate
 
-    private var delegate: InternalDelegate?
+    private weak var delegate: NINChatSessionInternalDelegate?
 
     var viewModel: NINQuestionnaireViewModel!
     weak var sessionManager: NINChatSessionManager?
@@ -21,7 +21,7 @@ final class NINQuestionnaireFormDataSourceDelegate: QuestionnaireDataSourceDeleg
 
     var isLoadingNewElements: Bool! = false
 
-    init(viewModel: NINQuestionnaireViewModel, sessionManager: NINChatSessionManager, delegate: InternalDelegate?) {
+    init(viewModel: NINQuestionnaireViewModel, sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?) {
         self.delegate = delegate
         self.sessionManager = sessionManager
         self.viewModel = viewModel

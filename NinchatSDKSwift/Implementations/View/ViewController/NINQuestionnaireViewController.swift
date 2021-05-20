@@ -54,7 +54,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
 
     // MARK: - ViewController
 
-    var delegate: InternalDelegate?
+    weak var delegate: NINChatSessionInternalDelegate?
     weak var sessionManager: NINChatSessionManager?
 
     // MARK: - Injected

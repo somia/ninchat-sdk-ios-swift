@@ -14,7 +14,7 @@ final class NINInitialViewController: UIViewController, HasCustomLayer, ViewCont
     
     // MARK: - ViewController
     
-    var delegate: InternalDelegate?
+    weak var delegate: NINChatSessionInternalDelegate?
     weak var sessionManager: NINChatSessionManager?
     
     // MARK: - Outlets

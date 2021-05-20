@@ -11,7 +11,7 @@ import WebRTC
 import NinchatLowLevelClient
 
 protocol Coordinator: AnyObject {
-    init(with sessionManager: NINChatSessionManager, delegate: InternalDelegate?, onPresentationCompletion: @escaping (() -> Void))
+    init(with sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?, onPresentationCompletion: @escaping (() -> Void))
     func start(with queue: String?, resume: ResumeMode?, within navigation: UINavigationController?) -> UIViewController?
     func prepareNINQuestionnaireViewModel(audienceMetadata: NINLowLevelClientProps?, onCompletion: @escaping (() -> Void))
     func deallocate()
@@ -21,7 +21,7 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
 
     // MARK: - Coordinator
 
-    internal var delegate: InternalDelegate?
+    internal weak var delegate: NINChatSessionInternalDelegate?
     internal weak var sessionManager: NINChatSessionManager!
     internal var onPresentationCompletion: (() -> Void)?
     internal weak var navigationController: UINavigationController? {
@@ -177,7 +177,7 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
 
     // MARK: - Coordinator
 
-    init(with sessionManager: NINChatSessionManager, delegate: InternalDelegate?, onPresentationCompletion: @escaping (() -> Void)) {
+    init(with sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?, onPresentationCompletion: @escaping (() -> Void)) {
         self.delegate = delegate
         self.sessionManager = sessionManager
         self.onPresentationCompletion = onPresentationCompletion
