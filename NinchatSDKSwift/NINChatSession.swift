@@ -92,7 +92,6 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         self.audienceMetadata = metadata
         self.configuration = configuration
         self.serverAddress = Constants.kProductionServerAddress.rawValue
-        self.started = false
     }
 
     deinit {

@@ -63,11 +63,7 @@ final class NINRatingViewController: UIViewController, HasCustomLayer, ViewContr
     @IBOutlet private(set) weak var facesFormViewContainer: UIView!
      
     // MARK: - UIViewController
-    
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .portrait
-    }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 

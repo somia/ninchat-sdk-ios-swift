@@ -54,10 +54,6 @@ final class NINInitialViewController: UIViewController, HasCustomLayer, ViewCont
 
     // MARK: - UIViewController
     
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        .portrait
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 

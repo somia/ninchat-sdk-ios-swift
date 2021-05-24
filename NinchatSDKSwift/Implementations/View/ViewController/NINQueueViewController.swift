@@ -55,10 +55,6 @@ final class NINQueueViewController: UIViewController, HasCustomLayer, ViewContro
     
     // MARK: - UIViewController
     
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        .portrait
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.overrideAssets()
