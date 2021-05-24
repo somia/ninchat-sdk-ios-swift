@@ -55,8 +55,6 @@ extension NINChatSession: NINChatSessionInternalDelegate {
     }
 
     func onResumeFailed() -> Bool {
-        weak var `self` = self
-        guard let `self` = self else { return false }
         return self.delegate?.ninchatDidFail(toResumeSession: self) ?? false
     }
 
@@ -87,9 +85,6 @@ extension NINChatSession: NINChatSessionInternalDelegate {
             .ninchatQuestionnaireBackground: .questionnaireBackground
         ]
 
-        weak var `self` = self
-        guard let `self` = self else { return nil }
-        
         if let asset = self.delegate?.ninchat(self, overrideImageAssetForKey: key) {
             return asset
         }
@@ -123,9 +118,6 @@ extension NINChatSession: NINChatSessionInternalDelegate {
             .ninchatColorRatingNegativeText: .ratingNegativeText
         ]
 
-        weak var `self` = self
-        guard let `self` = self else { return nil }
-        
         if let color = self.delegate?.ninchat(self, overrideColorAssetForKey: key) {
             return color
         }
@@ -134,9 +126,6 @@ extension NINChatSession: NINChatSessionInternalDelegate {
     }
 
     func override(layerAsset key: CALayerConstant) -> CALayer? {
-        weak var `self` = self
-        guard let `self` = self else { return nil }
-        
         let layer = self.delegate?.ninchat(self, overrideLayer: key)
         layer?.name = LAYER_NAME
         return layer
@@ -160,10 +149,7 @@ extension NINChatSession: NINChatSessionInternalDelegate {
             .ninchatQuestionnaireSelectSelected: .selectSelectedBackground,
             .ninchatQuestionnaireSelectUnselected: .selectDeselectedBackground
         ]
-        
-        weak var `self` = self
-        guard let `self` = self else { return nil }
-        
+                
         if let color = self.delegate?.ninchat(self, overrideQuestionnaireColorAssetKey: key) {
             return color
         }
