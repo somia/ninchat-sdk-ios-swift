@@ -14,7 +14,7 @@ final class NINInitialViewController: UIViewController, HasCustomLayer, ViewCont
     
     // MARK: - ViewController
     
-    var delegate: InternalDelegate?
+    weak var delegate: NINChatSessionInternalDelegate?
     weak var sessionManager: NINChatSessionManager?
     
     // MARK: - Outlets
@@ -53,10 +53,6 @@ final class NINInitialViewController: UIViewController, HasCustomLayer, ViewCont
     }
 
     // MARK: - UIViewController
-    
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        .portrait
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -131,7 +127,7 @@ private extension NINInitialViewController {
         let buttonHeights: CGFloat = (numberOfButtons > 2) ? 40.0 : 60.0
         for index in 0..<numberOfButtons {
             let queue = uniqueQueus[index]
-            let button = Button(frame: .zero) { [weak self] _ in
+            let button = Button(frame: .zero) { [weak self, queue] _ in
                 self?.onQueueActionTapped?(queue)
             }
             button.translatesAutoresizingMaskIntoConstraints = false

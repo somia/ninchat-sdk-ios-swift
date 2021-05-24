@@ -55,7 +55,7 @@ protocol NINChatAttachmentProtocol {
     func openAttachment(source: UIImagePickerController.SourceType, completion: @escaping AttachmentCompletion)
 }
 
-protocol NINChatViewModel: NINChatRTCProtocol, NINChatStateProtocol, NINChatMessageProtocol, NINChatPermissionsProtocol, NINChatAttachmentProtocol {
+protocol NINChatViewModel: AnyObject, NINChatRTCProtocol, NINChatStateProtocol, NINChatMessageProtocol, NINChatPermissionsProtocol, NINChatAttachmentProtocol {
     var onChannelClosed: (() -> Void)? { get set }
     var onQueueUpdated: (() -> Void)? { get set }
     var onChannelMessage: ((MessageUpdateType) -> Void)? { get set }

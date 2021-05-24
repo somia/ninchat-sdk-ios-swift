@@ -14,7 +14,7 @@ class CoordinatorTests: XCTestCase {
     
 
     override func setUp() {
-        coordinator = NINCoordinator(with: session.sessionManager, delegate: session.internalDelegate) { }
+        coordinator = NINCoordinator(with: session.sessionManager, delegate: session) { }
     }
 
     override func tearDown() { }

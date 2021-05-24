@@ -39,18 +39,15 @@ extension NINChatSessionProtocol {
 
 public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
     lazy var sessionManager: NINChatSessionManager! = {
-        NINChatSessionManagerImpl(session: self.internalDelegate, serverAddress: self.defaultServerAddress, audienceMetadata: self.audienceMetadata, configuration: self.configuration)
-    }()
-    lazy var internalDelegate: InternalDelegate? = {
-        InternalDelegate(session: self)
+        NINChatSessionManagerImpl(session: self, serverAddress: self.defaultServerAddress, audienceMetadata: self.audienceMetadata, configuration: self.configuration)
     }()
     private lazy var coordinator: Coordinator? = {
-        NINCoordinator(with: self.sessionManager, delegate: self.internalDelegate) { [weak self] in
+        NINCoordinator(with: self.sessionManager, delegate: self) { [weak self] in
             self?.deallocate()
         }
     }()
-    private let audienceMetadata: NINLowLevelClientProps?
-    private let configuration: NINSiteConfiguration?
+    private weak var audienceMetadata: NINLowLevelClientProps?
+    private var configuration: NINSiteConfiguration?
     private var configKey: String!
     private var queueID: String?
     private var environments: [String]?
@@ -95,7 +92,6 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         self.audienceMetadata = metadata
         self.configuration = configuration
         self.serverAddress = Constants.kProductionServerAddress.rawValue
-        self.started = false
     }
 
     deinit {
@@ -112,13 +108,13 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
             try self.fetchSiteConfiguration { [weak self] error in
                 DispatchQueue.main.async {
                     do {
-                        try self?.openChatSession() { credentials, error in
-                            guard let weakSelf = self, error == nil else { completion(credentials, error); return }
+                        try self?.openChatSession() { [weak self] credentials, error in
+                            guard let `self` = self, error == nil else { completion(credentials, error); return }
 
                             /// Prepare coordinator for starting
                             /// This is quite important to prepare time and memory consuming tasks before the user
                             /// starts the coordinator, otherwise he/she will face unexpected views
-                            weakSelf.coordinator?.prepareNINQuestionnaireViewModel(audienceMetadata: weakSelf.audienceMetadata) {
+                            self.coordinator?.prepareNINQuestionnaireViewModel(audienceMetadata: self.audienceMetadata) {
                                 completion(credentials, error)
                             }
                         }
@@ -139,13 +135,13 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
             try self.fetchSiteConfiguration { [weak self] error in
                 DispatchQueue.main.async {
                     do {
-                        try self?.openChatSession(credentials: credentials) { credentials, error in
-                            guard let weakSelf = self, error == nil else { completion(credentials, error); return }
+                        try self?.openChatSession(credentials: credentials) { [weak self] credentials, error in
+                            guard let `self` = self, error == nil else { completion(credentials, error); return }
 
                             /// Prepare coordinator for starting
                             /// This is quite important to prepare time and memory consuming tasks before the user
                             /// starts the coordinator, otherwise he/she will face unexpected views
-                            weakSelf.coordinator?.prepareNINQuestionnaireViewModel(audienceMetadata: weakSelf.audienceMetadata) {
+                            self.coordinator?.prepareNINQuestionnaireViewModel(audienceMetadata: self.audienceMetadata) {
                                 completion(credentials, error)
                             }
                         }
@@ -181,7 +177,7 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         self.sessionManager = nil
         self.started = false
         self.sessionAlive = false
-        self.internalDelegate?.onDidEnd()
+        self.onDidEnd()
     }
 }
 
@@ -212,13 +208,13 @@ extension NINChatSession {
         /// queues mentioned in "preAudienceQuestionnaire" as a target under the "queueId" key
         if let preAuestionnaireQueues = self.sessionManager.siteConfiguration.preAudienceQuestionnaireDictionary?.reduce(into: [], { (queues: inout [String], dict) in
             queues.append(contentsOf: dict.find("queueId"))
-        }).compactMap({ $0 as? String }), !preAuestionnaireQueues.isEmpty {
+        }).compactMap({ $0 }), !preAuestionnaireQueues.isEmpty {
             queues.append(contentsOf: preAuestionnaireQueues)
         }
         /// queues mentioned in "postAudienceQuestionnaire" as a target under the "queueId" key
         if let postAuestionnaireQueues = self.sessionManager.siteConfiguration.preAudienceQuestionnaireDictionary?.reduce(into: [], { (queues: inout [String], dict) in
             queues.append(contentsOf: dict.find("queueId"))
-        }).compactMap({ $0 as? String }), !postAuestionnaireQueues.isEmpty {
+        }).compactMap({ $0 }), !postAuestionnaireQueues.isEmpty {
             queues.append(contentsOf: postAuestionnaireQueues)
         }
 
@@ -273,7 +269,7 @@ extension NINChatSession {
     }
 
     private func handleResumptionFailure(completion: @escaping NinchatSessionCompletion) throws {
-        if self.internalDelegate?.onResumeFailed() ?? false {
+        if self.onResumeFailed() {
             /// Automatically start a new session
             try self.openChatSession(completion: completion)
         } else {

@@ -20,8 +20,7 @@ class NINChatViewModelTests: XCTestCase, NINChatWebRTCClientDelegate {
     var onError: ((NINChatWebRTCClient, Error) -> Void)?
 
     override func setUp() {
-        let delegate = InternalDelegate(session: NINChatSession(configKey: ""))
-        sessionManager = NINChatSessionManagerImpl(session: delegate, serverAddress: "", configuration: nil)
+        sessionManager = NINChatSessionManagerImpl(session: NINChatSession(configKey: ""), serverAddress: "", configuration: nil)
         viewModel = NINChatViewModelImpl(sessionManager: sessionManager)
     }
 

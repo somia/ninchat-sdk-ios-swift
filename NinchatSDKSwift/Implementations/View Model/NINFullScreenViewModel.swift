@@ -13,7 +13,7 @@ protocol NINFullScreenViewModel {
 
 final class NINFullScreenViewModelImpl: NSObject, NINFullScreenViewModel {
     
-    private var delegate: NINChatSessionInternalDelegate?
+    private weak var delegate: NINChatSessionInternalDelegate?
     private var downloadCompletion: ((Error?) -> Void)?
     
     // MARK: - NINFullScreenViewModel

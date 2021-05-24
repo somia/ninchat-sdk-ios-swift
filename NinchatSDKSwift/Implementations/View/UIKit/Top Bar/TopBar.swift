@@ -12,7 +12,7 @@ protocol TopBarAction {
 }
 
 protocol TopBarProtocol: UIView, TopBarAction {
-    var delegate: InternalDelegate? { get set }
+    var delegate: NINChatSessionInternalDelegate? { get set }
     var fileName: String! { get set }
     
     func overrideAssets()
@@ -22,7 +22,7 @@ final class TopBar: UIView, TopBarProtocol, HasCustomLayer {
     
     // MARK: - TopBarProtocol
 
-    var delegate: InternalDelegate?
+    weak var delegate: NINChatSessionInternalDelegate?
     var fileName: String! {
         didSet {
             fileNameLabel.text = fileName

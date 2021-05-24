@@ -11,7 +11,7 @@ import WebRTC
 import NinchatLowLevelClient
 
 protocol Coordinator: AnyObject {
-    init(with sessionManager: NINChatSessionManager, delegate: InternalDelegate?, onPresentationCompletion: @escaping (() -> Void))
+    init(with sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?, onPresentationCompletion: @escaping (() -> Void))
     func start(with queue: String?, resume: ResumeMode?, within navigation: UINavigationController?) -> UIViewController?
     func prepareNINQuestionnaireViewModel(audienceMetadata: NINLowLevelClientProps?, onCompletion: @escaping (() -> Void))
     func deallocate()
@@ -21,8 +21,8 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
 
     // MARK: - Coordinator
 
-    internal var delegate: InternalDelegate?
-    internal var sessionManager: NINChatSessionManager!
+    internal weak var delegate: NINChatSessionInternalDelegate?
+    internal weak var sessionManager: NINChatSessionManager!
     internal var onPresentationCompletion: (() -> Void)?
     internal weak var navigationController: UINavigationController? {
         didSet {
@@ -88,8 +88,8 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         joinViewController.sessionManager = sessionManager
         joinViewController.onQueueActionTapped = { [weak self] queue in
             DispatchQueue.main.async {
-                guard let weakSelf = self else { return }
-                weakSelf.navigationController?.pushViewController(weakSelf.chatViewController(queue: queue), animated: true)
+                guard let `self` = self else { return }
+                self.navigationController?.pushViewController(self.chatViewController(queue: queue), animated: true)
             }
         }
 
@@ -177,9 +177,9 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
 
     // MARK: - Coordinator
 
-    init(with sessionManager: NINChatSessionManager, delegate: InternalDelegate?, onPresentationCompletion: @escaping (() -> Void)) {
-        self.sessionManager = sessionManager
+    init(with sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?, onPresentationCompletion: @escaping (() -> Void)) {
         self.delegate = delegate
+        self.sessionManager = sessionManager
         self.onPresentationCompletion = onPresentationCompletion
     }
 
@@ -295,11 +295,13 @@ extension NINCoordinator {
                 weakSelf.navigationController?.pushViewController(weakSelf.fullScreenViewController(image: image, attachment: attachment), animated: true)
             }
         }
-        dataSourceDelegate.onOpenVideoAttachment = { attachment in
+        dataSourceDelegate.onOpenVideoAttachment = { [weak self] attachment in
             guard let attachmentURL = attachment.url, let playerURL = URL(string: attachmentURL) else { return }
+            
             let playerViewController = AVPlayerViewController()
             playerViewController.player = AVPlayer(url: playerURL)
-            self.navigationController?.present(playerViewController, animated: true) {
+            
+            self?.navigationController?.present(playerViewController, animated: true) {
                 playerViewController.player?.play()
             }
         }

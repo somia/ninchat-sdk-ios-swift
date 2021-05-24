@@ -42,8 +42,8 @@ final class QuestionnaireDataSourceDelegateTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        formQuestionnaireDataSource = NINQuestionnaireFormDataSourceDelegate(viewModel: viewModel, sessionManager: self.session.sessionManager, delegate: self.session.internalDelegate)
-        conversationQuestionnaireDataSource = NINQuestionnaireConversationDataSourceDelegate(viewModel: viewModel, sessionManager: self.session.sessionManager, delegate: self.session.internalDelegate)
+        formQuestionnaireDataSource = NINQuestionnaireFormDataSourceDelegate(viewModel: viewModel, sessionManager: self.session.sessionManager, delegate: self.session)
+        conversationQuestionnaireDataSource = NINQuestionnaireConversationDataSourceDelegate(viewModel: viewModel, sessionManager: self.session.sessionManager, delegate: self.session)
     }
 
     private var formQuestionnaireDataSource: QuestionnaireDataSourceDelegate!

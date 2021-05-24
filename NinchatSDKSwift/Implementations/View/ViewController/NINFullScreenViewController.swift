@@ -17,7 +17,7 @@ final class NINFullScreenViewController: UIViewController, ViewController {
     
     // MARK: - ViewController
     
-    var delegate: InternalDelegate?
+    weak var delegate: NINChatSessionInternalDelegate?
     weak var sessionManager: NINChatSessionManager?
     
     // MARK: - Outlets

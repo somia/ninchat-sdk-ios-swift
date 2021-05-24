@@ -16,7 +16,7 @@ protocol ChatInputActions {
 }
 
 protocol ChatInputControlsProtocol: UIView, ChatInputActions {
-    var delegate: InternalDelegate? { get set }
+    var delegate: NINChatSessionInternalDelegate? { get set }
     var sessionManager: NINChatSessionManager? { get set }
     var viewModel: NINChatViewModel! { get set }
     var isSelected: Bool! { get set }
@@ -44,7 +44,7 @@ final class ChatInputControls: UIView, HasCustomLayer, ChatInputControlsProtocol
 
     // MARK: - ChatInputControls
 
-    var delegate: InternalDelegate?
+    weak var delegate: NINChatSessionInternalDelegate?
     weak var sessionManager: NINChatSessionManager?
 
     var viewModel: NINChatViewModel!
@@ -95,7 +95,9 @@ final class ChatInputControls: UIView, HasCustomLayer, ChatInputControlsProtocol
             sendMessageButton.layer.insertSublayer(layer, below: sendMessageButton.titleLabel?.layer)
         }
         /// TODO: REMOVE legacy delegate
-        else if let sendButtonTitle = self.sessionManager?.siteConfiguration.sendButtonTitle {
+        else if self.sessionManager?.siteConfiguration.sendButtonTitle != nil {
+            /// the title is set by a few lines above
+            
             if let backgroundColor = self.delegate?.override(colorAsset: .textareaSubmit) {
                 self.sendMessageButton.backgroundColor = backgroundColor
             }

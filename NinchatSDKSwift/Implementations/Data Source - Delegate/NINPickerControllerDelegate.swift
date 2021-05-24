@@ -37,7 +37,7 @@ final class NINPickerControllerDelegateImpl: NSObject, NINPickerControllerDelega
     
     // MARK: - NINPickerControllerDelegate
     
-    private let viewModel: NINChatViewModel
+    private unowned var viewModel: NINChatViewModel!
     
     init(viewModel: NINChatViewModel) {
         self.viewModel = viewModel
@@ -78,7 +78,9 @@ extension NINPickerControllerDelegateImpl {
             }
         }
         
-        DispatchQueue.global(qos: .background).async {
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let `self` = self else { return }
+            
             switch info[UIImagePickerController.InfoKey.mediaType] as! CFString {
             case kUTTypeImage:
                 if fileName.components(separatedBy: ".").count == 1 {
@@ -86,7 +88,9 @@ extension NINPickerControllerDelegateImpl {
                     fileName += ".jpg"
                 }
 
-                if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage, let data = image.jpegData(compressionQuality: 0.5) {
+                if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage,
+                   let data = image.jpegData(compressionQuality: 0.5) {
+                    
                     self.viewModel.send(attachment: fileName, data: data) { [weak self] error in
                         self?.onMediaSent?(error)
                     }
@@ -97,7 +101,9 @@ extension NINPickerControllerDelegateImpl {
                     fileName += ".mp4"
                 }
 
-                if let videoURL = info[UIImagePickerController.InfoKey.mediaURL] as? URL, let data = try? Data(contentsOf: videoURL) {
+                if let videoURL = info[UIImagePickerController.InfoKey.mediaURL] as? URL,
+                   let data = try? Data(contentsOf: videoURL) {
+                    
                     self.viewModel.send(attachment: fileName, data: data) { [weak self] error in
                         self?.onMediaSent?(error)
                     }

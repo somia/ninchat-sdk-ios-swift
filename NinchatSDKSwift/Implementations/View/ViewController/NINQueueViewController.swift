@@ -18,7 +18,7 @@ final class NINQueueViewController: UIViewController, HasCustomLayer, ViewContro
     
     // MARK: - ViewController
     
-    var delegate: InternalDelegate?
+    weak var delegate: NINChatSessionInternalDelegate?
     weak var sessionManager: NINChatSessionManager?
     
     // MARK: - Outlets
@@ -54,10 +54,6 @@ final class NINQueueViewController: UIViewController, HasCustomLayer, ViewContro
     }
     
     // MARK: - UIViewController
-    
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        .portrait
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

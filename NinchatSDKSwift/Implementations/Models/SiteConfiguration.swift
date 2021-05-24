@@ -117,9 +117,8 @@ struct SiteConfigurationImpl: SiteConfiguration {
 
     // MARK: - PreAudience Questionnaire
     var preAudienceQuestionnaireStyle: QuestionnaireStyle {
-        guard let style = self.value(for: "preAudienceQuestionnaireStyle", ofType: String.self),
-              style != nil
-        else { return .form }
+        guard let style = self.value(for: "preAudienceQuestionnaireStyle", ofType: String.self), !style.isEmpty
+            else { return .form }
         
         return QuestionnaireStyle(rawValue: style.lowercased()) ?? .form
     }
@@ -135,9 +134,8 @@ struct SiteConfigurationImpl: SiteConfiguration {
 
     // MARK: - PostAudience Questionnaire
     var postAudienceQuestionnaireStyle: QuestionnaireStyle {
-        guard let style = self.value(for: "postAudienceQuestionnaireStyle", ofType: String.self),
-              style != nil
-        else { return .form }
+        guard let style = self.value(for: "postAudienceQuestionnaireStyle", ofType: String.self), !style.isEmpty
+            else { return .form }
         
         return QuestionnaireStyle(rawValue: style.lowercased()) ?? .form
     }
@@ -177,6 +175,6 @@ extension SiteConfigurationImpl {
         debugger("Loading keys from environments: \(environments)")
 
         /// Start the lookup
-        return environments.compactMap({ (configuration[$0] as? [String:Any])?[key] as? T }).first(where: { $0 != nil })
+        return environments.compactMap({ (configuration[$0] as? [String:Any])?[key] as? T }).first
     }
 }
