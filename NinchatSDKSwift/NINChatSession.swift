@@ -208,13 +208,13 @@ extension NINChatSession {
         /// queues mentioned in "preAudienceQuestionnaire" as a target under the "queueId" key
         if let preAuestionnaireQueues = self.sessionManager.siteConfiguration.preAudienceQuestionnaireDictionary?.reduce(into: [], { (queues: inout [String], dict) in
             queues.append(contentsOf: dict.find("queueId"))
-        }).compactMap({ $0 as? String }), !preAuestionnaireQueues.isEmpty {
+        }).compactMap({ $0 }), !preAuestionnaireQueues.isEmpty {
             queues.append(contentsOf: preAuestionnaireQueues)
         }
         /// queues mentioned in "postAudienceQuestionnaire" as a target under the "queueId" key
         if let postAuestionnaireQueues = self.sessionManager.siteConfiguration.preAudienceQuestionnaireDictionary?.reduce(into: [], { (queues: inout [String], dict) in
             queues.append(contentsOf: dict.find("queueId"))
-        }).compactMap({ $0 as? String }), !postAuestionnaireQueues.isEmpty {
+        }).compactMap({ $0 }), !postAuestionnaireQueues.isEmpty {
             queues.append(contentsOf: postAuestionnaireQueues)
         }
 

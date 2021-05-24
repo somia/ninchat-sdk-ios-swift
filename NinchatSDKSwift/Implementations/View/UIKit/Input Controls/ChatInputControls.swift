@@ -95,7 +95,9 @@ final class ChatInputControls: UIView, HasCustomLayer, ChatInputControlsProtocol
             sendMessageButton.layer.insertSublayer(layer, below: sendMessageButton.titleLabel?.layer)
         }
         /// TODO: REMOVE legacy delegate
-        else if let sendButtonTitle = self.sessionManager?.siteConfiguration.sendButtonTitle {
+        else if self.sessionManager?.siteConfiguration.sendButtonTitle != nil {
+            /// the title is set by a few lines above
+            
             if let backgroundColor = self.delegate?.override(colorAsset: .textareaSubmit) {
                 self.sendMessageButton.backgroundColor = backgroundColor
             }
