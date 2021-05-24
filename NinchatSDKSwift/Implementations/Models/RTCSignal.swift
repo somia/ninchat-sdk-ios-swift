@@ -36,11 +36,11 @@ enum MessageType: String, Decodable {
     }
 }
 
-final class RTCSignal: Codable {
+struct RTCSignal: Codable {
     let candidate: [String:String]?
     let sdp: [String:String]?
     
-    required init(from decoder: Decoder) throws {
+    init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         candidate = try container.decodeIfPresent([String:AnyCodable].self, forKey: .candidate)?.reduce(into: [:]) { (dic: inout [String:String], item) in

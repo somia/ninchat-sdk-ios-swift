@@ -63,15 +63,16 @@ final class FileInfo: Codable {
         debugger("Must update file info; call describe_file with id: \(self.fileID ?? "") and name: \(self.name ?? "")")
         do {
             try session?.describe(file: self.fileID) { [weak self] error, fileInfo in
-                debugger("described file with id: \(self?.fileID ?? "nil") and name: \(self?.name ?? "")")
+                guard let `self` = self else { return }
+                debugger("described file with id: \(self.fileID ?? "nil") and name: \(self.name ?? "")")
 
                 if let error = error {
                     completion(error, false)
                 } else if let info = fileInfo {
-                    self?.url = info["url"] as? String
-                    self?.urlExpiry = info["urlExpiry"] as? Date
-                    self?.thumbnailUrl = info["thumbnailUrl"] as? String
-                    self?.aspectRatio = info["aspectRatio"] as? Double
+                    self.url = info["url"] as? String
+                    self.urlExpiry = info["urlExpiry"] as? Date
+                    self.thumbnailUrl = info["thumbnailUrl"] as? String
+                    self.aspectRatio = info["aspectRatio"] as? Double
                     completion(nil, true)
                 }
             }
