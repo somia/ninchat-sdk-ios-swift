@@ -70,7 +70,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                     /// Check if the user is waiting in a queue - `https://github.com/somia/mobile/issues/266`
                     ///     1. describe the queue which user is waiting in
                     if self.userWaitingInQueue(param: param) {
-                        try self.describe(realm: self.realmID!, queuesID: [self.currentQueueID!]) { [weak self] error in
+                        try self.describe(queuesID: [self.currentQueueID!]) { [weak self] error in
                             self?.onActionSessionEvent?(credentials, eventType, error)
                         }
                     }
@@ -79,7 +79,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                     ///     2. fetch the list of available queues in order to get target queue's info
                     ///     3. describe channel's realm id (to get queues)
                     else if self.canResumeSession(param: param) {
-                        try self.list(queues: nil) { [weak self] error in
+                        try self.describe(queuesID: nil) { [weak self] error in
                             guard error == nil else { self?.onActionSessionEvent?(credentials, eventType, error); return }
 
                             do {

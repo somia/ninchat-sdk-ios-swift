@@ -11,7 +11,7 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
 
     // MARK: - ViewController
 
-    var delegate: InternalDelegate?
+    weak var delegate: NINChatSessionInternalDelegate?
     weak var sessionManager: NINChatSessionManager?
 
     // MARK: - Injected
@@ -164,6 +164,8 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
         }
     }
     
+    private let confirmVideoDialog: ConfirmVideoCallView = ConfirmVideoCallView.loadFromNib()
+    
     // MARK: - UIViewController
     
     override var prefersStatusBarHidden: Bool {
@@ -235,6 +237,7 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
             self.inputControlsView.updatePermissions(queue.permissions)
         }
         self.disableView(false)
+        self.chatView.tableView.reloadData()
     }
 
     // MARK: - Setup ViewModel
@@ -314,15 +317,14 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
             DispatchQueue.main.async {
                 self?.view.endEditing(true)
 
-                let confirmVideoDialog: ConfirmVideoCallView = ConfirmVideoCallView.loadFromNib()
-                confirmVideoDialog.user = channel
-                confirmVideoDialog.delegate = self?.delegate
-                confirmVideoDialog.sessionManager = self?.sessionManager
-                confirmVideoDialog.onViewAction = { action in
-                    confirmVideoDialog.hideConfirmView()
+                self?.confirmVideoDialog.user = channel
+                self?.confirmVideoDialog.delegate = self?.delegate
+                self?.confirmVideoDialog.sessionManager = self?.sessionManager
+                self?.confirmVideoDialog.onViewAction = { action in
+                    self?.confirmVideoDialog.hideConfirmView()
                     answerCall(with: action)
                 }
-                confirmVideoDialog.showConfirmView(on: self?.view ?? UIView())
+                self?.confirmVideoDialog.showConfirmView(on: self?.view ?? UIView())
             }
             
         }, onCallInitiated: { [weak self] rtcClient, error in
@@ -338,6 +340,8 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
         }, onCallHangup: { [weak self] in
             DispatchQueue.main.async {
                 self?.disableIdleTimer(false)
+                self?.confirmVideoDialog.hideConfirmView()
+                
                 self?.disconnectRTC {
                     self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
                 }

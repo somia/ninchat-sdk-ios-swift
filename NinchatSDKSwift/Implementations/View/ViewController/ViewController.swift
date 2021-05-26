@@ -7,6 +7,6 @@
 import UIKit
 
 protocol ViewController: UIViewController {
-    var delegate: InternalDelegate? { get set }
+    var delegate: NINChatSessionInternalDelegate? { get set }
     var sessionManager: NINChatSessionManager? { get set }
 }

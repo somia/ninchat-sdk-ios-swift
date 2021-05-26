@@ -74,7 +74,7 @@ class QuestionnaireElementRadio: UIView, HasCustomLayer, QuestionnaireElementWit
 
     // MARK: - Subviews - QuestionnaireElementWithTitleAndOptions + QuestionnaireElementHasButtons
 
-    private var delegate: NINChatSessionInternalDelegate?
+    private weak var delegate: NINChatSessionInternalDelegate?
     private(set) lazy var title: UILabel = {
         UILabel(frame: .zero)
     }()

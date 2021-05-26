@@ -15,7 +15,7 @@ protocol VideoViewActions {
 }
 
 protocol VideoViewProtocol: UIView, VideoViewActions {
-    var delegate: InternalDelegate? { get set }
+    var delegate: NINChatSessionInternalDelegate? { get set }
     var viewModel: NINChatViewModel! { get set }
     var localCapture: RTCCameraVideoCapturer? { get set }
     var remoteCapture: RTCVideoRenderer? { get set }
@@ -33,7 +33,7 @@ final class VideoView: UIView, VideoViewProtocol {
     
     // MARK: - VideoViewProtocol
 
-    var delegate: InternalDelegate?
+    weak var delegate: NINChatSessionInternalDelegate?
     var viewModel: NINChatViewModel!
     var onHangupTapped: Action?
     var onAudioTapped: Action?

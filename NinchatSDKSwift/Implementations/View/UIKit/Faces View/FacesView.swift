@@ -13,7 +13,7 @@ protocol FacesViewActions {
 }
 
 protocol FacesViewProtocol: UIView, FacesViewActions {
-    var delegate: InternalDelegate? { get set }
+    var delegate: NINChatSessionInternalDelegate? { get set }
     var sessionManager: NINChatSessionManager? { get set }
 
     func overrideAssets()
@@ -23,7 +23,7 @@ final class FacesView: UIView, FacesViewProtocol {
     
     // MARK: - FacesViewProtocol
 
-    var delegate: InternalDelegate?
+    weak var delegate: NINChatSessionInternalDelegate?
     weak var sessionManager: NINChatSessionManager?
     
     // MARK: - Outlets

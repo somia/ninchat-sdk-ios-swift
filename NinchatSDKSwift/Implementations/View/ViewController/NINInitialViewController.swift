@@ -14,7 +14,7 @@ final class NINInitialViewController: UIViewController, HasCustomLayer, ViewCont
     
     // MARK: - ViewController
     
-    var delegate: InternalDelegate?
+    weak var delegate: NINChatSessionInternalDelegate?
     weak var sessionManager: NINChatSessionManager?
     
     // MARK: - Outlets
@@ -54,10 +54,6 @@ final class NINInitialViewController: UIViewController, HasCustomLayer, ViewCont
 
     // MARK: - UIViewController
     
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        .portrait
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -71,9 +67,10 @@ final class NINInitialViewController: UIViewController, HasCustomLayer, ViewCont
         self.overrideAssets()
     }
 
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
         applyLayerOverride(view: self.topContainerView)
         applyLayerOverride(view: self.bottomContainerView)
     }
@@ -98,13 +95,15 @@ private extension NINInitialViewController {
         else if let topBackgroundColor = delegate?.override(colorAsset: .backgroundTop) {
             topContainerView.backgroundColor = topBackgroundColor
         }
+        
         if let layer = delegate?.override(layerAsset: .ninchatBackgroundBottom) {
             bottomContainerView.layer.insertSublayer(layer, at: 0)
         }
         /// TODO: REMOVE legacy delegate
-        if let bottomBackgroundColor = delegate?.override(colorAsset: .backgroundBottom) {
+        else if let bottomBackgroundColor = delegate?.override(colorAsset: .backgroundBottom) {
             bottomContainerView.backgroundColor = bottomBackgroundColor
         }
+        
         if let textTopColor = delegate?.override(colorAsset: .ninchatColorTextTop) {
             welcomeTextView.textColor = textTopColor
         }
@@ -121,12 +120,14 @@ private extension NINInitialViewController {
     private func drawQueueButtons() {
         self.queueButtonsStackView.subviews.forEach { $0.removeFromSuperview() }
 
-        let availableQueues = self.sessionManager?.audienceQueues.filter({ !$0.isClosed }) ?? []
-        let numberOfButtons = min(3, availableQueues.count)
+        guard let queues = self.sessionManager?.audienceQueues.filter({ !$0.isClosed }) else { return }
+        let uniqueQueus = queues.uniqued()
+        
+        let numberOfButtons = min(3, uniqueQueus.count)
         let buttonHeights: CGFloat = (numberOfButtons > 2) ? 40.0 : 60.0
         for index in 0..<numberOfButtons {
-            let queue = availableQueues[index]
-            let button = Button(frame: .zero) { [weak self] _ in
+            let queue = uniqueQueus[index]
+            let button = Button(frame: .zero) { [weak self, queue] _ in
                 self?.onQueueActionTapped?(queue)
             }
             button.translatesAutoresizingMaskIntoConstraints = false

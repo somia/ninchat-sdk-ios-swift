@@ -75,7 +75,7 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
             self.senderNameLabel.textColor = nameColor
         }
         
-        if let timeColor = colorAssets?[.chatTimestamp] {
+        if let timeColor = colorAssets?[.ninchatColorChatTimestamp] {
             self.timeLabel.textColor = timeColor
         }
     }

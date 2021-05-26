@@ -25,7 +25,7 @@ enum ResumeMode {
     case registerAudience
 }
 
-protocol NINChatSessionConnectionManager: class {
+protocol NINChatSessionConnectionManager: AnyObject {
     /** Low-level chat session reference. */
     var session: NINLowLevelClientSession? { get }
     
@@ -41,8 +41,8 @@ protocol NINChatSessionConnectionManager: class {
     /** Continues to an existing session using given user credentials. Completes with an asynchronous completion callback. */
     func continueSession(credentials: NINSessionCredentials, completion: @escaping CompletionWithCredentials) throws
 
-    /** List queues with specified ids for this realm, all available ones if queueIds is nil. */
-    func list(queues ID: [String]?, completion: @escaping CompletionWithError) throws
+    /** Describe queues with specified ids for this realm. */
+    func describe(queuesID: [String]?, completion: @escaping CompletionWithError) throws
     
     /** Joins a chat queue. */
     func join(queue ID: String, progress: @escaping (Queue?, Error?, Int) -> Void, completion: @escaping Completion) throws
@@ -69,7 +69,7 @@ extension NINChatSessionConnectionManager {
     func closeChat() throws { try self.closeChat(onCompletion: nil) }
 }
 
-protocol NINChatSessionMessenger: class {
+protocol NINChatSessionMessenger: AnyObject {
     /**
     * Chronological list of messages on the current channel. The list is ordered by the message
     * timestamp in descending order (most recent first).
@@ -111,15 +111,12 @@ protocol NINChatSessionMessenger: class {
     func closeSession(credentials: NINSessionCredentials, completion: ((NINResult<Empty>) -> Void)?)
 }
 
-protocol NINChatSessionAttachment: class {
+protocol NINChatSessionAttachment: AnyObject {
     /** Describe a file by its ID. */
     func describe(file id: String, completion: @escaping (Error?, [String:Any]?) -> Void) throws
-
-    /* Describe queues for a realm by their IDs. **/
-    func describe(realm id: String, queuesID: [String]?, completion: @escaping CompletionWithError) throws
 }
 
-protocol NINChatSessionTranslation: class {
+protocol NINChatSessionTranslation: AnyObject {
     /**
     * Get a formatted translation from the site configuration.
     * @param formatParams contains format param mappings key -> value
@@ -127,11 +124,11 @@ protocol NINChatSessionTranslation: class {
     func translate(key: String, formatParams: [String:String]) -> String?
 }
 
-protocol QueueUpdateCapture: class {
+protocol QueueUpdateCapture: AnyObject {
     var desc: String { get }
 }
 
-protocol NINChatSessionManagerDelegate: class {
+protocol NINChatSessionManagerDelegate: AnyObject {
     var onMessageAdded: ((_ index: Int) -> Void)? { get set }
     var onMessageRemoved: ((_ index: Int) -> Void)? { get set }
     var onHistoryLoaded: ((_ length: Int) -> Void)? { get set }

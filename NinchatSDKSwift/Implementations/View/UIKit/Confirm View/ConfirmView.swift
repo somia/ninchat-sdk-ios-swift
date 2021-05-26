@@ -14,7 +14,7 @@ enum ConfirmAction {
 protocol ConfirmView where Self:UIView {
     typealias OnViewAction = ((ConfirmAction) -> Void)
     var onViewAction: OnViewAction? { get set }
-    var delegate: InternalDelegate? { get set }
+    var delegate: NINChatSessionInternalDelegate? { get set }
     var sessionManager: NINChatSessionManager? { get set }
     
     func showConfirmView(on view: UIView)

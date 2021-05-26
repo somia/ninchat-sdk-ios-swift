@@ -22,16 +22,16 @@ struct FileAttributes: Decodable {
     }
 }
 
-final class Attributes: Decodable {
-    var name: String!
-    var type: String!
-    var size: Int!
+struct Attributes: Decodable {
+    var name: String = ""
+    var type: String = ""
+    var size: Int = 0
     
     enum CodingKeys: String, CodingKey {
         case name, type, size
     }
     
-    required init(from decoder: Decoder) throws {
+    init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         name = try container.decode(String.self, forKey: .name)

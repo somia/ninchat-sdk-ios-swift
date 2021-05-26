@@ -31,10 +31,12 @@ protocol SiteConfiguration  {
     var audienceRegisteredText: String? { get }
     var audienceClosedRegisteredText: String? { get }
     var preAudienceQuestionnaireStyle: QuestionnaireStyle { get }
+    var preAudienceQuestionnaireDictionary: Array<[String:AnyHashable]>? { get }
     var preAudienceQuestionnaire: [QuestionnaireConfiguration]? { get }
     var postAudienceQuestionnaireStyle: QuestionnaireStyle { get }
+    var postAudienceQuestionnaireDictionary: Array<[String:AnyHashable]>? { get }
     var postAudienceQuestionnaire: [QuestionnaireConfiguration]? { get }
-
+    
     init(configuration: [AnyHashable : Any]?, environments: [String]?)
     mutating func override(configuration: NINSiteConfiguration?)
 }
@@ -115,11 +117,16 @@ struct SiteConfigurationImpl: SiteConfiguration {
 
     // MARK: - PreAudience Questionnaire
     var preAudienceQuestionnaireStyle: QuestionnaireStyle {
-        guard let style: String? = self.value(for: "preAudienceQuestionnaireStyle"), style != nil else { return .form }
-        return QuestionnaireStyle(rawValue: style!.lowercased()) ?? .form
+        guard let style = self.value(for: "preAudienceQuestionnaireStyle", ofType: String.self), !style.isEmpty
+            else { return .form }
+        
+        return QuestionnaireStyle(rawValue: style.lowercased()) ?? .form
+    }
+    var preAudienceQuestionnaireDictionary: Array<[String:AnyHashable]>? {
+        self.value(for: "preAudienceQuestionnaire")
     }
     var preAudienceQuestionnaire: [QuestionnaireConfiguration]? {
-        if let questionnaire = self.value(for: "preAudienceQuestionnaire", ofType: Array<[String: AnyHashable]>.self) {
+        if let questionnaire = self.preAudienceQuestionnaireDictionary {
             return AudienceQuestionnaire(from: questionnaire).questionnaireConfiguration
         }
         return nil
@@ -127,11 +134,16 @@ struct SiteConfigurationImpl: SiteConfiguration {
 
     // MARK: - PostAudience Questionnaire
     var postAudienceQuestionnaireStyle: QuestionnaireStyle {
-        guard let style: String? = self.value(for: "postAudienceQuestionnaireStyle"), style != nil else { return .form }
-        return QuestionnaireStyle(rawValue: style!.lowercased()) ?? .form
+        guard let style = self.value(for: "postAudienceQuestionnaireStyle", ofType: String.self), !style.isEmpty
+            else { return .form }
+        
+        return QuestionnaireStyle(rawValue: style.lowercased()) ?? .form
+    }
+    var postAudienceQuestionnaireDictionary: Array<[String : AnyHashable]>? {
+        self.value(for: "postAudienceQuestionnaire")
     }
     var postAudienceQuestionnaire: [QuestionnaireConfiguration]? {
-        if let questionnaire = self.value(for: "postAudienceQuestionnaire", ofType: Array<[String: AnyHashable]>.self) {
+        if let questionnaire = self.postAudienceQuestionnaireDictionary {
             return AudienceQuestionnaire(from: questionnaire).questionnaireConfiguration
         }
         return nil
@@ -163,11 +175,6 @@ extension SiteConfigurationImpl {
         debugger("Loading keys from environments: \(environments)")
 
         /// Start the lookup
-        for env in environments.filter({ configuration[$0] != nil }) {
-            if let value = (configuration[env] as? [String:Any])?[key] as? T { return value }
-        }
-
-        /// No value was found for given key in "default" + environments
-        return nil
+        return environments.compactMap({ (configuration[$0] as? [String:Any])?[key] as? T }).first
     }
 }

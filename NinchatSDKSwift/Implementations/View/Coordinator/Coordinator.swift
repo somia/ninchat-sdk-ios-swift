@@ -10,8 +10,8 @@ import CoreServices
 import WebRTC
 import NinchatLowLevelClient
 
-protocol Coordinator: class {
-    init(with sessionManager: NINChatSessionManager, delegate: InternalDelegate?, onPresentationCompletion: @escaping (() -> Void))
+protocol Coordinator: AnyObject {
+    init(with sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?, onPresentationCompletion: @escaping (() -> Void))
     func start(with queue: String?, resume: ResumeMode?, within navigation: UINavigationController?) -> UIViewController?
     func prepareNINQuestionnaireViewModel(audienceMetadata: NINLowLevelClientProps?, onCompletion: @escaping (() -> Void))
     func deallocate()
@@ -21,8 +21,8 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
 
     // MARK: - Coordinator
 
-    internal var delegate: InternalDelegate?
-    internal var sessionManager: NINChatSessionManager!
+    internal weak var delegate: NINChatSessionInternalDelegate?
+    internal weak var sessionManager: NINChatSessionManager!
     internal var onPresentationCompletion: (() -> Void)?
     internal weak var navigationController: UINavigationController? {
         didSet {
@@ -35,8 +35,7 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
     internal lazy var storyboard: UIStoryboard = {
         UIStoryboard(name: "Chat", bundle: .SDKBundle)
     }()
-    private let dispatchGroup = DispatchGroup()
-
+    
     // MARK: - Questionnaire helpers
 
     private var hasPreAudienceQuestionnaire: Bool {
@@ -45,22 +44,29 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
     private var hasPostAudienceQuestionnaire: Bool {
         self.sessionManager.siteConfiguration?.postAudienceQuestionnaire?.count ?? 0 > 0
     }
-
+    private let operationQueue = OperationQueue.main
+    private let dispatchQueue = DispatchQueue.main
+    
     // MARK: - ViewControllers
 
-    private var didLoaded_initialViewController = false
     internal lazy var initialViewController: NINInitialViewController = {
         let initialViewController: NINInitialViewController = storyboard.instantiateViewController()
         initialViewController.delegate = self.delegate
         initialViewController.sessionManager = self.sessionManager
         initialViewController.onQueueActionTapped = { [weak self] queue in
             DispatchQueue.main.async {
-                guard let weakSelf = self else { return }
-                weakSelf.navigationController?.pushViewController((weakSelf.hasPreAudienceQuestionnaire) ? weakSelf.questionnaireViewController(queue: queue, questionnaireType: .pre) : weakSelf.queueViewController(queue: queue), animated: true)
+                guard let `self` = self else { return }
+                
+                var viewController: UIViewController
+                if self.hasPreAudienceQuestionnaire {
+                    viewController = self.questionnaireViewController(queue: queue, questionnaireType: .pre)
+                } else {
+                    viewController = self.queueViewController(queue: queue)
+                }
+                self.navigationController?.pushViewController(viewController, animated: true)
             }
         }
 
-        didLoaded_initialViewController = true
         return initialViewController
     }()
     /// Since it is pushed more than once, it cannot be defined as `lazy`
@@ -75,7 +81,6 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         didLoaded_questionnaireViewController = true
         return questionnaireViewController
     }
-    private var didLoaded_queueViewController = false
     internal lazy var queueViewController: NINQueueViewController = {
         let joinViewController: NINQueueViewController = storyboard.instantiateViewController()
         joinViewController.viewModel = NINQueueViewModelImpl(sessionManager: self.sessionManager, delegate: self.delegate)
@@ -83,12 +88,11 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         joinViewController.sessionManager = sessionManager
         joinViewController.onQueueActionTapped = { [weak self] queue in
             DispatchQueue.main.async {
-                guard let weakSelf = self else { return }
-                weakSelf.navigationController?.pushViewController(weakSelf.chatViewController(queue: queue), animated: true)
+                guard let `self` = self else { return }
+                self.navigationController?.pushViewController(self.chatViewController(queue: queue), animated: true)
             }
         }
 
-        didLoaded_queueViewController = true
         return joinViewController
     }()
     private var didLoaded_chatViewController = false
@@ -133,7 +137,6 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         didLoaded_chatViewController = true
         return chatViewController
     }()
-    private var didLoaded_fullScreenViewController = false
     internal lazy var fullScreenViewController: NINFullScreenViewController = {
         let viewModel: NINFullScreenViewModel = NINFullScreenViewModelImpl(delegate: nil)
         let previewViewController: NINFullScreenViewController = storyboard.instantiateViewController()
@@ -146,10 +149,8 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
             }
         }
 
-        didLoaded_fullScreenViewController = true
         return previewViewController
     }()
-    private var didLoaded_ratingViewController = false
     internal lazy var ratingViewController: NINRatingViewController = {
         let viewModel: NINRatingViewModel = NINRatingViewModelImpl(sessionManager: self.sessionManager)
         let ratingViewController: NINRatingViewController = storyboard.instantiateViewController()
@@ -158,23 +159,27 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         ratingViewController.sessionManager = self.sessionManager
         ratingViewController.style = self.sessionManager.siteConfiguration?.postAudienceQuestionnaireStyle
         ratingViewController.onRatingFinished = { [weak self] (status: ChatStatus?) -> Bool in
-            if !(self?.hasPostAudienceQuestionnaire ?? true) { return true }
+            guard let `self` = self else { return true }
+            
+            /// skip post questionnaire if the user skip rating.
+            /// according to `https://github.com/somia/mobile/issues/342`
+            if status == nil { return true }
+            
+            if !self.hasPostAudienceQuestionnaire { return true }
             DispatchQueue.main.async {
-                guard let weakSelf = self else { return }
-                weakSelf.navigationController?.pushViewController(weakSelf.questionnaireViewController(ratingViewModel: viewModel, rating: status, questionnaireType: .post), animated: true)
+                self.navigationController?.pushViewController(self.questionnaireViewController(ratingViewModel: viewModel, rating: status, questionnaireType: .post), animated: true)
             }
             return false
         }
 
-        didLoaded_ratingViewController = true
         return ratingViewController
     }()
 
     // MARK: - Coordinator
 
-    init(with sessionManager: NINChatSessionManager, delegate: InternalDelegate?, onPresentationCompletion: @escaping (() -> Void)) {
-        self.sessionManager = sessionManager
+    init(with sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?, onPresentationCompletion: @escaping (() -> Void)) {
         self.delegate = delegate
+        self.sessionManager = sessionManager
         self.onPresentationCompletion = onPresentationCompletion
     }
 
@@ -199,24 +204,28 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
     /// In case of heavy questionnaires, there would be a memory-consuming job in instantiation of `NINQuestionnaireViewModel` even though it is implemented in a multi-thread manner using `OperationQueue`.
     /// Thus, we have to do the job in background before the questionnaire page being loaded
     func prepareNINQuestionnaireViewModel(audienceMetadata: NINLowLevelClientProps?, onCompletion: @escaping (() -> Void)) {
+        let completionOperation = BlockOperation {
+            onCompletion()
+        }
+        
         if self.hasPreAudienceQuestionnaire {
-            self.dispatchGroup.enter()
-            DispatchQueue.global(qos: .background).async { [weak self] in
+            let operation = BlockOperation { [weak self] in
                 self?.preQuestionnaireViewModel = NINQuestionnaireViewModelImpl(sessionManager: self?.sessionManager, audienceMetadata: audienceMetadata, questionnaireType: .pre)
-                self?.dispatchGroup.leave()
             }
+            
+            completionOperation.addDependency(operation)
+            self.operationQueue.addOperation(operation)
         }
         if self.hasPostAudienceQuestionnaire {
-            self.dispatchGroup.enter()
-            DispatchQueue.global(qos: .background).async { [weak self] in
+            let operation = BlockOperation { [weak self] in
                 self?.postQuestionnaireViewModel = NINQuestionnaireViewModelImpl(sessionManager: self?.sessionManager, audienceMetadata: audienceMetadata, questionnaireType: .post)
-                self?.dispatchGroup.leave()
             }
+            
+            completionOperation.addDependency(operation)
+            self.operationQueue.addOperation(operation)
         }
-
-        self.dispatchGroup.notify(queue: .global(qos: .background)) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { onCompletion() }
-        }
+        
+        self.dispatchQueue.asyncAfter(deadline: .now() + 0.2) { self.operationQueue.addOperation(completionOperation) }
     }
 }
 
@@ -286,11 +295,13 @@ extension NINCoordinator {
                 weakSelf.navigationController?.pushViewController(weakSelf.fullScreenViewController(image: image, attachment: attachment), animated: true)
             }
         }
-        dataSourceDelegate.onOpenVideoAttachment = { attachment in
+        dataSourceDelegate.onOpenVideoAttachment = { [weak self] attachment in
             guard let attachmentURL = attachment.url, let playerURL = URL(string: attachmentURL) else { return }
+            
             let playerViewController = AVPlayerViewController()
             playerViewController.player = AVPlayer(url: playerURL)
-            self.navigationController?.present(playerViewController, animated: true) {
+            
+            self?.navigationController?.present(playerViewController, animated: true) {
                 playerViewController.player?.play()
             }
         }

@@ -24,7 +24,6 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
                     guard case let .success(id) = result else { return false }
                     return $0.key == id
                 }).first?.value {
-                    
                     targetClosure(error)
                 }
             }
@@ -41,7 +40,6 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
                     guard case let .success(id) = result else { return false }
                     return $0.key == id
                 }).first?.value {
-
                     targetClosure(error, fileInfo)
                 }
             }
@@ -58,7 +56,6 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
                     guard case let .success(id) = result else { return false }
                     return $0.key == id
                 }).first?.value {
-
                     targetClosure(nil)
                 }
             }

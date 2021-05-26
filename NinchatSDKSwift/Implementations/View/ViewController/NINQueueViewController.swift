@@ -18,7 +18,7 @@ final class NINQueueViewController: UIViewController, HasCustomLayer, ViewContro
     
     // MARK: - ViewController
     
-    var delegate: InternalDelegate?
+    weak var delegate: NINChatSessionInternalDelegate?
     weak var sessionManager: NINChatSessionManager?
     
     // MARK: - Outlets
@@ -55,10 +55,6 @@ final class NINQueueViewController: UIViewController, HasCustomLayer, ViewContro
     
     // MARK: - UIViewController
     
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        .portrait
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.overrideAssets()
@@ -79,8 +75,8 @@ final class NINQueueViewController: UIViewController, HasCustomLayer, ViewContro
         self.setupViewModel(self.resumeMode)
     }
 
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
 
         applyLayerOverride(view: self.topContainerView)
         applyLayerOverride(view: self.bottomContainerView)
