@@ -132,7 +132,7 @@ extension NINQuestionnaireFormDataSourceDelegate {
     }
 
     func addClosedRegisteredSection() {
-        guard let registerTitle = self.sessionManager?.siteConfiguration.audienceClosedRegisteredText,
+        guard let registerTitle = self.sessionManager?.siteConfiguration.audienceRegisteredClosedText,
               let json: Array<[String:AnyHashable]> = registerGroup(title: "register", registerTitle: registerTitle).toDictionary()
             else { return }
         json.forEach({ self.addToQuestionnaire(configuration: $0) })
