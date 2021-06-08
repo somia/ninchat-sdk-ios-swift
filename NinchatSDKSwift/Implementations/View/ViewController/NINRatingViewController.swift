@@ -7,7 +7,7 @@
 import UIKit
 import AutoLayoutSwift
 
-final class NINRatingViewController: UIViewController, HasCustomLayer, ViewController {
+final class NINRatingViewController: UIViewController, ViewController, HasCustomLayer, HasTitleBar, HasDefaultAvatar {
     
     // MARK: - Injected
     
@@ -61,11 +61,37 @@ final class NINRatingViewController: UIViewController, HasCustomLayer, ViewContr
     
     @IBOutlet private(set) weak var titleFormTextView: UITextView!
     @IBOutlet private(set) weak var facesFormViewContainer: UIView!
-     
+
+    /// MARK: - HasTitleBar
+
+    @IBOutlet private(set) weak var titlebar: UIView? {
+        didSet {
+            titlebar?.height?.constant = (hasTitlebar) ? (titleHeight + 8.0) : 45.0 /// space for rating top view
+        }
+    }
+    var titlebarAvatar: String? {
+        self.sessionManager?.agent?.iconURL
+    }
+    var titlebarName: String? {
+        self.sessionManager?.agent?.displayName
+    }
+    var titlebarJob: String? {
+        self.sessionManager?.agent?.info?.job
+    }
+
+    // MARK: - HasTitleBar
+
+    private(set) var defaultAvatar: UIImage? = UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)
+
     // MARK: - UIViewController
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.addTitleBar { [weak self] in
+            DispatchQueue.main.async {
+                self?.onSkipButtonTapped(sender: nil)
+            }
+        }
 
         /// Show conversation-style rating view
         /// according to `https://github.com/somia/mobile/issues/314`
@@ -173,7 +199,7 @@ extension NINRatingViewController {
         }
     }
         
-    @IBAction private func onSkipButtonTapped(sender: UIButton) {
+    @IBAction private func onSkipButtonTapped(sender: UIButton?) {
         if self.onRatingFinished(nil) {
             viewModel.skipRating()
         }
