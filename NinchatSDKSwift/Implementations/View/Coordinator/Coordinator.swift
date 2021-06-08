@@ -177,7 +177,7 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
 
     // MARK: - Coordinator
 
-    init(with sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?, onPresentationCompletion: @escaping (() -> Void)) {
+    init(with sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?, onPresentationCompletion: @escaping () -> Void) {
         self.delegate = delegate
         self.sessionManager = sessionManager
         self.onPresentationCompletion = onPresentationCompletion
@@ -201,9 +201,10 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         if self.didLoaded_chatViewController { self.chatViewController.deallocate() }
     }
 
-    /// In case of heavy questionnaires, there would be a memory-consuming job in instantiation of `NINQuestionnaireViewModel` even though it is implemented in a multi-thread manner using `OperationQueue`.
+    /// In case of heavy questionnaires, there would be a memory-consuming job
+    /// in instantiation of `NINQuestionnaireViewModel` even though it is implemented in a multi-thread manner using `OperationQueue`.
     /// Thus, we have to do the job in background before the questionnaire page being loaded
-    func prepareNINQuestionnaireViewModel(audienceMetadata: NINLowLevelClientProps?, onCompletion: @escaping (() -> Void)) {
+    func prepareNINQuestionnaireViewModel(audienceMetadata: NINLowLevelClientProps?, onCompletion: @escaping () -> Void) {
         let completionOperation = BlockOperation {
             onCompletion()
         }
@@ -230,7 +231,8 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
 }
 
 extension NINCoordinator {
-    internal func questionnaireViewController(queue: Queue? = nil, ratingViewModel: NINRatingViewModel? = nil, rating: ChatStatus? = nil, questionnaireType: AudienceQuestionnaireType) -> NINQuestionnaireViewController {
+    internal func questionnaireViewController(queue: Queue? = nil, ratingViewModel: NINRatingViewModel? = nil,
+                                              rating: ChatStatus? = nil, questionnaireType: AudienceQuestionnaireType) -> NINQuestionnaireViewController {
         let vc = self.questionnaireViewController
         vc.queue = queue
         vc.rating = rating
