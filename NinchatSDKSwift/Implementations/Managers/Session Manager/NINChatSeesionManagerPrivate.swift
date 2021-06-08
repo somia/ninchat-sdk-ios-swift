@@ -429,7 +429,23 @@ extension NINChatSessionManagerImpl {
 
     internal func parse(userAttr: NINLowLevelUserProps, userID: String) {
         /// TODO: Add result checking for attributes to avoid fatal error
-        self.channelUsers[userID] = ChannelUser(userID: userID, realName: userAttr.realName.value, displayName: userAttr.displayName.value, iconURL: userAttr.iconURL.value, guest: userAttr.isGuest.value)
+
+        var info: ChannelUserInfo?
+        if case let .success(job) = userAttr.jobTitle {
+            info = ChannelUserInfo(job: job)
+        }
+
+        let user = ChannelUser(userID: userID,
+                realName: userAttr.realName.value,
+                displayName: userAttr.displayName.value,
+                iconURL: userAttr.iconURL.value,
+                guest: userAttr.isGuest.value,
+                info: info)
+        self.channelUsers[userID] = user
+
+        if userID != self.myUserID {
+            self.agent = user
+        }
     }
 
     internal func sortAndMap() -> [ChatMessage] {

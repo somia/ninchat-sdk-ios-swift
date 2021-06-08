@@ -54,12 +54,13 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     var connected: Bool! {
         self.session != nil
     }
-    
+
     // MARK: - NINChatSessionManager variables
     
     var realmID: String?
     var chatMessages: [ChatMessage]! = []
     var describedQueue: Queue?
+    var agent: ChannelUser?
     var composeActions: [ComposeUIAction] = []
     
     // MARK: - NINChatSessionManagerDelegate
