@@ -251,10 +251,25 @@ extension NINCoordinator {
             vc.dataSourceDelegate = NINQuestionnaireConversationDataSourceDelegate(viewModel: (questionnaireType == .pre) ? self.preQuestionnaireViewModel : self.postQuestionnaireViewModel, sessionManager: self.sessionManager, delegate: self.delegate)
         }
         vc.style = style
+        vc.type = questionnaireType
         vc.completeQuestionnaire = { [weak self] queue in
             DispatchQueue.main.async {
                 guard let `self` = self, questionnaireType == .pre else { return }
                 self.navigationController?.pushViewController(self.queueViewController(queue: queue), animated: true)
+            }
+        }
+        vc.cancelQuestionnaire = { [weak self] in
+            DispatchQueue.main.async {
+                guard let `self` = self else { return }
+
+                if self.navigationController?.topViewController is NINInitialViewController {
+                    self.navigationController?.popViewController(animated: true)
+                } else {
+                    /// SDK started with AutoQueue and thus,
+                    /// the questionnaire has no previous ViewController to pop to.
+
+                    self.delegate?.onDidEnd()
+                }
             }
         }
         self.preQuestionnaireViewModel?.queue = queue

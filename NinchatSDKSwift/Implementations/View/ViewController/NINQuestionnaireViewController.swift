@@ -16,7 +16,7 @@ protocol QuestionnaireConversationController {
     func updateConversationContentView(_ interval: TimeInterval)
 }
 
-final class NINQuestionnaireViewController: UIViewController, ViewController, KeyboardHandler {
+final class NINQuestionnaireViewController: UIViewController, ViewController, KeyboardHandler, HasTitleBar, HasDefaultAvatar {
 
     private let operationQueue = OperationQueue.main
     private let dispatchQueue = DispatchQueue.main
@@ -61,6 +61,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
 
     var queue: Queue?
     var style: QuestionnaireStyle!
+    var type: AudienceQuestionnaireType!
     var dataSourceDelegate: QuestionnaireDataSourceDelegate? {
         didSet {
             dataSourceDelegate?.onUpdateCellContent = { [weak self] in
@@ -121,6 +122,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
     var ratingViewModel: NINRatingViewModel?
     var rating: ChatStatus?
     var completeQuestionnaire: ((_ queue: Queue) -> Void)?
+    var cancelQuestionnaire: (() -> Void)?
 
     // MARK: - SubViews
 
@@ -129,12 +131,9 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
             guard let contentView = contentView else { return }
             self.view.addSubview(contentView)
 
-            if #available(iOS 11, *) {
-                contentView.fix(top: (0.0, self.view), bottom: (0.0, self.view), toSafeArea: true)
-            } else {
-                contentView.fix(top: (20.0, self.view), bottom: (0.0, self.view))
-            }
             contentView
+                    .fix(top: (0.0, self.titlebar!), isRelative: true)
+                    .fix(bottom: (0.0, self.view))
                     .fix(leading: (0, self.view), trailing: (0, self.view))
                     .backgroundColor = .clear
         }
@@ -143,11 +142,33 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
         UIActivityIndicatorView(style: .gray)
     }()
 
+    /// MARK: - HasTitleBar
+
+    @IBOutlet private(set) weak var titlebar: UIView? {
+        didSet {
+            titlebar?.isHidden = !(hasTitlebar && type == .pre)
+            titlebar?.height?.constant = (hasTitlebar && type == .pre) ? (titleHeight + 8.0) : 0
+        }
+    }
+    var titlebarAvatar: String? {
+        self.sessionManager?.siteConfiguration.audienceQuestionnaireAvatar as? String
+    }
+    var titlebarName: String? {
+        self.sessionManager?.siteConfiguration.audienceQuestionnaireUserName
+    }
+    private(set) var titlebarJob: String? = nil
+
+    // MARK: - HasTitleBar
+
+    private(set) var defaultAvatar: UIImage? = UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)
+
     // MARK: - UIViewController life-cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        self.addTitleBar { [weak self] in
+            self?.cancelQuestionnaire?()
+        }
         self.overrideAssets()
         self.addKeyboardListeners()
         self.initiateIndicatorView()
