@@ -129,7 +129,7 @@ public enum ColorConstants {
     case ninchatColorRatingPositiveText
     case ninchatColorRatingNeutralText
     case ninchatColorRatingNegativeText
-
+    case ninchatColorTitlebarPlaceholder
 
     /* DEPRECATED
      * Use new keys above or CALayerConstant instead
