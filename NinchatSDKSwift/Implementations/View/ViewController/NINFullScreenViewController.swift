@@ -28,8 +28,8 @@ final class NINFullScreenViewController: UIViewController, ViewController {
         view.fileName = attachment.name
         view.onCloseTapped = onCloseTapped
         view.onDownloadTapped = { [weak self] in
-            guard let weakSelf = self else { return }
-            weakSelf.viewModel.download(image: weakSelf.image, completion: { error in
+            guard let `self` = self else { return }
+            self.viewModel.download(image: self.image, completion: { error in
                 if error != nil {
                     Toast.show(message: .error("Failed to save image"))
                 } else {

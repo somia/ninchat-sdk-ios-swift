@@ -185,8 +185,8 @@ extension ChatView {
             self?.composeMessageStates?[message.messageID] = composeState
         }
         cell.onImageTapped = { [weak self] attachment, image in
-            guard let weakSelf = self else { return }
-            weakSelf.delegate?.didSelect(image: image, for: attachment, weakSelf)
+            guard let `self` = self else { return }
+            self.delegate?.didSelect(image: image, for: attachment, self)
         }
 
         cell.populateChannel(message: message, configuration: self.sessionManager?.siteConfiguration, imageAssets: self.imageAssets, colorAssets: self.colorAssets, agentAvatarConfig: self.agentAvatarConfig, userAvatarConfig: self.userAvatarConfig, composeState: self.composeMessageStates?[message.messageID])
@@ -209,8 +209,8 @@ extension ChatView {
         let cell: ChatMetaCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
         cell.delegate = self.sessionManager?.delegate
         cell.onCloseChatTapped = { [weak self] _ in
-            guard let weakSelf = self else { return }
-            weakSelf.delegate?.didRequestToClose(weakSelf)
+            guard let `self` = self else { return }
+            self.delegate?.didRequestToClose(self)
         }
 
         cell.populate(message: message, colorAssets: self.colorAssets)

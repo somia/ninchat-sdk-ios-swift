@@ -111,15 +111,15 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
 
         chatViewController.onOpenGallery = { [weak self] source in
             DispatchQueue.main.async {
-                guard let weakSelf = self else { return }
+                guard let `self` = self else { return }
+
                 let controller = UIImagePickerController()
                 controller.sourceType = source
                 controller.mediaTypes = [kUTTypeImage, kUTTypeMovie] as [String]
                 controller.allowsEditing = false
                 controller.videoQuality = .typeMedium
                 controller.delegate = mediaDelegate
-
-                weakSelf.navigationController?.present(controller, animated: true, completion: nil)
+                self.navigationController?.present(controller, animated: true, completion: nil)
             }
         }
         chatViewController.onBackToQueue = { [weak self] in
@@ -129,8 +129,8 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         }
         chatViewController.onChatClosed = { [weak self] in
             DispatchQueue.main.async {
-                guard let weakSelf = self else { return }
-                weakSelf.navigationController?.pushViewController(weakSelf.ratingViewController, animated: true)
+                guard let `self` = self else { return }
+                self.navigationController?.pushViewController(self.ratingViewController, animated: true)
             }
         }
 
@@ -247,8 +247,8 @@ extension NINCoordinator {
         vc.style = style
         vc.completeQuestionnaire = { [weak self] queue in
             DispatchQueue.main.async {
-                guard let weakSelf = self, questionnaireType == .pre else { return }
-                weakSelf.navigationController?.pushViewController(weakSelf.queueViewController(queue: queue), animated: true)
+                guard let `self` = self, questionnaireType == .pre else { return }
+                self.navigationController?.pushViewController(self.queueViewController(queue: queue), animated: true)
             }
         }
         self.preQuestionnaireViewModel?.queue = queue
@@ -291,8 +291,8 @@ extension NINCoordinator {
         let dataSourceDelegate: NINChatDataSourceDelegate = NINChatDataSourceDelegateImpl(viewModel: viewModel)
         dataSourceDelegate.onOpenPhotoAttachment = { [weak self] image, attachment in
             DispatchQueue.main.async {
-                guard let weakSelf = self else { return }
-                weakSelf.navigationController?.pushViewController(weakSelf.fullScreenViewController(image: image, attachment: attachment), animated: true)
+                guard let `self` = self else { return }
+                self.navigationController?.pushViewController(self.fullScreenViewController(image: image, attachment: attachment), animated: true)
             }
         }
         dataSourceDelegate.onOpenVideoAttachment = { [weak self] attachment in

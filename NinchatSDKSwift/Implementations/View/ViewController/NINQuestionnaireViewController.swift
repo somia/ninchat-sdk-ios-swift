@@ -110,8 +110,8 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
                 }
             }
             viewModel.onSessionFinished = { [weak self] in
-                if let ratingViewModel = self?.ratingViewModel, let weakSelf = self {
-                    (weakSelf.rating != nil) ? ratingViewModel.rateChat(with: weakSelf.rating!) : ratingViewModel.skipRating()
+                if let ratingViewModel = self?.ratingViewModel, let `self` = self {
+                    (self.rating != nil) ? ratingViewModel.rateChat(with: self.rating!) : ratingViewModel.skipRating()
                 } else {
                     self?.delegate?.onDidEnd()
                 }
@@ -250,11 +250,11 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
 
         var newSection = -1
         let prepareOperation = BlockOperation { [weak self] in
-            guard let weakSelf = self else { return }
+            guard let `self` = self else { return }
 
-            newSection = weakSelf.prepareSection()
-            weakSelf.addLoadingRow(at: newSection)
-            weakSelf.scrollToBottom(at: newSection, delay: 0.0)     /// Scroll to bottom
+            newSection = self.prepareSection()
+            self.addLoadingRow(at: newSection)
+            self.scrollToBottom(at: newSection, delay: 0.0)     /// Scroll to bottom
         }
         let removeLoadingRowOperation = BlockOperation { [weak self] in
             self?.removeLoadingRow(at: newSection)

@@ -16,28 +16,28 @@ extension KeyboardHandler where Self:UIViewController {
 
     func addKeyboardListeners() {
         NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { [weak self] notification in
-            if let weakSelf = self, let keyboardSize = notification.keyboardInfo.endSize, let animationDuration = notification.keyboardInfo.animDuration, weakSelf.shouldBeScrolled(new: keyboardSize) {
+            if let `self` = self, let keyboardSize = notification.keyboardInfo.endSize, let animationDuration = notification.keyboardInfo.animDuration, self.shouldBeScrolled(new: keyboardSize) {
                 var height = keyboardSize.height
                 if #available(iOS 11.0, *) {
-                    height -= weakSelf.view.safeAreaInsets.bottom
+                    height -= self.view.safeAreaInsets.bottom
                 }
-                weakSelf.scrollView(height: height, duration: animationDuration)
+                self.scrollView(height: height, duration: animationDuration)
             }
         }
         NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { [weak self] notification in
-            if let weakSelf = self, let animationDuration = notification.keyboardInfo.animDuration {
-                weakSelf.scrollView(height: 0.0, duration: animationDuration)
+            if let `self` = self, let animationDuration = notification.keyboardInfo.animDuration {
+                self.scrollView(height: 0.0, duration: animationDuration)
             }
         }
         NotificationCenter.default.addObserver(forName: UIResponder.keyboardDidChangeFrameNotification, object: nil, queue: .main) { [weak self] notification in
             let (oldSize, newSize, animationDuration) = notification.keyboardInfo
-            if let weakSelf = self, oldSize != nil, newSize != nil, animationDuration != nil, weakSelf.shouldBeScrolled(new: newSize!, old: oldSize!) {
+            if let `self` = self, oldSize != nil, newSize != nil, animationDuration != nil, self.shouldBeScrolled(new: newSize!, old: oldSize!) {
                 var height = newSize!.height
                 if #available(iOS 11.0, *) {
-                    height -= weakSelf.scrollableView.safeAreaInsets.bottom
+                    height -= self.scrollableView.safeAreaInsets.bottom
                 }
 
-                weakSelf.scrollView(height: height, duration: animationDuration!)
+                self.scrollView(height: height, duration: animationDuration!)
             }
         }
     }
