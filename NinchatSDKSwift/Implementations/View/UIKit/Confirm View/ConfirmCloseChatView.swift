@@ -14,8 +14,8 @@ final class ConfirmCloseChatView: UIView, HasCustomLayer, ConfirmView {
     @IBOutlet private(set) weak var bottomContainerView: UIView!
     @IBOutlet private(set) weak var titleLabel: UILabel!
     @IBOutlet private(set) weak var infoTextView: UITextView!
-    @IBOutlet private(set) weak var confirmButton: Button!
-    @IBOutlet private(set) weak var cancelButton: Button!
+    @IBOutlet private(set) weak var confirmButton: NINButton!
+    @IBOutlet private(set) weak var cancelButton: NINButton!
 
     // MARK: - UIView
 

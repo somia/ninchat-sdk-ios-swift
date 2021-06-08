@@ -138,8 +138,8 @@ final class UIKitTests: XCTestCase {
     
     func test_button() {
         let expect_button = self.expectation(description: "The `UIButton` action is fulfilled")
-        let button = Button(frame: .zero, touch: { button in
-            XCTAssertNotNil(button as? Button)
+        let button = NINButton(frame: .zero, touch: { button in
+            XCTAssertNotNil(button as? NINButton)
             expect_button.fulfill()
         })
         button.sendActions(for: .touchUpInside)

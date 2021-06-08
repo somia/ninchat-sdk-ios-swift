@@ -6,8 +6,8 @@
 
 import UIKit
 
-class Button: UIButton, HasCustomLayer {
-    var closure: ((Button) -> Void)?
+class NINButton: UIButton, HasCustomLayer {
+    var closure: ((NINButton) -> Void)?
     var type: QuestionnaireButtonType?
 
     override init(frame: CGRect) {
@@ -67,7 +67,7 @@ class Button: UIButton, HasCustomLayer {
 
 /// Helper for questionnaire items
 
-extension Button {
+extension NINButton {
     func roundButton() {
         self.round(borderWidth: 1.0, borderColor: (self.isSelected ? self.titleColor(for: .selected) : self.titleColor(for: .normal)) ?? .QGrayButton)
     }

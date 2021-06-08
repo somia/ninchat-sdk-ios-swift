@@ -22,7 +22,7 @@ final class ChatMetaCell: UITableViewCell, ChatMeta {
     // MARK: - ChatMeta
     
     weak var delegate: NINChatSessionInternalDelegate?
-    var onCloseChatTapped: ((Button) -> Void)?
+    var onCloseChatTapped: ((NINButton) -> Void)?
     
     func populate(message: MetaMessage, colorAssets: NINColorAssetDictionary?) {
         self.applyAssets(message, colorAssets)

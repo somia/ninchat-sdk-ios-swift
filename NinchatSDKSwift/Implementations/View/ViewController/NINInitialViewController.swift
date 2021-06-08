@@ -30,7 +30,7 @@ final class NINInitialViewController: UIViewController, HasCustomLayer, ViewCont
         }
     }
     @IBOutlet private(set) var queueButtonsStackView: UIStackView!
-    @IBOutlet private(set) var closeWindowButton: Button! {
+    @IBOutlet private(set) var closeWindowButton: NINButton! {
         didSet {
             if let closeText = self.sessionManager?.translate(key: Constants.kCloseWindowText.rawValue, formatParams: [:]) {
                 closeWindowButton.setTitle(closeText, for: .normal)
@@ -127,7 +127,7 @@ private extension NINInitialViewController {
         let buttonHeights: CGFloat = (numberOfButtons > 2) ? 40.0 : 60.0
         for index in 0..<numberOfButtons {
             let queue = uniqueQueus[index]
-            let button = Button(frame: .zero) { [weak self, queue] _ in
+            let button = NINButton(frame: .zero) { [weak self, queue] _ in
                 self?.onQueueActionTapped?(queue)
             }
             button.translatesAutoresizingMaskIntoConstraints = false
