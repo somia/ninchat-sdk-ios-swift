@@ -29,6 +29,10 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
             if #available(iOS 13.0, *) {
                 navigationController?.overrideUserInterfaceStyle = .light
             }
+
+            if !self.sessionManager.siteConfiguration.hideTitlebar {
+                navigationController?.setNavigationBarHidden(true, animated: false)
+            }
             navigationController?.presentationController?.delegate = self
         }
     }
