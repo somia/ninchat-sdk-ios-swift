@@ -271,6 +271,7 @@ public enum Constants: String {
     case kProductionServerAddress = "api.ninchat.com"
     
     case kCloseWindowText = "Close window"
+    case kCloseText = "Close"
     case kJoinQueueText = "Join audience queue {{audienceQueue.queue_attrs.name}}"
     case kQueuePositionN = "Joined audience queue {{audienceQueue.queue_attrs.name}}, you are at position {{audienceQueue.queue_position}}."
     case kQueuePositionNext = "Joined audience queue {{audienceQueue.queue_attrs.name}}, you are next."
