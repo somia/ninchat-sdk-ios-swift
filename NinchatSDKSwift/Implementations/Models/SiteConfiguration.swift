@@ -26,6 +26,7 @@ protocol SiteConfiguration  {
     var userName: String? { get }
     var noQueueText: String? { get }
     var audienceAutoQueue: String? { get }
+    var hideTitlebar: Bool { get }
     var audienceQuestionnaireAvatar: AnyHashable? { get }
     var audienceQuestionnaireUserName: String? { get }
     var audienceRegisteredText: String? { get }
@@ -100,6 +101,9 @@ struct SiteConfigurationImpl: SiteConfiguration {
     }
     var audienceAutoQueue: String? {
         self.value(for: "audienceAutoQueue")
+    }
+    var hideTitlebar: Bool {
+        self.value(for: "hideTitlebar") ?? false
     }
 
     var audienceQuestionnaireAvatar: AnyHashable? {
