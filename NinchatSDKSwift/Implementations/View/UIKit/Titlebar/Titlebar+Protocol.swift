@@ -23,6 +23,12 @@ protocol HasTitleBar {
     var titlebarJob: String? { get }
 }
 
+extension HasTitleBar {
+    func addTitleBar(onCloseAction: @escaping () -> Void) {
+        fatalError("titlebar is not implemented")
+    }
+}
+
 extension HasTitleBar where Self:ViewController {
     var hasTitlebar: Bool {
         guard let session = self.sessionManager else {
@@ -36,12 +42,17 @@ extension HasTitleBar where Self:ViewController {
     }
 
     var titleHeight: CGFloat {
-        guard let win = UIApplication.shared.windows.first(where: { $0.isKeyWindow })  else { return 70 }
+        guard let win = UIApplication.shared.windows.first(where: { $0.isKeyWindow })  else {
+            return 70
+        }
         if UIScreen.main.traitCollection.userInterfaceIdiom == .pad {
             /// Don't apply safe area insets for iPad devices
             return 70
         }
-        return 70 + win.safeAreaInsets.top
+        if #available(iOS 11.0, *) {
+            return 70 + win.safeAreaInsets.top
+        }
+        return 70
     }
 
     internal var border: UIView {
