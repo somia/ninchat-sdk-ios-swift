@@ -16,7 +16,7 @@ protocol QuestionnaireConversationController {
     func updateConversationContentView(_ interval: TimeInterval)
 }
 
-final class NINQuestionnaireViewController: UIViewController, ViewController, KeyboardHandler, HasTitleBar, HasDefaultAvatar {
+final class NINQuestionnaireViewController: UIViewController, ViewController, KeyboardHandler, HasTitleBar {
 
     private let operationQueue = OperationQueue.main
     private let dispatchQueue = DispatchQueue.main
@@ -157,10 +157,6 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
         self.sessionManager?.siteConfiguration.audienceQuestionnaireUserName
     }
     private(set) var titlebarJob: String? = nil
-
-    // MARK: - HasTitleBar
-
-    private(set) var defaultAvatar: UIImage? = UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)
 
     // MARK: - UIViewController life-cycle
 

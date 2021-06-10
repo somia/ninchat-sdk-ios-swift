@@ -388,9 +388,8 @@ you are next.</string>
                                             <constraint firstItem="hb8-60-TGG" firstAttribute="centerY" secondItem="Yfi-1D-cO5" secondAttribute="centerY" id="Ivy-j4-Mv0"/>
                                             <constraint firstAttribute="trailing" secondItem="lpr-Ub-6OM" secondAttribute="trailing" constant="15" id="Jn8-kJ-NCV"/>
                                             <constraint firstItem="DbE-mm-dcs" firstAttribute="bottom" secondItem="lpr-Ub-6OM" secondAttribute="bottom" constant="-8" id="LJ9-jf-2FP"/>
-                                            <constraint firstItem="dEa-pc-H2B" firstAttribute="leading" secondItem="lpr-Ub-6OM" secondAttribute="leading" id="Umo-cR-RIt"/>
                                             <constraint firstItem="lpr-Ub-6OM" firstAttribute="top" secondItem="Zhu-12-0xh" secondAttribute="top" constant="55" id="ZrC-0j-UeC"/>
-                                            <constraint firstItem="lpr-Ub-6OM" firstAttribute="leading" secondItem="Yfi-1D-cO5" secondAttribute="leading" id="ar1-td-xxe"/>
+                                            <constraint firstItem="lpr-Ub-6OM" firstAttribute="leading" secondItem="Vt6-hF-T0g" secondAttribute="leading" id="b8P-Zp-jbh"/>
                                             <constraint firstItem="Vt6-hF-T0g" firstAttribute="leading" secondItem="Zhu-12-0xh" secondAttribute="leading" constant="15" id="cZc-p1-IPz"/>
                                             <constraint firstItem="dEa-pc-H2B" firstAttribute="top" secondItem="lpr-Ub-6OM" secondAttribute="bottom" constant="4" id="f26-LB-ZH6"/>
                                             <constraint firstItem="hb8-60-TGG" firstAttribute="leading" secondItem="Vt6-hF-T0g" secondAttribute="trailing" constant="8" id="fav-ef-l6O"/>
@@ -398,6 +397,7 @@ you are next.</string>
                                             <constraint firstItem="Vt6-hF-T0g" firstAttribute="top" secondItem="Zhu-12-0xh" secondAttribute="top" id="iDr-MJ-vkZ"/>
                                             <constraint firstItem="DbE-mm-dcs" firstAttribute="leading" secondItem="lpr-Ub-6OM" secondAttribute="leading" constant="8" id="iVh-g3-910"/>
                                             <constraint firstItem="dEa-pc-H2B" firstAttribute="trailing" secondItem="lpr-Ub-6OM" secondAttribute="trailing" id="pxn-7U-yar"/>
+                                            <constraint firstItem="dEa-pc-H2B" firstAttribute="leading" secondItem="Vt6-hF-T0g" secondAttribute="leading" id="rCY-gL-ufa"/>
                                             <constraint firstItem="DbE-mm-dcs" firstAttribute="top" secondItem="lpr-Ub-6OM" secondAttribute="top" constant="12" id="yGC-2b-b9P"/>
                                         </constraints>
                                     </view>
@@ -413,6 +413,11 @@ you are next.</string>
                                     <constraint firstItem="Zhu-12-0xh" firstAttribute="leading" secondItem="L5U-F0-l9Y" secondAttribute="leading" constant="16" id="g0K-By-o5x"/>
                                     <constraint firstAttribute="trailing" secondItem="Zhu-12-0xh" secondAttribute="trailing" constant="16" id="nho-Da-cI8"/>
                                 </constraints>
+                                <variation key="default">
+                                    <mask key="subviews">
+                                        <exclude reference="qj1-1U-Y4U"/>
+                                    </mask>
+                                </variation>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PLV-Oi-4sR">
                                 <rect key="frame" x="182" y="800" width="50" height="30"/>
@@ -455,6 +460,7 @@ you are next.</string>
                         <outlet property="titlebar" destination="9Uk-ep-CyI" id="nDI-0G-wPZ"/>
                         <outlet property="topViewContainer" destination="L5U-F0-l9Y" id="L0c-wH-tU0"/>
                         <outlet property="userAvatar" destination="Yfi-1D-cO5" id="Btl-NB-cDx"/>
+                        <outlet property="userAvatarContainerView" destination="Vt6-hF-T0g" id="WbJ-hH-U0j"/>
                         <outlet property="userTitle" destination="vdr-sU-emu" id="6Rs-ny-yeZ"/>
                     </connections>
                 </viewController>

@@ -48,6 +48,7 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
     // MARK: - Conversation Style Outlets
     
     @IBOutlet private(set) weak var userAvatar: UIImageView!
+    @IBOutlet private(set) weak var userAvatarContainerView: UIView!
     @IBOutlet private(set) weak var userTitle: UILabel! {
         didSet {
             userTitle.font = .ninchat
@@ -70,7 +71,9 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
         }
     }
     var titlebarAvatar: String? {
-        self.sessionManager?.agent?.iconURL
+        /// - agentAvatar:true, show user_attrs.iconurl everywhere
+        /// - agentAvatar:url, show that instead
+        (self.sessionManager?.siteConfiguration.agentAvatar as? String) ?? (self.sessionManager?.agent?.iconURL)
     }
     var titlebarName: String? {
         self.sessionManager?.agent?.displayName
@@ -121,14 +124,17 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
         
         if style == .conversation {
             topViewContainer.backgroundColor = .clear
-            
             userTitle.text = self.sessionManager?.siteConfiguration.audienceQuestionnaireUserName ?? ""
+
+            /// remove avatar if titlebar is shown
+            userAvatar.isHidden = !(self.sessionManager?.siteConfiguration.hideTitlebar ?? true)
+            userAvatarContainerView.width?.constant = (userAvatar.isHidden) ? 0 : 35
+            userAvatar.leading?.constant = (userAvatar.isHidden) ? 0 : 8
             if let avatar = self.sessionManager?.siteConfiguration.audienceQuestionnaireAvatar as? String, !avatar.isEmpty {
                 userAvatar.image(from: avatar)
             } else {
                 userAvatar.image = UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)
             }
-            
         }
 
         if let layer = delegate?.override(layerAsset: .ninchatBackgroundTop) {

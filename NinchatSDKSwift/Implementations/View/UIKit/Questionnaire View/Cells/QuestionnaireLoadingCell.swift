@@ -6,4 +6,4 @@
 
 import Foundation
 
-final class QuestionnaireTypingCell: ChatTypingCell {}
+final class QuestionnaireLoadingCell: ChatTypingCell {}

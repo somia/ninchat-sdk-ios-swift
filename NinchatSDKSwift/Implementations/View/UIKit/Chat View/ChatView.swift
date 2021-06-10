@@ -95,8 +95,8 @@ final class ChatView: UIView, ChatViewProtocol {
             self.imageAssets = self.sessionManager?.delegate?.imageAssetsDictionary
             self.colorAssets = self.sessionManager?.delegate?.colorAssetsDictionary
 
-            self.agentAvatarConfig = AvatarConfig(avatar: sessionManager?.siteConfiguration.agentAvatar, name: sessionManager?.siteConfiguration.agentName)
-            self.userAvatarConfig = AvatarConfig(avatar: sessionManager?.siteConfiguration.userAvatar, name: sessionManager?.siteConfiguration.userName)
+            self.agentAvatarConfig = AvatarConfig(session: sessionManager)
+            self.userAvatarConfig = AvatarConfig(session: sessionManager)
         }
     }
     weak var dataSource: ChatViewDataSource?
