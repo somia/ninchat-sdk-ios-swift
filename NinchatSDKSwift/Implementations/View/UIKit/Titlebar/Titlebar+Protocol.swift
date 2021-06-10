@@ -55,4 +55,26 @@ extension HasTitleBar where Self:ViewController {
             titlebar?.layer.insertSublayer(layer, at: 0)
         }
     }
+
+    internal func shapeTitlebar(_ bar: UIView) {
+        guard let titlebar = self.titlebar else {
+            fatalError("titlebar outlet is not set")
+        }
+        let border = self.border
+
+        titlebar.addSubview(border)
+        titlebar.addSubview(bar)
+
+        bar
+                .fix(top: (0, titlebar), toSafeArea: true)
+                .fix(bottom: (0, titlebar))
+                .fix(leading: (0, titlebar), trailing: (0, titlebar))
+        bar.leading?.priority = .required
+        bar.trailing?.priority = .required
+
+        border
+                .fix(bottom: (0, titlebar))
+                .fix(leading: (0, titlebar), trailing: (0, titlebar))
+                .fix(height: 1.0)
+    }
 }
