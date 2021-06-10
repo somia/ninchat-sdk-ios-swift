@@ -137,7 +137,7 @@ extension NINQuestionnaireConversationDataSourceDelegate: QuestionnaireConversat
 // MARK: - Helper
 extension NINQuestionnaireConversationDataSourceDelegate {
     private func loading(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: QuestionnaireTypingCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
+        let cell: QuestionnaireLoadingCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
         cell.populateLoading(agentAvatarConfig: AvatarConfig(session: self.sessionManager),
                 imageAssets: self.delegate?.imageAssetsDictionary ?? [:],
                 colorAssets: self.delegate?.colorAssetsDictionary ?? [:])
