@@ -114,7 +114,7 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
                             /// Prepare coordinator for starting
                             /// This is quite important to prepare time and memory consuming tasks before the user
                             /// starts the coordinator, otherwise he/she will face unexpected views
-                            self.coordinator?.prepareNINQuestionnaireViewModel(audienceMetadata: self.audienceMetadata) {
+                            self.coordinator?.prepareNINQuestionnaireViewModel() {
                                 completion(credentials, error)
                             }
                         }
@@ -141,7 +141,7 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
                             /// Prepare coordinator for starting
                             /// This is quite important to prepare time and memory consuming tasks before the user
                             /// starts the coordinator, otherwise he/she will face unexpected views
-                            self.coordinator?.prepareNINQuestionnaireViewModel(audienceMetadata: self.audienceMetadata) {
+                            self.coordinator?.prepareNINQuestionnaireViewModel() {
                                 completion(credentials, error)
                             }
                         }

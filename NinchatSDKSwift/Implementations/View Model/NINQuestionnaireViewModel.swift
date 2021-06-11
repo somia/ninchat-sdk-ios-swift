@@ -21,7 +21,7 @@ protocol NINQuestionnaireViewModel {
     var onSessionFinished: (() -> Void)? { get set }
     var requirementSatisfactionUpdater: ((Bool) -> Void)? { get set }
 
-    init(sessionManager: NINChatSessionManager?, audienceMetadata: NINLowLevelClientProps?, questionnaireType: AudienceQuestionnaireType)
+    init(sessionManager: NINChatSessionManager?, questionnaireType: AudienceQuestionnaireType)
     func isExitElement(_ element: Any?) -> Bool
     func getConfiguration() throws -> QuestionnaireConfiguration
     func getElements() throws -> [QuestionnaireElement]
@@ -61,7 +61,6 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     private var items: [QuestionnaireItems] = []
     internal var answers: [String:AnyHashable]! = [:]    // Holds answers saved by the user in the runtime
     internal var preAnswers: [String:AnyHashable]! = [:] // Holds answers already given by the server
-    internal var audienceMetadata: NINLowLevelClientProps? // Holds given metadata during the initialization
 
     // MARK: - NINQuestionnaireViewModel
 
@@ -85,9 +84,8 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     var onQuestionnaireFinished: ((Queue?, _ queueIsClosed: Bool, _ exit: Bool) -> Void)?
     var requirementSatisfactionUpdater: ((Bool) -> Void)?
 
-    init(sessionManager: NINChatSessionManager?, audienceMetadata: NINLowLevelClientProps?, questionnaireType: AudienceQuestionnaireType) {
+    init(sessionManager: NINChatSessionManager?, questionnaireType: AudienceQuestionnaireType) {
         self.sessionManager = sessionManager
-        self.audienceMetadata = audienceMetadata
 
         let configurationOperation = BlockOperation { [weak self] in
             guard let configurations = (questionnaireType == .pre) ? sessionManager?.siteConfiguration.preAudienceQuestionnaire : sessionManager?.siteConfiguration.postAudienceQuestionnaire else { return }
@@ -201,7 +199,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 
     private func registerAudience(queueID: String, completion: @escaping (Error?) -> Void) {
         do {
-            let metadata = self.audienceMetadata ?? NINLowLevelClientProps()
+            let metadata = self.sessionManager?.audienceMetadata ?? NINLowLevelClientProps()
             metadata.set(value: questionnaireAnswers, forKey: "pre_answers")
             
             try self.sessionManager?.registerAudience(queue: queueID, answers: metadata, completion: completion)
