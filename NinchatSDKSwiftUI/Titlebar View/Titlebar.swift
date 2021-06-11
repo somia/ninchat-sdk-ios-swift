@@ -27,7 +27,7 @@ struct Titlebar: View {
     private var loader: ImageRemoteLoader?
 
 
-    public var onCloseTapped: (() -> Void)!
+    var onCloseTapped: (() -> Void)!
     init(_ session: NINChatSessionManager?,  avatar: String?, defaultAvatar: UIImage?, name: String?, job: String?) {
         self.session = session
         self.avatar = avatar
@@ -96,7 +96,7 @@ extension Titlebar {
                 .cornerRadius(VIEW_TITLE_PLACEHOLDER_CORNER_RADIUS)
         } else if let avatar = self.avatar, !avatar.isEmpty {
             /// don't show avatar is config.agentAvatar = false
-            if self.session?.siteConfiguration.agentAvatar as? Bool ?? false {
+            if let agentAvatar = self.session?.siteConfiguration.agentAvatar as? Bool, !agentAvatar {
                 Group {}
             }
             

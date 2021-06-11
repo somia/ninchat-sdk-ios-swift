@@ -20,20 +20,22 @@ extension UIFont {
     
     static var ninchat: UIFont? {
         FontWeight.allCases.forEach({ register(font: "SourceSansPro-\($0.rawValue)") })
-        guard let font = UIFont(name: fontName, size: 16.0) else {
-            return UIFont(name: fontName, size: 16.0)
-        }
-
-        return font
+        return UIFont(name: fontName, size: 16.0)
+    }
+    
+    static var ninchatSemiBold: UIFont? {
+        FontWeight.allCases.forEach({ register(font: "SourceSansPro-\($0.rawValue)") })
+        return UIFont(name: "SourceSansPro-\(FontWeight.semiBold.rawValue)", size: 16.0)
+    }
+    
+    static var ninchatLight: UIFont? {
+        FontWeight.allCases.forEach({ register(font: "SourceSansPro-\($0.rawValue)") })
+        return UIFont(name: "SourceSansPro-\(FontWeight.light.rawValue)", size: 16.0)
     }
 
     static var subtitleNinchat: UIFont? {
         FontWeight.allCases.forEach({ register(font: "SourceSansPro-\($0.rawValue)") })
-        guard let font = UIFont(name: fontName, size: 12.0) else {
-            return UIFont(name: fontName, size: 12.0)
-        }
-
-        return font
+        return UIFont(name: fontName, size: 12.0)
     }
 
     @discardableResult
