@@ -41,7 +41,7 @@ final class CloseButton: UIView, HasCustomLayer, CloseButtonProtocol {
             self.theButton.closure = closure
         }
     }
-    var buttonTitle: String! {
+    var buttonTitle: String! = "" {
         didSet {
             self.theButton.setTitle(buttonTitle, for: .normal)
             self.theButton.sizeToFit()

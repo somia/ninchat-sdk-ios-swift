@@ -76,12 +76,10 @@ final class Titlebar: UIView {
         if agentInfoStackView.isHidden {
             /// show placeholder if name is hidden
             agentAvatarImageView.isHidden = true
-        } else if let avatarImage = view.titlebarAvatar, !avatarImage.isEmpty {
+        } else if let agentAvatar = session?.siteConfiguration.agentAvatar as? Bool, !agentAvatar {
             /// don't show avatar if config.agentAvatar = false
-            guard let agentAvatar = session?.siteConfiguration.agentAvatar as? Bool, agentAvatar else {
-                agentAvatarContainer.isHidden = true
-                return
-            }
+            agentAvatarContainer.isHidden = true
+        } else if let avatarImage = view.titlebarAvatar, !avatarImage.isEmpty {
             agentAvatarContainer.backgroundColor = .white
             agentAvatarImageView.image(from: avatarImage)
         } else if let defaultAvatar = defaultAvatarView?.defaultAvatar {
@@ -91,10 +89,7 @@ final class Titlebar: UIView {
             agentAvatarContainer.isHidden = true
         }
 
-        if let closeTitle = session?.translate(key: Constants.kCloseText.rawValue, formatParams: [:]), !closeTitle.isEmpty {
-            closeButton.buttonTitle = closeTitle
-        }
-
+        closeButton.buttonTitle = session?.translate(key: Constants.kCloseText.rawValue, formatParams: [:]) ?? ""
         overrideAssets(delegate: session?.delegate)
     }
     

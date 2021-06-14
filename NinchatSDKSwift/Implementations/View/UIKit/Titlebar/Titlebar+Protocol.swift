@@ -50,7 +50,7 @@ extension HasTitleBar where Self:ViewController {
             return 70
         }
         if #available(iOS 11.0, *) {
-            return 70 + win.safeAreaInsets.top
+            return 55 + win.safeAreaInsets.top
         }
         return 70
     }
