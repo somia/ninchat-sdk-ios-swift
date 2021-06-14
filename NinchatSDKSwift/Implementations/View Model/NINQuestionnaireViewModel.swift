@@ -17,11 +17,11 @@ protocol NINQuestionnaireViewModel {
     var questionnaireAnswers: NINLowLevelClientProps { get }
 
     var onErrorOccurred: ((Error) -> Void)? { get set }
-    var onQuestionnaireFinished: ((Queue?, _ exit: Bool) -> Void)? { get set }
+    var onQuestionnaireFinished: ((Queue?, _ queueIsClosed: Bool, _ exit: Bool) -> Void)? { get set }
     var onSessionFinished: (() -> Void)? { get set }
     var requirementSatisfactionUpdater: ((Bool) -> Void)? { get set }
 
-    init(sessionManager: NINChatSessionManager?, audienceMetadata: NINLowLevelClientProps?, questionnaireType: AudienceQuestionnaireType)
+    init(sessionManager: NINChatSessionManager?, questionnaireType: AudienceQuestionnaireType)
     func isExitElement(_ element: Any?) -> Bool
     func getConfiguration() throws -> QuestionnaireConfiguration
     func getElements() throws -> [QuestionnaireElement]
@@ -61,7 +61,6 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     private var items: [QuestionnaireItems] = []
     internal var answers: [String:AnyHashable]! = [:]    // Holds answers saved by the user in the runtime
     internal var preAnswers: [String:AnyHashable]! = [:] // Holds answers already given by the server
-    internal var audienceMetadata: NINLowLevelClientProps? // Holds given metadata during the initialization
 
     // MARK: - NINQuestionnaireViewModel
 
@@ -82,12 +81,11 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     // MARK: - Closures
     var onSessionFinished: (() -> Void)?
     var onErrorOccurred: ((Error) -> Void)?
-    var onQuestionnaireFinished: ((Queue?, _ exit: Bool) -> Void)?
+    var onQuestionnaireFinished: ((Queue?, _ queueIsClosed: Bool, _ exit: Bool) -> Void)?
     var requirementSatisfactionUpdater: ((Bool) -> Void)?
 
-    init(sessionManager: NINChatSessionManager?, audienceMetadata: NINLowLevelClientProps?, questionnaireType: AudienceQuestionnaireType) {
+    init(sessionManager: NINChatSessionManager?, questionnaireType: AudienceQuestionnaireType) {
         self.sessionManager = sessionManager
-        self.audienceMetadata = audienceMetadata
 
         let configurationOperation = BlockOperation { [weak self] in
             guard let configurations = (questionnaireType == .pre) ? sessionManager?.siteConfiguration.preAudienceQuestionnaire : sessionManager?.siteConfiguration.postAudienceQuestionnaire else { return }
@@ -129,12 +127,15 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
             self?.finishQuestionnaire(for: logic, redirect: redirect, autoApply: autoApply)
         }
         self.connector.onRegisterTargetReached = { [weak self, queue] logic, redirect, autoApply in
-            if self?.hasToWaitForUserConfirmation(autoApply) ?? false || self?.hasToExitQuestionnaire(logic) ?? false { return }
-            self?.registerAudience(queueID: logic?.queueId ?? queue.queueID) { error in
+            guard let `self` = self else { return }
+            if self.hasToWaitForUserConfirmation(autoApply) || self.hasToExitQuestionnaire(logic) { return }
+
+            let targetQueue = self.sessionManager?.audienceQueues.first(where: { $0.queueID == logic?.queueId })
+            self.registerAudience(queueID: targetQueue?.queueID ?? queue.queueID) { [weak self] error in
                 if let error = error {
                     self?.onErrorOccurred?(error)
                 } else {
-                    self?.onQuestionnaireFinished?(nil, false)
+                    self?.onQuestionnaireFinished?(nil, targetQueue?.isClosed ?? queue.isClosed, false)
                 }
             }
         }
@@ -198,7 +199,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 
     private func registerAudience(queueID: String, completion: @escaping (Error?) -> Void) {
         do {
-            let metadata = self.audienceMetadata ?? NINLowLevelClientProps()
+            let metadata = self.sessionManager?.audienceMetadata ?? NINLowLevelClientProps()
             metadata.set(value: questionnaireAnswers, forKey: "pre_answers")
             
             try self.sessionManager?.registerAudience(queue: queueID, answers: metadata, completion: completion)
@@ -233,7 +234,7 @@ extension NINQuestionnaireViewModelImpl {
             }
 
         self.sessionManager?.preAudienceQuestionnaireMetadata = self.questionnaireAnswers
-        self.onQuestionnaireFinished?(targetQueue, false)
+        self.onQuestionnaireFinished?(targetQueue, targetQueue.isClosed, false)
     }
 
     func isExitElement(_ element: Any?) -> Bool {
@@ -366,7 +367,7 @@ extension NINQuestionnaireViewModelImpl {
             case -2:
                 /// This is a _exit logic
                 /// Simply exit the questionnaire and do nothing
-                self.onQuestionnaireFinished?(nil, true)
+                self.onQuestionnaireFinished?(nil, false, true)
                 return nil
             case -1:
                 /// This is a _register or _complete logic

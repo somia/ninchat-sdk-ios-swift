@@ -50,7 +50,7 @@ extension QuestionnaireDataSourceDelegate {
     }
 
     var canAddClosedRegisteredSection: Bool {
-        self.sessionManager?.siteConfiguration.audienceClosedRegisteredText != nil
+        self.sessionManager?.siteConfiguration.audienceRegisteredClosedText != nil
     }
 
     internal func shouldShowNavigationCell(at index: Int) -> Bool {

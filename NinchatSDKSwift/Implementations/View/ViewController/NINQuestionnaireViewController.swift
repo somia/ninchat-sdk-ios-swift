@@ -85,7 +85,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
                     self?.delegate?.onDidEnd()
                 })
             }
-            viewModel.onQuestionnaireFinished = { [weak self] queue, exit in
+            viewModel.onQuestionnaireFinished = { [weak self] queue, queueIsClosed, exit in
                 /// Complete questionnaire and navigate to the queue.
                 if let queue = queue {
                     self?.completeQuestionnaire?(queue)
@@ -95,8 +95,14 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
                     self?.viewModel.onSessionFinished?()
                 }
                 /// Show `AudienceRegisteredText` if it is set in the site configuration
-                else if let registeredOperation = self?.audienceRegisteredOperation {
+                /// and queue is NOT closed `https://github.com/somia/ninchat-ng/issues/1057`
+                else if let registeredOperation = self?.audienceRegisteredOperation, !queueIsClosed {
                     self?.showRegisteredPage(operation: registeredOperation)
+                }
+                /// Show `AudienceRegisteredText` if it is set in the site configuration
+                /// and queue is closed `https://github.com/somia/ninchat-ng/issues/1057`
+                else if let closedOperation = self?.closedRegisteredOperation, queueIsClosed {
+                    self?.showRegisteredPage(operation: closedOperation)
                 }
                 /// If not, just finish the session
                 else {
