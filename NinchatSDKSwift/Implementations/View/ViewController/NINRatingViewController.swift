@@ -76,7 +76,7 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
         (self.sessionManager?.siteConfiguration.agentAvatar as? String) ?? (self.sessionManager?.agent?.iconURL)
     }
     var titlebarName: String? {
-        self.sessionManager?.agent?.displayName
+        self.sessionManager?.siteConfiguration.agentName ?? self.sessionManager?.agent?.displayName
     }
     var titlebarJob: String? {
         self.sessionManager?.agent?.info?.job

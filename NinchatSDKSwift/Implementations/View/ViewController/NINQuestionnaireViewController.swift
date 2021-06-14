@@ -198,7 +198,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
             switch config {
             case .agent:
                 /// "agent": Display agent avatar/name/jobTitle
-                return self.sessionManager?.agent?.displayName
+                return self.sessionManager?.siteConfiguration.agentName ?? self.sessionManager?.agent?.displayName
             case .questionnaire:
                 /// "questionnaire": Display questionnaireName and questionnaireAvatar
                 return self.sessionManager?.siteConfiguration.audienceQuestionnaireUserName
