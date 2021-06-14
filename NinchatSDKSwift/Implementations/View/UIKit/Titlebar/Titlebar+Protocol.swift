@@ -77,15 +77,15 @@ extension HasTitleBar where Self:ViewController {
         titlebar.addSubview(bar)
 
         bar
-                .fix(top: (0, titlebar), toSafeArea: true)
-                .fix(bottom: (0, titlebar))
-                .fix(leading: (0, titlebar), trailing: (0, titlebar))
+            .fix(top: (0, titlebar), toSafeArea: true)
+            .fix(bottom: (0, titlebar))
+            .fix(leading: (0, titlebar), trailing: (0, titlebar))
         bar.leading?.priority = .required
         bar.trailing?.priority = .required
 
         border
-                .fix(bottom: (0, titlebar))
-                .fix(leading: (0, titlebar), trailing: (0, titlebar))
-                .fix(height: 1.0)
+            .fix(bottom: (0, titlebar))
+            .fix(leading: (0, titlebar), trailing: (0, titlebar))
+            .fix(height: 1.0)
     }
 }

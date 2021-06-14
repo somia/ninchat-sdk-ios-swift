@@ -146,17 +146,87 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
 
     @IBOutlet private(set) weak var titlebar: UIView? {
         didSet {
-            titlebar?.isHidden = !(hasTitlebar && type == .pre)
-            titlebar?.height?.constant = (hasTitlebar && type == .pre) ? (titleHeight + 8.0) : 0
+            titlebar?.isHidden = !hasTitlebar
+            titlebar?.height?.constant = (hasTitlebar) ? (titleHeight + 8.0) : 0
         }
     }
+    var hasTitlebar: Bool {
+        /// questionnaire view has more logics for showing/hiding titlebar
+        guard let session = self.sessionManager else {
+            fatalError("session manager is not set!")
+        }
+        if session.siteConfiguration.hideTitlebar {
+            return false
+        }
+        if type == .post, session.siteConfiguration.postAudienceQuestionnaireTitlebar == nil {
+            return false
+        }
+        return true
+    }
     var titlebarAvatar: String? {
-        self.sessionManager?.siteConfiguration.audienceQuestionnaireAvatar as? String
+        switch type {
+        case .pre:
+            return self.sessionManager?.siteConfiguration.audienceQuestionnaireAvatar as? String
+        case .post:
+            guard let config = sessionManager?.siteConfiguration.postAudienceQuestionnaireTitlebar else {
+                return nil
+            }
+
+            switch config {
+            case .agent:
+                /// "agent": Display agent avatar/name/jobTitle
+                ///     - agentAvatar:true, show user_attrs.iconurl everywhere
+                ///     - agentAvatar:url, show that instead
+                return (self.sessionManager?.siteConfiguration.agentAvatar as? String) ?? (self.sessionManager?.agent?.iconURL)
+            case .questionnaire:
+                /// "questionnaire": Display questionnaireName and questionnaireAvatar
+                return self.sessionManager?.siteConfiguration.audienceQuestionnaireAvatar as? String
+            }
+        default:
+            return nil
+        }
     }
     var titlebarName: String? {
-        self.sessionManager?.siteConfiguration.audienceQuestionnaireUserName
+        switch type {
+        case .pre:
+            return self.sessionManager?.siteConfiguration.audienceQuestionnaireUserName
+        case .post:
+            guard let config = sessionManager?.siteConfiguration.postAudienceQuestionnaireTitlebar else {
+                return nil
+            }
+
+            switch config {
+            case .agent:
+                /// "agent": Display agent avatar/name/jobTitle
+                return self.sessionManager?.agent?.displayName
+            case .questionnaire:
+                /// "questionnaire": Display questionnaireName and questionnaireAvatar
+                return self.sessionManager?.siteConfiguration.audienceQuestionnaireUserName
+            }
+        default:
+            return nil
+        }
     }
-    private(set) var titlebarJob: String? = nil
+    var titlebarJob: String? {
+        switch type {
+        case .pre:
+            return nil
+        case .post:
+            guard let config = sessionManager?.siteConfiguration.postAudienceQuestionnaireTitlebar else {
+                return nil
+            }
+
+            switch config {
+            case .agent:
+                /// "agent": Display agent avatar/name/jobTitle
+                return self.sessionManager?.agent?.info?.job
+            case .questionnaire:
+                return nil
+            }
+        default:
+            return nil
+        }
+    }
 
     // MARK: - UIViewController life-cycle
 
