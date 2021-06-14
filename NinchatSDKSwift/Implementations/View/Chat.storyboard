@@ -413,11 +413,6 @@ you are next.</string>
                                     <constraint firstItem="Zhu-12-0xh" firstAttribute="leading" secondItem="L5U-F0-l9Y" secondAttribute="leading" constant="16" id="g0K-By-o5x"/>
                                     <constraint firstAttribute="trailing" secondItem="Zhu-12-0xh" secondAttribute="trailing" constant="16" id="nho-Da-cI8"/>
                                 </constraints>
-                                <variation key="default">
-                                    <mask key="subviews">
-                                        <exclude reference="qj1-1U-Y4U"/>
-                                    </mask>
-                                </variation>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PLV-Oi-4sR">
                                 <rect key="frame" x="182" y="800" width="50" height="30"/>
