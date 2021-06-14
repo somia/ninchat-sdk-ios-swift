@@ -11,10 +11,23 @@ struct AvatarConfig {
     let nameOverride: String
     var show: Bool!
 
-    init(session: NINChatSessionManager?) {
+    init(forQuestionnaire session: NINChatSessionManager?) {
         self.imageOverrideURL = session?.siteConfiguration.audienceQuestionnaireAvatar as? String
         self.nameOverride = session?.siteConfiguration.audienceQuestionnaireUserName ?? ""
         self.show = avatarVisibilityRules(session)
+    }
+
+    init(forAgent session: NINChatSessionManager?) {
+        self.imageOverrideURL = session?.siteConfiguration.agentAvatar as? String
+        self.nameOverride = session?.siteConfiguration.agentName ?? ""
+        self.show = avatarVisibilityRules(session)
+    }
+
+    init(forUser session: NINChatSessionManager?) {
+        self.imageOverrideURL = session?.siteConfiguration.userAvatar as? String
+        self.nameOverride = session?.siteConfiguration.userName ?? ""
+        /// avatar visibility rules are not applied to user avatar
+        self.show = (session?.siteConfiguration.userAvatar as? Bool) ?? true
     }
 }
 

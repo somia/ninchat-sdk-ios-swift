@@ -82,7 +82,7 @@ final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol, HasCusto
             self.usernameLabel.textColor = textColor
             self.infoLabel.textColor = textColor
         }
-        let agentAvatarConfig = AvatarConfig(session: sessionManager)
+        let agentAvatarConfig = AvatarConfig(forAgent: sessionManager)
         
         /// Caller's Avatar image
         if let overrideURL = agentAvatarConfig.imageOverrideURL {
