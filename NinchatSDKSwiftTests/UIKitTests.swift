@@ -265,7 +265,7 @@ final class UIKitTests: XCTestCase {
 
 extension UIKitTests {
     private func simulateSendMessage() {
-        let user = ChannelUser(userID: "11", realName: "Hassan Shahbazi", displayName: "Hassan", iconURL: "", guest: false)
+        let user = ChannelUser(userID: "11", realName: "Hassan Shahbazi", displayName: "Hassan", iconURL: "", guest: false, info: ChannelUserInfo(job: "developer"))
         self.sessionManager.add(message: TextMessage(timestamp: Date(), messageID:  "11", mine: false, sender: user, content: "content", attachment: nil))
     }
 }
