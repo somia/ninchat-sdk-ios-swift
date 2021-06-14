@@ -95,7 +95,8 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
                 self?.onSkipButtonTapped(sender: nil)
             }
         }
-
+        self.overrideAssets()
+        
         /// Show conversation-style rating view
         /// according to `https://github.com/somia/mobile/issues/314`
         conversationStyleView.isHidden = (style != .conversation)
@@ -106,7 +107,6 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
             self.adjustFaceView(parent: facesFormViewContainer)
         }
         
-        self.overrideAssets()
         self.navigationItem.setHidesBackButton(true, animated: false)
     }
 
@@ -181,6 +181,7 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
             .fix(leading: (0, parent), trailing: (0, parent))
             .fix(top: (0, parent), bottom: (0, parent))
 
+        titleConversationBubble.top?.constant = (userTitle.text?.isEmpty ?? true) ? 15 : 55
     }
 }
 
