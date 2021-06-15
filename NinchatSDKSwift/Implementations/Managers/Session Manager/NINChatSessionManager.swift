@@ -165,6 +165,9 @@ protocol NINChatSessionManager: NINChatSessionConnectionManager, NINChatSessionM
     *   will be appended to some predefined values such as SDK version, device OS, and device model.
     */
     var appDetails: String? { get set }
+
+    /** Agent's attributes */
+    var agent: ChannelUser? { get set }
     
     /** Default initializer for NinchatSessionManager. */
     init(session: NINChatSessionInternalDelegate?, serverAddress: String, audienceMetadata: NINLowLevelClientProps?, configuration: NINSiteConfiguration?)

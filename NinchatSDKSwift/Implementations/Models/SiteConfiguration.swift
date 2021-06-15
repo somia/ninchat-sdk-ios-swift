@@ -11,6 +11,11 @@ enum QuestionnaireStyle: String {
     case form
 }
 
+enum PostAudienceQuestionnaireTitlebarType: String {
+    case agent
+    case questionnaire
+}
+
 protocol SiteConfiguration  {
     var welcome: String? { get }
     var motd: String? { get }
@@ -26,6 +31,8 @@ protocol SiteConfiguration  {
     var userName: String? { get }
     var noQueueText: String? { get }
     var audienceAutoQueue: String? { get }
+    var hideTitlebar: Bool { get }
+    var postAudienceQuestionnaireTitlebar: PostAudienceQuestionnaireTitlebarType? { get }
     var audienceQuestionnaireAvatar: AnyHashable? { get }
     var audienceQuestionnaireUserName: String? { get }
     var audienceRegisteredText: String? { get }
@@ -100,6 +107,17 @@ struct SiteConfigurationImpl: SiteConfiguration {
     }
     var audienceAutoQueue: String? {
         self.value(for: "audienceAutoQueue")
+    }
+
+    // MARK: - Titlebar
+    var hideTitlebar: Bool {
+        self.value(for: "hideTitlebar") ?? false
+    }
+    var postAudienceQuestionnaireTitlebar: PostAudienceQuestionnaireTitlebarType? {
+        guard let style: String = self.value(for: "postAudienceQuestionnaireTitlebar") else {
+            return nil
+        }
+        return PostAudienceQuestionnaireTitlebarType(rawValue: style.lowercased())
     }
 
     var audienceQuestionnaireAvatar: AnyHashable? {

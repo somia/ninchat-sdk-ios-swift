@@ -128,10 +128,10 @@ extension QuestionnaireElementTextField: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         self.answerUpdateWorker?.cancel()
         self.answerUpdateWorker = DispatchWorkItem { [weak self] in
-            guard let weakSelf = self else { return }
+            guard let `self` = self else { return }
 
-            weakSelf.isCompleted = weakSelf.isCompleted(text: (textField.text ?? "") + string)
-            weakSelf.onElementDismissed?(weakSelf)
+            self.isCompleted = self.isCompleted(text: (textField.text ?? "") + string)
+            self.onElementDismissed?(self)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: self.answerUpdateWorker!)
 

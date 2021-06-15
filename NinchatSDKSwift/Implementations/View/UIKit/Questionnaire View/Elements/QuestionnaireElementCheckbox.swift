@@ -39,7 +39,7 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
         get {
             let viewHeight = CGFloat(self.view.height!.constant) + 16.0
             if self.subElements.count == 0, index == 0 {
-                self.view.subviews.first(where: { $0 is Button })?.center(toY: self)
+                self.view.subviews.first(where: { $0 is NINButton })?.center(toY: self)
             }
             return viewHeight
         }
@@ -59,7 +59,7 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
-        self.view.subviews.compactMap({ $0 as? Button }).forEach({
+        self.view.subviews.compactMap({ $0 as? NINButton }).forEach({
             $0.overrideQuestionnaireAsset(with: delegate, isPrimary: $0.isSelected)
         })
         self.view.allSubviews.filter({ $0.tag >= 200 }).compactMap({ $0 as? UIImageView }).forEach({
@@ -68,13 +68,13 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
 
         self.iconBorderNormalColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireCheckboxUnselectedIndicator) ?? UIColor.QGrayButton
         self.iconBorderSelectedColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireCheckboxSelectedIndicator) ?? UIColor.QBlueButtonNormal
-        self.view.subviews.filter({ !($0 is Button) }).forEach({ $0.round(radius: 23.0 / 2, borderWidth: 2.0, borderColor: self.iconBorderNormalColor) })
+        self.view.subviews.filter({ !($0 is NINButton) }).forEach({ $0.round(radius: 23.0 / 2, borderWidth: 2.0, borderColor: self.iconBorderNormalColor) })
     }
 
     // MARK: - QuestionnaireSettable
 
     func updateSetAnswers(_ answer: AnyHashable?, configuration: QuestionnaireConfiguration?, state: QuestionnaireSettableState) {
-        if let checkbox = self.view.subviews.compactMap({ $0 as? Button }).first(where: { $0.titleLabel?.text == configuration?.label }) {
+        if let checkbox = self.view.subviews.compactMap({ $0 as? NINButton }).first(where: { $0.titleLabel?.text == configuration?.label }) {
             checkbox.isSelected = answer as? Bool ?? false
             self.view.allSubviews.filter({ $0.tag == 100+checkbox.tag }).compactMap({ $0 as? UIImageView }).first?.isHighlighted = answer as? Bool ?? false
             self.view.allSubviews.filter({ $0.tag == 200+checkbox.tag }).forEach({ $0.layer.borderColor = (answer as? Bool ?? false) ? self.iconBorderSelectedColor.cgColor : self.iconBorderNormalColor.cgColor })
@@ -87,7 +87,7 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
     var onElementOptionDeselected: ((QuestionnaireElement, ElementOption) -> ())?
 
     private func select(option: ElementOption) {
-        if let checkbox = self.view.subviews.compactMap({ $0 as? Button }).first(where: { $0.title(for: .normal) == option.label }) {
+        if let checkbox = self.view.subviews.compactMap({ $0 as? NINButton }).first(where: { $0.title(for: .normal) == option.label }) {
             checkbox.isSelected = true
             self.view.allSubviews.filter({ $0.tag == 100+checkbox.tag }).compactMap({ $0 as? UIImageView }).first?.isHighlighted = true
             self.view.allSubviews.filter({ $0.tag == 200+checkbox.tag }).forEach({ $0.layer.borderColor = self.iconBorderSelectedColor.cgColor })
@@ -95,7 +95,7 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
     }
 
     func deselect(option: ElementOption) {
-        if let checkbox = self.view.subviews.compactMap({ $0 as? Button }).first(where: { $0.title(for: .normal) == option.label }) {
+        if let checkbox = self.view.subviews.compactMap({ $0 as? NINButton }).first(where: { $0.title(for: .normal) == option.label }) {
             checkbox.isSelected = false
             self.view.allSubviews.filter({ $0.tag == 100+checkbox.tag }).compactMap({ $0 as? UIImageView }).first?.isHighlighted = false
             self.view.allSubviews.filter({ $0.tag == 200+checkbox.tag }).forEach({ $0.layer.borderColor = self.iconBorderNormalColor.cgColor })
@@ -153,7 +153,7 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
 }
 
 /// Subviews assets override
-extension Button {
+extension NINButton {
     fileprivate func overrideQuestionnaireAsset(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         self.titleLabel?.font = .ninchat
         self.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorCheckboxUnselectedText) ?? UIColor.QGrayButton, for: .normal)
@@ -192,8 +192,8 @@ extension QuestionnaireElementCheckbox {
         self.layout(button: button, icon: icon.0)
     }
 
-    private func generateButton(label: String, icon: (UIView, UIImageView)) -> Button {
-        let view = Button(frame: .zero) { [weak self] button in
+    private func generateButton(label: String, icon: (UIView, UIImageView)) -> NINButton {
+        let view = NINButton(frame: .zero) { [weak self] button in
             button.isSelected = !button.isSelected
             guard let `self` = self else { return }
             let element = self.subElements[button.tag - 100] ?? self
@@ -238,7 +238,7 @@ extension QuestionnaireElementCheckbox {
             .fix(leading: (5.0, view), trailing: (5.0, view))
     }
 
-    private func layout(button: Button, icon: UIView) {
+    private func layout(button: NINButton, icon: UIView) {
         defer { upperView = button }
         self.view.addSubview(button)
         self.view.addSubview(icon)
@@ -272,7 +272,7 @@ extension QuestionnaireElementCheckbox {
 extension QuestionnaireElementCheckbox {
     @objc
     private func onIconTapped(_ gesture: UITapGestureRecognizer) {
-        guard let imgView = gesture.view?.subviews.first(where: { $0.tag >= 200 }) as? UIImageView, let button = self.view.viewWithTag(imgView.tag - 100) as? Button else { return }
+        guard let imgView = gesture.view?.subviews.first(where: { $0.tag >= 200 }) as? UIImageView, let button = self.view.viewWithTag(imgView.tag - 100) as? NINButton else { return }
         button.closure?(button)
     }
 }

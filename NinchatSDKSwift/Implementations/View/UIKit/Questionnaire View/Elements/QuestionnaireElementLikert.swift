@@ -29,11 +29,11 @@ extension QuestionnaireElementLikert {
     func shapeLikertView() {
         var upperView: UIView?
         self.options.forEach { [weak self] string in
-            guard let weakSelf = self else { return }
+            guard let `self` = self else { return }
 
-            let option = weakSelf.option(string, weakSelf.options)
-            let button = weakSelf.generateButton(for: option, tag: Int(option.value as! String)!)
-            weakSelf.layoutButton(button, upperView: &upperView)
+            let option = self.option(string, self.options)
+            let button = self.generateButton(for: option, tag: Int(option.value as! String)!)
+            self.layoutButton(button, upperView: &upperView)
         }
     }
 }

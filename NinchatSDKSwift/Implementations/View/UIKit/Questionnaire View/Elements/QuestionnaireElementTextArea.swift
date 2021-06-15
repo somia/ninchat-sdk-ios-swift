@@ -129,10 +129,10 @@ extension QuestionnaireElementTextArea: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         self.answerUpdateWorker?.cancel()
         self.answerUpdateWorker = DispatchWorkItem { [weak self] in
-            guard let weakSelf = self else { return }
+            guard let `self` = self else { return }
 
-            weakSelf.isCompleted = weakSelf.isCompleted(text: (textView.text ?? "") + text)
-            weakSelf.onElementDismissed?(weakSelf)
+            self.isCompleted = self.isCompleted(text: (textView.text ?? "") + text)
+            self.onElementDismissed?(self)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: self.answerUpdateWorker!)
 

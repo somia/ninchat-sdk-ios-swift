@@ -8,7 +8,7 @@ import UIKit
 
 protocol ChatMeta: UIView {
     var delegate: NINChatSessionInternalDelegate? { get set }
-    var onCloseChatTapped: ((Button) -> Void)? { get set }
+    var onCloseChatTapped: ((NINButton) -> Void)? { get set }
     
     func populate(message: MetaMessage, colorAssets: NINColorAssetDictionary?)
 }

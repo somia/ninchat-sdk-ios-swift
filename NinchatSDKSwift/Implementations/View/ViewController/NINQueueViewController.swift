@@ -6,8 +6,8 @@
 
 import UIKit
 
-final class NINQueueViewController: UIViewController, HasCustomLayer, ViewController {
-    
+final class NINQueueViewController: UIViewController, ViewController, HasCustomLayer, HasTitleBar {
+
     // MARK: - Injected
 
     var viewModel: NINQueueViewModel!
@@ -40,23 +40,41 @@ final class NINQueueViewController: UIViewController, HasCustomLayer, ViewContro
             motdTextView.delegate = self
         }
     }
-    @IBOutlet private(set) weak var closeChatButton: CloseButton! {
+    @IBOutlet private(set) weak var cancelQueueButton: CloseButton! {
         didSet {
             let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
-            closeChatButton.buttonTitle = closeTitle
-            closeChatButton.overrideAssets(with: self.delegate)
-            closeChatButton.closure = { [weak self] button in
-                try? self?.sessionManager?.closeChat {
-                    self?.sessionManager?.deallocateSession()
+            cancelQueueButton.buttonTitle = closeTitle
+            cancelQueueButton.overrideAssets(with: self.delegate)
+            cancelQueueButton.closure = { [weak self] _ in
+                DispatchQueue.main.async {
+                    self?.onCancelQueueTapped()
                 }
             }
         }
     }
-    
+
+    // MARK: - HasTitleBar
+
+    @IBOutlet private(set) weak var titlebar: UIView? {
+        didSet {
+            cancelQueueButton.isHidden = hasTitlebar
+            titlebar?.isHidden = !hasTitlebar
+            titlebar?.height?.constant = (hasTitlebar) ? (titleHeight + 8.0) : 0
+        }
+    }
+    private(set) var titlebarAvatar: String? = nil   /// show placeholder
+    private(set) var titlebarName: String? = nil     /// show placeholder
+    private(set) var titlebarJob: String? = nil      /// show placeholder
+
     // MARK: - UIViewController
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.addTitleBar { [weak self] in
+            DispatchQueue.main.async {
+                self?.onCancelQueueTapped()
+            }
+        }
         self.overrideAssets()
 
         NotificationCenter.default.addObserver(self, selector: #selector(spin(notification:)), name: UIApplication.willEnterForegroundNotification, object: nil)
@@ -78,6 +96,9 @@ final class NINQueueViewController: UIViewController, HasCustomLayer, ViewContro
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
+        if let titlebar = self.titlebar {
+            applyLayerOverride(view: titlebar)
+        }
         applyLayerOverride(view: self.topContainerView)
         applyLayerOverride(view: self.bottomContainerView)
     }
@@ -163,11 +184,13 @@ extension NINQueueViewController {
     }
 
     private func overrideAssets() {
-        closeChatButton.overrideAssets(with: self.delegate)
+        overrideTitlebarAssets()
+        cancelQueueButton.overrideAssets(with: self.delegate)
+
         if let spinnerImage = self.delegate?.override(imageAsset: .ninchatIconLoader) {
             self.spinnerImageView.image = spinnerImage
         }
-        
+
         if let layer = self.delegate?.override(layerAsset: .ninchatBackgroundTop) {
             topContainerView.layer.insertSublayer(layer, at: 0)
         }
@@ -195,6 +218,17 @@ extension NINQueueViewController {
             let attribute = [NSAttributedString.Key.foregroundColor: linkColor]
             queueInfoTextView.linkTextAttributes = attribute
             motdTextView.linkTextAttributes = attribute
+        }
+    }
+}
+
+// MARK: - User actions
+
+extension NINQueueViewController {
+    private func onCancelQueueTapped() {
+        debugger("cancel queue")
+        try? self.sessionManager?.closeChat { [weak self] in
+            self?.sessionManager?.deallocateSession()
         }
     }
 }

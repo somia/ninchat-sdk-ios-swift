@@ -26,6 +26,14 @@ extension UIColor {
     static var QBlueButtonNormal: UIColor { #colorLiteral(red: 0, green: 0.5411764706, blue: 1, alpha: 1) }
     
     static var QBlueButtonHighlighted: UIColor { #colorLiteral(red: 0, green: 0.4352941176, blue: 0.8078431373, alpha: 1) }
+
+    // MARK: - titlebar colors
+    
+    static var tPlaceholderGray: UIColor { #colorLiteral(red: 0.9137254902, green: 0.9137254902, blue: 0.9137254902, alpha: 1) }
+    
+    static var tTitleBlack: UIColor { #colorLiteral(red: 0.1411764706, green: 0.1411764706, blue: 0.1411764706, alpha: 1) }
+
+    static var tTitleBorder: UIColor { #colorLiteral(red: 0.8588235294, green: 0.8666666667, blue: 0.8823529412, alpha: 1) }
 }
 
 extension UIColor {
