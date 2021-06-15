@@ -31,7 +31,7 @@ final class NINQueueViewController: UIViewController, ViewController, HasCustomL
             if let textTopColor = self.delegate?.override(colorAsset: .ninchatColorTextTop) {
                 self.queueInfoTextView.textColor = textTopColor
             }
-            queueInfoTextView.text = nil
+            queueInfoTextView.isHidden = true
             queueInfoTextView.delegate = self
         }
     }
@@ -125,12 +125,14 @@ final class NINQueueViewController: UIViewController, ViewController, HasCustomL
             guard let queue = target else { return }
             self.viewModel.resumeMode = true
             self.viewModel.connect(queue: queue)
+            self.queueInfoTextView.isHidden = false
             self.queueInfoTextView.setAttributed(text: self.viewModel.queueTextInfo(queue: queue, 1) ?? "", font: .ninchat)
         case .toChannel:
             self.viewModel.resumeMode = true
             guard let describedQueue = self.sessionManager?.describedQueue else {
                 debugger("error in getting target queue")
                 self.spinnerImageView.isHidden = true
+                self.queueInfoTextView.isHidden = false
                 self.queueInfoTextView.setAttributed(text: "Resume error".localized, font: .ninchat)
                 return
             }
@@ -142,6 +144,7 @@ final class NINQueueViewController: UIViewController, ViewController, HasCustomL
         default:
             self.viewModel.resumeMode = false
             self.viewModel.connect(queue: self.queue)
+            self.queueInfoTextView.isHidden = false
             self.queueInfoTextView.setAttributed(text: self.viewModel.queueTextInfo(queue: queue, 1) ?? "", font: .ninchat)
         }
     }
@@ -151,7 +154,7 @@ final class NINQueueViewController: UIViewController, ViewController, HasCustomL
         if let queue = queue, queue.isClosed, queue.position == 0 {
             /// Currently, we do not have a key for closed-queue situations, leave it empty
             self.spinnerImageView.isHidden = true
-            self.queueInfoTextView.setAttributed(text: "", font: .ninchat)
+            self.queueInfoTextView.isHidden = true
             self.motdTextView.setAttributed(text: self.sessionManager?.siteConfiguration.motd ?? "", font: .ninchat)
             return true
         }
