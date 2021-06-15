@@ -11,9 +11,9 @@ import WebRTC
 import NinchatLowLevelClient
 
 protocol Coordinator: AnyObject {
-    init(with sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?, onPresentationCompletion: @escaping (() -> Void))
+    init(with sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?, onPresentationCompletion: @escaping () -> Void)
     func start(with queue: String?, resume: ResumeMode?, within navigation: UINavigationController?) -> UIViewController?
-    func prepareNINQuestionnaireViewModel(audienceMetadata: NINLowLevelClientProps?, onCompletion: @escaping (() -> Void))
+    func prepareNINQuestionnaireViewModel(onCompletion: @escaping () -> Void)
     func deallocate()
 }
 
@@ -205,17 +205,17 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         if self.didLoaded_chatViewController { self.chatViewController.deallocate() }
     }
 
-    /// In case of heavy questionnaires, there would be a memory-consuming job
-    /// in instantiation of `NINQuestionnaireViewModel` even though it is implemented in a multi-thread manner using `OperationQueue`.
+    /// In case of heavy questionnaires, there would be a memory-consuming job in instantiation of `NINQuestionnaireViewModel`
+    /// even though it is implemented in a multi-thread manner using `OperationQueue`.
     /// Thus, we have to do the job in background before the questionnaire page being loaded
-    func prepareNINQuestionnaireViewModel(audienceMetadata: NINLowLevelClientProps?, onCompletion: @escaping () -> Void) {
+    func prepareNINQuestionnaireViewModel(onCompletion: @escaping () -> Void) {
         let completionOperation = BlockOperation {
             onCompletion()
         }
         
         if self.hasPreAudienceQuestionnaire {
             let operation = BlockOperation { [weak self] in
-                self?.preQuestionnaireViewModel = NINQuestionnaireViewModelImpl(sessionManager: self?.sessionManager, audienceMetadata: audienceMetadata, questionnaireType: .pre)
+                self?.preQuestionnaireViewModel = NINQuestionnaireViewModelImpl(sessionManager: self?.sessionManager, questionnaireType: .pre)
             }
             
             completionOperation.addDependency(operation)
@@ -223,7 +223,7 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         }
         if self.hasPostAudienceQuestionnaire {
             let operation = BlockOperation { [weak self] in
-                self?.postQuestionnaireViewModel = NINQuestionnaireViewModelImpl(sessionManager: self?.sessionManager, audienceMetadata: audienceMetadata, questionnaireType: .post)
+                self?.postQuestionnaireViewModel = NINQuestionnaireViewModelImpl(sessionManager: self?.sessionManager, questionnaireType: .post)
             }
             
             completionOperation.addDependency(operation)
