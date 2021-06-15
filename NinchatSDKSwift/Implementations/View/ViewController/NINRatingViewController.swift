@@ -90,7 +90,7 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.addTitleBar { [weak self] in
+        self.addTitleBar(parent: self.topViewContainer, adjustToSafeArea: true) { [weak self] in
             DispatchQueue.main.async {
                 self?.onSkipButtonTapped(sender: nil)
             }

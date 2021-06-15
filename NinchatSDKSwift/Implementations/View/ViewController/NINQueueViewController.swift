@@ -70,7 +70,7 @@ final class NINQueueViewController: UIViewController, ViewController, HasCustomL
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.addTitleBar { [weak self] in
+        self.addTitleBar(parent: self.topContainerView, adjustToSafeArea: false) { [weak self] in
             DispatchQueue.main.async {
                 self?.onCancelQueueTapped()
             }

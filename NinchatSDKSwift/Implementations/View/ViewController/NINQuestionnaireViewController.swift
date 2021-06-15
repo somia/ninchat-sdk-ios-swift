@@ -231,7 +231,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.addTitleBar { [weak self] in
+        self.addTitleBar(parent: nil, adjustToSafeArea: true) { [weak self] in
             self?.cancelQuestionnaire?()
         }
         self.overrideAssets()

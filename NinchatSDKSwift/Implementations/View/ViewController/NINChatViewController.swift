@@ -199,7 +199,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.addTitleBar { [weak self] in
+        self.addTitleBar(parent: self.scrollableViewContainer, adjustToSafeArea: true) { [weak self] in
             DispatchQueue.main.async {
                 self?.onCloseChatTapped()
             }
