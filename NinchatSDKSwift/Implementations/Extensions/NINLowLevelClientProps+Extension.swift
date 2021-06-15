@@ -566,14 +566,14 @@ extension NINLowLevelClientProps {
     func set<T>(value: T, forKey key: String) {
         if let value = value as? AnyCodable {
             self.set(value: value.value as! AnyHashable, forKey: key)
+        } else if let value = value as? Bool {
+            self.setBool(key, val: value)
         } else if let value = value as? Double, floor(value) == value {
             self.setInt(key, val: Int(value))
         } else if let value = value as? Double {
             self.setFloat(key, val: value)
         } else if let value = value as? Int {
             self.setInt(key, val: value)
-        } else if let value = value as? Bool {
-            self.setBool(key, val: value)
         } else if let value = value as? String {
             self.setString(key, val: value)
         } else if let value = value as? NINLowLevelClientProps {
