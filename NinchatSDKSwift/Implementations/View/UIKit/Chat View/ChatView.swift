@@ -23,7 +23,7 @@ protocol ChatViewProtocol: UIView {
     func didRemoveMessage(from index: Int)
 
     /** A compose message got updates from the server regarding its options. */
-    func didUpdateComposeAction(at index: Int, with action: ComposeUIAction)
+    func didUpdateComposeAction(_ id: String, with action: ComposeUIAction)
 
     /** Should update table content offset when keyboard state changes. */
     func updateContentSize(_ value: CGFloat)
@@ -60,7 +60,7 @@ final class ChatView: UIView, ChatViewProtocol {
 
     private let videoThumbnailManager = VideoThumbnailManager()
     private var cellConstraints: Array<CGSize> = []
-    private var composeCellActions: [Int:ComposeUIAction] = [:]
+    private var composeCellActions: [String:ComposeUIAction] = [:]
 
     /// To avoid a race condition in updating the chat view
     private let lock = NSLock()
@@ -116,11 +116,11 @@ final class ChatView: UIView, ChatViewProtocol {
         lock.unlock()
     }
 
-    func didUpdateComposeAction(at index: Int, with action: ComposeUIAction) {
+    func didUpdateComposeAction(_ id: String, with action: ComposeUIAction) {
         debugger("Got ui action update for compose for message at: \(index)")
 
-        guard self.composeCellActions[index] == nil else { return }
-        self.composeCellActions[index] = action
+        guard self.composeCellActions[id] == nil else { return }
+        self.composeCellActions[id] = action
     }
 
     func updateContentSize(_ value: CGFloat) {
@@ -191,9 +191,9 @@ extension ChatView {
 
         cell.populateChannel(message: message, configuration: self.sessionManager?.siteConfiguration, imageAssets: self.imageAssets, colorAssets: self.colorAssets, agentAvatarConfig: self.agentAvatarConfig, userAvatarConfig: self.userAvatarConfig, composeState: self.composeMessageStates?[message.messageID])
         if let cell = cell as? ChatChannelComposeCell {
-            if let action = self.composeCellActions[indexPath.row] {
+            if let action = self.composeCellActions[message.messageID] {
                 cell.composeMessageView.updateStates(with: action)
-                composeCellActions.removeValue(forKey: indexPath.row)
+                composeCellActions.removeValue(forKey: message.messageID)
             }
         }
         return cell
