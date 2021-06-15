@@ -398,7 +398,8 @@ extension NINChatSessionManagerImpl {
     }
 
     internal func applyCompose(action: ComposeUIAction, to message: ComposeMessage) {
-        self.onComposeActionUpdated?(self.chatMessages.firstIndex(where: { $0.messageID == message.messageID }) ?? -1, action)
+        /// use message id instead of index, as the index for the last message is always 0
+        self.onComposeActionUpdated?(message.messageID, action)
         self.composeActions.removeAll(where: { $0.target == action.target })
     }
     
