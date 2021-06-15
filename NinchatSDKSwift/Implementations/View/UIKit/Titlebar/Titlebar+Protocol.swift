@@ -62,6 +62,8 @@ extension HasTitleBar where Self:ViewController {
     }
 
     func overrideTitlebarAssets() {
+        titlebar?.backgroundColor = .white
+
         if let layer = self.sessionManager?.delegate?.override(layerAsset: .ninchatModalTop) {
             titlebar?.layer.insertSublayer(layer, at: 0)
         }

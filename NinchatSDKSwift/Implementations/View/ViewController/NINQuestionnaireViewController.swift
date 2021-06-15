@@ -147,7 +147,6 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
     @IBOutlet private(set) weak var titlebar: UIView? {
         didSet {
             titlebar?.isHidden = !hasTitlebar
-            titlebar?.height?.constant = (hasTitlebar) ? (titleHeight + 8.0) : 0
         }
     }
     var hasTitlebar: Bool {
@@ -267,6 +266,8 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
     }
 
     private func overrideAssets() {
+        overrideTitlebarAssets()
+
         if let backgroundImage = self.delegate?.override(imageAsset: .ninchatQuestionnaireBackground) {
             self.view.backgroundColor = UIColor(patternImage: backgroundImage)
         } else if let bundleImage = UIImage(named: "chat_background_pattern", in: .SDKBundle, compatibleWith: nil) {

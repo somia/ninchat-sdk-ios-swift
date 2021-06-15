@@ -67,7 +67,7 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
 
     @IBOutlet private(set) weak var titlebar: UIView? {
         didSet {
-            titlebar?.height?.constant = (hasTitlebar) ? (titleHeight + 8.0) : 45.0 /// space for rating top view
+            titlebar?.isHidden = !hasTitlebar
         }
     }
     var titlebarAvatar: String? {
@@ -121,7 +121,8 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
     
     func overrideAssets() {
         facesView.overrideAssets()
-        
+        overrideTitlebarAssets()
+
         if style == .conversation {
             topViewContainer.backgroundColor = .clear
             userTitle.text = self.sessionManager?.siteConfiguration.audienceQuestionnaireUserName ?? ""

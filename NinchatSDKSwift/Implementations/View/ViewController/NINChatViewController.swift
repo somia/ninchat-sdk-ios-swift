@@ -172,7 +172,6 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
         didSet {
             closeChatButton.isHidden = hasTitlebar
             titlebar?.isHidden = !hasTitlebar
-            titlebar?.height?.constant = (hasTitlebar) ? (titleHeight + 8.0) : 0
         }
     }
     var titlebarAvatar: String? {
