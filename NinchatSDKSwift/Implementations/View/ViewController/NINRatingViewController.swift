@@ -65,11 +65,7 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
 
     /// MARK: - HasTitleBar
 
-    @IBOutlet private(set) weak var titlebar: UIView? {
-        didSet {
-            titlebar?.isHidden = !hasTitlebar
-        }
-    }
+    @IBOutlet private(set) weak var titlebar: UIView?
     var titlebarAvatar: String? {
         /// - agentAvatar:true, show user_attrs.iconurl everywhere
         /// - agentAvatar:url, show that instead

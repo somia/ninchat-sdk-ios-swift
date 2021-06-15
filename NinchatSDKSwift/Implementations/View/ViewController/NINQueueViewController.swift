@@ -42,6 +42,8 @@ final class NINQueueViewController: UIViewController, ViewController, HasCustomL
     }
     @IBOutlet private(set) weak var cancelQueueButton: CloseButton! {
         didSet {
+            cancelQueueButton.isHidden = hasTitlebar
+
             let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
             cancelQueueButton.buttonTitle = closeTitle
             cancelQueueButton.overrideAssets(with: self.delegate)
@@ -55,13 +57,7 @@ final class NINQueueViewController: UIViewController, ViewController, HasCustomL
 
     // MARK: - HasTitleBar
 
-    @IBOutlet private(set) weak var titlebar: UIView? {
-        didSet {
-            cancelQueueButton.isHidden = hasTitlebar
-            titlebar?.isHidden = !hasTitlebar
-            titlebar?.height?.constant = (hasTitlebar) ? (titleHeight + 8.0) : 0
-        }
-    }
+    @IBOutlet private(set) weak var titlebar: UIView?
     private(set) var titlebarAvatar: String? = nil   /// show placeholder
     private(set) var titlebarName: String? = nil     /// show placeholder
     private(set) var titlebarJob: String? = nil      /// show placeholder

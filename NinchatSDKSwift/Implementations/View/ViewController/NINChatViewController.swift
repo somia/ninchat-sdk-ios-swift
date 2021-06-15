@@ -123,6 +123,8 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     }
     @IBOutlet private(set) weak var closeChatButton: CloseButton! {
         didSet {
+            closeChatButton.isHidden = hasTitlebar
+
             let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
             closeChatButton.buttonTitle = closeTitle
             closeChatButton.overrideAssets(with: self.delegate)
@@ -168,12 +170,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
 
     /// MARK: - HasTitleBar
 
-    @IBOutlet private(set) weak var titlebar: UIView? {
-        didSet {
-            closeChatButton.isHidden = hasTitlebar
-            titlebar?.isHidden = !hasTitlebar
-        }
-    }
+    @IBOutlet private(set) weak var titlebar: UIView?
     var titlebarAvatar: String? {
         /// - agentAvatar:true, show user_attrs.iconurl everywhere
         /// - agentAvatar:url, show that instead
