@@ -30,41 +30,44 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cVi-ux-Foo" userLabel="Top content view">
-                                <rect key="frame" x="0.0" y="70" width="414" height="236"/>
+                                <rect key="frame" x="0.0" y="70" width="414" height="243.5"/>
                                 <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_progress_whirl" translatesAutoresizingMaskIntoConstraints="NO" id="9Zh-Yi-kTD">
-                                        <rect key="frame" x="182" y="70" width="50" height="50"/>
-                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="50" id="VAj-yL-Tyk"/>
-                                            <constraint firstAttribute="width" constant="50" id="keJ-to-87A"/>
-                                        </constraints>
-                                    </imageView>
-                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="LqB-7o-Qb9">
-                                        <rect key="frame" x="83" y="150" width="248" height="56"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <string key="text">Joined audience queue {{name}},
-you are next.</string>
-                                        <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
-                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                        <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
-                                    </textView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="30" translatesAutoresizingMaskIntoConstraints="NO" id="7p5-JL-Lp6">
+                                        <rect key="frame" x="45" y="53.5" width="324" height="136.5"/>
+                                        <subviews>
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_progress_whirl" translatesAutoresizingMaskIntoConstraints="NO" id="9Zh-Yi-kTD">
+                                                <rect key="frame" x="137" y="0.0" width="50" height="50"/>
+                                                <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="50" id="VAj-yL-Tyk"/>
+                                                    <constraint firstAttribute="width" constant="50" id="keJ-to-87A"/>
+                                                </constraints>
+                                            </imageView>
+                                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="LqB-7o-Qb9">
+                                                <rect key="frame" x="47" y="80" width="230.5" height="56.5"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <string key="text">Joined audience queue {{name}},
+you are next. </string>
+                                                <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
+                                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
+                                            </textView>
+                                        </subviews>
+                                    </stackView>
                                 </subviews>
                                 <color key="backgroundColor" red="0.85098039215686272" green="0.8784313725490196" blue="0.90588235294117647" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="LqB-7o-Qb9" secondAttribute="bottom" constant="30" id="67v-dX-51B"/>
-                                    <constraint firstItem="LqB-7o-Qb9" firstAttribute="centerX" secondItem="cVi-ux-Foo" secondAttribute="centerX" id="CBS-tB-OBb"/>
-                                    <constraint firstItem="9Zh-Yi-kTD" firstAttribute="centerX" secondItem="cVi-ux-Foo" secondAttribute="centerX" id="RiM-Yf-1OV"/>
-                                    <constraint firstItem="LqB-7o-Qb9" firstAttribute="top" secondItem="9Zh-Yi-kTD" secondAttribute="bottom" constant="30" id="YF5-fy-jwz"/>
-                                    <constraint firstItem="LqB-7o-Qb9" firstAttribute="width" secondItem="cVi-ux-Foo" secondAttribute="width" multiplier="0.6" id="h4D-fD-E2z"/>
-                                    <constraint firstItem="9Zh-Yi-kTD" firstAttribute="top" secondItem="cVi-ux-Foo" secondAttribute="top" constant="70" id="j6c-40-Rbz"/>
+                                    <constraint firstAttribute="trailing" secondItem="7p5-JL-Lp6" secondAttribute="trailing" constant="45" id="L6L-R9-Cha"/>
+                                    <constraint firstItem="7p5-JL-Lp6" firstAttribute="leading" secondItem="cVi-ux-Foo" secondAttribute="leading" constant="45" id="Nug-7v-hcP"/>
+                                    <constraint firstItem="7p5-JL-Lp6" firstAttribute="centerX" secondItem="cVi-ux-Foo" secondAttribute="centerX" id="OOl-2h-dxo"/>
+                                    <constraint firstItem="7p5-JL-Lp6" firstAttribute="centerY" secondItem="cVi-ux-Foo" secondAttribute="centerY" id="aBb-LH-vTq"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dkT-tD-Ztq" userLabel="Bottom content view">
-                                <rect key="frame" x="0.0" y="306" width="414" height="590"/>
+                                <rect key="frame" x="0.0" y="313.5" width="414" height="582.5"/>
                                 <subviews>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed " textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="RGm-bx-l81">
-                                        <rect key="frame" x="20" y="50" width="374" height="36.5"/>
+                                        <rect key="frame" x="20" y="50" width="374" height="56.5"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="textColor" systemColor="labelColor"/>
                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
@@ -72,7 +75,7 @@ you are next.</string>
                                         <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
                                     </textView>
                                     <view contentMode="scaleToFill" placeholderIntrinsicWidth="135" placeholderIntrinsicHeight="45" translatesAutoresizingMaskIntoConstraints="NO" id="8zZ-5c-Lgm" customClass="CloseButton" customModule="NinchatSDKSwift">
-                                        <rect key="frame" x="139.5" y="126.5" width="135" height="45"/>
+                                        <rect key="frame" x="139.5" y="146.5" width="135" height="45"/>
                                         <color key="backgroundColor" red="1" green="0.0" blue="0.2431916516" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </view>
                                 </subviews>
@@ -89,9 +92,11 @@ you are next.</string>
                         <viewLayoutGuide key="safeArea" id="yzb-y7-ihz"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="dkT-tD-Ztq" firstAttribute="height" secondItem="Uao-Kk-UXV" secondAttribute="height" multiplier="0.65" priority="750" id="6Eu-qr-xOQ"/>
                             <constraint firstItem="dkT-tD-Ztq" firstAttribute="top" secondItem="cVi-ux-Foo" secondAttribute="bottom" id="9Hy-8X-Qf5"/>
                             <constraint firstItem="yzb-y7-ihz" firstAttribute="trailing" secondItem="dkT-tD-Ztq" secondAttribute="trailing" id="DfQ-9P-pYT"/>
                             <constraint firstItem="cVi-ux-Foo" firstAttribute="leading" secondItem="yzb-y7-ihz" secondAttribute="leading" id="X7w-6Q-z6Z"/>
+                            <constraint firstItem="cVi-ux-Foo" firstAttribute="top" secondItem="Uao-Kk-UXV" secondAttribute="top" id="Z2i-vU-7YN"/>
                             <constraint firstItem="cVi-ux-Foo" firstAttribute="trailing" secondItem="yzb-y7-ihz" secondAttribute="trailing" id="dR2-V7-RCJ"/>
                             <constraint firstItem="cN6-DU-R0A" firstAttribute="top" secondItem="Uao-Kk-UXV" secondAttribute="top" id="hkF-Mh-bO9"/>
                             <constraint firstItem="cN6-DU-R0A" firstAttribute="trailing" secondItem="yzb-y7-ihz" secondAttribute="trailing" id="ome-Fr-cQH"/>
@@ -100,6 +105,11 @@ you are next.</string>
                             <constraint firstItem="cVi-ux-Foo" firstAttribute="top" secondItem="cN6-DU-R0A" secondAttribute="bottom" id="x1k-jv-1rE"/>
                             <constraint firstItem="cN6-DU-R0A" firstAttribute="leading" secondItem="yzb-y7-ihz" secondAttribute="leading" id="xv2-e9-Et5"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="Z2i-vU-7YN"/>
+                            </mask>
+                        </variation>
                     </view>
                     <connections>
                         <outlet property="bottomContainerView" destination="dkT-tD-Ztq" id="UTq-PA-I72"/>
@@ -149,7 +159,7 @@ you are next.</string>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="trailing" secondItem="g76-kj-vdH" secondAttribute="trailing" id="3e9-7J-cR2"/>
-                                            <constraint firstAttribute="height" relation="greaterThanOrEqual" priority="750" constant="290" id="FdO-24-78A"/>
+                                            <constraint firstAttribute="height" relation="greaterThanOrEqual" priority="750" constant="450" id="FdO-24-78A"/>
                                             <constraint firstItem="g76-kj-vdH" firstAttribute="leading" secondItem="brw-f0-DOL" secondAttribute="leading" id="S1k-po-8eP"/>
                                             <constraint firstAttribute="bottom" secondItem="g76-kj-vdH" secondAttribute="bottom" id="q94-aE-8dd"/>
                                             <constraint firstItem="g76-kj-vdH" firstAttribute="top" secondItem="brw-f0-DOL" secondAttribute="top" id="qQE-hG-NOO"/>
@@ -294,27 +304,27 @@ you are next.</string>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9Uk-ep-CyI">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="70"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="70" id="Baz-OF-vut"/>
+                                    <constraint firstAttribute="height" constant="44" id="Baz-OF-vut"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L5U-F0-l9Y" userLabel="Top part container view">
-                                <rect key="frame" x="0.0" y="70" width="414" height="448"/>
+                                <rect key="frame" x="0.0" y="44" width="414" height="448"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="qj1-1U-Y4U">
                                         <rect key="frame" x="16" y="16" width="382" height="424"/>
                                         <subviews>
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="How was our customer service? Please leave a rating by pressing the buttons below, or hit Skip to bypass this step." textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Ikj-NF-Jwm">
-                                                <rect key="frame" x="0.0" y="0.0" width="382" height="76.5"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="382" height="191"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                 <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
                                             </textView>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B6F-ML-XSh" customClass="FacesView" customModule="NinchatSDKSwift">
-                                                <rect key="frame" x="0.0" y="92.5" width="382" height="331.5"/>
+                                                <rect key="frame" x="0.0" y="207" width="382" height="217"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </view>
                                         </subviews>

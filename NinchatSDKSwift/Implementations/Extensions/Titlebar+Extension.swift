@@ -9,7 +9,10 @@ import UIKit
 /// Titlebar implementation using UIKit
 
 extension HasTitleBar where Self:ViewController {
-    func addTitleBar(onCloseAction: @escaping () -> Void) {
+    func addTitleBar(parent: UIView?, adjustToSafeArea: Bool, onCloseAction: @escaping () -> Void) {
+        defer {
+            self.adjustTitlebar(topView: parent, toSafeArea: adjustToSafeArea)
+        }
         guard hasTitlebar else {
             return
         }

@@ -132,10 +132,15 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
             self.view.addSubview(contentView)
 
             contentView
-                    .fix(top: (0.0, self.titlebar!), isRelative: true)
                     .fix(bottom: (0.0, self.view))
                     .fix(leading: (0, self.view), trailing: (0, self.view))
                     .backgroundColor = .clear
+
+            if hasTitlebar {
+                contentView.fix(top: (0.0, self.titlebar!), isRelative: true)
+            } else {
+                contentView.fix(top: (0, self.view), toSafeArea: true)
+            }
         }
     }
     private lazy var loadingIndicator: UIActivityIndicatorView = {
@@ -144,12 +149,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
 
     /// MARK: - HasTitleBar
 
-    @IBOutlet private(set) weak var titlebar: UIView? {
-        didSet {
-            titlebar?.isHidden = !hasTitlebar
-            titlebar?.height?.constant = (hasTitlebar) ? (titleHeight + 8.0) : 0
-        }
-    }
+    @IBOutlet private(set) weak var titlebar: UIView?
     var hasTitlebar: Bool {
         /// questionnaire view has more logics for showing/hiding titlebar
         guard let session = self.sessionManager else {
@@ -232,7 +232,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.addTitleBar { [weak self] in
+        self.addTitleBar(parent: nil, adjustToSafeArea: true) { [weak self] in
             self?.cancelQuestionnaire?()
         }
         self.overrideAssets()
@@ -267,6 +267,8 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
     }
 
     private func overrideAssets() {
+        overrideTitlebarAssets()
+
         if let backgroundImage = self.delegate?.override(imageAsset: .ninchatQuestionnaireBackground) {
             self.view.backgroundColor = UIColor(patternImage: backgroundImage)
         } else if let bundleImage = UIImage(named: "chat_background_pattern", in: .SDKBundle, compatibleWith: nil) {

@@ -65,11 +65,7 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
 
     /// MARK: - HasTitleBar
 
-    @IBOutlet private(set) weak var titlebar: UIView? {
-        didSet {
-            titlebar?.height?.constant = (hasTitlebar) ? (titleHeight + 8.0) : 45.0 /// space for rating top view
-        }
-    }
+    @IBOutlet private(set) weak var titlebar: UIView?
     var titlebarAvatar: String? {
         /// - agentAvatar:true, show user_attrs.iconurl everywhere
         /// - agentAvatar:url, show that instead
@@ -90,7 +86,7 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.addTitleBar { [weak self] in
+        self.addTitleBar(parent: self.topViewContainer, adjustToSafeArea: true) { [weak self] in
             DispatchQueue.main.async {
                 self?.onSkipButtonTapped(sender: nil)
             }
@@ -121,7 +117,8 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
     
     func overrideAssets() {
         facesView.overrideAssets()
-        
+        overrideTitlebarAssets()
+
         if style == .conversation {
             topViewContainer.backgroundColor = .clear
             userTitle.text = self.sessionManager?.siteConfiguration.audienceQuestionnaireUserName ?? ""

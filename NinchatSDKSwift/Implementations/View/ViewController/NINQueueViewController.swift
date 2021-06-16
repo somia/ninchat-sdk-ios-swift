@@ -31,7 +31,7 @@ final class NINQueueViewController: UIViewController, ViewController, HasCustomL
             if let textTopColor = self.delegate?.override(colorAsset: .ninchatColorTextTop) {
                 self.queueInfoTextView.textColor = textTopColor
             }
-            queueInfoTextView.text = nil
+            queueInfoTextView.isHidden = true
             queueInfoTextView.delegate = self
         }
     }
@@ -42,6 +42,8 @@ final class NINQueueViewController: UIViewController, ViewController, HasCustomL
     }
     @IBOutlet private(set) weak var cancelQueueButton: CloseButton! {
         didSet {
+            cancelQueueButton.isHidden = hasTitlebar
+
             let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
             cancelQueueButton.buttonTitle = closeTitle
             cancelQueueButton.overrideAssets(with: self.delegate)
@@ -55,13 +57,7 @@ final class NINQueueViewController: UIViewController, ViewController, HasCustomL
 
     // MARK: - HasTitleBar
 
-    @IBOutlet private(set) weak var titlebar: UIView? {
-        didSet {
-            cancelQueueButton.isHidden = hasTitlebar
-            titlebar?.isHidden = !hasTitlebar
-            titlebar?.height?.constant = (hasTitlebar) ? (titleHeight + 8.0) : 0
-        }
-    }
+    @IBOutlet private(set) weak var titlebar: UIView?
     private(set) var titlebarAvatar: String? = nil   /// show placeholder
     private(set) var titlebarName: String? = nil     /// show placeholder
     private(set) var titlebarJob: String? = nil      /// show placeholder
@@ -70,7 +66,7 @@ final class NINQueueViewController: UIViewController, ViewController, HasCustomL
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.addTitleBar { [weak self] in
+        self.addTitleBar(parent: self.topContainerView, adjustToSafeArea: false) { [weak self] in
             DispatchQueue.main.async {
                 self?.onCancelQueueTapped()
             }
@@ -129,12 +125,14 @@ final class NINQueueViewController: UIViewController, ViewController, HasCustomL
             guard let queue = target else { return }
             self.viewModel.resumeMode = true
             self.viewModel.connect(queue: queue)
+            self.queueInfoTextView.isHidden = false
             self.queueInfoTextView.setAttributed(text: self.viewModel.queueTextInfo(queue: queue, 1) ?? "", font: .ninchat)
         case .toChannel:
             self.viewModel.resumeMode = true
             guard let describedQueue = self.sessionManager?.describedQueue else {
                 debugger("error in getting target queue")
                 self.spinnerImageView.isHidden = true
+                self.queueInfoTextView.isHidden = false
                 self.queueInfoTextView.setAttributed(text: "Resume error".localized, font: .ninchat)
                 return
             }
@@ -146,6 +144,7 @@ final class NINQueueViewController: UIViewController, ViewController, HasCustomL
         default:
             self.viewModel.resumeMode = false
             self.viewModel.connect(queue: self.queue)
+            self.queueInfoTextView.isHidden = false
             self.queueInfoTextView.setAttributed(text: self.viewModel.queueTextInfo(queue: queue, 1) ?? "", font: .ninchat)
         }
     }
@@ -155,7 +154,7 @@ final class NINQueueViewController: UIViewController, ViewController, HasCustomL
         if let queue = queue, queue.isClosed, queue.position == 0 {
             /// Currently, we do not have a key for closed-queue situations, leave it empty
             self.spinnerImageView.isHidden = true
-            self.queueInfoTextView.setAttributed(text: "", font: .ninchat)
+            self.queueInfoTextView.isHidden = true
             self.motdTextView.setAttributed(text: self.sessionManager?.siteConfiguration.motd ?? "", font: .ninchat)
             return true
         }

@@ -11,7 +11,7 @@ protocol HasDefaultAvatar {
 }
 
 protocol HasTitleBar {
-    func addTitleBar(onCloseAction: @escaping () -> Void)
+    func addTitleBar(parent: UIView?, adjustToSafeArea: Bool, onCloseAction: @escaping () -> Void)
     func overrideTitlebarAssets()
 
     var hasTitlebar: Bool { get }
@@ -24,7 +24,7 @@ protocol HasTitleBar {
 }
 
 extension HasTitleBar {
-    func addTitleBar(onCloseAction: @escaping () -> Void) {
+    func addTitleBar(parent: UIView?, adjustToSafeArea: Bool, onCloseAction: @escaping () -> Void) {
         fatalError("titlebar is not implemented")
     }
 }
@@ -62,6 +62,8 @@ extension HasTitleBar where Self:ViewController {
     }
 
     func overrideTitlebarAssets() {
+        titlebar?.backgroundColor = .white
+
         if let layer = self.sessionManager?.delegate?.override(layerAsset: .ninchatModalTop) {
             titlebar?.layer.insertSublayer(layer, at: 0)
         }
@@ -87,5 +89,17 @@ extension HasTitleBar where Self:ViewController {
             .fix(bottom: (0, titlebar))
             .fix(leading: (0, titlebar), trailing: (0, titlebar))
             .fix(height: 1.0)
+    }
+
+    internal func adjustTitlebar(topView: UIView?, toSafeArea: Bool) {
+        guard !self.hasTitlebar else { return }
+        /// remove titlebar from parent
+        titlebar?.removeFromSuperview()
+
+
+        guard let topView = topView else { return }
+        /// adjust top view when titlebar is hidden
+        topView.fix(top: (0, self.view), toSafeArea: toSafeArea)
+        topView.height?.constant += titleHeight
     }
 }
