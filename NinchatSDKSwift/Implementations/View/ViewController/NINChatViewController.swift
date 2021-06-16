@@ -223,8 +223,8 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        if let titlebar = self.titlebar {
-            applyLayerOverride(view: titlebar)
+        if let titlebarContainer = self.titlebarContainer {
+            applyLayerOverride(view: titlebarContainer)
         }
     }
 

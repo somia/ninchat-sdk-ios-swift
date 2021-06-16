@@ -93,8 +93,8 @@ final class NINQueueViewController: UIViewController, ViewController, HasCustomL
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        if let titlebar = self.titlebar {
-            applyLayerOverride(view: titlebar)
+        if let titlebarContainer = self.titlebarContainer {
+            applyLayerOverride(view: titlebarContainer)
         }
         applyLayerOverride(view: self.topContainerView)
         applyLayerOverride(view: self.bottomContainerView)

@@ -16,7 +16,7 @@ protocol QuestionnaireConversationController {
     func updateConversationContentView(_ interval: TimeInterval)
 }
 
-final class NINQuestionnaireViewController: UIViewController, ViewController, KeyboardHandler, HasTitleBar {
+final class NINQuestionnaireViewController: UIViewController, ViewController, KeyboardHandler, HasCustomLayer, HasTitleBar {
 
     private let operationQueue = OperationQueue.main
     private let dispatchQueue = DispatchQueue.main
@@ -251,6 +251,14 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         self.deallocate()
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        if let titlebarContainer = self.titlebarContainer {
+            applyLayerOverride(view: titlebarContainer)
+        }
     }
 
     deinit {

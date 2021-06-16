@@ -110,6 +110,9 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
+        if let titlebarContainer = self.titlebarContainer {
+            applyLayerOverride(view: titlebarContainer)
+        }
         applyLayerOverride(view: topViewContainer)
         applyLayerOverride(view: view)
     }
