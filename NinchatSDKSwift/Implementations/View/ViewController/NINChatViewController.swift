@@ -171,6 +171,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     /// MARK: - HasTitleBar
 
     @IBOutlet private(set) weak var titlebar: UIView?
+    @IBOutlet private(set) weak var titlebarContainer: UIView?
     var titlebarAvatar: String? {
         /// - agentAvatar:true, show user_attrs.iconurl everywhere
         /// - agentAvatar:url, show that instead

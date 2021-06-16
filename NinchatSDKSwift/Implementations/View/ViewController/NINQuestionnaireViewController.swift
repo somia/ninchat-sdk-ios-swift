@@ -150,6 +150,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
     /// MARK: - HasTitleBar
 
     @IBOutlet private(set) weak var titlebar: UIView?
+    @IBOutlet private(set) weak var titlebarContainer: UIView?
     var hasTitlebar: Bool {
         /// questionnaire view has more logics for showing/hiding titlebar
         guard let session = self.sessionManager else {

@@ -15,8 +15,8 @@ protocol HasTitleBar {
     func overrideTitlebarAssets()
 
     var hasTitlebar: Bool { get }
-    var titleHeight: CGFloat { get }
     var titlebar: UIView? { get }
+    var titlebarContainer: UIView? { get }
 
     var titlebarAvatar: String? { get }
     var titlebarName: String? { get }
@@ -41,18 +41,8 @@ extension HasTitleBar where Self:ViewController {
         return true
     }
 
-    var titleHeight: CGFloat {
-        guard let win = UIApplication.shared.windows.first(where: { $0.isKeyWindow })  else {
-            return 70
-        }
-        if UIScreen.main.traitCollection.userInterfaceIdiom == .pad {
-            /// Don't apply safe area insets for iPad devices
-            return 70
-        }
-        if #available(iOS 11.0, *) {
-            return 55 + win.safeAreaInsets.top
-        }
-        return 70
+    internal var titleHeight: CGFloat {
+        60.0
     }
 
     internal var border: UIView {
@@ -62,10 +52,11 @@ extension HasTitleBar where Self:ViewController {
     }
 
     func overrideTitlebarAssets() {
-        titlebar?.backgroundColor = .white
+        titlebar?.backgroundColor = .clear
+        titlebarContainer?.backgroundColor = .white
 
         if let layer = self.sessionManager?.delegate?.override(layerAsset: .ninchatModalTop) {
-            titlebar?.layer.insertSublayer(layer, at: 0)
+            titlebarContainer?.layer.insertSublayer(layer, at: 0)
         }
     }
 
@@ -73,29 +64,34 @@ extension HasTitleBar where Self:ViewController {
         guard let titlebar = self.titlebar else {
             fatalError("titlebar outlet is not set")
         }
-        let border = self.border
+        guard self.titlebarContainer != nil else {
+            fatalError("titlebar container outlet is not set")
+        }
+        titlebar.height?.constant = titleHeight
 
-        titlebar.addSubview(border)
         titlebar.addSubview(bar)
-
         bar
-            .fix(top: (0, titlebar), toSafeArea: true)
-            .fix(bottom: (0, titlebar))
+            .fix(top: (0, titlebar))
             .fix(leading: (0, titlebar), trailing: (0, titlebar))
+            .fix(height: titleHeight)
         bar.leading?.priority = .required
         bar.trailing?.priority = .required
 
+        let border = self.border
+        titlebar.addSubview(border)
         border
             .fix(bottom: (0, titlebar))
             .fix(leading: (0, titlebar), trailing: (0, titlebar))
             .fix(height: 1.0)
+
+
     }
 
     internal func adjustTitlebar(topView: UIView?, toSafeArea: Bool) {
         guard !self.hasTitlebar else { return }
+
         /// remove titlebar from parent
         titlebar?.removeFromSuperview()
-
 
         guard let topView = topView else { return }
         /// adjust top view when titlebar is hidden
