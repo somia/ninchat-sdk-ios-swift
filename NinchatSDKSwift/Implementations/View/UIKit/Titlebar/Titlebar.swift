@@ -20,7 +20,11 @@ final class Titlebar: UIView {
             agentAvatarContainer.backgroundColor = .tPlaceholderGray
         }
     }
-    @IBOutlet private(set) weak var agentAvatarImageView: UIImageView!
+    @IBOutlet private(set) weak var agentAvatarImageView: UIImageView! {
+        didSet {
+            agentAvatarImageView.contentMode = .scaleAspectFill
+        }
+    }
     @IBOutlet private(set) weak var agentInfoStackView: UIStackView!
     @IBOutlet private(set) weak var agentInfoPlaceholder: UIView! {
         didSet {
