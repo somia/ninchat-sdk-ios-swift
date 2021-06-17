@@ -58,6 +58,7 @@ final class NINQueueViewController: UIViewController, ViewController, HasCustomL
     // MARK: - HasTitleBar
 
     @IBOutlet private(set) weak var titlebar: UIView?
+    @IBOutlet private(set) weak var titlebarContainer: UIView?
     private(set) var titlebarAvatar: String? = nil   /// show placeholder
     private(set) var titlebarName: String? = nil     /// show placeholder
     private(set) var titlebarJob: String? = nil      /// show placeholder
@@ -92,8 +93,8 @@ final class NINQueueViewController: UIViewController, ViewController, HasCustomL
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        if let titlebar = self.titlebar {
-            applyLayerOverride(view: titlebar)
+        if let titlebarContainer = self.titlebarContainer {
+            applyLayerOverride(view: titlebarContainer)
         }
         applyLayerOverride(view: self.topContainerView)
         applyLayerOverride(view: self.bottomContainerView)

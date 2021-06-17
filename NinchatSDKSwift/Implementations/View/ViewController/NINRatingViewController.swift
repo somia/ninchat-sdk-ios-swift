@@ -66,6 +66,7 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
     /// MARK: - HasTitleBar
 
     @IBOutlet private(set) weak var titlebar: UIView?
+    @IBOutlet private(set) weak var titlebarContainer: UIView?
     var titlebarAvatar: String? {
         /// - agentAvatar:true, show user_attrs.iconurl everywhere
         /// - agentAvatar:url, show that instead
@@ -109,6 +110,9 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
+        if let titlebarContainer = self.titlebarContainer {
+            applyLayerOverride(view: titlebarContainer)
+        }
         applyLayerOverride(view: topViewContainer)
         applyLayerOverride(view: view)
     }
