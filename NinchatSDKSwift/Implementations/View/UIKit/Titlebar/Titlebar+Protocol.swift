@@ -64,7 +64,7 @@ extension HasTitleBar where Self:ViewController {
         guard let titlebar = self.titlebar else {
             fatalError("titlebar outlet is not set")
         }
-        guard self.titlebarContainer != nil else {
+        guard let titlebarContainer = self.titlebarContainer else {
             fatalError("titlebar container outlet is not set")
         }
         titlebar.height?.constant = titleHeight
@@ -81,7 +81,7 @@ extension HasTitleBar where Self:ViewController {
         titlebar.addSubview(border)
         border
             .fix(bottom: (0, titlebar))
-            .fix(leading: (0, titlebar), trailing: (0, titlebar))
+            .fix(leading: (0, titlebarContainer), trailing: (0, titlebarContainer))
             .fix(height: 1.0)
 
 
