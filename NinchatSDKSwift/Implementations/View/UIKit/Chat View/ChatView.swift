@@ -23,7 +23,7 @@ protocol ChatViewProtocol: UIView {
     func didRemoveMessage(from index: Int)
 
     /** A compose message got updates from the server regarding its options. */
-    func didUpdateComposeAction(at index: Int, with action: ComposeUIAction)
+    func didUpdateComposeAction(_ id: String, with action: ComposeUIAction)
 
     /** Should update table content offset when keyboard state changes. */
     func updateContentSize(_ value: CGFloat)
@@ -60,7 +60,7 @@ final class ChatView: UIView, ChatViewProtocol {
 
     private let videoThumbnailManager = VideoThumbnailManager()
     private var cellConstraints: Array<CGSize> = []
-    private var composeCellActions: [Int:ComposeUIAction] = [:]
+    private var composeCellActions: [String:ComposeUIAction] = [:]
 
     /// To avoid a race condition in updating the chat view
     private let lock = NSLock()
@@ -95,8 +95,8 @@ final class ChatView: UIView, ChatViewProtocol {
             self.imageAssets = self.sessionManager?.delegate?.imageAssetsDictionary
             self.colorAssets = self.sessionManager?.delegate?.colorAssetsDictionary
 
-            self.agentAvatarConfig = AvatarConfig(avatar: sessionManager?.siteConfiguration.agentAvatar, name: sessionManager?.siteConfiguration.agentName)
-            self.userAvatarConfig = AvatarConfig(avatar: sessionManager?.siteConfiguration.userAvatar, name: sessionManager?.siteConfiguration.userName)
+            self.agentAvatarConfig = AvatarConfig(forAgent: sessionManager)
+            self.userAvatarConfig = AvatarConfig(forUser: sessionManager)
         }
     }
     weak var dataSource: ChatViewDataSource?
@@ -116,11 +116,11 @@ final class ChatView: UIView, ChatViewProtocol {
         lock.unlock()
     }
 
-    func didUpdateComposeAction(at index: Int, with action: ComposeUIAction) {
+    func didUpdateComposeAction(_ id: String, with action: ComposeUIAction) {
         debugger("Got ui action update for compose for message at: \(index)")
 
-        guard self.composeCellActions[index] == nil else { return }
-        self.composeCellActions[index] = action
+        guard self.composeCellActions[id] == nil else { return }
+        self.composeCellActions[id] = action
     }
 
     func updateContentSize(_ value: CGFloat) {
@@ -185,15 +185,15 @@ extension ChatView {
             self?.composeMessageStates?[message.messageID] = composeState
         }
         cell.onImageTapped = { [weak self] attachment, image in
-            guard let weakSelf = self else { return }
-            weakSelf.delegate?.didSelect(image: image, for: attachment, weakSelf)
+            guard let `self` = self else { return }
+            self.delegate?.didSelect(image: image, for: attachment, self)
         }
 
         cell.populateChannel(message: message, configuration: self.sessionManager?.siteConfiguration, imageAssets: self.imageAssets, colorAssets: self.colorAssets, agentAvatarConfig: self.agentAvatarConfig, userAvatarConfig: self.userAvatarConfig, composeState: self.composeMessageStates?[message.messageID])
         if let cell = cell as? ChatChannelComposeCell {
-            if let action = self.composeCellActions[indexPath.row] {
+            if let action = self.composeCellActions[message.messageID] {
                 cell.composeMessageView.updateStates(with: action)
-                composeCellActions.removeValue(forKey: indexPath.row)
+                composeCellActions.removeValue(forKey: message.messageID)
             }
         }
         return cell
@@ -209,8 +209,8 @@ extension ChatView {
         let cell: ChatMetaCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
         cell.delegate = self.sessionManager?.delegate
         cell.onCloseChatTapped = { [weak self] _ in
-            guard let weakSelf = self else { return }
-            weakSelf.delegate?.didRequestToClose(weakSelf)
+            guard let `self` = self else { return }
+            self.delegate?.didRequestToClose(self)
         }
 
         cell.populate(message: message, colorAssets: self.colorAssets)

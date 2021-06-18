@@ -136,7 +136,7 @@ protocol NINChatSessionManagerDelegate: AnyObject {
     var onChannelClosed: (() -> Void)? { get set }
     var onRTCSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
     var onRTCClientSignal: ((MessageType, ChannelUser?, _ signal: RTCSignal?) -> Void)? { get set }
-    var onComposeActionUpdated: ((_ index: Int, _ action: ComposeUIAction) -> Void)? { get set }
+    var onComposeActionUpdated: ((_ id: String, _ action: ComposeUIAction) -> Void)? { get set }
 
     func bindQueueUpdate<T: QueueUpdateCapture>(closure: @escaping (Events, Queue, Error?) -> Void, to receiver: T)
     func unbindQueueUpdateClosure<T: QueueUpdateCapture>(from receiver: T)
@@ -165,6 +165,9 @@ protocol NINChatSessionManager: NINChatSessionConnectionManager, NINChatSessionM
     *   will be appended to some predefined values such as SDK version, device OS, and device model.
     */
     var appDetails: String? { get set }
+
+    /** Agent's attributes */
+    var agent: ChannelUser? { get set }
     
     /** Default initializer for NinchatSessionManager. */
     init(session: NINChatSessionInternalDelegate?, serverAddress: String, audienceMetadata: NINLowLevelClientProps?, configuration: NINSiteConfiguration?)

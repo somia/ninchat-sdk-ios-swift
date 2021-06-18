@@ -297,6 +297,8 @@ protocol NINLowLevelUserProps {
     var displayName: NINResult<String> { get }
     var realName: NINResult<String> { get }
     var isGuest: NINResult<Bool> { get }
+    var info: NINResult<NINLowLevelClientProps> { get }
+    var jobTitle: NINResult<String> { get }
     var channels: NINResult<NINLowLevelClientProps> { get }
 
     var userID: NINResult<String> { set get }
@@ -331,6 +333,21 @@ extension NINLowLevelClientProps: NINLowLevelUserProps {
     var userID: NINResult<String> {
         get { self.get(forKey: "user_id") }
         set { self.set(value: newValue.value, forKey: "user_id") }
+    }
+
+    var jobTitle: NINResult<String> {
+        get {
+            switch self.info {
+            case .success(let attr):
+                return attr.get(forKey: "job_title")
+            case .failure(let error):
+                return .failure(error)
+            }
+        }
+    }
+
+    var info: NINResult<NINLowLevelClientProps> {
+        get { self.get(forKey: "info") }
     }
 
     var userAttributes: NINResult<NINLowLevelClientProps> {
@@ -549,14 +566,14 @@ extension NINLowLevelClientProps {
     func set<T>(value: T, forKey key: String) {
         if let value = value as? AnyCodable {
             self.set(value: value.value as! AnyHashable, forKey: key)
+        } else if let value = value as? Bool {
+            self.setBool(key, val: value)
         } else if let value = value as? Double, floor(value) == value {
             self.setInt(key, val: Int(value))
         } else if let value = value as? Double {
             self.setFloat(key, val: value)
         } else if let value = value as? Int {
             self.setInt(key, val: value)
-        } else if let value = value as? Bool {
-            self.setBool(key, val: value)
         } else if let value = value as? String {
             self.setString(key, val: value)
         } else if let value = value as? NINLowLevelClientProps {

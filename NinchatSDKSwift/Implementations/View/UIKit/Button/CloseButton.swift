@@ -7,7 +7,7 @@
 import UIKit
 
 protocol CloseButtonProtocol {
-    var closure: ((Button) -> Void)? { get set }
+    var closure: ((NINButton) -> Void)? { get set }
     var buttonTitle: String! { get set }
     
     func overrideAssets(with session: NINChatSessionInternalDelegate?)
@@ -17,8 +17,8 @@ final class CloseButton: UIView, HasCustomLayer, CloseButtonProtocol {
     
     // MARK: - Outlets
     
-    private(set) lazy var theButton: Button! = {
-        let view = Button(frame: .zero)
+    private(set) lazy var theButton: NINButton! = {
+        let view = NINButton(frame: .zero)
         view.backgroundColor = .clear
         view.setTitleColor(.defaultBackgroundButton, for: .normal)
         view.titleEdgeInsets = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0.0, right: 24.0)
@@ -36,12 +36,12 @@ final class CloseButton: UIView, HasCustomLayer, CloseButtonProtocol {
     
     // MARK: - CloseButtonProtocol
     
-    var closure: ((Button) -> Void)? {
+    var closure: ((NINButton) -> Void)? {
         didSet {
             self.theButton.closure = closure
         }
     }
-    var buttonTitle: String! {
+    var buttonTitle: String! = "" {
         didSet {
             self.theButton.setTitle(buttonTitle, for: .normal)
             self.theButton.sizeToFit()

@@ -56,7 +56,7 @@ class QuestionnaireCell: UITableViewCell {
     }
 
     private func setupAvatar(_ userAvatar: UIImageView) {
-        let avatar = AvatarConfig(session: self.sessionManager)
+        let avatar = AvatarConfig(forQuestionnaire: self.sessionManager)
 
         userAvatar.isHidden = !avatar.show
         leftAvatarContainerView.width?.constant = (userAvatar.isHidden) ? 0 : 35

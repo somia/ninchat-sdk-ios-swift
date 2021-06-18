@@ -6,8 +6,8 @@
 
 import UIKit
 
-final class NINQueueViewController: UIViewController, HasCustomLayer, ViewController {
-    
+final class NINQueueViewController: UIViewController, ViewController, HasCustomLayer, HasTitleBar {
+
     // MARK: - Injected
 
     var viewModel: NINQueueViewModel!
@@ -31,7 +31,7 @@ final class NINQueueViewController: UIViewController, HasCustomLayer, ViewContro
             if let textTopColor = self.delegate?.override(colorAsset: .ninchatColorTextTop) {
                 self.queueInfoTextView.textColor = textTopColor
             }
-            queueInfoTextView.text = nil
+            queueInfoTextView.isHidden = true
             queueInfoTextView.delegate = self
         }
     }
@@ -40,23 +40,38 @@ final class NINQueueViewController: UIViewController, HasCustomLayer, ViewContro
             motdTextView.delegate = self
         }
     }
-    @IBOutlet private(set) weak var closeChatButton: CloseButton! {
+    @IBOutlet private(set) weak var cancelQueueButton: CloseButton! {
         didSet {
+            cancelQueueButton.isHidden = hasTitlebar
+
             let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
-            closeChatButton.buttonTitle = closeTitle
-            closeChatButton.overrideAssets(with: self.delegate)
-            closeChatButton.closure = { [weak self] button in
-                try? self?.sessionManager?.closeChat {
-                    self?.sessionManager?.deallocateSession()
+            cancelQueueButton.buttonTitle = closeTitle
+            cancelQueueButton.overrideAssets(with: self.delegate)
+            cancelQueueButton.closure = { [weak self] _ in
+                DispatchQueue.main.async {
+                    self?.onCancelQueueTapped()
                 }
             }
         }
     }
-    
+
+    // MARK: - HasTitleBar
+
+    @IBOutlet private(set) weak var titlebar: UIView?
+    @IBOutlet private(set) weak var titlebarContainer: UIView?
+    private(set) var titlebarAvatar: String? = nil   /// show placeholder
+    private(set) var titlebarName: String? = nil     /// show placeholder
+    private(set) var titlebarJob: String? = nil      /// show placeholder
+
     // MARK: - UIViewController
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.addTitleBar(parent: self.topContainerView, adjustToSafeArea: false) { [weak self] in
+            DispatchQueue.main.async {
+                self?.onCancelQueueTapped()
+            }
+        }
         self.overrideAssets()
 
         NotificationCenter.default.addObserver(self, selector: #selector(spin(notification:)), name: UIApplication.willEnterForegroundNotification, object: nil)
@@ -66,7 +81,7 @@ final class NINQueueViewController: UIViewController, HasCustomLayer, ViewContro
         /// instead, try to register audience if it is set in the config
         /// `https://github.com/somia/mobile/issues/337`
         if self.setupClosedQueue() {
-            if let audienceRegister = self.sessionManager?.siteConfiguration.audienceRegisteredText, !audienceRegister.isEmpty {
+            if let audienceRegister = self.sessionManager?.siteConfiguration.audienceRegisteredClosedText, !audienceRegister.isEmpty {
                 self.setupViewModel(.registerAudience)
             }
             return
@@ -78,6 +93,9 @@ final class NINQueueViewController: UIViewController, HasCustomLayer, ViewContro
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
+        if let titlebarContainer = self.titlebarContainer {
+            applyLayerOverride(view: titlebarContainer)
+        }
         applyLayerOverride(view: self.topContainerView)
         applyLayerOverride(view: self.bottomContainerView)
     }
@@ -108,12 +126,14 @@ final class NINQueueViewController: UIViewController, HasCustomLayer, ViewContro
             guard let queue = target else { return }
             self.viewModel.resumeMode = true
             self.viewModel.connect(queue: queue)
+            self.queueInfoTextView.isHidden = false
             self.queueInfoTextView.setAttributed(text: self.viewModel.queueTextInfo(queue: queue, 1) ?? "", font: .ninchat)
         case .toChannel:
             self.viewModel.resumeMode = true
             guard let describedQueue = self.sessionManager?.describedQueue else {
                 debugger("error in getting target queue")
                 self.spinnerImageView.isHidden = true
+                self.queueInfoTextView.isHidden = false
                 self.queueInfoTextView.setAttributed(text: "Resume error".localized, font: .ninchat)
                 return
             }
@@ -125,6 +145,7 @@ final class NINQueueViewController: UIViewController, HasCustomLayer, ViewContro
         default:
             self.viewModel.resumeMode = false
             self.viewModel.connect(queue: self.queue)
+            self.queueInfoTextView.isHidden = false
             self.queueInfoTextView.setAttributed(text: self.viewModel.queueTextInfo(queue: queue, 1) ?? "", font: .ninchat)
         }
     }
@@ -132,9 +153,9 @@ final class NINQueueViewController: UIViewController, HasCustomLayer, ViewContro
     private func setupClosedQueue() -> Bool {
         /// `If customer resumes to a session and is already in queue, then show queueing view even if queue is closed`
         if let queue = queue, queue.isClosed, queue.position == 0 {
-            /// Currently, we do not have a key for closed-queue situations, leave it empty
             self.spinnerImageView.isHidden = true
-            self.queueInfoTextView.setAttributed(text: "", font: .ninchat)
+            self.queueInfoTextView.isHidden = false
+            self.queueInfoTextView.setAttributed(text: self.sessionManager?.siteConfiguration.audienceRegisteredClosedText ?? "", font: .ninchat)
             self.motdTextView.setAttributed(text: self.sessionManager?.siteConfiguration.motd ?? "", font: .ninchat)
             return true
         }
@@ -163,11 +184,13 @@ extension NINQueueViewController {
     }
 
     private func overrideAssets() {
-        closeChatButton.overrideAssets(with: self.delegate)
+        overrideTitlebarAssets()
+        cancelQueueButton.overrideAssets(with: self.delegate)
+
         if let spinnerImage = self.delegate?.override(imageAsset: .ninchatIconLoader) {
             self.spinnerImageView.image = spinnerImage
         }
-        
+
         if let layer = self.delegate?.override(layerAsset: .ninchatBackgroundTop) {
             topContainerView.layer.insertSublayer(layer, at: 0)
         }
@@ -195,6 +218,17 @@ extension NINQueueViewController {
             let attribute = [NSAttributedString.Key.foregroundColor: linkColor]
             queueInfoTextView.linkTextAttributes = attribute
             motdTextView.linkTextAttributes = attribute
+        }
+    }
+}
+
+// MARK: - User actions
+
+extension NINQueueViewController {
+    private func onCancelQueueTapped() {
+        debugger("cancel queue")
+        try? self.sessionManager?.closeChat { [weak self] in
+            self?.sessionManager?.deallocateSession()
         }
     }
 }

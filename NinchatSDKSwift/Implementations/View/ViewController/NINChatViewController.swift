@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class NINChatViewController: UIViewController, KeyboardHandler {
+final class NINChatViewController: UIViewController, ViewController, KeyboardHandler, HasCustomLayer, HasTitleBar, HasDefaultAvatar {
     private var webRTCClient: NINChatWebRTCClient?
 
     // MARK: - ViewController
@@ -123,6 +123,8 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
     }
     @IBOutlet private(set) weak var closeChatButton: CloseButton! {
         didSet {
+            closeChatButton.isHidden = hasTitlebar
+
             let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
             closeChatButton.buttonTitle = closeTitle
             closeChatButton.overrideAssets(with: self.delegate)
@@ -165,7 +167,28 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
     }
     
     private let confirmVideoDialog: ConfirmVideoCallView = ConfirmVideoCallView.loadFromNib()
-    
+
+    /// MARK: - HasTitleBar
+
+    @IBOutlet private(set) weak var titlebar: UIView?
+    @IBOutlet private(set) weak var titlebarContainer: UIView?
+    var titlebarAvatar: String? {
+        /// - agentAvatar:true, show user_attrs.iconurl everywhere
+        /// - agentAvatar:url, show that instead
+        guard let avatar = self.sessionManager?.siteConfiguration.agentAvatar as? Bool else { return nil }
+        return (self.sessionManager?.siteConfiguration.agentAvatar as? String) ?? (self.sessionManager?.agent?.iconURL)
+    }
+    var titlebarName: String? {
+        self.sessionManager?.siteConfiguration.agentName ?? self.sessionManager?.agent?.displayName
+    }
+    var titlebarJob: String? {
+        self.sessionManager?.agent?.info?.job
+    }
+
+    // MARK: - HasTitleBar
+
+    private(set) var defaultAvatar: UIImage? = UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)
+
     // MARK: - UIViewController
     
     override var prefersStatusBarHidden: Bool {
@@ -175,6 +198,11 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.addTitleBar(parent: self.scrollableViewContainer, adjustToSafeArea: true) { [weak self] in
+            DispatchQueue.main.async {
+                self?.onCloseChatTapped()
+            }
+        }
         self.addKeyboardListeners()
         self.setupView()
         self.setupViewModel()
@@ -192,7 +220,15 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
         self.reloadView()
         self.adjustConstraints(for: self.view.bounds.size, withAnimation: false)
     }
-    
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        if let titlebarContainer = self.titlebarContainer {
+            applyLayerOverride(view: titlebarContainer)
+        }
+    }
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.removeRotationListener()
@@ -266,8 +302,8 @@ final class NINChatViewController: UIViewController, KeyboardHandler {
             }
         }
         self.viewModel.loadHistory { _ in }
-        self.viewModel.onComposeActionUpdated = { [weak self] index, action in
-            self?.chatView.didUpdateComposeAction(at: index, with: action)
+        self.viewModel.onComposeActionUpdated = { [weak self] id, action in
+            self?.chatView.didUpdateComposeAction(id, with: action)
         }
     }
     
@@ -389,9 +425,10 @@ extension NINChatViewController {
     }
     
     private func overrideAssets() {
+        overrideTitlebarAssets()
         videoView.overrideAssets()
         inputControlsView.overrideAssets()
-        
+
         if let backgroundImage = self.delegate?.override(imageAsset: .ninchatChatBackground) {
             self.backgroundView.backgroundColor = UIColor(patternImage: backgroundImage)
         } else if let bundleImage = UIImage(named: "chat_background_pattern", in: .SDKBundle, compatibleWith: nil) {

@@ -68,7 +68,7 @@ final class NINQueueViewModelImpl: NINQueueViewModel {
                     self?.onInfoTextUpdate?(error.localizedDescription); return
                 }
 
-                self?.onInfoTextUpdate?(self?.sessionManager.siteConfiguration.audienceRegisteredText)
+                self?.onInfoTextUpdate?(self?.sessionManager.siteConfiguration.audienceRegisteredClosedText)
             }
         } catch {
             self.onInfoTextUpdate?(error.localizedDescription)

@@ -12,6 +12,11 @@ struct ChannelUser: Codable, Equatable {
     let displayName: String
     let iconURL: String?
     let guest: Bool
+    let info: ChannelUserInfo?
+}
+
+struct ChannelUserInfo: Codable {
+    let job: String?
 }
 
 // MARK: - Equatable

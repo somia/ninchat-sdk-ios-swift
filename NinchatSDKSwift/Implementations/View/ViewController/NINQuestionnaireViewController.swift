@@ -16,7 +16,7 @@ protocol QuestionnaireConversationController {
     func updateConversationContentView(_ interval: TimeInterval)
 }
 
-final class NINQuestionnaireViewController: UIViewController, ViewController, KeyboardHandler {
+final class NINQuestionnaireViewController: UIViewController, ViewController, KeyboardHandler, HasCustomLayer, HasTitleBar {
 
     private let operationQueue = OperationQueue.main
     private let dispatchQueue = DispatchQueue.main
@@ -61,6 +61,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
 
     var queue: Queue?
     var style: QuestionnaireStyle!
+    var type: AudienceQuestionnaireType!
     var dataSourceDelegate: QuestionnaireDataSourceDelegate? {
         didSet {
             dataSourceDelegate?.onUpdateCellContent = { [weak self] in
@@ -110,8 +111,8 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
                 }
             }
             viewModel.onSessionFinished = { [weak self] in
-                if let ratingViewModel = self?.ratingViewModel, let weakSelf = self {
-                    (weakSelf.rating != nil) ? ratingViewModel.rateChat(with: weakSelf.rating!) : ratingViewModel.skipRating()
+                if let ratingViewModel = self?.ratingViewModel, let `self` = self {
+                    (self.rating != nil) ? ratingViewModel.rateChat(with: self.rating!) : ratingViewModel.skipRating()
                 } else {
                     self?.delegate?.onDidEnd()
                 }
@@ -121,6 +122,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
     var ratingViewModel: NINRatingViewModel?
     var rating: ChatStatus?
     var completeQuestionnaire: ((_ queue: Queue) -> Void)?
+    var cancelQuestionnaire: (() -> Void)?
 
     // MARK: - SubViews
 
@@ -129,25 +131,112 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
             guard let contentView = contentView else { return }
             self.view.addSubview(contentView)
 
-            if #available(iOS 11, *) {
-                contentView.fix(top: (0.0, self.view), bottom: (0.0, self.view), toSafeArea: true)
-            } else {
-                contentView.fix(top: (20.0, self.view), bottom: (0.0, self.view))
-            }
             contentView
+                    .fix(bottom: (0.0, self.view))
                     .fix(leading: (0, self.view), trailing: (0, self.view))
                     .backgroundColor = .clear
+
+            if hasTitlebar {
+                contentView.fix(top: (0.0, self.titlebar!), isRelative: true)
+            } else {
+                contentView.fix(top: (0, self.view), toSafeArea: true)
+            }
         }
     }
     private lazy var loadingIndicator: UIActivityIndicatorView = {
         UIActivityIndicatorView(style: .gray)
     }()
 
+    /// MARK: - HasTitleBar
+
+    @IBOutlet private(set) weak var titlebar: UIView?
+    @IBOutlet private(set) weak var titlebarContainer: UIView?
+    var hasTitlebar: Bool {
+        /// questionnaire view has more logics for showing/hiding titlebar
+        guard let session = self.sessionManager else {
+            fatalError("session manager is not set!")
+        }
+        if session.siteConfiguration.hideTitlebar {
+            return false
+        }
+        if type == .post, session.siteConfiguration.postAudienceQuestionnaireTitlebar == nil {
+            return false
+        }
+        return true
+    }
+    var titlebarAvatar: String? {
+        switch type {
+        case .pre:
+            return self.sessionManager?.siteConfiguration.audienceQuestionnaireAvatar as? String
+        case .post:
+            guard let config = sessionManager?.siteConfiguration.postAudienceQuestionnaireTitlebar else {
+                return nil
+            }
+
+            switch config {
+            case .agent:
+                /// "agent": Display agent avatar/name/jobTitle
+                ///     - agentAvatar:true, show user_attrs.iconurl everywhere
+                ///     - agentAvatar:url, show that instead
+                guard let avatar = self.sessionManager?.siteConfiguration.agentAvatar as? Bool else { return nil }
+                return (self.sessionManager?.siteConfiguration.agentAvatar as? String) ?? (self.sessionManager?.agent?.iconURL)
+            case .questionnaire:
+                /// "questionnaire": Display questionnaireName and questionnaireAvatar
+                return self.sessionManager?.siteConfiguration.audienceQuestionnaireAvatar as? String
+            }
+        default:
+            return nil
+        }
+    }
+    var titlebarName: String? {
+        switch type {
+        case .pre:
+            return self.sessionManager?.siteConfiguration.audienceQuestionnaireUserName
+        case .post:
+            guard let config = sessionManager?.siteConfiguration.postAudienceQuestionnaireTitlebar else {
+                return nil
+            }
+
+            switch config {
+            case .agent:
+                /// "agent": Display agent avatar/name/jobTitle
+                return self.sessionManager?.siteConfiguration.agentName ?? self.sessionManager?.agent?.displayName
+            case .questionnaire:
+                /// "questionnaire": Display questionnaireName and questionnaireAvatar
+                return self.sessionManager?.siteConfiguration.audienceQuestionnaireUserName
+            }
+        default:
+            return nil
+        }
+    }
+    var titlebarJob: String? {
+        switch type {
+        case .pre:
+            return nil
+        case .post:
+            guard let config = sessionManager?.siteConfiguration.postAudienceQuestionnaireTitlebar else {
+                return nil
+            }
+
+            switch config {
+            case .agent:
+                /// "agent": Display agent avatar/name/jobTitle
+                return self.sessionManager?.agent?.info?.job
+            case .questionnaire:
+                return nil
+            }
+        default:
+            return nil
+        }
+    }
+
     // MARK: - UIViewController life-cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        self.addTitleBar(parent: nil, adjustToSafeArea: true) { [weak self] in
+            self?.cancelQuestionnaire?()
+        }
         self.overrideAssets()
         self.addKeyboardListeners()
         self.initiateIndicatorView()
@@ -165,6 +254,14 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
         self.deallocate()
     }
 
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        if let titlebarContainer = self.titlebarContainer {
+            applyLayerOverride(view: titlebarContainer)
+        }
+    }
+
     deinit {
         self.deallocate()
     }
@@ -180,6 +277,8 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
     }
 
     private func overrideAssets() {
+        overrideTitlebarAssets()
+
         if let backgroundImage = self.delegate?.override(imageAsset: .ninchatQuestionnaireBackground) {
             self.view.backgroundColor = UIColor(patternImage: backgroundImage)
         } else if let bundleImage = UIImage(named: "chat_background_pattern", in: .SDKBundle, compatibleWith: nil) {
@@ -190,7 +289,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
     private func generateTableView(isHidden: Bool) -> UITableView  {
         let view = UITableView(frame: .zero)
         view.register(QuestionnaireCell.self)
-        view.register(QuestionnaireTypingCell.self)
+        view.register(QuestionnaireLoadingCell.self)
         view.registerClass(QuestionnaireNavigationCell.self)
 
         view.separatorStyle = .none
@@ -250,11 +349,11 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
 
         var newSection = -1
         let prepareOperation = BlockOperation { [weak self] in
-            guard let weakSelf = self else { return }
+            guard let `self` = self else { return }
 
-            newSection = weakSelf.prepareSection()
-            weakSelf.addLoadingRow(at: newSection)
-            weakSelf.scrollToBottom(at: newSection, delay: 0.0)     /// Scroll to bottom
+            newSection = self.prepareSection()
+            self.addLoadingRow(at: newSection)
+            self.scrollToBottom(at: newSection, delay: 0.0)     /// Scroll to bottom
         }
         let removeLoadingRowOperation = BlockOperation { [weak self] in
             self?.removeLoadingRow(at: newSection)

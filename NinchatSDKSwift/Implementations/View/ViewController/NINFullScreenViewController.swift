@@ -7,7 +7,9 @@
 import UIKit
 
 final class NINFullScreenViewController: UIViewController, ViewController {
-    
+
+    private var navigationBeenVisibleSoFar = false
+
     // MARK: - Injected
     
     var viewModel: NINFullScreenViewModel!
@@ -28,8 +30,8 @@ final class NINFullScreenViewController: UIViewController, ViewController {
         view.fileName = attachment.name
         view.onCloseTapped = onCloseTapped
         view.onDownloadTapped = { [weak self] in
-            guard let weakSelf = self else { return }
-            weakSelf.viewModel.download(image: weakSelf.image, completion: { error in
+            guard let `self` = self else { return }
+            self.viewModel.download(image: self.image, completion: { error in
                 if error != nil {
                     Toast.show(message: .error("Failed to save image"))
                 } else {
@@ -46,7 +48,7 @@ final class NINFullScreenViewController: UIViewController, ViewController {
         }
     }
     @IBOutlet private(set) weak var scrollView: UIScrollView!
-    
+
     // MARK: - UIViewController
     
     override var prefersStatusBarHidden: Bool {
@@ -63,6 +65,9 @@ final class NINFullScreenViewController: UIViewController, ViewController {
             .fix(top: (0, self.view), toSafeArea: true)
             .fix(leading: (0, self.view), trailing: (0, self.view))
             .fix(height: 60)
+
+        /// if navigation is already shown, it needs to be re-added when user is back
+        self.navigationBeenVisibleSoFar = !(self.navigationController?.isNavigationBarHidden ?? true)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -70,13 +75,17 @@ final class NINFullScreenViewController: UIViewController, ViewController {
 
         /// Update image
         imageView.image = image
-        self.navigationController?.setNavigationBarHidden(true, animated: true)
+        if navigationBeenVisibleSoFar {
+            self.navigationController?.setNavigationBarHidden(true, animated: animated)
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        self.navigationController?.setNavigationBarHidden(false, animated: true)
+        if navigationBeenVisibleSoFar {
+            self.navigationController?.setNavigationBarHidden(false, animated: animated)
+        }
     }
 }
 
