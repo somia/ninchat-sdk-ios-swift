@@ -81,7 +81,7 @@ final class NINQueueViewController: UIViewController, ViewController, HasCustomL
         /// instead, try to register audience if it is set in the config
         /// `https://github.com/somia/mobile/issues/337`
         if self.setupClosedQueue() {
-            if let audienceRegister = self.sessionManager?.siteConfiguration.audienceRegisteredText, !audienceRegister.isEmpty {
+            if let audienceRegister = self.sessionManager?.siteConfiguration.audienceRegisteredClosedText, !audienceRegister.isEmpty {
                 self.setupViewModel(.registerAudience)
             }
             return
@@ -153,9 +153,9 @@ final class NINQueueViewController: UIViewController, ViewController, HasCustomL
     private func setupClosedQueue() -> Bool {
         /// `If customer resumes to a session and is already in queue, then show queueing view even if queue is closed`
         if let queue = queue, queue.isClosed, queue.position == 0 {
-            /// Currently, we do not have a key for closed-queue situations, leave it empty
             self.spinnerImageView.isHidden = true
-            self.queueInfoTextView.isHidden = true
+            self.queueInfoTextView.isHidden = false
+            self.queueInfoTextView.setAttributed(text: self.sessionManager?.siteConfiguration.audienceRegisteredClosedText ?? "", font: .ninchat)
             self.motdTextView.setAttributed(text: self.sessionManager?.siteConfiguration.motd ?? "", font: .ninchat)
             return true
         }
