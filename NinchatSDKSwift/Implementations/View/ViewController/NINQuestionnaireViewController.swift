@@ -178,7 +178,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
                 /// "agent": Display agent avatar/name/jobTitle
                 ///     - agentAvatar:true, show user_attrs.iconurl everywhere
                 ///     - agentAvatar:url, show that instead
-                if let avatar = self.sessionManager?.siteConfiguration.agentAvatar as? Bool, !avatar { return nil }
+                guard let avatar = self.sessionManager?.siteConfiguration.agentAvatar as? Bool else { return nil }
                 return (self.sessionManager?.siteConfiguration.agentAvatar as? String) ?? (self.sessionManager?.agent?.iconURL)
             case .questionnaire:
                 /// "questionnaire": Display questionnaireName and questionnaireAvatar
