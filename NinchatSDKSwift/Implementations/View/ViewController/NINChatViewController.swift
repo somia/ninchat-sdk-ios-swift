@@ -175,7 +175,8 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     var titlebarAvatar: String? {
         /// - agentAvatar:true, show user_attrs.iconurl everywhere
         /// - agentAvatar:url, show that instead
-        (self.sessionManager?.siteConfiguration.agentAvatar as? String) ?? (self.sessionManager?.agent?.iconURL)
+        if let avatar = self.sessionManager?.siteConfiguration.agentAvatar as? Bool, !avatar { return nil }
+        return (self.sessionManager?.siteConfiguration.agentAvatar as? String) ?? (self.sessionManager?.agent?.iconURL)
     }
     var titlebarName: String? {
         self.sessionManager?.siteConfiguration.agentName ?? self.sessionManager?.agent?.displayName
