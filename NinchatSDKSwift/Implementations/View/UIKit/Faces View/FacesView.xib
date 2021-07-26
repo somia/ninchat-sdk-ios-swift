@@ -19,22 +19,22 @@
             <rect key="frame" x="0.0" y="0.0" width="414" height="182"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
-                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="g2F-aL-V5g">
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="XjG-xk-T14">
                     <rect key="frame" x="33.5" y="65.5" width="70" height="95.5"/>
                     <subviews>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vsV-iU-E6T">
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ra2-rs-CKY">
                             <rect key="frame" x="0.0" y="0.0" width="70" height="70"/>
                             <constraints>
-                                <constraint firstAttribute="width" constant="70" id="92b-pi-OcP"/>
-                                <constraint firstAttribute="height" constant="70" id="LL2-9J-Yqa"/>
+                                <constraint firstAttribute="height" constant="70" id="QZc-Ni-Dnp"/>
+                                <constraint firstAttribute="width" constant="70" id="xAE-oG-jO5"/>
                             </constraints>
-                            <color key="tintColor" red="0.0" green="0.47450980390000003" blue="0.1764705882" alpha="1" colorSpace="calibratedRGB"/>
-                            <state key="normal" image="icon_face_happy"/>
+                            <color key="tintColor" red="0.69019607839999997" green="0.20000000000000001" blue="0.20392156859999999" alpha="1" colorSpace="calibratedRGB"/>
+                            <state key="normal" image="icon_face_sad"/>
                             <connections>
-                                <action selector="onPositiveButtonTappedWithSender:" destination="e6q-1L-Knb" eventType="touchUpInside" id="n8g-Be-oiG"/>
+                                <action selector="onNegativeButtonTappedWithSender:" destination="e6q-1L-Knb" eventType="touchUpInside" id="sWV-50-c2t"/>
                             </connections>
                         </button>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="GOOD" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T9p-OJ-8ui">
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="POOR" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GV7-hU-CuT">
                             <rect key="frame" x="0.0" y="74" width="70" height="21.5"/>
                             <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="17"/>
                             <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -42,7 +42,7 @@
                         </label>
                     </subviews>
                     <constraints>
-                        <constraint firstItem="T9p-OJ-8ui" firstAttribute="width" secondItem="vsV-iU-E6T" secondAttribute="width" id="rsC-JV-DF7"/>
+                        <constraint firstItem="GV7-hU-CuT" firstAttribute="width" secondItem="Ra2-rs-CKY" secondAttribute="width" id="OKL-JK-C5A"/>
                     </constraints>
                 </stackView>
                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="XSK-Db-1ZX">
@@ -71,22 +71,22 @@
                         <constraint firstItem="5bu-kj-nMW" firstAttribute="width" secondItem="hEI-x1-dee" secondAttribute="width" id="2gJ-pO-AwZ"/>
                     </constraints>
                 </stackView>
-                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="XjG-xk-T14">
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="g2F-aL-V5g">
                     <rect key="frame" x="308.5" y="65.5" width="70" height="95.5"/>
                     <subviews>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ra2-rs-CKY">
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vsV-iU-E6T">
                             <rect key="frame" x="0.0" y="0.0" width="70" height="70"/>
                             <constraints>
-                                <constraint firstAttribute="height" constant="70" id="QZc-Ni-Dnp"/>
-                                <constraint firstAttribute="width" constant="70" id="xAE-oG-jO5"/>
+                                <constraint firstAttribute="width" constant="70" id="92b-pi-OcP"/>
+                                <constraint firstAttribute="height" constant="70" id="LL2-9J-Yqa"/>
                             </constraints>
-                            <color key="tintColor" red="0.69019607839999997" green="0.20000000000000001" blue="0.20392156859999999" alpha="1" colorSpace="calibratedRGB"/>
-                            <state key="normal" image="icon_face_sad"/>
+                            <color key="tintColor" red="0.0" green="0.47450980390000003" blue="0.1764705882" alpha="1" colorSpace="calibratedRGB"/>
+                            <state key="normal" image="icon_face_happy"/>
                             <connections>
-                                <action selector="onNegativeButtonTappedWithSender:" destination="e6q-1L-Knb" eventType="touchUpInside" id="sWV-50-c2t"/>
+                                <action selector="onPositiveButtonTappedWithSender:" destination="e6q-1L-Knb" eventType="touchUpInside" id="n8g-Be-oiG"/>
                             </connections>
                         </button>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="POOR" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GV7-hU-CuT">
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="GOOD" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T9p-OJ-8ui">
                             <rect key="frame" x="0.0" y="74" width="70" height="21.5"/>
                             <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="17"/>
                             <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -94,7 +94,7 @@
                         </label>
                     </subviews>
                     <constraints>
-                        <constraint firstItem="GV7-hU-CuT" firstAttribute="width" secondItem="Ra2-rs-CKY" secondAttribute="width" id="OKL-JK-C5A"/>
+                        <constraint firstItem="T9p-OJ-8ui" firstAttribute="width" secondItem="vsV-iU-E6T" secondAttribute="width" id="rsC-JV-DF7"/>
                     </constraints>
                 </stackView>
             </subviews>
@@ -102,7 +102,7 @@
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
                 <constraint firstItem="XSK-Db-1ZX" firstAttribute="centerX" secondItem="NyQ-WR-mDi" secondAttribute="centerX" id="5RI-Lc-kJn"/>
-                <constraint firstItem="XjG-xk-T14" firstAttribute="centerX" secondItem="NyQ-WR-mDi" secondAttribute="centerX" multiplier="1.66" id="5h7-aY-Xdb"/>
+                <constraint firstItem="XjG-xk-T14" firstAttribute="centerX" secondItem="NyQ-WR-mDi" secondAttribute="centerX" multiplier="0.33" id="5h7-aY-Xdb"/>
                 <constraint firstItem="NyQ-WR-mDi" firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="g2F-aL-V5g" secondAttribute="bottom" constant="4" id="Caq-ZF-Ldj"/>
                 <constraint firstItem="XSK-Db-1ZX" firstAttribute="top" relation="greaterThanOrEqual" secondItem="NyQ-WR-mDi" secondAttribute="top" constant="4" id="Ku4-dG-IQx"/>
                 <constraint firstItem="NyQ-WR-mDi" firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="XjG-xk-T14" secondAttribute="bottom" constant="4" id="LTS-qM-asZ"/>
@@ -112,7 +112,7 @@
                 <constraint firstItem="NyQ-WR-mDi" firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="XSK-Db-1ZX" secondAttribute="bottom" constant="4" id="YtC-ps-qVE"/>
                 <constraint firstItem="g2F-aL-V5g" firstAttribute="top" relation="greaterThanOrEqual" secondItem="NyQ-WR-mDi" secondAttribute="top" constant="4" id="lWd-BC-wtB"/>
                 <constraint firstItem="XjG-xk-T14" firstAttribute="top" relation="greaterThanOrEqual" secondItem="NyQ-WR-mDi" secondAttribute="top" constant="4" id="pPf-gq-1mg"/>
-                <constraint firstItem="g2F-aL-V5g" firstAttribute="centerX" secondItem="NyQ-WR-mDi" secondAttribute="centerX" multiplier="0.33" id="tpm-mp-SQW"/>
+                <constraint firstItem="g2F-aL-V5g" firstAttribute="centerX" secondItem="NyQ-WR-mDi" secondAttribute="centerX" multiplier="1.66" id="tpm-mp-SQW"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
