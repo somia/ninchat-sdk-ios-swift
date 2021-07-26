@@ -111,7 +111,8 @@ struct SiteConfigurationImpl: SiteConfiguration {
 
     // MARK: - Titlebar
     var hideTitlebar: Bool {
-        self.value(for: "hideTitlebar") ?? false
+        /// hide title bar by default
+        self.value(for: "hideTitlebar") ?? true
     }
     var postAudienceQuestionnaireTitlebar: PostAudienceQuestionnaireTitlebarType? {
         guard let style: String = self.value(for: "postAudienceQuestionnaireTitlebar") else {
