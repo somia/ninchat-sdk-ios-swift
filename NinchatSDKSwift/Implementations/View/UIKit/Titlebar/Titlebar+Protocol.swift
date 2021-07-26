@@ -74,8 +74,8 @@ extension HasTitleBar where Self:ViewController {
             .fix(top: (0, titlebar))
             .fix(leading: (0, titlebar), trailing: (0, titlebar))
             .fix(height: titleHeight)
-        bar.leading?.priority = .required
-        bar.trailing?.priority = .required
+        bar.leading?.priority = .almostRequired
+        bar.trailing?.priority = .almostRequired
 
         let border = self.border
         titlebar.addSubview(border)
