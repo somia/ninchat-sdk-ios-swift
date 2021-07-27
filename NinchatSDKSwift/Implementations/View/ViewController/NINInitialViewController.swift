@@ -39,11 +39,13 @@ final class NINInitialViewController: UIViewController, HasCustomLayer, ViewCont
     }
     @IBOutlet private(set) var motdTextView: UITextView! {
         didSet {
-            if let motdText = self.sessionManager?.siteConfiguration.motd {
-                motdTextView.setAttributed(text: motdText, font: .ninchat)
+            guard let motdText = self.sessionManager?.siteConfiguration.motd else {
+                motdTextView.isHidden = true; return
             }
+            
             motdTextView.delegate = self
             motdTextView.textAlignment = .left
+            motdTextView.setAttributed(text: motdText, font: .ninchat)
         }
     }
     @IBOutlet private(set) var noQueueTextView: UITextView! {
