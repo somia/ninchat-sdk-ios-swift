@@ -173,9 +173,14 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
             self.titleFormTextView.textColor = textTopColor
             titleConversationTextView.textColor = textTopColor
         }
+        if let textBottomColor = delegate?.override(colorAsset: .ninchatColorTextBottom) {
+            self.infoTextView.textColor = textBottomColor
+        }
         if let linkColor = self.delegate?.override(colorAsset: .ninchatColorLink) {
-            self.titleFormTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
-            titleConversationTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
+            let attribute = [NSAttributedString.Key.foregroundColor: linkColor]
+            self.titleFormTextView.linkTextAttributes = attribute
+            self.titleConversationTextView.linkTextAttributes = attribute
+            self.infoTextView.linkTextAttributes = attribute
             self.skipButton.setTitleColor(linkColor, for: .normal)
         }
         
