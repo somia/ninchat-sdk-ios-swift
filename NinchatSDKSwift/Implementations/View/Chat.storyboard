@@ -17,7 +17,7 @@
         <!--Queue View Controller-->
         <scene sceneID="KNa-t7-ctL">
             <objects>
-                <viewController storyboardIdentifier="NINQueueViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="XUt-Du-Jff" customClass="NINQueueViewController" customModule="NinchatSDKSwift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NINQueueViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="XUt-Du-Jff" customClass="NINQueueViewController" customModule="NinchatSwiftSDKUI" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Uao-Kk-UXV">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -137,7 +137,7 @@ you are next. </string>
         <!--Chat View Controller-->
         <scene sceneID="5s0-Qq-Gee">
             <objects>
-                <viewController storyboardIdentifier="NINChatViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="bZ9-oP-wEd" customClass="NINChatViewController" customModule="NinchatSDKSwift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NINChatViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="bZ9-oP-wEd" customClass="NINChatViewController" customModule="NinchatSwiftSDKUI" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="wrn-IT-ZNh">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -148,7 +148,7 @@ you are next. </string>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RGh-Mv-yIb">
                                 <rect key="frame" x="0.0" y="104" width="414" height="758"/>
                                 <subviews>
-                                    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="brw-f0-DOL" userLabel="Chat view" customClass="ChatView" customModule="NinchatSDKSwift" customModuleProvider="target">
+                                    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="brw-f0-DOL" userLabel="Chat view" customClass="ChatView" customModule="NinchatSwiftSDKUI" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="638"/>
                                         <subviews>
                                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="g76-kj-vdH">
@@ -316,7 +316,7 @@ you are next. </string>
         <!--Rating View Controller-->
         <scene sceneID="AoA-TJ-9Dd">
             <objects>
-                <viewController storyboardIdentifier="NINRatingViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="sVb-C5-GLO" customClass="NINRatingViewController" customModule="NinchatSDKSwift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NINRatingViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="sVb-C5-GLO" customClass="NINRatingViewController" customModule="NinchatSwiftSDKUI" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="YOl-0M-h20">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -339,14 +339,14 @@ you are next. </string>
                                         <rect key="frame" x="16" y="16" width="382" height="424"/>
                                         <subviews>
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="How was our customer service? Please leave a rating by pressing the buttons below, or hit Skip to bypass this step." textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Ikj-NF-Jwm">
-                                                <rect key="frame" x="0.0" y="0.0" width="382" height="191"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="382" height="277.5"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                 <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
                                             </textView>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B6F-ML-XSh" customClass="FacesView" customModule="NinchatSDKSwift">
-                                                <rect key="frame" x="0.0" y="207" width="382" height="217"/>
+                                                <rect key="frame" x="0.0" y="293.5" width="382" height="130.5"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </view>
                                         </subviews>
@@ -458,6 +458,14 @@ you are next. </string>
                                     <action selector="onSkipButtonTappedWithSender:" destination="sVb-C5-GLO" eventType="touchUpInside" id="EXA-mC-nQd"/>
                                 </connections>
                             </button>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed " textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="yEN-f5-12p">
+                                <rect key="frame" x="20" y="576" width="374" height="56.5"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="textColor" systemColor="labelColor"/>
+                                <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
+                            </textView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="oWm-rW-0NV"/>
                         <color key="backgroundColor" red="0.9137254901960784" green="0.9137254901960784" blue="0.9137254901960784" alpha="1" colorSpace="calibratedRGB"/>
@@ -471,9 +479,12 @@ you are next. </string>
                             <constraint firstItem="JQu-HN-y9Z" firstAttribute="bottom" secondItem="9Uk-ep-CyI" secondAttribute="bottom" id="M5G-Xx-DIF"/>
                             <constraint firstItem="L5U-F0-l9Y" firstAttribute="leading" secondItem="YOl-0M-h20" secondAttribute="leading" id="MIS-tu-hqe"/>
                             <constraint firstItem="oWm-rW-0NV" firstAttribute="bottom" secondItem="PLV-Oi-4sR" secondAttribute="bottom" priority="750" constant="32" id="Nfl-pb-NbK"/>
+                            <constraint firstItem="yEN-f5-12p" firstAttribute="top" secondItem="L5U-F0-l9Y" secondAttribute="bottom" constant="24" id="QPB-uu-7fo"/>
+                            <constraint firstItem="yEN-f5-12p" firstAttribute="leading" secondItem="YOl-0M-h20" secondAttribute="leading" constant="20" id="R80-Rz-aYS"/>
                             <constraint firstItem="9Uk-ep-CyI" firstAttribute="trailing" secondItem="oWm-rW-0NV" secondAttribute="trailing" id="cCm-fl-1Yu"/>
                             <constraint firstItem="9Uk-ep-CyI" firstAttribute="leading" secondItem="oWm-rW-0NV" secondAttribute="leading" id="dzr-ZZ-6ak"/>
                             <constraint firstItem="JQu-HN-y9Z" firstAttribute="leading" secondItem="YOl-0M-h20" secondAttribute="leading" id="fkc-7U-9cI"/>
+                            <constraint firstAttribute="trailing" secondItem="yEN-f5-12p" secondAttribute="trailing" constant="20" id="iGn-JB-iZY"/>
                             <constraint firstItem="JQu-HN-y9Z" firstAttribute="top" secondItem="YOl-0M-h20" secondAttribute="top" id="jXa-zk-g7x"/>
                             <constraint firstItem="9Uk-ep-CyI" firstAttribute="top" secondItem="oWm-rW-0NV" secondAttribute="top" id="y9g-yF-L5X"/>
                             <constraint firstItem="PLV-Oi-4sR" firstAttribute="centerX" secondItem="YOl-0M-h20" secondAttribute="centerX" id="yhx-ov-sUS"/>
@@ -484,6 +495,7 @@ you are next. </string>
                         <outlet property="facesConversationViewContainer" destination="dEa-pc-H2B" id="xIK-6e-VP4"/>
                         <outlet property="facesFormViewContainer" destination="B6F-ML-XSh" id="kg3-Et-Ydv"/>
                         <outlet property="formStyleView" destination="qj1-1U-Y4U" id="6TR-GJ-EzI"/>
+                        <outlet property="infoTextView" destination="yEN-f5-12p" id="0fT-ir-8IY"/>
                         <outlet property="skipButton" destination="PLV-Oi-4sR" id="BII-Eo-jaz"/>
                         <outlet property="titleConversationBubble" destination="lpr-Ub-6OM" id="IfA-N2-MTN"/>
                         <outlet property="titleConversationTextView" destination="DbE-mm-dcs" id="3gU-ir-XwY"/>
@@ -503,7 +515,7 @@ you are next. </string>
         <!--Initial View Controller-->
         <scene sceneID="XHh-YP-k7w">
             <objects>
-                <viewController storyboardIdentifier="NINInitialViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="YpM-11-QhB" customClass="NINInitialViewController" customModule="NinchatSDKSwift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NINInitialViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="YpM-11-QhB" customClass="NINInitialViewController" customModule="NinchatSwiftSDKUI" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="w6e-s4-vNx">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -537,7 +549,7 @@ you are next. </string>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="kgP-Ty-5vY">
                                                 <rect key="frame" x="87" y="5" width="240" height="60"/>
                                                 <subviews>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mti-Jm-Fuc" customClass="NINButton" customModule="NinchatSDKSwift" customModuleProvider="target">
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mti-Jm-Fuc" customClass="NINButton" customModule="NinchatSwiftSDKUI" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="0.0" width="240" height="60"/>
                                                         <color key="backgroundColor" red="0.28627450980392155" green="0.67450980392156867" blue="0.99215686274509807" alpha="1" colorSpace="calibratedRGB"/>
                                                         <constraints>
@@ -568,7 +580,7 @@ you are next. </string>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                 <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
                                             </textView>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ign-ZR-Zu6" customClass="NINButton" customModule="NinchatSDKSwift" customModuleProvider="target">
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ign-ZR-Zu6" customClass="NINButton" customModule="NinchatSwiftSDKUI" customModuleProvider="target">
                                                 <rect key="frame" x="87" y="80" width="240" height="60"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
@@ -659,7 +671,7 @@ you are next. </string>
         <!--Questionnaire View Controller-->
         <scene sceneID="aa4-SC-Gqp">
             <objects>
-                <viewController storyboardIdentifier="NINQuestionnaireViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="2fr-nW-Pce" customClass="NINQuestionnaireViewController" customModule="NinchatSDKSwift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NINQuestionnaireViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="2fr-nW-Pce" customClass="NINQuestionnaireViewController" customModule="NinchatSwiftSDKUI" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="4SI-g6-pAy">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

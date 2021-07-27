@@ -44,7 +44,18 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
     @IBOutlet private(set) weak var conversationStyleView: UIView!
     @IBOutlet private(set) weak var formStyleView: UIView!
     @IBOutlet private(set) weak var skipButton: UIButton!
-
+    @IBOutlet private(set) weak var infoTextView: UITextView! {
+        didSet {
+            guard let infoText = self.sessionManager?.siteConfiguration.ratingInfoText else {
+                infoTextView.isHidden = true; return
+            }
+            
+            infoTextView.delegate = self
+            infoTextView.textAlignment = .center
+            infoTextView.setAttributed(text: infoText, font: .ninchat)
+        }
+    }
+    
     // MARK: - Conversation Style Outlets
     
     @IBOutlet private(set) weak var userAvatar: UIImageView!
