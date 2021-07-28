@@ -41,7 +41,6 @@ public typealias NINColorAssetDictionary = [ColorConstants:UIColor]
 public enum ColorConstants {
     case ninchatColorButtonPrimaryText
     case ninchatColorButtonSecondaryText
-    case ninchatColorButtonCloseChatText
     case ninchatColorInfoText
     case ninchatColorChatName
     case ninchatColorChatTimestamp
@@ -62,6 +61,13 @@ public enum ColorConstants {
     case ninchatColorRatingNeutralText
     case ninchatColorRatingNegativeText
     case ninchatColorTitlebarPlaceholder
+    
+    /// "Close chat" button in top right corner
+    case ninchatColorCloseChatText
+    /// "Close" button in titlebar
+    case ninchatColorTitlebarCloseText
+    /// "Close chat" button after conversation is ended
+    case ninchatColorCloseText
 }
 
 /// Layer override keys
@@ -69,8 +75,6 @@ public let LAYER_NAME = "_ninchat-asset"
 public enum CALayerConstant {
     case ninchatPrimaryButton
     case ninchatSecondaryButton
-    case ninchatChatCloseButton
-    case ninchatChatCloseEmptyButton
     case ninchatTextareaSubmitButton
     case ninchatModalTop
     case ninchatModalBottom
@@ -80,6 +84,15 @@ public enum CALayerConstant {
     case ninchatQuestionnaireRadioUnselected
     case ninchatQuestionnaireNavigationNext
     case ninchatQuestionnaireNavigationBack
+    /// "Close chat" button in top right corner
+    case ninchatChatCloseButton
+    case ninchatChatCloseEmptyButton
+    /// "Close" button in titlebar
+    case ninchatTitlebarCloseButton
+    case ninchatTitlebarCloseEmptyButton
+    /// "Close chat" button after conversation is ended
+    case ninchatCloseButton
+    case ninchatCloseEmptyButton
 }
 
 /// Questionnaire color override keys

@@ -98,7 +98,7 @@ final class Titlebar: UIView {
     }
     
     private func overrideAssets(delegate: NINChatSessionInternalDelegate?) {
-        closeButton.overrideAssets(with: delegate)
+        closeButton.overrideAssets(with: delegate, in: .titlebar)
         
         if let placeholder = delegate?.override(colorAsset: .ninchatColorTitlebarPlaceholder) {
             agentInfoPlaceholder.backgroundColor = placeholder

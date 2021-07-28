@@ -46,7 +46,7 @@ final class NINQueueViewController: UIViewController, ViewController, HasCustomL
 
             let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
             cancelQueueButton.buttonTitle = closeTitle
-            cancelQueueButton.overrideAssets(with: self.delegate)
+            cancelQueueButton.overrideAssets(with: self.delegate, in: .view)
             cancelQueueButton.closure = { [weak self] _ in
                 DispatchQueue.main.async {
                     self?.onCancelQueueTapped()
@@ -185,7 +185,7 @@ extension NINQueueViewController {
 
     private func overrideAssets() {
         overrideTitlebarAssets()
-        cancelQueueButton.overrideAssets(with: self.delegate)
+        cancelQueueButton.overrideAssets(with: self.delegate, in: .view)
 
         if let spinnerImage = self.delegate?.override(imageAsset: .ninchatIconLoader) {
             self.spinnerImageView.image = spinnerImage
