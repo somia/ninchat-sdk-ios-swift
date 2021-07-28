@@ -20,6 +20,7 @@ protocol SiteConfiguration  {
     var welcome: String? { get }
     var motd: String? { get }
     var inQueue: String? { get }
+    var ratingInfoText: String? { get }
     var sendButtonTitle: String? { get }
     var confirmDialogTitle: String? { get }
     var audienceRealm: String? { get }
@@ -77,6 +78,9 @@ struct SiteConfigurationImpl: SiteConfiguration {
     }
     var inQueue: String? {
         self.value(for: "inQueueText")
+    }
+    var ratingInfoText: String? {
+        self.value(for: "ratingInfoText")
     }
     var sendButtonTitle: String? {
         self.value(for: "sendButtonText")

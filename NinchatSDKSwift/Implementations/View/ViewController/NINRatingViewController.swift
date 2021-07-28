@@ -44,7 +44,18 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
     @IBOutlet private(set) weak var conversationStyleView: UIView!
     @IBOutlet private(set) weak var formStyleView: UIView!
     @IBOutlet private(set) weak var skipButton: UIButton!
-
+    @IBOutlet private(set) weak var infoTextView: UITextView! {
+        didSet {
+            guard let infoText = self.sessionManager?.siteConfiguration.ratingInfoText else {
+                infoTextView.isHidden = true; return
+            }
+            
+            infoTextView.delegate = self
+            infoTextView.textAlignment = .center
+            infoTextView.setAttributed(text: infoText, font: .ninchat)
+        }
+    }
+    
     // MARK: - Conversation Style Outlets
     
     @IBOutlet private(set) weak var userAvatar: UIImageView!
@@ -162,9 +173,14 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
             self.titleFormTextView.textColor = textTopColor
             titleConversationTextView.textColor = textTopColor
         }
+        if let textBottomColor = delegate?.override(colorAsset: .ninchatColorTextBottom) {
+            self.infoTextView.textColor = textBottomColor
+        }
         if let linkColor = self.delegate?.override(colorAsset: .ninchatColorLink) {
-            self.titleFormTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
-            titleConversationTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
+            let attribute = [NSAttributedString.Key.foregroundColor: linkColor]
+            self.titleFormTextView.linkTextAttributes = attribute
+            self.titleConversationTextView.linkTextAttributes = attribute
+            self.infoTextView.linkTextAttributes = attribute
             self.skipButton.setTitleColor(linkColor, for: .normal)
         }
         
