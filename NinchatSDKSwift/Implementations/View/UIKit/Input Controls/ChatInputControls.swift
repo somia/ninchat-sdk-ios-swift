@@ -94,22 +94,6 @@ final class ChatInputControls: UIView, HasCustomLayer, ChatInputControlsProtocol
         if let layer = delegate?.override(layerAsset: .ninchatTextareaSubmitButton) {
             sendMessageButton.layer.insertSublayer(layer, below: sendMessageButton.titleLabel?.layer)
         }
-        /// TODO: REMOVE legacy delegate
-        else if self.sessionManager?.siteConfiguration.sendButtonTitle != nil {
-            /// the title is set by a few lines above
-            
-            if let backgroundColor = self.delegate?.override(colorAsset: .textareaSubmit) {
-                self.sendMessageButton.backgroundColor = backgroundColor
-            }
-            if let backgroundImage = self.delegate?.override(imageAsset: .textareaSubmitButton) {
-                self.sendMessageButton.setBackgroundImage(backgroundImage, for: .normal)
-            } else if let backgroundBundle = UIImage(named: "icon_send_message_border", in: .SDKBundle, compatibleWith: nil) {
-                self.sendMessageButton.setBackgroundImage(backgroundBundle, for: .normal)
-            }
-        } else if let buttonImage = self.delegate?.override(imageAsset: .textareaSubmitButton) {
-            self.sendMessageButton.setImage(buttonImage, for: .normal)
-        }
-
         if let titleColor = self.delegate?.override(colorAsset: .ninchatColorTextareaSubmitText) {
             self.sendMessageButton.setTitleColor(titleColor, for: .normal)
         }

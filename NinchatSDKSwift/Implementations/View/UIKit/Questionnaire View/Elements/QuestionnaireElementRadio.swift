@@ -135,11 +135,6 @@ extension NINButton {
                     self.layer.insertSublayer(layer, at: 0)
                 }
             }
-            /// TODO: REMOVE legacy delegate
-            else {
-                self.setBackgroundImage((delegate?.override(questionnaireAsset: .radioSecondaryBackground) ?? .white).toImage, for: .normal)
-                self.roundButton()
-            }
         case true:
             if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireRadioSelected) {
                 if let old = self.layer.sublayers?.first(where: { $0.name == LAYER_NAME }) {
@@ -147,11 +142,6 @@ extension NINButton {
                 } else {
                     self.layer.insertSublayer(layer, at: 0)
                 }
-            }
-                /// TODO: REMOVE legacy delegate
-            else {
-                self.setBackgroundImage((delegate?.override(questionnaireAsset: .radioPrimaryBackground) ?? .white).toImage, for: .selected)
-                self.roundButton()
             }
         }
 

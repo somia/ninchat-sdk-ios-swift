@@ -71,12 +71,6 @@ final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol, HasCusto
             useLegacyOverride = false
         }
         
-        /// TODO: REMOVE legacy delegate
-        if useLegacyOverride, let backgroundColor = self.delegate?.override(colorAsset: .modalBackground) {
-            self.headerContainerView.backgroundColor = backgroundColor
-            self.bottomContainerView.backgroundColor = backgroundColor
-        }
-        
         if let textColor = self.delegate?.override(colorAsset: .ninchatColorModalTitleText) {
             self.titleLabel.textColor = textColor
             self.usernameLabel.textColor = textColor

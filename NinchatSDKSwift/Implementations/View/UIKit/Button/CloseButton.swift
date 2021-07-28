@@ -61,32 +61,6 @@ final class CloseButton: UIView, HasCustomLayer, CloseButtonProtocol {
             self.layer.insertSublayer(layer, at: 0)
         } else if let layer = session?.override(layerAsset: .ninchatChatCloseButton) {
             self.layer.insertSublayer(layer, at: 0)
-        } else {
-            /// TODO: REMOVE legacy delegates
-
-            func shapeButton(image: UIImage) {
-                /// Overriding (setting) the button background image; no border.
-                self.theButton.setBackgroundImage(image, for: .normal)
-                self.theButton.contentMode = .scaleAspectFill
-                self.theButton.backgroundColor = .clear
-                self.theButton.layer.cornerRadius = 0
-                self.theButton.layer.borderWidth = 0
-            }
-
-            self.round(borderWidth: 1.0, borderColor: .defaultBackgroundButton)
-            self.backgroundColor = .white
-
-            if let backgroundColor = session?.override(colorAsset: .chatCloseButtonBackground) {
-                self.backgroundColor = backgroundColor
-            }
-            if buttonTitle.isEmpty, let overrideImage = session?.override(imageAsset: .chatCloseButtonEmpty) {
-                shapeButton(image: overrideImage)
-            } else if let overrideImage = session?.override(imageAsset: .chatCloseButton) {
-                shapeButton(image: overrideImage)
-            }
-            if let icon = session?.override(imageAsset: .iconChatCloseButton) {
-                self.closeButtonImageView.image = icon
-            }
         }
         
         if let textColor = session?.override(colorAsset: .ninchatColorButtonCloseChatText) {

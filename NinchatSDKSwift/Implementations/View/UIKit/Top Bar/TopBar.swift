@@ -65,10 +65,6 @@ final class TopBar: UIView, TopBarProtocol, HasCustomLayer {
         if let closeButtonLayer = self.delegate?.override(layerAsset: .ninchatChatCloseButton) {
             self.closeButton.layer.insertSublayer(closeButtonLayer, at: 0)
         }
-        /// TODO: REMOVE legacy delegate
-        else if let closeButton = self.delegate?.override(imageAsset: .iconChatCloseButton) {
-            self.closeButton.image = closeButton
-        }
     }
     
     // MARK: - User actions

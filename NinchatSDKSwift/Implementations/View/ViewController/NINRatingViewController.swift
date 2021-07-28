@@ -153,19 +153,9 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
         if let layer = delegate?.override(layerAsset: .ninchatBackgroundTop) {
             topViewContainer.layer.insertSublayer(layer, at: 0)
         }
-        /// TODO: REMOVE legacy delegate
-        else if let topBackgroundColor = self.delegate?.override(colorAsset: .backgroundTop) {
-            self.topViewContainer.backgroundColor = topBackgroundColor
-        }
-
         if let layer = delegate?.override(layerAsset: .ninchatBackgroundBottom) {
             view.layer.insertSublayer(layer, at: 0)
         }
-        /// TODO: REMOVE legacy delegate
-        else if let bottomBackgroundColor = self.delegate?.override(colorAsset: .backgroundBottom) {
-            self.view.backgroundColor = bottomBackgroundColor
-        }
-
         if let bubbleColor = self.delegate?.override(colorAsset: .ninchatColorChatBubbleLeftTint) {
             self.titleConversationBubble.tintColor = bubbleColor
         }

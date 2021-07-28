@@ -194,17 +194,9 @@ extension NINQueueViewController {
         if let layer = self.delegate?.override(layerAsset: .ninchatBackgroundTop) {
             topContainerView.layer.insertSublayer(layer, at: 0)
         }
-        /// TODO: REMOVE legacy delegate
-        else if let topBackgroundColor = self.delegate?.override(colorAsset: .backgroundTop) {
-            topContainerView.backgroundColor = topBackgroundColor
-        }
         
         if let layer = self.delegate?.override(layerAsset: .ninchatBackgroundBottom) {
             bottomContainerView.layer.insertSublayer(layer, at: 0)
-        }
-        /// TODO: REMOVE legacy delegate
-        else if let bottomBackgroundColor = self.delegate?.override(colorAsset: .backgroundBottom) {
-            bottomContainerView.backgroundColor = bottomBackgroundColor
         }
         
         if let textTopColor = self.delegate?.override(colorAsset: .ninchatColorTextTop) {

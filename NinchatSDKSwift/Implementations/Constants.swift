@@ -34,74 +34,6 @@ public enum AssetConstants {
     case ninchatIconRatingNeutral
     case ninchatIconRatingNegative
     case ninchatQuestionnaireBackground
-
-    /* DEPRECATED
-     * Use new keys above or CALayerConstant instead
-    */
-    @available(*, deprecated, renamed: "ninchatIconLoader")
-    case iconLoader
-    @available(*, deprecated, renamed: "ninchatIconChatWritingIndicator")
-    case chatWritingIndicator
-    @available(*, deprecated, renamed: "ninchatChatBackground")
-    case chatBackground
-    @available(*, deprecated, message: "use CALayerConstant.ninchatPrimaryButton")
-    case primaryButton
-    @available(*, deprecated, message: "use CALayerConstant.ninchatSecondaryButton")
-    case secondaryButton
-    @available(*, deprecated, message: "use CALayerConstant.ninchatChatCloseButton")
-    case chatCloseButton
-    @available(*, deprecated, message: "use CALayerConstant.ninchatChatCloseEmptyButton")
-    case chatCloseButtonEmpty
-    @available(*, deprecated, message: "use CALayerConstant.ninchatChatCloseButton")
-    case iconChatCloseButton
-    @available(*, unavailable, message: "the item cannot be overridden by images. use ColorConstants.ninchatColorChatBubbleLeftText and ColorConstants.ninchatColorChatBubbleLeftTint instead")
-    case chatBubbleLeft
-    @available(*, unavailable, message: "the item cannot be overridden by images. use ColorConstants.ninchatColorChatBubbleLeftText and ColorConstants.ninchatColorChatBubbleLeftTint instead")
-    case chatBubbleLeftRepeated
-    @available(*, unavailable, message: "the item cannot be overridden by images. use ColorConstants.ninchatColorChatBubbleRightText and ColorConstants.ninchatColorChatBubbleRightTint instead")
-    case chatBubbleRight
-    @available(*, unavailable, message: "the item cannot be overridden by images. use ColorConstants.ninchatColorChatBubbleRightText and ColorConstants.ninchatColorChatBubbleRightTint instead")
-    case chatBubbleRightRepeated
-    @available(*, deprecated, renamed: "ninchatChatAvatarRight")
-    case chatAvatarRight
-    @available(*, deprecated, renamed: "ninchatChatAvatarLeft")
-    case chatAvatarLeft
-    @available(*, deprecated, renamed: "ninchatChatPlayVideo")
-    case chatPlayVideo
-    @available(*, deprecated, renamed: "ninchatIconTextareaCamera")
-    case iconTextareaCamera
-    @available(*, deprecated, renamed: "ninchatIconTextareaAttachment")
-    case iconTextareaAttachment
-    @available(*, deprecated, renamed: "ninchatIconDownload")
-    case iconDownload
-    @available(*, deprecated, message: "use CALayerConstant.ninchatTextareaSubmitButton")
-    case textareaSubmitButton
-    @available(*, deprecated, renamed: "ninchatIconVideoToggleFull")
-    case iconVideoToggleFull
-    @available(*, deprecated, renamed: "ninchatIconVideoToggleNormal")
-    case iconVideoToggleNormal
-    @available(*, deprecated, renamed: "ninchatIconVideoSoundOn")
-    case iconVideoSoundOn
-    @available(*, deprecated, renamed: "ninchatIconVideoSoundOff")
-    case iconVideoSoundOff
-    @available(*, deprecated, renamed: "ninchatIconVideoMicrophoneOn")
-    case iconVideoMicrophoneOn
-    @available(*, deprecated, renamed: "ninchatIconVideoMicrophoneOff")
-    case iconVideoMicrophoneOff
-    @available(*, deprecated, renamed: "ninchatIconVideoCameraOn")
-    case iconVideoCameraOn
-    @available(*, deprecated, renamed: "ninchatIconVideoCameraOff")
-    case iconVideoCameraOff
-    @available(*, deprecated, renamed: "ninchatIconVideoHangup")
-    case iconVideoHangup
-    @available(*, deprecated, renamed: "ninchatIconRatingPositive")
-    case iconRatingPositive
-    @available(*, deprecated, renamed: "ninchatIconRatingNeutral")
-    case iconRatingNeutral
-    @available(*, deprecated, renamed: "ninchatIconRatingNegative")
-    case iconRatingNegative
-    @available(*, deprecated, renamed: "ninchatQuestionnaireBackground")
-    case questionnaireBackground
 }
 
 /// Color override keys
@@ -130,62 +62,6 @@ public enum ColorConstants {
     case ninchatColorRatingNeutralText
     case ninchatColorRatingNegativeText
     case ninchatColorTitlebarPlaceholder
-
-    /* DEPRECATED
-     * Use new keys above or CALayerConstant instead
-    */
-    @available(*, deprecated, renamed: "ninchatColorButtonPrimaryText")
-    case buttonPrimaryText
-    @available(*, deprecated, renamed: "ninchatColorButtonSecondaryText")
-    case buttonSecondaryText
-    @available(*, deprecated, renamed: "ninchatColorInfoText")
-    case infoText
-    @available(*, deprecated, renamed: "ninchatColorChatName")
-    case chatName
-    @available(*, deprecated, renamed: "ninchatColorChatTimestamp")
-    case chatTimestamp
-    @available(*, deprecated, renamed: "ninchatColorChatBubbleLeftText")
-    case chatBubbleLeftText
-    @available(*, deprecated, renamed: "ninchatColorChatBubbleRightText")
-    case chatBubbleRightText
-    @available(*, deprecated, renamed: "ninchatColorChatBubbleLeftTint")
-    case chatBubbleLeftTint
-    @available(*, deprecated, renamed: "ninchatColorChatBubbleRightTint")
-    case chatBubbleRightTint
-    @available(*, deprecated, message: "use CALayerConstant.ninchatChatCloseButton")
-    case chatCloseButtonBackground
-    @available(*, deprecated, renamed: "ninchatColorTextareaText")
-    case textareaText
-    @available(*, deprecated, message: "use CALayerConstant.ninchatTextareaSubmitButton")
-    case textareaSubmit
-    @available(*, deprecated, renamed: "ninchatColorTextareaSubmitText")
-    case textareaSubmitText
-    @available(*, deprecated, renamed: "ninchatColorTextareaPlaceholder")
-    case textareaPlaceholder
-    @available(*, deprecated, renamed: "ninchatColorChatBubbleLeftLink")
-    case chatBubbleLeftLink
-    @available(*, deprecated, renamed: "ninchatColorChatBubbleRightLink")
-    case chatBubbleRightLink
-    @available(*, deprecated, renamed: "ninchatColorModalTitleText")
-    case modalText
-    @available(*, deprecated, message: "use CALayerConstant.ninchatModalTop and CALayerConstant.ninchatModalBottom")
-    case modalBackground
-    @available(*, deprecated, message: "use CALayerConstant.ninchatBackgroundTop")
-    case backgroundTop
-    @available(*, deprecated, renamed: "ninchatColorTextTop")
-    case textTop
-    @available(*, deprecated, renamed: "ninchatColorTextBottom")
-    case textBottom
-    @available(*, deprecated, renamed: "ninchatColorLink")
-    case link
-    @available(*, deprecated, message: "use CALayerConstant.ninchatBackgroundBottom")
-    case backgroundBottom
-    @available(*, deprecated, renamed: "ninchatColorRatingPositiveText")
-    case ratingPositiveText
-    @available(*, deprecated, renamed: "ninchatColorRatingNeutralText")
-    case ratingNeutralText
-    @available(*, deprecated, renamed: "ninchatColorRatingNegativeText")
-    case ratingNegativeText
 }
 
 /// Layer override keys
@@ -222,46 +98,6 @@ public enum QuestionnaireColorConstants {
     case ninchatQuestionnaireSelectUnselected
     case ninchatQuestionnaireColorNavigationNextText
     case ninchatQuestionnaireColorNavigationBackText
-
-    /* DEPRECATED
-     * Use new keys above or CALayerConstant instead
-    */
-    @available(*, deprecated, renamed: "ninchatQuestionnaireColorTitleText")
-    case titleTextColor
-    @available(*, deprecated, renamed: "ninchatQuestionnaireColorTextInput")
-    case textInputColor
-    @available(*, deprecated, renamed: "ninchatQuestionnaireColorRadioSelectedText")
-    case radioPrimaryText
-    @available(*, deprecated, renamed: "ninchatQuestionnaireColorRadioUnselectedText")
-    case radioSecondaryText
-    @available(*, deprecated, message: "use CALayerConstant.ninchatQuestionnaireRadioSelected")
-    case radioPrimaryBackground
-    @available(*, deprecated, message: "use CALayerConstant.ninchatQuestionnaireRadioUnselected")
-    case radioSecondaryBackground
-    @available(*, deprecated, renamed: "ninchatQuestionnaireColorCheckboxSelectedText")
-    case checkboxPrimaryText
-    @available(*, deprecated, renamed: "ninchatQuestionnaireColorCheckboxUnselectedText")
-    case checkboxSecondaryText
-    @available(*, deprecated, renamed: "ninchatQuestionnaireCheckboxSelectedIndicator")
-    case checkboxSelectedIndicator
-    @available(*, deprecated, renamed: "ninchatQuestionnaireCheckboxUnselectedIndicator")
-    case checkboxDeselectedIndicator
-    @available(*, deprecated, renamed: "ninchatQuestionnaireColorSelectSelectedText")
-    case selectSelectedText
-    @available(*, deprecated, renamed: "ninchatQuestionnaireColorSelectUnselectText")
-    case selectNormalText
-    @available(*, deprecated, renamed: "ninchatQuestionnaireSelectSelected")
-    case selectSelectedBackground
-    @available(*, deprecated, renamed: "ninchatQuestionnaireSelectUnselected")
-    case selectDeselectedBackground
-    @available(*, deprecated, renamed: "ninchatQuestionnaireColorNavigationNextText")
-    case navigationNextText
-    @available(*, deprecated, renamed: "ninchatQuestionnaireColorNavigationBackText")
-    case navigationBackText
-    @available(*, deprecated, message: "use CALayerConstant.ninchatQuestionnaireNavigationNext")
-    case navigationNextBackground
-    @available(*, deprecated, message: "use CALayerConstant.ninchatQuestionnaireNavigationBack")
-    case navigationBackBackground
 }
 
 // MARK: - Constants used within the SDK
