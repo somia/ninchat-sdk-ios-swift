@@ -58,6 +58,10 @@ final class QuestionnaireNavigationCell: UITableViewCell, HasCustomLayer, Questi
 
             if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireNavigationNext) {
                 nextButton.layer.insertSublayer(layer, at: 0)
+            } else {
+                nextButton.layer.borderColor = UIColor.QBlueButtonNormal.cgColor
+                nextButton.backgroundColor = .QBlueButtonNormal
+                nextButton.round(radius: 45.0 / 2, borderWidth: 1.0, borderColor: .QBlueButtonNormal)
             }
         }
         if let backButton = self.buttons.arrangedSubviews.compactMap({ $0 as? NINButton }).first(where: { $0.type == .back }) {
@@ -70,6 +74,10 @@ final class QuestionnaireNavigationCell: UITableViewCell, HasCustomLayer, Questi
 
             if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireNavigationBack) {
                 backButton.layer.insertSublayer(layer, at: 0)
+            } else {
+                backButton.layer.borderColor = UIColor.QBlueButtonNormal.cgColor
+                backButton.backgroundColor = .white
+                backButton.round(radius: 45.0 / 2, borderWidth: 1.0, borderColor: .QBlueButtonNormal)
             }
         }
     }

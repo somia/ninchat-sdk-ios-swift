@@ -134,6 +134,8 @@ extension NINButton {
                 } else {
                     self.layer.insertSublayer(layer, at: 0)
                 }
+            } else {
+                self.roundButton()
             }
         case true:
             if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireRadioSelected) {
@@ -142,6 +144,8 @@ extension NINButton {
                 } else {
                     self.layer.insertSublayer(layer, at: 0)
                 }
+            } else {
+                self.roundButton()
             }
         }
 
