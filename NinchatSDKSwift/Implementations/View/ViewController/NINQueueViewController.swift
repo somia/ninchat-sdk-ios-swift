@@ -46,7 +46,7 @@ final class NINQueueViewController: UIViewController, ViewController, HasCustomL
 
             let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
             cancelQueueButton.buttonTitle = closeTitle
-            cancelQueueButton.overrideAssets(with: self.delegate)
+            cancelQueueButton.overrideAssets(with: self.delegate, in: .view)
             cancelQueueButton.closure = { [weak self] _ in
                 DispatchQueue.main.async {
                     self?.onCancelQueueTapped()
@@ -185,7 +185,7 @@ extension NINQueueViewController {
 
     private func overrideAssets() {
         overrideTitlebarAssets()
-        cancelQueueButton.overrideAssets(with: self.delegate)
+        cancelQueueButton.overrideAssets(with: self.delegate, in: .view)
 
         if let spinnerImage = self.delegate?.override(imageAsset: .ninchatIconLoader) {
             self.spinnerImageView.image = spinnerImage
@@ -194,17 +194,9 @@ extension NINQueueViewController {
         if let layer = self.delegate?.override(layerAsset: .ninchatBackgroundTop) {
             topContainerView.layer.insertSublayer(layer, at: 0)
         }
-        /// TODO: REMOVE legacy delegate
-        else if let topBackgroundColor = self.delegate?.override(colorAsset: .backgroundTop) {
-            topContainerView.backgroundColor = topBackgroundColor
-        }
         
         if let layer = self.delegate?.override(layerAsset: .ninchatBackgroundBottom) {
             bottomContainerView.layer.insertSublayer(layer, at: 0)
-        }
-        /// TODO: REMOVE legacy delegate
-        else if let bottomBackgroundColor = self.delegate?.override(colorAsset: .backgroundBottom) {
-            bottomContainerView.backgroundColor = bottomBackgroundColor
         }
         
         if let textTopColor = self.delegate?.override(colorAsset: .ninchatColorTextTop) {

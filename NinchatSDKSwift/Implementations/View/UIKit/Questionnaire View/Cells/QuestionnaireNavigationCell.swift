@@ -59,12 +59,6 @@ final class QuestionnaireNavigationCell: UITableViewCell, HasCustomLayer, Questi
             if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireNavigationNext) {
                 nextButton.layer.insertSublayer(layer, at: 0)
             }
-            /// TODO: REMOVE legacy delegate
-            else {
-                nextButton.layer.borderColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorNavigationNextText)?.cgColor ?? UIColor.QBlueButtonNormal.cgColor
-                nextButton.backgroundColor = delegate?.override(questionnaireAsset: .navigationNextBackground) ?? .QBlueButtonNormal
-                nextButton.round(radius: 45.0 / 2, borderWidth: 1.0, borderColor: .QBlueButtonNormal)
-            }
         }
         if let backButton = self.buttons.arrangedSubviews.compactMap({ $0 as? NINButton }).first(where: { $0.type == .back }) {
             if backButton.titleLabel?.text?.isEmpty ?? true {
@@ -76,12 +70,6 @@ final class QuestionnaireNavigationCell: UITableViewCell, HasCustomLayer, Questi
 
             if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireNavigationBack) {
                 backButton.layer.insertSublayer(layer, at: 0)
-            }
-            /// TODO: REMOVE legacy delegate
-            else {
-                backButton.layer.borderColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorNavigationBackText)?.cgColor ?? UIColor.QBlueButtonNormal.cgColor
-                backButton.backgroundColor = delegate?.override(questionnaireAsset: .navigationBackBackground) ?? .white
-                backButton.round(radius: 45.0 / 2, borderWidth: 1.0, borderColor: .QBlueButtonNormal)
             }
         }
     }

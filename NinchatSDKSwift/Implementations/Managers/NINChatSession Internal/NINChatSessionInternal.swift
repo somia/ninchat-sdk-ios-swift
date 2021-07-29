@@ -59,70 +59,11 @@ extension NINChatSession: NINChatSessionInternalDelegate {
     }
 
     func override(imageAsset key: AssetConstants) -> UIImage? {
-        /// TODO: REMOVE legacy keys
-        let deprecatedKeys: [AssetConstants:AssetConstants] = [
-            .ninchatIconLoader: .iconLoader,
-            .ninchatIconChatWritingIndicator: .chatWritingIndicator,
-            .ninchatChatBackground: .chatBackground,
-            .ninchatChatAvatarRight: .chatAvatarRight,
-            .ninchatChatAvatarLeft: .chatAvatarLeft,
-            .ninchatChatPlayVideo: .chatPlayVideo,
-            .ninchatIconTextareaCamera: .iconTextareaCamera,
-            .ninchatIconTextareaAttachment: .iconTextareaAttachment,
-            .ninchatIconDownload: .iconDownload,
-            .ninchatIconVideoToggleFull: .iconVideoToggleFull,
-            .ninchatIconVideoToggleNormal: .iconVideoToggleNormal,
-            .ninchatIconVideoSoundOn: .iconVideoSoundOn,
-            .ninchatIconVideoSoundOff: .iconVideoSoundOff,
-            .ninchatIconVideoMicrophoneOn: .iconVideoMicrophoneOn,
-            .ninchatIconVideoMicrophoneOff: .iconVideoMicrophoneOff,
-            .ninchatIconVideoCameraOn: .iconVideoCameraOn,
-            .ninchatIconVideoCameraOff: .iconVideoCameraOff,
-            .ninchatIconVideoHangup: .iconVideoHangup,
-            .ninchatIconRatingPositive: .iconRatingPositive,
-            .ninchatIconRatingNeutral: .iconRatingNeutral,
-            .ninchatIconRatingNegative: .iconRatingNegative,
-            .ninchatQuestionnaireBackground: .questionnaireBackground
-        ]
-
-        if let asset = self.delegate?.ninchat(self, overrideImageAssetForKey: key) {
-            return asset
-        }
-        guard let depKey = deprecatedKeys[key] else { return nil }
-        return self.delegate?.ninchat(self, overrideImageAssetForKey: depKey)
+        self.delegate?.ninchat(self, overrideImageAssetForKey: key)
     }
 
     func override(colorAsset key: ColorConstants) -> UIColor? {
-        /// TODO: REMOVE legacy keys
-        let deprecatedKeys: [ColorConstants:ColorConstants] = [
-            .ninchatColorButtonPrimaryText: .buttonPrimaryText,
-            .ninchatColorButtonSecondaryText: .buttonSecondaryText,
-            .ninchatColorInfoText: .infoText,
-            .ninchatColorChatName: .chatName,
-            .ninchatColorChatTimestamp: .chatTimestamp,
-            .ninchatColorChatBubbleLeftText: .chatBubbleLeftText,
-            .ninchatColorChatBubbleRightText: .chatBubbleRightText,
-            .ninchatColorChatBubbleLeftTint: .chatBubbleLeftTint,
-            .ninchatColorChatBubbleRightTint: .chatBubbleRightTint,
-            .ninchatColorTextareaText: .textareaText,
-            .ninchatColorTextareaSubmitText: .textareaSubmitText,
-            .ninchatColorTextareaPlaceholder: .textareaPlaceholder,
-            .ninchatColorChatBubbleLeftLink: .chatBubbleLeftLink,
-            .ninchatColorChatBubbleRightLink: .chatBubbleRightLink,
-            .ninchatColorModalTitleText: .modalText,
-            .ninchatColorTextTop: .textTop,
-            .ninchatColorTextBottom: .textBottom,
-            .ninchatColorLink: .link,
-            .ninchatColorRatingPositiveText: .ratingPositiveText,
-            .ninchatColorRatingNeutralText: .ratingNeutralText,
-            .ninchatColorRatingNegativeText: .ratingNegativeText
-        ]
-
-        if let color = self.delegate?.ninchat(self, overrideColorAssetForKey: key) {
-            return color
-        }
-        guard let depKey = deprecatedKeys[key] else { return nil }
-        return self.delegate?.ninchat(self, overrideColorAssetForKey: depKey)
+        self.delegate?.ninchat(self, overrideColorAssetForKey: key)
     }
 
     func override(layerAsset key: CALayerConstant) -> CALayer? {
@@ -131,30 +72,8 @@ extension NINChatSession: NINChatSessionInternalDelegate {
         return layer
     }
 
-    func override(questionnaireAsset key: QuestionnaireColorConstants) -> UIColor? {
-        /// TODO: REMOVE legacy keys
-        let deprecatedKeys: [QuestionnaireColorConstants:QuestionnaireColorConstants] = [
-            .ninchatQuestionnaireColorTitleText: .titleTextColor,
-            .ninchatQuestionnaireColorTextInput: .textInputColor,
-            .ninchatQuestionnaireColorRadioSelectedText: .radioPrimaryText,
-            .ninchatQuestionnaireColorRadioUnselectedText: .radioSecondaryText,
-            .ninchatQuestionnaireColorCheckboxSelectedText: .checkboxPrimaryText,
-            .ninchatQuestionnaireColorCheckboxUnselectedText: .checkboxSecondaryText,
-            .ninchatQuestionnaireColorSelectSelectedText: .selectSelectedText,
-            .ninchatQuestionnaireColorSelectUnselectText: .selectNormalText,
-            .ninchatQuestionnaireColorNavigationNextText: .navigationNextText,
-            .ninchatQuestionnaireColorNavigationBackText: .navigationBackText,
-            .ninchatQuestionnaireCheckboxSelectedIndicator: .checkboxSelectedIndicator,
-            .ninchatQuestionnaireCheckboxUnselectedIndicator: .checkboxDeselectedIndicator,
-            .ninchatQuestionnaireSelectSelected: .selectSelectedBackground,
-            .ninchatQuestionnaireSelectUnselected: .selectDeselectedBackground
-        ]
-                
-        if let color = self.delegate?.ninchat(self, overrideQuestionnaireColorAssetKey: key) {
-            return color
-        }
-        guard let depKey = deprecatedKeys[key] else { return nil }
-        return self.delegate?.ninchat(self, overrideQuestionnaireColorAssetKey: depKey)
+    func override(questionnaireAsset key: QuestionnaireColorConstants) -> UIColor? {     
+        self.delegate?.ninchat(self, overrideQuestionnaireColorAssetKey: key)
     }
 }
 
