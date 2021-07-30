@@ -134,10 +134,7 @@ extension NINButton {
                 } else {
                     self.layer.insertSublayer(layer, at: 0)
                 }
-            }
-            /// TODO: REMOVE legacy delegate
-            else {
-                self.setBackgroundImage((delegate?.override(questionnaireAsset: .radioSecondaryBackground) ?? .white).toImage, for: .normal)
+            } else {
                 self.roundButton()
             }
         case true:
@@ -147,10 +144,7 @@ extension NINButton {
                 } else {
                     self.layer.insertSublayer(layer, at: 0)
                 }
-            }
-                /// TODO: REMOVE legacy delegate
-            else {
-                self.setBackgroundImage((delegate?.override(questionnaireAsset: .radioPrimaryBackground) ?? .white).toImage, for: .selected)
+            } else {
                 self.roundButton()
             }
         }

@@ -34,11 +34,7 @@ extension HasTitleBar where Self:ViewController {
         guard let session = self.sessionManager else {
             fatalError("session manager is not set!")
         }
-        if session.siteConfiguration.hideTitlebar {
-            /// hide title bar only if explicitly set in the config
-            return false
-        }
-        return true
+        return !session.siteConfiguration.hideTitlebar
     }
 
     internal var titleHeight: CGFloat {
@@ -74,8 +70,8 @@ extension HasTitleBar where Self:ViewController {
             .fix(top: (0, titlebar))
             .fix(leading: (0, titlebar), trailing: (0, titlebar))
             .fix(height: titleHeight)
-        bar.leading?.priority = .required
-        bar.trailing?.priority = .required
+        bar.leading?.priority = .almostRequired
+        bar.trailing?.priority = .almostRequired
 
         let border = self.border
         titlebar.addSubview(border)

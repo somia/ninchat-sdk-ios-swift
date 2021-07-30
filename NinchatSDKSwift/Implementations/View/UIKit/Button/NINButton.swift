@@ -49,11 +49,6 @@ class NINButton: UIButton, HasCustomLayer {
 
         if let layer = delegate?.override(layerAsset: primary ? .ninchatPrimaryButton : .ninchatSecondaryButton) {
             self.layer.insertSublayer(layer, below: self.titleLabel?.layer)
-        }
-        /// TODO: REMOVE legacy delegate
-        else if let overrideImage = delegate?.override(imageAsset: primary ? .primaryButton : .secondaryButton) {
-            self.setBackgroundImage(overrideImage, for: .normal)
-            self.roundButton()
         } else {
             self.setTitleColor(primary ? .white : .defaultBackgroundButton, for: .normal)
             self.backgroundColor = primary ? .defaultBackgroundButton : .white

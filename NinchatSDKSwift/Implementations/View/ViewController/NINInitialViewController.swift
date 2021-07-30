@@ -39,11 +39,13 @@ final class NINInitialViewController: UIViewController, HasCustomLayer, ViewCont
     }
     @IBOutlet private(set) var motdTextView: UITextView! {
         didSet {
-            if let motdText = self.sessionManager?.siteConfiguration.motd {
-                motdTextView.setAttributed(text: motdText, font: .ninchat)
+            guard let motdText = self.sessionManager?.siteConfiguration.motd else {
+                motdTextView.isHidden = true; return
             }
+            
             motdTextView.delegate = self
             motdTextView.textAlignment = .left
+            motdTextView.setAttributed(text: motdText, font: .ninchat)
         }
     }
     @IBOutlet private(set) var noQueueTextView: UITextView! {
@@ -91,17 +93,9 @@ private extension NINInitialViewController {
         if let layer = delegate?.override(layerAsset: .ninchatBackgroundTop) {
             topContainerView.layer.insertSublayer(layer, at: 0)
         }
-        /// TODO: REMOVE legacy delegate
-        else if let topBackgroundColor = delegate?.override(colorAsset: .backgroundTop) {
-            topContainerView.backgroundColor = topBackgroundColor
-        }
         
         if let layer = delegate?.override(layerAsset: .ninchatBackgroundBottom) {
             bottomContainerView.layer.insertSublayer(layer, at: 0)
-        }
-        /// TODO: REMOVE legacy delegate
-        else if let bottomBackgroundColor = delegate?.override(colorAsset: .backgroundBottom) {
-            bottomContainerView.backgroundColor = bottomBackgroundColor
         }
         
         if let textTopColor = delegate?.override(colorAsset: .ninchatColorTextTop) {
