@@ -11,9 +11,19 @@ final class ChatMetaCell: UITableViewCell, ChatMeta {
 
     // MARK: - Outlets
     
+    @IBOutlet private weak var metaTextLabelContainer: UIView! {
+        didSet {
+            metaTextLabelContainer.round(radius: 15.0)
+        }
+    }
     @IBOutlet private weak var metaTextLabel: UILabel! {
         didSet {
             metaTextLabel.font = .ninchat
+        }
+    }
+    @IBOutlet private weak var metaTextIcon: UIImageView! {
+        didSet {
+            metaTextIcon.tintColor = .QBlueButtonNormal
         }
     }
     @IBOutlet private weak var closeChatButtonContainer: UIView!
