@@ -181,11 +181,19 @@ you are next. </string>
                                             <constraint firstAttribute="height" constant="120" id="53e-gu-L9H"/>
                                         </constraints>
                                     </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8su-MT-odz" userLabel="Separator">
+                                        <rect key="frame" x="0.0" y="637" width="414" height="1"/>
+                                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="1" id="V42-4I-xli"/>
+                                        </constraints>
+                                    </view>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="0Fg-U9-lGc" secondAttribute="trailing" id="2d5-OB-ykZ"/>
                                     <constraint firstItem="0Fg-U9-lGc" firstAttribute="top" secondItem="Zwn-LD-a0m" secondAttribute="top" id="2vX-mI-GL4"/>
+                                    <constraint firstItem="Zwn-LD-a0m" firstAttribute="top" secondItem="8su-MT-odz" secondAttribute="bottom" id="50y-4Z-eF0"/>
                                     <constraint firstItem="brw-f0-DOL" firstAttribute="leading" secondItem="RGh-Mv-yIb" secondAttribute="leading" id="Atl-NT-ym0"/>
                                     <constraint firstAttribute="trailing" secondItem="brw-f0-DOL" secondAttribute="trailing" id="Hdj-TF-ici"/>
                                     <constraint firstItem="0Fg-U9-lGc" firstAttribute="leading" secondItem="RGh-Mv-yIb" secondAttribute="leading" id="P2b-Tm-L7V"/>
@@ -194,8 +202,10 @@ you are next. </string>
                                     <constraint firstItem="0Fg-U9-lGc" firstAttribute="trailing" secondItem="Zwn-LD-a0m" secondAttribute="trailing" id="hGV-XB-LvV"/>
                                     <constraint firstAttribute="bottom" secondItem="0Fg-U9-lGc" secondAttribute="bottom" id="hmc-Et-zax"/>
                                     <constraint firstAttribute="bottom" secondItem="Zwn-LD-a0m" secondAttribute="bottom" id="imt-se-8I4"/>
+                                    <constraint firstAttribute="trailing" secondItem="8su-MT-odz" secondAttribute="trailing" id="lRl-kM-3Dz"/>
                                     <constraint firstItem="Zwn-LD-a0m" firstAttribute="leading" secondItem="RGh-Mv-yIb" secondAttribute="leading" id="oKZ-VW-Va5"/>
                                     <constraint firstItem="Zwn-LD-a0m" firstAttribute="trailing" secondItem="RGh-Mv-yIb" secondAttribute="trailing" id="tRQ-yh-uam"/>
+                                    <constraint firstItem="8su-MT-odz" firstAttribute="leading" secondItem="RGh-Mv-yIb" secondAttribute="leading" id="uHZ-JB-50h"/>
                                     <constraint firstItem="brw-f0-DOL" firstAttribute="top" secondItem="RGh-Mv-yIb" secondAttribute="top" id="uyB-PA-9zl"/>
                                 </constraints>
                             </view>
