@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -14,24 +15,47 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="121" id="FyA-uo-lSb" userLabel="ChatMetaCell" customClass="ChatMetaCell" customModule="NinchatSDKSwift">
-            <rect key="frame" x="0.0" y="0.0" width="396" height="121"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="148" id="FyA-uo-lSb" userLabel="ChatMetaCell" customClass="ChatMetaCell" customModule="NinchatSDKSwift">
+            <rect key="frame" x="0.0" y="0.0" width="396" height="148"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="FyA-uo-lSb" id="eEc-j9-Oc2">
-                <rect key="frame" x="0.0" y="0.0" width="396" height="121"/>
+                <rect key="frame" x="0.0" y="0.0" width="396" height="148"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="x0N-3W-u1q" userLabel="Container view">
-                        <rect key="frame" x="0.0" y="0.0" width="396" height="121"/>
+                        <rect key="frame" x="0.0" y="0.0" width="396" height="148"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Conversation started. Oh, did I mention this could take up multiple lines?" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WkV-Az-Oj6">
-                                <rect key="frame" x="15" y="10" width="366" height="37.5"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="y8V-BS-DC4">
+                                <rect key="frame" x="15" y="10" width="366" height="64.5"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="info.circle" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="mzw-OU-KFv">
+                                        <rect key="frame" x="18.5" y="23" width="20" height="19"/>
+                                        <color key="tintColor" systemColor="systemBlueColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="20" id="UYL-ST-CFf"/>
+                                            <constraint firstAttribute="height" constant="20" id="xv3-TD-Dv4"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Conversation started. Oh, did I mention this could take up multiple lines?" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WkV-Az-Oj6">
+                                        <rect key="frame" x="48.5" y="12" width="293" height="40.5"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="mzw-OU-KFv" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="y8V-BS-DC4" secondAttribute="leading" constant="10" id="4CH-uu-diB"/>
+                                    <constraint firstItem="WkV-Az-Oj6" firstAttribute="centerX" secondItem="y8V-BS-DC4" secondAttribute="centerX" constant="12" id="DYT-2P-joG"/>
+                                    <constraint firstAttribute="bottom" secondItem="WkV-Az-Oj6" secondAttribute="bottom" constant="12" id="IdC-7L-aRG"/>
+                                    <constraint firstItem="WkV-Az-Oj6" firstAttribute="top" secondItem="y8V-BS-DC4" secondAttribute="top" constant="12" id="Jrx-WZ-15h"/>
+                                    <constraint firstItem="WkV-Az-Oj6" firstAttribute="leading" secondItem="mzw-OU-KFv" secondAttribute="trailing" constant="10" id="Rb1-1i-oP5"/>
+                                    <constraint firstItem="mzw-OU-KFv" firstAttribute="centerY" secondItem="y8V-BS-DC4" secondAttribute="centerY" id="ezB-xQ-dBR"/>
+                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="WkV-Az-Oj6" secondAttribute="trailing" constant="8" id="vnF-Cs-IFj"/>
+                                </constraints>
+                            </view>
                             <view clipsSubviews="YES" tag="123" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UQg-Rm-BHH" userLabel="Button container view">
-                                <rect key="frame" x="0.0" y="57.5" width="396" height="63.5"/>
+                                <rect key="frame" x="0.0" y="84.5" width="396" height="63.5"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" placeholderIntrinsicWidth="135" placeholderIntrinsicHeight="45" translatesAutoresizingMaskIntoConstraints="NO" id="uKt-hw-mCs" customClass="CloseButton" customModule="NinchatSDKSwift">
                                         <rect key="frame" x="130.5" y="8" width="135" height="47.5"/>
@@ -50,11 +74,11 @@
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="UQg-Rm-BHH" secondAttribute="trailing" id="A5D-cX-MJz"/>
                             <constraint firstItem="UQg-Rm-BHH" firstAttribute="leading" secondItem="x0N-3W-u1q" secondAttribute="leading" id="BDe-EQ-Sya"/>
-                            <constraint firstAttribute="trailing" secondItem="WkV-Az-Oj6" secondAttribute="trailing" constant="15" id="Ez7-5p-la8"/>
-                            <constraint firstItem="UQg-Rm-BHH" firstAttribute="top" secondItem="WkV-Az-Oj6" secondAttribute="bottom" constant="10" id="YRP-uq-DLs"/>
+                            <constraint firstItem="UQg-Rm-BHH" firstAttribute="top" secondItem="y8V-BS-DC4" secondAttribute="bottom" constant="10" id="RQS-KK-MeY"/>
+                            <constraint firstItem="y8V-BS-DC4" firstAttribute="leading" secondItem="x0N-3W-u1q" secondAttribute="leading" constant="15" id="TeU-Aw-s5l"/>
                             <constraint firstAttribute="bottom" secondItem="UQg-Rm-BHH" secondAttribute="bottom" id="gRx-lF-Qg5"/>
-                            <constraint firstItem="WkV-Az-Oj6" firstAttribute="top" secondItem="x0N-3W-u1q" secondAttribute="top" constant="10" id="nut-tt-ogK"/>
-                            <constraint firstItem="WkV-Az-Oj6" firstAttribute="leading" secondItem="x0N-3W-u1q" secondAttribute="leading" constant="15" id="tWr-HX-0dn"/>
+                            <constraint firstAttribute="trailing" secondItem="y8V-BS-DC4" secondAttribute="trailing" constant="15" id="ip1-BH-aSZ"/>
+                            <constraint firstItem="y8V-BS-DC4" firstAttribute="top" secondItem="x0N-3W-u1q" secondAttribute="top" constant="10" id="nh7-MR-YhO"/>
                         </constraints>
                     </view>
                 </subviews>
@@ -70,9 +94,17 @@
             <connections>
                 <outlet property="closeChatButton" destination="uKt-hw-mCs" id="BCb-dS-FhW"/>
                 <outlet property="closeChatButtonContainer" destination="UQg-Rm-BHH" id="ycp-rI-xAo"/>
+                <outlet property="metaTextIcon" destination="mzw-OU-KFv" id="Ic8-5S-ucR"/>
                 <outlet property="metaTextLabel" destination="WkV-Az-Oj6" id="nrp-hH-RB0"/>
+                <outlet property="metaTextLabelContainer" destination="y8V-BS-DC4" id="rds-lN-Ui4"/>
             </connections>
-            <point key="canvasLocation" x="-321.60000000000002" y="13.943028485757123"/>
+            <point key="canvasLocation" x="-321.60000000000002" y="26.086956521739133"/>
         </tableViewCell>
     </objects>
+    <resources>
+        <image name="info.circle" catalog="system" width="128" height="121"/>
+        <systemColor name="systemBlueColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
 </document>
