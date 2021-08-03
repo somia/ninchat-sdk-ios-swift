@@ -78,6 +78,7 @@ final class ChatInputControls: UIView, HasCustomLayer, ChatInputControlsProtocol
     override func layoutSubviews() {
         super.layoutSubviews()
         applyLayerOverride(view: sendMessageButton)
+        applyLayerOverride(view: textInput)
     }
     
     func overrideAssets() {
@@ -105,6 +106,9 @@ final class ChatInputControls: UIView, HasCustomLayer, ChatInputControlsProtocol
         if let inputTextColor = self.delegate?.override(colorAsset: .ninchatColorTextareaText) {
             self.textInput.textColor = inputTextColor
             textColor = inputTextColor
+        }
+        if let inputTextLayer = self.delegate?.override(layerAsset: .ninchatColorTextareaTextInput) {
+            self.textInput.layer.insertSublayer(inputTextLayer, at: 0)
         }
         if let placeholderColor = self.delegate?.override(colorAsset: .ninchatColorTextareaPlaceholder) {
             self.placeholderColor = placeholderColor

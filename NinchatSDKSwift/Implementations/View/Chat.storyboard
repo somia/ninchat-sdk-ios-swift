@@ -149,10 +149,10 @@ you are next. </string>
                                 <rect key="frame" x="0.0" y="104" width="414" height="758"/>
                                 <subviews>
                                     <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="brw-f0-DOL" userLabel="Chat view" customClass="ChatView" customModule="NinchatSwiftSDKUI" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="638"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="608"/>
                                         <subviews>
                                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="g76-kj-vdH">
-                                                <rect key="frame" x="0.0" y="0.0" width="414" height="638"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="414" height="608"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <color key="separatorColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </tableView>
@@ -171,18 +171,18 @@ you are next. </string>
                                         </connections>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0Fg-U9-lGc" userLabel="SafeArea Cover">
-                                        <rect key="frame" x="0.0" y="638" width="414" height="120"/>
+                                        <rect key="frame" x="0.0" y="608" width="414" height="150"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
                                     <view tag="201" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zwn-LD-a0m">
-                                        <rect key="frame" x="0.0" y="638" width="414" height="120"/>
+                                        <rect key="frame" x="0.0" y="608" width="414" height="150"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="120" id="53e-gu-L9H"/>
+                                            <constraint firstAttribute="height" constant="150" id="53e-gu-L9H"/>
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8su-MT-odz" userLabel="Separator">
-                                        <rect key="frame" x="0.0" y="637" width="414" height="1"/>
+                                        <rect key="frame" x="0.0" y="607" width="414" height="1"/>
                                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="V42-4I-xli"/>

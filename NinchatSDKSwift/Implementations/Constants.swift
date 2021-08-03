@@ -76,6 +76,7 @@ public enum CALayerConstant {
     case ninchatPrimaryButton
     case ninchatSecondaryButton
     case ninchatTextareaSubmitButton
+    case ninchatColorTextareaTextInput
     case ninchatModalTop
     case ninchatModalBottom
     case ninchatBackgroundTop
