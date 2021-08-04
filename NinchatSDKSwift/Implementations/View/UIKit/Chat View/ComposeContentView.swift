@@ -17,6 +17,7 @@ protocol ComposeContentViewProtocol: UIView {
     var message: ComposeContent? { get }
     var sendButton: UIButton? { get }
     var optionsButton: [UIButton] { get }
+    var delegate: NINChatSessionInternalDelegate? { get set }
 
     func clear()
     func removeSendTapAction()
@@ -24,7 +25,7 @@ protocol ComposeContentViewProtocol: UIView {
     func populate(message: ComposeContent, siteConfiguration: SiteConfiguration?, colorAssets: NINColorAssetDictionary?, composeStates: [Bool]?, enableSendButton: Bool, isSelected: Bool)
 }
 
-final class ComposeContentView: UIView, ComposeContentViewProtocol {
+final class ComposeContentView: UIView, ComposeContentViewProtocol, HasCustomLayer {
     private(set) var message: ComposeContent?
 
     private var selectedOptions: [ComposeContentOption] = []
@@ -50,13 +51,44 @@ final class ComposeContentView: UIView, ComposeContentViewProtocol {
         } else if message?.element == .button {
             self.sendButton?.frame = CGRect(x: 0, y: 0, width: self.bounds.width, height: Margins.kButtonHeight.rawValue)
         }
+        
+        if self.sendButton != nil {
+            self.applyLayerOverride(view: self.sendButton!)
+        }
+        self.optionsButton.forEach({ [weak self] button in
+            self?.applyLayerOverride(view: button)
+        })
     }
     
     private func applyStyle(to button: UIButton?, borderWidth: CGFloat? = nil, selected: Bool) {
-        let mainColor: UIColor = (button == self.sendButton) ? .blueButton : .grayButton
-        button?.round(radius: Margins.kButtonHeight.rawValue / 2, borderWidth: borderWidth ?? ((selected) ? 0.0 : 2.0), borderColor: mainColor)
-        button?.setBackgroundImage((selected) ? UIColor.blueButton.toImage : UIColor.white.toImage, for: .normal)
-        button?.setTitleColor((selected) ? .white : mainColor, for: .normal)
+        func applyDefaultStyle(borderColor: UIColor, backgroundImage: UIColor, titleColor: UIColor) {
+            button?.round(radius: Margins.kButtonHeight.rawValue/2, borderWidth: borderWidth ?? ((selected) ? 0.0 : 2.0), borderColor: borderColor)
+            button?.setBackgroundImage(backgroundImage.toImage, for: .normal)
+            button?.setTitleColor(titleColor, for: .normal)
+        }
+        
+        button?.layer.sublayers?.first(where: { $0.name == LAYER_NAME })?.removeFromSuperlayer()
+        
+        if button == self.sendButton {
+            if selected, let layer = self.delegate?.override(layerAsset: .ninchatComposeSubmitSelectedButton) {
+                button?.layer.insertSublayer(layer, at: 0)
+            } else if let layer = self.delegate?.override(layerAsset: .ninchatComposeSubmitButton) {
+                button?.layer.insertSublayer(layer, at: 0)
+            } else {
+                applyDefaultStyle(borderColor: .blueButton, backgroundImage: (selected) ? .blueButton : .white, titleColor: (selected) ? .white : .blueButton)
+            }
+        } else {
+            if selected, let layer = self.delegate?.override(layerAsset: .ninchatComposeSelectedButton) {
+                button?.layer.insertSublayer(layer, at: 0)
+            } else if let layer = self.delegate?.override(layerAsset: .ninchatComposeUnselectedButton) {
+                button?.layer.insertSublayer(layer, at: 0)
+            } else {
+                applyDefaultStyle(borderColor: .grayButton, backgroundImage: (selected) ? .blueButton : .white, titleColor: (selected) ? .white : .grayButton)
+            }
+        }
+        
+        self.setNeedsLayout()
+        self.layoutIfNeeded()
     }
     
     /// `https://github.com/somia/ninchat-sdk-ios/issues/84`
@@ -111,6 +143,7 @@ final class ComposeContentView: UIView, ComposeContentViewProtocol {
         } 
         return 0
     }
+    var delegate: NINChatSessionInternalDelegate?
     
     func clear() {
         self.selectedOptions = []
@@ -157,6 +190,7 @@ final class ComposeContentView: UIView, ComposeContentViewProtocol {
         self.applyStyle(to: sendButton, borderWidth: 1.0, selected: isSelected)
         self.updateTitleScale(for: self.sendButton)
         self.composeState = []
+        self.optionsButton.append(self.sendButton!)
     }
     
     private func drawSelect(_ siteConfiguration: SiteConfiguration?, _ composeStates: [Bool]?, _ isSelected: Bool) {

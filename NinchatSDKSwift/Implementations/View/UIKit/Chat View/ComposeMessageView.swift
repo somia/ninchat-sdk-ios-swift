@@ -13,6 +13,7 @@ protocol ComposeMessageViewProtocol: UIView {
     typealias OnUIComposeSendActionTapped = (ComposeContentViewProtocol, _ didUpdateOptions: Bool) -> Void
     typealias OnUIComposeUpdateActionTapped = ([Bool], _ didUpdateOptions: Bool) -> Void
 
+    var delegate: NINChatSessionInternalDelegate? { get set }
     var onSendActionTapped: OnUIComposeSendActionTapped? { get set }
     var onStateUpdateTapped: OnUIComposeUpdateActionTapped? { get set }
     
@@ -58,6 +59,7 @@ final class ComposeMessageView: UIView, ComposeMessageViewProtocol {
     
     // MARK: - ComposeMessageViewProtocol
     
+    var delegate: NINChatSessionInternalDelegate?
     var onSendActionTapped: OnUIComposeSendActionTapped?
     var onStateUpdateTapped: OnUIComposeUpdateActionTapped?
     
@@ -95,6 +97,7 @@ final class ComposeMessageView: UIView, ComposeMessageViewProtocol {
         let enableSendButton = message.sendPressedIndex == -1
         message.content.forEach { [weak self] (content: ComposeContent) in
             let view: ComposeContentViewProtocol = ComposeContentView(frame: .zero)
+            view.delegate = self?.delegate
             view.populate(message: content, siteConfiguration: siteConfiguration, colorAssets: colorAssets, composeStates: composeStates, enableSendButton: enableSendButton, isSelected: content.sendPressed ?? false)
             view.isHidden = false
             view.onSendActionTapped = { [weak self] contentView, didUpdateOptions in

@@ -33,6 +33,7 @@ class ChatChannelComposeCell: ChatChannelOthersCell {
     }
     
     func populateCompose(message: ComposeMessage, configuration: SiteConfiguration?, colorAssets: NINColorAssetDictionary?, composeStates: [Bool]?) {
+        self.composeMessageView.delegate = self.delegate
         self.composeMessageView.clear()
         self.composeMessageView.onStateUpdateTapped = { [weak self] composeStates, didUpdateOptions in
             self?.onComposeUpdateTapped?(composeStates, didUpdateOptions)
