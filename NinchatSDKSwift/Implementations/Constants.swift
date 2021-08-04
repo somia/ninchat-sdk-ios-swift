@@ -20,6 +20,7 @@ public enum AssetConstants {
     case ninchatChatPlayVideo
     case ninchatIconTextareaCamera      /* not used */
     case ninchatIconTextareaAttachment
+    case ninchatIconMetadata
     case ninchatIconDownload
     case ninchatIconVideoToggleFull     /* not used */
     case ninchatIconVideoToggleNormal   /* not used */
@@ -77,6 +78,7 @@ public enum CALayerConstant {
     case ninchatSecondaryButton
     case ninchatTextareaSubmitButton
     case ninchatColorTextareaTextInput
+    case ninchatMetadataContainer
     case ninchatModalTop
     case ninchatModalBottom
     case ninchatBackgroundTop

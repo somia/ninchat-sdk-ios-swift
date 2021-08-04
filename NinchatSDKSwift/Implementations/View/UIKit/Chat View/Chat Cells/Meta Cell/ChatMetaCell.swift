@@ -7,15 +7,11 @@
 import UIKit
 import AutoLayoutSwift
 
-final class ChatMetaCell: UITableViewCell, ChatMeta {
+final class ChatMetaCell: UITableViewCell, ChatMeta, HasCustomLayer {
 
     // MARK: - Outlets
     
-    @IBOutlet private weak var metaTextLabelContainer: UIView! {
-        didSet {
-            metaTextLabelContainer.round(radius: 15.0)
-        }
-    }
+    @IBOutlet private weak var metaTextLabelContainer: UIView!
     @IBOutlet private weak var metaTextLabel: UILabel! {
         didSet {
             metaTextLabel.font = .ninchat
@@ -23,7 +19,7 @@ final class ChatMetaCell: UITableViewCell, ChatMeta {
     }
     @IBOutlet private weak var metaTextIcon: UIImageView! {
         didSet {
-            metaTextIcon.tintColor = .QBlueButtonNormal
+            metaTextIcon.contentMode = .scaleAspectFit
         }
     }
     @IBOutlet private weak var closeChatButtonContainer: UIView!
@@ -51,6 +47,11 @@ final class ChatMetaCell: UITableViewCell, ChatMeta {
         self.rasterize()
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.applyLayerOverride(view: metaTextLabelContainer)
+    }
+    
     private func applyAssets(_ message: MetaMessage, _ colorAssets: NINColorAssetDictionary?) {
         if let labelColor = colorAssets?[.ninchatColorInfoText] {
             self.metaTextLabel.textColor = labelColor
@@ -67,6 +68,18 @@ final class ChatMetaCell: UITableViewCell, ChatMeta {
             self.closeChatButtonContainer.fix(height: 0)
             self.closeChatButton.fix(height: 0)
             self.onCloseChatTapped = nil
+        }
+        
+        if let metaLabelContainerLayer = self.delegate?.override(layerAsset: .ninchatMetadataContainer) {
+            self.metaTextLabelContainer.layer.insertSublayer(metaLabelContainerLayer, at: 0)
+        } else {
+            metaTextLabelContainer.round(radius: 15.0)
+        }
+        
+        if let metaIcon = self.delegate?.override(imageAsset: .ninchatIconMetadata) {
+            metaTextIcon.image = metaIcon
+        } else {
+            metaTextIcon.tintColor = .QBlueButtonNormal
         }
     }
 }
