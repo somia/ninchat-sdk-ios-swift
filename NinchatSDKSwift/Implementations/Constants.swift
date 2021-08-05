@@ -20,6 +20,7 @@ public enum AssetConstants {
     case ninchatChatPlayVideo
     case ninchatIconTextareaCamera      /* not used */
     case ninchatIconTextareaAttachment
+    case ninchatIconMetadata
     case ninchatIconDownload
     case ninchatIconVideoToggleFull     /* not used */
     case ninchatIconVideoToggleNormal   /* not used */
@@ -48,6 +49,7 @@ public enum ColorConstants {
     case ninchatColorChatBubbleRightText
     case ninchatColorChatBubbleLeftTint
     case ninchatColorChatBubbleRightTint
+    case ninchatColorChatBubbleComposeTint
     case ninchatColorTextareaText
     case ninchatColorTextareaPlaceholder
     case ninchatColorTextareaSubmitText
@@ -75,7 +77,13 @@ public let LAYER_NAME = "_ninchat-asset"
 public enum CALayerConstant {
     case ninchatPrimaryButton
     case ninchatSecondaryButton
+    case ninchatComposeSelectedButton
+    case ninchatComposeUnselectedButton
+    case ninchatComposeSubmitButton
+    case ninchatComposeSubmitSelectedButton
     case ninchatTextareaSubmitButton
+    case ninchatColorTextareaTextInput
+    case ninchatMetadataContainer
     case ninchatModalTop
     case ninchatModalBottom
     case ninchatBackgroundTop

@@ -43,7 +43,8 @@ final class ChatView: UIView, ChatViewProtocol {
     * every time a cell needs updating.
     */
     private var colorAssets: NINColorAssetDictionary!
-
+    private var composeColorAssets: NINColorAssetDictionary!
+    
     /**
     * Current states for the visible ui/compose type messages, tracked across cell
     * recycle. messageID as key, array corresponds to the array of ui/compose objects
@@ -94,6 +95,7 @@ final class ChatView: UIView, ChatViewProtocol {
         didSet {
             self.imageAssets = self.sessionManager?.delegate?.imageAssetsDictionary
             self.colorAssets = self.sessionManager?.delegate?.colorAssetsDictionary
+            self.composeColorAssets = self.sessionManager?.delegate?.composeColorAssetsDictionary
 
             self.agentAvatarConfig = AvatarConfig(forAgent: sessionManager)
             self.userAvatarConfig = AvatarConfig(forUser: sessionManager)
@@ -174,6 +176,7 @@ extension ChatView {
     private func setupBubbleCell(_ message: ChannelMessage, at indexPath: IndexPath) -> ChatChannelCell {
         let cell = self.cell(message, for: tableView, at: indexPath)
         cell.session = self.sessionManager
+        cell.delegate = self.sessionManager?.delegate
         cell.videoThumbnailManager = videoThumbnailManager
 
         cell.onComposeSendTapped = { [weak self] composeContentView, didUpdateOptions in
@@ -189,7 +192,13 @@ extension ChatView {
             self.delegate?.didSelect(image: image, for: attachment, self)
         }
 
-        cell.populateChannel(message: message, configuration: self.sessionManager?.siteConfiguration, imageAssets: self.imageAssets, colorAssets: self.colorAssets, agentAvatarConfig: self.agentAvatarConfig, userAvatarConfig: self.userAvatarConfig, composeState: self.composeMessageStates?[message.messageID])
+        cell.populateChannel(message: message,
+                             configuration: self.sessionManager?.siteConfiguration,
+                             imageAssets: self.imageAssets,
+                             colorAssets: (cell is ChatChannelComposeCell) ? self.composeColorAssets : self.colorAssets,
+                             agentAvatarConfig: self.agentAvatarConfig,
+                             userAvatarConfig: self.userAvatarConfig,
+                             composeState: self.composeMessageStates?[message.messageID])
         if let cell = cell as? ChatChannelComposeCell {
             if let action = self.composeCellActions[message.messageID] {
                 cell.composeMessageView.updateStates(with: action)

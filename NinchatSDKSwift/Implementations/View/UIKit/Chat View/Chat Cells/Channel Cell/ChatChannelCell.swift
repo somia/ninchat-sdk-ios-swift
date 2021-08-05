@@ -47,6 +47,8 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
     
     // MARK: - ChannelCell
     
+    var delegate: NINChatSessionInternalDelegate?
+    
     func populateChannel(message: ChannelMessage, configuration: SiteConfiguration?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, agentAvatarConfig: AvatarConfig?, userAvatarConfig: AvatarConfig?, composeState: [Bool]?) {
         self.message = message
 
@@ -65,6 +67,7 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
         } else if let cell = self as? ChannelMediaCell, let textMessage = message as? TextMessage {
             cell.populateText(message: textMessage, attachment: textMessage.attachment)
         } else if let cell = self as? ChatChannelComposeCell, let uiComposeMessage = message as? ComposeMessage {
+            cell.delegate = self.delegate
             cell.populateCompose(message: uiComposeMessage, configuration: configuration, colorAssets: colorAssets, composeStates: composeState)
         }
     }
