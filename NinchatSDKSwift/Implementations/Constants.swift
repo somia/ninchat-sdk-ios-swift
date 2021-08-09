@@ -122,6 +122,7 @@ public enum QuestionnaireColorConstants {
     case ninchatQuestionnaireColorBubble
     case ninchatQuestionnaireColorTextInputBorder
     case ninchatQuestionnaireColorTextInputErrorBorder
+    case ninchatQuestionnaireColorSelectBorder
 }
 
 // MARK: - Constants used within the SDK
