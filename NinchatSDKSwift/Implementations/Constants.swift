@@ -92,6 +92,7 @@ public enum CALayerConstant {
     case ninchatQuestionnaireRadioUnselected
     case ninchatQuestionnaireNavigationNext
     case ninchatQuestionnaireNavigationBack
+    case ninchatQuestionnaireCheckbox
     /// "Close chat" button in top right corner
     case ninchatChatCloseButton
     case ninchatChatCloseEmptyButton
