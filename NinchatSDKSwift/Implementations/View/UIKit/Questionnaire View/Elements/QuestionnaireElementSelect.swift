@@ -203,6 +203,12 @@ extension QuestionnaireElementSelect: QuestionnaireHasBorder {
     var isCompleted: Bool? {
         self.selectedOption.text != "Select".localized
     }
+    var normalBorderColor: UIColor {
+        .QGrayButton
+    }
+    var errorBorderColor: UIColor {
+        .QRedBorder
+    }
 
     func updateBorder() {
         self.selectionIndicator.tint = self.selectedOption.isHighlighted ? self.selectedOption.highlightedTextColor : self.selectedOption.textColor
