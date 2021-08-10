@@ -53,6 +53,9 @@ class QuestionnaireCell: UITableViewCell {
         if let usernameColor = delegate.override(colorAsset: .ninchatColorChatName) {
             usernameLabel.textColor = usernameColor
         }
+        if let backgroundColor = delegate.override(questionnaireAsset: .ninchatQuestionnaireColorBubble) {
+            conversationContentViewStyle.tintColor = backgroundColor
+        }
     }
 
     private func setupAvatar(_ userAvatar: UIImageView) {

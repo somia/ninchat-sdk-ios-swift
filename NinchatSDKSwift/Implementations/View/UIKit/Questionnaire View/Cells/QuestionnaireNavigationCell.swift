@@ -49,12 +49,13 @@ final class QuestionnaireNavigationCell: UITableViewCell, HasCustomLayer, Questi
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         if let nextButton = self.buttons.arrangedSubviews.compactMap({ $0 as? NINButton }).first(where: { $0.type == .next }) {
-            if nextButton.titleLabel?.text?.isEmpty ?? true {
-                nextButton.imageView?.tint = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorNavigationNextText) ?? .white
-            } else {
-                nextButton.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorNavigationNextText) ?? .white, for: .normal)
-                nextButton.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorNavigationNextText) ?? .white, for: .selected)
-            }
+            let textColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorNavigationNextText) ?? .white
+            
+            nextButton.imageView?.tint = textColor
+            nextButton.imageView?.tintColor = textColor
+            nextButton.tintColor = textColor
+            nextButton.setTitleColor(textColor, for: .normal)
+            nextButton.setTitleColor(textColor, for: .selected)
 
             if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireNavigationNext) {
                 nextButton.layer.insertSublayer(layer, at: 0)
@@ -65,12 +66,13 @@ final class QuestionnaireNavigationCell: UITableViewCell, HasCustomLayer, Questi
             }
         }
         if let backButton = self.buttons.arrangedSubviews.compactMap({ $0 as? NINButton }).first(where: { $0.type == .back }) {
-            if backButton.titleLabel?.text?.isEmpty ?? true {
-                backButton.imageView?.tint = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorNavigationBackText) ?? .QBlueButtonNormal
-            } else {
-                backButton.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorNavigationBackText) ?? .QBlueButtonNormal, for: .normal)
-                backButton.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorNavigationBackText) ?? .QBlueButtonNormal, for: .selected)
-            }
+            let textColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorNavigationBackText) ?? .QBlueButtonNormal
+            
+            backButton.imageView?.tint = textColor
+            backButton.imageView?.tintColor = textColor
+            backButton.tintColor = textColor
+            backButton.setTitleColor(textColor, for: .normal)
+            backButton.setTitleColor(textColor, for: .selected)
 
             if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireNavigationBack) {
                 backButton.layer.insertSublayer(layer, at: 0)
@@ -148,7 +150,9 @@ extension QuestionnaireNavigationCell {
 
     func shapeNavigationButtons(_ configuration: QuestionnaireConfiguration?) {
         func drawBackButton(isVisible: Bool) {
-            if self.buttons.arrangedSubviews.compactMap({ $0 as? NINButton }).filter({ $0.type == .back }).count > 0 || !isVisible { return }
+            if self.buttons.arrangedSubviews.compactMap({ $0 as? NINButton }).filter({ $0.type == .back }).count > 0 || !isVisible {
+                return
+            }
 
             let button = NINButton(frame: .zero) { [weak self] button in
                 button.isSelected = !button.isSelected
@@ -160,7 +164,9 @@ extension QuestionnaireNavigationCell {
             self.layoutButton(button, configuration: configuration?.buttons, type: .back)
         }
         func drawNextButton(isVisible: Bool) {
-            if self.buttons.arrangedSubviews.compactMap({ $0 as? NINButton }).filter({ $0.type == .next }).count > 0 || !isVisible { return }
+            if self.buttons.arrangedSubviews.compactMap({ $0 as? NINButton }).filter({ $0.type == .next }).count > 0 || !isVisible {
+                return
+            }
 
             let button = NINButton(frame: .zero) { [weak self] button in
                 button.isSelected = !button.isSelected
@@ -210,9 +216,9 @@ extension QuestionnaireNavigationCell {
             button.setTitleColor(.white, for: .selected)
         } else {
             button.setTitle("", for: .normal)
-            button.setImage(UIImage(named: "icon_select_next", in: .SDKBundle, compatibleWith: nil), for: .normal)
+            button.setImage(UIImage(named: "icon_select_next", in: .SDKBundle, compatibleWith: nil)?.withRenderingMode(.alwaysTemplate), for: .normal)
             button.setTitle("", for: .selected)
-            button.setImage(UIImage(named: "icon_select_next", in: .SDKBundle, compatibleWith: nil), for: .highlighted)
+            button.setImage(UIImage(named: "icon_select_next", in: .SDKBundle, compatibleWith: nil)?.withRenderingMode(.alwaysTemplate), for: .highlighted)
         }
     }
 
@@ -224,9 +230,9 @@ extension QuestionnaireNavigationCell {
             button.setTitleColor(.QBlueButtonHighlighted, for: .selected)
         } else {
             button.setTitle("", for: .normal)
-            button.setImage(UIImage(named: "icon_select_back", in: .SDKBundle, compatibleWith: nil), for: .normal)
+            button.setImage(UIImage(named: "icon_select_back", in: .SDKBundle, compatibleWith: nil)?.withRenderingMode(.alwaysTemplate), for: .normal)
             button.setTitle("", for: .selected)
-            button.setImage(UIImage(named: "icon_select_back", in: .SDKBundle, compatibleWith: nil), for: .selected)
+            button.setImage(UIImage(named: "icon_select_back", in: .SDKBundle, compatibleWith: nil)?.withRenderingMode(.alwaysTemplate), for: .selected)
         }
     }
 }
