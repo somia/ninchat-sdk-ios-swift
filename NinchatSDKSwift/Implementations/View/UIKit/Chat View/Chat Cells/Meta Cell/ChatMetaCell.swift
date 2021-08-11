@@ -45,6 +45,11 @@ final class ChatMetaCell: UITableViewCell, ChatMeta, HasCustomLayer {
         
         /// The cell doesnt have any dynamic content; we can freely rasterize it for better scrolling performance
         self.rasterize()
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(didRotateView(_:)),
+                                               name: UIDevice.orientationDidChangeNotification,
+                                               object: nil)
     }
     
     override func layoutSubviews() {
@@ -81,5 +86,10 @@ final class ChatMetaCell: UITableViewCell, ChatMeta, HasCustomLayer {
         } else {
             metaTextIcon.tintColor = .QBlueButtonNormal
         }
+    }
+    
+    @objc
+    func didRotateView(_ notification: Notification) {
+        self.applyLayerOverride(view: metaTextLabelContainer)
     }
 }

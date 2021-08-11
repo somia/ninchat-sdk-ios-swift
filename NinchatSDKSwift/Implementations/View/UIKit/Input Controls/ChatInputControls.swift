@@ -75,11 +75,21 @@ final class ChatInputControls: UIView, HasCustomLayer, ChatInputControlsProtocol
     @IBOutlet private(set) weak var sendMessageButton: UIButton!
     @IBOutlet private(set) weak var sendMessageButtonWidthConstraint: NSLayoutConstraint!
     
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(didRotateView(_:)),
+                                               name: UIDevice.orientationDidChangeNotification,
+                                               object: nil)
+    }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
-        applyLayerOverride(view: sendMessageButton)
-        applyLayerOverride(view: textInput)
+        self.applyLayerOverride(view: sendMessageButton)
+        self.applyLayerOverride(view: textInput)
     }
+    
     
     func overrideAssets() {
         self.sendMessageButton.backgroundColor = .clear
@@ -149,6 +159,12 @@ final class ChatInputControls: UIView, HasCustomLayer, ChatInputControlsProtocol
         }
         textInput.updateSize(to: textInput.newSize())
         onTextSizeChanged?(textInput.newSize())
+    }
+    
+    @objc
+    func didRotateView(_ notification: Notification) {
+        self.applyLayerOverride(view: sendMessageButton)
+        self.applyLayerOverride(view: textInput)
     }
 }
 
