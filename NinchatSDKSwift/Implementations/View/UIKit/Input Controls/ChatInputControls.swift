@@ -72,20 +72,33 @@ final class ChatInputControls: UIView, HasCustomLayer, ChatInputControlsProtocol
         }
     }
     @IBOutlet private(set) weak var attachmentButton: UIButton!
-    @IBOutlet private(set) weak var sendMessageButton: UIButton!
+    @IBOutlet private(set) weak var sendMessageButton: UIButton! {
+        didSet {
+            sendMessageButton.backgroundColor = .clear
+            sendMessageButton.setImage(nil, for: .normal)
+            sendMessageButton.contentVerticalAlignment = .center
+            sendMessageButton.contentHorizontalAlignment = .center
+        }
+    }
     @IBOutlet private(set) weak var sendMessageButtonWidthConstraint: NSLayoutConstraint!
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(didRotateView(_:)),
+                                               name: UIDevice.orientationDidChangeNotification,
+                                               object: nil)
+    }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        applyLayerOverride(view: sendMessageButton)
-        applyLayerOverride(view: textInput)
+        self.applyLayerOverride(view: sendMessageButton)
+        self.applyLayerOverride(view: textInput)
     }
     
+    
     func overrideAssets() {
-        self.sendMessageButton.backgroundColor = .clear
-        self.sendMessageButton.setImage(nil, for: .normal)
-        self.sendMessageButton.contentVerticalAlignment = .center
-        self.sendMessageButton.contentHorizontalAlignment = .center
         if let sendButtonTitle = self.sessionManager?.siteConfiguration.sendButtonTitle {
             self.sendMessageButtonWidthConstraint.isActive = false
             self.sendMessageButton.setTitle(sendButtonTitle, for: .normal)
@@ -149,6 +162,12 @@ final class ChatInputControls: UIView, HasCustomLayer, ChatInputControlsProtocol
         }
         textInput.updateSize(to: textInput.newSize())
         onTextSizeChanged?(textInput.newSize())
+    }
+    
+    @objc
+    func didRotateView(_ notification: Notification) {
+        self.applyLayerOverride(view: sendMessageButton)
+        self.applyLayerOverride(view: textInput)
     }
 }
 
