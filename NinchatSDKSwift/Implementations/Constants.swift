@@ -20,6 +20,7 @@ public enum AssetConstants {
     case ninchatChatPlayVideo
     case ninchatIconTextareaCamera      /* not used */
     case ninchatIconTextareaAttachment
+    case ninchatIconMetadata
     case ninchatIconDownload
     case ninchatIconVideoToggleFull     /* not used */
     case ninchatIconVideoToggleNormal   /* not used */
@@ -48,6 +49,7 @@ public enum ColorConstants {
     case ninchatColorChatBubbleRightText
     case ninchatColorChatBubbleLeftTint
     case ninchatColorChatBubbleRightTint
+    case ninchatColorChatBubbleComposeTint
     case ninchatColorTextareaText
     case ninchatColorTextareaPlaceholder
     case ninchatColorTextareaSubmitText
@@ -75,7 +77,13 @@ public let LAYER_NAME = "_ninchat-asset"
 public enum CALayerConstant {
     case ninchatPrimaryButton
     case ninchatSecondaryButton
+    case ninchatComposeSelectedButton
+    case ninchatComposeUnselectedButton
+    case ninchatComposeSubmitButton
+    case ninchatComposeSubmitSelectedButton
     case ninchatTextareaSubmitButton
+    case ninchatColorTextareaTextInput
+    case ninchatMetadataContainer
     case ninchatModalTop
     case ninchatModalBottom
     case ninchatBackgroundTop
@@ -84,6 +92,7 @@ public enum CALayerConstant {
     case ninchatQuestionnaireRadioUnselected
     case ninchatQuestionnaireNavigationNext
     case ninchatQuestionnaireNavigationBack
+    case ninchatQuestionnaireCheckbox
     /// "Close chat" button in top right corner
     case ninchatChatCloseButton
     case ninchatChatCloseEmptyButton
@@ -111,6 +120,10 @@ public enum QuestionnaireColorConstants {
     case ninchatQuestionnaireSelectUnselected
     case ninchatQuestionnaireColorNavigationNextText
     case ninchatQuestionnaireColorNavigationBackText
+    case ninchatQuestionnaireColorBubble
+    case ninchatQuestionnaireColorTextInputBorder
+    case ninchatQuestionnaireColorTextInputErrorBorder
+    case ninchatQuestionnaireColorSelectBorder
 }
 
 // MARK: - Constants used within the SDK

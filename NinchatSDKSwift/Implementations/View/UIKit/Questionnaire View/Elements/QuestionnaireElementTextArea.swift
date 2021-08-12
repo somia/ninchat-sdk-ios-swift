@@ -36,6 +36,13 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         self.overrideTitle(delegate: delegate)
         self.view.textColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorTextInput) ?? .black
+        if let borderColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorTextInputBorder) {
+            normalBorderColor = borderColor
+        }
+        if let borderColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorTextInputErrorBorder) {
+            errorBorderColor = borderColor
+        }
+        self.updateBorder()
     }
 
     // MARK: - QuestionnaireSettable
@@ -60,6 +67,8 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
             self.updateBorder()
         }
     }
+    var normalBorderColor: UIColor = .QGrayButton
+    var errorBorderColor: UIColor = .QRedBorder
 
     // MARK: - QuestionnaireFocusableElement
 
@@ -156,7 +165,6 @@ extension QuestionnaireElement where Self:QuestionnaireElementTextArea {
         self.view.backgroundColor = .clear
         self.view.textAlignment = .left
         self.view.font = .ninchat
-        self.updateBorder()
         self.adjustConstraints(viewHeight: self.heightValue)
     }
 }

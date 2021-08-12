@@ -95,4 +95,11 @@ extension NINChatSessionInternalDelegate {
             colorAsset[tuple.key] = tuple.color
         }
     }
+    
+    var composeColorAssetsDictionary: [ColorConstants:UIColor] {
+        let colorKeys: [ColorConstants] = [.ninchatColorInfoText, .ninchatColorChatName, .ninchatColorChatTimestamp, .ninchatColorChatBubbleComposeTint]
+        return colorKeys.compactMap({ ($0, self.override(colorAsset: $0)) }).reduce(into: [:]) { (colorAsset: inout [ColorConstants:UIColor], tuple: (key: ColorConstants, color: UIColor?)) in
+            colorAsset[tuple.key] = tuple.color
+        }
+    }
 }

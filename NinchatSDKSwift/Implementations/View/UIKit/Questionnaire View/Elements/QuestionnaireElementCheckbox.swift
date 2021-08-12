@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, QuestionnaireSettable, QuestionnaireOptionSelectableElement, QuestionnaireElementHasDefaultAnswer {
+final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, QuestionnaireSettable, QuestionnaireOptionSelectableElement, QuestionnaireElementHasDefaultAnswer, HasCustomLayer {
 
     private var iconBorderNormalColor: UIColor! = .QGrayButton
     private var iconBorderSelectedColor: UIColor! = .QBlueButtonNormal
@@ -59,25 +59,49 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
     }
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
-        self.view.subviews.compactMap({ $0 as? NINButton }).forEach({
-            $0.overrideQuestionnaireAsset(with: delegate, isPrimary: $0.isSelected)
+        self.view.subviews.compactMap({ $0 as? NINButton }).forEach({ button in
+            if let selectedTextColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorCheckboxUnselectedText) {
+                button.setTitleColor(selectedTextColor, for: .normal)
+            } else {
+                button.setTitleColor(.QGrayButton, for: .normal)
+            }
+            if let selectedTextColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorCheckboxSelectedText) {
+                button.setTitleColor(selectedTextColor, for: .selected)
+            } else {
+                button.setTitleColor(.QBlueButtonNormal, for: .selected)
+            }
         })
-        self.view.allSubviews.filter({ $0.tag >= 200 }).compactMap({ $0 as? UIImageView }).forEach({
-            $0.tint = delegate?.override(questionnaireAsset: .ninchatQuestionnaireCheckboxSelectedIndicator) ?? UIColor.QBlueButtonHighlighted
+        self.view.allSubviews.filter({ $0.tag >= 200 }).compactMap({ $0 as? UIImageView }).forEach({ imageView in
+            
+            if let tintColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireCheckboxSelectedIndicator) {
+                imageView.tint = tintColor
+            } else {
+                imageView.tint = .QBlueButtonHighlighted
+            }
         })
 
-        self.iconBorderNormalColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireCheckboxUnselectedIndicator) ?? UIColor.QGrayButton
-        self.iconBorderSelectedColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireCheckboxSelectedIndicator) ?? UIColor.QBlueButtonNormal
-        self.view.subviews.filter({ !($0 is NINButton) }).forEach({ $0.round(radius: 23.0 / 2, borderWidth: 2.0, borderColor: self.iconBorderNormalColor) })
+        self.view.subviews.filter({ !($0 is NINButton) }).forEach({ view in
+            if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireCheckbox) {
+                view.layer.insertSublayer(layer, at: 0)
+            } else {
+                view.round(radius: 23.0 / 2, borderWidth: 2.0, borderColor: self.iconBorderNormalColor)
+            }
+        })
     }
 
     // MARK: - QuestionnaireSettable
 
     func updateSetAnswers(_ answer: AnyHashable?, configuration: QuestionnaireConfiguration?, state: QuestionnaireSettableState) {
-        if let checkbox = self.view.subviews.compactMap({ $0 as? NINButton }).first(where: { $0.titleLabel?.text == configuration?.label }) {
+        if let checkbox = self.view.subviews
+            .compactMap({ $0 as? NINButton })
+            .first(where: { $0.titleLabel?.text == configuration?.label }) {
+            
             checkbox.isSelected = answer as? Bool ?? false
-            self.view.allSubviews.filter({ $0.tag == 100+checkbox.tag }).compactMap({ $0 as? UIImageView }).first?.isHighlighted = answer as? Bool ?? false
-            self.view.allSubviews.filter({ $0.tag == 200+checkbox.tag }).forEach({ $0.layer.borderColor = (answer as? Bool ?? false) ? self.iconBorderSelectedColor.cgColor : self.iconBorderNormalColor.cgColor })
+            
+            self.view.allSubviews
+                .filter({ $0.tag == 100+checkbox.tag })
+                .compactMap({ $0 as? UIImageView })
+                .first?.isHighlighted = answer as? Bool ?? false
         }
     }
 
@@ -130,6 +154,9 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
 
         self.decorateView()
         self.layoutIfNeeded()
+        self.view.subviews.filter({ !($0 is NINButton) }).forEach({ [weak self] view in
+            self?.applyLayerOverride(view: view)
+        })
     }
 
     // MARK: - View Setup

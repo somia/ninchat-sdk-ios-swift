@@ -15,5 +15,6 @@ protocol ChatCell: UIView {
 }
 
 protocol ChannelCell: UIView {
+    var delegate: NINChatSessionInternalDelegate? { get set }
     func populateChannel(message: ChannelMessage, configuration: SiteConfiguration?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, agentAvatarConfig: AvatarConfig?, userAvatarConfig: AvatarConfig?, composeState: [Bool]?)
 }

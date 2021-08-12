@@ -55,6 +55,11 @@ class ChatTypingCell: UITableViewCell {
         if let timeColor = colorAssets?[.ninchatColorChatTimestamp] {
             self.timeLabel?.textColor = timeColor
         }
+        
+        if let backgroundColor = colorAssets?[.ninchatColorChatBubbleLeftTint] {
+            self.bubbleImageView.tintColor = backgroundColor
+            self.messageImageView.backgroundColor = backgroundColor
+        }
     }
 
     private func apply(avatar config: AvatarConfig?, imageView: UIImageView, url: String?) {

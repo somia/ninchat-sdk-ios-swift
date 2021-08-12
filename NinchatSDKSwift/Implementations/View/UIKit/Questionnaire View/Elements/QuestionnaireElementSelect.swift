@@ -36,13 +36,20 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
     var elementConfiguration: QuestionnaireConfiguration?
     var elementHeight: CGFloat = 0
 
+    // MARK: - QuestionnaireHasBorder
+    
+    var normalBorderColor: UIColor = .QGrayButton
+    
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         self.overrideTitle(delegate: delegate)
 
         normalBackgroundColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireSelectUnselected) ?? .white
         selectedBackgroundColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireSelectSelected) ?? .white
         selectedOption.textColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorSelectUnselectText) ?? .QGrayButton
-
+        if let borderColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorSelectBorder) {
+            normalBorderColor = borderColor
+        }
+        
         /// On scrolling the table, the `selectedOption` highlight status changes back to 'false'
         /// We should reset it to avoid breaking the UI
         selectedOption.isHighlighted = (selectionIndicator.tint != selectedOption.textColor) && (self.isCompleted ?? false)
@@ -203,9 +210,12 @@ extension QuestionnaireElementSelect: QuestionnaireHasBorder {
     var isCompleted: Bool? {
         self.selectedOption.text != "Select".localized
     }
+    var errorBorderColor: UIColor {
+        fatalError("this element doesn't support error border color")
+    }
 
     func updateBorder() {
         self.selectionIndicator.tint = self.selectedOption.isHighlighted ? self.selectedOption.highlightedTextColor : self.selectedOption.textColor
-        self.view.round(radius: 6.0, borderWidth: 1.0, borderColor: self.selectionIndicator.tint ?? .QGrayButton)
+        self.view.round(radius: 6.0, borderWidth: 2.0, borderColor: self.normalBorderColor)
     }
 }
