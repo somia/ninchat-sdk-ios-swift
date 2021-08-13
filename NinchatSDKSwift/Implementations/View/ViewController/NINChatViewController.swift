@@ -209,8 +209,8 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
         self.setupKeyboardClosure()
         self.connectRTC()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(didEnterBackground(notification:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(willResignActive(notification:)), name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(willEnterBackground(notification:)), name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didEnterForeground(notification:)), name: UIApplication.didBecomeActiveNotification, object: nil)
         self.navigationItem.setHidesBackButton(true, animated: false)
     }
     
@@ -556,15 +556,15 @@ extension NINChatViewController {
     // MARK: - Video
     
     private func onVideoCameraTapped(with button: UIButton) {
-        self.webRTCClient?.disableLocalVideo = !button.isSelected
         self.delegate?.log(value: "Video disabled: \(!button.isSelected)")
+        self.viewModel.disableVideoStream(disable: !button.isSelected)
         
         button.isSelected = !button.isSelected
     }
     
     private func onVideoAudioTapped(with button: UIButton) {
-        self.webRTCClient?.disableLocalAudio = !button.isSelected
         self.delegate?.log(value: "Audio disabled: \(!button.isSelected)")
+        self.viewModel.disableAudioStream(disable: !button.isSelected)
         
         button.isSelected = !button.isSelected
     }
@@ -586,27 +586,15 @@ extension NINChatViewController {
         self.videoView.resizeRemoteVideo()
         self.videoView.resizeLocalVideo()
     }
-    
-    @objc
-    private func didEnterBackground(notification: Notification) {
-        viewModel.appDidEnterBackground { [weak self] error in
-            if let error = error {
-                debugger("failed to send hang-up: \(error)")
-            }
-            
-            self?.view.endEditing(true)
-            self?.disconnectRTC {
-                self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: true)
-            }
-        }
-    }
 
     @objc
-    private func willResignActive(notification: Notification) {
-        /// For the time-being, the solo solution is to terminate the call and then re-initiate it from the agent.
-        /// I may pause/resume the video later, when I figure out how to.
-        self.didEnterBackground(notification: notification)
-//        viewModel.appWillResignActive { _ in }
+    private func willEnterBackground(notification: Notification) {
+        viewModel.willEnterBackground()
+    }
+    
+    @objc
+    private func didEnterForeground(notification: Notification) {
+        viewModel.didEnterForeground()
     }
 }
 
