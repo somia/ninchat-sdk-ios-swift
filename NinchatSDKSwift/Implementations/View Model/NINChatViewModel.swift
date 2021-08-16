@@ -23,6 +23,8 @@ protocol NINChatRTCProtocol {
     func pickup(answer: Bool, unsupported: Bool?, completion: @escaping (Error?) -> Void)
     func hangup(completion: @escaping (Error?) -> Void)
     func disconnectRTC(_ client: NINChatWebRTCClient?, completion: (() -> Void)?)
+    func disableVideoStream(disable: Bool)
+    func disableAudioStream(disable: Bool)
 }
 extension NINChatRTCProtocol {
     func pickup(answer: Bool, completion: @escaping (Error?) -> ()) {
@@ -31,8 +33,8 @@ extension NINChatRTCProtocol {
 }
 
 protocol NINChatStateProtocol {
-    func appDidEnterBackground(completion: @escaping (Error?) -> Void)
-    func appWillResignActive(completion: @escaping (Error?) -> Void)
+    func willEnterBackground()
+    func didEnterForeground()
 }
 
 protocol NINChatMessageProtocol {
@@ -67,7 +69,6 @@ protocol NINChatViewModel: AnyObject, NINChatRTCProtocol, NINChatStateProtocol, 
 final class NINChatViewModelImpl: NINChatViewModel {
     private unowned var sessionManager: NINChatSessionManager
     private var iceCandidates: [RTCIceCandidate] = []
-    private var isOnBackgroundTask: Bool = false
     private var client: NINChatWebRTCClient?
     private var timer: Timer?
 
@@ -183,19 +184,31 @@ extension NINChatViewModelImpl {
             completion?()
         }
     }
+    
+    func disableVideoStream(disable: Bool) {
+        self.client?.disableLocalVideo = disable
+    }
+    
+    func disableAudioStream(disable: Bool) {
+        self.client?.disableLocalAudio = disable
+    }
 }
 
 // MARK: - NINChatState
 
 extension NINChatViewModelImpl {
-    func appDidEnterBackground(completion: @escaping (Error?) -> Void) {
-        guard !isOnBackgroundTask else { debugger("background for granting permissions, do not hangup"); return }
-
+    func willEnterBackground() {
         debugger("background mode, hangup the video call (if there are any)")
-        self.hangup(completion: completion)
+        /// instead of droping the connection when the app goes to the background
+        /// it is better to stop video stream and let the connection be alive
+        /// discussed on `https://github.com/somia/mobile/issues/295`
+        self.disableVideoStream(disable: true)
     }
 
-    func appWillResignActive(completion: @escaping (Error?) -> Void) {}
+    func didEnterForeground() {
+        /// take the video stream back
+        self.disableVideoStream(disable: false)
+    }
 }
 
 // MARK: - NINChatMessage
@@ -268,10 +281,9 @@ extension NINChatViewModelImpl: QueueUpdateCapture {
 
 extension NINChatViewModelImpl {
     func grantVideoCallPermissions(_ completion: @escaping (Error?) -> Void) {
-        isOnBackgroundTask = true
         Permission.grantPermission(.deviceCamera, .deviceMicrophone) { [weak self] error in
             debugger("permissions for video call granted with error: \(String(describing: error))")
-            self?.isOnBackgroundTask = false; completion(error)
+            completion(error)
         }
     }
 
@@ -292,15 +304,14 @@ extension NINChatViewModelImpl {
 
 extension NINChatViewModelImpl {
     func openAttachment(source: UIImagePickerController.SourceType, completion: @escaping AttachmentCompletion) {
-        self.isOnBackgroundTask = true
         switch source {
         case .photoLibrary:
             self.grantLibraryPermission { [weak self] error in
-                self?.isOnBackgroundTask = false; completion(error)
+                completion(error)
             }
         case .camera:
             self.grantCameraPermission { [weak self] error in
-                self?.isOnBackgroundTask = false; completion(error)
+                completion(error)
             }
         default:
             fatalError("The source cannot be anything else")
