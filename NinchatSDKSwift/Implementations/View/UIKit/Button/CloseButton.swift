@@ -8,16 +8,16 @@ import UIKit
 
 enum CloseButtonPosition {
     case titlebar
-    case view
-    case conversation
+    case chatTopRight
+    case general
     
     var assetKey: CALayerConstant {
         switch self {
         case .titlebar:
             return .ninchatTitlebarCloseButton
-        case .view:
+        case .chatTopRight:
             return .ninchatChatCloseButton
-        case .conversation:
+        case .general:
             return .ninchatCloseButton
         }
     }
@@ -26,9 +26,9 @@ enum CloseButtonPosition {
         switch self {
         case .titlebar:
             return .ninchatTitlebarCloseEmptyButton
-        case .view:
+        case .chatTopRight:
             return .ninchatChatCloseEmptyButton
-        case .conversation:
+        case .general:
             return .ninchatCloseEmptyButton
         }
     }
@@ -37,9 +37,9 @@ enum CloseButtonPosition {
         switch self {
         case .titlebar:
             return .ninchatColorTitlebarCloseText
-        case .view:
+        case .chatTopRight:
             return .ninchatColorCloseChatText
-        case .conversation:
+        case .general:
             return .ninchatColorCloseText
         }
     }
