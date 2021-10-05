@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -34,7 +34,7 @@
                             </constraints>
                         </view>
                         <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="ktB-6F-abR">
-                            <rect key="frame" x="4" y="221" width="170" height="50"/>
+                            <rect key="frame" x="12" y="213" width="170" height="50"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Azo-lN-ErL">
                                     <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
@@ -76,10 +76,10 @@
                                     </connections>
                                 </button>
                             </subviews>
+                            <viewLayoutGuide key="safeArea" id="mJ7-vo-ITn"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="50" id="rZn-db-dfB"/>
                             </constraints>
-                            <viewLayoutGuide key="safeArea" id="mJ7-vo-ITn"/>
                         </stackView>
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -88,11 +88,12 @@
                         <constraint firstItem="yy1-Yt-omB" firstAttribute="centerX" secondItem="Udg-YC-b7k" secondAttribute="centerX" id="5Pi-Yd-9ex"/>
                         <constraint firstAttribute="bottom" secondItem="ihz-gf-SMX" secondAttribute="bottom" constant="4" id="8hI-5x-gcy"/>
                         <constraint firstItem="yy1-Yt-omB" firstAttribute="centerY" secondItem="Udg-YC-b7k" secondAttribute="centerY" id="Kr7-Ua-Cz7"/>
-                        <constraint firstAttribute="bottom" secondItem="ktB-6F-abR" secondAttribute="bottom" constant="4" id="dtA-Kl-62l"/>
-                        <constraint firstItem="ktB-6F-abR" firstAttribute="leading" secondItem="Udg-YC-b7k" secondAttribute="leading" constant="4" id="hj2-2Z-3ym"/>
+                        <constraint firstAttribute="bottom" secondItem="ktB-6F-abR" secondAttribute="bottom" constant="12" id="dtA-Kl-62l"/>
+                        <constraint firstItem="ktB-6F-abR" firstAttribute="leading" secondItem="Udg-YC-b7k" secondAttribute="leading" constant="12" id="hj2-2Z-3ym"/>
                     </constraints>
                 </view>
             </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="Udg-YC-b7k" secondAttribute="bottom" id="5nr-gf-zqn"/>
@@ -101,7 +102,6 @@
                 <constraint firstItem="Udg-YC-b7k" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="tLw-oo-TZ1"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <connections>
                 <outlet property="cameraEnabledButton" destination="K34-Xb-e44" id="byt-xS-FKw"/>
                 <outlet property="hangupButton" destination="Azo-lN-ErL" id="FSe-X7-SM2"/>
