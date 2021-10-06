@@ -64,7 +64,7 @@ final class ChatMetaCell: UITableViewCell, ChatMeta, HasCustomLayer {
         if let title = message.closeChatButtonTitle {
             self.deactivate(constraints: [.height])
             self.closeChatButton.buttonTitle = title
-            self.closeChatButton.overrideAssets(with: self.delegate, in: .conversation)
+            self.closeChatButton.overrideAssets(with: self.delegate, in: .general)
             self.closeChatButton.closure = { [weak self] button in
                 self?.onCloseChatTapped?(button)
             }

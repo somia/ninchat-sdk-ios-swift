@@ -127,7 +127,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
 
             let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
             closeChatButton.buttonTitle = closeTitle
-            closeChatButton.overrideAssets(with: self.delegate, in: .view)
+            closeChatButton.overrideAssets(with: self.delegate, in: .chatTopRight)
             closeChatButton.closure = { [weak self] button in
                 DispatchQueue.main.async {
                     self?.onCloseChatTapped()
@@ -158,7 +158,6 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     private var inputContainerHeight: CGFloat!
     @IBOutlet private weak var inputContainer: UIView! {
         didSet {
-            inputContainerHeight = 94.5
             inputContainer.addSubview(inputControlsView)
             inputControlsView
                 .fix(leading: (0.0, inputContainer), trailing: (0.0, inputContainer))
@@ -203,6 +202,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
                 self?.onCloseChatTapped()
             }
         }
+        self.overrideAssets()
         self.addKeyboardListeners()
         self.setupView()
         self.setupViewModel()
@@ -220,10 +220,10 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
         self.reloadView()
         self.adjustConstraints(for: self.view.bounds.size, withAnimation: false)
     }
-
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-
+        
         if let titlebarContainer = self.titlebarContainer {
             applyLayerOverride(view: titlebarContainer)
         }
@@ -256,10 +256,10 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     // MARK: - Setup View
     
     private func setupView() {
-        self.overrideAssets()
         self.setupGestures()
         self.reloadView()
-
+        self.updateInputContainerHeight(94.0)
+        
         self.inputControlsView.onTextSizeChanged = { [weak self] height in
             debugger("new text area height: \(height + Margins.kTextFieldPaddingHeight.rawValue)")
             self?.updateInputContainerHeight(height + Margins.kTextFieldPaddingHeight.rawValue)
@@ -434,6 +434,19 @@ extension NINChatViewController {
         } else if let bundleImage = UIImage(named: "chat_background_pattern", in: .SDKBundle, compatibleWith: nil) {
             self.backgroundView.backgroundColor = UIColor(patternImage: bundleImage)
         }
+        
+        self.titlebar?.reloadInputViews()
+        self.titlebar?.setNeedsLayout()
+        self.titlebar?.layoutIfNeeded()
+        self.videoView.reloadInputViews()
+        self.videoView.setNeedsLayout()
+        self.videoView.layoutIfNeeded()
+        self.inputControlsView.reloadInputViews()
+        self.inputControlsView.setNeedsLayout()
+        self.inputControlsView.layoutIfNeeded()
+        self.inputContainer.reloadInputViews()
+        self.inputContainer.setNeedsLayout()
+        self.inputContainer.layoutIfNeeded()
     }
     
     func setupKeyboardClosure() {
@@ -448,7 +461,10 @@ extension NINChatViewController {
             self.inputContainerHeight = value
         }
     
+        self.view.setNeedsLayout()
         self.view.layoutIfNeeded()
+        self.inputControlsView.setNeedsLayout()
+        self.inputControlsView.layoutIfNeeded()
     }
     
     /// Aligns (or cancels existing alignment) the input control container view's top
