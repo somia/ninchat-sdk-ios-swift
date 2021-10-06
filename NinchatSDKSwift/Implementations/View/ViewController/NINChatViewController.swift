@@ -203,6 +203,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
                 self?.onCloseChatTapped()
             }
         }
+        self.overrideAssets()
         self.addKeyboardListeners()
         self.setupView()
         self.setupViewModel()
@@ -434,6 +435,19 @@ extension NINChatViewController {
         } else if let bundleImage = UIImage(named: "chat_background_pattern", in: .SDKBundle, compatibleWith: nil) {
             self.backgroundView.backgroundColor = UIColor(patternImage: bundleImage)
         }
+        
+        self.titlebar?.reloadInputViews()
+        self.titlebar?.setNeedsLayout()
+        self.titlebar?.layoutIfNeeded()
+        self.videoView.reloadInputViews()
+        self.videoView.setNeedsLayout()
+        self.videoView.layoutIfNeeded()
+        self.inputControlsView.reloadInputViews()
+        self.inputControlsView.setNeedsLayout()
+        self.inputControlsView.layoutIfNeeded()
+        self.inputContainer.reloadInputViews()
+        self.inputContainer.setNeedsLayout()
+        self.inputContainer.layoutIfNeeded()
     }
     
     func setupKeyboardClosure() {

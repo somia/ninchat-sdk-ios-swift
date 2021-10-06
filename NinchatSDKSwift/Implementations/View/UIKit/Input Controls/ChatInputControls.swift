@@ -126,6 +126,13 @@ final class ChatInputControls: UIView, HasCustomLayer, ChatInputControlsProtocol
         if let placeholderColor = self.delegate?.override(colorAsset: .ninchatColorTextareaPlaceholder) {
             self.placeholderColor = placeholderColor
         }
+        
+        self.textInput.reloadInputViews()
+        self.textInput.setNeedsLayout()
+        self.textInput.layoutIfNeeded()
+        self.inputControlsContainerView.reloadInputViews()
+        self.inputControlsContainerView.setNeedsLayout()
+        self.inputControlsContainerView.layoutIfNeeded()
         self.updatePlaceholder()
     }
 
