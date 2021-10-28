@@ -157,8 +157,8 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         guard !self.sessionAlive else { throw NINExceptions.apiAlive }
 
         self.sessionAlive = true
-        /// use "audienceAutoQueue" if queue is an empty (not null) string
-        if self.queueID?.trimmingCharacters(in: .whitespacesAndNewlines).count == 0 {
+        /// use "audienceAutoQueue" if queue is an empty string
+        if self.queueID?.trimmingCharacters(in: .whitespacesAndNewlines).count ?? 0 == 0 {
             self.queueID = self.sessionManager.siteConfiguration.audienceAutoQueue
         }
         return coordinator?.start(
