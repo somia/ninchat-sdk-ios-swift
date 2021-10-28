@@ -581,8 +581,8 @@ extension NINChatSessionManagerImpl {
     }
 
     func translate(key: String, formatParams: [String:String]) -> String? {
-        /// Look for a translation. If one is not available for this key, use the key itself.
-        return formatParams.reduce(into: self.siteConfiguration.translation?[key] ?? key, { translation, dict in
+        /// Look for a translation. If one is not available for this key, use the key
+        return formatParams.reduce(into: self.siteConfiguration.translation(for: key) ?? key, { translation, dict in
             translation = translation.replacingOccurrences(of: "{{\(dict.key)}}", with: dict.value)
         })
     }

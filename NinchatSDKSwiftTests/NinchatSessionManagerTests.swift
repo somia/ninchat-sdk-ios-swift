@@ -17,6 +17,7 @@ class NinchatSessionManagerTests: XCTestCase {
     override func setUp() {
         sessionSwift = NINChatSession(configKey: "")
         sessionManager = NINChatSessionManagerImpl(session: sessionSwift, serverAddress: "", audienceMetadata: NINLowLevelClientProps.initiate(metadata: ["metadata":"value"]) ,configuration: nil)
+        (sessionManager as! NINChatSessionManagerImpl).setSiteConfiguration(SiteConfigurationImpl(configuration: try! openAsset(forResource: "site-configuration-mock"), environments: ["fi-restart"]))
     }
 
     override func tearDown() { }
@@ -35,6 +36,11 @@ class NinchatSessionManagerTests: XCTestCase {
         let metadata: NINResult<String> = sessionManager.audienceMetadata!.get(forKey: "metadata")
         XCTAssertNotNil(metadata.value)
         XCTAssertEqual(metadata.value, "value")
+    }
+    
+    func testNestedTranslations() {
+        XCTAssertEqual(self.sessionManager.translate(key: Constants.kRatingSkipText.rawValue, formatParams: [:]), "Ohita 2")
+        XCTAssertEqual(self.sessionManager.translate(key: Constants.kRatingPositiveText.rawValue, formatParams: [:]), "Hyvin")
     }
 }
 

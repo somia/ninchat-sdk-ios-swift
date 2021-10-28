@@ -25,7 +25,7 @@ protocol SiteConfiguration  {
     var confirmDialogTitle: String? { get }
     var audienceRealm: String? { get }
     var audienceQueues: [String]? { get }
-    var translation: [String:String]? { get }
+    func translation(for key: String) -> String?
     var agentAvatar: AnyHashable? { get }
     var agentName: String? { get }
     var userAvatar: AnyHashable? { get }
@@ -94,8 +94,14 @@ struct SiteConfigurationImpl: SiteConfiguration {
     var audienceQueues: [String]? {
         self.value(for: "audienceQueues")
     }
-    var translation: [String:String]? {
-        self.value(for: "translations")
+    func translation(for key: String) -> String? {
+        for env in self.prepareEnvironments() {
+            let dict: [String:String]? = self.value(for: "translations", at: env)
+            if let val = dict?[key] {
+                return val
+            }
+        }
+        return nil
     }
     var agentAvatar: AnyHashable? {
         self.value(for: "agentAvatar")
@@ -184,8 +190,17 @@ struct SiteConfigurationImpl: SiteConfiguration {
 }
 
 extension SiteConfigurationImpl {
-    private func value<T>(for key: String, ofType type: T.Type = T.self) -> T? {
+    private func value<T>(for key: String, at env: String, ofType type: T.Type = T.self) -> T? {
         guard let configuration = configuration as? [String:Any] else { return nil }
+        return (configuration[env] as? [String:Any])?[key] as? T
+    }
+    
+    private func value<T>(for key: String, ofType type: T.Type = T.self) -> T? {
+        return self.prepareEnvironments().compactMap({ self.value(for: key, at: $0, ofType: type) }).first
+    }
+    
+    private func prepareEnvironments() -> [String] {
+        /// Start the lookup
         var environments = self.environments
 
         /// Insert "default" to the beginning of given environments
@@ -195,9 +210,7 @@ extension SiteConfigurationImpl {
 
         /// Lookup should be done from the last env to the first one
         environments.reverse()
-        debugger("Loading keys from environments: \(environments)")
-
-        /// Start the lookup
-        return environments.compactMap({ (configuration[$0] as? [String:Any])?[key] as? T }).first
+        
+        return environments
     }
 }
