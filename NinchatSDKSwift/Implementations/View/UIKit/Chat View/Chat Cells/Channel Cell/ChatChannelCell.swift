@@ -83,12 +83,14 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
         }
     }
 
-    internal func apply(avatar config: AvatarConfig?, imageView: UIImageView, url: String?) {
+    internal func apply(avatar config: AvatarConfig?, imageView: UIImageView, url: String?, overrideWith override: UIImage) {
         imageView.isHidden = !(config?.show ?? false)
         if let overrideURL = config?.imageOverrideURL {
-            imageView.image(from: overrideURL)
+            imageView.image(from: overrideURL, defaultImage: override)
+        } else if let url = url {
+            imageView.image(from: url, defaultImage: override)
         } else {
-            imageView.image(from: url)
+            imageView.image = override
         }
     }
 }
@@ -126,7 +128,7 @@ class ChatChannelMineCell: ChatChannelCell {
     internal func configureMyMessage(avatar url: String?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, config: AvatarConfig?, series: Bool) {
         self.senderNameLabel.textAlignment = .right
         self.bubbleImageView.image = UIImage(named: (series) ? "chat_bubble_right_series" : "chat_bubble_right", in: .SDKBundle, compatibleWith: nil)
-
+        
         /// White text on black bubble
         self.bubbleImageView.tintColor = colorAssets?[.ninchatColorChatBubbleRightTint] ?? .black
         if let name = config?.nameOverride, !name.isEmpty {
@@ -135,7 +137,7 @@ class ChatChannelMineCell: ChatChannelCell {
 
         /// Apply asset overrides
         self.applyCommon(imageAssets: imageAssets, colorAssets: colorAssets)
-        self.apply(avatar: config, imageView: self.rightAvatarImageView, url: url)
+        self.apply(avatar: config, imageView: self.rightAvatarImageView, url: url, overrideWith: imageAssets?[.ninchatChatAvatarRight] ?? UIImage(named: "icon_avatar_mine", in: .SDKBundle, compatibleWith: nil)!)
         
         /// Push the top label container to the left edge by toggling the constraints
         self.toggleBubbleConstraints(isMyMessage: true, isSeries: series, showByConfig: config?.show ?? false)
@@ -181,7 +183,7 @@ class ChatChannelOthersCell: ChatChannelCell {
         
         /// Apply asset overrides
         self.applyCommon(imageAssets: imageAssets, colorAssets: colorAssets)
-        self.apply(avatar: config, imageView: self.leftAvatarImageView, url: url)
+        self.apply(avatar: config, imageView: self.leftAvatarImageView, url: url, overrideWith: imageAssets?[.ninchatChatAvatarLeft] ?? UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)!)
         
         /// Push the top label container to the left edge by toggling the hidden flag
         self.toggleBubbleConstraints(isMyMessage: false, isSeries: series, showByConfig: config?.show ?? false)
