@@ -79,12 +79,13 @@ final class ConfirmVideoCallView: UIView, ConfirmVideoCallViewProtocol, HasCusto
         let agentAvatarConfig = AvatarConfig(forAgent: sessionManager)
         
         /// Caller's Avatar image
+        let defaultImage = UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)!
         if let overrideURL = agentAvatarConfig.imageOverrideURL {
-            self.avatarImageView.image(from: overrideURL)
+            self.avatarImageView.image(from: overrideURL, defaultImage: defaultImage)
         } else if let iconURL = user?.iconURL {
-            self.avatarImageView.image(from: iconURL)
-        } else if let bundle = Bundle.SDKBundle {
-            self.avatarImageView.image = UIImage(named: "icon_avatar_other", in: bundle, compatibleWith: nil)
+            self.avatarImageView.image(from: iconURL, defaultImage: defaultImage)
+        } else {
+            self.avatarImageView.image = defaultImage
         }
         
         /// Caller's name

@@ -62,14 +62,16 @@ class ChatTypingCell: UITableViewCell {
         }
     }
 
-    private func apply(avatar config: AvatarConfig?, imageView: UIImageView, url: String?) {
+    private func apply(avatar config: AvatarConfig?, imageView: UIImageView, url: String?, overrideWith override: UIImage) {
         imageView.isHidden = !(config?.show ?? false)
         leftAvatarContainerView.width?.constant = (imageView.isHidden) ? 0 : 35
         
         if let overrideURL = config?.imageOverrideURL {
-            imageView.image(from: overrideURL)
+            imageView.image(from: overrideURL, defaultImage: override)
         } else if let url = url {
-            imageView.image(from: url)
+            imageView.image(from: url, defaultImage: override)
+        } else {
+            imageView.image = override
         }
     }
 }
@@ -95,7 +97,7 @@ extension ChatTypingCell: TypingCell {
 
         /// Apply asset overrides
         self.applyCommon(imageAssets: imageAssets, colorAssets: colorAssets)
-        self.apply(avatar: agentAvatarConfig, imageView: self.leftAvatarImageView, url: message.user?.iconURL)
+        self.apply(avatar: agentAvatarConfig, imageView: self.leftAvatarImageView, url: message.user?.iconURL, overrideWith: imageAssets?[.ninchatChatAvatarLeft] ?? UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)!)
     }
 }
 
@@ -116,7 +118,7 @@ extension ChatTypingCell: LoadingCell {
 
         /// Apply asset overrides
         self.applyCommon(imageAssets: imageAssets, colorAssets: colorAssets)
-        self.apply(avatar: agentAvatarConfig, imageView: self.leftAvatarImageView, url: nil)
+        self.apply(avatar: agentAvatarConfig, imageView: self.leftAvatarImageView, url: nil, overrideWith: imageAssets?[.ninchatChatAvatarLeft] ?? UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)!)
 
         /// Rotate the cell back to the normal
         self.rotate(0.0)

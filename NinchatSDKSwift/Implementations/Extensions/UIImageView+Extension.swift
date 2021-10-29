@@ -7,20 +7,24 @@
 import UIKit
 
 extension UIImageView {
-    func image(from url: String?, completion: ((Data) -> Void)? = nil) {
-        self.image(from: URL(string: url ?? ""), completion: completion)
+    func image(from url: String?, completion: ((Data?, Error?) -> Void)? = nil, defaultImage: UIImage) {
+        self.image(from: URL(string: url ?? ""), completion: completion, defaultImage: defaultImage)
     }
     
-    func image(from url: URL?, completion: ((Data) -> Void)? = nil) {
-        url?.fetchImage { [weak self] data in
+    func image(from url: URL?, completion: ((Data?, Error?) -> Void)? = nil, defaultImage: UIImage) {
+        url?.fetchImage { [weak self] data, error in
             DispatchQueue.main.async() {
-                self?.image = UIImage(data: data)
-                completion?(data)
+                if let data = data {
+                    self?.image = UIImage(data: data)
+                } else if error != nil {
+                    self?.image = defaultImage
+                }
+                completion?(data, error)
             }
         }
     }
 
-    func fetchImage(from url: URL?, completion: ((Data) -> Void)? = nil) {
+    func fetchImage(from url: URL?, completion: ((Data?, Error?) -> Void)? = nil) {
         url?.fetchImage(completion: completion)
     }
 

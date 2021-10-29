@@ -64,10 +64,11 @@ class QuestionnaireCell: UITableViewCell {
         userAvatar.isHidden = !avatar.show
         leftAvatarContainerView.width?.constant = (userAvatar.isHidden) ? 0 : 35
         
+        let defaultImage = UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)!
         if let url = avatar.imageOverrideURL, !url.isEmpty {
-            userAvatar.image(from: url)
+            userAvatar.image(from: url, defaultImage: defaultImage)
         } else {
-            userAvatar.image = UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)
+            userAvatar.image = defaultImage
         }
     }
 }

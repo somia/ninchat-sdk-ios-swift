@@ -95,7 +95,8 @@ extension ChannelMediaCell where Self:ChatChannelCell {
             }
             /// Load the thumbnail image in message image view over HTTP or from local cache
             else if let thumbnailUrl = thumbnailUrl, let messageID = self.message?.messageID {
-                self.messageImageView.fetchImage(from: URL(string: thumbnailUrl)) { [weak self, messageID] data in
+                self.messageImageView.fetchImage(from: URL(string: thumbnailUrl)) { [weak self, messageID] data, error in
+                    guard let data = data, error == nil else { return }
                     DispatchQueue.main.async {
                         (self as? ChannelMediaCellDelegate)?.didLoadAttachment(UIImage(data: data), messageID: messageID)
                     }
@@ -106,7 +107,8 @@ extension ChannelMediaCell where Self:ChatChannelCell {
         /// Load the image in message image view over HTTP in the background for later uses
         if let messageID = self.message?.messageID, self.originalImage?[messageID] == nil, let imageURL = imageURL, image == nil {
             DispatchQueue.global(qos: .background).async {
-                imageURL.fetchImage { [weak self, messageID] data in
+                imageURL.fetchImage { [weak self, messageID] data, error in
+                    guard let data = data, error == nil else { return }
                     self?.originalImage?[messageID] = UIImage(data: data)
                 }
             }

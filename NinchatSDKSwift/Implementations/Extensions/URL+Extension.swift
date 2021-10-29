@@ -7,14 +7,16 @@
 import Foundation
 
 extension URL {
-    func fetchImage(completion: ((Data) -> Void)? = nil) {
+    func fetchImage(completion: ((Data?, Error?) -> Void)? = nil) {
         URLSession.shared.dataTask(with: URLRequest(url: self, cachePolicy: .returnCacheDataElseLoad)) { (data: Data?, response: URLResponse?, error: Error?) in
             guard
                 let httpURLResponse = response as? HTTPURLResponse, httpURLResponse.statusCode == 200,
                 let mimeType = response?.mimeType, mimeType.hasPrefix("image"),
                 let data = data, error == nil
-            else { return }
-            completion?(data)
+            else {
+                completion?(nil, error); return
+            }
+            completion?(data, nil)
         }.resume()
     }
 }
