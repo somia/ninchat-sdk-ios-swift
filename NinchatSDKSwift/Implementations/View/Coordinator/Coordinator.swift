@@ -65,7 +65,7 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
                 if self.hasPreAudienceQuestionnaire {
                     viewController = self.questionnaireViewController(queue: queue, questionnaireType: .pre)
                 } else {
-                    viewController = self.queueViewController(queue: queue)
+                    viewController = self.queueViewController(queue: queue, nil)
                 }
                 self.navigationController?.pushViewController(viewController, animated: true)
             }
@@ -87,7 +87,6 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
     }
     internal lazy var queueViewController: NINQueueViewController = {
         let joinViewController: NINQueueViewController = storyboard.instantiateViewController()
-        joinViewController.viewModel = NINQueueViewModelImpl(sessionManager: self.sessionManager, delegate: self.delegate)
         joinViewController.delegate = self.delegate
         joinViewController.sessionManager = sessionManager
         joinViewController.onQueueActionTapped = { [weak self] queue in
@@ -190,9 +189,9 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
     func start(with queue: String?, resume: ResumeMode?, within navigation: UINavigationController?) -> UIViewController? {
         let topViewController: UIViewController
         if let resume = resume {
-            topViewController = self.queueViewController(resume: resume, queue: nil)
+            topViewController = self.queueViewController(resume: resume, queue: nil, nil)
         } else if let queue = queue, let target = self.sessionManager.queues.filter({ $0.queueID == queue }).first {
-            topViewController = hasPreAudienceQuestionnaire ? self.questionnaireViewController(queue: target, questionnaireType: .pre) : self.queueViewController(queue: target)
+            topViewController = hasPreAudienceQuestionnaire ? self.questionnaireViewController(queue: target, questionnaireType: .pre) : self.queueViewController(queue: target, nil)
         } else {
             topViewController = self.initialViewController
         }
@@ -255,7 +254,7 @@ extension NINCoordinator {
         vc.completeQuestionnaire = { [weak self] queue, backlogMessage in
             DispatchQueue.main.async {
                 guard let `self` = self, questionnaireType == .pre else { return }
-                self.navigationController?.pushViewController(self.queueViewController(queue: queue), animated: true)
+                self.navigationController?.pushViewController(self.queueViewController(queue: queue, backlogMessage), animated: true)
             }
         }
         vc.cancelQuestionnaire = { [weak self] in
@@ -277,8 +276,12 @@ extension NINCoordinator {
         return vc
     }
 
-    internal func queueViewController(resume: ResumeMode? = nil, queue: Queue?) -> NINQueueViewController {
+    internal func queueViewController(resume: ResumeMode? = nil, queue: Queue?, _ backlogMessage: String?) -> NINQueueViewController {
+        let vm = NINQueueViewModelImpl(sessionManager: self.sessionManager, delegate: self.delegate)
+        vm.backlogMessages = backlogMessage
+        
         let vc = self.queueViewController
+        vc.viewModel = vm
         vc.resumeMode = resume
         if let queue = queue {
             vc.queue = queue

@@ -10,7 +10,8 @@ protocol NINQueueViewModel {
     var resumeMode: Bool! { get set }
     var onInfoTextUpdate: ((String?) -> Void)? { get set }
     var onQueueJoin: ((Error?) -> Void)? { get set }
-
+    var backlogMessages: String? { get }
+    
     init(sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?)
     func connect(queue: Queue)
     func registerAudience(queue: Queue)
@@ -28,6 +29,7 @@ final class NINQueueViewModelImpl: NINQueueViewModel {
     var onInfoTextUpdate: ((String?) -> Void)?
     var onQueueJoin: ((Error?) -> Void)?
     var resumeMode: Bool!
+    var backlogMessages: String?
 
     init(sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?) {
         self.sessionManager = sessionManager
