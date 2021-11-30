@@ -252,7 +252,7 @@ extension NINCoordinator {
         }
         vc.style = style
         vc.type = questionnaireType
-        vc.completeQuestionnaire = { [weak self] queue in
+        vc.completeQuestionnaire = { [weak self] queue, backlogMessage in
             DispatchQueue.main.async {
                 guard let `self` = self, questionnaireType == .pre else { return }
                 self.navigationController?.pushViewController(self.queueViewController(queue: queue), animated: true)
