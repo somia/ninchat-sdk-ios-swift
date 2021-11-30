@@ -39,6 +39,7 @@ protocol NINChatStateProtocol {
 
 protocol NINChatMessageProtocol {
     var onErrorOccurred: ((Error) -> Void)? { get set }
+    var backlogMessages: String? { get set }
 
     func updateWriting(state: Bool)
     func send(message: String, completion: @escaping (Error?) -> Void)
@@ -71,7 +72,14 @@ final class NINChatViewModelImpl: NINChatViewModel {
     private var iceCandidates: [RTCIceCandidate] = []
     private var client: NINChatWebRTCClient?
     private var timer: Timer?
-
+    
+    var backlogMessages: String? {
+        didSet {
+            if let backlogMessages = backlogMessages {
+                self.send(message: backlogMessages) { _ in }
+            }
+        }
+    }
     var onQueueUpdated: (() -> Void)?
     var onChannelClosed: (() -> Void)?
     var onErrorOccurred: ((Error) -> Void)?

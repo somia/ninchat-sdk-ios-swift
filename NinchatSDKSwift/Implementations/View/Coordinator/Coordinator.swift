@@ -92,7 +92,8 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         joinViewController.onQueueActionTapped = { [weak self] queue in
             DispatchQueue.main.async {
                 guard let `self` = self else { return }
-                self.navigationController?.pushViewController(self.chatViewController(queue: queue), animated: true)
+                let chatViewController = self.chatViewController(queue: queue, backlogMessage: joinViewController.viewModel.backlogMessages)
+                self.navigationController?.pushViewController(chatViewController, animated: true)
             }
         }
 
@@ -292,8 +293,9 @@ extension NINCoordinator {
         return vc
     }
 
-    internal func chatViewController(queue: Queue?) -> NINChatViewController {
+    internal func chatViewController(queue: Queue?, backlogMessage: String? = nil) -> NINChatViewController {
         let vc = self.chatViewController
+        vc.viewModel.backlogMessages = backlogMessage
         vc.queue = queue
 
         return vc
