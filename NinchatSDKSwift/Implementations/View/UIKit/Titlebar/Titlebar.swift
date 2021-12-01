@@ -85,7 +85,7 @@ final class Titlebar: UIView {
             agentAvatarContainer.isHidden = true
         } else if let avatarImage = view.titlebarAvatar, !avatarImage.isEmpty {
             agentAvatarContainer.backgroundColor = .white
-            agentAvatarImageView.image(from: avatarImage)
+            agentAvatarImageView.image(from: avatarImage, defaultImage: defaultAvatarView?.defaultAvatar ?? UIImage())
         } else if let defaultAvatar = defaultAvatarView?.defaultAvatar {
             agentAvatarContainer.backgroundColor = .white
             agentAvatarImageView.image = defaultAvatar

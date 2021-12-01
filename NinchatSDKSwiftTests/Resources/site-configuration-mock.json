@@ -1037,6 +1037,9 @@
       "audienceQueues": [
         "5lmpjrbl00m3g"
       ],
+      "translations": {
+        "Skip": "Ohita 2",
+      },
       "welcome": "fi-restart",
       "audienceAutoQueue": null
     },

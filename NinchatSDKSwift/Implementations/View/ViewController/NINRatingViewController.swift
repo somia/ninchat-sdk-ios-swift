@@ -140,13 +140,14 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
             userTitle.text = self.sessionManager?.siteConfiguration.audienceQuestionnaireUserName ?? ""
 
             /// remove avatar if titlebar is shown
+            let defaultImage = UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)!
             userAvatar.isHidden = !(self.sessionManager?.siteConfiguration.hideTitlebar ?? true)
             userAvatarContainerView.width?.constant = (userAvatar.isHidden) ? 0 : 35
             userAvatar.leading?.constant = (userAvatar.isHidden) ? 0 : 8
             if let avatar = self.sessionManager?.siteConfiguration.audienceQuestionnaireAvatar as? String, !avatar.isEmpty {
-                userAvatar.image(from: avatar)
+                userAvatar.image(from: avatar, defaultImage: defaultImage)
             } else {
-                userAvatar.image = UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)
+                userAvatar.image = defaultImage
             }
         }
 

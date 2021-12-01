@@ -207,6 +207,12 @@ extension NINChatSessionManagerImpl {
                 }
                 completion(credentials, nil, error)
             } else if event == .error {
+                if let err = params.error as? NinchatError {
+                   if err.type == "user_not_found" {
+                       self.endSession()
+                   }
+                   completion(credentials, nil, error); return
+                }
                 completion(nil, nil, error)
             }
         }
@@ -385,24 +391,24 @@ extension NINChatSessionManagerImpl {
     func closeChat(onCompletion: Completion? = nil) throws {
         delegate?.log(value: "Shutting down chat Session..")
 
-        func endSession() {
-            self.disconnect()
-
-            /// Signal the delegate that our session has ended
-            self.delegate?.onDidEnd()
-            self.didEndSession?()
-            onCompletion?()
-        }
-
         if self.myUserID == nil {
             endSession()
         } else if let userID = self.myUserID, let user = self.channelUsers[userID], !user.guest {
             endSession()
         } else {
-            try self.deleteCurrentUser { error in
-                endSession()
+            try self.deleteCurrentUser { [weak self] error in
+                self?.endSession()
             }
         }
+    }
+
+    internal func endSession(onCompletion: Completion? = nil) {
+        self.disconnect()
+
+        /// Signal the delegate that our session has ended
+        self.delegate?.onDidEnd()
+        self.didEndSession?()
+        onCompletion?()
     }
     
     /// High-level chat ending; sends channel metadata and then closes session.
@@ -581,8 +587,8 @@ extension NINChatSessionManagerImpl {
     }
 
     func translate(key: String, formatParams: [String:String]) -> String? {
-        /// Look for a translation. If one is not available for this key, use the key itself.
-        return formatParams.reduce(into: self.siteConfiguration.translation?[key] ?? key, { translation, dict in
+        /// Look for a translation. If one is not available for this key, use the key
+        return formatParams.reduce(into: self.siteConfiguration.translation(for: key) ?? key, { translation, dict in
             translation = translation.replacingOccurrences(of: "{{\(dict.key)}}", with: dict.value)
         })
     }

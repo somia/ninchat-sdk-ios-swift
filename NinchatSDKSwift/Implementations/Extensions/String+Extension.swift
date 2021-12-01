@@ -106,7 +106,7 @@ extension String {
 }
 
 extension String {
-    func fetchImage(completion: ((Data) -> Void)? = nil) {
+    func fetchImage(completion: ((Data?, Error?) -> Void)? = nil) {
         URL(string: self)?.fetchImage(completion: completion)
     }
 }
