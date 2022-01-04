@@ -39,7 +39,6 @@ protocol NINChatStateProtocol {
 
 protocol NINChatMessageProtocol {
     var onErrorOccurred: ((Error) -> Void)? { get set }
-    var backlogMessages: String? { get set }
 
     func updateWriting(state: Bool)
     func send(message: String, completion: @escaping (Error?) -> Void)
