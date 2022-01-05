@@ -89,7 +89,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
             viewModel.onQuestionnaireFinished = { [weak self] queue, queueIsClosed, exit in
                 /// Complete questionnaire and navigate to the queue.
                 if let queue = queue {
-                    self?.completeQuestionnaire?(queue, self?.viewModel.backlogMessages)
+                    self?.completeQuestionnaire?(queue)
                 }
                 /// Finish the session if it is an `exit` element
                 else if exit {
@@ -121,7 +121,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
     }
     var ratingViewModel: NINRatingViewModel?
     var rating: ChatStatus?
-    var completeQuestionnaire: ((_ queue: Queue, _ backlogMessage: String?) -> Void)?
+    var completeQuestionnaire: ((_ queue: Queue) -> Void)?
     var cancelQuestionnaire: (() -> Void)?
     
     // MARK: - SubViews

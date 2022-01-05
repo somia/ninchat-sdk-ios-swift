@@ -15,7 +15,6 @@ protocol NINQuestionnaireViewModel {
     var requirementsSatisfied: Bool { get }
     var shouldWaitForNextButton: Bool { get }
     var questionnaireAnswers: NINLowLevelClientProps { get }
-    var backlogMessages: String? { get }
 
     var onErrorOccurred: ((Error) -> Void)? { get set }
     var onQuestionnaireFinished: ((Queue?, _ queueIsClosed: Bool, _ exit: Bool) -> Void)? { get set }
@@ -251,10 +250,6 @@ extension NINQuestionnaireViewModelImpl {
         NINLowLevelClientProps.initiate(metadata: self.answers.filter({ $0.value as? Bool != false }).merging(self.preAnswers) { (current,new) in new })
     }
     
-    var backlogMessages: String? {
-        self.answers.first(where: { $0.key == "message" })?.value as? String
-    }
-
     var requirementsSatisfied: Bool {
         guard self.items.count > self.pageNumber else { return false }
         guard let elements = self.items[self.pageNumber].elements else { return true } /// Return true if the current item is a logic block
