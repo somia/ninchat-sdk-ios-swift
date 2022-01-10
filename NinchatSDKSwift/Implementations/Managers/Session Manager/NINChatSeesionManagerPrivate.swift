@@ -335,13 +335,14 @@ extension NINChatSessionManagerImpl {
                 if case let .failure(error) = param.channelMemberAttributes { throw error }
                 if case let .failure(error) = param.channelMemberAttributes.value.writing { throw error }
                 let isWriting = param.channelMemberAttributes.value.writing.value
-                
+
                 /// Check if that user already has a 'writing' message
-                let writingMessage = chatMessages.filter({ ($0 as? UserTypingMessage)?.user?.userID == userID }).first as? UserTypingMessage
+                let writingMessage = chatMessages.first(where: { ($0 as? UserTypingMessage)?.user?.userID == userID }) as? UserTypingMessage
                 if isWriting, writingMessage == nil {
                     /// There's no 'typing' message for this user yet, lets create one
-                    self.add(message: UserTypingMessage(timestamp: Date(), messageID: self.chatMessages.first?.messageID, user: messageUser))
-                } else if let msg = writingMessage, let index = chatMessages.firstIndex(where: { $0.messageID == msg.messageID }) {
+                    /// The value for message id is inspired from the Android SDK
+                    self.add(message: UserTypingMessage(timestamp: Date(), messageID: "zzzzzwriting\(userID)", user: messageUser))
+                } else if let msg = writingMessage, let index = chatMessages.firstIndex(where: { $0 is UserTypingMessage }) {
                     /// There's a 'typing' message for this user - lets remove that.
                     self.removeMessage(atIndex: index)
                 }
