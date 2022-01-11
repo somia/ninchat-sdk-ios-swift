@@ -32,7 +32,9 @@ Pod::Spec.new do |s|
   s.pod_target_xcconfig = {
     "OTHER_LDFLAGS[arch=i386]" => "-Wl,-read_only_relocs,suppress -lstdc++",
     "ENABLE_BITCODE" => "NO",
-    "SWIFT_SUPPRESS_WARNINGS" => "YES"
+    "SWIFT_SUPPRESS_WARNINGS" => "YES",
+    "ONLY_ACTIVE_ARCH" => "NO",
+    "BUILD_LIBRARY_FOR_DISTRIBUTION" => "YES"
   }
   s.user_target_xcconfig = {
       "ENABLE_BITCODE" => "NO"
