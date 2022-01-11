@@ -130,7 +130,8 @@ extension NINChatSessionManagerImpl {
     internal func didJoinChannel(param: NINLowLevelClientProps) throws {
         guard currentQueueID != nil else { throw NINSessionExceptions.noActiveQueue }
         if case let .failure(error) = param.channelID { throw error }
-        self.didJoinChannel(channelID: param.channelID.value)
+
+        var message: String? = nil
 
         /// Extract the channel members' data
         if case let .failure(error) = param.channelMembers { throw error }
@@ -151,12 +152,23 @@ extension NINChatSessionManagerImpl {
         } catch {
             debugger(error.localizedDescription)
         }
-        
+
+        if case let .success(metadata) = param.channelAudienceMetadata {
+            if case let .success(answers) = metadata.preAnswers {
+                let parser = NINChatClientPropsParser()
+                try? answers.accept(parser)
+
+                message = parser.properties.first(where: { $0.key == "message" })?.value as? String
+            }
+        }
+
+        try self.didJoinChannel(channelID: param.channelID.value, message: message)
+
         /// Signal channel join event to the asynchronous listener
         self.onChannelJoined?()
     }
 
-    internal func didJoinChannel(channelID: String) {
+    internal func didJoinChannel(channelID: String, message: String?) throws {
         delegate?.log(value: "Joined channel ID: \(channelID)")
 
         /// Set the currently active channel
@@ -183,6 +195,11 @@ extension NINChatSessionManagerImpl {
 
         /// Insert a meta message about the conversation start
         self.add(message: MetaMessage(timestamp: Date(), messageID: self.chatMessages.first?.messageID, text: self.translate(key: "Audience in queue {{queue}} accepted.", formatParams: ["queue": self.describedQueue?.name ?? ""]) ?? "", closeChatButtonTitle: nil))
+
+        /// send message if any
+        if let message = message {
+            try self.send(message: message) { _ in }
+        }
     }
     
     internal func didPartChannel(param: NINLowLevelClientProps) throws {
@@ -318,13 +335,14 @@ extension NINChatSessionManagerImpl {
                 if case let .failure(error) = param.channelMemberAttributes { throw error }
                 if case let .failure(error) = param.channelMemberAttributes.value.writing { throw error }
                 let isWriting = param.channelMemberAttributes.value.writing.value
-                
+
                 /// Check if that user already has a 'writing' message
-                let writingMessage = chatMessages.filter({ ($0 as? UserTypingMessage)?.user?.userID == userID }).first as? UserTypingMessage
+                let writingMessage = chatMessages.first(where: { ($0 as? UserTypingMessage)?.user?.userID == userID }) as? UserTypingMessage
                 if isWriting, writingMessage == nil {
                     /// There's no 'typing' message for this user yet, lets create one
-                    self.add(message: UserTypingMessage(timestamp: Date(), messageID: self.chatMessages.first?.messageID, user: messageUser))
-                } else if let msg = writingMessage, let index = chatMessages.firstIndex(where: { $0.messageID == msg.messageID }) {
+                    /// The value for message id is inspired from the Android SDK
+                    self.add(message: UserTypingMessage(timestamp: Date(), messageID: "zzzzzwriting\(userID)", user: messageUser))
+                } else if let msg = writingMessage, let index = chatMessages.firstIndex(where: { $0 is UserTypingMessage }) {
                     /// There's a 'typing' message for this user - lets remove that.
                     self.removeMessage(atIndex: index)
                 }

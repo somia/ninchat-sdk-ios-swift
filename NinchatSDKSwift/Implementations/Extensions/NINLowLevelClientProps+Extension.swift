@@ -248,6 +248,7 @@ protocol NINLowLevelChannelProps {
     var channelAttributes: NINResult<NINLowLevelClientProps> { get }
     var channelClosed: NINResult<Bool> { get }
     var channelSuspended: NINResult<Bool> { get }
+    var channelAudienceMetadata: NINResult<NINLowLevelClientProps> { get }
 
     var channelID: NINResult<String> { set get }
     var channelMemberAttributes: NINResult<NINLowLevelClientProps> { set get }
@@ -280,6 +281,10 @@ extension NINLowLevelClientProps: NINLowLevelChannelProps {
         }
     }
 
+    var channelAudienceMetadata: NINResult<NINLowLevelClientProps> {
+        get { self.get(forKey: "audience_metadata") }
+    }
+
     var channelID: NINResult<String> {
         get { self.get(forKey: "channel_id") }
         set { self.set(value: newValue.value, forKey: "channel_id") }
@@ -300,6 +305,7 @@ protocol NINLowLevelUserProps {
     var info: NINResult<NINLowLevelClientProps> { get }
     var jobTitle: NINResult<String> { get }
     var channels: NINResult<NINLowLevelClientProps> { get }
+    var preAnswers: NINResult<NINLowLevelClientProps> { get }
 
     var userID: NINResult<String> { set get }
     var userAttributes: NINResult<NINLowLevelClientProps> { set get }
@@ -353,6 +359,10 @@ extension NINLowLevelClientProps: NINLowLevelUserProps {
     var userAttributes: NINResult<NINLowLevelClientProps> {
         get { self.get(forKey: "user_attrs") }
         set { self.set(value: newValue.value, forKey: "user_attrs") }
+    }
+
+    var preAnswers: NINResult<NINLowLevelClientProps> {
+        get { self.get(forKey: "pre_answers") }
     }
 }
 
