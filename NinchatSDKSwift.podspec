@@ -2,7 +2,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "NinchatSDKSwift"
-  s.version      = "0.5.6"
+  s.version      = "0.5.7"
   s.summary      = "iOS SDK for Ninchat, Swift version"
   s.description  = "For building iOS applications using Ninchat messaging."
   s.homepage     = "https://ninchat.com/"
@@ -33,8 +33,7 @@ Pod::Spec.new do |s|
     "OTHER_LDFLAGS[arch=i386]" => "-Wl,-read_only_relocs,suppress -lstdc++",
     "ENABLE_BITCODE" => "NO",
     "SWIFT_SUPPRESS_WARNINGS" => "YES",
-    "ONLY_ACTIVE_ARCH" => "NO",
-    "BUILD_LIBRARY_FOR_DISTRIBUTION" => "YES"
+    "ONLY_ACTIVE_ARCHS" => "NO"
   }
   s.user_target_xcconfig = {
       "ENABLE_BITCODE" => "NO"
