@@ -125,6 +125,10 @@ extension QuestionnaireDataSourceDelegate {
             guard let `self` = self else { return }
             guard self.viewModel.submitAnswer(key: element, value: option.value, allowUpdate: view.isShown) else { return }
 
+            if let view = view as? HasExternalLink, let link = view.url {
+                UIApplication.shared.open(link)
+            }
+
             /// Load the next element if the selected element was a radio or checkbox without any navigation block (redirect/logic)
             /// It will perform only if the element is not the exit element provided to close the questionnaire
             if (view is QuestionnaireElementRadio || view is QuestionnaireElementCheckbox) {
