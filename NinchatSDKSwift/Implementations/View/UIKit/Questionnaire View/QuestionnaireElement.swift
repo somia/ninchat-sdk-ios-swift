@@ -217,3 +217,8 @@ protocol QuestionnaireElementHasDefaultAnswer {
     var didSubmitDefaultAnswer: Bool { get }
     var defaultAnswer: Array<(QuestionnaireElement,ElementOption)>? { get }
 }
+
+/// open href in a browser #376
+protocol HasExternalLink {
+    var url: URL? { get }
+}
