@@ -134,14 +134,16 @@ struct ElementOption: Codable, Equatable {
         get { _value?.value as? AnyHashable }
     }
     var _value: AnyCodable!
+    let href: String?
 
     enum CodingKeys: String, CodingKey {
         case _value = "value"
-        case label
+        case label, href
     }
 
-    init(label: String, value: AnyHashable?) {
+    init(label: String, value: AnyHashable?, href: String? = nil) {
         self.label = label
+        self.href = href
         self.value = value
     }
 

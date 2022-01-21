@@ -10,7 +10,7 @@ protocol QuestionnaireExitElement {
     var isExitElement: Bool { set get }
 }
 
-class QuestionnaireElementRadio: UIView, HasCustomLayer, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireOptionSelectableElement, QuestionnaireExitElement {
+class QuestionnaireElementRadio: UIView, HasCustomLayer, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireOptionSelectableElement, QuestionnaireExitElement, HasExternalLink {
 
     // MARK: - QuestionnaireElement
 
@@ -51,6 +51,7 @@ class QuestionnaireElementRadio: UIView, HasCustomLayer, QuestionnaireElementWit
 
         switch state {
         case .set:
+            self.url = URL(string: option.href ?? "")
             button.closure?(button)
         case .nothing:
             debugger("Do nothing for Radio element")
@@ -66,11 +67,16 @@ class QuestionnaireElementRadio: UIView, HasCustomLayer, QuestionnaireElementWit
         guard let tag = self.elementConfiguration?.options?.firstIndex(where: { $0.label == option.label }) else { return }
         (self.view.viewWithTag(tag + 1) as? NINButton)?.isSelected = false
         (self.view.viewWithTag(tag + 1) as? NINButton)?.roundButton()
+        self.url = nil
     }
 
     // MARK: - QuestionnaireExitElement
 
     var isExitElement: Bool = false
+
+    // MARK: - HasExternalLink
+
+    var url: URL?
 
     // MARK: - Subviews - QuestionnaireElementWithTitleAndOptions + QuestionnaireElementHasButtons
 
@@ -169,7 +175,13 @@ extension QuestionnaireElementRadio {
             guard let `self` = self else { return }
 
             self.applySelection(to: button)
-            button.isSelected ? self.onElementOptionSelected?(self, option) : self.onElementOptionDeselected?(self, option)
+            if button.isSelected {
+                self.url = URL(string: option.href ?? "")
+                self.onElementOptionSelected?(self, option)
+            } else {
+                self.url = nil
+                self.onElementOptionDeselected?(self, option)
+            }
         }
 
         view.tag = tag + 1
