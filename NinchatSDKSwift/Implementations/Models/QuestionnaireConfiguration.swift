@@ -31,7 +31,7 @@ struct AudienceQuestionnaire {
 // MARK: - QuestionnaireConfiguration
 struct QuestionnaireConfiguration: Codable, Equatable {
     let name: String
-    let label, pattern: String?
+    let label, pattern, href: String?
     let type: QuestionnaireConfigurationType?
     let buttons: ButtonQuestionnaire?
     let logic: LogicQuestionnaire?
@@ -43,7 +43,7 @@ struct QuestionnaireConfiguration: Codable, Equatable {
     let elements: [QuestionnaireConfiguration]?
 
     enum CodingKeys: String, CodingKey {
-        case name, label, pattern, type, buttons, logic, redirects, element, required, options, elements
+        case name, label, pattern, href, type, buttons, logic, redirects, element, required, options, elements
         case inputMode = "inputmode"
     }
 
@@ -128,7 +128,7 @@ struct LogicQuestionnaire: Codable {
 
 // MARK: - Option
 struct ElementOption: Codable, Equatable {
-    let label: String
+    var label: String?
     var value: AnyHashable! {
         set { _value = AnyCodable(newValue) }
         get { _value?.value as? AnyHashable }
@@ -187,6 +187,7 @@ enum ElementType: String, Codable {
     case text
     case textarea
     case checkbox
+    case a
 }
 
 // MARK: - QuestionnaireButtonType

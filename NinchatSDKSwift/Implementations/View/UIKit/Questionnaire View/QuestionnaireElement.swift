@@ -9,6 +9,7 @@ import UIKit
 protocol QuestionnaireElement: UIView {
     var index: Int { get set }
     var isShown: Bool? { get set }
+    var didShapedView: Bool { get }
     var elementHeight: CGFloat { set get }
     var questionnaireStyle: QuestionnaireStyle? { get set }
     var questionnaireConfiguration: QuestionnaireConfiguration? { get set }
@@ -17,6 +18,13 @@ protocol QuestionnaireElement: UIView {
     func shapeView(_ configuration: QuestionnaireConfiguration?)
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?)
 }
+extension QuestionnaireElement {
+    /// To prevent duplicate shaping functions
+    var didShapedView: Bool {
+        self.elementConfiguration != nil
+    }
+}
+
 
 /// Questionnaire element with
 ///     - title
@@ -38,11 +46,6 @@ extension QuestionnaireElementWithTitle {
     }
     private var requiredIndicatorAlpha: CGFloat {
         0.7
-    }
-
-    /// To prevent duplicate shaping functions
-    var didShapedView: Bool {
-        self.elementConfiguration != nil
     }
 
     var padding: CGFloat {
@@ -220,5 +223,5 @@ protocol QuestionnaireElementHasDefaultAnswer {
 
 /// open href in a browser #376
 protocol HasExternalLink {
-    var url: URL? { get }
+    var didTapOnURL: ((URL?) -> Void)? { get set }
 }

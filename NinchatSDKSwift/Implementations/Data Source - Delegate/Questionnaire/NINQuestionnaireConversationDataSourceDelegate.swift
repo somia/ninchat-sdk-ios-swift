@@ -189,6 +189,9 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         if var view = element as? QuestionnaireFocusableElement & QuestionnaireElement {
             self.setupFocusable(view: &view)
         }
+        if var view = element as? QuestionnaireElement & HasExternalLink {
+            self.setupExternalLink(element: &view)
+        }
         cell.style = .conversation
         cell.indexPath = indexPath
         cell.backgroundColor = .clear
