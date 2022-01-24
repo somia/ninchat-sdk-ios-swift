@@ -51,7 +51,6 @@ class QuestionnaireElementRadio: UIView, HasCustomLayer, QuestionnaireElementWit
 
         switch state {
         case .set:
-            self.url = URL(string: option.href ?? "")
             button.closure?(button)
         case .nothing:
             debugger("Do nothing for Radio element")
@@ -67,7 +66,6 @@ class QuestionnaireElementRadio: UIView, HasCustomLayer, QuestionnaireElementWit
         guard let tag = self.elementConfiguration?.options?.firstIndex(where: { $0.label == option.label }) else { return }
         (self.view.viewWithTag(tag + 1) as? NINButton)?.isSelected = false
         (self.view.viewWithTag(tag + 1) as? NINButton)?.roundButton()
-        self.url = nil
     }
 
     // MARK: - QuestionnaireExitElement
@@ -76,7 +74,7 @@ class QuestionnaireElementRadio: UIView, HasCustomLayer, QuestionnaireElementWit
 
     // MARK: - HasExternalLink
 
-    var url: URL?
+    var didTapOnURL: ((URL?) -> ())?
 
     // MARK: - Subviews - QuestionnaireElementWithTitleAndOptions + QuestionnaireElementHasButtons
 
@@ -176,10 +174,9 @@ extension QuestionnaireElementRadio {
 
             self.applySelection(to: button)
             if button.isSelected {
-                self.url = URL(string: option.href ?? "")
+                self.didTapOnURL?(URL(string: option.href ?? ""))
                 self.onElementOptionSelected?(self, option)
             } else {
-                self.url = nil
                 self.onElementOptionDeselected?(self, option)
             }
         }
@@ -229,6 +226,7 @@ extension QuestionnaireElementRadio {
 }
 
 /// QuestionnaireElement
+
 extension QuestionnaireElement where Self:QuestionnaireElementRadio {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
         if self.didShapedView { return }

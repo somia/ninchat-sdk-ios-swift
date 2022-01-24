@@ -220,5 +220,5 @@ protocol QuestionnaireElementHasDefaultAnswer {
 
 /// open href in a browser #376
 protocol HasExternalLink {
-    var url: URL? { get }
+    var didTapOnURL: ((URL?) -> Void)? { get set }
 }
