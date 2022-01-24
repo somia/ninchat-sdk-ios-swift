@@ -55,6 +55,8 @@ struct QuestionnaireParser {
                     return generate(from: configuration, index: index, ofType: QuestionnaireElementTextField.self)
                 case .likert:
                     return generate(from: configuration, index: index, ofType: QuestionnaireElementLikert.self)
+                case .a:
+                    return generate(from: configuration, index: index, ofType: QuestionnaireElementHyperlink.self)
                 }
             }
 
