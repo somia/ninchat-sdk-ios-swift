@@ -87,7 +87,7 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
         imageView.isHidden = !(config?.show ?? false)
         if let overrideURL = config?.imageOverrideURL {
             imageView.image(from: overrideURL, defaultImage: override)
-        } else if let url = url {
+        } else if let url = url, !url.isEmpty {
             imageView.image(from: url, defaultImage: override)
         } else {
             imageView.image = override
