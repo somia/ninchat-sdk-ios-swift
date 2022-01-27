@@ -70,8 +70,9 @@ final class NINChatViewModelImpl: NINChatViewModel {
     private unowned var sessionManager: NINChatSessionManager
     private var iceCandidates: [RTCIceCandidate] = []
     private var client: NINChatWebRTCClient?
-    private var timer: Timer?
-    
+    private var typingStatus = false
+    private var typingStatusQueue: DispatchWorkItem?
+
     var backlogMessages: String? {
         didSet {
             if let backlogMessages = backlogMessages {
@@ -114,6 +115,17 @@ final class NINChatViewModelImpl: NINChatViewModel {
         self.sessionManager.onComposeActionUpdated = { [weak self] id, action in
             self?.onComposeActionUpdated?(id, action)
         }
+    }
+
+    private func startTimer() {
+        self.typingStatusQueue = DispatchWorkItem { [weak self] in
+            self?.updateWriting(state: false)
+        }
+        DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + .seconds(20), execute: self.typingStatusQueue!)
+    }
+
+    private func cancelTimer() {
+        self.typingStatusQueue?.cancel()
     }
 }
 
@@ -254,17 +266,20 @@ extension NINChatViewModelImpl {
     }
 
     func updateWriting(state: Bool) {
-        try? self.sessionManager.update(isWriting: state, completion: { _ in })
-        timer?.invalidate()
-        timer = nil
-        
-        /// According to `https://github.com/somia/mobile/issues/306`
+        self.cancelTimer()
+
         if state {
-            timer = Timer.scheduledTimer(withTimeInterval: 30.0, repeats: false) { [weak self] timer in
-                debugger("writing indicator timed out")
-                try? self?.sessionManager.update(isWriting: false) { _ in  }
-            }
+            /// restart timer if user is still typing
+            self.startTimer()
         }
+
+        if typingStatus == state {
+            /// skip if the status has not changed
+            return
+        }
+        self.typingStatus = state
+
+        try? self.sessionManager.update(isWriting: state) { _ in  }
     }
 
     func loadHistory(completion: @escaping (Error?) -> Void) {

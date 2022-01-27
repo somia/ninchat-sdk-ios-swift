@@ -10,7 +10,7 @@ protocol QuestionnaireExitElement {
     var isExitElement: Bool { set get }
 }
 
-class QuestionnaireElementRadio: UIView, HasCustomLayer, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireOptionSelectableElement, QuestionnaireExitElement {
+class QuestionnaireElementRadio: UIView, HasCustomLayer, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireOptionSelectableElement, QuestionnaireExitElement, HasExternalLink {
 
     // MARK: - QuestionnaireElement
 
@@ -71,6 +71,10 @@ class QuestionnaireElementRadio: UIView, HasCustomLayer, QuestionnaireElementWit
     // MARK: - QuestionnaireExitElement
 
     var isExitElement: Bool = false
+
+    // MARK: - HasExternalLink
+
+    var didTapOnURL: ((URL?) -> ())?
 
     // MARK: - Subviews - QuestionnaireElementWithTitleAndOptions + QuestionnaireElementHasButtons
 
@@ -151,6 +155,12 @@ extension NINButton {
 
         self.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorRadioUnselectedText) ?? .QGrayButton, for: .normal)
         self.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorRadioSelectedText) ?? .QBlueButtonNormal, for: .selected)
+
+        if self.isSelected {
+            self.imageView?.tintColor = self.titleColor(for: .selected)
+        } else {
+            self.imageView?.tintColor = self.titleColor(for: .normal)
+        }
     }
 }
 
@@ -169,7 +179,12 @@ extension QuestionnaireElementRadio {
             guard let `self` = self else { return }
 
             self.applySelection(to: button)
-            button.isSelected ? self.onElementOptionSelected?(self, option) : self.onElementOptionDeselected?(self, option)
+            if button.isSelected {
+                self.didTapOnURL?(URL(string: option.href ?? ""))
+                self.onElementOptionSelected?(self, option)
+            } else {
+                self.onElementOptionDeselected?(self, option)
+            }
         }
 
         view.tag = tag + 1
@@ -178,6 +193,16 @@ extension QuestionnaireElementRadio {
         view.setTitle(option.label, for: .selected)
         view.setTitleColor(.QBlueButtonNormal, for: .selected)
         view.setBackgroundImage(UIColor.QBlueButtonHighlighted.toImage, for: .highlighted)
+        if option.href != nil {
+            view.setImage(UIImage(named: "icon-external-link", in: .SDKBundle, compatibleWith: nil)?.withRenderingMode(.alwaysTemplate), for: .normal)
+            view.imageView?.tintColor = view.titleColor(for: .normal)
+            view.semanticContentAttribute = .forceRightToLeft
+            view.imageEdgeInsets = UIEdgeInsets(top: 0.0, left: 8.0, bottom: 0.0, right: 0.0)
+        } else {
+            view.setImage(nil, for: .normal)
+            view.imageEdgeInsets = .zero
+            view.semanticContentAttribute = .unspecified
+        }
         view.updateTitleScale()
 
         return view
@@ -217,6 +242,7 @@ extension QuestionnaireElementRadio {
 }
 
 /// QuestionnaireElement
+
 extension QuestionnaireElement where Self:QuestionnaireElementRadio {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
         if self.didShapedView { return }

@@ -107,6 +107,13 @@ extension QuestionnaireDataSourceDelegate {
         _ = self.viewModel.submitAnswer(key: element, value: option.value, allowUpdate: false)
     }
 
+    internal func setupExternalLink(element: inout QuestionnaireElement & HasExternalLink) {
+        element.didTapOnURL = { url in
+           guard let link = url else { return }
+           UIApplication.shared.open(link)
+        }
+    }
+
     internal func setupSettable(element: QuestionnaireElement & QuestionnaireSettable) {
         defer { self.viewModel.preventAutoRedirect = false }
         let setAnswerState: QuestionnaireSettableState = (self.viewModel.redirectTargetPage(element, performClosures: false) ?? -1 >= 0) ? .set : .nothing
@@ -123,7 +130,11 @@ extension QuestionnaireDataSourceDelegate {
     internal func setupSelectable(view: inout  QuestionnaireElement & QuestionnaireOptionSelectableElement) {
         view.onElementOptionSelected = { [weak self, view] element, option in
             guard let `self` = self else { return }
-            guard self.viewModel.submitAnswer(key: element, value: option.value, allowUpdate: view.isShown) else { return }
+
+            /// Hyperlink elements have no value to submit
+            if !(view is QuestionnaireElementHyperlink) {
+                guard self.viewModel.submitAnswer(key: element, value: option.value, allowUpdate: view.isShown) else { return }
+            }
 
             /// Load the next element if the selected element was a radio or checkbox without any navigation block (redirect/logic)
             /// It will perform only if the element is not the exit element provided to close the questionnaire
