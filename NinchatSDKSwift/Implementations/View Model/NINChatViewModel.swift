@@ -218,7 +218,7 @@ extension NINChatViewModelImpl {
 extension NINChatViewModelImpl {
     func willEnterBackground() {
         debugger("background mode, hangup the video call (if there are any)")
-        /// instead of droping the connection when the app goes to the background
+        /// instead of dropping the connection when the app goes to the background
         /// it is better to stop video stream and let the connection be alive
         /// discussed on `https://github.com/somia/mobile/issues/295`
         self.disableVideoStream(disable: true)
@@ -227,6 +227,26 @@ extension NINChatViewModelImpl {
     func didEnterForeground() {
         /// take the video stream back
         self.disableVideoStream(disable: false)
+
+        /// reload history if the app was in the background
+        ///
+        /// this is a workaround to avoid missing messages
+        /// when the app is in the background, and the OS decides
+        /// to close the connection, or if the user gets suspended
+        /// and not deleted.
+        ///
+        /// if the user was deleted when the app gets back in the
+        /// foreground, the solution we have developed for the issue
+        /// `https://github.com/somia/mobile/issues/368`
+        /// is followed
+        ///
+        /// however, if there is still problems in case the user
+        /// was deleted when the app gets back in foreground (such
+        /// as race conditions in loading history or checking the
+        /// user's status), and if the new issue is critical to resolve,
+        /// then a dedicated task must be opened to investigate the
+        /// problem.
+        self.loadHistory()
     }
 }
 
