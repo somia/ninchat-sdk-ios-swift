@@ -137,10 +137,13 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
 
                 /// skip rating page if ´audienceRating = False´
                 /// according to `https://github.com/somia/mobile/issues/380`
-                if self.sessionManager.siteConfiguration.audienceRating == false {
-                    self.delegate?.onDidEnd(); return
+                if self.sessionManager.siteConfiguration.audienceRating {
+                    self.navigationController?.pushViewController(self.ratingViewController, animated: true)
+                } else if self.hasPostAudienceQuestionnaire {
+                    self.navigationController?.pushViewController(self.questionnaireViewController(ratingViewModel: nil, rating: nil, questionnaireType: .post), animated: true)
+                } else {
+                    self.delegate?.onDidEnd()
                 }
-                self.navigationController?.pushViewController(self.ratingViewController, animated: true)
             }
         }
 
