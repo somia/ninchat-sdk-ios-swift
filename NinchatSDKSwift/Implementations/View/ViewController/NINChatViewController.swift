@@ -301,10 +301,11 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
                 self?.chatView.tableView.reloadData()
             }
         }
-        self.viewModel.loadHistory { _ in }
         self.viewModel.onComposeActionUpdated = { [weak self] id, action in
             self?.chatView.didUpdateComposeAction(id, with: action)
         }
+
+        self.viewModel.loadHistory()
     }
     
     // MARK: - Helpers
