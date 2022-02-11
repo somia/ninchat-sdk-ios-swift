@@ -134,6 +134,12 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         chatViewController.onChatClosed = { [weak self] in
             DispatchQueue.main.async {
                 guard let `self` = self else { return }
+
+                /// skip rating page if ´audienceRating = False´
+                /// according to `https://github.com/somia/mobile/issues/380`
+                if self.sessionManager.siteConfiguration.audienceRating == false {
+                    self.delegate?.onDidEnd(); return
+                }
                 self.navigationController?.pushViewController(self.ratingViewController, animated: true)
             }
         }
