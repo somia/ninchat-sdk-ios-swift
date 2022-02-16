@@ -46,6 +46,13 @@ final class ChatView: UIView, ChatViewProtocol {
     private var composeColorAssets: NINColorAssetDictionary!
     
     /**
+    * The CALayer asset overrides as map. Only contains items used by the chat view.
+    * These are cached in this fashion to avoid looking them up from the chat delegate
+    * every time a cell needs updating.
+    */
+    private var layerAssets: NINLayerAssetDictionary!
+    
+    /**
     * Current states for the visible ui/compose type messages, tracked across cell
     * recycle. messageID as key, array corresponds to the array of ui/compose objects
     * in the message with each object being a dictionary that gets received and passed
@@ -90,12 +97,13 @@ final class ChatView: UIView, ChatViewProtocol {
     }
 
     // MARK: - ChatViewProtocol
-
+    
     weak var sessionManager: NINChatSessionManager? {
         didSet {
             self.imageAssets = self.sessionManager?.delegate?.imageAssetsDictionary
             self.colorAssets = self.sessionManager?.delegate?.colorAssetsDictionary
             self.composeColorAssets = self.sessionManager?.delegate?.composeColorAssetsDictionary
+            self.layerAssets = self.sessionManager?.delegate?.layerAssetsDictionary
 
             self.agentAvatarConfig = AvatarConfig(forAgent: sessionManager)
             self.userAvatarConfig = AvatarConfig(forUser: sessionManager)
@@ -196,6 +204,7 @@ extension ChatView {
                              configuration: self.sessionManager?.siteConfiguration,
                              imageAssets: self.imageAssets,
                              colorAssets: (cell is ChatChannelComposeCell) ? self.composeColorAssets : self.colorAssets,
+                             layerAssets: self.layerAssets,
                              agentAvatarConfig: self.agentAvatarConfig,
                              userAvatarConfig: self.userAvatarConfig,
                              composeState: self.composeMessageStates?[message.messageID])
