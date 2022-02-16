@@ -13,6 +13,14 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
     // MARK: - Outlets
     
     @IBOutlet private(set) weak var infoContainerView: UIView!
+    /// To keep the default behaviour, we start by making 'bubbleContainerView'
+    /// invisible, unless it is customized
+    @IBOutlet private(set) weak var bubbleContainerView: UIView!
+    /// despite introducing 'bubbleContainerView' for more advanced
+    /// customization options, we should keep 'bubbleImageView' and
+    /// just make it hidden, because most of the constraints are set
+    /// to 'bubbleImageView', and removing it might result in a shut
+    /// gun effect on the code and can result in unexpected behaviour.
     @IBOutlet private(set) weak var bubbleImageView: UIImageView!
     @IBOutlet private(set) weak var senderNameLabel: UILabel! {
         didSet {

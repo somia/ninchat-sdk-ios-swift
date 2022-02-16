@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait" appearance="light"/>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="dark"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -50,13 +51,13 @@
                                         <rect key="frame" x="16" y="0.0" width="660" height="40"/>
                                         <subviews>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="999" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Dr Koistinen" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="axj-Ae-KVS">
-                                                <rect key="frame" x="0.0" y="8" width="616.5" height="32"/>
+                                                <rect key="frame" x="0.0" y="8" width="620.5" height="32"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="17:18" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="97N-ME-Xh8">
-                                                <rect key="frame" x="624.5" y="8" width="35.5" height="32"/>
+                                                <rect key="frame" x="628.5" y="8" width="31.5" height="32"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
                                                 <color key="textColor" red="0.4549019608" green="0.57254901960000004" blue="0.66666666669999997" alpha="1" colorSpace="calibratedRGB"/>
@@ -79,6 +80,10 @@
                                         <rect key="frame" x="8" y="40" width="676" height="143"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </imageView>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="r87-R4-v74">
+                                        <rect key="frame" x="8" y="40" width="676" height="143"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                    </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Nc9-aw-Vh3">
                                         <rect key="frame" x="12" y="48" width="668" height="127"/>
                                         <subviews>
@@ -130,6 +135,7 @@
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstItem="Zsw-s3-FM2" firstAttribute="bottom" secondItem="1Nj-ja-lgx" secondAttribute="bottom" constant="-8" id="2BT-IW-Ysa"/>
+                                    <constraint firstItem="r87-R4-v74" firstAttribute="trailing" secondItem="1Nj-ja-lgx" secondAttribute="trailing" id="66X-om-Gjq"/>
                                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="1Nj-ja-lgx" secondAttribute="trailing" constant="8" id="CIM-gf-YqN"/>
                                     <constraint firstItem="Nc9-aw-Vh3" firstAttribute="leading" secondItem="1Nj-ja-lgx" secondAttribute="leading" constant="4" id="DID-JX-90w"/>
                                     <constraint firstItem="ggr-BW-AKj" firstAttribute="bottom" secondItem="1Nj-ja-lgx" secondAttribute="bottom" constant="-8" id="Dlj-p5-22j"/>
@@ -148,12 +154,15 @@
                                     <constraint firstItem="ggr-BW-AKj" firstAttribute="leading" secondItem="1Nj-ja-lgx" secondAttribute="leading" constant="4" id="Ze3-Wt-Dky"/>
                                     <constraint firstItem="1Nj-ja-lgx" firstAttribute="top" secondItem="KuD-LN-gbc" secondAttribute="bottom" id="bnG-Cs-ruP"/>
                                     <constraint firstAttribute="bottom" secondItem="1Nj-ja-lgx" secondAttribute="bottom" id="doQ-QC-KXw"/>
+                                    <constraint firstItem="r87-R4-v74" firstAttribute="leading" secondItem="1Nj-ja-lgx" secondAttribute="leading" id="fkM-A3-kPW"/>
                                     <constraint firstItem="Zsw-s3-FM2" firstAttribute="leading" secondItem="1Nj-ja-lgx" secondAttribute="leading" constant="4" id="hZT-FA-omy"/>
                                     <constraint firstItem="ggr-BW-AKj" firstAttribute="trailing" secondItem="1Nj-ja-lgx" secondAttribute="trailing" constant="-4" id="lrG-Rf-AuV"/>
                                     <constraint firstItem="ggr-BW-AKj" firstAttribute="top" secondItem="1Nj-ja-lgx" secondAttribute="top" constant="8" id="pzc-mD-nmQ"/>
                                     <constraint firstItem="Zsw-s3-FM2" firstAttribute="trailing" secondItem="1Nj-ja-lgx" secondAttribute="trailing" constant="-4" id="rV9-kf-w0Q"/>
                                     <constraint firstItem="Nc9-aw-Vh3" firstAttribute="trailing" secondItem="1Nj-ja-lgx" secondAttribute="trailing" constant="-4" id="sUX-0h-PfG"/>
                                     <constraint firstItem="fjd-1d-buR" firstAttribute="leading" secondItem="1Nj-ja-lgx" secondAttribute="leading" constant="16" id="ttO-IY-Xrg"/>
+                                    <constraint firstItem="r87-R4-v74" firstAttribute="top" secondItem="1Nj-ja-lgx" secondAttribute="top" id="wsA-k6-FWT"/>
+                                    <constraint firstItem="r87-R4-v74" firstAttribute="bottom" secondItem="1Nj-ja-lgx" secondAttribute="bottom" id="zEC-67-tWa"/>
                                 </constraints>
                             </view>
                             <view tag="2" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KLU-sh-tmI" userLabel="Right avatar container">
@@ -201,6 +210,7 @@
             </tableViewCellContentView>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <connections>
+                <outlet property="bubbleContainerViewvvvvvvv" destination="r87-R4-v74" id="VuH-GS-15z"/>
                 <outlet property="bubbleImageLeftEqualConstraint" destination="X4A-cx-i8c" id="8Jq-8c-z6Y"/>
                 <outlet property="bubbleImageLeftGreaterConstraint" destination="EQT-l7-rqs" id="9Bs-wu-BEU"/>
                 <outlet property="bubbleImageRightEqualConstraint" destination="IRL-bP-c5E" id="6cN-k4-PJB"/>
@@ -211,7 +221,7 @@
                 <outlet property="infoContainerHeightConstraint" destination="iVo-o6-dB4" id="PXO-e6-AXU"/>
                 <outlet property="infoContainerLeftConstraint" destination="Evt-by-Vpb" id="Zuv-je-Pe7"/>
                 <outlet property="infoContainerRightConstraint" destination="JdU-4p-z0U" id="bjS-iJ-Y0z"/>
-                <outlet property="infoContainerView" destination="KuD-LN-gbc" id="BEv-mq-6jJ"/>
+                <outlet property="infoContainerView" destination="KuD-LN-gbc" id="kmf-Bs-ZTl"/>
                 <outlet property="leftAvatarImageView" destination="nRb-Bh-vqb" id="z9u-pX-beG"/>
                 <outlet property="leftAvatarWidthConstraint" destination="rJd-HW-vhg" id="GbS-7e-aYH"/>
                 <outlet property="mainContainerLeftConstraint" destination="h6t-bY-BbZ" id="Fu9-qE-3OV"/>
@@ -234,5 +244,8 @@
         <image name="icon_avatar_mine" width="726" height="725"/>
         <image name="icon_avatar_other" width="726" height="725"/>
         <image name="icon_play" width="17" height="19"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
     </resources>
 </document>
