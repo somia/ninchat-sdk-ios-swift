@@ -52,7 +52,7 @@ protocol CloseButtonProtocol {
     func overrideAssets(with session: NINChatSessionInternalDelegate?, in position: CloseButtonPosition)
 }
 
-final class CloseButton: UIView, HasCustomLayer, CloseButtonProtocol {
+final class CloseButton: UIView, CloseButtonProtocol {
     
     // MARK: - Outlets
     
@@ -89,7 +89,6 @@ final class CloseButton: UIView, HasCustomLayer, CloseButtonProtocol {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        applyLayerOverride(view: self)
     }
     
     func overrideAssets(with session: NINChatSessionInternalDelegate?, in position: CloseButtonPosition) {
@@ -97,9 +96,9 @@ final class CloseButton: UIView, HasCustomLayer, CloseButtonProtocol {
         self.backgroundColor = .clear
 
         if buttonTitle.isEmpty, let layer = session?.override(layerAsset: position.assetKeyEmpty) {
-            self.layer.insertSublayer(layer, at: 0)
+            self.layer.apply(layer)
         } else if let layer = session?.override(layerAsset: position.assetKey) {
-            self.layer.insertSublayer(layer, at: 0)
+            self.layer.apply(layer)
         } else {
             self.round(borderWidth: 1.0, borderColor: .defaultBackgroundButton)
             self.backgroundColor = .white

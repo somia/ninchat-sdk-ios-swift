@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class NINChatViewController: UIViewController, ViewController, KeyboardHandler, HasCustomLayer, HasTitleBar, HasDefaultAvatar {
+final class NINChatViewController: UIViewController, ViewController, KeyboardHandler, HasTitleBar, HasDefaultAvatar {
     private var webRTCClient: NINChatWebRTCClient?
 
     // MARK: - ViewController
@@ -219,14 +219,6 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
         self.addRotationListener()
         self.reloadView()
         self.adjustConstraints(for: self.view.bounds.size, withAnimation: false)
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        if let titlebarContainer = self.titlebarContainer {
-            applyLayerOverride(view: titlebarContainer)
-        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
