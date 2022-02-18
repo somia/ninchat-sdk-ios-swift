@@ -21,13 +21,13 @@ final class NinchatSDKSwiftServerQuestionnaireTests: XCTestCase {
                 XCTAssertNil(error)
                 XCTAssertNotNil(credentials)
 
-                try! self.sessionManager.list(queues: self.sessionManager.siteConfiguration.audienceQueues) { error in
+                try! self.sessionManager.describe(queuesID: self.sessionManager.siteConfiguration.audienceQueues) { error in
                     XCTAssertNil(error)
 
                     guard let answers = self.sessionManager.audienceMetadata else { XCTFail("Unable to get audience metadata"); return }
                     answers.set(value: NINLowLevelClientProps.initiate(preQuestionnaireAnswers: ["question":"answer"]), forKey: "pre_answers")
 
-                    try! self.sessionManager.registerQuestionnaire(queue: Session.suiteQueue, answers: answers) { error in
+                    try! self.sessionManager.registerAudience(queue: Session.suiteQueue, answers: answers) { error in
                         XCTAssertNil(error)
                         expect.fulfill()
                     }
@@ -48,12 +48,12 @@ final class NinchatSDKSwiftServerQuestionnaireTests: XCTestCase {
             try! self.sessionManager.openSession { _, _, error in
                 XCTAssertNil(error)
 
-                try! self.sessionManager.list(queues: self.sessionManager.siteConfiguration.audienceQueues) { error in
+                try! self.sessionManager.describe(queuesID: self.sessionManager.siteConfiguration.audienceQueues) { error in
                     XCTAssertNil(error)
                     XCTAssertFalse(self.sessionManager.queues.contains(where: { $0.queueID == "7s1gafig00ofg" }))
                     XCTAssertFalse(self.sessionManager.queues.contains(where: { $0.queueID == "76nr0l4m00t5" }))
 
-                    viewModel = NINQuestionnaireViewModelImpl(sessionManager: self.sessionManager, audienceMetadata: self.sessionManager.audienceMetadata, questionnaireType: .pre)
+                    viewModel = NINQuestionnaireViewModelImpl(sessionManager: self.sessionManager, questionnaireType: .pre)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
                         XCTAssertTrue(self.sessionManager.queues.contains(where: { $0.queueID == "7s1gafig00ofg" }))
                         XCTAssertTrue(self.sessionManager.queues.contains(where: { $0.queueID == "76nr0l4m00t5" }))

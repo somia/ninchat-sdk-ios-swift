@@ -25,7 +25,7 @@ final class NinchatSDKSwiftServerHandlerTests: XCTestCase {
     
     func testServer_1_clientEvents() {
         self.expect_event = self.expectation(description: "Expected to get general events")
-        try! self.sessionManager.list(queues: self.sessionManager.siteConfiguration.audienceQueues) { error in }
+        try! self.sessionManager.describe(queuesID: self.sessionManager.siteConfiguration.audienceQueues) { error in }
         self.sessionManager.session?.setOnEvent(self)
         
         waitForExpectations(timeout: 5.0)
