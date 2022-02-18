@@ -7,7 +7,7 @@
 import UIKit
 import AnyCodable
 
-final class QuestionnaireNavigationCell: UITableViewCell, HasCustomLayer, QuestionnaireNavigationButtons {
+final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigationButtons {
 
     // MARK: - QuestionnaireElementWithNavigationButtons
 
@@ -36,17 +36,6 @@ final class QuestionnaireNavigationCell: UITableViewCell, HasCustomLayer, Questi
         UIView(frame: .zero)
     }()
 
-    override func layoutSublayers(of layer: CALayer) {
-        super.layoutSublayers(of: layer)
-
-        if let nextButton = self.buttons.arrangedSubviews.compactMap({ $0 as? NINButton }).first(where: { $0.type == .next }) {
-            applyLayerOverride(view: nextButton)
-        }
-        if let backButton = self.buttons.arrangedSubviews.compactMap({ $0 as? NINButton }).first(where: { $0.type == .back }) {
-            applyLayerOverride(view: backButton)
-        }
-    }
-
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         if let nextButton = self.buttons.arrangedSubviews.compactMap({ $0 as? NINButton }).first(where: { $0.type == .next }) {
             let textColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorNavigationNextText) ?? .white
@@ -58,7 +47,7 @@ final class QuestionnaireNavigationCell: UITableViewCell, HasCustomLayer, Questi
             nextButton.setTitleColor(textColor, for: .selected)
 
             if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireNavigationNext) {
-                nextButton.layer.insertSublayer(layer, at: 0)
+                nextButton.layer.apply(layer)
             } else {
                 nextButton.layer.borderColor = UIColor.QBlueButtonNormal.cgColor
                 nextButton.backgroundColor = .QBlueButtonNormal
@@ -75,7 +64,7 @@ final class QuestionnaireNavigationCell: UITableViewCell, HasCustomLayer, Questi
             backButton.setTitleColor(textColor, for: .selected)
 
             if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireNavigationBack) {
-                backButton.layer.insertSublayer(layer, at: 0)
+                backButton.layer.apply(layer)
             } else {
                 backButton.layer.borderColor = UIColor.QBlueButtonNormal.cgColor
                 backButton.backgroundColor = .white

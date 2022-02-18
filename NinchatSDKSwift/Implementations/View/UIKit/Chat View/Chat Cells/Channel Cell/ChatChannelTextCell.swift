@@ -57,7 +57,7 @@ final class ChatChannelTextOthersCell: ChatChannelOthersCell, ChannelTextCell {
         }
     }
     
-    override func configureOtherMessage(avatar url: String?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, config: AvatarConfig?, series: Bool) {
+    override func configureOtherMessage(avatar url: String?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?,  config: AvatarConfig?, series: Bool) {
         super.configureOtherMessage(avatar: url, imageAssets: imageAssets, colorAssets: colorAssets, config: config, series: series)
     
         self.messageTextView.textAlignment = .left

@@ -24,7 +24,7 @@ protocol ChatInputControlsProtocol: UIView, ChatInputActions {
     func overrideAssets()
 }
 
-final class ChatInputControls: UIView, HasCustomLayer, ChatInputControlsProtocol {
+final class ChatInputControls: UIView, ChatInputControlsProtocol {
     
     private var isOnPlaceholderMode: Bool = true {
         didSet {
@@ -82,22 +82,6 @@ final class ChatInputControls: UIView, HasCustomLayer, ChatInputControlsProtocol
     }
     @IBOutlet private(set) weak var sendMessageButtonWidthConstraint: NSLayoutConstraint!
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(didRotateView(_:)),
-                                               name: UIDevice.orientationDidChangeNotification,
-                                               object: nil)
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        self.applyLayerOverride(view: sendMessageButton)
-        self.applyLayerOverride(view: textInput)
-    }
-    
-    
     func overrideAssets() {
         if let sendButtonTitle = self.sessionManager?.siteConfiguration.sendButtonTitle {
             self.sendMessageButtonWidthConstraint.isActive = false
@@ -106,7 +90,7 @@ final class ChatInputControls: UIView, HasCustomLayer, ChatInputControlsProtocol
         }
 
         if let layer = delegate?.override(layerAsset: .ninchatTextareaSubmitButton) {
-            self.sendMessageButton.layer.insertSublayer(layer, below: sendMessageButton.titleLabel?.layer)
+            self.sendMessageButton.layer.apply(layer)
         } else if let backgroundBundle = UIImage(named: "icon_send_message_border", in: .SDKBundle, compatibleWith: nil) {
             self.sendMessageButton.setBackgroundImage(backgroundBundle, for: .normal)
         }
@@ -121,7 +105,7 @@ final class ChatInputControls: UIView, HasCustomLayer, ChatInputControlsProtocol
             textColor = inputTextColor
         }
         if let inputTextLayer = self.delegate?.override(layerAsset: .ninchatColorTextareaTextInput) {
-            self.textInput.layer.insertSublayer(inputTextLayer, at: 0)
+            self.textInput.layer.apply(inputTextLayer)
         }
         if let placeholderColor = self.delegate?.override(colorAsset: .ninchatColorTextareaPlaceholder) {
             self.placeholderColor = placeholderColor
@@ -169,12 +153,6 @@ final class ChatInputControls: UIView, HasCustomLayer, ChatInputControlsProtocol
         }
         textInput.updateSize(to: textInput.newSize())
         onTextSizeChanged?(textInput.newSize())
-    }
-    
-    @objc
-    func didRotateView(_ notification: Notification) {
-        self.applyLayerOverride(view: sendMessageButton)
-        self.applyLayerOverride(view: textInput)
     }
 }
 

@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, QuestionnaireSettable, QuestionnaireOptionSelectableElement, QuestionnaireElementHasDefaultAnswer, HasCustomLayer {
+final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, QuestionnaireSettable, QuestionnaireOptionSelectableElement, QuestionnaireElementHasDefaultAnswer {
 
     private var iconBorderNormalColor: UIColor! = .QGrayButton
     private var iconBorderSelectedColor: UIColor! = .QBlueButtonNormal
@@ -82,7 +82,7 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
 
         self.view.subviews.filter({ !($0 is NINButton) }).forEach({ view in
             if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireCheckbox) {
-                view.layer.insertSublayer(layer, at: 0)
+                view.layer.apply(layer)
             } else {
                 view.round(radius: 23.0 / 2, borderWidth: 2.0, borderColor: self.iconBorderNormalColor)
             }
@@ -154,9 +154,6 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
 
         self.decorateView()
         self.layoutIfNeeded()
-        self.view.subviews.filter({ !($0 is NINButton) }).forEach({ [weak self] view in
-            self?.applyLayerOverride(view: view)
-        })
     }
 
     // MARK: - View Setup

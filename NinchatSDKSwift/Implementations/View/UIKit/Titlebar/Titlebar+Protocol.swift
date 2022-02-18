@@ -52,7 +52,7 @@ extension HasTitleBar where Self:ViewController {
         titlebarContainer?.backgroundColor = .white
 
         if let layer = self.sessionManager?.delegate?.override(layerAsset: .ninchatModalTop) {
-            titlebarContainer?.layer.insertSublayer(layer, at: 0)
+            self.titlebarContainer?.layer.apply(layer)
         }
     }
 

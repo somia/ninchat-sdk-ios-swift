@@ -18,7 +18,7 @@ protocol TopBarProtocol: UIView, TopBarAction {
     func overrideAssets()
 }
 
-final class TopBar: UIView, TopBarProtocol, HasCustomLayer {
+final class TopBar: UIView, TopBarProtocol {
     
     // MARK: - TopBarProtocol
 
@@ -52,18 +52,13 @@ final class TopBar: UIView, TopBarProtocol, HasCustomLayer {
     
     // MARK: - UIView
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        applyLayerOverride(view: self.closeButton)
-    }
-    
     func overrideAssets() {
         if let downloadButton = self.delegate?.override(imageAsset: .ninchatIconDownload) {
             self.downloadButton.image = downloadButton
         }
         
         if let closeButtonLayer = self.delegate?.override(layerAsset: .ninchatChatCloseButton) {
-            self.closeButton.layer.insertSublayer(closeButtonLayer, at: 0)
+            self.closeButton.layer.apply(closeButtonLayer)
         }
     }
     

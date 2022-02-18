@@ -7,7 +7,7 @@
 import UIKit
 import AutoLayoutSwift
 
-final class NINRatingViewController: UIViewController, ViewController, HasCustomLayer, HasTitleBar, HasDefaultAvatar {
+final class NINRatingViewController: UIViewController, ViewController, HasTitleBar, HasDefaultAvatar {
     
     // MARK: - Injected
     
@@ -124,16 +124,6 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
         self.navigationItem.setHidesBackButton(true, animated: false)
     }
 
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-
-        if let titlebarContainer = self.titlebarContainer {
-            applyLayerOverride(view: titlebarContainer)
-        }
-        applyLayerOverride(view: topViewContainer)
-        applyLayerOverride(view: view)
-    }
-
     // MARK: - Setup View
     
     func overrideAssets() {
@@ -157,10 +147,10 @@ final class NINRatingViewController: UIViewController, ViewController, HasCustom
         }
 
         if let layer = delegate?.override(layerAsset: .ninchatBackgroundTop) {
-            topViewContainer.layer.insertSublayer(layer, at: 0)
+            self.topViewContainer.layer.apply(layer)
         }
         if let layer = delegate?.override(layerAsset: .ninchatBackgroundBottom) {
-            view.layer.insertSublayer(layer, at: 0)
+            self.view.layer.apply(layer)
         }
         if let bubbleColor = self.delegate?.override(colorAsset: .ninchatColorChatBubbleLeftTint) {
             self.titleConversationBubble.tintColor = bubbleColor
