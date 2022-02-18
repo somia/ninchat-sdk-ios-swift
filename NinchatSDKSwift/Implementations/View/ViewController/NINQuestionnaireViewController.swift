@@ -131,6 +131,9 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
             guard let contentView = contentView else { return }
             self.view.addSubview(contentView)
 
+            contentView.estimatedRowHeight = 80.0
+            contentView.rowHeight = UITableView.automaticDimension
+
             contentView
                     .fix(bottom: (0.0, self.view))
                     .fix(leading: (0, self.view), trailing: (0, self.view))
@@ -470,11 +473,27 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let height = self.dataSourceDelegate?.height(at: indexPath) ?? 0.0
-        if self.style == .conversation {
-            return height + ((indexPath.row == 0) ? 55.0 : 0.0)
+        guard let component = self.dataSourceDelegate?.cellHeightComponent(at: indexPath) else {
+            return UITableView.automaticDimension
         }
-        return height
+
+        if component.type == nil, component.isLoading {
+            /// Loading cell
+            return component.height
+        } else if component.type == nil, !component.isLoading {
+            /// navigation cell
+            return component.height
+        } else if component.type is QuestionnaireElementText.Type {
+            /// Text element cell
+            return UITableView.automaticDimension
+        } else {
+            /// Other elements
+            let height = component.height
+            if self.style == .conversation {
+                return height + ((indexPath.row == 0) ? 55.0 : 0.0)
+            }
+            return height
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
