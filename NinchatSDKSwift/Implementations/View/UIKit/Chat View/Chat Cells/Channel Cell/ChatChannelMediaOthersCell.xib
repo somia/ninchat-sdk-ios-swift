@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -47,16 +47,16 @@
                                 <rect key="frame" x="39" y="0.0" width="294" height="151"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="36V-Bg-f8R">
-                                        <rect key="frame" x="16" y="0.0" width="120" height="40"/>
+                                        <rect key="frame" x="16" y="0.0" width="111" height="40"/>
                                         <subviews>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="999" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Dr Koistinen" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IU6-Jc-btB">
-                                                <rect key="frame" x="0.0" y="16" width="76.5" height="16.5"/>
+                                                <rect key="frame" x="0.0" y="15" width="71.5" height="18"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="17:18" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RCf-C0-pVn">
-                                                <rect key="frame" x="84.5" y="16" width="35.5" height="16.5"/>
+                                                <rect key="frame" x="79.5" y="15" width="31.5" height="18"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
                                                 <color key="textColor" red="0.4549019608" green="0.57254901960000004" blue="0.66666666669999997" alpha="1" colorSpace="calibratedRGB"/>
@@ -79,6 +79,10 @@
                                         <rect key="frame" x="8" y="40" width="31" height="111"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </imageView>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="V8Y-mT-lmf">
+                                        <rect key="frame" x="8" y="40" width="31" height="111"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ykv-HC-jMH">
                                         <rect key="frame" x="16" y="48" width="15" height="95"/>
                                         <subviews>
@@ -109,6 +113,8 @@
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
+                                    <constraint firstItem="V8Y-mT-lmf" firstAttribute="bottom" secondItem="ywG-ua-67r" secondAttribute="bottom" id="7uT-ds-6qV"/>
+                                    <constraint firstItem="V8Y-mT-lmf" firstAttribute="top" secondItem="ywG-ua-67r" secondAttribute="top" id="9zb-Vd-ywk"/>
                                     <constraint firstItem="ykv-HC-jMH" firstAttribute="top" secondItem="ywG-ua-67r" secondAttribute="top" constant="8" id="Dsj-wP-kDq"/>
                                     <constraint firstItem="ywG-ua-67r" firstAttribute="top" secondItem="36V-Bg-f8R" secondAttribute="bottom" id="GuX-Uv-PzZ"/>
                                     <constraint firstAttribute="bottom" secondItem="ywG-ua-67r" secondAttribute="bottom" id="HLk-QS-KBv"/>
@@ -116,8 +122,10 @@
                                     <constraint firstItem="ykv-HC-jMH" firstAttribute="leading" secondItem="ywG-ua-67r" secondAttribute="leading" constant="8" id="Mc3-T6-pSb"/>
                                     <constraint firstItem="36V-Bg-f8R" firstAttribute="top" secondItem="bqi-6v-Ki3" secondAttribute="top" id="NoX-tA-ghB"/>
                                     <constraint firstItem="36V-Bg-f8R" firstAttribute="leading" secondItem="ywG-ua-67r" secondAttribute="leading" constant="8" id="Nu0-Ub-1W7"/>
+                                    <constraint firstItem="V8Y-mT-lmf" firstAttribute="trailing" secondItem="ywG-ua-67r" secondAttribute="trailing" id="Ol2-1d-Jh8"/>
                                     <constraint firstItem="ywG-ua-67r" firstAttribute="leading" secondItem="bqi-6v-Ki3" secondAttribute="leading" constant="8" identifier="leading-equal" id="diZ-pp-3zF"/>
                                     <constraint firstItem="ykv-HC-jMH" firstAttribute="bottom" secondItem="ywG-ua-67r" secondAttribute="bottom" constant="-8" id="hH2-2h-RAa"/>
+                                    <constraint firstItem="V8Y-mT-lmf" firstAttribute="leading" secondItem="ywG-ua-67r" secondAttribute="leading" id="hqV-4r-V1R"/>
                                     <constraint firstItem="KYK-co-6QM" firstAttribute="centerX" secondItem="ykv-HC-jMH" secondAttribute="centerX" id="n8o-Xu-Tfx"/>
                                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="ywG-ua-67r" secondAttribute="trailing" constant="8" id="nWN-kF-wZc"/>
                                     <constraint firstItem="ykv-HC-jMH" firstAttribute="trailing" secondItem="ywG-ua-67r" secondAttribute="trailing" constant="-8" id="pI9-xe-3Hg"/>
@@ -146,6 +154,7 @@
             </tableViewCellContentView>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <connections>
+                <outlet property="bubbleContainerView" destination="V8Y-mT-lmf" id="0oD-X5-Hff"/>
                 <outlet property="bubbleImageView" destination="ywG-ua-67r" id="jVS-vt-cp6"/>
                 <outlet property="infoContainerView" destination="36V-Bg-f8R" id="Da4-oW-SIt"/>
                 <outlet property="leftAvatarContainer" destination="IUa-yW-n2k" id="zaY-IA-gl1"/>

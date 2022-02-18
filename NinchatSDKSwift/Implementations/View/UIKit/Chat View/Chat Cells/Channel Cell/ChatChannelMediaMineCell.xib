@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -60,6 +60,10 @@
                                         <rect key="frame" x="263" y="40" width="31" height="111"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </imageView>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RZm-Sd-Ise">
+                                        <rect key="frame" x="263" y="40" width="31" height="111"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MaM-x8-fT4">
                                         <rect key="frame" x="271" y="48" width="15" height="95"/>
                                         <subviews>
@@ -92,13 +96,17 @@
                                 <constraints>
                                     <constraint firstItem="MaM-x8-fT4" firstAttribute="bottom" secondItem="NMj-ts-SXE" secondAttribute="bottom" constant="-8" id="7GZ-rj-BWk"/>
                                     <constraint firstItem="MaM-x8-fT4" firstAttribute="leading" secondItem="NMj-ts-SXE" secondAttribute="leading" constant="8" id="Dcx-6j-M9t"/>
+                                    <constraint firstItem="RZm-Sd-Ise" firstAttribute="bottom" secondItem="NMj-ts-SXE" secondAttribute="bottom" id="EYB-Ka-TLL"/>
+                                    <constraint firstItem="RZm-Sd-Ise" firstAttribute="trailing" secondItem="NMj-ts-SXE" secondAttribute="trailing" id="Jxo-1O-wBB"/>
                                     <constraint firstItem="MaM-x8-fT4" firstAttribute="trailing" secondItem="NMj-ts-SXE" secondAttribute="trailing" constant="-8" id="ZFW-U1-V46"/>
                                     <constraint firstItem="Yov-9L-jiZ" firstAttribute="centerX" secondItem="MaM-x8-fT4" secondAttribute="centerX" id="aH6-Tb-4ba"/>
                                     <constraint firstItem="Lfa-KG-f9c" firstAttribute="trailing" secondItem="NMj-ts-SXE" secondAttribute="trailing" constant="-8" id="b3e-mH-8Gp"/>
                                     <constraint firstItem="NMj-ts-SXE" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="qzj-Lx-UId" secondAttribute="leading" constant="8" identifier="leading-equal" id="bDB-Jw-xHa"/>
+                                    <constraint firstItem="RZm-Sd-Ise" firstAttribute="leading" secondItem="NMj-ts-SXE" secondAttribute="leading" id="cQN-7y-ukw"/>
                                     <constraint firstItem="MaM-x8-fT4" firstAttribute="top" secondItem="NMj-ts-SXE" secondAttribute="top" constant="8" id="dbm-13-uJc"/>
                                     <constraint firstItem="Lfa-KG-f9c" firstAttribute="top" secondItem="qzj-Lx-UId" secondAttribute="top" id="ftt-j5-153"/>
                                     <constraint firstItem="Yov-9L-jiZ" firstAttribute="centerY" secondItem="MaM-x8-fT4" secondAttribute="centerY" id="h8v-8T-RkB"/>
+                                    <constraint firstItem="RZm-Sd-Ise" firstAttribute="top" secondItem="NMj-ts-SXE" secondAttribute="top" id="oXY-uZ-Pby"/>
                                     <constraint firstAttribute="trailing" secondItem="NMj-ts-SXE" secondAttribute="trailing" constant="8" identifier="trailing-greater" id="ohh-0P-n1Y"/>
                                     <constraint firstItem="NMj-ts-SXE" firstAttribute="top" secondItem="Lfa-KG-f9c" secondAttribute="bottom" id="rYK-K1-4es"/>
                                     <constraint firstAttribute="bottom" secondItem="NMj-ts-SXE" secondAttribute="bottom" id="uqI-A5-iWr"/>
@@ -146,6 +154,7 @@
             </tableViewCellContentView>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <connections>
+                <outlet property="bubbleContainerView" destination="RZm-Sd-Ise" id="5tM-ce-ahv"/>
                 <outlet property="bubbleImageView" destination="NMj-ts-SXE" id="CDI-Pz-sVg"/>
                 <outlet property="infoContainerView" destination="Lfa-KG-f9c" id="r4J-33-vnz"/>
                 <outlet property="messageImageView" destination="lVv-be-HdN" id="81p-Rl-10r"/>

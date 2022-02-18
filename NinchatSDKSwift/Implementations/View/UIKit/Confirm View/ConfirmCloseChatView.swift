@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class ConfirmCloseChatView: UIView, HasCustomLayer, ConfirmView {
+final class ConfirmCloseChatView: UIView, ConfirmView {
     
     // MARK: - Outlets
     
@@ -16,14 +16,6 @@ final class ConfirmCloseChatView: UIView, HasCustomLayer, ConfirmView {
     @IBOutlet private(set) weak var infoTextView: UITextView!
     @IBOutlet private(set) weak var confirmButton: NINButton!
     @IBOutlet private(set) weak var cancelButton: NINButton!
-
-    // MARK: - UIView
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        applyLayerOverride(view: headerContainerView)
-        applyLayerOverride(view: bottomContainerView)
-    }
 
     // MARK: - ConfirmView
     
@@ -38,16 +30,12 @@ final class ConfirmCloseChatView: UIView, HasCustomLayer, ConfirmView {
     func overrideAssets() {
         confirmButton.overrideAssets(with: self.delegate, isPrimary: true)
         cancelButton.overrideAssets(with: self.delegate, isPrimary: false)
-
-        var useLegacyOverride = true
         
         if let layer = self.delegate?.override(layerAsset: .ninchatModalTop) {
-            self.headerContainerView.layer.insertSublayer(layer, at: 0)
-            useLegacyOverride = false
+            self.headerContainerView.layer.apply(layer)
         }
         if let layer = self.delegate?.override(layerAsset: .ninchatModalBottom) {
-            self.bottomContainerView.layer.insertSublayer(layer, at: 0)
-            useLegacyOverride = false
+            self.bottomContainerView.layer.apply(layer)
         }
         if let textColor = self.delegate?.override(colorAsset: .ninchatColorModalTitleText) {
             self.titleLabel.textColor = textColor

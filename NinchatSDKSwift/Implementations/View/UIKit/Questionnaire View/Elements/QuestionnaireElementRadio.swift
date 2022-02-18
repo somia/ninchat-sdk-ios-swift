@@ -10,7 +10,7 @@ protocol QuestionnaireExitElement {
     var isExitElement: Bool { set get }
 }
 
-class QuestionnaireElementRadio: UIView, HasCustomLayer, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireOptionSelectableElement, QuestionnaireExitElement, HasExternalLink {
+class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireOptionSelectableElement, QuestionnaireExitElement, HasExternalLink {
 
     // MARK: - QuestionnaireElement
 
@@ -105,7 +105,6 @@ class QuestionnaireElementRadio: UIView, HasCustomLayer, QuestionnaireElementWit
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        applyLayerOverride(view: self)
 
         self.decorateView()
         self.layoutIfNeeded()
@@ -133,21 +132,13 @@ extension NINButton {
         switch isPrimary {
         case false:
             if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireRadioUnselected) {
-                if let old = self.layer.sublayers?.first(where: { $0.name == LAYER_NAME }) {
-                    self.layer.replaceSublayer(old, with: layer)
-                } else {
-                    self.layer.insertSublayer(layer, at: 0)
-                }
+                self.layer.apply(layer)
             } else {
                 self.roundButton()
             }
         case true:
             if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireRadioSelected) {
-                if let old = self.layer.sublayers?.first(where: { $0.name == LAYER_NAME }) {
-                    self.layer.replaceSublayer(old, with: layer)
-                } else {
-                    self.layer.insertSublayer(layer, at: 0)
-                }
+                self.layer.apply(layer)
             } else {
                 self.roundButton()
             }

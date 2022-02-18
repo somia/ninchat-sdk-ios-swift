@@ -25,7 +25,7 @@ protocol ComposeContentViewProtocol: UIView {
     func populate(message: ComposeContent, siteConfiguration: SiteConfiguration?, colorAssets: NINColorAssetDictionary?, composeStates: [Bool]?, enableSendButton: Bool, isSelected: Bool)
 }
 
-final class ComposeContentView: UIView, ComposeContentViewProtocol, HasCustomLayer {
+final class ComposeContentView: UIView, ComposeContentViewProtocol {
     private(set) var message: ComposeContent?
 
     private var selectedOptions: [ComposeContentOption] = []
@@ -51,13 +51,6 @@ final class ComposeContentView: UIView, ComposeContentViewProtocol, HasCustomLay
         } else if message?.element == .button {
             self.sendButton?.frame = CGRect(x: 0, y: 0, width: self.bounds.width, height: Margins.kButtonHeight.rawValue)
         }
-        
-        if self.sendButton != nil {
-            self.applyLayerOverride(view: self.sendButton!)
-        }
-        self.optionsButton.forEach({ [weak self] button in
-            self?.applyLayerOverride(view: button)
-        })
     }
     
     private func applyStyle(to button: UIButton?, borderWidth: CGFloat? = nil, selected: Bool) {
@@ -71,17 +64,17 @@ final class ComposeContentView: UIView, ComposeContentViewProtocol, HasCustomLay
         
         if button == self.sendButton {
             if selected, let layer = self.delegate?.override(layerAsset: .ninchatComposeSubmitSelectedButton) {
-                button?.layer.insertSublayer(layer, at: 0)
+                button?.layer.apply(layer)
             } else if let layer = self.delegate?.override(layerAsset: .ninchatComposeSubmitButton) {
-                button?.layer.insertSublayer(layer, at: 0)
+                button?.layer.apply(layer)
             } else {
                 applyDefaultStyle(borderColor: .blueButton, backgroundImage: (selected) ? .blueButton : .white, titleColor: (selected) ? .white : .blueButton)
             }
         } else {
             if selected, let layer = self.delegate?.override(layerAsset: .ninchatComposeSelectedButton) {
-                button?.layer.insertSublayer(layer, at: 0)
+                button?.layer.apply(layer)
             } else if let layer = self.delegate?.override(layerAsset: .ninchatComposeUnselectedButton) {
-                button?.layer.insertSublayer(layer, at: 0)
+                button?.layer.apply(layer)
             } else {
                 applyDefaultStyle(borderColor: .grayButton, backgroundImage: (selected) ? .blueButton : .white, titleColor: (selected) ? .white : .grayButton)
             }

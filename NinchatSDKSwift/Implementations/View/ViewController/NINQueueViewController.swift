@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class NINQueueViewController: UIViewController, ViewController, HasCustomLayer, HasTitleBar {
+final class NINQueueViewController: UIViewController, ViewController, HasTitleBar {
 
     // MARK: - Injected
 
@@ -88,16 +88,6 @@ final class NINQueueViewController: UIViewController, ViewController, HasCustomL
         }
         self.setupOpenQueue()
         self.setupViewModel(self.resumeMode)
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-
-        if let titlebarContainer = self.titlebarContainer {
-            applyLayerOverride(view: titlebarContainer)
-        }
-        applyLayerOverride(view: self.topContainerView)
-        applyLayerOverride(view: self.bottomContainerView)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -192,11 +182,11 @@ extension NINQueueViewController {
         }
 
         if let layer = self.delegate?.override(layerAsset: .ninchatBackgroundTop) {
-            topContainerView.layer.insertSublayer(layer, at: 0)
+            self.topContainerView.layer.apply(layer)
         }
         
         if let layer = self.delegate?.override(layerAsset: .ninchatBackgroundBottom) {
-            bottomContainerView.layer.insertSublayer(layer, at: 0)
+            self.bottomContainerView.layer.apply(layer)
         }
         
         if let textTopColor = self.delegate?.override(colorAsset: .ninchatColorTextTop) {

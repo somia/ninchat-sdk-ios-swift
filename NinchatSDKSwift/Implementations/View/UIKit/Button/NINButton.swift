@@ -6,7 +6,7 @@
 
 import UIKit
 
-class NINButton: UIButton, HasCustomLayer {
+class NINButton: UIButton {
     var closure: ((NINButton) -> Void)?
     var type: QuestionnaireButtonType?
 
@@ -26,7 +26,6 @@ class NINButton: UIButton, HasCustomLayer {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        applyLayerOverride(view: self)
     }
 
     // MARK: - User actions
@@ -48,7 +47,7 @@ class NINButton: UIButton, HasCustomLayer {
         self.backgroundColor = .clear
 
         if let layer = delegate?.override(layerAsset: primary ? .ninchatPrimaryButton : .ninchatSecondaryButton) {
-            self.layer.insertSublayer(layer, below: self.titleLabel?.layer)
+            self.layer.apply(layer)
         } else {
             self.setTitleColor(primary ? .white : .defaultBackgroundButton, for: .normal)
             self.backgroundColor = primary ? .defaultBackgroundButton : .white
