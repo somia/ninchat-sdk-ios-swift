@@ -184,6 +184,7 @@ extension ChatInputControls: UITextViewDelegate {
     func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
         if textView.text == placeholderText {
             textView.text.removeAll()
+            textView.autocapitalizationType = .sentences
         }
         return true
     }
