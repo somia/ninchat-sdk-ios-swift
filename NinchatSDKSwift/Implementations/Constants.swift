@@ -17,6 +17,7 @@ public enum AssetConstants {
     case ninchatChatBackground
     case ninchatChatAvatarRight
     case ninchatChatAvatarLeft
+    case ninchatAvatarTitlebar
     case ninchatChatPlayVideo
     case ninchatIconTextareaCamera      /* not used */
     case ninchatIconTextareaAttachment

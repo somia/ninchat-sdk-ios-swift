@@ -186,7 +186,12 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
 
     // MARK: - HasTitleBar
 
-    private(set) var defaultAvatar: UIImage? = UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)
+    var defaultAvatar: UIImage? {
+        if let avatar = self.delegate?.override(imageAsset: .ninchatAvatarTitlebar) {
+            return avatar
+        }
+        return UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)
+    }
 
     // MARK: - UIViewController
     
