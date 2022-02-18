@@ -75,7 +75,7 @@ final class NinchatSDKSwiftServerSessionTests: XCTestCase {
             try? self.sessionManager.openSession { _, _, error in
                 XCTAssertNil(error)
 
-                try? self.sessionManager.list(queues: self.sessionManager.siteConfiguration.audienceQueues) { error in
+                try? self.sessionManager.describe(queuesID: self.sessionManager.siteConfiguration.audienceQueues) { error in
                     XCTAssertNil(error)
 
                     XCTAssertTrue(self.sessionManager.audienceQueues.first(where: { $0.queueID == closedQueue })?.isClosed ?? false)
@@ -166,7 +166,7 @@ extension NinchatSDKSwiftServerSessionTests {
         do {
             sessionManager.updateSecureMetadata()
             try self.sessionManager.openSession { credentials, _, _ in
-                try! self.sessionManager.list(queues: self.sessionManager.siteConfiguration.audienceQueues) { _ in
+                try! self.sessionManager.describe(queuesID: self.sessionManager.siteConfiguration.audienceQueues) { _ in
                     try! self.sessionManager.join(queue: queue, progress: { queue, error, position in }, completion: {
                         completion(credentials)
                     })

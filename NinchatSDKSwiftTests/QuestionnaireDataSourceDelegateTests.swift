@@ -67,14 +67,14 @@ extension QuestionnaireDataSourceDelegateTests {
 
     func test_104_questionnaireCell() {
         formQuestionnaireDataSource.isLoadingNewElements = true
-        XCTAssertGreaterThan(formQuestionnaireDataSource.height(at: IndexPath(row: 0, section: 0)), 0)
+        XCTAssertGreaterThan(formQuestionnaireDataSource.cellHeightComponent(at: IndexPath(row: 0, section: 0), view: self.tableView), 0)
         XCTAssertTrue(formQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) is QuestionnaireCell)
         XCTAssertEqual((formQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) as! QuestionnaireCell).style, QuestionnaireStyle.form)
     }
 
     func test_105_navigationCell() {
         formQuestionnaireDataSource.isLoadingNewElements = true
-        XCTAssertEqual(formQuestionnaireDataSource.height(at: IndexPath(row: 1, section: 0)), 65.0)
+        XCTAssertEqual(formQuestionnaireDataSource.cellHeightComponent(at: IndexPath(row: 1, section: 0), view: self.tableView), 65.0)
         XCTAssertTrue(formQuestionnaireDataSource.cell(at: IndexPath(row: 1, section: 0), view: self.tableView) is QuestionnaireNavigationCell)
     }
 
@@ -139,7 +139,7 @@ extension QuestionnaireDataSourceDelegateTests {
         XCTAssertEqual((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).insertRow(), 0)
 
         conversationQuestionnaireDataSource.isLoadingNewElements = true
-        XCTAssertEqual(conversationQuestionnaireDataSource.height(at: IndexPath(row: 0, section: 0)), 75.0)
+        XCTAssertEqual(conversationQuestionnaireDataSource.cellHeightComponent(at: IndexPath(row: 0, section: 0), view: self.tableView), 75.0)
         XCTAssertTrue(conversationQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) is QuestionnaireLoadingCell)
     }
 
@@ -148,7 +148,7 @@ extension QuestionnaireDataSourceDelegateTests {
         XCTAssertEqual((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).insertRow(), 0)
 
         conversationQuestionnaireDataSource.isLoadingNewElements = false
-        XCTAssertGreaterThan(conversationQuestionnaireDataSource.height(at: IndexPath(row: 0, section: 0)), 0)
+        XCTAssertGreaterThan(conversationQuestionnaireDataSource.cellHeightComponent(at: IndexPath(row: 0, section: 0), view: self.tableView), 0)
         XCTAssertTrue(conversationQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) is QuestionnaireCell)
         XCTAssertEqual((conversationQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) as! QuestionnaireCell).style, QuestionnaireStyle.conversation)
 
@@ -171,7 +171,7 @@ extension QuestionnaireDataSourceDelegateTests {
         XCTAssertEqual((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).insertRow(), 1)
 
         conversationQuestionnaireDataSource.isLoadingNewElements = false
-        XCTAssertEqual(conversationQuestionnaireDataSource.height(at: IndexPath(row: 1, section: 0)), 55.0)
+        XCTAssertEqual(conversationQuestionnaireDataSource.cellHeightComponent(at: IndexPath(row: 1, section: 0), view: self.tableView), 55.0)
         XCTAssertTrue(conversationQuestionnaireDataSource.cell(at: IndexPath(row: 1, section: 0), view: self.tableView) is QuestionnaireNavigationCell)
     }
 
