@@ -75,7 +75,7 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
                 return (nil, false, self.shouldShowNavigationCell(at: index.section) ? 55.0 : 0.0)
             }
 
-            let element = elements[index.section]
+            let element = elements[index.row]
             return (element.classForCoder, false, element.elementHeight)
         } catch {
             fatalError(error.localizedDescription)
