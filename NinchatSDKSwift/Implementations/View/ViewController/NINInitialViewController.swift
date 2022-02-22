@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class NINInitialViewController: UIViewController, HasCustomLayer, ViewController {
+final class NINInitialViewController: UIViewController, ViewController {
     
     // MARK: - Injected
     
@@ -69,14 +69,6 @@ final class NINInitialViewController: UIViewController, HasCustomLayer, ViewCont
         self.overrideAssets()
     }
 
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        applyLayerOverride(view: self.topContainerView)
-        applyLayerOverride(view: self.bottomContainerView)
-    }
-
     // MARK: - User actions
     
     @IBAction private func closeWindowButtonPressed(button: UIButton) {
@@ -91,11 +83,11 @@ private extension NINInitialViewController {
         closeWindowButton?.overrideAssets(with: delegate, isPrimary: false)
 
         if let layer = delegate?.override(layerAsset: .ninchatBackgroundTop) {
-            topContainerView.layer.insertSublayer(layer, at: 0)
+            self.topContainerView.layer.apply(layer)
         }
         
         if let layer = delegate?.override(layerAsset: .ninchatBackgroundBottom) {
-            bottomContainerView.layer.insertSublayer(layer, at: 0)
+            self.bottomContainerView.layer.apply(layer)
         }
         
         if let textTopColor = delegate?.override(colorAsset: .ninchatColorTextTop) {

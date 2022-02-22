@@ -6,7 +6,7 @@
 
 import UIKit
 
-class QuestionnaireElementHyperlink: UIView, QuestionnaireElement, HasCustomLayer, HasExternalLink {
+class QuestionnaireElementHyperlink: UIView, QuestionnaireElement, HasExternalLink {
 
     // MARK: - QuestionnaireElement
 
@@ -65,8 +65,6 @@ class QuestionnaireElementHyperlink: UIView, QuestionnaireElement, HasCustomLaye
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        applyLayerOverride(view: self)
-
         self.layoutIfNeeded()
     }
 
@@ -141,11 +139,7 @@ extension NINButton {
     fileprivate func overrideQuestionnaireAsset(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         self.titleLabel?.font = .ninchat
         if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireRadioUnselected) {
-            if let old = self.layer.sublayers?.first(where: { $0.name == LAYER_NAME }) {
-                self.layer.replaceSublayer(old, with: layer)
-            } else {
-                self.layer.insertSublayer(layer, at: 0)
-            }
+            self.layer.apply(layer)
         } else {
             self.roundButton()
         }

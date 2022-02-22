@@ -25,6 +25,7 @@ protocol SiteConfiguration  {
     var confirmDialogTitle: String? { get }
     var audienceRealm: String? { get }
     var audienceQueues: [String]? { get }
+    var audienceRating: Bool { get }
     func translation(for key: String) -> String?
     var agentAvatar: AnyHashable? { get }
     var agentName: String? { get }
@@ -93,6 +94,9 @@ struct SiteConfigurationImpl: SiteConfiguration {
     }
     var audienceQueues: [String]? {
         self.value(for: "audienceQueues")
+    }
+    var audienceRating: Bool {
+        self.value(for: "audienceRating") ?? false
     }
     func translation(for key: String) -> String? {
         for env in self.prepareEnvironments() {

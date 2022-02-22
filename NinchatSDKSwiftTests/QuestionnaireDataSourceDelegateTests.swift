@@ -67,15 +67,20 @@ extension QuestionnaireDataSourceDelegateTests {
 
     func test_104_questionnaireCell() {
         formQuestionnaireDataSource.isLoadingNewElements = true
-        XCTAssertGreaterThan(formQuestionnaireDataSource.height(at: IndexPath(row: 0, section: 0)), 0)
-        XCTAssertTrue(formQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) is QuestionnaireCell)
-        XCTAssertEqual((formQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) as! QuestionnaireCell).style, QuestionnaireStyle.form)
+        let heightComponent = formQuestionnaireDataSource.cellHeightComponent(at: IndexPath(row: 0, section: 0))
+
+        XCTAssertTrue(heightComponent.type is QuestionnaireElementRadio.Type)
+        XCTAssertGreaterThan(heightComponent.height, 0.0)
+        XCTAssertFalse(heightComponent.isLoading)
     }
 
     func test_105_navigationCell() {
         formQuestionnaireDataSource.isLoadingNewElements = true
-        XCTAssertEqual(formQuestionnaireDataSource.height(at: IndexPath(row: 1, section: 0)), 65.0)
-        XCTAssertTrue(formQuestionnaireDataSource.cell(at: IndexPath(row: 1, section: 0), view: self.tableView) is QuestionnaireNavigationCell)
+        let heightComponent = formQuestionnaireDataSource.cellHeightComponent(at: IndexPath(row: 1, section: 0))
+
+        XCTAssertNil(heightComponent.type)
+        XCTAssertEqual(heightComponent.height, 65.0)
+        XCTAssertFalse(heightComponent.isLoading)
     }
 
     func test_106_closures() {
@@ -139,8 +144,11 @@ extension QuestionnaireDataSourceDelegateTests {
         XCTAssertEqual((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).insertRow(), 0)
 
         conversationQuestionnaireDataSource.isLoadingNewElements = true
-        XCTAssertEqual(conversationQuestionnaireDataSource.height(at: IndexPath(row: 0, section: 0)), 75.0)
-        XCTAssertTrue(conversationQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) is QuestionnaireLoadingCell)
+        let heightComponent = conversationQuestionnaireDataSource.cellHeightComponent(at: IndexPath(row: 0, section: 0))
+
+        XCTAssertNil(heightComponent.type)
+        XCTAssertEqual(heightComponent.height, 75.0)
+        XCTAssertTrue(heightComponent.isLoading)
     }
 
     func test_008_questionnaireCell() {
@@ -148,8 +156,11 @@ extension QuestionnaireDataSourceDelegateTests {
         XCTAssertEqual((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).insertRow(), 0)
 
         conversationQuestionnaireDataSource.isLoadingNewElements = false
-        XCTAssertGreaterThan(conversationQuestionnaireDataSource.height(at: IndexPath(row: 0, section: 0)), 0)
-        XCTAssertTrue(conversationQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) is QuestionnaireCell)
+        let heightComponent = conversationQuestionnaireDataSource.cellHeightComponent(at: IndexPath(row: 0, section: 0))
+
+        XCTAssertTrue(heightComponent.type is QuestionnaireElementRadio.Type)
+        XCTAssertGreaterThan(heightComponent.height, 0.0)
+        XCTAssertFalse(heightComponent.isLoading)
         XCTAssertEqual((conversationQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) as! QuestionnaireCell).style, QuestionnaireStyle.conversation)
 
         XCTAssertEqual((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).elements.count, 1)
@@ -171,8 +182,11 @@ extension QuestionnaireDataSourceDelegateTests {
         XCTAssertEqual((conversationQuestionnaireDataSource as! NINQuestionnaireConversationDataSourceDelegate).insertRow(), 1)
 
         conversationQuestionnaireDataSource.isLoadingNewElements = false
-        XCTAssertEqual(conversationQuestionnaireDataSource.height(at: IndexPath(row: 1, section: 0)), 55.0)
-        XCTAssertTrue(conversationQuestionnaireDataSource.cell(at: IndexPath(row: 1, section: 0), view: self.tableView) is QuestionnaireNavigationCell)
+        let heightComponent = conversationQuestionnaireDataSource.cellHeightComponent(at: IndexPath(row: 1, section: 0))
+
+        XCTAssertNil(heightComponent.type)
+        XCTAssertEqual(heightComponent.height, 55.0)
+        XCTAssertFalse(heightComponent.isLoading)
     }
 
     func test_010_closures() {

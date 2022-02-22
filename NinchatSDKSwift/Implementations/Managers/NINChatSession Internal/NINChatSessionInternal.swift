@@ -102,4 +102,11 @@ extension NINChatSessionInternalDelegate {
             colorAsset[tuple.key] = tuple.color
         }
     }
+    
+    var layerAssetsDictionary: [CALayerConstant:CALayer] {
+        let layerKeys: [CALayerConstant] = [.ninchatBubbleLeft, .ninchatBubbleLeftRepeated, .ninchatBubbleRight, .ninchatBubbleRightRepeated]
+        return layerKeys.compactMap({ ($0, self.override(layerAsset: $0)) }).reduce(into: [:]) { (layerAsset: inout [CALayerConstant:CALayer], tuple: (key: CALayerConstant, layer: CALayer?)) in
+            layerAsset[tuple.key] = tuple.layer
+        }
+    }
 }

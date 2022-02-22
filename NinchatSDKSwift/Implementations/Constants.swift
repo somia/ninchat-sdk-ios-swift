@@ -17,6 +17,7 @@ public enum AssetConstants {
     case ninchatChatBackground
     case ninchatChatAvatarRight
     case ninchatChatAvatarLeft
+    case ninchatAvatarTitlebar
     case ninchatChatPlayVideo
     case ninchatIconTextareaCamera      /* not used */
     case ninchatIconTextareaAttachment
@@ -74,6 +75,7 @@ public enum ColorConstants {
 
 /// Layer override keys
 public let LAYER_NAME = "_ninchat-asset"
+public typealias NINLayerAssetDictionary = [CALayerConstant:CALayer]
 public enum CALayerConstant {
     case ninchatPrimaryButton
     case ninchatSecondaryButton
@@ -102,6 +104,10 @@ public enum CALayerConstant {
     /// "Close chat" button after conversation is ended
     case ninchatCloseButton
     case ninchatCloseEmptyButton
+    case ninchatBubbleLeft
+    case ninchatBubbleLeftRepeated
+    case ninchatBubbleRight
+    case ninchatBubbleRightRepeated
 }
 
 /// Questionnaire color override keys

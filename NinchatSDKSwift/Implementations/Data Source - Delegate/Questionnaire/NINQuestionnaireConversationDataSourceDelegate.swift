@@ -55,18 +55,28 @@ final class NINQuestionnaireConversationDataSourceDelegate: QuestionnaireDataSou
 
     func numberOfMessages(in page: Int) -> Int { rowCount[page] }
 
-    func height(at index: IndexPath) -> CGFloat {
+    func cellHeightComponent(at index: IndexPath) -> (type: AnyClass?, isLoading: Bool, height: CGFloat) {
         do {
-            if self.isLoadingNewElements, self.elements.count <= index.section, index.row == 0 { return 75.0 }
+            if self.isLoadingNewElements, self.elements.count <= index.section, index.row == 0 {
+                return (nil, true, 75.0)
+            }
 
             if self.elements.count > index.section {
-                if index.row >= self.elements[index.section].count { return self.shouldShowNavigationCells[index.section] ? 55.0 : 0.0 }
-                return self.elements[index.section][index.row].elementHeight
+                if index.row >= self.elements[index.section].count {
+                    return (nil, false, self.shouldShowNavigationCells[index.section] ? 55.0 : 0.0)
+                }
+
+                let element = self.elements[index.section][index.row]
+                return (element.classForCoder, false, element.elementHeight)
             }
 
             let elements = try self.viewModel.getElements()
-            if index.row == elements.count { return self.shouldShowNavigationCell(at: index.section) ? 55.0 : 0.0 }
-            return elements[index.row].elementHeight
+            if index.row == elements.count {
+                return (nil, false, self.shouldShowNavigationCell(at: index.section) ? 55.0 : 0.0)
+            }
+
+            let element = elements[index.row]
+            return (element.classForCoder, false, element.elementHeight)
         } catch {
             fatalError(error.localizedDescription)
         }

@@ -97,7 +97,7 @@ class NinchatSDKSwiftAcceptanceTests: XCTestCase, NINChatWebRTCClientDelegate {
         expect.assertForOverFulfill = false
 
         do {
-            try self.sessionManager.list(queues: self.sessionManager.siteConfiguration.audienceQueues) { error in
+            try self.sessionManager.describe(queuesID: self.sessionManager.siteConfiguration.audienceQueues) { error in
                 XCTAssertNil(error)
                 XCTAssertNotNil(self.sessionManager.queues)
                 XCTAssertGreaterThan(self.sessionManager.queues.count, 0)
@@ -421,6 +421,8 @@ extension NinchatSDKSwiftAcceptanceTests: NINChatSessionInternalDelegate {
     func override(colorAsset key: ColorConstants) -> UIColor? { nil }
 
     func override(questionnaireAsset key: QuestionnaireColorConstants) -> UIColor? { nil }
+
+    func override(layerAsset key: CALayerConstant) -> CALayer? { nil }
 
     func onLowLevelEvent(event: NINLowLevelClientProps, payload: NINLowLevelClientPayload, lastReply: Bool) {
         if case let .failure(error) = event.event { self.onEvent?(nil, error); return }

@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class NINChatViewController: UIViewController, ViewController, KeyboardHandler, HasCustomLayer, HasTitleBar, HasDefaultAvatar {
+final class NINChatViewController: UIViewController, ViewController, KeyboardHandler, HasTitleBar, HasDefaultAvatar {
     private var webRTCClient: NINChatWebRTCClient?
 
     // MARK: - ViewController
@@ -186,7 +186,12 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
 
     // MARK: - HasTitleBar
 
-    private(set) var defaultAvatar: UIImage? = UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)
+    var defaultAvatar: UIImage? {
+        if let avatar = self.delegate?.override(imageAsset: .ninchatAvatarTitlebar) {
+            return avatar
+        }
+        return UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)
+    }
 
     // MARK: - UIViewController
     
@@ -219,14 +224,6 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
         self.addRotationListener()
         self.reloadView()
         self.adjustConstraints(for: self.view.bounds.size, withAnimation: false)
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        if let titlebarContainer = self.titlebarContainer {
-            applyLayerOverride(view: titlebarContainer)
-        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -301,10 +298,11 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
                 self?.chatView.tableView.reloadData()
             }
         }
-        self.viewModel.loadHistory { _ in }
         self.viewModel.onComposeActionUpdated = { [weak self] id, action in
             self?.chatView.didUpdateComposeAction(id, with: action)
         }
+
+        self.viewModel.loadHistory()
     }
     
     // MARK: - Helpers

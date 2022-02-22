@@ -23,8 +23,14 @@ protocol QuestionnaireDataSource: AnyObject {
     /** How many element pages are available. */
     func numberOfMessages(in page: Int) -> Int
 
-    /** Returns the height for each element at given index. */
-    func height(at index: IndexPath) -> CGFloat
+    /** Returns a component to calculate height for each element at given index.
+     - Parameter index: cell indexPath
+     - Returns:
+        - (nil, true, value): if the cell is a loading cell
+        - (nil, false, value): if the cell is a navigation cell
+        -(not nil, false, value): if the cell is a questionnaire item
+    */
+    func cellHeightComponent(at index: IndexPath) -> (type: AnyClass?, isLoading: Bool, height: CGFloat)
 
     /** Returns the cell with element embedded into it at given index. */
     func cell(at index: IndexPath, view: UITableView) -> UITableViewCell

@@ -13,6 +13,14 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
     // MARK: - Outlets
     
     @IBOutlet private(set) weak var infoContainerView: UIView!
+    /// To keep the default behaviour, we start by making 'bubbleContainerView'
+    /// invisible, unless it is customized
+    @IBOutlet private(set) weak var bubbleContainerView: UIView!
+    /// despite introducing 'bubbleContainerView' for more advanced
+    /// customization options, we should keep 'bubbleImageView' and
+    /// just make it hidden, because most of the constraints are set
+    /// to 'bubbleImageView', and removing it might result in a shut
+    /// gun effect on the code and can result in unexpected behaviour.
     @IBOutlet private(set) weak var bubbleImageView: UIImageView!
     @IBOutlet private(set) weak var senderNameLabel: UILabel! {
         didSet {
@@ -49,7 +57,7 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
     
     var delegate: NINChatSessionInternalDelegate?
     
-    func populateChannel(message: ChannelMessage, configuration: SiteConfiguration?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, agentAvatarConfig: AvatarConfig?, userAvatarConfig: AvatarConfig?, composeState: [Bool]?) {
+    func populateChannel(message: ChannelMessage, configuration: SiteConfiguration?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, layerAssets: NINLayerAssetDictionary?, agentAvatarConfig: AvatarConfig?, userAvatarConfig: AvatarConfig?, composeState: [Bool]?) {
         self.message = message
 
         if let sender = message.sender, !sender.displayName.isEmpty {
@@ -120,14 +128,23 @@ class ChatChannelMineCell: ChatChannelCell {
         self.bubbleImageView.width?.isActive = false
     }
     
-    override func populateChannel(message: ChannelMessage, configuration: SiteConfiguration?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, agentAvatarConfig: AvatarConfig?, userAvatarConfig: AvatarConfig?, composeState: [Bool]?) {
-        super.populateChannel(message: message, configuration: configuration, imageAssets: imageAssets, colorAssets: colorAssets, agentAvatarConfig: agentAvatarConfig, userAvatarConfig: userAvatarConfig, composeState: composeState)
+    override func populateChannel(message: ChannelMessage, configuration: SiteConfiguration?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, layerAssets: NINLayerAssetDictionary?, agentAvatarConfig: AvatarConfig?, userAvatarConfig: AvatarConfig?, composeState: [Bool]?) {
+        super.populateChannel(message: message, configuration: configuration, imageAssets: imageAssets, colorAssets: colorAssets, layerAssets: layerAssets, agentAvatarConfig: agentAvatarConfig, userAvatarConfig: userAvatarConfig, composeState: composeState)
+        
         self.configureMyMessage(avatar: message.sender?.iconURL, imageAssets: imageAssets, colorAssets: colorAssets, config: userAvatarConfig, series: message.series)
+        
+        /// To avoid sending layerAssets down in layers, we shall apply changes here directly
+        if let bubbleLayer = (message.series) ? layerAssets?[.ninchatBubbleRightRepeated] : layerAssets?[.ninchatBubbleRight] {
+            self.bubbleContainerView.layer.apply(bubbleLayer)
+            self.bubbleImageView.isHidden = true
+        } else {
+            self.bubbleImageView.image = UIImage(named: (message.series) ? "chat_bubble_right_series" : "chat_bubble_right", in: .SDKBundle, compatibleWith: nil)
+            self.bubbleImageView.isHidden = false
+        }
     }
     
     internal func configureMyMessage(avatar url: String?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, config: AvatarConfig?, series: Bool) {
         self.senderNameLabel.textAlignment = .right
-        self.bubbleImageView.image = UIImage(named: (series) ? "chat_bubble_right_series" : "chat_bubble_right", in: .SDKBundle, compatibleWith: nil)
         
         /// White text on black bubble
         self.bubbleImageView.tintColor = colorAssets?[.ninchatColorChatBubbleRightTint] ?? .black
@@ -166,14 +183,21 @@ class ChatChannelOthersCell: ChatChannelCell {
         self.bubbleImageView.width?.isActive = false
     }
 
-    override func populateChannel(message: ChannelMessage, configuration: SiteConfiguration?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, agentAvatarConfig: AvatarConfig?, userAvatarConfig: AvatarConfig?, composeState: [Bool]?) {
-        super.populateChannel(message: message, configuration: configuration, imageAssets: imageAssets, colorAssets: colorAssets, agentAvatarConfig: agentAvatarConfig, userAvatarConfig: userAvatarConfig, composeState: composeState)
+    override func populateChannel(message: ChannelMessage, configuration: SiteConfiguration?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, layerAssets: NINLayerAssetDictionary?, agentAvatarConfig: AvatarConfig?, userAvatarConfig: AvatarConfig?, composeState: [Bool]?) {
+        super.populateChannel(message: message, configuration: configuration, imageAssets: imageAssets, colorAssets: colorAssets, layerAssets: layerAssets, agentAvatarConfig: agentAvatarConfig, userAvatarConfig: userAvatarConfig, composeState: composeState)
+        
         self.configureOtherMessage(avatar: message.sender?.iconURL, imageAssets: imageAssets, colorAssets: colorAssets, config: agentAvatarConfig, series: message.series)
+        
+        /// To avoid sending layerAssets down in children, we shall apply changes here directly
+        if let bubbleLayer = (message.series) ? layerAssets?[.ninchatBubbleLeftRepeated] : layerAssets?[.ninchatBubbleLeft] {
+            self.bubbleContainerView.layer.apply(bubbleLayer)
+        } else {
+            self.bubbleImageView.image = UIImage(named: (message.series) ? "chat_bubble_left_series" : "chat_bubble_left", in: .SDKBundle, compatibleWith: nil)
+        }
     }
     
     internal func configureOtherMessage(avatar url: String?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, config: AvatarConfig?, series: Bool) {
         self.senderNameLabel.textAlignment = .left
-        self.bubbleImageView.image = UIImage(named: (series) ? "chat_bubble_left_series" : "chat_bubble_left", in: .SDKBundle, compatibleWith: nil)
         
         /// Black text on white bubble
         self.bubbleImageView.tintColor = colorAssets?[.ninchatColorChatBubbleLeftTint] ?? .white

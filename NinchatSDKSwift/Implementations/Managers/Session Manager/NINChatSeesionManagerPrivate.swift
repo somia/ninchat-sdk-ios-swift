@@ -228,7 +228,7 @@ extension NINChatSessionManagerImpl {
 
             let text = self.translate(key: Constants.kConversationEnded.rawValue, formatParams: [:])
             let closeTitle = self.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
-            self.add(message: MetaMessage(timestamp: Date(), messageID: self.chatMessages.first?.messageID, text: text ?? "", closeChatButtonTitle: closeTitle))
+            self.add(message: MetaMessage(timestamp: Date(), messageID: "zzzzzzclose\(channelID)", text: text ?? "", closeChatButtonTitle: closeTitle))
             self.onChannelClosed?()
         }
     }
