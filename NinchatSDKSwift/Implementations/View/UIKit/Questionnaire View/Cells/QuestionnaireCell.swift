@@ -36,13 +36,31 @@ class QuestionnaireCell: UITableViewCell {
     weak var sessionManager: NINChatSessionManager? {
         didSet {
             guard self.style == .conversation,
-                  let usernameLabel = self.conversationDetailsView.first(where: { $0 is UILabel }) as? UILabel,
-                  let userAvatar = self.conversationDetailsView.first(where: { $0 is UIImageView }) as? UIImageView
-                else { return }
+                let usernameLabel = self.usernameLabel,
+                let userAvatar = self.userAvatarImageView
+            else { return }
 
             setupTitles(usernameLabel)
             setupAvatar(userAvatar)
         }
+    }
+
+    private lazy var usernameLabel: UILabel? = {
+        self.conversationDetailsView.first(where: { $0 is UILabel }) as? UILabel
+    }()
+    private lazy var userAvatarImageView: UIImageView? = {
+        self.conversationDetailsView.first(where: { $0 is UIImageView }) as? UIImageView
+    }()
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        self.content.subviews.forEach({ $0.removeFromSuperview() })
+    }
+
+    func hideUserNameAndAvatar(_ bool: Bool) {
+        self.usernameLabel?.isHidden = bool
+        self.userAvatarImageView?.isHidden = bool
     }
 
     private func setupTitles(_ usernameLabel: UILabel) {

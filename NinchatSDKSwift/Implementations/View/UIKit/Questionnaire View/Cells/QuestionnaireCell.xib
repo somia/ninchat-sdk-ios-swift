@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -67,7 +67,7 @@
                                 </constraints>
                             </view>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_bubble_left_series" translatesAutoresizingMaskIntoConstraints="NO" id="taM-Ib-XuF">
-                                <rect key="frame" x="15" y="55" width="740" height="190"/>
+                                <rect key="frame" x="15" y="55" width="740" height="52"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2LW-sy-DwU">
@@ -77,7 +77,6 @@
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="taM-Ib-XuF" firstAttribute="height" secondItem="2LW-sy-DwU" secondAttribute="height" id="1OC-WM-mxn"/>
                             <constraint firstAttribute="bottom" secondItem="VBt-A4-ei2" secondAttribute="bottom" id="7GX-hv-hZC"/>
                             <constraint firstItem="LKO-kf-xFa" firstAttribute="leading" secondItem="VBt-A4-ei2" secondAttribute="trailing" constant="8" id="7tA-bf-MYJ"/>
                             <constraint firstAttribute="trailing" secondItem="taM-Ib-XuF" secondAttribute="trailing" constant="15" id="9MZ-Yx-2Ge"/>
@@ -85,11 +84,10 @@
                             <constraint firstItem="taM-Ib-XuF" firstAttribute="leading" secondItem="VBt-A4-ei2" secondAttribute="leading" id="IgM-Zv-V0c"/>
                             <constraint firstItem="2LW-sy-DwU" firstAttribute="leading" secondItem="taM-Ib-XuF" secondAttribute="leading" constant="8" id="Qnc-Zr-8nF"/>
                             <constraint firstItem="VBt-A4-ei2" firstAttribute="top" secondItem="HZn-tJ-Cnk" secondAttribute="top" id="ST7-nY-Ys9"/>
-                            <constraint firstItem="2LW-sy-DwU" firstAttribute="bottom" secondItem="taM-Ib-XuF" secondAttribute="bottom" id="Zra-j7-Y3U"/>
                             <constraint firstItem="taM-Ib-XuF" firstAttribute="top" secondItem="HZn-tJ-Cnk" secondAttribute="top" constant="55" id="kMj-Kz-MMJ"/>
                             <constraint firstItem="LKO-kf-xFa" firstAttribute="centerY" secondItem="ruI-1u-tFs" secondAttribute="centerY" id="rHh-G8-Xe9"/>
                             <constraint firstItem="2LW-sy-DwU" firstAttribute="trailing" secondItem="taM-Ib-XuF" secondAttribute="trailing" constant="-8" id="t0P-Og-XNp"/>
-                            <constraint firstAttribute="bottom" secondItem="taM-Ib-XuF" secondAttribute="bottom" constant="2" id="toZ-sI-ESc"/>
+                            <constraint firstAttribute="bottom" secondItem="2LW-sy-DwU" secondAttribute="bottom" constant="2" id="wUQ-hs-SBy"/>
                             <constraint firstItem="VBt-A4-ei2" firstAttribute="leading" secondItem="HZn-tJ-Cnk" secondAttribute="leading" constant="15" id="y7s-ox-wmK"/>
                         </constraints>
                     </view>

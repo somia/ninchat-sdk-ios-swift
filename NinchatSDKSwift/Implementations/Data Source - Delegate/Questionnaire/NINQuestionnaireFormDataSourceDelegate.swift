@@ -120,8 +120,8 @@ extension NINQuestionnaireFormDataSourceDelegate {
             cell.indexPath = indexPath
             cell.backgroundColor = .clear
             cell.sessionManager = self.sessionManager
-            self.layoutSubview(element, parent: cell.content)
-
+            
+            layoutSubview(cell, view: element, bubbleBottomView: nil, parent: cell.content)
             return cell
         } catch {
             fatalError(error.localizedDescription)

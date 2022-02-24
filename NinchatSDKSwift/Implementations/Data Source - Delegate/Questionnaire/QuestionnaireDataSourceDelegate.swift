@@ -28,7 +28,7 @@ protocol QuestionnaireDataSource: AnyObject {
      - Returns:
         - (nil, true, value): if the cell is a loading cell
         - (nil, false, value): if the cell is a navigation cell
-        -(not nil, false, value): if the cell is a questionnaire item
+        - (not nil, false, value): if the cell is a questionnaire item
     */
     func cellHeightComponent(at index: IndexPath) -> (type: AnyClass?, isLoading: Bool, height: CGFloat)
 
@@ -67,15 +67,27 @@ extension QuestionnaireDataSourceDelegate {
         return configuration.buttons?.hasValidButtons ?? true
     }
 
-    internal func layoutSubview(_ view: UIView, parent: UIView) {
-        if parent.subviews.filter({ $0 is QuestionnaireElement }).count > 0 {
-            parent.subviews.filter({ $0 is QuestionnaireElement }).forEach({ $0.removeFromSuperview() })
-        }
-        parent.addSubview(view)
-
+    internal func layoutSubview(_ cell: QuestionnaireCell, view: UIView, bubbleBottomView: UIView?, parent: UIView) {
         view
             .fix(top: (0.0, parent), bottom: (0.0, parent))
             .fix(leading: (0.0, parent), trailing: (0.0, parent))
+        cell.conversationContentViewStyle
+            .fix(top: (0.0, parent))
+        
+        if let bubbleBottomView = bubbleBottomView {
+            cell.conversationContentViewStyle
+                .fix(bottom: ((cell.indexPath.row == 0) ? 2.0 : 6.0, bubbleBottomView), isRelative: true)
+            
+            /// To keep bubble size fixed on scroll
+            if bubbleBottomView.frame.origin.y > 0 {
+                cell.conversationContentViewStyle
+                    .fix(height: bubbleBottomView.frame.origin.y)
+            }
+        } else {
+            cell.conversationContentViewStyle
+                .fix(bottom: (2.0, cell.content))
+        }
+        
         view.leading?.priority = .almostRequired
         view.trailing?.priority = .almostRequired
     }
@@ -137,6 +149,7 @@ extension QuestionnaireDataSourceDelegate {
         view.onElementOptionSelected = { [weak self, view, index] element, option in
             guard let `self` = self else { return }
 
+            /// reload rows after selection to fix an issue in applying layers in cells
             table.reloadRows(at: [index], with: .none)
             
             /// Hyperlink elements have no value to submit
