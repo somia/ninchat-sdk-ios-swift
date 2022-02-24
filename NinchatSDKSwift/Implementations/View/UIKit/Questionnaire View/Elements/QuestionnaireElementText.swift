@@ -8,12 +8,6 @@ import UIKit
 
 final class QuestionnaireElementText: UITextView, QuestionnaireElement {
 
-    fileprivate var topInset: CGFloat {
-        index == 0 ? 10.0 : 18.0
-    }
-    fileprivate var bottomInset: CGFloat {
-        index == 0 ? 6.0 : 2.0
-    }
     fileprivate var sidesInset: CGFloat {
         (self.questionnaireStyle == .conversation) ? 0.0 : 8.0
     }
@@ -27,7 +21,7 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
         didSet {
             /// to remove text content paddings
             /// thanks to `https://stackoverflow.com/a/42333832/7264553`
-            self.textContainerInset = UIEdgeInsets(top: topInset, left: sidesInset, bottom: bottomInset, right: sidesInset)
+            self.textContainerInset = .zero
         }
     }
     var isShown: Bool? {
@@ -98,6 +92,5 @@ extension QuestionnaireElement where Self:QuestionnaireElementText {
         self.backgroundColor = .clear
         self.setAttributed(text: configuration?.label ?? "", font: .ninchat, width: self.estimatedWidth())
         self.elementConfiguration = configuration
-        self.elementHeight = self.estimateHeight(width: self.estimatedWidth()) + topInset
     }
 }

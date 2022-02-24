@@ -108,7 +108,7 @@ extension NINQuestionnaireFormDataSourceDelegate {
                 self.setupSettable(element: settableElement)
             }
             if var view = element as? QuestionnaireOptionSelectableElement & QuestionnaireElement {
-                self.setupSelectable(view: &view)
+                self.setupSelectable(view: &view, tableView, at: indexPath)
             }
             if var view = element as? QuestionnaireFocusableElement & QuestionnaireElement {
                 self.setupFocusable(view: &view)

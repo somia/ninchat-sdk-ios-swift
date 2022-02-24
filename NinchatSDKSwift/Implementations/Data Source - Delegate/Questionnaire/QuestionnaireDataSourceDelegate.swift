@@ -133,10 +133,12 @@ extension QuestionnaireDataSourceDelegate {
         }
     }
 
-    internal func setupSelectable(view: inout  QuestionnaireElement & QuestionnaireOptionSelectableElement) {
-        view.onElementOptionSelected = { [weak self, view] element, option in
+    internal func setupSelectable(view: inout  QuestionnaireElement & QuestionnaireOptionSelectableElement, _ table: UITableView, at index: IndexPath) {
+        view.onElementOptionSelected = { [weak self, view, index] element, option in
             guard let `self` = self else { return }
 
+            table.reloadRows(at: [index], with: .none)
+            
             /// Hyperlink elements have no value to submit
             if !(view is QuestionnaireElementHyperlink) {
                 guard self.viewModel.submitAnswer(key: element, value: option.value, allowUpdate: view.isShown) else { return }
