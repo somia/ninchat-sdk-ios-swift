@@ -45,12 +45,12 @@ class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Question
     // MARK: - QuestionnaireSettable
 
     func updateSetAnswers(_ answer: AnyHashable?, configuration: QuestionnaireConfiguration?, state: QuestionnaireSettableState) {
-        guard let option = self.elementConfiguration?.options?.first(where: { $0.value == answer }),
-              let button = self.view.subviews.compactMap({ $0 as? NINButton }).first(where: { $0.titleLabel?.text == option.label })
-            else { return }
-
         switch state {
         case .set:
+            guard let option = self.elementConfiguration?.options?.first(where: { $0.value == answer }),
+                  let button = self.view.subviews.compactMap({ $0 as? NINButton }).first(where: { $0.titleLabel?.text == option.label })
+                else { return }
+            
             button.closure?(button)
         case .nothing:
             debugger("Do nothing for Radio element")
@@ -64,8 +64,10 @@ class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Question
 
     func deselect(option: ElementOption) {
         guard let tag = self.elementConfiguration?.options?.firstIndex(where: { $0.label == option.label }) else { return }
-        (self.view.viewWithTag(tag + 1) as? NINButton)?.isSelected = false
-        (self.view.viewWithTag(tag + 1) as? NINButton)?.roundButton()
+        if let button = self.view.viewWithTag(tag + 1) as? NINButton {
+            button.isSelected = false
+            button.roundButton()
+        }
     }
 
     // MARK: - QuestionnaireExitElement
@@ -129,19 +131,10 @@ extension NINButton {
     fileprivate func overrideQuestionnaireAsset(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         self.titleLabel?.font = .ninchat
 
-        switch isPrimary {
-        case false:
-            if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireRadioUnselected) {
-                self.layer.apply(layer)
-            } else {
-                self.roundButton()
-            }
-        case true:
-            if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireRadioSelected) {
-                self.layer.apply(layer)
-            } else {
-                self.roundButton()
-            }
+        if let layer = delegate?.override(layerAsset: (isPrimary) ? .ninchatQuestionnaireRadioSelected : .ninchatQuestionnaireRadioUnselected) {
+            self.layer.apply(layer)
+        } else {
+            self.roundButton()
         }
 
         self.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorRadioUnselectedText) ?? .QGrayButton, for: .normal)
@@ -222,9 +215,11 @@ extension QuestionnaireElementRadio {
     }
 
     private func applySelection(to button: UIButton) {
-        self.view.subviews.compactMap({ $0 as? NINButton }).forEach({
-            $0.isSelected = false
-            $0.overrideQuestionnaireAsset(with: self.delegate, isPrimary: $0.isSelected)
+        self.view.subviews.forEach({ btn in
+            guard let button = btn as? NINButton else { return }
+
+            button.isSelected = false
+            button.overrideQuestionnaireAsset(with: self.delegate, isPrimary: button.isSelected)
         })
 
         button.isSelected = true
