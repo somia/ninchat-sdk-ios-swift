@@ -70,7 +70,7 @@ class QuestionnaireCell: UITableViewCell {
         switch style {
         case .form:
             conversationViewContentView.isHidden = true
-            formContentView.isHidden = false
+            formContentView.isHidden = false            
             formContentView.addSubview(element)
         case .conversation:
             conversationViewContentView.isHidden = false

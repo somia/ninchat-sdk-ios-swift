@@ -122,6 +122,7 @@ extension NINQuestionnaireFormDataSourceDelegate {
             cell.sessionManager = self.sessionManager
             
             cell.addElement(element)
+            layoutSubview(view: element, parent: cell.formContentView)
             return cell
         } catch {
             fatalError(error.localizedDescription)

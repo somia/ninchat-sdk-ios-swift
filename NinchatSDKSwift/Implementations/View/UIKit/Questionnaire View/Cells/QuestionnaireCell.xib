@@ -22,7 +22,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uVs-oJ-d1d">
-                        <rect key="frame" x="0.0" y="0.0" width="770" height="247"/>
+                        <rect key="frame" x="4" y="4" width="762" height="239"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HZn-tJ-Cnk">
@@ -120,14 +120,14 @@
                 </subviews>
                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 <constraints>
-                    <constraint firstItem="uVs-oJ-d1d" firstAttribute="leading" secondItem="qLY-OO-QDE" secondAttribute="leading" id="91K-QM-m7u"/>
+                    <constraint firstItem="uVs-oJ-d1d" firstAttribute="leading" secondItem="qLY-OO-QDE" secondAttribute="leading" constant="4" id="91K-QM-m7u"/>
                     <constraint firstAttribute="trailing" secondItem="HZn-tJ-Cnk" secondAttribute="trailing" id="Ibn-3G-z00"/>
                     <constraint firstItem="HZn-tJ-Cnk" firstAttribute="leading" secondItem="qLY-OO-QDE" secondAttribute="leading" id="PEN-fL-u3y"/>
-                    <constraint firstItem="uVs-oJ-d1d" firstAttribute="top" secondItem="qLY-OO-QDE" secondAttribute="top" id="fu9-Ds-El0"/>
-                    <constraint firstAttribute="trailing" secondItem="uVs-oJ-d1d" secondAttribute="trailing" id="gfg-86-2qW"/>
+                    <constraint firstItem="uVs-oJ-d1d" firstAttribute="top" secondItem="qLY-OO-QDE" secondAttribute="top" constant="4" id="fu9-Ds-El0"/>
+                    <constraint firstAttribute="trailing" secondItem="uVs-oJ-d1d" secondAttribute="trailing" constant="4" id="gfg-86-2qW"/>
                     <constraint firstAttribute="bottom" secondItem="HZn-tJ-Cnk" secondAttribute="bottom" id="hUX-tW-l7S"/>
                     <constraint firstItem="HZn-tJ-Cnk" firstAttribute="top" secondItem="qLY-OO-QDE" secondAttribute="top" id="hca-yN-EU8"/>
-                    <constraint firstAttribute="bottom" secondItem="uVs-oJ-d1d" secondAttribute="bottom" id="jqr-Yw-Ecx"/>
+                    <constraint firstAttribute="bottom" secondItem="uVs-oJ-d1d" secondAttribute="bottom" constant="4" id="jqr-Yw-Ecx"/>
                 </constraints>
             </tableViewCellContentView>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
