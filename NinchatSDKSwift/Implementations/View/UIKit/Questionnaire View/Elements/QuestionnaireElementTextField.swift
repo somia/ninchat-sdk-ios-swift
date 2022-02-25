@@ -119,7 +119,7 @@ final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle
 
     private func decorateView() {
         if self.subviews.count > 0 {
-            self.layoutElementViews()
+            self.layoutElementViews(padding: UIEdgeInsets(top: 0.0, left: 8.0, bottom: 0.0, right: 8.0))
         }
     }
 }
