@@ -207,20 +207,12 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         cell.backgroundColor = .clear
         cell.sessionManager = self.sessionManager
         cell.conversationContentViewStyle.isHidden = false
+
         
-        var bubbleBottomView: UIView? = nil
-        if let radio = element as? QuestionnaireElementRadio {
-            bubbleBottomView = radio.view
-        } else if let select = element as? QuestionnaireElementSelect {
-            bubbleBottomView = select.view
-        } else if element is QuestionnaireElementCheckbox {
-            /// Hide bubble image view for checkbox items
-            cell.conversationContentViewStyle.isHidden = true
-        }
-        
-        cell.content.addSubview(element)
+        cell.addElement(element)
         cell.hideUserNameAndAvatar(indexPath.row != 0)
-        layoutSubview(cell, view: element, bubbleBottomView: bubbleBottomView, parent: cell.content)
+        layoutSubview(view: (element as? HasTitle)?.titleView, parent: cell.conversationTitleContentView)
+        layoutSubview(view: (element as? HasOptions)?.optionsView, parent: cell.conversationViewContentView)
         return cell
     }
 }

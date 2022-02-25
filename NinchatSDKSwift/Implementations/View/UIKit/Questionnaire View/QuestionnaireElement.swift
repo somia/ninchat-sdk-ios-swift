@@ -120,6 +120,12 @@ extension QuestionnaireElementWithTitle {
     }
 }
 
+protocol HasTitle {
+    var titleView: UIView { get }
+}
+protocol HasOptions {
+    var optionsView: UIView { get }
+}
 
 /// Add focus/dismiss closure for applicable elements (e.g. textarea, input)
 protocol QuestionnaireFocusableElement {

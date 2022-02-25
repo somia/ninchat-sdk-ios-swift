@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementText: UITextView, QuestionnaireElement {
+final class QuestionnaireElementText: UITextView, QuestionnaireElement, HasTitle {
 
     fileprivate var sidesInset: CGFloat {
         (self.questionnaireStyle == .conversation) ? 0.0 : 8.0
@@ -51,6 +51,12 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement {
         }
     }
 
+    // MARK: - HasTitle
+    
+    var titleView: UIView {
+        self
+    }
+    
     // MARK: - UIView life-cycle
 
     override func awakeFromNib() {

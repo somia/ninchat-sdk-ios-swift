@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireOptionSelectableElement {
+final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireOptionSelectableElement, HasTitle, HasOptions {
 
     fileprivate var heightValue: CGFloat = 45.0
     var normalBackgroundColor: UIColor! = .white
@@ -87,6 +87,18 @@ final class QuestionnaireElementSelect: UIView, QuestionnaireElementWithTitle, Q
     }()
     private var dialogueIsShown = false
 
+    // MARK: - HasTitle
+    
+    var titleView: UIView {
+        self.title
+    }
+    
+    // MARK: - HasOptions
+    
+    var optionsView: UIView {
+        self.view
+    }
+    
     // MARK: - UIView life-cycle
 
     override func awakeFromNib() {

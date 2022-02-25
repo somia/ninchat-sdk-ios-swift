@@ -121,7 +121,7 @@ extension NINQuestionnaireFormDataSourceDelegate {
             cell.backgroundColor = .clear
             cell.sessionManager = self.sessionManager
             
-            layoutSubview(cell, view: element, bubbleBottomView: nil, parent: cell.content)
+            cell.addElement(element)
             return cell
         } catch {
             fatalError(error.localizedDescription)

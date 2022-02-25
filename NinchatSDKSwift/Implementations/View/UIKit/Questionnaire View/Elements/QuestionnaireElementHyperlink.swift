@@ -6,7 +6,7 @@
 
 import UIKit
 
-class QuestionnaireElementHyperlink: UIView, QuestionnaireElement, HasExternalLink {
+class QuestionnaireElementHyperlink: UIView, QuestionnaireElement, HasExternalLink, HasOptions {
 
     // MARK: - QuestionnaireElement
 
@@ -45,6 +45,12 @@ class QuestionnaireElementHyperlink: UIView, QuestionnaireElement, HasExternalLi
     private(set) lazy var view: UIView = {
         UIView(frame: .zero)
     }()
+    
+    // MARK: - HasOptions
+    
+    var optionsView: UIView {
+        self.view
+    }
 
     // MARK: - UIView life-cycle
 

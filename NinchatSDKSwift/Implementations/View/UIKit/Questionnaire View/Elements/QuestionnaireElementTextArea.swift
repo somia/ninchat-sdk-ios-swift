@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireHasBorder, QuestionnaireFocusableElement {
+final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireHasBorder, QuestionnaireFocusableElement, HasTitle {
 
     fileprivate var heightValue: CGFloat = 100.0
     private var answerUpdateWorker: DispatchWorkItem?
@@ -83,6 +83,12 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
     private(set) lazy var view: UITextView = {
         UITextView(frame: .zero)
     }()
+    
+    // MARK: - HasTitle
+    
+    var titleView: UIView {
+        self
+    }
 
     // MARK: - UIView life-cycle
 

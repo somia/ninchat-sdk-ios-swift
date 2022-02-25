@@ -67,26 +67,12 @@ extension QuestionnaireDataSourceDelegate {
         return configuration.buttons?.hasValidButtons ?? true
     }
 
-    internal func layoutSubview(_ cell: QuestionnaireCell, view: UIView, bubbleBottomView: UIView?, parent: UIView) {
+    internal func layoutSubview(view: UIView?, parent: UIView) {
+        guard let view = view else { return }
+        
         view
             .fix(top: (0.0, parent), bottom: (0.0, parent))
             .fix(leading: (0.0, parent), trailing: (0.0, parent))
-        cell.conversationContentViewStyle
-            .fix(top: (0.0, parent))
-        
-        if let bubbleBottomView = bubbleBottomView {
-            cell.conversationContentViewStyle
-                .fix(bottom: ((cell.indexPath.row == 0) ? 2.0 : 6.0, bubbleBottomView), isRelative: true)
-            
-            /// To keep bubble size fixed on scroll
-            if bubbleBottomView.frame.origin.y > 0 {
-                cell.conversationContentViewStyle
-                    .fix(height: bubbleBottomView.frame.origin.y)
-            }
-        } else {
-            cell.conversationContentViewStyle
-                .fix(bottom: (2.0, cell.content))
-        }
         
         view.leading?.priority = .almostRequired
         view.trailing?.priority = .almostRequired

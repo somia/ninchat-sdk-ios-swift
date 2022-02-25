@@ -10,7 +10,7 @@ protocol QuestionnaireExitElement {
     var isExitElement: Bool { set get }
 }
 
-class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireOptionSelectableElement, QuestionnaireExitElement, HasExternalLink {
+class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireOptionSelectableElement, QuestionnaireExitElement, HasExternalLink, HasTitle, HasOptions {
 
     // MARK: - QuestionnaireElement
 
@@ -88,6 +88,18 @@ class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Question
         UIView(frame: .zero)
     }()
 
+    // MARK: - HasTitle
+    
+    var titleView: UIView {
+        self.title
+    }
+    
+    // MARK: - HasOptions
+    
+    var optionsView: UIView {
+        self.view
+    }
+    
     // MARK: - UIView life-cycle
 
     override func awakeFromNib() {
@@ -155,7 +167,6 @@ extension QuestionnaireElementRadio {
             guard let button = self?.generateButton(for: option, tag: (configuration?.options?.firstIndex(of: option))!) else { return }
             self?.layoutButton(button, upperView: &upperView)
         }
-        view.height?.constant += 8
     }
 
     internal func generateButton(for option: ElementOption, tag: Int) -> NINButton {
