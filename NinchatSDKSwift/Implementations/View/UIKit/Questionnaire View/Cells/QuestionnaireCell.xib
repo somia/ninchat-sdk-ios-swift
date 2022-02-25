@@ -70,14 +70,14 @@
                                 <rect key="frame" x="15" y="55" width="740" height="190"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="t30-ZM-uIM">
-                                        <rect key="frame" x="0.0" y="0.0" width="740" height="138"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="740" height="50"/>
                                         <subviews>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_bubble_left_series" translatesAutoresizingMaskIntoConstraints="NO" id="taM-Ib-XuF">
-                                                <rect key="frame" x="0.0" y="0.0" width="740" height="138"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="740" height="50"/>
                                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </imageView>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2LW-sy-DwU">
-                                                <rect key="frame" x="8" y="0.0" width="724" height="138"/>
+                                                <rect key="frame" x="8" y="0.0" width="724" height="50"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </view>
                                         </subviews>
@@ -98,7 +98,7 @@
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ctJ-KZ-BKu">
-                                        <rect key="frame" x="0.0" y="140" width="740" height="50"/>
+                                        <rect key="frame" x="0.0" y="52" width="740" height="138"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
                                 </subviews>

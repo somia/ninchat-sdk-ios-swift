@@ -8,6 +8,12 @@ import UIKit
 
 final class QuestionnaireElementText: UITextView, QuestionnaireElement, HasTitle {
 
+    fileprivate var topInset: CGFloat {
+        index == 0 ? 10.0 : 18.0
+    }
+    fileprivate var bottomInset: CGFloat {
+        index == 0 ? 6.0 : 2.0
+    }
     fileprivate var sidesInset: CGFloat {
         (self.questionnaireStyle == .conversation) ? 0.0 : 8.0
     }
@@ -17,13 +23,7 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement, HasTitle
 
     // MARK: - QuestionnaireElement
 
-    var index: Int = 0 {
-        didSet {
-            /// to remove text content paddings
-            /// thanks to `https://stackoverflow.com/a/42333832/7264553`
-            self.textContainerInset = .zero
-        }
-    }
+    var index: Int = 0
     var isShown: Bool? {
         didSet {
             self.isUserInteractionEnabled = isShown ?? true
@@ -44,7 +44,7 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement, HasTitle
 
     func overrideAssets(with delegate: NINChatSessionInternalDelegate?) {
         if let overriddenColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorTitleText) {
-            self.setAttributed(text: self.elementConfiguration?.label ?? "", font: .ninchat, color: overriddenColor, width:  self.estimatedWidth())
+            self.setAttributed(text: self.elementConfiguration?.label ?? "", font: .ninchat, color: overriddenColor)
         }
         if let linkColor = delegate?.override(colorAsset: .ninchatColorLink) {
             self.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
@@ -79,16 +79,9 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement, HasTitle
     private func initiateView() {
         self.isEditable = false
         self.isScrollEnabled = false
-
+        
+        self.textContainerInset = .zero
         self.textContainer.lineFragmentPadding = 0
-    }
-
-    func estimateHeight(width: CGFloat) -> CGFloat {
-        self.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude)).height
-    }
-    
-    fileprivate func estimatedWidth() -> CGFloat {
-        (UIApplication.topViewController()?.view.bounds ?? UIScreen.main.bounds).width - conversationStylePadding
     }
 }
 
@@ -96,7 +89,7 @@ extension QuestionnaireElement where Self:QuestionnaireElementText {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
         self.textAlignment = .left
         self.backgroundColor = .clear
-        self.setAttributed(text: configuration?.label ?? "", font: .ninchat, width: self.estimatedWidth())
+        self.setAttributed(text: configuration?.label ?? "", font: .ninchat)
         self.elementConfiguration = configuration
     }
 }

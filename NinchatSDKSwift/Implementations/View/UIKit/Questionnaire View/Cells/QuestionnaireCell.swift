@@ -87,6 +87,10 @@ class QuestionnaireCell: UITableViewCell {
             } else {
                 conversationViewContentView.isHidden = true
             }
+            
+            guard let label = element.elementConfiguration?.label, !label.isEmpty else {
+                conversationTitleContainerView.isHidden = true; return
+            }
         case .none:
             fatalError("style cannot be none")
         }

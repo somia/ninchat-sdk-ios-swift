@@ -206,7 +206,7 @@ extension QuestionnaireDataSourceDelegate {
             """
             [
                 {
-                    "name": "Epäilys",
+                    "name": "Exit",
                     "type": "group",
                     "buttons": {
                         "back": false,
@@ -216,7 +216,7 @@ extension QuestionnaireDataSourceDelegate {
                         {
                             "element": "text",
                             "name": "\(title)",
-                            "label": "\(registerTitle)"
+                            "label": "<br>\(registerTitle)"
                         },
                         {
                             "element": "radio",
