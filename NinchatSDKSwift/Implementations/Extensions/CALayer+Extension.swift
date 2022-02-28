@@ -7,10 +7,16 @@
 import UIKit
 
 extension CALayer {
-    func apply(_ layer: CALayer) {
+    func apply(_ layer: CALayer, force: Bool = true) {
         var count = UInt32()
         guard let layerClassProps: UnsafeMutablePointer <objc_property_t> = class_copyPropertyList(CALayer.self, &count) else {
             fatalError("unable to fetch class properties")
+        }
+        
+        if self.name == LAYER_NAME, !force {
+            /// the layer was set before, skip overwriting it
+            /// unless it is forced (e.g. button selected)
+            return
         }
         
         (0..<count)

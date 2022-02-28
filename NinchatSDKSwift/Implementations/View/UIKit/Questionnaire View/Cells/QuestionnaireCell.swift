@@ -64,6 +64,7 @@ class QuestionnaireCell: UITableViewCell {
         
         conversationTitleContainerView.isHidden = false
         conversationViewContentView.isHidden = false
+        conversationContentViewStyle.isHidden = false
     }
 
     func addElement(_ element: QuestionnaireElement) {
@@ -111,11 +112,10 @@ class QuestionnaireCell: UITableViewCell {
         }
         
         if let layer = delegate.override(layerAsset: .ninchatBubbleQuestionnaire) {
-            conversationTitleContainerView.layer.apply(layer)
+            conversationTitleContainerView.layer.apply(layer, force: false)
             conversationContentViewStyle.isHidden = true
         } else if let backgroundColor = delegate.override(questionnaireAsset: .ninchatQuestionnaireColorBubble) {
             conversationContentViewStyle.tintColor = backgroundColor
-            conversationContentViewStyle.isHidden = false
         }
     }
 
