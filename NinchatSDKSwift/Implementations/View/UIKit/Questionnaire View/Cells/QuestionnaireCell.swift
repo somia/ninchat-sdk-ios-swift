@@ -109,8 +109,13 @@ class QuestionnaireCell: UITableViewCell {
         if let usernameColor = delegate.override(colorAsset: .ninchatColorChatName) {
             usernameLabel.textColor = usernameColor
         }
-        if let backgroundColor = delegate.override(questionnaireAsset: .ninchatQuestionnaireColorBubble) {
+        
+        if let layer = delegate.override(layerAsset: .ninchatBubbleQuestionnaire) {
+            conversationTitleContainerView.layer.apply(layer)
+            conversationContentViewStyle.isHidden = true
+        } else if let backgroundColor = delegate.override(questionnaireAsset: .ninchatQuestionnaireColorBubble) {
             conversationContentViewStyle.tintColor = backgroundColor
+            conversationContentViewStyle.isHidden = false
         }
     }
 
