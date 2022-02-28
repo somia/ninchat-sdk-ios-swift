@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, QuestionnaireSettable, QuestionnaireOptionSelectableElement, QuestionnaireElementHasDefaultAnswer {
+final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, QuestionnaireSettable, QuestionnaireOptionSelectableElement, QuestionnaireElementHasDefaultAnswer, HasOptions {
 
     private var iconBorderNormalColor: UIColor! = .QGrayButton
     private var iconBorderSelectedColor: UIColor! = .QBlueButtonNormal
@@ -131,6 +131,12 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
     private(set) lazy var view: UIView = {
         UIView(frame: .zero)
     }()
+    
+    // MARK: - HasOptions
+    
+    var optionsView: UIView {
+        self.view
+    }
     
     // MARK: - UIView life-cycle
 

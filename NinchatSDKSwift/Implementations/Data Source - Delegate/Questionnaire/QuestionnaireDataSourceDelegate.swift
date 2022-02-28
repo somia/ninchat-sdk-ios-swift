@@ -28,7 +28,7 @@ protocol QuestionnaireDataSource: AnyObject {
      - Returns:
         - (nil, true, value): if the cell is a loading cell
         - (nil, false, value): if the cell is a navigation cell
-        -(not nil, false, value): if the cell is a questionnaire item
+        - (not nil, false, value): if the cell is a questionnaire item
     */
     func cellHeightComponent(at index: IndexPath) -> (type: AnyClass?, isLoading: Bool, height: CGFloat)
 
@@ -67,15 +67,13 @@ extension QuestionnaireDataSourceDelegate {
         return configuration.buttons?.hasValidButtons ?? true
     }
 
-    internal func layoutSubview(_ view: UIView, parent: UIView) {
-        if parent.subviews.filter({ $0 is QuestionnaireElement }).count > 0 {
-            parent.subviews.filter({ $0 is QuestionnaireElement }).forEach({ $0.removeFromSuperview() })
-        }
-        parent.addSubview(view)
-
+    internal func layoutSubview(view: UIView?, parent: UIView) {
+        guard let view = view else { return }
+        
         view
             .fix(top: (0.0, parent), bottom: (0.0, parent))
             .fix(leading: (0.0, parent), trailing: (0.0, parent))
+        
         view.leading?.priority = .almostRequired
         view.trailing?.priority = .almostRequired
     }
@@ -133,10 +131,13 @@ extension QuestionnaireDataSourceDelegate {
         }
     }
 
-    internal func setupSelectable(view: inout  QuestionnaireElement & QuestionnaireOptionSelectableElement) {
-        view.onElementOptionSelected = { [weak self, view] element, option in
+    internal func setupSelectable(view: inout  QuestionnaireElement & QuestionnaireOptionSelectableElement, _ table: UITableView, at index: IndexPath) {
+        view.onElementOptionSelected = { [weak self, view, index] element, option in
             guard let `self` = self else { return }
 
+            /// reload rows after selection to fix an issue in applying layers in cells
+            table.reloadRows(at: [index], with: .none)
+            
             /// Hyperlink elements have no value to submit
             if !(view is QuestionnaireElementHyperlink) {
                 guard self.viewModel.submitAnswer(key: element, value: option.value, allowUpdate: view.isShown) else { return }
@@ -205,7 +206,7 @@ extension QuestionnaireDataSourceDelegate {
             """
             [
                 {
-                    "name": "Epäilys",
+                    "name": "Exit",
                     "type": "group",
                     "buttons": {
                         "back": false,
@@ -215,7 +216,7 @@ extension QuestionnaireDataSourceDelegate {
                         {
                             "element": "text",
                             "name": "\(title)",
-                            "label": "\(registerTitle)"
+                            "label": "<br>\(registerTitle)"
                         },
                         {
                             "element": "radio",
