@@ -131,9 +131,6 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
             guard let contentView = contentView else { return }
             self.view.addSubview(contentView)
 
-            contentView.estimatedRowHeight = 80.0
-            contentView.rowHeight = UITableView.automaticDimension
-
             contentView
                     .fix(bottom: (0.0, self.view))
                     .fix(leading: (0, self.view), trailing: (0, self.view))
@@ -457,17 +454,15 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
 // MARK: - UITableViewDataSource, UITableViewDelegate
 extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDelegate {
     func numberOfSections(in tableView: UITableView) -> Int {
-        self.dataSourceDelegate?.numberOfPages() ?? 0
+        self.dataSourceDelegate!.numberOfPages()
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        self.dataSourceDelegate?.numberOfMessages(in: section) ?? 0
+        self.dataSourceDelegate!.numberOfMessages(in: section)
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        guard let component = self.dataSourceDelegate?.cellHeightComponent(at: indexPath) else {
-            return UITableView.automaticDimension
-        }
+        let component = self.dataSourceDelegate!.cellHeightComponent(at: indexPath)
 
         if component.type == nil, component.isLoading {
             /// Loading cell
@@ -486,6 +481,15 @@ extension NINQuestionnaireViewController: UITableViewDataSource, UITableViewDele
             }
             return height
         }
+    }
+    
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        let component = self.dataSourceDelegate!.cellHeightComponent(at: indexPath)
+        
+        if component.type is QuestionnaireElementText.Type {
+            return 10.0
+        }
+        return 80.0
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

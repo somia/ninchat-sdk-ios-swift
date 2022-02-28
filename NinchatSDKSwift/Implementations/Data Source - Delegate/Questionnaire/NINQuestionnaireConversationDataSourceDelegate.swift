@@ -194,7 +194,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
             self.setupSettable(element: settableElement)
         }
         if var view = element as? QuestionnaireOptionSelectableElement & QuestionnaireElement {
-            self.setupSelectable(view: &view)
+            self.setupSelectable(view: &view, tableView, at: indexPath)
         }
         if var view = element as? QuestionnaireFocusableElement & QuestionnaireElement {
             self.setupFocusable(view: &view)
@@ -206,8 +206,13 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         cell.indexPath = indexPath
         cell.backgroundColor = .clear
         cell.sessionManager = self.sessionManager
-        self.layoutSubview(element, parent: cell.content)
+        cell.conversationContentViewStyle.isHidden = false
 
+        
+        cell.addElement(element)
+        cell.hideUserNameAndAvatar(indexPath.row != 0)
+        layoutSubview(view: (element as? HasTitle)?.titleView, parent: cell.conversationTitleContentView)
+        layoutSubview(view: (element as? HasOptions)?.optionsView, parent: cell.conversationViewContentView)
         return cell
     }
 }

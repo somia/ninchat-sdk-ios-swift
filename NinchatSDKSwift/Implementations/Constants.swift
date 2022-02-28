@@ -108,6 +108,7 @@ public enum CALayerConstant {
     case ninchatBubbleLeftRepeated
     case ninchatBubbleRight
     case ninchatBubbleRightRepeated
+    case ninchatBubbleQuestionnaire
 }
 
 /// Questionnaire color override keys

@@ -37,7 +37,7 @@ protocol QuestionnaireElementWithTitle: QuestionnaireElement {
     var didShapedView: Bool { get }
 
     func addElementViews()
-    func layoutElementViews()
+    func layoutElementViews(padding: UIEdgeInsets)
     func overrideTitle(delegate: NINChatSessionInternalDelegate?)
 }
 extension QuestionnaireElementWithTitle {
@@ -61,15 +61,15 @@ extension QuestionnaireElementWithTitle {
         self.addSubview(view)
     }
 
-    func layoutElementViews() {
+    func layoutElementViews(padding: UIEdgeInsets = .zero) {
         /// Must be called once subviews are added
         title
             .fix(leading: (8.0, self), trailing: (8.0, self))
             .fix(top: (0.0, self))
 
         view
-            .fix(leading: (8.0, self), trailing: (8.0, self))
-            .fix(top: (0.0, title), isRelative: true)
+            .fix(leading: (padding.left, self), trailing: (padding.right, self))
+            .fix(top: (padding.top + ((index == 0) ? 0 : 2.0), title), isRelative: true)
             .center(toX: self)
         view.leading?.priority = .almostRequired
         view.trailing?.priority = .almostRequired
@@ -120,6 +120,12 @@ extension QuestionnaireElementWithTitle {
     }
 }
 
+protocol HasTitle {
+    var titleView: UIView { get }
+}
+protocol HasOptions {
+    var optionsView: UIView { get }
+}
 
 /// Add focus/dismiss closure for applicable elements (e.g. textarea, input)
 protocol QuestionnaireFocusableElement {
