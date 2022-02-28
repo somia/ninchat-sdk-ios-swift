@@ -95,6 +95,9 @@ final class Titlebar: UIView {
 
         closeButton.buttonTitle = session?.translate(key: Constants.kCloseText.rawValue, formatParams: [:]) ?? ""
         overrideAssets(delegate: session?.delegate)
+        
+        guard let session = session else { return }
+        closeButton.isHidden = !session.siteConfiguration.hideTitlebar
     }
     
     private func overrideAssets(delegate: NINChatSessionInternalDelegate?) {
