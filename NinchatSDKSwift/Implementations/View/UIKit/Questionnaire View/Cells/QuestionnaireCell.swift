@@ -123,6 +123,8 @@ class QuestionnaireCell: UITableViewCell {
         let avatar = AvatarConfig(forQuestionnaire: self.sessionManager)
 
         userAvatar.isHidden = !avatar.show
+        userAvatar.round()
+        userAvatar.contentMode = .scaleAspectFill
         leftAvatarContainerView.width?.constant = (userAvatar.isHidden) ? 0 : 35
         
         let defaultImage = UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)!
