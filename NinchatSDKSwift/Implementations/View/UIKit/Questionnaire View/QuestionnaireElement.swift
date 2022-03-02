@@ -95,7 +95,7 @@ extension QuestionnaireElementWithTitle {
         self.title.textAlignment = .left
         self.title.lineBreakMode = .byWordWrapping
 
-        if let text = configuration?.label {
+        if let text = configuration?.label, !text.isEmpty {
             self.title.text = text + ((configuration?.required ?? false) ? self.requiredIndicator : "")
         }
     }
