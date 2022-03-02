@@ -382,8 +382,7 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     private func prepareSection() -> Int {
         guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` is not conformed to `QuestionnaireConversationHelpers`") }
         let section = conversationDataSource.insertSection()
-        contentView.insertSections(IndexSet(integer: section), with: .automatic)
-        if section > 0 { contentView.reloadSections(IndexSet(integer: section-1), with: .none) }
+        contentView.insertSections(IndexSet(integer: section), with: .none)
         return section
     }
 
@@ -410,7 +409,7 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
         do {
             let elements = try self.viewModel.getElements()
             elements.forEach { element in
-                contentView.insertRows(at: [IndexPath(row: elements.firstIndex(where: { $0 == element })!, section: section)], with: .bottom)
+                contentView.insertRows(at: [IndexPath(row: elements.firstIndex(where: { $0 == element })!, section: section)], with: .fade)
                 _ = conversationDataSource.insertRow()
             }
         } catch {
