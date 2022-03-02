@@ -136,7 +136,9 @@ extension QuestionnaireDataSourceDelegate {
             guard let `self` = self else { return }
 
             /// reload rows after selection to fix an issue in applying layers in cells
-            table.reloadRows(at: [index], with: .none)
+            if !(view is QuestionnaireElementCheckbox) {
+                table.reloadRows(at: [index], with: .none)
+            }
             
             /// Hyperlink elements have no value to submit
             if !(view is QuestionnaireElementHyperlink) {
