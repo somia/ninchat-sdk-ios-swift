@@ -129,15 +129,13 @@ class QuestionnaireCell: UITableViewCell {
         self.conversationTitleContainerView.addSubview(view)
         
         view
-            .fix(top: (8.0, self.conversationTitleContainerView), bottom: (0.0, self.conversationTitleContainerView))
-            .fix(leading: (0.0, self.conversationTitleContainerView), trailing: (0.0, self.conversationTitleContainerView))
+            .fix(top: (4.0, self.conversationTitleContainerView), bottom: (4.0, self.conversationTitleContainerView))
     }
     
     private func layoutOptions(_ view: UIView) {
         self.conversationOptionsContainerView.addSubview(view)
         
         view
-            .fix(top: (8.0, self.conversationOptionsContainerView), bottom: (0.0, self.conversationOptionsContainerView))
-            .fix(leading: (0.0, self.conversationOptionsContainerView), trailing: (0.0, self.conversationOptionsContainerView))
+            .fix(top: (4.0, self.conversationOptionsContainerView), bottom: (4.0, self.conversationOptionsContainerView))
     }
 }
