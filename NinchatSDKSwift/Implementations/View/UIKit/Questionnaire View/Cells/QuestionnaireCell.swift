@@ -10,10 +10,10 @@ class QuestionnaireCell: UITableViewCell {
     @IBOutlet private(set) weak var conversationView: UIView!
     @IBOutlet private(set) weak var conversationContentView: UIStackView!
     
-    @IBOutlet private(set) weak var conversationTitleContainerView: UIView!
-    @IBOutlet private(set) weak var conversationContentViewStyle: UIImageView!
-    @IBOutlet private(set) weak var conversationTitleContentView: UIView!
-    @IBOutlet private(set) weak var conversationViewContentView: UIView!
+    @IBOutlet private(set) weak var conversationContentViewStyle: UIImageView!      /// bubble image
+    @IBOutlet private(set) weak var conversationTitleContentView: UIView!           /// title text is added to this
+    @IBOutlet private(set) weak var conversationTitleContainerView: UIView!         /// title is added to this
+    @IBOutlet private(set) weak var conversationOptionsContainerView: UIView!       /// elements are added to this
     
     @IBOutlet private(set) weak var formContentView: UIView!
     
@@ -58,40 +58,29 @@ class QuestionnaireCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
 
-        self.conversationViewContentView.subviews.forEach({ $0.removeFromSuperview() })
+        self.conversationOptionsContainerView.subviews.forEach({ $0.removeFromSuperview() })
         self.conversationTitleContentView.subviews.forEach({ $0.removeFromSuperview() })
         self.formContentView.subviews.forEach({ $0.removeFromSuperview() })
-        
-        conversationTitleContainerView.isHidden = false
-        conversationViewContentView.isHidden = false
-        conversationContentViewStyle.isHidden = false
     }
 
     func addElement(_ element: QuestionnaireElement) {
         switch style {
         case .form:
-            conversationViewContentView.isHidden = true
+            conversationOptionsContainerView.isHidden = true
             formContentView.isHidden = false            
             formContentView.addSubview(element)
         case .conversation:
-            conversationViewContentView.isHidden = false
+            conversationOptionsContainerView.isHidden = false
             formContentView.isHidden = true
             
             if let title = element as? HasTitle {
-                conversationTitleContentView.addSubview(title.titleView)
-            } else {
-                conversationTitleContainerView.isHidden = true
+                self.layoutTitle(title.titleView)
             }
-            
             if let options = element as? HasOptions {
-                conversationViewContentView.addSubview(options.optionsView)
-            } else {
-                conversationViewContentView.isHidden = true
+                self.layoutOptions(options.optionsView)
             }
             
-            guard let label = element.elementConfiguration?.label, !label.isEmpty else {
-                conversationTitleContainerView.isHidden = true; return
-            }
+            self.conversationTitleContainerView.isHidden = (element.elementConfiguration?.label ?? "").isEmpty
         case .none:
             fatalError("style cannot be none")
         }
@@ -116,6 +105,7 @@ class QuestionnaireCell: UITableViewCell {
             conversationContentViewStyle.isHidden = true
         } else if let backgroundColor = delegate.override(questionnaireAsset: .ninchatQuestionnaireColorBubble) {
             conversationContentViewStyle.tintColor = backgroundColor
+            conversationContentViewStyle.isHidden = false
         }
     }
 
@@ -133,5 +123,21 @@ class QuestionnaireCell: UITableViewCell {
         } else {
             userAvatar.image = defaultImage
         }
+    }
+    
+    private func layoutTitle(_ view: UIView) {
+        self.conversationTitleContainerView.addSubview(view)
+        
+        view
+            .fix(top: (8.0, self.conversationTitleContainerView), bottom: (0.0, self.conversationTitleContainerView))
+            .fix(leading: (0.0, self.conversationTitleContainerView), trailing: (0.0, self.conversationTitleContainerView))
+    }
+    
+    private func layoutOptions(_ view: UIView) {
+        self.conversationOptionsContainerView.addSubview(view)
+        
+        view
+            .fix(top: (8.0, self.conversationOptionsContainerView), bottom: (0.0, self.conversationOptionsContainerView))
+            .fix(leading: (0.0, self.conversationOptionsContainerView), trailing: (0.0, self.conversationOptionsContainerView))
     }
 }

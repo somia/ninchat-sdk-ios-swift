@@ -70,14 +70,14 @@
                                 <rect key="frame" x="15" y="55" width="740" height="190"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="t30-ZM-uIM">
-                                        <rect key="frame" x="0.0" y="0.0" width="740" height="50"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="740" height="52"/>
                                         <subviews>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_bubble_left_series" translatesAutoresizingMaskIntoConstraints="NO" id="taM-Ib-XuF">
-                                                <rect key="frame" x="0.0" y="0.0" width="740" height="50"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="740" height="52"/>
                                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </imageView>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2LW-sy-DwU">
-                                                <rect key="frame" x="8" y="0.0" width="724" height="50"/>
+                                                <rect key="frame" x="8" y="0.0" width="724" height="52"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </view>
                                         </subviews>
@@ -98,7 +98,7 @@
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ctJ-KZ-BKu">
-                                        <rect key="frame" x="0.0" y="52" width="740" height="138"/>
+                                        <rect key="frame" x="0.0" y="54" width="740" height="136"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
                                 </subviews>
@@ -111,8 +111,8 @@
                             <constraint firstItem="P3r-hR-wbe" firstAttribute="leading" secondItem="HZn-tJ-Cnk" secondAttribute="leading" constant="15" id="Ft6-rI-KZa"/>
                             <constraint firstAttribute="bottom" secondItem="P3r-hR-wbe" secondAttribute="bottom" constant="2" id="GTV-B9-icz"/>
                             <constraint firstAttribute="trailing" secondItem="P3r-hR-wbe" secondAttribute="trailing" constant="15" id="NKH-8M-Ycy"/>
-                            <constraint firstItem="P3r-hR-wbe" firstAttribute="top" secondItem="HZn-tJ-Cnk" secondAttribute="top" constant="55" id="PV2-Vr-zqd"/>
                             <constraint firstItem="VBt-A4-ei2" firstAttribute="top" secondItem="HZn-tJ-Cnk" secondAttribute="top" id="ST7-nY-Ys9"/>
+                            <constraint firstItem="P3r-hR-wbe" firstAttribute="top" secondItem="HZn-tJ-Cnk" secondAttribute="top" constant="55" id="cvs-ue-rIc"/>
                             <constraint firstItem="LKO-kf-xFa" firstAttribute="centerY" secondItem="ruI-1u-tFs" secondAttribute="centerY" id="rHh-G8-Xe9"/>
                             <constraint firstItem="VBt-A4-ei2" firstAttribute="leading" secondItem="HZn-tJ-Cnk" secondAttribute="leading" constant="15" id="y7s-ox-wmK"/>
                         </constraints>
@@ -134,10 +134,10 @@
             <connections>
                 <outlet property="conversationContentView" destination="P3r-hR-wbe" id="Y42-b2-Xd3"/>
                 <outlet property="conversationContentViewStyle" destination="taM-Ib-XuF" id="Tai-ZV-CWM"/>
+                <outlet property="conversationOptionsContainerView" destination="ctJ-KZ-BKu" id="Nqo-UQ-ITS"/>
                 <outlet property="conversationTitleContainerView" destination="t30-ZM-uIM" id="y2B-PK-4R1"/>
                 <outlet property="conversationTitleContentView" destination="2LW-sy-DwU" id="Y17-a1-KN9"/>
                 <outlet property="conversationView" destination="HZn-tJ-Cnk" id="19C-Ln-hSU"/>
-                <outlet property="conversationViewContentView" destination="ctJ-KZ-BKu" id="Nqo-UQ-ITS"/>
                 <outlet property="formContentView" destination="uVs-oJ-d1d" id="rzA-Or-8SQ"/>
                 <outlet property="leftAvatarContainerView" destination="VBt-A4-ei2" id="F7Y-kT-fwo"/>
                 <outletCollection property="conversationAuthorView" destination="ruI-1u-tFs" collectionClass="NSMutableArray" id="3uw-Eb-f5g"/>

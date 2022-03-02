@@ -212,7 +212,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         cell.addElement(element)
         cell.hideUserNameAndAvatar(indexPath.row != 0)
         layoutSubview(view: (element as? HasTitle)?.titleView, parent: cell.conversationTitleContentView)
-        layoutSubview(view: (element as? HasOptions)?.optionsView, parent: cell.conversationViewContentView)
+        layoutSubview(view: (element as? HasOptions)?.optionsView, parent: cell.conversationOptionsContainerView)
         return cell
     }
 }
