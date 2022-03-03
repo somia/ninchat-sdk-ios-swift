@@ -82,7 +82,7 @@ extension QuestionnaireDataSourceDelegate {
 // MARK: - Closures
 extension QuestionnaireDataSourceDelegate {
     internal func onRequirementsUpdated(_ update: Bool, for cell: QuestionnaireNavigationCell) {
-        cell.requirementSatisfactionUpdater?(update)
+        cell.requirementSatisfactionUpdater?(update, cell.configuration!)
     }
 
     internal func onNextButtonTapped(elements: [QuestionnaireElement]?) {
@@ -171,7 +171,7 @@ extension QuestionnaireDataSourceDelegate {
             /// First ensure that the element is completed properly, otherwise remove any submitted answer for it
             if let isCompleted = self.isCompletedBorder(view: view as? QuestionnaireHasBorder), !isCompleted {
                 self.viewModel.removeAnswer(key: element)
-                self.viewModel.requirementSatisfactionUpdater?(false)
+                self.viewModel.requirementSatisfactionUpdater?(false, view.elementConfiguration!)
             }
 
             /// Now that the element is completed properly, save the answer

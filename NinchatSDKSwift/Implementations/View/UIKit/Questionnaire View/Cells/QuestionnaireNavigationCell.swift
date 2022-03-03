@@ -22,7 +22,7 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
         }
     }
 
-    var requirementSatisfactionUpdater: ((Bool) -> Void)?
+    var requirementSatisfactionUpdater: ((Bool, QuestionnaireConfiguration) -> Void)?
     var onNextButtonTapped: (() -> Void)?
     var onBackButtonTapped: (() -> Void)?
 
@@ -73,7 +73,9 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
         }
     }
 
-    func setSatisfaction(_ satisfied: Bool) {
+    func enableNavigationItems(_ satisfied: Bool, configuration cfg: QuestionnaireConfiguration) {
+        guard self.configuration == cfg else { return }
+        
         debugger("Set navigation Satisfaction: \(satisfied && self.isLastItemInTable)")
         self.buttons.arrangedSubviews.compactMap({ $0 as? NINButton }).first(where: { $0.type == .next })?.isEnabled = satisfied && self.isLastItemInTable
         /// back button should not get disabled according to user inputs
@@ -84,6 +86,12 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
 
     // MARK: - UIView life-cycle
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        self.requirementSatisfactionUpdater = nil
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         self.initiateView()
@@ -110,14 +118,14 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
 
     private func initiateView() {
         self.addNavigationButtons()
+        self.requirementSatisfactionUpdater = { [weak self] satisfied, cfg in
+            self?.enableNavigationItems(satisfied, configuration: cfg)
+        }
     }
 
     private func decorateView() {
         if self.buttons.arrangedSubviews.count > 0 {
             self.layoutNavigationButtons()
-        }
-        self.requirementSatisfactionUpdater = { [weak self] satisfied in
-            self?.setSatisfaction(satisfied)
         }
     }
 }
@@ -171,7 +179,7 @@ extension QuestionnaireNavigationCell {
         /// " Basically you have buttons always displayed unless they are removed in config. "
         /// " But it should omit 'back' for the first element "
         drawBackButton(isVisible: self.shouldShowBackButton)
-        addSeparator(isVisible: self.shouldShowNextButton || self.shouldShowBackButton)
+        addSeparator(isVisible: self.shouldShowNextButton && self.shouldShowBackButton)
         drawNextButton(isVisible: self.shouldShowNextButton)
     }
 
@@ -189,7 +197,6 @@ extension QuestionnaireNavigationCell {
         button.titleLabel?.lineBreakMode = .byTruncatingTail
         button
             .fix(width: button.intrinsicContentSize.width + 32.0, height: 45.0)
-            .width?.priority = .almostRequired
     }
 
     private func addSeparator(isVisible: Bool) {
