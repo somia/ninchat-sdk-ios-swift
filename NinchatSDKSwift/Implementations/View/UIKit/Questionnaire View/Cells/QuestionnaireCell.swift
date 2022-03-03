@@ -24,8 +24,6 @@ class QuestionnaireCell: UITableViewCell {
     var indexPath: IndexPath! {
         didSet {
             self.conversationContentViewStyle.image = UIImage(named: (indexPath.row == 0) ? "chat_bubble_left" : "chat_bubble_left_series", in: .SDKBundle, compatibleWith: nil)
-            self.conversationAuthorView.compactMap({ $0 as? UIView }).forEach({ $0.isHidden = (indexPath.row != 0) })
-            self.conversationContentView.top?.constant = (indexPath.row == 0) ? 55 : 0
         }
     }
 
@@ -57,10 +55,11 @@ class QuestionnaireCell: UITableViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-
-        self.conversationOptionsContainerView.subviews.forEach({ $0.removeFromSuperview() })
-        self.conversationTitleContentView.subviews.forEach({ $0.removeFromSuperview() })
-        self.formContentView.subviews.forEach({ $0.removeFromSuperview() })
+        
+        self.conversationTitleContainerView.viewWithTag(1)?.removeFromSuperview()
+        self.conversationTitleContainerView.isHidden = true
+        self.conversationOptionsContainerView.viewWithTag(1)?.removeFromSuperview()
+        self.conversationOptionsContainerView.isHidden = true
     }
 
     func addElement(_ element: QuestionnaireElement) {
@@ -74,21 +73,23 @@ class QuestionnaireCell: UITableViewCell {
             formContentView.isHidden = true
             
             if let title = element as? HasTitle {
-                self.layoutTitle(title.titleView)
+                title.titleView.tag = 1
+                self.layoutTitle(title.titleView, element: element)
             }
             if let options = element as? HasOptions {
+                options.optionsView.tag = 1
                 self.layoutOptions(options.optionsView)
             }
-            
-            self.conversationTitleContainerView.isHidden = (element.elementConfiguration?.label ?? "").isEmpty
         case .none:
             fatalError("style cannot be none")
         }
     }
     
-    func hideUserNameAndAvatar(_ bool: Bool) {
-        self.usernameLabel?.isHidden = bool
-        self.userAvatarImageView?.isHidden = bool
+    func hideUserNameAndAvatar(_ hide: Bool) {
+        self.usernameLabel?.isHidden = hide
+        self.userAvatarImageView?.isHidden = hide
+        
+        self.conversationContentView.top?.constant = (hide) ? 0 : 55
     }
 
     private func setupTitles(_ usernameLabel: UILabel) {
@@ -125,7 +126,9 @@ class QuestionnaireCell: UITableViewCell {
         }
     }
     
-    private func layoutTitle(_ view: UIView) {
+    private func layoutTitle(_ view: UIView, element: QuestionnaireElement) {
+        self.conversationTitleContainerView.isHidden = (element.elementConfiguration?.label ?? "").isEmpty
+        self.conversationTitleContainerView.viewWithTag(1)?.removeFromSuperview()
         self.conversationTitleContainerView.addSubview(view)
         
         view
@@ -133,6 +136,8 @@ class QuestionnaireCell: UITableViewCell {
     }
     
     private func layoutOptions(_ view: UIView) {
+        self.conversationOptionsContainerView.isHidden = false
+        self.conversationOptionsContainerView.viewWithTag(1)?.removeFromSuperview()
         self.conversationOptionsContainerView.addSubview(view)
         
         view
