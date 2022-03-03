@@ -120,7 +120,11 @@ extension QuestionnaireDataSourceDelegate {
 
     internal func setupSettable(element: QuestionnaireElement & QuestionnaireSettable) {
         defer { self.viewModel.preventAutoRedirect = false }
-        let setAnswerState: QuestionnaireSettableState = (self.viewModel.redirectTargetPage(element, performClosures: false) ?? -1 >= 0) ? .set : .nothing
+        
+        var setAnswerState: QuestionnaireSettableState = .nothing
+        if let redirect = self.viewModel.redirectTargetPage(element, performClosures: false), redirect >= 0, self.viewModel.shouldWaitForNextButton {
+            setAnswerState = .set
+        }
 
         if let checkbox = element as? QuestionnaireElementCheckbox, checkbox.subElements.count > 0 {
             checkbox.subElements.compactMap({ $0.value as? QuestionnaireElementCheckbox }).forEach({
