@@ -267,7 +267,7 @@ extension NINQuestionnaireViewModelImpl {
     func submitAnswer(key: QuestionnaireElement?, value: AnyHashable, allowUpdate: Bool?) -> Bool {
         guard !self.isExitElement(key) else { return true }
 
-        if let configuration = key?.elementConfiguration {
+        if let configuration = key?.elementConfiguration, let cfg = key?.questionnaireConfiguration {
             /// The check below intended to avoid executing closures that had been executed before
             /// But, this wouldn't be the case for the last item in the page
             if !(allowUpdate ?? true), let currentValue = self.answers[configuration.name], value == currentValue { return false }
@@ -275,7 +275,7 @@ extension NINQuestionnaireViewModelImpl {
             self.preventAutoRedirect = false
             self.answers[configuration.name] = value
             self.preAnswers.removeValue(forKey: configuration.name) // clear preset answers if there is a matched one
-            self.requirementSatisfactionUpdater?(self.requirementsSatisfied, configuration)
+            self.requirementSatisfactionUpdater?(self.requirementsSatisfied, cfg)
             return true
         }
         return false

@@ -85,12 +85,6 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
     }
 
     // MARK: - UIView life-cycle
-
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        
-        self.requirementSatisfactionUpdater = nil
-    }
     
     override func awakeFromNib() {
         super.awakeFromNib()
