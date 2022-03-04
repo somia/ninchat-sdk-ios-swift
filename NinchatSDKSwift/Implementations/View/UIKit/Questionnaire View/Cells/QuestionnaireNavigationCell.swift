@@ -85,12 +85,6 @@ final class QuestionnaireNavigationCell: UITableViewCell, QuestionnaireNavigatio
     }
 
     // MARK: - UIView life-cycle
-
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        
-        self.requirementSatisfactionUpdater = nil
-    }
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -179,7 +173,7 @@ extension QuestionnaireNavigationCell {
         /// " Basically you have buttons always displayed unless they are removed in config. "
         /// " But it should omit 'back' for the first element "
         drawBackButton(isVisible: self.shouldShowBackButton)
-        addSeparator(isVisible: self.shouldShowNextButton && self.shouldShowBackButton)
+        addSeparator(isVisible: self.shouldShowNextButton || self.shouldShowBackButton)
         drawNextButton(isVisible: self.shouldShowNextButton)
     }
 

@@ -152,8 +152,10 @@ class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Question
 extension NINButton {
     fileprivate func overrideQuestionnaireAsset(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         self.titleLabel?.font = .ninchat
-
+        self.setBackgroundImage(UIColor.white.toImage, for: .normal)
+        
         if let layer = delegate?.override(layerAsset: (isPrimary) ? .ninchatQuestionnaireRadioSelected : .ninchatQuestionnaireRadioUnselected) {
+            self.setBackgroundImage(nil, for: .normal)
             self.layer.apply(layer)
         }
 
@@ -195,7 +197,6 @@ extension QuestionnaireElementRadio {
         view.setTitleColor(.QGrayButton, for: .normal)
         view.setTitle(option.label, for: .selected)
         view.setTitleColor(.QBlueButtonNormal, for: .selected)
-        view.setBackgroundImage(UIColor.white.toImage, for: .normal)
         view.setBackgroundImage(UIColor.QBlueButtonHighlighted.toImage, for: .highlighted)
         if option.href != nil {
             view.setImage(UIImage(named: "icon-external-link", in: .SDKBundle, compatibleWith: nil)?.withRenderingMode(.alwaysTemplate), for: .normal)

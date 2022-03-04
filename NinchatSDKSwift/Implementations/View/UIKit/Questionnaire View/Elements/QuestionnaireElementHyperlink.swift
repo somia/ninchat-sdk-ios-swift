@@ -104,7 +104,6 @@ class QuestionnaireElementHyperlink: UIView, QuestionnaireElement, HasExternalLi
         view.imageView?.tintColor = view.titleColor(for: .normal)
         view.semanticContentAttribute = .forceRightToLeft
         view.imageEdgeInsets = UIEdgeInsets(top: 0.0, left: 8.0, bottom: 0.0, right: 0.0)
-        view.setBackgroundImage(UIColor.white.toImage, for: .normal)
         view.updateTitleScale()
 
         self.layoutButton(view)
@@ -121,9 +120,10 @@ class QuestionnaireElementHyperlink: UIView, QuestionnaireElement, HasExternalLi
             button.fix(width: button.intrinsicContentSize.width + 32.0)
         }
         button
-                .fix(top: (4.0, self.view))
-                .fix(height: max(45.0, button.intrinsicContentSize.height + 16.0))
-                .center(toX: self.view)
+            .fix(top: (4.0, self.view))
+            .fix(height: max(45.0, button.intrinsicContentSize.height + 16.0))
+            .center(toX: self.view)
+            .roundButton()
 
         if self.view.height == nil {
             self.view.fix(height: 0)
@@ -145,11 +145,13 @@ extension QuestionnaireElement where Self:QuestionnaireElementHyperlink {
 extension NINButton {
     fileprivate func overrideQuestionnaireAsset(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         self.titleLabel?.font = .ninchat
+        self.setBackgroundImage(UIColor.white.toImage, for: .normal)
+        
         if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireRadioUnselected) {
+            self.setBackgroundImage(nil, for: .normal)
             self.layer.apply(layer)
-        } else {
-            self.roundButton()
         }
+        
         self.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorRadioUnselectedText) ?? .QGrayButton, for: .normal)
         self.imageView?.tintColor = self.titleColor(for: .normal)
     }
