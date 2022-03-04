@@ -80,13 +80,17 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement, HasTitle
         self.textContainerInset = UIEdgeInsets(top: topInset, left: 0.0, bottom: bottomInset, right: 0.0)
         self.textContainer.lineFragmentPadding = 0
     }
+    
+    fileprivate func estimatedWidth() -> CGFloat {
+        (UIApplication.topViewController()?.view.bounds ?? UIScreen.main.bounds).width - conversationStylePadding
+    }
 }
 
 extension QuestionnaireElement where Self:QuestionnaireElementText {
     func shapeView(_ configuration: QuestionnaireConfiguration?) {
         self.textAlignment = .left
         self.backgroundColor = .clear
-        self.setAttributed(text: configuration?.label ?? "", font: .ninchat)
+        self.setAttributed(text: configuration?.label ?? "", font: .ninchat, width: self.estimatedWidth())
         self.elementConfiguration = configuration
     }
 }
