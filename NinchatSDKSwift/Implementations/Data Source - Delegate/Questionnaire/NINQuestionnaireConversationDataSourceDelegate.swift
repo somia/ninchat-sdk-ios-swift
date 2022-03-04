@@ -182,7 +182,7 @@ extension NINQuestionnaireConversationDataSourceDelegate {
     }
 
     private func questionnaire(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
+        let cell: QuestionnaireCellConversation = tableView.dequeueReusableCell(forIndexPath: indexPath)
         let element = self.elements[indexPath.section][indexPath.row]
         element.isUserInteractionEnabled = (element.isShown ?? true) && (indexPath.section == self.sectionCount-1)
         element.questionnaireStyle = .conversation
@@ -209,7 +209,6 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         cell.indexPath = indexPath
         cell.backgroundColor = .clear
         cell.sessionManager = self.sessionManager
-        cell.conversationContentViewStyle.isHidden = false
 
         cell.addElement(element)
         cell.hideUserNameAndAvatar(indexPath.row != 0)

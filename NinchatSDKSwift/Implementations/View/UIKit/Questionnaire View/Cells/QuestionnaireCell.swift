@@ -7,7 +7,6 @@
 import UIKit
 
 class QuestionnaireCell: UITableViewCell {
-    @IBOutlet private(set) weak var conversationView: UIView!
     @IBOutlet private(set) weak var conversationContentView: UIStackView!
     
     @IBOutlet private(set) weak var conversationContentViewStyle: UIImageView!      /// bubble image
@@ -15,37 +14,14 @@ class QuestionnaireCell: UITableViewCell {
     @IBOutlet private(set) weak var conversationTitleContainerView: UIView!         /// title is added to this
     @IBOutlet private(set) weak var conversationOptionsContainerView: UIView!       /// elements are added to this
     
-    @IBOutlet private(set) weak var formContentView: UIView!
-    
     @IBOutlet private(set) weak var leftAvatarContainerView: UIView!
     @IBOutlet private(set) var conversationAuthorView: [Any]!
     
 
-    var indexPath: IndexPath! {
-        didSet {
-            self.conversationContentViewStyle.image = UIImage(named: (indexPath.row == 0) ? "chat_bubble_left" : "chat_bubble_left_series", in: .SDKBundle, compatibleWith: nil)
-        }
-    }
-
-    var style: QuestionnaireStyle! {
-        didSet {
-            self.conversationView.isHidden = (style == .form)
-            self.formContentView.isHidden = !self.conversationView.isHidden
-        }
-    }
-
-    weak var sessionManager: NINChatSessionManager? {
-        didSet {
-            guard self.style == .conversation,
-                let usernameLabel = self.usernameLabel,
-                let userAvatar = self.userAvatarImageView
-            else { return }
-
-            setupTitles(usernameLabel)
-            setupAvatar(userAvatar)
-        }
-    }
-
+    var indexPath: IndexPath!
+    var style: QuestionnaireStyle!
+    weak var sessionManager: NINChatSessionManager?
+    
     private lazy var usernameLabel: UILabel? = {
         self.conversationAuthorView.first(where: { $0 is UILabel }) as? UILabel
     }()
@@ -56,22 +32,24 @@ class QuestionnaireCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         
-        self.conversationTitleContainerView.viewWithTag(1)?.removeFromSuperview()
-        self.conversationTitleContainerView.isHidden = true
-        self.conversationOptionsContainerView.viewWithTag(1)?.removeFromSuperview()
-        self.conversationOptionsContainerView.isHidden = true
+        guard style == .conversation else { return }
+        self.conversationTitleContainerView?.viewWithTag(1)?.removeFromSuperview()
+        self.conversationTitleContainerView?.isHidden = true
+        self.conversationOptionsContainerView?.viewWithTag(1)?.removeFromSuperview()
+        self.conversationOptionsContainerView?.isHidden = true
     }
 
     func addElement(_ element: QuestionnaireElement) {
         switch style {
         case .form:
-            conversationOptionsContainerView.isHidden = true
-            formContentView.isHidden = false            
-            formContentView.addSubview(element)
-        case .conversation:
-            conversationOptionsContainerView.isHidden = false
-            formContentView.isHidden = true
+            self.contentView.addSubview(element)
+            self.layoutForm(element)
             
+        case .conversation:
+            conversationContentViewStyle.image = UIImage(named: (indexPath.row == 0) ? "chat_bubble_left" : "chat_bubble_left_series", in: .SDKBundle, compatibleWith: nil)
+            setupTitles(usernameLabel)
+            setupAvatar(userAvatarImageView)
+
             if let title = element as? HasTitle {
                 title.titleView.tag = 1
                 self.layoutTitle(title.titleView, element: element)
@@ -92,7 +70,9 @@ class QuestionnaireCell: UITableViewCell {
         self.conversationContentView.top?.constant = (hide) ? 0 : 55
     }
 
-    private func setupTitles(_ usernameLabel: UILabel) {
+    private func setupTitles(_ usernameLabel: UILabel?) {
+        guard let usernameLabel = usernameLabel else { return }
+        
         usernameLabel.text = sessionManager?.siteConfiguration.audienceQuestionnaireUserName ?? ""
         usernameLabel.font = .ninchat
         
@@ -110,7 +90,8 @@ class QuestionnaireCell: UITableViewCell {
         }
     }
 
-    private func setupAvatar(_ userAvatar: UIImageView) {
+    private func setupAvatar(_ userAvatar: UIImageView?) {
+        guard let userAvatar = userAvatar else { return }
         let avatar = AvatarConfig(forQuestionnaire: self.sessionManager)
 
         userAvatar.isHidden = !avatar.show
@@ -124,6 +105,10 @@ class QuestionnaireCell: UITableViewCell {
         } else {
             userAvatar.image = defaultImage
         }
+    }
+    
+    private func layoutForm(_ view: UIView) {
+        view.fix(leading: (4.0, self.contentView), trailing: (4.0, self.contentView))
     }
     
     private func layoutTitle(_ view: UIView, element: QuestionnaireElement) {
@@ -144,3 +129,6 @@ class QuestionnaireCell: UITableViewCell {
             .fix(top: (4.0, self.conversationOptionsContainerView), bottom: (4.0, self.conversationOptionsContainerView))
     }
 }
+
+class QuestionnaireCellConversation: QuestionnaireCell {}
+class QuestionnaireCellForm: QuestionnaireCell {}

@@ -280,7 +280,8 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
 
     private func generateTableView(isHidden: Bool) -> UITableView  {
         let view = UITableView(frame: .zero)
-        view.register(QuestionnaireCell.self)
+        view.register(QuestionnaireCellConversation.self)
+        view.register(QuestionnaireCellForm.self)
         view.register(QuestionnaireLoadingCell.self)
         view.registerClass(QuestionnaireNavigationCell.self)
 

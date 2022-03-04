@@ -104,6 +104,7 @@ class QuestionnaireElementHyperlink: UIView, QuestionnaireElement, HasExternalLi
         view.imageView?.tintColor = view.titleColor(for: .normal)
         view.semanticContentAttribute = .forceRightToLeft
         view.imageEdgeInsets = UIEdgeInsets(top: 0.0, left: 8.0, bottom: 0.0, right: 0.0)
+        view.setBackgroundImage(UIColor.white.toImage, for: .normal)
         view.updateTitleScale()
 
         self.layoutButton(view)
