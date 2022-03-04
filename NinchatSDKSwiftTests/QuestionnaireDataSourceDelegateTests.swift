@@ -33,7 +33,8 @@ final class QuestionnaireDataSourceDelegateTests: XCTestCase {
 
     private lazy var tableView: UITableView = {
         let view = UITableView(frame: .zero)
-        view.register(QuestionnaireCell.self)
+        view.register(QuestionnaireCellConversation.self)
+        view.register(QuestionnaireCellForm.self)
         view.register(QuestionnaireLoadingCell.self)
         view.registerClass(QuestionnaireNavigationCell.self)
 
@@ -85,8 +86,8 @@ extension QuestionnaireDataSourceDelegateTests {
 
     func test_106_closures() {
         let cell = formQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) as! QuestionnaireCell
-        XCTAssertTrue(cell.formContentView.subviews.first is QuestionnaireElementRadio)
-        let radioElement = cell.formContentView.subviews.first as! QuestionnaireElementRadio
+        XCTAssertTrue(cell.contentView.subviews.first is QuestionnaireElementRadio)
+        let radioElement = cell.contentView.subviews.first as! QuestionnaireElementRadio
         XCTAssertNotNil(radioElement.onElementOptionSelected)
         XCTAssertNotNil(radioElement.onElementOptionDeselected)
 

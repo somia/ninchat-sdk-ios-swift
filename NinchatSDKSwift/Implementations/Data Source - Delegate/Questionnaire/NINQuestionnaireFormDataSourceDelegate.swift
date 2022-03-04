@@ -94,7 +94,7 @@ extension NINQuestionnaireFormDataSourceDelegate {
 
     private func questionnaire(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> QuestionnaireCell {
         do {
-            let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
+            let cell: QuestionnaireCellForm = tableView.dequeueReusableCell(forIndexPath: indexPath) 
             let element = try self.viewModel.getElements()[indexPath.row]
             element.questionnaireStyle = .form
             element.overrideAssets(with: self.delegate)
@@ -122,7 +122,7 @@ extension NINQuestionnaireFormDataSourceDelegate {
             cell.sessionManager = self.sessionManager
             
             cell.addElement(element)
-            layoutSubview(view: element, parent: cell.formContentView)
+            layoutSubview(view: element, parent: cell.contentView)
             return cell
         } catch {
             fatalError(error.localizedDescription)
