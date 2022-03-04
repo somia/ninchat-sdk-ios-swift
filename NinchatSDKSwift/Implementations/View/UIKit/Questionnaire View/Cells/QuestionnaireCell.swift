@@ -65,7 +65,9 @@ class QuestionnaireCell: UITableViewCell {
     
     func hideUserNameAndAvatar(_ hide: Bool) {
         self.usernameLabel?.isHidden = hide
-        self.userAvatarImageView?.isHidden = hide
+        if AvatarConfig(forQuestionnaire: self.sessionManager).show {
+            self.userAvatarImageView?.isHidden = hide
+        }
         
         self.conversationContentView.top?.constant = (hide) ? 0 : 55
     }
