@@ -9,13 +9,10 @@ import UIKit
 final class QuestionnaireElementText: UITextView, QuestionnaireElement, HasTitle {
 
     fileprivate var topInset: CGFloat {
-        index == 0 ? 10.0 : 18.0
+        index == 0 ? 18.0 : 24.0
     }
     fileprivate var bottomInset: CGFloat {
         index == 0 ? 6.0 : 2.0
-    }
-    fileprivate var sidesInset: CGFloat {
-        (self.questionnaireStyle == .conversation) ? 0.0 : 8.0
     }
     fileprivate var conversationStylePadding: CGFloat {
         (self.questionnaireStyle == .conversation) ? 32 : 0
@@ -80,7 +77,7 @@ final class QuestionnaireElementText: UITextView, QuestionnaireElement, HasTitle
         self.isEditable = false
         self.isScrollEnabled = false
         
-        self.textContainerInset = .zero
+        self.textContainerInset = UIEdgeInsets(top: topInset, left: 0.0, bottom: bottomInset, right: 0.0)
         self.textContainer.lineFragmentPadding = 0
     }
 }

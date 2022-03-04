@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireHasBorder, QuestionnaireFocusableElement, HasTitle {
+final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireHasBorder, QuestionnaireFocusableElement, HasTitle, HasOptions {
 
     fileprivate var heightValue: CGFloat = 45.0
     private var answerUpdateWorker: DispatchWorkItem?
@@ -86,11 +86,24 @@ final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle
     // MARK: - HasTitle
     
     var titleView: UIView {
-        self
+        self.title
+    }
+    
+    // MARK: - HasOptions
+    
+    var optionsView: UIView {
+        self.view
     }
 
     // MARK: - UIView life-cycle
 
+    override var isUserInteractionEnabled: Bool {
+        didSet {
+            self.title.isEnabled = isUserInteractionEnabled
+            self.view.isEnabled = isUserInteractionEnabled
+        }
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         self.initiateView()
@@ -121,6 +134,7 @@ final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle
 
         self.view.delegate = self
         self.view.inputAccessoryView = self.doneButton(selector: #selector(self.onDoneButtonTapped(_:)))
+        self.view.addTarget(self, action: #selector(self.textFieldDidChange), for: .editingChanged)
     }
 
     private func decorateView() {
@@ -139,18 +153,17 @@ extension QuestionnaireElementTextField: UITextFieldDelegate {
         defer {  self.onElementDismissed?(self) }
         self.isCompleted = isCompleted(text: textField.text)
     }
-
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    
+    @objc
+    func textFieldDidChange() {
         self.answerUpdateWorker?.cancel()
         self.answerUpdateWorker = DispatchWorkItem { [weak self] in
             guard let `self` = self else { return }
-
-            self.isCompleted = self.isCompleted(text: (textField.text ?? "") + string)
+            
+            self.isCompleted = self.isCompleted(text: self.view.text)
             self.onElementDismissed?(self)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: self.answerUpdateWorker!)
-
-        return true
     }
 }
 

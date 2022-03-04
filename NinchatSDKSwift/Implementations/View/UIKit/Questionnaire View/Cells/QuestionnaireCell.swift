@@ -10,10 +10,10 @@ class QuestionnaireCell: UITableViewCell {
     @IBOutlet private(set) weak var conversationView: UIView!
     @IBOutlet private(set) weak var conversationContentView: UIStackView!
     
-    @IBOutlet private(set) weak var conversationTitleContainerView: UIView!
-    @IBOutlet private(set) weak var conversationContentViewStyle: UIImageView!
-    @IBOutlet private(set) weak var conversationTitleContentView: UIView!
-    @IBOutlet private(set) weak var conversationViewContentView: UIView!
+    @IBOutlet private(set) weak var conversationContentViewStyle: UIImageView!      /// bubble image
+    @IBOutlet private(set) weak var conversationTitleContentView: UIView!           /// title text is added to this
+    @IBOutlet private(set) weak var conversationTitleContainerView: UIView!         /// title is added to this
+    @IBOutlet private(set) weak var conversationOptionsContainerView: UIView!       /// elements are added to this
     
     @IBOutlet private(set) weak var formContentView: UIView!
     
@@ -24,8 +24,6 @@ class QuestionnaireCell: UITableViewCell {
     var indexPath: IndexPath! {
         didSet {
             self.conversationContentViewStyle.image = UIImage(named: (indexPath.row == 0) ? "chat_bubble_left" : "chat_bubble_left_series", in: .SDKBundle, compatibleWith: nil)
-            self.conversationAuthorView.compactMap({ $0 as? UIView }).forEach({ $0.isHidden = (indexPath.row != 0) })
-            self.conversationContentView.top?.constant = (indexPath.row == 0) ? 55 : 0
         }
     }
 
@@ -57,49 +55,41 @@ class QuestionnaireCell: UITableViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-
-        self.conversationViewContentView.subviews.forEach({ $0.removeFromSuperview() })
-        self.conversationTitleContentView.subviews.forEach({ $0.removeFromSuperview() })
-        self.formContentView.subviews.forEach({ $0.removeFromSuperview() })
         
-        conversationTitleContainerView.isHidden = false
-        conversationViewContentView.isHidden = false
-        conversationContentViewStyle.isHidden = false
+        self.conversationTitleContainerView.viewWithTag(1)?.removeFromSuperview()
+        self.conversationTitleContainerView.isHidden = true
+        self.conversationOptionsContainerView.viewWithTag(1)?.removeFromSuperview()
+        self.conversationOptionsContainerView.isHidden = true
     }
 
     func addElement(_ element: QuestionnaireElement) {
         switch style {
         case .form:
-            conversationViewContentView.isHidden = true
+            conversationOptionsContainerView.isHidden = true
             formContentView.isHidden = false            
             formContentView.addSubview(element)
         case .conversation:
-            conversationViewContentView.isHidden = false
+            conversationOptionsContainerView.isHidden = false
             formContentView.isHidden = true
             
             if let title = element as? HasTitle {
-                conversationTitleContentView.addSubview(title.titleView)
-            } else {
-                conversationTitleContainerView.isHidden = true
+                title.titleView.tag = 1
+                self.layoutTitle(title.titleView, element: element)
             }
-            
             if let options = element as? HasOptions {
-                conversationViewContentView.addSubview(options.optionsView)
-            } else {
-                conversationViewContentView.isHidden = true
-            }
-            
-            guard let label = element.elementConfiguration?.label, !label.isEmpty else {
-                conversationTitleContainerView.isHidden = true; return
+                options.optionsView.tag = 1
+                self.layoutOptions(options.optionsView)
             }
         case .none:
             fatalError("style cannot be none")
         }
     }
     
-    func hideUserNameAndAvatar(_ bool: Bool) {
-        self.usernameLabel?.isHidden = bool
-        self.userAvatarImageView?.isHidden = bool
+    func hideUserNameAndAvatar(_ hide: Bool) {
+        self.usernameLabel?.isHidden = hide
+        self.userAvatarImageView?.isHidden = hide
+        
+        self.conversationContentView.top?.constant = (hide) ? 0 : 55
     }
 
     private func setupTitles(_ usernameLabel: UILabel) {
@@ -116,6 +106,7 @@ class QuestionnaireCell: UITableViewCell {
             conversationContentViewStyle.isHidden = true
         } else if let backgroundColor = delegate.override(questionnaireAsset: .ninchatQuestionnaireColorBubble) {
             conversationContentViewStyle.tintColor = backgroundColor
+            conversationContentViewStyle.isHidden = false
         }
     }
 
@@ -123,6 +114,8 @@ class QuestionnaireCell: UITableViewCell {
         let avatar = AvatarConfig(forQuestionnaire: self.sessionManager)
 
         userAvatar.isHidden = !avatar.show
+        userAvatar.round()
+        userAvatar.contentMode = .scaleAspectFill
         leftAvatarContainerView.width?.constant = (userAvatar.isHidden) ? 0 : 35
         
         let defaultImage = UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)!
@@ -131,5 +124,23 @@ class QuestionnaireCell: UITableViewCell {
         } else {
             userAvatar.image = defaultImage
         }
+    }
+    
+    private func layoutTitle(_ view: UIView, element: QuestionnaireElement) {
+        self.conversationTitleContainerView.isHidden = (element.elementConfiguration?.label ?? "").isEmpty
+        self.conversationTitleContainerView.viewWithTag(1)?.removeFromSuperview()
+        self.conversationTitleContainerView.addSubview(view)
+        
+        view
+            .fix(top: (4.0, self.conversationTitleContainerView), bottom: (4.0, self.conversationTitleContainerView))
+    }
+    
+    private func layoutOptions(_ view: UIView) {
+        self.conversationOptionsContainerView.isHidden = false
+        self.conversationOptionsContainerView.viewWithTag(1)?.removeFromSuperview()
+        self.conversationOptionsContainerView.addSubview(view)
+        
+        view
+            .fix(top: (4.0, self.conversationOptionsContainerView), bottom: (4.0, self.conversationOptionsContainerView))
     }
 }
