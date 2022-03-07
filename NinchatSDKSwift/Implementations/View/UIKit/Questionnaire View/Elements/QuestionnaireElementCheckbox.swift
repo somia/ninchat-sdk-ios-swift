@@ -72,7 +72,6 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
             }
         })
         self.view.allSubviews.filter({ $0.tag >= 200 }).compactMap({ $0 as? UIImageView }).forEach({ imageView in
-            
             if let tintColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireCheckboxSelectedIndicator) {
                 imageView.tint = tintColor
             } else {
@@ -87,6 +86,7 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
                 view.round(radius: 23.0 / 2, borderWidth: 2.0, borderColor: self.iconBorderNormalColor)
             }
         })
+        self.view.backgroundColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorCheckboxBackground) ?? .white
     }
 
     // MARK: - QuestionnaireSettable

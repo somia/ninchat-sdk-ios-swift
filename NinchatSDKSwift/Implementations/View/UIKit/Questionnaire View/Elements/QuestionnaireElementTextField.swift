@@ -42,6 +42,7 @@ final class QuestionnaireElementTextField: UIView, QuestionnaireElementWithTitle
         if let borderColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorTextInputErrorBorder) {
             errorBorderColor = borderColor
         }
+        self.view.backgroundColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorTextInputBackground) ?? .white
         self.updateBorder()
     }
 
