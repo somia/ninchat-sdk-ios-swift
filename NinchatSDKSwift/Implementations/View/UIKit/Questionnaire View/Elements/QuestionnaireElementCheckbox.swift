@@ -83,10 +83,11 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
             if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireCheckbox) {
                 view.layer.apply(layer)
             } else {
-                view.round(radius: 23.0 / 2, borderWidth: 2.0, borderColor: self.iconBorderNormalColor)
+                view
+                    .round(radius: 23.0 / 2, borderWidth: 2.0, borderColor: self.iconBorderNormalColor)
+                    .backgroundColor = .white
             }
         })
-        self.view.backgroundColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorCheckboxBackground) ?? .white
     }
 
     // MARK: - QuestionnaireSettable

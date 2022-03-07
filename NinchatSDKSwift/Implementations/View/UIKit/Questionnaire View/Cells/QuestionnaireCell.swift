@@ -50,6 +50,14 @@ class QuestionnaireCell: UITableViewCell {
             setupTitles(usernameLabel)
             setupAvatar(userAvatarImageView)
 
+            if element is QuestionnaireElementCheckbox {
+                /// Checkbox elements should never show a bubble
+                self.conversationTitleContainerView.isHidden = true
+            } else if let label = element.elementConfiguration?.label, !label.isEmpty {
+                self.conversationTitleContainerView.isHidden = false
+            } else {
+                self.conversationTitleContainerView.isHidden = true
+            }
             if let title = element as? HasTitle {
                 title.titleView.tag = 1
                 self.layoutTitle(title.titleView, element: element)
@@ -114,7 +122,6 @@ class QuestionnaireCell: UITableViewCell {
     }
     
     private func layoutTitle(_ view: UIView, element: QuestionnaireElement) {
-        self.conversationTitleContainerView.isHidden = (element.elementConfiguration?.label ?? "").isEmpty
         self.conversationTitleContainerView.viewWithTag(1)?.removeFromSuperview()
         self.conversationTitleContainerView.addSubview(view)
         
