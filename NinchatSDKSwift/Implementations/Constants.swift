@@ -117,7 +117,6 @@ public enum QuestionnaireColorConstants {
     case ninchatQuestionnaireColorTextInput
     case ninchatQuestionnaireColorRadioSelectedText
     case ninchatQuestionnaireColorRadioUnselectedText
-    case ninchatQuestionnaireColorCheckboxBackground
     case ninchatQuestionnaireColorCheckboxSelectedText
     case ninchatQuestionnaireCheckboxSelectedIndicator
     case ninchatQuestionnaireColorCheckboxUnselectedText
