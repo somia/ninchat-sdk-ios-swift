@@ -53,10 +53,8 @@ class QuestionnaireCell: UITableViewCell {
             if element is QuestionnaireElementCheckbox {
                 /// Checkbox elements should never show a bubble
                 self.conversationTitleContainerView.isHidden = true
-            } else if let label = element.elementConfiguration?.label, !label.isEmpty {
-                self.conversationTitleContainerView.isHidden = false
             } else {
-                self.conversationTitleContainerView.isHidden = true
+                self.conversationTitleContainerView.isHidden = (element.elementConfiguration?.label ?? "").isEmpty
             }
             if let title = element as? HasTitle {
                 title.titleView.tag = 1
