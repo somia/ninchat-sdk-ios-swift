@@ -50,8 +50,8 @@ class QuestionnaireCell: UITableViewCell {
             setupTitles(usernameLabel)
             setupAvatar(userAvatarImageView)
 
-            if element is QuestionnaireElementCheckbox {
-                /// Checkbox elements should never show a bubble
+            if element is QuestionnaireElementCheckbox || element is QuestionnaireElementHyperlink {
+                /// Checkbox and Hyperlink elements should never show a bubble
                 self.conversationTitleContainerView.isHidden = true
             } else {
                 self.conversationTitleContainerView.isHidden = (element.elementConfiguration?.label ?? "").isEmpty
