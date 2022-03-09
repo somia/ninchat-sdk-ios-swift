@@ -42,8 +42,10 @@ final class NINQueueViewController: UIViewController, ViewController, HasTitleBa
     }
     @IBOutlet private(set) weak var cancelQueueButton: CloseButton! {
         didSet {
-            cancelQueueButton.isHidden = hasTitlebar
-
+            if self.hasTitlebar {
+                cancelQueueButton.isHidden = true; return
+            }
+            
             let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
             cancelQueueButton.buttonTitle = closeTitle
             cancelQueueButton.overrideAssets(with: self.delegate, in: .general)
@@ -175,7 +177,10 @@ extension NINQueueViewController {
 
     private func overrideAssets() {
         overrideTitlebarAssets()
-        cancelQueueButton.overrideAssets(with: self.delegate, in: .general)
+        
+        if !cancelQueueButton.isHidden {
+            cancelQueueButton.overrideAssets(with: self.delegate, in: .general)
+        }
 
         if let spinnerImage = self.delegate?.override(imageAsset: .ninchatIconLoader) {
             self.spinnerImageView.image = spinnerImage

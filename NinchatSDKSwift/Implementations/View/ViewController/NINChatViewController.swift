@@ -123,8 +123,10 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     }
     @IBOutlet private(set) weak var closeChatButton: CloseButton! {
         didSet {
-            closeChatButton.isHidden = hasTitlebar
-
+            if self.hasTitlebar {
+                closeChatButton.isHidden = true; return
+            }
+            
             let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
             closeChatButton.buttonTitle = closeTitle
             closeChatButton.overrideAssets(with: self.delegate, in: .chatTopRight)

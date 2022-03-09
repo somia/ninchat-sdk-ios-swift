@@ -97,7 +97,7 @@ final class Titlebar: UIView {
         overrideAssets(delegate: session?.delegate)
         
         guard let session = session else { return }
-        closeButton.isHidden = !session.siteConfiguration.hideTitlebar
+        closeButton.isHidden = session.siteConfiguration.hideTitlebar
     }
     
     private func overrideAssets(delegate: NINChatSessionInternalDelegate?) {
