@@ -82,7 +82,7 @@ extension QuestionnaireDataSourceDelegate {
 // MARK: - Closures
 extension QuestionnaireDataSourceDelegate {
     internal func onRequirementsUpdated(_ update: Bool, for cell: QuestionnaireNavigationCell) {
-        cell.requirementSatisfactionUpdater?(update)
+        cell.requirementSatisfactionUpdater?(update, cell.configuration!)
     }
 
     internal func onNextButtonTapped(elements: [QuestionnaireElement]?) {
@@ -120,7 +120,11 @@ extension QuestionnaireDataSourceDelegate {
 
     internal func setupSettable(element: QuestionnaireElement & QuestionnaireSettable) {
         defer { self.viewModel.preventAutoRedirect = false }
-        let setAnswerState: QuestionnaireSettableState = (self.viewModel.redirectTargetPage(element, performClosures: false) ?? -1 >= 0) ? .set : .nothing
+        
+        var setAnswerState: QuestionnaireSettableState = .nothing
+        if let redirect = self.viewModel.redirectTargetPage(element, performClosures: false), redirect >= 0, self.viewModel.shouldWaitForNextButton {
+            setAnswerState = .set
+        }
 
         if let checkbox = element as? QuestionnaireElementCheckbox, checkbox.subElements.count > 0 {
             checkbox.subElements.compactMap({ $0.value as? QuestionnaireElementCheckbox }).forEach({
@@ -136,7 +140,9 @@ extension QuestionnaireDataSourceDelegate {
             guard let `self` = self else { return }
 
             /// reload rows after selection to fix an issue in applying layers in cells
-            table.reloadRows(at: [index], with: .none)
+            if !(view is QuestionnaireElementCheckbox) {
+                table.reloadRows(at: [index], with: .none)
+            }
             
             /// Hyperlink elements have no value to submit
             if !(view is QuestionnaireElementHyperlink) {
@@ -165,7 +171,7 @@ extension QuestionnaireDataSourceDelegate {
             /// First ensure that the element is completed properly, otherwise remove any submitted answer for it
             if let isCompleted = self.isCompletedBorder(view: view as? QuestionnaireHasBorder), !isCompleted {
                 self.viewModel.removeAnswer(key: element)
-                self.viewModel.requirementSatisfactionUpdater?(false)
+                self.viewModel.requirementSatisfactionUpdater?(false, view.elementConfiguration!)
             }
 
             /// Now that the element is completed properly, save the answer

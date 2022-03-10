@@ -157,29 +157,32 @@ extension NINQuestionnaireConversationDataSourceDelegate {
 
     private func navigation(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: QuestionnaireNavigationCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
+        let configuration = self.configurations[indexPath.section]
+        
         cell.isLastItemInTable = indexPath.section == sectionCount-1
-        cell.shouldShowNextButton = self.configurations[indexPath.section].buttons?.hasValidNextButton ?? true
-        cell.shouldShowBackButton = (self.configurations[indexPath.section].buttons?.hasValidBackButton ?? true) && indexPath.section != 0
-        cell.configuration = self.configurations[indexPath.section]
+        cell.shouldShowNextButton = configuration.buttons?.hasValidNextButton ?? true
+        cell.shouldShowBackButton = (configuration.buttons?.hasValidBackButton ?? true) && indexPath.section != 0
+        cell.configuration = configuration
         cell.backgroundColor = .clear
         cell.isUserInteractionEnabled = (self.elements[indexPath.section].first?.isShown ?? true) && (cell.isLastItemInTable)
         cell.overrideAssets(with: self.delegate)
-
-        cell.onNextButtonTapped = { [weak self] in
+        cell.enableNavigationItems(self.viewModel.requirementsSatisfied, configuration: configuration)
+        
+        cell.onNextButtonTapped = { [weak self, cell, indexPath, configuration] in
             self?.viewModel.preventAutoRedirect = false
             self?.onNextButtonTapped(elements: self?.elements[indexPath.section])
+            cell.enableNavigationItems(false, configuration: configuration)
         }
         cell.onBackButtonTapped = { [weak self] in
             self?.onBackButtonTapped(completion: self?.onRemoveCellContent)
         }
-        cell.setSatisfaction(self.viewModel.requirementsSatisfied)
         self.viewModel.requirementSatisfactionUpdater = cell.requirementSatisfactionUpdater
 
         return cell
     }
 
     private func questionnaire(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
+        let cell: QuestionnaireCellConversation = tableView.dequeueReusableCell(forIndexPath: indexPath)
         let element = self.elements[indexPath.section][indexPath.row]
         element.isUserInteractionEnabled = (element.isShown ?? true) && (indexPath.section == self.sectionCount-1)
         element.questionnaireStyle = .conversation
@@ -206,13 +209,11 @@ extension NINQuestionnaireConversationDataSourceDelegate {
         cell.indexPath = indexPath
         cell.backgroundColor = .clear
         cell.sessionManager = self.sessionManager
-        cell.conversationContentViewStyle.isHidden = false
 
-        
         cell.addElement(element)
         cell.hideUserNameAndAvatar(indexPath.row != 0)
         layoutSubview(view: (element as? HasTitle)?.titleView, parent: cell.conversationTitleContentView)
-        layoutSubview(view: (element as? HasOptions)?.optionsView, parent: cell.conversationViewContentView)
+        layoutSubview(view: (element as? HasOptions)?.optionsView, parent: cell.conversationOptionsContainerView)
         return cell
     }
 }

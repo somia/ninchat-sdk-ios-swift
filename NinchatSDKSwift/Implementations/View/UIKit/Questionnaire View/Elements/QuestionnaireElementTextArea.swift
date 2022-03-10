@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireHasBorder, QuestionnaireFocusableElement, HasTitle {
+final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle, QuestionnaireSettable, QuestionnaireHasBorder, QuestionnaireFocusableElement, HasTitle, HasOptions {
 
     fileprivate var heightValue: CGFloat = 100.0
     private var answerUpdateWorker: DispatchWorkItem?
@@ -42,6 +42,7 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
         if let borderColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorTextInputErrorBorder) {
             errorBorderColor = borderColor
         }
+        self.view.backgroundColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorTextInputBackground) ?? .white
         self.updateBorder()
     }
 
@@ -87,11 +88,24 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
     // MARK: - HasTitle
     
     var titleView: UIView {
-        self
+        self.title
+    }
+    
+    // MARK: - HasOptions
+    
+    var optionsView: UIView {
+        self.view
     }
 
     // MARK: - UIView life-cycle
 
+    override var isUserInteractionEnabled: Bool {
+        didSet {
+            self.view.isEditable = isUserInteractionEnabled
+            self.view.isSelectable = isUserInteractionEnabled
+        }
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         self.initiateView()
@@ -126,7 +140,7 @@ final class QuestionnaireElementTextArea: UIView, QuestionnaireElementWithTitle,
 
     private func decorateView() {
         if self.subviews.count > 0 {
-            self.layoutElementViews(padding: UIEdgeInsets(top: 0.0, left: 8.0, bottom: 0.0, right: 8.0))
+            self.layoutElementViews()
         }
     }
 }
@@ -140,18 +154,16 @@ extension QuestionnaireElementTextArea: UITextViewDelegate {
         defer { self.onElementDismissed?(self) }
         self.isCompleted = isCompleted(text: textView.text)
     }
-
-    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+    
+    func textViewDidChange(_ textView: UITextView) {
         self.answerUpdateWorker?.cancel()
         self.answerUpdateWorker = DispatchWorkItem { [weak self] in
             guard let `self` = self else { return }
-
-            self.isCompleted = self.isCompleted(text: (textView.text ?? "") + text)
+            
+            self.isCompleted = self.isCompleted(text: self.view.text)
             self.onElementDismissed?(self)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: self.answerUpdateWorker!)
-
-        return true
     }
 }
 

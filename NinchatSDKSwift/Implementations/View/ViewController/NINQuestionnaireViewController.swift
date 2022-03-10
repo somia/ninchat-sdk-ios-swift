@@ -280,7 +280,8 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
 
     private func generateTableView(isHidden: Bool) -> UITableView  {
         let view = UITableView(frame: .zero)
-        view.register(QuestionnaireCell.self)
+        view.register(QuestionnaireCellConversation.self)
+        view.register(QuestionnaireCellForm.self)
         view.register(QuestionnaireLoadingCell.self)
         view.registerClass(QuestionnaireNavigationCell.self)
 
@@ -382,8 +383,7 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
     private func prepareSection() -> Int {
         guard let contentView = self.contentView, let conversationDataSource = self.dataSourceDelegate as? QuestionnaireConversationHelpers else { fatalError("`dataSourceDelegate` is not conformed to `QuestionnaireConversationHelpers`") }
         let section = conversationDataSource.insertSection()
-        contentView.insertSections(IndexSet(integer: section), with: .automatic)
-        if section > 0 { contentView.reloadSections(IndexSet(integer: section-1), with: .none) }
+        contentView.insertSections(IndexSet(integer: section), with: .none)
         return section
     }
 
@@ -410,7 +410,7 @@ extension NINQuestionnaireViewController: QuestionnaireConversationController {
         do {
             let elements = try self.viewModel.getElements()
             elements.forEach { element in
-                contentView.insertRows(at: [IndexPath(row: elements.firstIndex(where: { $0 == element })!, section: section)], with: .bottom)
+                contentView.insertRows(at: [IndexPath(row: elements.firstIndex(where: { $0 == element })!, section: section)], with: .fade)
                 _ = conversationDataSource.insertRow()
             }
         } catch {

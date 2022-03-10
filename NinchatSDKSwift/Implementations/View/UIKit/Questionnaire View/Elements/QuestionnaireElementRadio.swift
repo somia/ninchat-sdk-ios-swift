@@ -102,6 +102,16 @@ class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Question
     
     // MARK: - UIView life-cycle
 
+    override var isUserInteractionEnabled: Bool {
+        didSet {
+            self.title.isEnabled = isUserInteractionEnabled
+            self.view.subviews.forEach({ btn in
+                guard let button = btn as? NINButton else { return }
+                button.isEnabled = isUserInteractionEnabled
+            })
+        }
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         self.initiateView()
@@ -142,11 +152,11 @@ class QuestionnaireElementRadio: UIView, QuestionnaireElementWithTitle, Question
 extension NINButton {
     fileprivate func overrideQuestionnaireAsset(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         self.titleLabel?.font = .ninchat
-
+        self.setBackgroundImage(UIColor.white.toImage, for: .normal)
+        
         if let layer = delegate?.override(layerAsset: (isPrimary) ? .ninchatQuestionnaireRadioSelected : .ninchatQuestionnaireRadioUnselected) {
+            self.setBackgroundImage(nil, for: .normal)
             self.layer.apply(layer)
-        } else {
-            self.roundButton()
         }
 
         self.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorRadioUnselectedText) ?? .QGrayButton, for: .normal)
@@ -199,7 +209,7 @@ extension QuestionnaireElementRadio {
             view.semanticContentAttribute = .unspecified
         }
         view.updateTitleScale()
-
+        
         return view
     }
 
@@ -218,7 +228,8 @@ extension QuestionnaireElementRadio {
             .fix(top: (8.0, upperView ?? self.view), isRelative: (upperView != nil))
             .fix(height: max(45.0, button.intrinsicContentSize.height + 16.0))
             .center(toX: self.view)
-
+            .roundButton()
+        
         if self.view.height == nil {
             self.view.fix(height: 0)
         }

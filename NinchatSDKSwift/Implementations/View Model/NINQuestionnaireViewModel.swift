@@ -19,7 +19,7 @@ protocol NINQuestionnaireViewModel {
     var onErrorOccurred: ((Error) -> Void)? { get set }
     var onQuestionnaireFinished: ((Queue?, _ queueIsClosed: Bool, _ exit: Bool) -> Void)? { get set }
     var onSessionFinished: (() -> Void)? { get set }
-    var requirementSatisfactionUpdater: ((Bool) -> Void)? { get set }
+    var requirementSatisfactionUpdater: ((Bool, QuestionnaireConfiguration) -> Void)? { get set }
 
     init(sessionManager: NINChatSessionManager?, questionnaireType: AudienceQuestionnaireType)
     func isExitElement(_ element: Any?) -> Bool
@@ -82,7 +82,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     var onSessionFinished: (() -> Void)?
     var onErrorOccurred: ((Error) -> Void)?
     var onQuestionnaireFinished: ((Queue?, _ queueIsClosed: Bool, _ exit: Bool) -> Void)?
-    var requirementSatisfactionUpdater: ((Bool) -> Void)?
+    var requirementSatisfactionUpdater: ((Bool, QuestionnaireConfiguration) -> Void)?
 
     init(sessionManager: NINChatSessionManager?, questionnaireType: AudienceQuestionnaireType) {
         self.sessionManager = sessionManager
@@ -267,7 +267,7 @@ extension NINQuestionnaireViewModelImpl {
     func submitAnswer(key: QuestionnaireElement?, value: AnyHashable, allowUpdate: Bool?) -> Bool {
         guard !self.isExitElement(key) else { return true }
 
-        if let configuration = key?.elementConfiguration {
+        if let configuration = key?.elementConfiguration, let cfg = key?.questionnaireConfiguration {
             /// The check below intended to avoid executing closures that had been executed before
             /// But, this wouldn't be the case for the last item in the page
             if !(allowUpdate ?? true), let currentValue = self.answers[configuration.name], value == currentValue { return false }
@@ -275,7 +275,7 @@ extension NINQuestionnaireViewModelImpl {
             self.preventAutoRedirect = false
             self.answers[configuration.name] = value
             self.preAnswers.removeValue(forKey: configuration.name) // clear preset answers if there is a matched one
-            self.requirementSatisfactionUpdater?(self.requirementsSatisfied)
+            self.requirementSatisfactionUpdater?(self.requirementsSatisfied, cfg)
             return true
         }
         return false
@@ -288,7 +288,7 @@ extension NINQuestionnaireViewModelImpl {
             self.preventAutoRedirect = true
 
             self.answers.removeValue(forKey: configuration.name)
-            self.requirementSatisfactionUpdater?(self.requirementsSatisfied)
+            self.requirementSatisfactionUpdater?(self.requirementsSatisfied, configuration)
         }
     }
 

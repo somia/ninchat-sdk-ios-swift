@@ -63,7 +63,7 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
             if let selectedTextColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorCheckboxUnselectedText) {
                 button.setTitleColor(selectedTextColor, for: .normal)
             } else {
-                button.setTitleColor(.QGrayButton, for: .normal)
+                button.setTitleColor(.black, for: .normal)
             }
             if let selectedTextColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorCheckboxSelectedText) {
                 button.setTitleColor(selectedTextColor, for: .selected)
@@ -72,7 +72,6 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
             }
         })
         self.view.allSubviews.filter({ $0.tag >= 200 }).compactMap({ $0 as? UIImageView }).forEach({ imageView in
-            
             if let tintColor = delegate?.override(questionnaireAsset: .ninchatQuestionnaireCheckboxSelectedIndicator) {
                 imageView.tint = tintColor
             } else {
@@ -84,7 +83,9 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
             if let layer = delegate?.override(layerAsset: .ninchatQuestionnaireCheckbox) {
                 view.layer.apply(layer)
             } else {
-                view.round(radius: 23.0 / 2, borderWidth: 2.0, borderColor: self.iconBorderNormalColor)
+                view
+                    .round(radius: 23.0 / 2, borderWidth: 2.0, borderColor: self.iconBorderNormalColor)
+                    .backgroundColor = .white
             }
         })
     }
@@ -140,6 +141,18 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
     
     // MARK: - UIView life-cycle
 
+    override var isUserInteractionEnabled: Bool {
+        didSet {
+            self.view.subviews.forEach({ v in
+                if let button = v as? NINButton {
+                    button.isEnabled = isUserInteractionEnabled
+                } else if let icon = v as? UIView, icon.tag >= 200 {
+                    icon.isUserInteractionEnabled = isUserInteractionEnabled
+                }
+            })
+        }
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         self.initiateView()
@@ -186,8 +199,8 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
 extension NINButton {
     fileprivate func overrideQuestionnaireAsset(with delegate: NINChatSessionInternalDelegate?, isPrimary: Bool) {
         self.titleLabel?.font = .ninchat
-        self.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorCheckboxUnselectedText) ?? UIColor.QGrayButton, for: .normal)
-        self.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorCheckboxSelectedText) ?? UIColor.QBlueButtonNormal, for: .selected)
+        self.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorCheckboxUnselectedText) ?? .black, for: .normal)
+        self.setTitleColor(delegate?.override(questionnaireAsset: .ninchatQuestionnaireColorCheckboxSelectedText) ?? .QBlueButtonNormal, for: .selected)
     }
 }
 
@@ -235,7 +248,7 @@ extension QuestionnaireElementCheckbox {
 
         view.tag = 100 + index
         view.setTitle(label, for: .normal)
-        view.setTitleColor(.QGrayButton, for: .normal)
+        view.setTitleColor(.black, for: .normal)
         view.setTitle(label, for: .selected)
         view.setTitleColor(.QBlueButtonNormal, for: .selected)
         view.titleLabel?.font = .ninchat
@@ -275,7 +288,7 @@ extension QuestionnaireElementCheckbox {
 
         /// Layout icon
         icon
-            .fix(leading: (0.0, self.view))
+            .fix(leading: (8.0, self.view))
             .fix(width: 23.0, height: 23.0)
             .center(toY: button)
         icon.leading?.priority = .almostRequired

@@ -65,13 +65,13 @@ extension NINQuestionnaireFormDataSourceDelegate {
     private func navigation(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> QuestionnaireNavigationCell {
         do {
             let cell: QuestionnaireNavigationCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
-
             let configuration = try self.viewModel.getConfiguration()
+            
             cell.shouldShowNextButton = configuration.buttons?.hasValidNextButton ?? true
             cell.shouldShowBackButton = (configuration.buttons?.hasValidBackButton ?? true) && self.viewModel.pageNumber != 0
             cell.configuration = configuration
             cell.overrideAssets(with: self.delegate)
-            cell.setSatisfaction(self.viewModel.requirementsSatisfied)
+            cell.enableNavigationItems(self.viewModel.requirementsSatisfied, configuration: configuration)
 
             cell.onNextButtonTapped = { [weak self] in
                 do {
@@ -94,7 +94,7 @@ extension NINQuestionnaireFormDataSourceDelegate {
 
     private func questionnaire(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> QuestionnaireCell {
         do {
-            let cell: QuestionnaireCell = tableView.dequeueReusableCell(forIndexPath: indexPath)
+            let cell: QuestionnaireCellForm = tableView.dequeueReusableCell(forIndexPath: indexPath) 
             let element = try self.viewModel.getElements()[indexPath.row]
             element.questionnaireStyle = .form
             element.overrideAssets(with: self.delegate)
@@ -122,7 +122,7 @@ extension NINQuestionnaireFormDataSourceDelegate {
             cell.sessionManager = self.sessionManager
             
             cell.addElement(element)
-            layoutSubview(view: element, parent: cell.formContentView)
+            layoutSubview(view: element, parent: cell.contentView)
             return cell
         } catch {
             fatalError(error.localizedDescription)
