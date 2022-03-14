@@ -113,8 +113,8 @@ extension QuestionnaireElementConnectorImpl {
     ///   - autoApply: The variable declares if the '_register'/'_complete' closures are automatically applied or not.
     ///   - performClosures: The variable declares if the '_register'/'_complete' closures has to be performed or not.
     /// - Returns: Returns associated index and QuestionnaireElement for the given input in the given answers. If the
-        /// index == nil -> No associated elements found
-        /// index == -1 -> No associated elements found, but the '_register' or '_complete' block is found.
+    ///     index == nil -> No associated elements found
+    ///     index == -1 -> No associated elements found, but the '_register' or '_complete' block is found.
     func findElementAndPageLogic(logic block: LogicQuestionnaire, in answers: [String:AnyHashable], autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?) {
         if block.satisfy(dictionary: answers) {
             if let tags = block.tags, tags.count > 0 {
@@ -130,7 +130,7 @@ extension QuestionnaireElementConnectorImpl {
             if block.target == "_complete", performClosures {
                 self.onCompleteTargetReached?(block, nil, autoApply); return (nil, -1)
             }
-            if block.target == "_audienceRegisteredTarget", performClosures {
+            if (block.target == "_audienceRegisteredTarget" || block.target == "_close"), performClosures {
                 return (nil, -2)
             }
             if let configuration = self.findTargetLogicConfiguration(from: block).0 {
