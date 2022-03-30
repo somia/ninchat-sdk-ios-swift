@@ -28,7 +28,8 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     internal var myUserID: String?
     internal var channelClosed: Bool = false
     internal var expectedHistoryLength = -1
-
+    internal let operationQueue = OperationQueue()
+    
     // MARK: - NINChatSessionManagerInternalActions
     
     internal var onActionSessionEvent: ((NINSessionCredentials?, Events, Error?) -> Void)?
