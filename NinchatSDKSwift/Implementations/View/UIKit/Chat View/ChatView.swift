@@ -22,6 +22,9 @@ protocol ChatViewProtocol: UIView {
     /** A message was removed from given index. */
     func didRemoveMessage(from index: Int)
 
+    /** The chat's history is loaded. */
+    func didLoadHistory()
+
     /** A compose message got updates from the server regarding its options. */
     func didUpdateComposeAction(_ id: String, with action: ComposeUIAction)
 
@@ -113,17 +116,38 @@ final class ChatView: UIView, ChatViewProtocol {
     weak var delegate: ChatViewDelegate?
 
     func didAddMessage(at index: Int) {
-        guard let messageCount = dataSource?.numberOfMessages(for: self), tableView.numberOfRows(inSection: 0) < messageCount else { return }
-        lock.lock()
-        self.tableView.insertRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
-        lock.unlock()
+        DispatchQueue.main.async { [weak self] in
+            guard let `self` = self,
+                  let messageCount = self.dataSource?.numberOfMessages(for: self),
+                  self.tableView.numberOfRows(inSection: 0) < messageCount
+                    else {
+                return
+            }
+            self.tableView.beginUpdates()
+            self.tableView.insertRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+            self.tableView.endUpdates()
+        }
     }
 
     func didRemoveMessage(from index: Int) {
-        guard let messageCount = dataSource?.numberOfMessages(for: self), tableView.numberOfRows(inSection: 0) > messageCount else { return }
-        lock.lock()
-        self.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
-        lock.unlock()
+        DispatchQueue.main.async { [weak self] in
+            guard let `self` = self,
+                  let messageCount = self.dataSource?.numberOfMessages(for: self),
+                  self.tableView.numberOfRows(inSection: 0) > messageCount
+                    else {
+                return
+            }
+            self.tableView.beginUpdates()
+            self.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+            self.tableView.endUpdates()
+        }
+    }
+
+    func didLoadHistory() {
+        DispatchQueue.main.async { [weak self] in
+            guard let `self` = self else { return }
+            self.tableView.reloadData()
+        }
     }
 
     func didUpdateComposeAction(_ id: String, with action: ComposeUIAction) {

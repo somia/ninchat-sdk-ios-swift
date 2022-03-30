@@ -297,7 +297,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
             case .remove(let index):
                 self?.chatView.didRemoveMessage(from: index)
             case .history, .clean:
-                self?.chatView.tableView.reloadData()
+                self?.chatView.didLoadHistory()
             }
         }
         self.viewModel.onComposeActionUpdated = { [weak self] id, action in

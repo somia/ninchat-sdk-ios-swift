@@ -36,7 +36,7 @@ enum Events: String {
 
 protocol NINChatSessionManagerEventHandlers {
     func onSessionEvent(param: NINLowLevelClientProps)
-    func onEvent(param: NINLowLevelClientProps, payload: NINLowLevelClientPayload, lastReplay: Bool)
+    func onEvent(param: NINLowLevelClientProps, payload: NINLowLevelClientPayload, lastReplay: Bool) throws
     func onCloseEvent()
     func onLogEvent(value: String)
     func onConnStateEvent(state: String)
@@ -110,53 +110,76 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
         }
     }
 
-    func onEvent(param: NINLowLevelClientProps, payload: NINLowLevelClientPayload, lastReplay: Bool) {
-        do {
-            if case let .failure(error) = param.event { throw error }
+    func onEvent(param: NINLowLevelClientProps, payload: NINLowLevelClientPayload, lastReplay: Bool) throws {
+        if case let .failure(error) = param.event { throw error }
+        var currentOperation: BlockOperation?
 
-            let event = param.event.value
-            debugger("event handler: \(event)")
-            if let eventType = Events(rawValue: event) {
-                switch eventType {
-                case .error:
-                    try self.handlerError(param: param)
-                case .channelJoined:
-                    try self.didJoinChannel(param: param)
-                case .historyResult:
-                    try self.didLoadHistory(param: param)
-                    fallthrough
-                case .receivedMessage:
-                    try self.didReceiveMessage(param: param, payload: payload)
-                case .realmQueueFound:
-                    try self.didFindRealmQueues(param: param)
-                case .audienceEnqueued, .queueUpdated:
-                    try self.didUpdateQueue(type: eventType, param: param)
-                case .channelUpdated:
-                    try self.didUpdateChannel(param: param)
-                case .iceBegun:
-                    try self.didBeginICE(param: param)
-                case .userUpdated:
-                    try self.didUpdateUser(param: param)
-                case .channelParted:
-                    try self.didPartChannel(param: param)
-                case .channelMemberUpdated:
-                    try self.didUpdateMember(param: param)
-                case .fileFound:
-                    try self.didFindFile(param: param)
-                case .channelFound:
-                    try self.didFindChannel(param: param)
-                case .audienceRegistered:
-                    try self.didRegisterAudience(param: param)
-                default:
-                    break
+        let event = param.event.value
+        debugger("event handler: \(event)")
+
+        if let eventType = Events(rawValue: event) {
+            func setWorkItem(f: Selector, _ params: Any...) {
+                currentOperation = BlockOperation { [weak self] in
+                    guard let `self` = self else {
+                        fatalError("error in capturing self")
+                    }
+
+                    do {
+                        if params.count == 1 {
+                            try self.perform(f, with: params[0])
+                        } else if params.count == 2 {
+                            try self.perform(f, with: params[0], with: params[1])
+                        }
+                    } catch {
+                        debugger("Error in parsing the event \(event): \(error.localizedDescription)")
+                    }
                 }
-                
-                /// Forward the event to the SDK
-                self.delegate?.onLowLevelEvent(event: param, payload: payload, lastReply: lastReplay)
+
+                if let lastOperation = self.operationQueue.operations.last {
+                    currentOperation?.addDependency(lastOperation)
+                }
             }
-        } catch {
-            debugger("Error occurred: \(error)")
+
+            switch eventType {
+            case .error:
+                setWorkItem(f: #selector(self.handleError(param:)), param)
+            case .channelJoined:
+                setWorkItem(f: #selector(self.didJoinChannel(param:)), param)
+            case .historyResult:
+                setWorkItem(f: #selector(self.didLoadHistory(param:)), param)
+            case .receivedMessage:
+                setWorkItem(f: #selector(self.didReceiveMessage(param:payload:)), param, payload)
+            case .realmQueueFound:
+                setWorkItem(f: #selector(self.didFindRealmQueues(param:)), param)
+            case .audienceEnqueued, .queueUpdated:
+                setWorkItem(f: #selector(self.didUpdateQueue(type:param:)), event, param)
+            case .channelUpdated:
+                setWorkItem(f: #selector(self.didUpdateChannel(param:)), param)
+            case .iceBegun:
+                setWorkItem(f: #selector(self.didBeginICE(param:)), param)
+            case .userUpdated:
+                setWorkItem(f: #selector(self.didUpdateUser(param:)), param)
+            case .channelParted:
+                setWorkItem(f: #selector(self.didPartChannel(param:)), param)
+            case .channelMemberUpdated:
+                setWorkItem(f: #selector(self.didUpdateMember(param:)), param)
+            case .fileFound:
+                setWorkItem(f: #selector(self.didFindFile(param:)), param)
+            case .channelFound:
+                setWorkItem(f: #selector(self.didFindChannel(param:)), param)
+            case .audienceRegistered:
+                setWorkItem(f: #selector(self.didRegisterAudience(param:)), param)
+            default:
+                break
+            }
         }
+
+        if let operation = currentOperation {
+            self.operationQueue.addOperation(operation)
+        }
+
+        /// Forward the event to the SDK
+        self.delegate?.onLowLevelEvent(event: param, payload: payload, lastReply: lastReplay)
     }
     
     func onCloseEvent() {
@@ -183,7 +206,7 @@ extension NINChatSessionManagerImpl: NINLowLevelClientSessionEventHandlerProtoco
 extension NINChatSessionManagerImpl: NINLowLevelClientEventHandlerProtocol {
     func onEvent(_ params: NINLowLevelClientProps?, payload: NINLowLevelClientPayload?, lastReply: Bool) {
         DispatchQueue.main.async {
-            self.onEvent(param: params!, payload: payload!, lastReplay: lastReply)
+            try? self.onEvent(param: params!, payload: payload!, lastReplay: lastReply)
         }
     }
 }
