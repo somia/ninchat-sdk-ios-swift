@@ -393,6 +393,8 @@ extension NINChatSessionManagerImpl {
     
     internal func add<T: ChatMessage>(message: T, remained: NINResult<Int>? = .success(0)) {
         /// Guard against the same message getting added multiple times
+
+        debugger("trying to add the message: \(message)")
         if self.chatMessages.contains(where: { $0.messageID == message.messageID }) { return }
         self.chatMessages.insert(message, at: 0)
 
@@ -405,6 +407,9 @@ extension NINChatSessionManagerImpl {
             }
         }
 
+        debugger("expected history length: \(self.expectedHistoryLength)")
+        debugger("current messages: \(self.chatMessages.filter({ $0 is ChannelMessage }))")
+
         if self.expectedHistoryLength == self.chatMessages.filter({ $0 is ChannelMessage }).count {
             /// We are loading a history that needs to `reload` corresponded chat view
             self.chatMessages = self.sortAndMap()
@@ -415,6 +420,7 @@ extension NINChatSessionManagerImpl {
             /// Thus, we will update the view with the index of received message
             self.chatMessages = self.sortAndMap()
             self.onMessageAdded?(chatMessages.firstIndex(where: { $0.messageID == message.messageID }) ?? -1)
+            debugger("message was a part of history.")
         }
     }
 
