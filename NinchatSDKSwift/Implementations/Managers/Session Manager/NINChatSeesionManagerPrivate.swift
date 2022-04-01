@@ -10,7 +10,6 @@ import NinchatLowLevelClient
 // MARK: - Private helper functions - delegates
 
 extension NINChatSessionManagerImpl {
-    @objc
     internal func didFindRealmQueues(param: NINLowLevelClientProps) throws {
         delegate?.log(value: "Realm queues found")
 
@@ -56,7 +55,6 @@ extension NINChatSessionManagerImpl {
         }
     }
 
-    @objc
     internal func didUpdateQueue(type: String, param: NINLowLevelClientProps) throws {
         if case let .failure(error) = param.queueID { throw error }
         let type = Events(rawValue: type)!
@@ -92,7 +90,6 @@ extension NINChatSessionManagerImpl {
         }
     }
 
-    @objc
     internal func didUpdateUser(param: NINLowLevelClientProps) throws {
         guard self.currentChannelID != nil else { throw NINSessionExceptions.noActiveChannel }
         if case let .failure(error) = param.userID { throw error }
@@ -101,7 +98,6 @@ extension NINChatSessionManagerImpl {
         parse(userAttr: param.userAttributes.value, userID: param.userID.value)
     }
 
-    @objc
     internal func didFindFile(param: NINLowLevelClientProps) throws {
         if case let .failure(error) = param.fileURL { throw error }
         var fileInfoDictionary: [String:AnyHashable] = ["url": param.fileURL.value, "aspectRatio": 1, "urlExpiry": Date()]
@@ -121,7 +117,6 @@ extension NINChatSessionManagerImpl {
         self.onActionFileInfo?(param.actionID, fileInfoDictionary, nil)
     }
 
-    @objc
     internal func didDeleteUser(param: NINLowLevelClientProps) throws {
         if case let .failure(error) = param.userID { throw error }
 
@@ -133,7 +128,6 @@ extension NINChatSessionManagerImpl {
         self.onActionID?(param.actionID, nil)
     }
 
-    @objc
     internal func didJoinChannel(param: NINLowLevelClientProps) throws {
         guard currentQueueID != nil else { throw NINSessionExceptions.noActiveQueue }
         if case let .failure(error) = param.channelID { throw error }
@@ -175,7 +169,6 @@ extension NINChatSessionManagerImpl {
         self.onChannelJoined?()
     }
 
-    @objc
     internal func didJoinChannel(channelID: String, message: String?) throws {
         delegate?.log(value: "Joined channel ID: \(channelID)")
 
@@ -210,7 +203,6 @@ extension NINChatSessionManagerImpl {
         }
     }
 
-    @objc
     internal func didPartChannel(param: NINLowLevelClientProps) throws {
         if case let .failure(error) = param.channelID { throw error }
         
@@ -219,7 +211,6 @@ extension NINChatSessionManagerImpl {
         self.onActionChannel?(param.actionID, param.channelID.value)
     }
 
-    @objc
     internal func didUpdateChannel(param: NINLowLevelClientProps) throws {
         guard currentChannelID != nil || backgroundChannelID != nil else { throw NINSessionExceptions.noActiveChannel }
         if case let .failure(error) = param.channelID { throw error }
@@ -243,7 +234,6 @@ extension NINChatSessionManagerImpl {
         }
     }
 
-    @objc
     internal func didFindChannel(param: NINLowLevelClientProps) throws {
         if case let .failure(error) = param.channelID { throw error }
         guard param.channelID.value == self.currentChannelID else { throw NINSessionExceptions.noActiveChannel }
@@ -261,7 +251,6 @@ extension NINChatSessionManagerImpl {
     }
 
     /// Processes the response to the WebRTC connectivity ICE query
-    @objc
     internal func didBeginICE(param: NINLowLevelClientProps) throws {
 
         /// Parse the STUN server list
@@ -299,7 +288,6 @@ extension NINChatSessionManagerImpl {
         self.onActionSevers?(param.actionID, stunServers, turnServers)
     }
 
-    @objc
     internal func didLoadHistory(param: NINLowLevelClientProps) throws {
         if case let .failure(error) = param.historyLength { throw error }
         if param.historyLength.value > 0 {
@@ -307,7 +295,6 @@ extension NINChatSessionManagerImpl {
         }
     }
 
-    @objc
     internal func didReceiveMessage(param: NINLowLevelClientProps, payload: NINLowLevelClientPayload) throws {
         if case let .failure(error) = param.messageType { throw error }
         debugger("Received message of type \(String(describing: param.messageType.value))")
@@ -329,7 +316,6 @@ extension NINChatSessionManagerImpl {
         }
     }
 
-    @objc
     internal func didUpdateMember(param: NINLowLevelClientProps) throws {
         if case let .failure(error) = param.channelID { throw error }
 
@@ -369,7 +355,6 @@ extension NINChatSessionManagerImpl {
         }
     }
 
-    @objc
     internal func didRegisterAudience(param: NINLowLevelClientProps) throws {
         self.onActionID?(param.actionID, param.error)
     }
