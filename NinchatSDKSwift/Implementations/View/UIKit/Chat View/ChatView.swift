@@ -120,9 +120,7 @@ final class ChatView: UIView, ChatViewProtocol {
             return
         }
 
-        DispatchQueue.main.async {
-            self.tableView.insertRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
-        }
+       self.tableView.insertRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
     }
 
     func didRemoveMessage(from index: Int) {
@@ -130,9 +128,7 @@ final class ChatView: UIView, ChatViewProtocol {
             return
         }
 
-        DispatchQueue.main.async {
-            self.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
-        }
+        self.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
     }
 
     func didLoadHistory() {
