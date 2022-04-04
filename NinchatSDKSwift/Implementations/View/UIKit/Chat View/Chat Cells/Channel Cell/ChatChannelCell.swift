@@ -191,8 +191,10 @@ class ChatChannelOthersCell: ChatChannelCell {
         /// To avoid sending layerAssets down in children, we shall apply changes here directly
         if let bubbleLayer = (message.series) ? layerAssets?[.ninchatBubbleLeftRepeated] : layerAssets?[.ninchatBubbleLeft] {
             self.bubbleContainerView.layer.apply(bubbleLayer)
+            self.bubbleImageView.isHidden = true
         } else {
             self.bubbleImageView.image = UIImage(named: (message.series) ? "chat_bubble_left_series" : "chat_bubble_left", in: .SDKBundle, compatibleWith: nil)
+            self.bubbleImageView.isHidden = false
         }
     }
     
