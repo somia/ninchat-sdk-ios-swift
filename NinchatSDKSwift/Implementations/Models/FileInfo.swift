@@ -64,11 +64,12 @@ final class FileInfo: Codable {
         do {
             try session?.describe(file: self.fileID) { [weak self] error, fileInfo in
                 guard let `self` = self else { return }
-                debugger("described file with id: \(self.fileID ?? "nil") and name: \(self.name ?? "")")
-
                 if let error = error {
+                    debugger("error in describing the file: \(error.localizedDescription)")
                     completion(error, false)
                 } else if let info = fileInfo {
+                    debugger("described file with id: \(self.fileID ?? "nil") and name: \(self.name ?? "")")
+
                     self.url = info["url"] as? String
                     self.urlExpiry = info["urlExpiry"] as? Date
                     self.thumbnailUrl = info["thumbnailUrl"] as? String

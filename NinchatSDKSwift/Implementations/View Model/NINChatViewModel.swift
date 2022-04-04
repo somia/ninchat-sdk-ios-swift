@@ -72,6 +72,7 @@ final class NINChatViewModelImpl: NINChatViewModel {
     private var client: NINChatWebRTCClient?
     private var typingStatus = false
     private var typingStatusQueue: DispatchWorkItem?
+    private var isSelectingMedia = false
 
     var backlogMessages: String? {
         didSet {
@@ -217,7 +218,7 @@ extension NINChatViewModelImpl {
 
 extension NINChatViewModelImpl {
     func willEnterBackground() {
-        debugger("background mode, hangup the video call (if there are any)")
+        debugger("background mode, stop the video stream (if there are any)")
         /// instead of dropping the connection when the app goes to the background
         /// it is better to stop video stream and let the connection be alive
         /// discussed on `https://github.com/somia/mobile/issues/295`
@@ -246,7 +247,16 @@ extension NINChatViewModelImpl {
         /// user's status), and if the new issue is critical to resolve,
         /// then a dedicated task must be opened to investigate the
         /// problem.
-        self.loadHistory()
+        /// Update: the history shall not be loaded if the user
+        /// is just selecting a media to send. Either if they choose
+        /// or cancel, the backlog doesn't need to be updated with history
+        /// reload.
+
+        if !self.isSelectingMedia {
+            debugger("getting back to foreground, reloading history")
+            self.loadHistory()
+        }
+        self.isSelectingMedia = false
     }
 }
 
@@ -342,6 +352,8 @@ extension NINChatViewModelImpl {
 
 extension NINChatViewModelImpl {
     func openAttachment(source: UIImagePickerController.SourceType, completion: @escaping AttachmentCompletion) {
+        self.isSelectingMedia = true
+
         switch source {
         case .photoLibrary:
             self.grantLibraryPermission { [weak self] error in

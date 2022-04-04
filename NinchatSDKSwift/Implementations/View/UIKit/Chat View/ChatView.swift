@@ -116,31 +116,19 @@ final class ChatView: UIView, ChatViewProtocol {
     weak var delegate: ChatViewDelegate?
 
     func didAddMessage(at index: Int) {
-        DispatchQueue.main.async { [weak self] in
-            guard let `self` = self,
-                  let messageCount = self.dataSource?.numberOfMessages(for: self),
-                  self.tableView.numberOfRows(inSection: 0) < messageCount
-                    else {
-                return
-            }
-            self.tableView.beginUpdates()
-            self.tableView.insertRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
-            self.tableView.endUpdates()
+        guard let messageCount = self.dataSource?.numberOfMessages(for: self), self.tableView.numberOfRows(inSection: 0) < messageCount else {
+            return
         }
+
+       self.tableView.insertRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
     }
 
     func didRemoveMessage(from index: Int) {
-        DispatchQueue.main.async { [weak self] in
-            guard let `self` = self,
-                  let messageCount = self.dataSource?.numberOfMessages(for: self),
-                  self.tableView.numberOfRows(inSection: 0) > messageCount
-                    else {
-                return
-            }
-            self.tableView.beginUpdates()
-            self.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
-            self.tableView.endUpdates()
+        guard let messageCount = self.dataSource?.numberOfMessages(for: self), self.tableView.numberOfRows(inSection: 0) > messageCount else {
+            return
         }
+
+        self.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
     }
 
     func didLoadHistory() {
