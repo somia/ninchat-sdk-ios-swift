@@ -219,6 +219,7 @@
 		B704E3D3839BFE7F8114910B /* CALayer+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B704E0C1E0D15356C896EBF3 /* CALayer+Extension.swift */; };
 		B704E3E68829ED0963294E84 /* NSUserDefaults+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B704E5FC177573DF56D2369A /* NSUserDefaults+Extension.swift */; };
 		B704E8410F0ECA2A17505879 /* URL+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B704E5C0EFFB626F12366601 /* URL+Extension.swift */; };
+		B704EE2B2995404843CAE75E /* QuestionnaireElementConnectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B704EFBC22755FDA9C9A8FC3 /* QuestionnaireElementConnectorTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -469,6 +470,7 @@
 		B704E5C0EFFB626F12366601 /* URL+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL+Extension.swift"; sourceTree = "<group>"; };
 		B704E5FC177573DF56D2369A /* NSUserDefaults+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSUserDefaults+Extension.swift"; sourceTree = "<group>"; };
 		B704EDCDD95E1682A89C6470 /* QuestionnaireElementHyperlink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireElementHyperlink.swift; sourceTree = "<group>"; };
+		B704EFBC22755FDA9C9A8FC3 /* QuestionnaireElementConnectorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuestionnaireElementConnectorTests.swift; sourceTree = "<group>"; };
 		CE774BD7EED85980393E55AF /* Pods-NinchatSDKSwiftTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftTests.release.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests.release.xcconfig"; sourceTree = "<group>"; };
 		D463517AB20A2F6A738E2978 /* Pods-NinchatSDKSwiftUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftUITests.debug.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftUITests/Pods-NinchatSDKSwiftUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		ED659B1BF359B2E2971FF138 /* Pods-NinchatSDKSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwift.debug.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwift/Pods-NinchatSDKSwift.debug.xcconfig"; sourceTree = "<group>"; };
@@ -728,6 +730,7 @@
 				91A164F53F1869A8AC9E8982 /* XCTest+Extension.swift */,
 				91A16A4BAAD9D6ED4337842F /* NINQuestionnaireViewModelTests.swift */,
 				91A16294117AC2EE830CFB24 /* QuestionnaireDataSourceDelegateTests.swift */,
+				B704EFBC22755FDA9C9A8FC3 /* QuestionnaireElementConnectorTests.swift */,
 			);
 			path = NinchatSDKSwiftTests;
 			sourceTree = "<group>";
@@ -1606,6 +1609,7 @@
 				91A16A68D20E9D85101D93F8 /* XCTest+Extension.swift in Sources */,
 				91A161DB68CC555F5D24B454 /* NINQuestionnaireViewModelTests.swift in Sources */,
 				91A16DFAD20E2202A9E78EF8 /* QuestionnaireDataSourceDelegateTests.swift in Sources */,
+				B704EE2B2995404843CAE75E /* QuestionnaireElementConnectorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
