@@ -36,13 +36,13 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
         }
     }
     private var audienceRegisteredOperation: BlockOperation? {
-        guard self.dataSourceDelegate?.canAddRegisteredSection ?? false else { return nil }
+        guard self.viewModel.canAddRegisteredSection else { return nil }
         return BlockOperation { [weak self] in
             self?.dataSourceDelegate?.addRegisterSection()
         }
     }
     private var closedRegisteredOperation: BlockOperation? {
-        guard self.dataSourceDelegate?.canAddClosedRegisteredSection ?? false else { return nil }
+        guard self.viewModel.canAddClosedRegisteredSection else { return nil }
         return BlockOperation { [weak self] in
             self?.dataSourceDelegate?.addClosedRegisteredSection()
         }

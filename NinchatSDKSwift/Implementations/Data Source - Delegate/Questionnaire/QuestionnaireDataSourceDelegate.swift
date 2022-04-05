@@ -36,11 +36,9 @@ protocol QuestionnaireDataSource: AnyObject {
     func cell(at index: IndexPath, view: UITableView) -> UITableViewCell
 
     /** Add an extra section/page to questionnaires to show 'AudienceRegisteredText' */
-    var canAddRegisteredSection: Bool { get }
     func addRegisterSection()
 
     /** Add an extra section/page to questionnaires to show 'audienceRegisteredClosedText' */
-    var canAddClosedRegisteredSection: Bool { get }
     func addClosedRegisteredSection()
 
     var viewModel: NINQuestionnaireViewModel! { get set }
@@ -51,14 +49,6 @@ protocol QuestionnaireDataSource: AnyObject {
 protocol QuestionnaireDataSourceDelegate: QuestionnaireDataSource, QuestionnaireDelegate {}
 
 extension QuestionnaireDataSourceDelegate {
-    var canAddRegisteredSection: Bool {
-        self.sessionManager?.siteConfiguration.audienceRegisteredText != nil
-    }
-
-    var canAddClosedRegisteredSection: Bool {
-        self.sessionManager?.siteConfiguration.audienceRegisteredClosedText != nil
-    }
-
     internal func shouldShowNavigationCell(at index: Int) -> Bool {
         guard let configuration = try? self.viewModel.getConfiguration() else { return false }
         if index == 0 {

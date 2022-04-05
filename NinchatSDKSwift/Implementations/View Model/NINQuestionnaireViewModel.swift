@@ -21,6 +21,9 @@ protocol NINQuestionnaireViewModel {
     var onSessionFinished: (() -> Void)? { get set }
     var requirementSatisfactionUpdater: ((Bool, QuestionnaireConfiguration) -> Void)? { get set }
 
+    var canAddRegisteredSection: Bool { get }
+    var canAddClosedRegisteredSection: Bool { get }
+
     init(sessionManager: NINChatSessionManager?, questionnaireType: AudienceQuestionnaireType)
     func isExitElement(_ element: Any?) -> Bool
     func getConfiguration() throws -> QuestionnaireConfiguration
@@ -404,3 +407,16 @@ extension NINQuestionnaireViewModelImpl {
     }
 }
 
+// MARK : - Register Audience Helpers
+extension NINQuestionnaireViewModelImpl {
+    var canAddRegisteredSection: Bool {
+        /// Check if the questionnaire contains _registered element or logic first
+
+        /// if not, check if there is a text for the audience register
+        return self.sessionManager?.siteConfiguration.audienceRegisteredText != nil
+    }
+
+    var canAddClosedRegisteredSection: Bool {
+        self.sessionManager?.siteConfiguration.audienceRegisteredClosedText != nil
+    }
+}
