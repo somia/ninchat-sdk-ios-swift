@@ -187,7 +187,7 @@ extension QuestionnaireDataSourceDelegate {
     }
 
     private func showTargetPage(page: Int) -> Bool {
-        if self.viewModel.requirementsSatisfied, self.viewModel.goToPage(page) {
+        if self.viewModel.requirementsSatisfied, self.viewModel.goToPage(page: page) {
             self.onUpdateCellContent?(); return true
         }
         return false
