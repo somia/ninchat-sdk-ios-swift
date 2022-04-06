@@ -41,6 +41,9 @@ protocol QuestionnaireDataSource: AnyObject {
     /** Add an extra section/page to questionnaires to show 'audienceRegisteredClosedText' */
     func addClosedRegisteredSection()
 
+    /** Add an extra logic to questionnaires to show '_registered' */
+    func addRegisteredLogic()
+
     var viewModel: NINQuestionnaireViewModel! { get set }
     var sessionManager: NINChatSessionManager? { get set }
     init(viewModel: NINQuestionnaireViewModel, sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?)
@@ -231,6 +234,22 @@ extension QuestionnaireDataSourceDelegate {
                     "name": "register-logic",
                     "logic": {
                       "target": "_audienceRegisteredTarget"
+                    }
+                }
+            ]
+            """
+    }
+
+    internal func registeredLogic() -> String {
+        /// if the _registered configuration is not a logic, thus, it is a questionnaire element (or a group)
+        /// to be able to show it, we shall add a logic that navigate us to the element
+        return
+            """
+            [
+                {
+                    "name": "registered-logic",
+                    "logic": {
+                        "target": "_registered"
                     }
                 }
             ]

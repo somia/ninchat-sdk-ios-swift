@@ -47,6 +47,11 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
             self?.dataSourceDelegate?.addClosedRegisteredSection()
         }
     }
+    private var registeredElementOperation: BlockOperation? {
+        BlockOperation { [weak self] in 
+            self?.dataSourceDelegate?.addRegisteredLogic()
+        }
+    }
 
     // MARK: - KeyboardHandler
 
