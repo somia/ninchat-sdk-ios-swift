@@ -100,6 +100,16 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
                 else if exit {
                     self?.viewModel.onSessionFinished?()
                 }
+                /// Show _registered element according to `https://github.com/somia/mobile/issues/385`
+                /// If the configuration is a logic
+                else if let configuration = self?.viewModel.registeredElement, let logic = configuration.logic {
+                    self?.viewModel.goToPage(logic: logic)
+                    self?.dataSourceDelegate?.onUpdateCellContent?()
+                }
+                /// If the configuration is a questionnaire element
+                else if let configuration = self?.viewModel.registeredElement, let operation = self?.registeredElementOperation {
+                    self?.showRegisteredPage(operation: operation)
+                }
                 /// Show `AudienceRegisteredText` if it is set in the site configuration
                 /// and queue is NOT closed `https://github.com/somia/ninchat-ng/issues/1057`
                 else if let registeredOperation = self?.audienceRegisteredOperation, !queueIsClosed {
