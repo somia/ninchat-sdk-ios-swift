@@ -21,6 +21,10 @@ protocol NINQuestionnaireViewModel {
     var onSessionFinished: (() -> Void)? { get set }
     var requirementSatisfactionUpdater: ((Bool, QuestionnaireConfiguration) -> Void)? { get set }
 
+    var registeredElement: QuestionnaireConfiguration? { get }
+    var canAddRegisteredSection: Bool { get }
+    var canAddClosedRegisteredSection: Bool { get }
+
     init(sessionManager: NINChatSessionManager?, questionnaireType: AudienceQuestionnaireType)
     func isExitElement(_ element: Any?) -> Bool
     func getConfiguration() throws -> QuestionnaireConfiguration
@@ -33,7 +37,8 @@ protocol NINQuestionnaireViewModel {
     func goToNextPage() -> Bool?
     func canGoToPreviousPage() -> Bool
     func goToPreviousPage()
-    func goToPage(_ page: Int) -> Bool
+    func goToPage(logic: LogicQuestionnaire) -> Bool?
+    func goToPage(page: Int) -> Bool
     func submitAnswer(key: QuestionnaireElement?, value: AnyHashable, allowUpdate: Bool?) -> Bool
     func removeAnswer(key: QuestionnaireElement?)
     func finishQuestionnaire(for logic: LogicQuestionnaire?, redirect: ElementRedirect?, autoApply: Bool)
@@ -361,28 +366,9 @@ extension NINQuestionnaireViewModelImpl {
         guard self.items.count > self.pageNumber + 1 else { return false }
 
         if let logic = self.items[self.pageNumber + 1].logic {
-            let target = logicTargetPage(logic, autoApply: false)
-
-            switch target {
-            case -2:
-                /// This is a _exit logic
-                /// Simply exit the questionnaire and do nothing
-                self.onQuestionnaireFinished?(nil, false, true)
-                return nil
-            case -1:
-                /// This is a _register or _complete logic
-                /// Which is handled by appropriate closures. Skip for now
-                return nil
-            case nil:
-                /// No target is found, move to the next page
-                self.pageNumber += 1
-                return goToNextPage()
-            default:
-                /// Move to the target
-                return self.goToPage(target!)
-            }
+           return self.goToPage(logic: logic)
         } else if self.items[self.pageNumber + 1].elements != nil {
-            return self.goToPage(self.pageNumber + 1)
+            return self.goToPage(page: self.pageNumber + 1)
         }
         return false
     }
@@ -395,12 +381,57 @@ extension NINQuestionnaireViewModelImpl {
         self.pageNumber = self.visitedPages.last!
     }
 
-    func goToPage(_ page: Int) -> Bool {
+    func goToPage(page: Int) -> Bool {
         guard self.requirementsSatisfied, page >= 0 else { return false }
 
         self.pageNumber = page
         self.visitedPages.append(page)
         return true
     }
+
+    @discardableResult
+    func goToPage(logic: LogicQuestionnaire) -> Bool? {
+        let target = logicTargetPage(logic, autoApply: false)
+
+        switch target {
+        case -2:
+            /// This is a _exit logic
+            /// Simply exit the questionnaire and do nothing
+            self.onQuestionnaireFinished?(nil, false, true)
+            return nil
+        case -1:
+            /// This is a _register or _complete logic
+            /// Which is handled by appropriate closures. Skip for now
+            return nil
+        case nil:
+            /// No target is found, move to the next page
+            self.pageNumber += 1
+            return goToNextPage()
+        default:
+            /// Move to the target
+            return self.goToPage(page: target!)
+        }
+        return false
+    }
 }
 
+// MARK : - Register Audience Helpers
+extension NINQuestionnaireViewModelImpl {
+    var registeredElement: QuestionnaireConfiguration? {
+        self.connector.findConfiguration(label: "_registered", in: self.configurations)
+    }
+
+    var canAddRegisteredSection: Bool {
+        /// Check if the questionnaire contains _registered element or logic first
+        if self.registeredElement != nil {
+            return false
+        }
+
+        /// if not, check if there is a text for the audience register
+        return self.sessionManager?.siteConfiguration.audienceRegisteredText != nil
+    }
+
+    var canAddClosedRegisteredSection: Bool {
+        self.sessionManager?.siteConfiguration.audienceRegisteredClosedText != nil
+    }
+}

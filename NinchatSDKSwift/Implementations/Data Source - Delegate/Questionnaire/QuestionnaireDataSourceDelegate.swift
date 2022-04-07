@@ -36,12 +36,13 @@ protocol QuestionnaireDataSource: AnyObject {
     func cell(at index: IndexPath, view: UITableView) -> UITableViewCell
 
     /** Add an extra section/page to questionnaires to show 'AudienceRegisteredText' */
-    var canAddRegisteredSection: Bool { get }
     func addRegisterSection()
 
     /** Add an extra section/page to questionnaires to show 'audienceRegisteredClosedText' */
-    var canAddClosedRegisteredSection: Bool { get }
     func addClosedRegisteredSection()
+
+    /** Add an extra logic to questionnaires to show '_registered' */
+    func addRegisteredLogic()
 
     var viewModel: NINQuestionnaireViewModel! { get set }
     var sessionManager: NINChatSessionManager? { get set }
@@ -51,14 +52,6 @@ protocol QuestionnaireDataSource: AnyObject {
 protocol QuestionnaireDataSourceDelegate: QuestionnaireDataSource, QuestionnaireDelegate {}
 
 extension QuestionnaireDataSourceDelegate {
-    var canAddRegisteredSection: Bool {
-        self.sessionManager?.siteConfiguration.audienceRegisteredText != nil
-    }
-
-    var canAddClosedRegisteredSection: Bool {
-        self.sessionManager?.siteConfiguration.audienceRegisteredClosedText != nil
-    }
-
     internal func shouldShowNavigationCell(at index: Int) -> Bool {
         guard let configuration = try? self.viewModel.getConfiguration() else { return false }
         if index == 0 {
@@ -194,7 +187,7 @@ extension QuestionnaireDataSourceDelegate {
     }
 
     private func showTargetPage(page: Int) -> Bool {
-        if self.viewModel.requirementsSatisfied, self.viewModel.goToPage(page) {
+        if self.viewModel.requirementsSatisfied, self.viewModel.goToPage(page: page) {
             self.onUpdateCellContent?(); return true
         }
         return false
@@ -241,6 +234,22 @@ extension QuestionnaireDataSourceDelegate {
                     "name": "register-logic",
                     "logic": {
                       "target": "_audienceRegisteredTarget"
+                    }
+                }
+            ]
+            """
+    }
+
+    internal func registeredLogic() -> String {
+        /// if the _registered configuration is not a logic, thus, it is a questionnaire element (or a group)
+        /// to be able to show it, we shall add a logic that navigate us to the element
+        return
+            """
+            [
+                {
+                    "name": "registered-logic",
+                    "logic": {
+                        "target": "_registered"
                     }
                 }
             ]

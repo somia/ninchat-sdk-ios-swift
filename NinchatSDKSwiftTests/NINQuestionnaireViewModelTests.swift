@@ -135,11 +135,11 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
     }
 
     func test_40_pageNavigation() {
-        XCTAssertFalse(self.viewModel?.goToPage(8) ?? true)
+        XCTAssertFalse(self.viewModel?.goToPage(page: 8) ?? true)
 
         let element = try? self.viewModel?.getElements().first
         _ = self.viewModel?.submitAnswer(key: element!, value: "Mikä on koronavirus", allowUpdate: true)
-        XCTAssertTrue(self.viewModel?.goToPage(8) ?? false)
+        XCTAssertTrue(self.viewModel?.goToPage(page: 8) ?? false)
     }
 
     func test_41_waitForNextButton() {
@@ -152,13 +152,13 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
 
     func test_50_simpleNavigation() {
         self.viewModel?.pageNumber = 28
-        XCTAssertFalse(self.viewModel?.goToPage(30) ?? true)
+        XCTAssertFalse(self.viewModel?.goToPage(page: 30) ?? true)
 
         self.viewModel?.answers = ["temp-btn": "Finnish", "temp-btn2": "Finnish"]
-        XCTAssertFalse(self.viewModel?.goToPage(30) ?? true)
+        XCTAssertFalse(self.viewModel?.goToPage(page: 30) ?? true)
 
         self.viewModel?.answers = ["temp-btn": "Finnish", "temp-btn2": "Finnish", "comments": "This is unit test"]
-        XCTAssertTrue(self.viewModel?.goToPage(30) ?? false)
+        XCTAssertTrue(self.viewModel?.goToPage(page: 30) ?? false)
     }
 
     func test_51_navigationWithRedirects() {
@@ -172,7 +172,7 @@ final class NINQuestionnaireViewModelTests: XCTestCase {
         let page = self.viewModel?.redirectTargetPage(element!)
         XCTAssertNotNil(page)
         XCTAssertEqual(page ?? 0, 1)
-        XCTAssertTrue(self.viewModel?.goToPage(page!) ?? false)
+        XCTAssertTrue(self.viewModel?.goToPage(page: page!) ?? false)
     }
 
     func test_52_navigationWithRedirects_Complete() {
