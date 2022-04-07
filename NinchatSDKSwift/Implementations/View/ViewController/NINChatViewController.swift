@@ -223,6 +223,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.updateTitlebar()
         self.addRotationListener()
         self.reloadView()
         self.adjustConstraints(for: self.view.bounds.size, withAnimation: false)
