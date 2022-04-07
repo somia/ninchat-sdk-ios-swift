@@ -142,7 +142,7 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
                 } else if self.hasPostAudienceQuestionnaire {
                     self.navigationController?.pushViewController(self.questionnaireViewController(ratingViewModel: nil, rating: nil, questionnaireType: .post), animated: true)
                 } else {
-                    self.delegate?.onDidEnd()
+                    try? self.sessionManager.closeChat()
                 }
             }
         }
