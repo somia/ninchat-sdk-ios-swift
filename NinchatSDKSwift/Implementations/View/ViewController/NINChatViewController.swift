@@ -223,6 +223,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.updateTitlebar()
         self.addRotationListener()
         self.reloadView()
         self.adjustConstraints(for: self.view.bounds.size, withAnimation: false)
@@ -297,7 +298,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
             case .remove(let index):
                 self?.chatView.didRemoveMessage(from: index)
             case .history, .clean:
-                self?.chatView.tableView.reloadData()
+                self?.chatView.didLoadHistory()
             }
         }
         self.viewModel.onComposeActionUpdated = { [weak self] id, action in

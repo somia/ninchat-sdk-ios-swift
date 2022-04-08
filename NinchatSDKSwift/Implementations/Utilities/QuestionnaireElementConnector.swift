@@ -15,6 +15,7 @@ protocol QuestionnaireElementConnector {
     init(configurations: [QuestionnaireConfiguration], style: QuestionnaireStyle)
     func findElementAndPageRedirect(for input: AnyHashable, in configuration: QuestionnaireConfiguration, autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?)
     func findElementAndPageLogic(logic block: LogicQuestionnaire, in answers: [String:AnyHashable], autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?)
+    func findConfiguration(label: String, in cfg: [QuestionnaireConfiguration]?) -> QuestionnaireConfiguration?
     mutating func appendElements(_ elements: [QuestionnaireItems], configurations: [QuestionnaireConfiguration])
 }
 
@@ -113,8 +114,8 @@ extension QuestionnaireElementConnectorImpl {
     ///   - autoApply: The variable declares if the '_register'/'_complete' closures are automatically applied or not.
     ///   - performClosures: The variable declares if the '_register'/'_complete' closures has to be performed or not.
     /// - Returns: Returns associated index and QuestionnaireElement for the given input in the given answers. If the
-        /// index == nil -> No associated elements found
-        /// index == -1 -> No associated elements found, but the '_register' or '_complete' block is found.
+    ///     index == nil -> No associated elements found
+    ///     index == -1 -> No associated elements found, but the '_register' or '_complete' block is found.
     func findElementAndPageLogic(logic block: LogicQuestionnaire, in answers: [String:AnyHashable], autoApply: Bool, performClosures: Bool) -> ([QuestionnaireElement]?, Int?) {
         if block.satisfy(dictionary: answers) {
             if let tags = block.tags, tags.count > 0 {
@@ -130,7 +131,7 @@ extension QuestionnaireElementConnectorImpl {
             if block.target == "_complete", performClosures {
                 self.onCompleteTargetReached?(block, nil, autoApply); return (nil, -1)
             }
-            if block.target == "_audienceRegisteredTarget", performClosures {
+            if (block.target == "_audienceRegisteredTarget" || block.target == "_close"), performClosures {
                 return (nil, -2)
             }
             if let configuration = self.findTargetLogicConfiguration(from: block).0 {
@@ -144,5 +145,24 @@ extension QuestionnaireElementConnectorImpl {
     /// The function is called if the `areSatisfied(logic:values:)` returns the satisfied logic
     internal func findTargetLogicConfiguration(from logic: LogicQuestionnaire) -> (QuestionnaireConfiguration?, Int?) {
         (self.configurations.first { $0.name == logic.target }, self.configurations.firstIndex { $0.name == logic.target })
+    }
+}
+
+// MARK : - Search Helpers
+extension QuestionnaireElementConnectorImpl {
+    func findConfiguration(label: String, in cfg: [QuestionnaireConfiguration]?) -> QuestionnaireConfiguration? {
+        guard let cfg = cfg else { return nil }
+
+        if let target = cfg.first(where: { $0.name == label }) {
+            return target
+        }
+
+        /// Search for the target recursively
+        for configuration in cfg {
+            if let target = findConfiguration(label: label, in: configuration.elements) {
+                return target
+            }
+        }
+        return nil
     }
 }

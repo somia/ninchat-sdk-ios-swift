@@ -55,8 +55,9 @@ extension NINChatSessionManagerImpl {
         }
     }
 
-    internal func didUpdateQueue(type: Events, param: NINLowLevelClientProps) throws {
+    internal func didUpdateQueue(type: String, param: NINLowLevelClientProps) throws {
         if case let .failure(error) = param.queueID { throw error }
+        let type = Events(rawValue: type)!
 
         func updateQueueClosures() throws {
             guard let queue = self.queues.first(where: { $0.queueID == param.queueID.value }) else { throw NINSessionExceptions.noQueueFound }
@@ -96,7 +97,7 @@ extension NINChatSessionManagerImpl {
 
         parse(userAttr: param.userAttributes.value, userID: param.userID.value)
     }
-    
+
     internal func didFindFile(param: NINLowLevelClientProps) throws {
         if case let .failure(error) = param.fileURL { throw error }
         var fileInfoDictionary: [String:AnyHashable] = ["url": param.fileURL.value, "aspectRatio": 1, "urlExpiry": Date()]
@@ -115,7 +116,7 @@ extension NINChatSessionManagerImpl {
 
         self.onActionFileInfo?(param.actionID, fileInfoDictionary, nil)
     }
-    
+
     internal func didDeleteUser(param: NINLowLevelClientProps) throws {
         if case let .failure(error) = param.userID { throw error }
 
@@ -126,7 +127,7 @@ extension NINChatSessionManagerImpl {
 
         self.onActionID?(param.actionID, nil)
     }
-    
+
     internal func didJoinChannel(param: NINLowLevelClientProps) throws {
         guard currentQueueID != nil else { throw NINSessionExceptions.noActiveQueue }
         if case let .failure(error) = param.channelID { throw error }
@@ -201,7 +202,7 @@ extension NINChatSessionManagerImpl {
             try self.send(message: message) { _ in }
         }
     }
-    
+
     internal func didPartChannel(param: NINLowLevelClientProps) throws {
         if case let .failure(error) = param.channelID { throw error }
         
@@ -209,7 +210,7 @@ extension NINChatSessionManagerImpl {
         self.channelClosed = false
         self.onActionChannel?(param.actionID, param.channelID.value)
     }
-    
+
     internal func didUpdateChannel(param: NINLowLevelClientProps) throws {
         guard currentChannelID != nil || backgroundChannelID != nil else { throw NINSessionExceptions.noActiveChannel }
         if case let .failure(error) = param.channelID { throw error }
@@ -314,7 +315,7 @@ extension NINChatSessionManagerImpl {
             if actionID.value != 0 { self.onActionID?(actionID, error) }
         }
     }
-    
+
     internal func didUpdateMember(param: NINLowLevelClientProps) throws {
         if case let .failure(error) = param.channelID { throw error }
 
@@ -377,6 +378,8 @@ extension NINChatSessionManagerImpl {
     
     internal func add<T: ChatMessage>(message: T, remained: NINResult<Int>? = .success(0)) {
         /// Guard against the same message getting added multiple times
+
+        debugger("trying to add the message: \(message.messageID)")
         if self.chatMessages.contains(where: { $0.messageID == message.messageID }) { return }
         self.chatMessages.insert(message, at: 0)
 
@@ -389,16 +392,21 @@ extension NINChatSessionManagerImpl {
             }
         }
 
-        if self.expectedHistoryLength == self.chatMessages.filter({ $0 is ChannelMessage }).count {
+        debugger("expected history length: \(self.expectedHistoryLength)")
+        debugger("current messages: \(self.chatMessages.filter({ $0 is ChannelMessage }).count)")
+
+        if self.expectedHistoryLength > 0, self.expectedHistoryLength <= self.chatMessages.filter({ $0 is ChannelMessage }).count {
             /// We are loading a history that needs to `reload` corresponded chat view
             self.chatMessages = self.sortAndMap()
             self.onHistoryLoaded?(self.expectedHistoryLength)
             self.expectedHistoryLength = -1
-        } else if self.expectedHistoryLength == -1, case let .success(length) = remained, length == 0 {
+            debugger("history loaded")
+        } else if expectedHistoryLength <= 0, case let .success(length) = remained, length == 0 {
             /// We are not waiting for a history result
             /// Thus, we will update the view with the index of received message
             self.chatMessages = self.sortAndMap()
             self.onMessageAdded?(chatMessages.firstIndex(where: { $0.messageID == message.messageID }) ?? -1)
+            debugger("message added")
         }
     }
 
@@ -640,7 +648,8 @@ extension NINChatSessionManagerImpl {
         debugger("Received a Part message with payload: \(payload)")
     }
 
-    internal func handlerError(param: NINLowLevelClientProps) throws {
+    @objc
+    internal func handleError(param: NINLowLevelClientProps) throws {
         debugger.error(param.error as? NinchatError)
         self.onActionID?(param.actionID, param.error)
     }

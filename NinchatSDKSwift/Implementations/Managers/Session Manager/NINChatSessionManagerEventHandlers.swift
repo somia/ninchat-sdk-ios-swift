@@ -113,24 +113,23 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
     func onEvent(param: NINLowLevelClientProps, payload: NINLowLevelClientPayload, lastReplay: Bool) {
         do {
             if case let .failure(error) = param.event { throw error }
-
             let event = param.event.value
             debugger("event handler: \(event)")
+
             if let eventType = Events(rawValue: event) {
                 switch eventType {
                 case .error:
-                    try self.handlerError(param: param)
+                    try self.handleError(param: param)
                 case .channelJoined:
                     try self.didJoinChannel(param: param)
                 case .historyResult:
                     try self.didLoadHistory(param: param)
-                    fallthrough
                 case .receivedMessage:
                     try self.didReceiveMessage(param: param, payload: payload)
                 case .realmQueueFound:
                     try self.didFindRealmQueues(param: param)
                 case .audienceEnqueued, .queueUpdated:
-                    try self.didUpdateQueue(type: eventType, param: param)
+                    try self.didUpdateQueue(type:event, param: param)
                 case .channelUpdated:
                     try self.didUpdateChannel(param: param)
                 case .iceBegun:
@@ -150,12 +149,12 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                 default:
                     break
                 }
-                
-                /// Forward the event to the SDK
-                self.delegate?.onLowLevelEvent(event: param, payload: payload, lastReply: lastReplay)
             }
+
+            /// Forward the event to the SDK
+            self.delegate?.onLowLevelEvent(event: param, payload: payload, lastReply: lastReplay)
         } catch {
-            debugger("Error occurred: \(error)")
+            debugger("error in parsing the event: \(error.localizedDescription)")
         }
     }
     
