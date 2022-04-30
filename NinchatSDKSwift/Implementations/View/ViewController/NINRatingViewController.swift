@@ -81,8 +81,11 @@ final class NINRatingViewController: UIViewController, ViewController, HasTitleB
     var titlebarAvatar: String? {
         /// - agentAvatar:true, show user_attrs.iconurl everywhere
         /// - agentAvatar:url, show that instead
-        guard let avatar = self.sessionManager?.siteConfiguration.agentAvatar as? Bool else { return nil }
-        return (self.sessionManager?.siteConfiguration.agentAvatar as? String) ?? (self.sessionManager?.agent?.iconURL)
+        
+        if let avatar = self.sessionManager?.siteConfiguration.agentAvatar as? Bool, avatar {
+            return self.sessionManager?.agent?.iconURL
+        }
+        return self.sessionManager?.siteConfiguration.agentAvatar as? String
     }
     var titlebarName: String? {
         self.sessionManager?.siteConfiguration.agentName ?? self.sessionManager?.agent?.displayName
