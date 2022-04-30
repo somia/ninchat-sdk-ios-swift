@@ -107,7 +107,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
                     self?.dataSourceDelegate?.onUpdateCellContent?()
                 }
                 /// If the configuration is a questionnaire element
-                else if let configuration = self?.viewModel.registeredElement, let operation = self?.registeredElementOperation {
+                else if self?.viewModel.registeredElement != nil, let operation = self?.registeredElementOperation {
                     self?.showRegisteredPage(operation: operation)
                 }
                 /// Show `AudienceRegisteredText` if it is set in the site configuration

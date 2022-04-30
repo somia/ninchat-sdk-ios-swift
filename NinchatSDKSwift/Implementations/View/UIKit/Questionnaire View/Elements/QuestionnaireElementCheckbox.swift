@@ -146,8 +146,8 @@ final class QuestionnaireElementCheckbox: UIView, QuestionnaireElement, Question
             self.view.subviews.forEach({ v in
                 if let button = v as? NINButton {
                     button.isEnabled = isUserInteractionEnabled
-                } else if let icon = v as? UIView, icon.tag >= 200 {
-                    icon.isUserInteractionEnabled = isUserInteractionEnabled
+                } else if v.tag >= 200 {
+                    v.isUserInteractionEnabled = isUserInteractionEnabled
                 }
             })
         }

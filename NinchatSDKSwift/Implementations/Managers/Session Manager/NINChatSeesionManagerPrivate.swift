@@ -343,7 +343,7 @@ extension NINChatSessionManagerImpl {
                     /// There's no 'typing' message for this user yet, lets create one
                     /// The value for message id is inspired from the Android SDK
                     self.add(message: UserTypingMessage(timestamp: Date(), messageID: "zzzzzwriting\(userID)", user: messageUser))
-                } else if let msg = writingMessage, let index = chatMessages.firstIndex(where: { $0 is UserTypingMessage }) {
+                } else if writingMessage != nil, let index = chatMessages.firstIndex(where: { $0 is UserTypingMessage }) {
                     /// There's a 'typing' message for this user - lets remove that.
                     self.removeMessage(atIndex: index)
                 }

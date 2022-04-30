@@ -411,7 +411,6 @@ extension NINQuestionnaireViewModelImpl {
             /// Move to the target
             return self.goToPage(page: target!)
         }
-        return false
     }
 }
 
