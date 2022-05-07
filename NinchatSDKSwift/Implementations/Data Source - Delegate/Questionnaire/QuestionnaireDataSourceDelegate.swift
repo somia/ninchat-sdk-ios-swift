@@ -44,6 +44,9 @@ protocol QuestionnaireDataSource: AnyObject {
     /** Add an extra logic to questionnaires to show '_registered' */
     func addRegisteredLogic()
 
+    /** Add an extra logic to questionnaires to show '_completed' */
+    func addCompletedLogic()
+    
     var viewModel: NINQuestionnaireViewModel! { get set }
     var sessionManager: NINChatSessionManager? { get set }
     init(viewModel: NINQuestionnaireViewModel, sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?)
