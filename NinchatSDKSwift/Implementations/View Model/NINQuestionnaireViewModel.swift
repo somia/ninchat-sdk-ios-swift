@@ -24,7 +24,8 @@ protocol NINQuestionnaireViewModel {
     var registeredElement: QuestionnaireConfiguration? { get }
     var canAddRegisteredSection: Bool { get }
     var canAddClosedRegisteredSection: Bool { get }
-
+    var completedElement: QuestionnaireConfiguration? { get }
+    
     init(sessionManager: NINChatSessionManager?, questionnaireType: AudienceQuestionnaireType)
     func isExitElement(_ element: Any?) -> Bool
     func getConfiguration() throws -> QuestionnaireConfiguration
@@ -62,6 +63,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 
     private weak var sessionManager: NINChatSessionManager?
     private var configurations: [QuestionnaireConfiguration] = []
+    private let questionnaireType: AudienceQuestionnaireType
     internal var connector: QuestionnaireElementConnector!
     private var items: [QuestionnaireItems] = []
     internal var answers: [String:AnyHashable]! = [:]    // Holds answers saved by the user in the runtime
@@ -90,6 +92,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     var requirementSatisfactionUpdater: ((Bool, QuestionnaireConfiguration) -> Void)?
 
     init(sessionManager: NINChatSessionManager?, questionnaireType: AudienceQuestionnaireType) {
+        self.questionnaireType = questionnaireType
         self.sessionManager = sessionManager
 
         let configurationOperation = BlockOperation { [weak self] in
@@ -421,6 +424,10 @@ extension NINQuestionnaireViewModelImpl {
     }
 
     var canAddRegisteredSection: Bool {
+        guard self.questionnaireType == .pre else {
+            return false
+        }
+        
         /// Check if the questionnaire contains _registered element or logic first
         if self.registeredElement != nil {
             return false
@@ -432,5 +439,12 @@ extension NINQuestionnaireViewModelImpl {
 
     var canAddClosedRegisteredSection: Bool {
         self.sessionManager?.siteConfiguration.audienceRegisteredClosedText != nil
+    }
+}
+
+// MARK :- Complete Questionnaire Helpers
+extension NINQuestionnaireViewModelImpl {
+    var completedElement: QuestionnaireConfiguration? {
+        self.connector.findConfiguration(label: "_completed", in: self.configurations)
     }
 }
