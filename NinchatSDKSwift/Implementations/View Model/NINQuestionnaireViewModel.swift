@@ -234,14 +234,26 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 
 extension NINQuestionnaireViewModelImpl {
     func finishQuestionnaire(for logic: LogicQuestionnaire?, redirect: ElementRedirect?, autoApply: Bool) {
+        if self.questionnaireType == .post {
+            /// if the post audience questionnaire needs to be saved
+            /// the behaviour supports `https://github.com/somia/mobile/issues/386`
+            self.sessionManager?.preAudienceQuestionnaireMetadata = NINLowLevelClientProps.initiate()
+            self.onQuestionnaireFinished?(nil, false, false)
+            return;
+        }
+        
+        /// if the pre audience questionnaire needs to be saved
         guard let queue = self.queue,
               let target: (canJoin: Bool, queue: Queue?) = self.canJoinGivenQueue(withID: queue.queueID),
-              let targetQueue = target.queue, target.canJoin
-            else {
-                self.connector.onRegisterTargetReached?(logic, redirect, autoApply); return
-            }
+              let targetQueue = target.queue, target.canJoin else {
+            self.connector.onRegisterTargetReached?(logic, redirect, autoApply); return
+        }
 
-        self.sessionManager?.preAudienceQuestionnaireMetadata = self.questionnaireAnswers
+        if self.questionnaireType == .pre {
+            self.sessionManager?.preAudienceQuestionnaireMetadata = self.questionnaireAnswers
+        } else {
+            self.sessionManager?.preAudienceQuestionnaireMetadata = nil
+        }
         self.onQuestionnaireFinished?(targetQueue, targetQueue.isClosed, false)
     }
 
