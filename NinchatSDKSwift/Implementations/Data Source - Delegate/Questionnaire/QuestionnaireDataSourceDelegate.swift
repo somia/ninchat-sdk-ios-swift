@@ -255,4 +255,19 @@ extension QuestionnaireDataSourceDelegate {
             ]
             """
     }
+    
+    internal func completedLogic() -> String {
+        /// This is the same function as 'registeredLogic' for '_completed' element
+        return
+            """
+            [
+                {
+                    "name": "completed-logic",
+                    "logic": {
+                        "target": "_completed"
+                    }
+                }
+            ]
+            """
+    }
 }
