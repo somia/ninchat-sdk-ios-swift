@@ -30,9 +30,8 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
                 navigationController?.overrideUserInterfaceStyle = .light
             }
 
-            if !self.sessionManager.siteConfiguration.hideTitlebar {
-                navigationController?.setNavigationBarHidden(true, animated: false)
-            }
+            navigationController?.setNavigationBarHidden(true, animated: false)
+            navigationController?.isNavigationBarHidden = true
             navigationController?.presentationController?.delegate = self
         }
     }
@@ -206,7 +205,7 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
             topViewController = self.initialViewController
         }
         self.navigationController = navigation ?? UINavigationController(rootViewController: topViewController)
-        return (navigation == nil) ? self.navigationController : topViewController
+        return (navigation != nil) ? topViewController : self.navigationController
     }
 
     func deallocate() {
