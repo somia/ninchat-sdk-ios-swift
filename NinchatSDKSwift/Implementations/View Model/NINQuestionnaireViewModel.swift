@@ -371,7 +371,20 @@ extension NINQuestionnaireViewModelImpl {
         self.connector.appendElements(items, configurations: configuration)
         self.configurations.append(contentsOf: configuration)
         self.items.append(contentsOf: items)
-        self.pageNumber = self.items.lastIndex(where: { $0.elements != nil })!
+        
+        
+        /// if item.element != nil
+        ///     - set the page number to the element
+        if let elements: Array<QuestionnaireElement> = items.first?.elements {
+            self.pageNumber = self.items
+                .compactMap({ $0.elements })
+                .lastIndex(where: { $0.isEqualToArray(elements) })!
+        }
+        /// if items.element == nil
+        ///     - find it using available function in the view model
+        else if let logic = items.first?.logic {
+            self.pageNumber = self.logicTargetPage(logic, autoApply: false, performClosures: false)!
+        }
     }
 }
 
