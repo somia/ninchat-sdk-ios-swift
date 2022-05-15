@@ -150,18 +150,37 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     }
 
     private func setupPostConnector() {
-        self.connector.onRegisterTargetReached = { [weak self] _, _, autoApply in
+        
+        func submitPostQuestionnaireAnswers(waitForUserConfirmation: Bool, completion: @escaping ((Error?) -> Void)) {
+            if waitForUserConfirmation { return }
             do {
-                if self?.hasToWaitForUserConfirmation(autoApply) ?? false { return }
-                try self?.sessionManager?.send(type: .metadata, payload: ["data": ["post_answers": self?.answers ?? [:]], "time": Date().timeIntervalSince1970]) { error in
-                    if let error = error {
-                        self?.onErrorOccurred?(error)
-                    } else {
-                        self?.onSessionFinished?()
-                    }
-                }
+                let payload: [String:Any] = ["data": ["post_answers": self.answers ?? [:]], "time": Date().timeIntervalSince1970]
+                try self.sessionManager?.send(type: .metadata, payload: payload, completion: completion)
             } catch {
-                self?.onErrorOccurred?(error)
+                completion(error)
+            }
+        }
+        
+        self.connector.onRegisterTargetReached = { [weak self] _, _, autoApply in
+            guard let `self` = self else { return }
+            
+            submitPostQuestionnaireAnswers(waitForUserConfirmation: self.hasToWaitForUserConfirmation(autoApply)) { error in
+                if let error = error {
+                    self.onErrorOccurred?(error)
+                } else {
+                    self.onSessionFinished?()
+                }
+            }
+        }
+        self.connector.onCompleteTargetReached = { [weak self] _, _, autoApply in
+            guard let `self` = self else { return }
+            
+            submitPostQuestionnaireAnswers(waitForUserConfirmation: self.hasToWaitForUserConfirmation(autoApply)) { error in
+                if let error = error {
+                    self.onErrorOccurred?(error)
+                } else {
+                    self.finishQuestionnaire(for: nil, redirect: nil, autoApply: autoApply)
+                }
             }
         }
     }
