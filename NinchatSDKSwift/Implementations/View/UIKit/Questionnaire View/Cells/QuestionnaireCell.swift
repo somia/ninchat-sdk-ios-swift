@@ -13,6 +13,7 @@ class QuestionnaireCell: UITableViewCell {
     @IBOutlet private(set) weak var conversationTitleContentView: UIView!           /// title text is added to this
     @IBOutlet private(set) weak var conversationTitleContainerView: UIView!         /// title is added to this
     @IBOutlet private(set) weak var conversationOptionsContainerView: UIView!       /// elements are added to this
+    @IBOutlet private(set) weak var formOptionsContainerView: UIView!               /// elements are added to this
     
     @IBOutlet private(set) weak var leftAvatarContainerView: UIView!
     @IBOutlet private(set) var conversationAuthorView: [Any]!
@@ -42,7 +43,7 @@ class QuestionnaireCell: UITableViewCell {
     func addElement(_ element: QuestionnaireElement) {
         switch style {
         case .form:
-            self.contentView.addSubview(element)
+            self.formOptionsContainerView.addSubview(element)
             self.layoutForm(element)
             
         case .conversation:
@@ -116,7 +117,7 @@ class QuestionnaireCell: UITableViewCell {
     }
     
     private func layoutForm(_ view: UIView) {
-        view.fix(leading: (4.0, self.contentView), trailing: (4.0, self.contentView))
+        view.fix(leading: (4.0, self.formOptionsContainerView), trailing: (4.0, self.formOptionsContainerView))
     }
     
     private func layoutTitle(_ view: UIView, element: QuestionnaireElement) {

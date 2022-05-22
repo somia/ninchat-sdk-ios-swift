@@ -64,8 +64,8 @@ extension QuestionnaireElementWithTitle {
     func layoutElementViews(padding: UIEdgeInsets = .zero) {
         /// Must be called once subviews are added
         title
-            .fix(leading: (8.0, self), trailing: (8.0, self))
-            .fix(top: (0.0, self))
+            .fix(leading: (padding.left, self), trailing: (padding.right, self))
+            .fix(top: (padding.top, self))
 
         view
             .fix(leading: (padding.left, self), trailing: (padding.right, self))
