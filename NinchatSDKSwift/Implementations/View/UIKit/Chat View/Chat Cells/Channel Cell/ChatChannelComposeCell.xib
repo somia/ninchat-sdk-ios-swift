@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -25,10 +25,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="770" height="183"/>
                         <subviews>
                             <view tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jIM-mn-NMV" userLabel="Left avatar container">
-                                <rect key="frame" x="4" y="0.0" width="35" height="183"/>
+                                <rect key="frame" x="8" y="0.0" width="35" height="183"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" image="icon_avatar_other" translatesAutoresizingMaskIntoConstraints="NO" id="2fR-UP-S8a">
-                                        <rect key="frame" x="0.0" y="12" width="35" height="35"/>
+                                        <rect key="frame" x="0.0" y="8" width="35" height="35"/>
                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="35" id="DI5-ui-VAu"/>
@@ -38,16 +38,16 @@
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstItem="2fR-UP-S8a" firstAttribute="top" secondItem="jIM-mn-NMV" secondAttribute="top" constant="12" id="AbE-uG-s3I"/>
+                                    <constraint firstItem="2fR-UP-S8a" firstAttribute="top" secondItem="jIM-mn-NMV" secondAttribute="top" constant="8" id="AbE-uG-s3I"/>
                                     <constraint firstItem="2fR-UP-S8a" firstAttribute="centerX" secondItem="jIM-mn-NMV" secondAttribute="centerX" id="CPq-7K-osQ"/>
                                     <constraint firstAttribute="width" constant="35" id="m5E-ZJ-sVv"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MTD-3X-5oD">
-                                <rect key="frame" x="39" y="0.0" width="688" height="183"/>
+                                <rect key="frame" x="43" y="0.0" width="684" height="183"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yTp-Ag-tWh">
-                                        <rect key="frame" x="16" y="0.0" width="111" height="40"/>
+                                        <rect key="frame" x="8" y="0.0" width="111" height="40"/>
                                         <subviews>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="999" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Dr Koistinen" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UsB-lD-AGg">
                                                 <rect key="frame" x="0.0" y="15" width="71.5" height="18"/>
@@ -75,16 +75,16 @@
                                             <constraint firstAttribute="height" priority="750" constant="40" id="tCU-lu-aUJ"/>
                                         </constraints>
                                     </view>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_bubble_right" translatesAutoresizingMaskIntoConstraints="NO" id="MJm-gG-pAr">
-                                        <rect key="frame" x="8" y="40" width="32" height="143"/>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_bubble_left" translatesAutoresizingMaskIntoConstraints="NO" id="MJm-gG-pAr">
+                                        <rect key="frame" x="0.0" y="40" width="32" height="143"/>
                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </imageView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0mF-tk-WxK">
-                                        <rect key="frame" x="8" y="40" width="32" height="143"/>
+                                        <rect key="frame" x="0.0" y="40" width="32" height="143"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
                                     <view contentMode="scaleToFill" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="2Qd-UC-fGA" customClass="ComposeMessageView" customModule="NinchatSDKSwift">
-                                        <rect key="frame" x="24" y="56" width="0.0" height="111"/>
+                                        <rect key="frame" x="16" y="56" width="0.0" height="111"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
                                 </subviews>
@@ -98,7 +98,7 @@
                                     <constraint firstItem="0mF-tk-WxK" firstAttribute="leading" secondItem="MJm-gG-pAr" secondAttribute="leading" id="NRv-9s-Fcl"/>
                                     <constraint firstItem="0mF-tk-WxK" firstAttribute="bottom" secondItem="MJm-gG-pAr" secondAttribute="bottom" id="Q68-Uz-PzL"/>
                                     <constraint firstItem="MJm-gG-pAr" firstAttribute="top" secondItem="yTp-Ag-tWh" secondAttribute="bottom" id="S2j-vT-YY0"/>
-                                    <constraint firstItem="MJm-gG-pAr" firstAttribute="leading" secondItem="MTD-3X-5oD" secondAttribute="leading" constant="8" identifier="leading-equal" id="axV-JT-p3s"/>
+                                    <constraint firstItem="MJm-gG-pAr" firstAttribute="leading" secondItem="MTD-3X-5oD" secondAttribute="leading" identifier="leading-equal" id="axV-JT-p3s"/>
                                     <constraint firstItem="0mF-tk-WxK" firstAttribute="top" secondItem="MJm-gG-pAr" secondAttribute="top" id="cwx-A4-BWn"/>
                                     <constraint firstItem="2Qd-UC-fGA" firstAttribute="bottom" secondItem="MJm-gG-pAr" secondAttribute="bottom" constant="-16" id="gLS-LI-Y45"/>
                                     <constraint firstItem="2Qd-UC-fGA" firstAttribute="leading" secondItem="MJm-gG-pAr" secondAttribute="leading" constant="16" id="oOx-LW-qY5"/>
@@ -114,7 +114,7 @@
                             <constraint firstAttribute="trailing" secondItem="MTD-3X-5oD" secondAttribute="trailing" constant="43" id="C6q-Fu-dag"/>
                             <constraint firstAttribute="bottom" secondItem="jIM-mn-NMV" secondAttribute="bottom" id="FKP-eY-JJt"/>
                             <constraint firstItem="MTD-3X-5oD" firstAttribute="leading" secondItem="jIM-mn-NMV" secondAttribute="trailing" id="HNi-Hf-cCK"/>
-                            <constraint firstItem="jIM-mn-NMV" firstAttribute="leading" secondItem="00N-FD-6Gi" secondAttribute="leading" constant="4" id="PKf-gP-WUq"/>
+                            <constraint firstItem="jIM-mn-NMV" firstAttribute="leading" secondItem="00N-FD-6Gi" secondAttribute="leading" constant="8" id="PKf-gP-WUq"/>
                             <constraint firstAttribute="bottom" secondItem="MTD-3X-5oD" secondAttribute="bottom" id="wHG-hx-lcS"/>
                         </constraints>
                     </view>
@@ -142,7 +142,7 @@
         </tableViewCell>
     </objects>
     <resources>
-        <image name="chat_bubble_right" width="31" height="45"/>
+        <image name="chat_bubble_left" width="31" height="45"/>
         <image name="icon_avatar_other" width="726" height="725"/>
     </resources>
 </document>
