@@ -24,7 +24,8 @@ protocol NINQuestionnaireViewModel {
     var registeredElement: QuestionnaireConfiguration? { get }
     var canAddRegisteredSection: Bool { get }
     var canAddClosedRegisteredSection: Bool { get }
-
+    var completedElement: QuestionnaireConfiguration? { get }
+    
     init(sessionManager: NINChatSessionManager?, questionnaireType: AudienceQuestionnaireType)
     func isExitElement(_ element: Any?) -> Bool
     func getConfiguration() throws -> QuestionnaireConfiguration
@@ -62,6 +63,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 
     private weak var sessionManager: NINChatSessionManager?
     private var configurations: [QuestionnaireConfiguration] = []
+    private let questionnaireType: AudienceQuestionnaireType
     internal var connector: QuestionnaireElementConnector!
     private var items: [QuestionnaireItems] = []
     internal var answers: [String:AnyHashable]! = [:]    // Holds answers saved by the user in the runtime
@@ -90,6 +92,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     var requirementSatisfactionUpdater: ((Bool, QuestionnaireConfiguration) -> Void)?
 
     init(sessionManager: NINChatSessionManager?, questionnaireType: AudienceQuestionnaireType) {
+        self.questionnaireType = questionnaireType
         self.sessionManager = sessionManager
 
         let configurationOperation = BlockOperation { [weak self] in
@@ -147,18 +150,37 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
     }
 
     private func setupPostConnector() {
-        self.connector.onRegisterTargetReached = { [weak self] _, _, autoApply in
+        
+        func submitPostQuestionnaireAnswers(waitForUserConfirmation: Bool, completion: @escaping ((Error?) -> Void)) {
+            if waitForUserConfirmation { return }
             do {
-                if self?.hasToWaitForUserConfirmation(autoApply) ?? false { return }
-                try self?.sessionManager?.send(type: .metadata, payload: ["data": ["post_answers": self?.answers ?? [:]], "time": Date().timeIntervalSince1970]) { error in
-                    if let error = error {
-                        self?.onErrorOccurred?(error)
-                    } else {
-                        self?.onSessionFinished?()
-                    }
-                }
+                let payload: [String:Any] = ["data": ["post_answers": self.answers ?? [:]], "time": Date().timeIntervalSince1970]
+                try self.sessionManager?.send(type: .metadata, payload: payload, completion: completion)
             } catch {
-                self?.onErrorOccurred?(error)
+                completion(error)
+            }
+        }
+        
+        self.connector.onRegisterTargetReached = { [weak self] _, _, autoApply in
+            guard let `self` = self else { return }
+            
+            submitPostQuestionnaireAnswers(waitForUserConfirmation: self.hasToWaitForUserConfirmation(autoApply)) { error in
+                if let error = error {
+                    self.onErrorOccurred?(error)
+                } else {
+                    self.onSessionFinished?()
+                }
+            }
+        }
+        self.connector.onCompleteTargetReached = { [weak self] _, _, autoApply in
+            guard let `self` = self else { return }
+            
+            submitPostQuestionnaireAnswers(waitForUserConfirmation: self.hasToWaitForUserConfirmation(autoApply)) { error in
+                if let error = error {
+                    self.onErrorOccurred?(error)
+                } else {
+                    self.finishQuestionnaire(for: nil, redirect: nil, autoApply: autoApply)
+                }
             }
         }
     }
@@ -231,14 +253,26 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 
 extension NINQuestionnaireViewModelImpl {
     func finishQuestionnaire(for logic: LogicQuestionnaire?, redirect: ElementRedirect?, autoApply: Bool) {
+        if self.questionnaireType == .post {
+            /// if the post audience questionnaire needs to be saved
+            /// the behaviour supports `https://github.com/somia/mobile/issues/386`
+            self.sessionManager?.preAudienceQuestionnaireMetadata = NINLowLevelClientProps.initiate()
+            self.onQuestionnaireFinished?(nil, false, false)
+            return;
+        }
+        
+        /// if the pre audience questionnaire needs to be saved
         guard let queue = self.queue,
               let target: (canJoin: Bool, queue: Queue?) = self.canJoinGivenQueue(withID: queue.queueID),
-              let targetQueue = target.queue, target.canJoin
-            else {
-                self.connector.onRegisterTargetReached?(logic, redirect, autoApply); return
-            }
+              let targetQueue = target.queue, target.canJoin else {
+            self.connector.onRegisterTargetReached?(logic, redirect, autoApply); return
+        }
 
-        self.sessionManager?.preAudienceQuestionnaireMetadata = self.questionnaireAnswers
+        if self.questionnaireType == .pre {
+            self.sessionManager?.preAudienceQuestionnaireMetadata = self.questionnaireAnswers
+        } else {
+            self.sessionManager?.preAudienceQuestionnaireMetadata = nil
+        }
         self.onQuestionnaireFinished?(targetQueue, targetQueue.isClosed, false)
     }
 
@@ -337,7 +371,20 @@ extension NINQuestionnaireViewModelImpl {
         self.connector.appendElements(items, configurations: configuration)
         self.configurations.append(contentsOf: configuration)
         self.items.append(contentsOf: items)
-        self.pageNumber = self.items.lastIndex(where: { $0.elements != nil })!
+        
+        
+        /// if item.element != nil
+        ///     - set the page number to the element
+        if let elements: Array<QuestionnaireElement> = items.first?.elements {
+            self.pageNumber = self.items
+                .compactMap({ $0.elements })
+                .lastIndex(where: { $0.isEqualToArray(elements) })!
+        }
+        /// if items.element == nil
+        ///     - find it using available function in the view model
+        else if let logic = items.first?.logic {
+            self.pageNumber = self.logicTargetPage(logic, autoApply: false, performClosures: false)!
+        }
     }
 }
 
@@ -421,6 +468,10 @@ extension NINQuestionnaireViewModelImpl {
     }
 
     var canAddRegisteredSection: Bool {
+        guard self.questionnaireType == .pre else {
+            return false
+        }
+        
         /// Check if the questionnaire contains _registered element or logic first
         if self.registeredElement != nil {
             return false
@@ -432,5 +483,12 @@ extension NINQuestionnaireViewModelImpl {
 
     var canAddClosedRegisteredSection: Bool {
         self.sessionManager?.siteConfiguration.audienceRegisteredClosedText != nil
+    }
+}
+
+// MARK :- Complete Questionnaire Helpers
+extension NINQuestionnaireViewModelImpl {
+    var completedElement: QuestionnaireConfiguration? {
+        self.connector.findConfiguration(label: "_completed", in: self.configurations)
     }
 }

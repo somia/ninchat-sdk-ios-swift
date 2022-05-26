@@ -6,7 +6,7 @@
 
 import UIKit
 
-protocol QuestionnaireElement: UIView {
+protocol QuestionnaireElement: UIView, QuestionnaireElementEqual {
     var index: Int { get set }
     var isShown: Bool? { get set }
     var didShapedView: Bool { get }
@@ -24,7 +24,39 @@ extension QuestionnaireElement {
         self.elementConfiguration != nil
     }
 }
+extension QuestionnaireElement {
+    func isEqualTo(_ pair: QuestionnaireElementEqual) -> Bool {
+        self.isEqualTo(pair)
+    }
+}
+extension Array where Element == QuestionnaireElement {
+    func isEqualToArray(_ array: [QuestionnaireElement]) -> Bool {
+        let sortedSelf = self
+            .compactMap({ $0.elementConfiguration })
+            .sorted(by: { $0.name > $1.name })
+            .compactMap({ $0 as? QuestionnaireElementEqual })
+        let sortedAray = array
+            .compactMap({ $0.elementConfiguration })
+            .sorted(by: { $0.name > $1.name })
+            .compactMap({ $0 as? QuestionnaireElementEqual })
+        
+        for (element_1, element_2) in zip(sortedSelf, sortedAray) {
+            if !(element_1.isEqualTo(element_2)) {
+                return false
+            }
+        }
+        return true
+    }
+}
 
+protocol QuestionnaireElementEqual {
+    func isEqualTo(_ pair: QuestionnaireElementEqual) -> Bool
+}
+extension QuestionnaireElementEqual where Self:QuestionnaireElement {
+    func isEqualTo(_ pair: QuestionnaireElement) -> Bool {
+        self.elementConfiguration?.name == pair.elementConfiguration?.name
+    }
+}
 
 /// Questionnaire element with
 ///     - title

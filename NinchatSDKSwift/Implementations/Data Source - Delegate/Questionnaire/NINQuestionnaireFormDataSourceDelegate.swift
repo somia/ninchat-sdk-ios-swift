@@ -150,6 +150,11 @@ extension NINQuestionnaireFormDataSourceDelegate {
         guard let json: Array<[String:AnyHashable]> = registeredLogic().toDictionary() else { return }
         json.forEach({ self.addToQuestionnaire(configuration: $0) })
     }
+    
+    func addCompletedLogic() {
+        guard let json: Array<[String:AnyHashable]> = completedLogic().toDictionary() else { return }
+        json.forEach({ self.addToQuestionnaire(configuration: $0) })
+    }
 
     private func addToQuestionnaire(configuration: [String:AnyHashable]) {
         guard let configuration = AudienceQuestionnaire(from: [configuration]).questionnaireConfiguration,

@@ -52,6 +52,11 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
             self?.dataSourceDelegate?.addRegisteredLogic()
         }
     }
+    private var completedElementOperation: BlockOperation? {
+        BlockOperation { [weak self] in
+            self?.dataSourceDelegate?.addCompletedLogic()
+        }
+    }
 
     // MARK: - KeyboardHandler
 
@@ -85,7 +90,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
             viewModel.onErrorOccurred = { [weak self] error in
                 debugger("** ** SDK: error in registering audience: \(error)")
                 if let error = error as? NinchatError, error.type == "queue_is_closed" {
-                    self?.showRegisteredPage(operation: self?.closedRegisteredOperation); return
+                    self?.showRegisteredCompletedPage(operation: self?.closedRegisteredOperation); return
                 }
                 Toast.show(message: .error("Submission Error".localized), onToastDismissed: { [weak self] in
                     self?.delegate?.onDidEnd()
@@ -106,19 +111,29 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
                     self?.viewModel.goToPage(logic: logic)
                     self?.dataSourceDelegate?.onUpdateCellContent?()
                 }
-                /// If the configuration is a questionnaire element
+                /// If the _registered configuration is a questionnaire element
                 else if self?.viewModel.registeredElement != nil, let operation = self?.registeredElementOperation {
-                    self?.showRegisteredPage(operation: operation)
+                    self?.showRegisteredCompletedPage(operation: operation)
+                }
+                /// Show _completed element according to `https://github.com/somia/mobile/issues/386`
+                /// If the configuration is a logic
+                else if let configuration = self?.viewModel.completedElement, let logic = configuration.logic {
+                    self?.viewModel.goToPage(logic: logic)
+                    self?.dataSourceDelegate?.onUpdateCellContent?()
+                }
+                /// If the _completed configuration is a questionnaire element
+                else if self?.viewModel.completedElement != nil, let operation = self?.completedElementOperation {
+                    self?.showRegisteredCompletedPage(operation: operation)
                 }
                 /// Show `AudienceRegisteredText` if it is set in the site configuration
                 /// and queue is NOT closed `https://github.com/somia/ninchat-ng/issues/1057`
                 else if let registeredOperation = self?.audienceRegisteredOperation, !queueIsClosed {
-                    self?.showRegisteredPage(operation: registeredOperation)
+                    self?.showRegisteredCompletedPage(operation: registeredOperation)
                 }
                 /// Show `AudienceRegisteredText` if it is set in the site configuration
                 /// and queue is closed `https://github.com/somia/ninchat-ng/issues/1057`
                 else if let closedOperation = self?.closedRegisteredOperation, queueIsClosed {
-                    self?.showRegisteredPage(operation: closedOperation)
+                    self?.showRegisteredCompletedPage(operation: closedOperation)
                 }
                 /// If not, just finish the session
                 else {
@@ -312,7 +327,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
         return view
     }
 
-    private func showRegisteredPage(operation: BlockOperation?) {
+    private func showRegisteredCompletedPage(operation: BlockOperation?) {
         guard let operation = operation, let updateOperationTuple: (block: BlockOperation, delay: TimeInterval) = self.updateOperationBlock else { return }
         self.operationQueue.addOperation(updateOperationTuple.block)
 

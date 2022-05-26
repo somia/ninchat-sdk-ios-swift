@@ -44,6 +44,9 @@ protocol QuestionnaireDataSource: AnyObject {
     /** Add an extra logic to questionnaires to show '_registered' */
     func addRegisteredLogic()
 
+    /** Add an extra logic to questionnaires to show '_completed' */
+    func addCompletedLogic()
+    
     var viewModel: NINQuestionnaireViewModel! { get set }
     var sessionManager: NINChatSessionManager? { get set }
     init(viewModel: NINQuestionnaireViewModel, sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?)
@@ -205,7 +208,7 @@ extension QuestionnaireDataSourceDelegate {
             """
             [
                 {
-                    "name": "Exit",
+                    "name": "_audienceRegisteredTarget",
                     "type": "group",
                     "buttons": {
                         "back": false,
@@ -250,6 +253,21 @@ extension QuestionnaireDataSourceDelegate {
                     "name": "registered-logic",
                     "logic": {
                         "target": "_registered"
+                    }
+                }
+            ]
+            """
+    }
+    
+    internal func completedLogic() -> String {
+        /// This is the same function as 'registeredLogic' for '_completed' element
+        return
+            """
+            [
+                {
+                    "name": "completed-logic",
+                    "logic": {
+                        "target": "_completed"
                     }
                 }
             ]
