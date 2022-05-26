@@ -86,8 +86,7 @@ extension QuestionnaireDataSourceDelegateTests {
 
     func test_106_closures() {
         let cell = formQuestionnaireDataSource.cell(at: IndexPath(row: 0, section: 0), view: self.tableView) as! QuestionnaireCell
-        XCTAssertTrue(cell.contentView.subviews.first is QuestionnaireElementRadio)
-        let radioElement = cell.contentView.subviews.first as! QuestionnaireElementRadio
+        let radioElement = cell.contentView.allSubviews.first(where: { $0 is QuestionnaireElementRadio }) as! QuestionnaireElementRadio
         XCTAssertNotNil(radioElement.onElementOptionSelected)
         XCTAssertNotNil(radioElement.onElementOptionDeselected)
 
