@@ -208,7 +208,7 @@ extension QuestionnaireDataSourceDelegate {
             """
             [
                 {
-                    "name": "Exit",
+                    "name": "_audienceRegisteredTarget",
                     "type": "group",
                     "buttons": {
                         "back": false,
