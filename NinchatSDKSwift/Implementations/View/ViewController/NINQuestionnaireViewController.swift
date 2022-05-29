@@ -144,7 +144,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
                 if let ratingViewModel = self?.ratingViewModel, let `self` = self {
                     (self.rating != nil) ? ratingViewModel.rateChat(with: self.rating!) : ratingViewModel.skipRating()
                 } else {
-                    self?.delegate?.onDidEnd()
+                    try? self?.sessionManager?.closeChat(endSession: true, onCompletion: nil)
                 }
             }
         }

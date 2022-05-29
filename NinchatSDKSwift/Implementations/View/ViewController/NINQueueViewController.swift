@@ -214,7 +214,7 @@ extension NINQueueViewController {
 extension NINQueueViewController {
     private func onCancelQueueTapped() {
         debugger("cancel queue")
-        try? self.sessionManager?.closeChat { [weak self] in
+        try? self.sessionManager?.closeChat(endSession: true) { [weak self] in
             self?.sessionManager?.deallocateSession()
         }
     }

@@ -141,7 +141,7 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
                 } else if self.hasPostAudienceQuestionnaire {
                     self.navigationController?.pushViewController(self.questionnaireViewController(ratingViewModel: nil, rating: nil, questionnaireType: .post), animated: true)
                 } else {
-                    try? self.sessionManager.closeChat()
+                    try? self.sessionManager.closeChat(endSession: true, onCompletion: nil)
                 }
             }
         }
@@ -275,8 +275,8 @@ extension NINCoordinator {
                 } else {
                     /// SDK started with AutoQueue and thus,
                     /// the questionnaire has no previous ViewController to pop to.
-
-                    self.delegate?.onDidEnd()
+                    
+                    try? self.sessionManager.closeChat(endSession: true, onCompletion: nil)
                 }
             }
         }
