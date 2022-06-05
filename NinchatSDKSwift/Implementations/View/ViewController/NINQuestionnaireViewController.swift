@@ -103,37 +103,45 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
                 }
                 /// Finish the session if it is an `exit` element
                 else if exit {
-                    self?.viewModel.onSessionFinished?()
+                    self?.sessionManager?.endSession(onCompletion: nil)
                 }
                 /// Show _registered element according to `https://github.com/somia/mobile/issues/385`
                 /// If the configuration is a logic
                 else if let configuration = self?.viewModel.registeredElement, let logic = configuration.logic {
                     self?.viewModel.goToPage(logic: logic)
                     self?.dataSourceDelegate?.onUpdateCellContent?()
+                    try? self?.sessionManager?.closeChat(endSession: false, onCompletion: nil)
                 }
                 /// If the _registered configuration is a questionnaire element
                 else if self?.viewModel.registeredElement != nil, let operation = self?.registeredElementOperation {
                     self?.showRegisteredCompletedPage(operation: operation)
+                    try? self?.sessionManager?.closeChat(endSession: false, onCompletion: nil)
                 }
                 /// Show _completed element according to `https://github.com/somia/mobile/issues/386`
                 /// If the configuration is a logic
                 else if let configuration = self?.viewModel.completedElement, let logic = configuration.logic {
                     self?.viewModel.goToPage(logic: logic)
+                    self?.viewModel.finishPostQuestionnaire()
                     self?.dataSourceDelegate?.onUpdateCellContent?()
+                    try? self?.sessionManager?.closeChat(endSession: false, onCompletion: nil)
                 }
                 /// If the _completed configuration is a questionnaire element
                 else if self?.viewModel.completedElement != nil, let operation = self?.completedElementOperation {
+                    self?.viewModel.finishPostQuestionnaire()
                     self?.showRegisteredCompletedPage(operation: operation)
+                    try? self?.sessionManager?.closeChat(endSession: false, onCompletion: nil)
                 }
                 /// Show `AudienceRegisteredText` if it is set in the site configuration
                 /// and queue is NOT closed `https://github.com/somia/ninchat-ng/issues/1057`
                 else if let registeredOperation = self?.audienceRegisteredOperation, !queueIsClosed {
                     self?.showRegisteredCompletedPage(operation: registeredOperation)
+                    try? self?.sessionManager?.closeChat(endSession: false, onCompletion: nil)
                 }
                 /// Show `AudienceRegisteredText` if it is set in the site configuration
                 /// and queue is closed `https://github.com/somia/ninchat-ng/issues/1057`
                 else if let closedOperation = self?.closedRegisteredOperation, queueIsClosed {
                     self?.showRegisteredCompletedPage(operation: closedOperation)
+                    try? self?.sessionManager?.closeChat(endSession: false, onCompletion: nil)
                 }
                 /// If not, just finish the session
                 else {
@@ -144,7 +152,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
                 if let ratingViewModel = self?.ratingViewModel, let `self` = self {
                     (self.rating != nil) ? ratingViewModel.rateChat(with: self.rating!) : ratingViewModel.skipRating()
                 } else {
-                    self?.delegate?.onDidEnd()
+                    try? self?.sessionManager?.closeChat(endSession: true, onCompletion: nil)
                 }
             }
         }

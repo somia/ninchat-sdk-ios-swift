@@ -43,6 +43,7 @@ protocol NINQuestionnaireViewModel {
     func submitAnswer(key: QuestionnaireElement?, value: AnyHashable, allowUpdate: Bool?) -> Bool
     func removeAnswer(key: QuestionnaireElement?)
     func finishQuestionnaire(for logic: LogicQuestionnaire?, redirect: ElementRedirect?, autoApply: Bool)
+    func finishPostQuestionnaire()
 }
 extension NINQuestionnaireViewModel {
     func redirectTargetPage(_ element: QuestionnaireElement, autoApply: Bool = true, performClosures: Bool = true) -> Int? {
@@ -112,8 +113,6 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
         self.setupConnectorOperation = BlockOperation { [weak self] in
             if questionnaireType == .pre {
                 self?.preAnswers = (try? self?.extractGivenPreAnswers()) ?? [:]
-            } else if questionnaireType == .post {
-                self?.setupPostConnector()
             }
         }
 
@@ -148,43 +147,7 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
             }
         }
     }
-
-    private func setupPostConnector() {
-        
-        func submitPostQuestionnaireAnswers(waitForUserConfirmation: Bool, completion: @escaping ((Error?) -> Void)) {
-            if waitForUserConfirmation { return }
-            do {
-                let payload: [String:Any] = ["data": ["post_answers": self.answers ?? [:]], "time": Date().timeIntervalSince1970]
-                try self.sessionManager?.send(type: .metadata, payload: payload, completion: completion)
-            } catch {
-                completion(error)
-            }
-        }
-        
-        self.connector.onRegisterTargetReached = { [weak self] _, _, autoApply in
-            guard let `self` = self else { return }
-            
-            submitPostQuestionnaireAnswers(waitForUserConfirmation: self.hasToWaitForUserConfirmation(autoApply)) { error in
-                if let error = error {
-                    self.onErrorOccurred?(error)
-                } else {
-                    self.onSessionFinished?()
-                }
-            }
-        }
-        self.connector.onCompleteTargetReached = { [weak self] _, _, autoApply in
-            guard let `self` = self else { return }
-            
-            submitPostQuestionnaireAnswers(waitForUserConfirmation: self.hasToWaitForUserConfirmation(autoApply)) { error in
-                if let error = error {
-                    self.onErrorOccurred?(error)
-                } else {
-                    self.finishQuestionnaire(for: nil, redirect: nil, autoApply: autoApply)
-                }
-            }
-        }
-    }
-
+    
     internal func hasToWaitForUserConfirmation(_ autoApply: Bool) -> Bool {
         if autoApply {
             return !(self.requirementsSatisfied) || self.shouldWaitForNextButton
@@ -254,11 +217,8 @@ final class NINQuestionnaireViewModelImpl: NINQuestionnaireViewModel {
 extension NINQuestionnaireViewModelImpl {
     func finishQuestionnaire(for logic: LogicQuestionnaire?, redirect: ElementRedirect?, autoApply: Bool) {
         if self.questionnaireType == .post {
-            /// if the post audience questionnaire needs to be saved
-            /// the behaviour supports `https://github.com/somia/mobile/issues/386`
-            self.sessionManager?.preAudienceQuestionnaireMetadata = NINLowLevelClientProps.initiate()
-            self.onQuestionnaireFinished?(nil, false, false)
-            return;
+            self.finishPostQuestionnaire()
+            return
         }
         
         /// if the pre audience questionnaire needs to be saved
@@ -275,10 +235,30 @@ extension NINQuestionnaireViewModelImpl {
         }
         self.onQuestionnaireFinished?(targetQueue, targetQueue.isClosed, false)
     }
+    
+    func finishPostQuestionnaire() {
+        guard self.questionnaireType == .post else { return }
+        /// if the post audience questionnaire needs to be saved
+        /// the behaviour supports `https://github.com/somia/mobile/issues/386`
+        self.sessionManager?.preAudienceQuestionnaireMetadata = NINLowLevelClientProps.initiate()
+        self.submitPostQuestionnaireAnswers(waitForUserConfirmation: false) { [weak self] _ in
+            self?.onQuestionnaireFinished?(nil, false, false)
+        }
+    }
 
     func isExitElement(_ element: Any?) -> Bool {
         guard let exitElement = element as? QuestionnaireExitElement else { return false }
         return exitElement.isExitElement
+    }
+    
+    internal func submitPostQuestionnaireAnswers(waitForUserConfirmation: Bool, completion: @escaping ((Error?) -> Void)) {
+        if waitForUserConfirmation { return }
+        do {
+            let payload: [String:Any] = ["data": ["post_answers": self.answers ?? [:]], "time": Date().timeIntervalSince1970]
+            try self.sessionManager?.send(type: .metadata, payload: payload, completion: completion)
+        } catch {
+            completion(error)
+        }
     }
 }
 
