@@ -5,7 +5,7 @@
 //
 
 import Foundation
-import WebRTC
+import NinchatWebRTC
 
 extension RTCIceCandidate {
     var toDictionary: [String:Any?] {

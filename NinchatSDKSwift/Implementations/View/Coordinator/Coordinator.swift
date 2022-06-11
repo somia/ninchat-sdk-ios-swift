@@ -7,7 +7,7 @@
 import UIKit
 import AVKit
 import CoreServices
-import WebRTC
+import NinchatWebRTC
 import NinchatLowLevelClient
 
 protocol Coordinator: AnyObject {

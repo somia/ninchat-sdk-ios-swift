@@ -6,7 +6,7 @@
 
 import AnyCodable
 import Foundation
-import WebRTC
+import NinchatWebRTC
 
 extension Dictionary where Key==AnyHashable {
     var toData: Data? {

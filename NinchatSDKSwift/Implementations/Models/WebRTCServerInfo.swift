@@ -5,7 +5,7 @@
 //
 
 import Foundation
-import WebRTC
+import NinchatWebRTC
 
 struct WebRTCServerInfo {
     let url: String

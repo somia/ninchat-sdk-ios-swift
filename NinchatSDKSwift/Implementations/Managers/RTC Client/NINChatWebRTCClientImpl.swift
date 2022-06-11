@@ -6,7 +6,7 @@
 
 import AVFoundation
 import Foundation
-import WebRTC
+import NinchatWebRTC
 
 final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
     
@@ -93,7 +93,7 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
         self.initiatePeerConnection()
         for candidate in candidates ?? [] {
             debugger("WebRTC: Adding candidate: \(candidate) to peerConnection: \(String(describing: peerConnection))")
-            self.peerConnection?.add(candidate)
+            self.peerConnection?.add(candidate) { _ in }
         }
         
         sessionManager?.delegate?.log(value: "Creating new `NINChatWebRTCClient` in the '\(operatingMode.description)' mode")
@@ -110,7 +110,7 @@ final class NINChatWebRTCClientImpl: NSObject, NINChatWebRTCClient {
             case .candidate:
                 debugger("WebRTC: Candidate received")
                 guard let iceCandidate = signal?.candidate?.toRTCIceCandidate else { return }
-                self?.peerConnection?.add(iceCandidate)
+                self?.peerConnection?.add(iceCandidate) { _ in }
             case .answer:
                 guard let sdp = signal?.sdp, sdp.values.count > 0, let description = sdp.toRTCSessionDescription else { return }
                 debugger("WebRTC: Setting remote description from Answer with SDP: \(description)")

@@ -5,7 +5,7 @@
 //
 
 import XCTest
-import WebRTC
+import NinchatWebRTC
 @testable import NinchatSDKSwift
 
 class NINChatViewModelTests: XCTestCase, NINChatWebRTCClientDelegate {

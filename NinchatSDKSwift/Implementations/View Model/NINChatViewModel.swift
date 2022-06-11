@@ -5,7 +5,7 @@
 //
 
 import Foundation
-import WebRTC
+import NinchatWebRTC
 
 enum MessageUpdateType {
     case insert(_ index: Int)

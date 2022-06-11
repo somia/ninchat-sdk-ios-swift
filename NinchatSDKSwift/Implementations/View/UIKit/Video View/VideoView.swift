@@ -5,7 +5,7 @@
 //
 
 import UIKit
-import WebRTC
+import NinchatWebRTC
 
 protocol VideoViewActions {
     typealias Action = (UIButton) -> Void

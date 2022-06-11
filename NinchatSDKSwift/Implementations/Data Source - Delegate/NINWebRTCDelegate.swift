@@ -5,7 +5,7 @@
 //
 
 import Foundation
-import WebRTC
+import NinchatWebRTC
 
 protocol NINWebRTCActions {
     var onActionError: ((Error) -> Void)? { get set }
