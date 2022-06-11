@@ -9,7 +9,7 @@ def libraries
   pod 'AnyCodable-FlightSchool', '~> 0.2.3'
   pod 'AutoLayoutSwift', '4.0.0'
   pod 'NinchatLowLevelClient', '~> 0.3.10'
-  pod 'GoogleWebRTC'
+  pod 'NinchatWebRTC', '~> 0.6.0'
 end
 
 target 'NinchatSDKSwift' do
