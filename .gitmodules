@@ -4,3 +4,6 @@
 [submodule "go-sdk/src/github.com/gorilla/websocket"]
 	path = go-sdk/src/github.com/gorilla/websocket
 	url = https://github.com/gorilla/websocket.git
+[submodule "webrtc/depot_tools"]
+	path = webrtc/depot_tools
+	url = https://chromium.googlesource.com/chromium/tools/depot_tools.git
