@@ -40,10 +40,10 @@ Pod::Spec.new do |s|
   }
 
   # Cocoapods dependencies
-  s.dependency "GoogleWebRTC"
   s.dependency 'AnyCodable-FlightSchool', '~> 0.2.3'
   s.dependency "AutoLayoutSwift", "4.0.0"
   s.dependency "NinchatLowLevelClient", "~> 0.3.10"
+  s.dependency "NinchatWebRTC", "~> 0.6.0"
 
   s.module_name = "NinchatSDKSwift"
 end
