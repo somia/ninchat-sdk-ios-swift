@@ -17,6 +17,7 @@
 		5C7A2AF227D20AF90067F2F1 /* QuestionnaireCellForm.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C7A2AF127D20AF90067F2F1 /* QuestionnaireCellForm.xib */; };
 		5CD4F1C82540CAAF009856AC /* Notification+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD4F1C62540CAAF009856AC /* Notification+Extension.swift */; };
 		5CD4F1C92540CAAF009856AC /* KeyboardHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD4F1C72540CAAF009856AC /* KeyboardHandler.swift */; };
+		5CDC33DB285478C400D48183 /* NinchatWebRTC.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 5CDC33DA285478C400D48183 /* NinchatWebRTC.podspec */; };
 		7C44F1A84C25C4445CF3B955 /* Pods_NinchatSDKSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 495ADA60487CD354EDC07332 /* Pods_NinchatSDKSwift.framework */; };
 		851E359923B1214E000FA966 /* AutolayouTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851E359823B1214E000FA966 /* AutolayouTests.swift */; };
 		851ECF6423969297006D332F /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 851ECF6323969297006D332F /* README.md */; };
@@ -261,13 +262,13 @@
 		5C7A2AF127D20AF90067F2F1 /* QuestionnaireCellForm.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = QuestionnaireCellForm.xib; sourceTree = "<group>"; };
 		5CD4F1C62540CAAF009856AC /* Notification+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Notification+Extension.swift"; sourceTree = "<group>"; };
 		5CD4F1C72540CAAF009856AC /* KeyboardHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardHandler.swift; sourceTree = "<group>"; };
+		5CDC33DA285478C400D48183 /* NinchatWebRTC.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NinchatWebRTC.podspec; sourceTree = "<group>"; };
 		62C8D99D572F0DB4B5E6D255 /* Pods-NinchatSDKSwiftUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftUITests.release.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftUITests/Pods-NinchatSDKSwiftUITests.release.xcconfig"; sourceTree = "<group>"; };
 		7B50C1E321841F3749D5D05A /* Pods-NinchatSDKSwiftServerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftServerTests.release.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftServerTests/Pods-NinchatSDKSwiftServerTests.release.xcconfig"; sourceTree = "<group>"; };
 		832BEC3E467C0EEE45282F1B /* Pods-NinchatSDKSwiftTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftTests.debug.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests.debug.xcconfig"; sourceTree = "<group>"; };
 		851E359823B1214E000FA966 /* AutolayouTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutolayouTests.swift; sourceTree = "<group>"; };
 		851ECF6323969297006D332F /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		852751D8238EE67000B6A44A /* NinchatSDKSwift.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = NinchatSDKSwift.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		852751DA238EE67800B6A44A /* BUILDING.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = BUILDING.md; path = "../ninchat-sdk-ios/BUILDING.md"; sourceTree = "<group>"; };
 		8530EC8023AD3FC300BAA52A /* NINChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINChatViewController.swift; sourceTree = "<group>"; };
 		8530EC8323AD405200BAA52A /* VideoView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VideoView.xib; sourceTree = "<group>"; };
 		8530EC8423AD405200BAA52A /* VideoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoView.swift; sourceTree = "<group>"; };
@@ -668,7 +669,8 @@
 			children = (
 				855B9F9D238ED9DC0081A9C6 /* Podfile */,
 				852751D8238EE67000B6A44A /* NinchatSDKSwift.podspec */,
-				852751DA238EE67800B6A44A /* BUILDING.md */,
+				91A165ACC671F88CB39EEB82 /* NinchatLowLevelClient.podspec */,
+				5CDC33DA285478C400D48183 /* NinchatWebRTC.podspec */,
 				851ECF6323969297006D332F /* README.md */,
 				855B9F13238ECDB30081A9C6 /* NinchatSDKSwift */,
 				5C2BFF79266E45740067E3F5 /* NinchatSDKSwiftUI */,
@@ -677,7 +679,6 @@
 				855B9F12238ECDB30081A9C6 /* Products */,
 				51F561339DA2FBB7CF2F5A02 /* Pods */,
 				1F3E30E3300160A871D02F85 /* Frameworks */,
-				91A165ACC671F88CB39EEB82 /* NinchatLowLevelClient.podspec */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1313,6 +1314,7 @@
 				85DD6C5723AE0CBC0023FFEF /* SourceSansPro-Regular.ttf in Resources */,
 				91A16F01F99326D2F881295A /* ChoiceDialogue.xib in Resources */,
 				91A16097541D9C728A532EF5 /* ChoiceDialogueRow.xib in Resources */,
+				5CDC33DB285478C400D48183 /* NinchatWebRTC.podspec in Resources */,
 				91A160407EF6C23B8001A121 /* Toast.xib in Resources */,
 				857F12BF24752C9000337F7A /* QuestionnaireCellConversation.xib in Resources */,
 				91A16F0F943EEA59D402EF50 /* Localizable.strings in Resources */,
@@ -1811,6 +1813,10 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Frameworks",
+				);
 				INFOPLIST_FILE = NinchatSDKSwift/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1860,6 +1866,10 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Frameworks",
+				);
 				INFOPLIST_FILE = NinchatSDKSwift/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
