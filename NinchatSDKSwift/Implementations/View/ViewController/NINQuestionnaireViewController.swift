@@ -16,7 +16,7 @@ protocol QuestionnaireConversationController {
     func updateConversationContentView(_ interval: TimeInterval)
 }
 
-final class NINQuestionnaireViewController: UIViewController, ViewController, KeyboardHandler, HasTitleBar {
+final class NINQuestionnaireViewController: UIViewController, ViewController, KeyboardHandler, HasTitleBar, HasDefaultAvatar {
 
     private let operationQueue = OperationQueue.main
     private let dispatchQueue = DispatchQueue.main
@@ -270,11 +270,26 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
         }
     }
 
+    // MARK: - HasDefaultAvatar
+
+    var defaultAvatar: UIImage? {
+        if let avatar = self.delegate?.override(imageAsset: .ninchatAvatarTitlebar) {
+            return avatar
+        }
+        return UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)
+    }
+    
     // MARK: - UIViewController life-cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.addTitleBar(parent: nil, adjustToSafeArea: true) { [weak self] in
+        var showAvatar: Bool? {
+            if let agentAvatar = self.sessionManager?.siteConfiguration.audienceQuestionnaireAvatar as? String {
+                return !agentAvatar.isEmpty
+            }
+            return self.sessionManager?.siteConfiguration.audienceQuestionnaireAvatar as? Bool
+        }
+        self.addTitleBar(parent: nil, showAvatar: showAvatar, adjustToSafeArea: true) { [weak self] in
             self?.cancelQuestionnaire?()
         }
         self.overrideAssets()

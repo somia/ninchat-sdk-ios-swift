@@ -95,7 +95,7 @@ final class NINRatingViewController: UIViewController, ViewController, HasTitleB
         self.sessionManager?.agent?.info?.job
     }
 
-    // MARK: - HasTitleBar
+    // MARK: - HasDefaultAvatar
 
     var defaultAvatar: UIImage? {
         if let avatar = self.delegate?.override(imageAsset: .ninchatAvatarTitlebar) {
