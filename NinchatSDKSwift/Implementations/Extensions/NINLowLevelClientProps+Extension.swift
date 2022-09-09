@@ -249,6 +249,7 @@ protocol NINLowLevelChannelProps {
     var channelClosed: NINResult<Bool> { get }
     var channelSuspended: NINResult<Bool> { get }
     var channelAudienceMetadata: NINResult<NINLowLevelClientProps> { get }
+    var channelAudienceTransferred: NINResult<String> { get }
 
     var channelID: NINResult<String> { set get }
     var channelMemberAttributes: NINResult<NINLowLevelClientProps> { set get }
@@ -283,6 +284,15 @@ extension NINLowLevelClientProps: NINLowLevelChannelProps {
 
     var channelAudienceMetadata: NINResult<NINLowLevelClientProps> {
         get { self.get(forKey: "audience_metadata") }
+    }
+
+    var channelAudienceTransferred: NINResult<String> {
+        switch self.channelAttributes {
+        case .success(let attributes):
+            return attributes.get(forKey: "audience_transferred")
+        case .failure(let error):
+            return .failure(error)
+        }
     }
 
     var channelID: NINResult<String> {
