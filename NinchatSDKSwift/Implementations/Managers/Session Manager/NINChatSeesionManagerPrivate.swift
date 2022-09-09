@@ -163,13 +163,18 @@ extension NINChatSessionManagerImpl {
             }
         }
 
-        try self.didJoinChannel(channelID: param.channelID.value, message: message)
+        var audienceTransferred = false
+        if case let .success(transferID) = param.channelAudienceTransferred, !transferID.isEmpty {
+            audienceTransferred = true
+        }
+
+        try self.didJoinChannel(channelID: param.channelID.value, message: message, audienceTransferred)
 
         /// Signal channel join event to the asynchronous listener
         self.onChannelJoined?()
     }
 
-    internal func didJoinChannel(channelID: String, message: String?) throws {
+    internal func didJoinChannel(channelID: String, message: String?, _ audienceTransferred: Bool) throws {
         delegate?.log(value: "Joined channel ID: \(channelID)")
 
         /// Set the currently active channel
@@ -198,7 +203,8 @@ extension NINChatSessionManagerImpl {
         self.add(message: MetaMessage(timestamp: Date(), messageID: self.chatMessages.first?.messageID, text: self.translate(key: "Audience in queue {{queue}} accepted.", formatParams: ["queue": self.describedQueue?.name ?? ""]) ?? "", closeChatButtonTitle: nil))
 
         /// send message if any
-        if let message = message {
+        /// avoid sending duplicated messages, according to `https://github.com/somia/mobile/issues/394`
+        if let message = message, !audienceTransferred {
             try self.send(message: message) { _ in }
         }
     }
