@@ -75,7 +75,6 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
     @IBOutlet private(set) weak var sendMessageButton: UIButton! {
         didSet {
             sendMessageButton.backgroundColor = .clear
-            sendMessageButton.setImage(nil, for: .normal)
             sendMessageButton.contentVerticalAlignment = .center
             sendMessageButton.contentHorizontalAlignment = .center
         }
@@ -85,11 +84,15 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
     func overrideAssets() {
         if let sendButtonTitle = self.sessionManager?.siteConfiguration.sendButtonTitle {
             self.sendMessageButtonWidthConstraint.isActive = false
+            self.sendMessageButton.setImage(nil, for: .normal)
             self.sendMessageButton.setTitle(sendButtonTitle, for: .normal)
             self.sendMessageButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
+        } else {
+            self.sendMessageButton.setImage(UIImage(named: "icon_send_message", in: .SDKBundle, compatibleWith: nil), for: .normal)
         }
 
         if let layer = delegate?.override(layerAsset: .ninchatTextareaSubmitButton) {
+            self.sendMessageButton.setImage(nil, for: .normal)
             self.sendMessageButton.layer.apply(layer)
         } else if let backgroundBundle = UIImage(named: "icon_send_message_border", in: .SDKBundle, compatibleWith: nil) {
             self.sendMessageButton.setBackgroundImage(backgroundBundle, for: .normal)
