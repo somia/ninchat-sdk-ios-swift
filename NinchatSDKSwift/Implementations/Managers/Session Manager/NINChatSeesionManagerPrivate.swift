@@ -199,6 +199,11 @@ extension NINChatSessionManagerImpl {
             channelUsers.removeAll()
         }
 
+        /// Remove meta message related to channel closed if there are any
+        if let metaMessage = self.chatMessages.first(where: { $0.messageID.contains("zzzzzzclose") }) {
+            self.removeMessage(atIndex: 0)
+        }
+        
         /// Insert a meta message about the conversation start
         self.add(message: MetaMessage(timestamp: Date(), messageID: self.chatMessages.first?.messageID, text: self.translate(key: "Audience in queue {{queue}} accepted.", formatParams: ["queue": self.describedQueue?.name ?? ""]) ?? "", closeChatButtonTitle: nil))
 
