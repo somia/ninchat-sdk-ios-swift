@@ -117,11 +117,17 @@ final class NINRatingViewController: UIViewController, ViewController, HasTitleB
         
         /// Show conversation-style rating view
         /// according to `https://github.com/somia/mobile/issues/314`
-        conversationStyleView.isHidden = (style != .conversation)
-        formStyleView.isHidden = !conversationStyleView.isHidden
         if style == .conversation {
+            self.formStyleView.isHidden = true
+            self.conversationStyleView.isHidden = false
+            self.facesFormViewContainer.isHidden = true
+            self.facesConversationViewContainer.isHidden = false
             self.adjustFaceView(parent: facesConversationViewContainer)
         } else if style == .form {
+            self.formStyleView.isHidden = false
+            self.conversationStyleView.isHidden = true
+            self.facesFormViewContainer.isHidden = false
+            self.facesConversationViewContainer.isHidden = true
             self.adjustFaceView(parent: facesFormViewContainer)
         }
         
