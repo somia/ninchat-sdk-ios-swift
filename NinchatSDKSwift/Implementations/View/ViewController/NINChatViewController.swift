@@ -185,7 +185,11 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
         self.sessionManager?.siteConfiguration.agentName ?? self.sessionManager?.agent?.displayName
     }
     var titlebarJob: String? {
-        self.sessionManager?.agent?.info?.job
+        /// `https://github.com/somia/mobile/issues/411#issuecomment-1249263156`
+        if let agentName = self.sessionManager?.siteConfiguration.agentName, !agentName.isEmpty {
+            return nil
+        }
+        return self.sessionManager?.agent?.info?.job
     }
 
     // MARK: - HasTitleBar
