@@ -87,7 +87,7 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                                     guard error == nil else { self?.onActionSessionEvent?(credentials, eventType, error); return }
                                     guard let channelID = self?.currentChannelID else { debugger("Error in getting current channel id"); return }
 
-                                    try? self?.didJoinChannel(channelID: channelID, message: nil, false)
+                                    try? self?.didJoinChannel(channelID: channelID, message: nil, false, true)
                                     self?.onActionSessionEvent?(credentials, eventType, nil)
                                 }
                             } catch {

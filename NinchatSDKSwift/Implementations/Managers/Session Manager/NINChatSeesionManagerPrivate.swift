@@ -168,13 +168,13 @@ extension NINChatSessionManagerImpl {
             audienceTransferred = true
         }
 
-        try self.didJoinChannel(channelID: param.channelID.value, message: message, audienceTransferred)
+        try self.didJoinChannel(channelID: param.channelID.value, message: message, audienceTransferred, param.channelClosed.value || param.channelSuspended.value)
 
         /// Signal channel join event to the asynchronous listener
         self.onChannelJoined?()
     }
 
-    internal func didJoinChannel(channelID: String, message: String?, _ audienceTransferred: Bool) throws {
+    internal func didJoinChannel(channelID: String, message: String?, _ audienceTransferred: Bool, _ channelClosed: Bool) throws {
         delegate?.log(value: "Joined channel ID: \(channelID)")
 
         /// Set the currently active channel
@@ -194,11 +194,16 @@ extension NINChatSessionManagerImpl {
 
         /// Clear current list of messages and users
         /// If only the previous channel was successfully closed.
-        if self.channelClosed {
+        if channelClosed {
             chatMessages.removeAll()
             channelUsers.removeAll()
         }
 
+        /// Remove meta message related to channel closed if there are any
+        if let metaMessage = self.chatMessages.first(where: { $0.messageID.contains("zzzzzzclose") }) {
+            self.removeMessage(atIndex: 0)
+        }
+        
         /// Insert a meta message about the conversation start
         self.add(message: MetaMessage(timestamp: Date(), messageID: self.chatMessages.first?.messageID, text: self.translate(key: "Audience in queue {{queue}} accepted.", formatParams: ["queue": self.describedQueue?.name ?? ""]) ?? "", closeChatButtonTitle: nil))
 
@@ -211,9 +216,6 @@ extension NINChatSessionManagerImpl {
 
     internal func didPartChannel(param: NINLowLevelClientProps) throws {
         if case let .failure(error) = param.channelID { throw error }
-        
-        /// The channel is not actually "closed", it is parted.
-        self.channelClosed = false
         self.onActionChannel?(param.actionID, param.channelID.value)
     }
 
@@ -226,12 +228,11 @@ extension NINChatSessionManagerImpl {
             debugger("Got channel_updated for wrong channel: \(channelID)"); return
         }
 
-        self.channelClosed = param.channelClosed.value || param.channelSuspended.value
         /// In case of "channel transfer", the corresponded function: "didPartChannel(param:)" is called after this function.
         /// Thus, We will send meta message only if the channel was actually closed, not parted.
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             guard let `self` = self else { return }
-            guard self.channelClosed else { return }
+            guard param.channelClosed.value || param.channelSuspended.value else { return }
 
             let text = self.translate(key: Constants.kConversationEnded.rawValue, formatParams: [:])
             let closeTitle = self.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
