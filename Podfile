@@ -1,4 +1,4 @@
-platform :ios, '10.0'
+platform :ios, '13.0'
 inhibit_all_warnings!
 use_frameworks!
 
@@ -8,8 +8,8 @@ source 'https://github.com/somia/ninchat-podspecs.git'
 def libraries
   pod 'AnyCodable-FlightSchool', '~> 0.2.3'
   pod 'AutoLayoutSwift', '4.0.0'
-  pod 'NinchatLowLevelClient', '~> 0.3.10'
-  pod 'GoogleWebRTC'
+  pod 'NinchatLowLevelClient', :path => './' # '~> 0.3.10'
+  pod 'JitsiMeetSDK', '7.0.0'
 end
 
 target 'NinchatSDKSwift' do
@@ -31,7 +31,7 @@ end
 post_install do |pi|
     pi.pods_project.build_configurations.each do |config|
       config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'YES'
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '10'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13'
     end
     pi.pods_project.targets.each do |t|
       t.build_configurations.each do |config|

@@ -9,8 +9,8 @@ Pod::Spec.new do |s|
   s.license      = { :type => "BSD", :file => "LICENSE.md" }
   s.author       = { "Hassan Shahbazi" => "hassan@ninchat.com" }
   s.source       = { :git => "https://github.com/somia/ninchat-sdk-ios-swift.git", :tag => "#{s.version}" }
-  s.ios.deployment_target = "10.0"
-  s.vendored_frameworks = "Frameworks/NinchatLowLevelClient.framework"
+  s.ios.deployment_target = "13.0"
+  s.vendored_frameworks = "Frameworks/NinchatLowLevelClient.xcframework"
   s.module_name = "NinchatLowLevelClient"
   s.static_framework = true
 

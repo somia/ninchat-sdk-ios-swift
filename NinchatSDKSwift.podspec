@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.license      = { :type => "Ninchat", :file => "LICENSE.md" }
   s.author       = { "Hassan Shahbazi" => "hassan@ninchat.com" }
   s.source       = { :git => "https://github.com/somia/ninchat-sdk-ios-swift.git", :tag => "#{s.version}" }
-  s.ios.deployment_target = "10.0"
+  s.ios.deployment_target = "13.0"
 
   # Handle the SDK itself as a subspec with dependencies to the frameworks
   s.subspec "SDKSwift" do |ss|
@@ -41,6 +41,7 @@ Pod::Spec.new do |s|
 
   # Cocoapods dependencies
   s.dependency "GoogleWebRTC"
+  s.dependency "JitsiMeetSDK", "7.0.0"
   s.dependency 'AnyCodable-FlightSchool', '~> 0.2.3'
   s.dependency "AutoLayoutSwift", "4.0.0"
   s.dependency "NinchatLowLevelClient", "~> 0.3.10"

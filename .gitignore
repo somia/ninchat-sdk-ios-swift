@@ -11,5 +11,6 @@ NinchatSDKSwiftServerTests/Secrets.plist
 *.out
 *.log
 .envrc
+shell.nix
 
 go-sdk/
