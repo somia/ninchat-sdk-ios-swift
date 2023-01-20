@@ -1,3 +1,4 @@
+.DS_Store
 *.lock
 Pods/
 NinchatSDKSwift.xcodeproj/xcuserdata/
@@ -9,5 +10,6 @@ NinchatSDKSwiftServerTests/Secrets.plist
 
 *.out
 *.log
+.envrc
 
 go-sdk/
