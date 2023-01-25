@@ -40,7 +40,6 @@ Pod::Spec.new do |s|
   }
 
   # Cocoapods dependencies
-  s.dependency "GoogleWebRTC"
   s.dependency "JitsiMeetSDK", "7.0.0"
   s.dependency 'AnyCodable-FlightSchool', '~> 0.2.3'
   s.dependency "AutoLayoutSwift", "4.0.0"
