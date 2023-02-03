@@ -8,6 +8,7 @@ import Foundation
 
 protocol NINChatSessionManagerClosureHandler {
     func bind(action id: Int?, closure: @escaping (Error?) -> Void)
+    func bindJitsi(action id: Int?, closure: @escaping CompletionWithJitsiCredentials)
     func bindFile(action id: Int?, closure: @escaping (Error?, [String:Any]?) -> Void)
     func bindChannel(action id: Int?, closure: @escaping (Error?) -> Void)
     func bindICEServer(action id: Int?, closure: @escaping (Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void)
@@ -29,7 +30,23 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerClosureHandler {
             }
         }
     }
-    
+
+    internal func bindJitsi(action id: Int?, closure: @escaping CompletionWithJitsiCredentials) {
+        guard let id = id else { return }
+        self.actionJitsiBoundClosures[id] = closure
+
+        if self.onActionJitsiDiscovered == nil {
+            self.onActionJitsiDiscovered = { [weak self] actionId, result in
+                if let targetClosure = self?.actionJitsiBoundClosures.filter({
+                    guard case let .success(id) = actionId else { return false }
+                    return $0.key == id
+                }).first?.value {
+                    targetClosure(result)
+                }
+            }
+        }
+    }
+
     internal func bindFile(action id: Int?, closure: @escaping (Error?, [String:Any]?) -> Void) {
         guard let id = id else { return }
         self.actionFileBoundClosures[id] = closure

@@ -9,6 +9,8 @@ import NinchatLowLevelClient
 
 typealias CompletionWithError = (Error?) -> Void
 typealias CompletionWithCredentials = (NINSessionCredentials?, _ resume: ResumeMode?, Error?) -> Void
+typealias JitsiCredentials = (room: String, token: String)
+typealias CompletionWithJitsiCredentials = (NINResult<JitsiCredentials>?) -> Void
 typealias Completion = () -> Void
 
 /** Available ratings and assigned status codes for finishing the chat from our end */
@@ -34,6 +36,9 @@ protocol NINChatSessionConnectionManager: AnyObject {
     
     /** Fetch site's configuration using given `server address` in the initialization */
     func fetchSiteConfiguration(config key: String, environments: [String]?, completion: @escaping CompletionWithError)
+
+    /** Discover Jitsi's room and token given `server address` and `channel id` in the initialization */
+    func discoverJitsi(completion: @escaping CompletionWithJitsiCredentials) throws
     
     /** Opens the session with an asynchronous completion callback. */
     func openSession(completion: @escaping CompletionWithCredentials) throws
