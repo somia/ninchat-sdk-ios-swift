@@ -37,7 +37,7 @@ protocol NINChatStateProtocol {
     func didEnterForeground()
 }
 
-protocol NINChatMessageProtocol {
+protocol NINChatMessageProtocol: AnyObject {
     var onErrorOccurred: ((Error) -> Void)? { get set }
 
     func updateWriting(state: Bool)

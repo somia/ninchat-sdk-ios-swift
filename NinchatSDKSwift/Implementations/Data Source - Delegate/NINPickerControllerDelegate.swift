@@ -25,7 +25,7 @@ protocol NINPickerControllerAction {
 }
 
 protocol NINPickerControllerDelegate: UIImagePickerControllerDelegate, UINavigationControllerDelegate, NINPickerControllerAction {
-    init(viewModel: NINChatViewModel)
+    init(viewModel: NINChatMessageProtocol)
 }
 
 final class NINPickerControllerDelegateImpl: NSObject, NINPickerControllerDelegate {
@@ -37,9 +37,9 @@ final class NINPickerControllerDelegateImpl: NSObject, NINPickerControllerDelega
     
     // MARK: - NINPickerControllerDelegate
     
-    private unowned var viewModel: NINChatViewModel!
+    private unowned var viewModel: NINChatMessageProtocol!
     
-    init(viewModel: NINChatViewModel) {
+    init(viewModel: NINChatMessageProtocol) {
         self.viewModel = viewModel
     }
 }

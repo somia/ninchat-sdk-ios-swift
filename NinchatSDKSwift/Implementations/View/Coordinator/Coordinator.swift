@@ -91,64 +91,17 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
         joinViewController.onQueueActionTapped = { [weak self] queue in
             DispatchQueue.main.async {
                 guard let `self` = self else { return }
-                let chatViewController = self.chatViewController(queue: queue)
-                self.navigationController?.pushViewController(chatViewController, animated: true)
+                let chatVC = self.chatViewController(queue: queue)
+                self.chatViewController = chatVC
+                self.navigationController?.pushViewController(chatVC, animated: true)
             }
         }
 
         return joinViewController
     }()
     private var didLoaded_chatViewController = false
-    internal lazy var chatViewController: NINChatViewController = {
-        let viewModel: NINChatViewModel = NINChatViewModelImpl(sessionManager: self.sessionManager)
-        let videoDelegate: NINRTCVideoDelegate = NINRTCVideoDelegateImpl()
-        let mediaDelegate: NINPickerControllerDelegate = chatMediaPicker(viewModel)
-        let chatViewController: NINChatViewController = storyboard.instantiateViewController()
-        chatViewController.viewModel = viewModel
-        chatViewController.delegate = self.delegate
-        chatViewController.sessionManager = self.sessionManager
-        chatViewController.chatDataSourceDelegate = chatDataSourceDelegate(viewModel)
-        chatViewController.chatVideoDelegate = videoDelegate
-        chatViewController.chatRTCDelegate = chatRTCDelegate(videoDelegate)
-        chatViewController.chatMediaPickerDelegate = mediaDelegate
+    internal var chatViewController: DeallocatableViewController?
 
-        chatViewController.onOpenGallery = { [weak self] source in
-            DispatchQueue.main.async {
-                guard let `self` = self else { return }
-
-                let controller = UIImagePickerController()
-                controller.sourceType = source
-                controller.mediaTypes = [kUTTypeImage, kUTTypeMovie] as [String]
-                controller.allowsEditing = false
-                controller.videoQuality = .typeMedium
-                controller.delegate = mediaDelegate
-                self.navigationController?.present(controller, animated: true, completion: nil)
-            }
-        }
-        chatViewController.onBackToQueue = { [weak self] in
-            DispatchQueue.main.async {
-                self?.navigationController?.popViewController(animated: true)
-            }
-        }
-        chatViewController.onChatClosed = { [weak self] in
-            DispatchQueue.main.async {
-                guard let `self` = self else { return }
-
-                /// skip rating page if ´audienceRating = False´
-                /// according to `https://github.com/somia/mobile/issues/380`
-                if self.sessionManager.siteConfiguration.audienceRating {
-                    self.navigationController?.pushViewController(self.ratingViewController, animated: true)
-                } else if self.hasPostAudienceQuestionnaire {
-                    self.navigationController?.pushViewController(self.questionnaireViewController(ratingViewModel: nil, rating: nil, questionnaireType: .post), animated: true)
-                } else {
-                    try? self.sessionManager.closeChat(endSession: true, onCompletion: nil)
-                }
-            }
-        }
-
-        didLoaded_chatViewController = true
-        return chatViewController
-    }()
     internal lazy var fullScreenViewController: NINFullScreenViewController = {
         let viewModel: NINFullScreenViewModel = NINFullScreenViewModelImpl(delegate: nil)
         let previewViewController: NINFullScreenViewController = storyboard.instantiateViewController()
@@ -210,7 +163,7 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
 
     func deallocate() {
         if self.didLoaded_questionnaireViewController { self.questionnaireViewController.deallocate() }
-        if self.didLoaded_chatViewController { self.chatViewController.deallocate() }
+        if self.didLoaded_chatViewController { self.chatViewController?.deallocate() }
     }
 
     /// In case of heavy questionnaires, there would be a memory-consuming job in instantiation of `NINQuestionnaireViewModel`
@@ -299,11 +252,107 @@ extension NINCoordinator {
         return vc
     }
 
-    internal func chatViewController(queue: Queue?) -> NINChatViewController {
-        let vc = self.chatViewController
-        vc.queue = queue
+    internal func chatViewController(queue: Queue?) -> DeallocatableViewController {
+        if let chatVC = chatViewController {
+            return chatVC
+        }
+        // TODO: Jitsi - remove copy-paste
+        let chatVC: DeallocatableViewController
+        if queue?.isGroup == true {
+            let viewModel: NINGroupChatViewModel = NINGroupChatViewModelImpl(sessionManager: self.sessionManager)
+            let mediaDelegate: NINPickerControllerDelegate = chatMediaPicker(viewModel)
+            let chatViewController: NINGroupChatViewController = storyboard.instantiateViewController()
+            chatViewController.viewModel = viewModel
+            chatViewController.delegate = self.delegate
+            chatViewController.sessionManager = self.sessionManager
+            chatViewController.chatDataSourceDelegate = chatDataSourceDelegate(viewModel)
+            chatViewController.chatMediaPickerDelegate = mediaDelegate
 
-        return vc
+            chatViewController.onOpenGallery = { [weak self] source in
+                DispatchQueue.main.async {
+                    guard let `self` = self else { return }
+
+                    let controller = UIImagePickerController()
+                    controller.sourceType = source
+                    controller.mediaTypes = [kUTTypeImage, kUTTypeMovie] as [String]
+                    controller.allowsEditing = false
+                    controller.videoQuality = .typeMedium
+                    controller.delegate = mediaDelegate
+                    self.navigationController?.present(controller, animated: true, completion: nil)
+                }
+            }
+            chatViewController.onBackToQueue = { [weak self] in
+                DispatchQueue.main.async {
+                    self?.navigationController?.popViewController(animated: true)
+                }
+            }
+            chatViewController.onChatClosed = { [weak self] in
+                DispatchQueue.main.async {
+                    guard let `self` = self else { return }
+
+                    /// skip rating page if ´audienceRating = False´
+                    /// according to `https://github.com/somia/mobile/issues/380`
+                    if self.sessionManager.siteConfiguration.audienceRating {
+                        self.navigationController?.pushViewController(self.ratingViewController, animated: true)
+                    } else if self.hasPostAudienceQuestionnaire {
+                        self.navigationController?.pushViewController(self.questionnaireViewController(ratingViewModel: nil, rating: nil, questionnaireType: .post), animated: true)
+                    } else {
+                        try? self.sessionManager.closeChat(endSession: true, onCompletion: nil)
+                    }
+                }
+            }
+            chatVC = chatViewController
+        } else {
+            let viewModel: NINChatViewModel = NINChatViewModelImpl(sessionManager: self.sessionManager)
+            let videoDelegate: NINRTCVideoDelegate = NINRTCVideoDelegateImpl()
+            let mediaDelegate: NINPickerControllerDelegate = chatMediaPicker(viewModel)
+            let chatViewController: NINChatViewController = storyboard.instantiateViewController()
+            chatViewController.viewModel = viewModel
+            chatViewController.delegate = self.delegate
+            chatViewController.sessionManager = self.sessionManager
+            chatViewController.chatDataSourceDelegate = chatDataSourceDelegate(viewModel)
+            chatViewController.chatVideoDelegate = videoDelegate
+            chatViewController.chatRTCDelegate = chatRTCDelegate(videoDelegate)
+            chatViewController.chatMediaPickerDelegate = mediaDelegate
+
+            chatViewController.onOpenGallery = { [weak self] source in
+                DispatchQueue.main.async {
+                    guard let `self` = self else { return }
+
+                    let controller = UIImagePickerController()
+                    controller.sourceType = source
+                    controller.mediaTypes = [kUTTypeImage, kUTTypeMovie] as [String]
+                    controller.allowsEditing = false
+                    controller.videoQuality = .typeMedium
+                    controller.delegate = mediaDelegate
+                    self.navigationController?.present(controller, animated: true, completion: nil)
+                }
+            }
+            chatViewController.onBackToQueue = { [weak self] in
+                DispatchQueue.main.async {
+                    self?.navigationController?.popViewController(animated: true)
+                }
+            }
+            chatViewController.onChatClosed = { [weak self] in
+                DispatchQueue.main.async {
+                    guard let `self` = self else { return }
+
+                    /// skip rating page if ´audienceRating = False´
+                    /// according to `https://github.com/somia/mobile/issues/380`
+                    if self.sessionManager.siteConfiguration.audienceRating {
+                        self.navigationController?.pushViewController(self.ratingViewController, animated: true)
+                    } else if self.hasPostAudienceQuestionnaire {
+                        self.navigationController?.pushViewController(self.questionnaireViewController(ratingViewModel: nil, rating: nil, questionnaireType: .post), animated: true)
+                    } else {
+                        try? self.sessionManager.closeChat(endSession: true, onCompletion: nil)
+                    }
+                }
+            }
+            chatViewController.queue = queue
+            chatVC = chatViewController
+        }
+        didLoaded_chatViewController = true
+        return chatVC
     }
 
     internal func fullScreenViewController(image: UIImage?, attachment: FileInfo?) -> NINFullScreenViewController {
@@ -318,7 +367,7 @@ extension NINCoordinator {
 // MARK: - NINChatViewController components
 
 extension NINCoordinator {
-    internal func chatDataSourceDelegate(_ viewModel: NINChatViewModel) -> NINChatDataSourceDelegate {
+    internal func chatDataSourceDelegate(_ viewModel: NINChatMessageProtocol) -> NINChatDataSourceDelegate {
         let dataSourceDelegate: NINChatDataSourceDelegate = NINChatDataSourceDelegateImpl(viewModel: viewModel)
         dataSourceDelegate.onOpenPhotoAttachment = { [weak self] image, attachment in
             DispatchQueue.main.async {
@@ -343,7 +392,7 @@ extension NINCoordinator {
         NINWebRTCDelegateImpl(remoteVideoDelegate: videoDelegate)
     }
 
-    internal func chatMediaPicker(_ viewModel: NINChatViewModel) -> NINPickerControllerDelegate {
+    internal func chatMediaPicker(_ viewModel: NINChatMessageProtocol) -> NINPickerControllerDelegate {
         NINPickerControllerDelegateImpl(viewModel: viewModel)
     }
 }

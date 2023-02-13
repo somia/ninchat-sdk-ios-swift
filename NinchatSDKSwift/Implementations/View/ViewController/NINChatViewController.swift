@@ -6,7 +6,7 @@
 
 import UIKit
 
-final class NINChatViewController: UIViewController, ViewController, KeyboardHandler, HasTitleBar, HasDefaultAvatar {
+final class NINChatViewController: UIViewController, DeallocatableViewController, KeyboardHandler, HasTitleBar, HasDefaultAvatar {
     private var webRTCClient: NINChatWebRTCClient?
 
     // MARK: - ViewController
@@ -140,7 +140,6 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     
     private lazy var inputControlsView: ChatInputControlsProtocol = {
         let view: ChatInputControls = ChatInputControls.loadFromNib()
-        view.viewModel = viewModel
         view.delegate = self.delegate
         view.sessionManager = self.sessionManager
         view.onSendTapped = { [weak self] text in
