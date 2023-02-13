@@ -10,3 +10,7 @@ protocol ViewController: UIViewController {
     var delegate: NINChatSessionInternalDelegate? { get set }
     var sessionManager: NINChatSessionManager? { get set }
 }
+
+protocol DeallocatableViewController: ViewController {
+    func deallocate()
+}
