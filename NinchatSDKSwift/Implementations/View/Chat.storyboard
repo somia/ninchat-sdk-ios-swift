@@ -817,11 +817,88 @@ you are next. </string>
                                     <constraint firstAttribute="height" constant="60" id="245-ed-p9z"/>
                                 </constraints>
                             </view>
-                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="V3Y-9g-qYe" userLabel="Video container view">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="0.0"/>
-                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="V3Y-9g-qYe" userLabel="Join Video container view">
+                                <rect key="frame" x="0.0" y="108" width="414" height="200"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mDv-HO-Uww" userLabel="Shadow">
+                                        <rect key="frame" x="0.0" y="199" width="414" height="1"/>
+                                        <color key="backgroundColor" red="0.85882352941176465" green="0.8666666666666667" blue="0.88235294117647056" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="1" id="2yO-GQ-R1G"/>
+                                        </constraints>
+                                    </view>
+                                    <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uWx-9I-BAh">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="199"/>
+                                        <subviews>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="xv2-Vb-E7a">
+                                                <rect key="frame" x="0.0" y="30" width="414" height="209.5"/>
+                                                <subviews>
+                                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="oMz-g1-Vcu">
+                                                        <rect key="frame" x="154" y="0.0" width="106.5" height="57"/>
+                                                        <subviews>
+                                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_camera_on" translatesAutoresizingMaskIntoConstraints="NO" id="BDs-BD-POF">
+                                                                <rect key="frame" x="20.5" y="0.0" width="65" height="26"/>
+                                                                <color key="tintColor" red="0.49411764705882355" green="0.58431372549019611" blue="0.68627450980392157" alpha="1" colorSpace="calibratedRGB"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="26" id="17B-Jk-EB8"/>
+                                                                    <constraint firstAttribute="width" constant="65" id="UsL-3V-cKB"/>
+                                                                </constraints>
+                                                            </imageView>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Video Meeting" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gM3-CS-0gI">
+                                                                <rect key="frame" x="0.0" y="34" width="106.5" height="23"/>
+                                                                <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="18"/>
+                                                                <nil key="textColor"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                        </subviews>
+                                                    </stackView>
+                                                    <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rMZ-Jf-WSH" customClass="JoinVideoButton" customModule="NinchatSDKSwift">
+                                                        <rect key="frame" x="117" y="73" width="180" height="45"/>
+                                                        <color key="backgroundColor" red="0.0" green="0.54117647059999996" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="45" id="Wdj-LA-s0H"/>
+                                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="180" id="efa-w7-gqs"/>
+                                                        </constraints>
+                                                        <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
+                                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                        <state key="normal" title="Join Video Meeting">
+                                                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        </state>
+                                                    </button>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qEb-zT-pbh">
+                                                        <rect key="frame" x="75.5" y="134" width="263" height="75.5"/>
+                                                        <string key="text">Continue to join video meeting.
+You can toggle text chat from the top.
+Longer text can be scrollable, flows below 
+chat backlog.</string>
+                                                        <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="15"/>
+                                                        <nil key="textColor"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                </subviews>
+                                            </stackView>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstAttribute="bottom" secondItem="xv2-Vb-E7a" secondAttribute="bottom" id="P0V-Sb-G0H"/>
+                                            <constraint firstItem="xv2-Vb-E7a" firstAttribute="leading" secondItem="uWx-9I-BAh" secondAttribute="leading" id="b0d-dV-m7j"/>
+                                            <constraint firstItem="xv2-Vb-E7a" firstAttribute="centerX" secondItem="uWx-9I-BAh" secondAttribute="centerX" id="ePR-JC-e6o"/>
+                                            <constraint firstItem="xv2-Vb-E7a" firstAttribute="top" secondItem="uWx-9I-BAh" secondAttribute="top" constant="30" id="owH-bC-7z4"/>
+                                            <constraint firstAttribute="trailing" secondItem="xv2-Vb-E7a" secondAttribute="trailing" id="pf0-wM-KHs"/>
+                                        </constraints>
+                                        <viewLayoutGuide key="contentLayoutGuide" id="n4E-0P-jMZ"/>
+                                        <viewLayoutGuide key="frameLayoutGuide" id="Zd4-FH-FXI"/>
+                                    </scrollView>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" id="vU8-LU-4Ti"/>
+                                    <constraint firstItem="mDv-HO-Uww" firstAttribute="leading" secondItem="V3Y-9g-qYe" secondAttribute="leading" id="2fL-6L-P4d"/>
+                                    <constraint firstAttribute="bottom" secondItem="mDv-HO-Uww" secondAttribute="bottom" id="99J-lu-2nl"/>
+                                    <constraint firstAttribute="trailing" secondItem="mDv-HO-Uww" secondAttribute="trailing" id="9C9-aj-DnZ"/>
+                                    <constraint firstAttribute="trailing" secondItem="uWx-9I-BAh" secondAttribute="trailing" id="A4r-YZ-4kg"/>
+                                    <constraint firstItem="uWx-9I-BAh" firstAttribute="leading" secondItem="V3Y-9g-qYe" secondAttribute="leading" id="JRU-YQ-0Kt"/>
+                                    <constraint firstItem="uWx-9I-BAh" firstAttribute="top" secondItem="V3Y-9g-qYe" secondAttribute="top" id="idF-jm-FzI"/>
+                                    <constraint firstAttribute="height" constant="200" id="vU8-LU-4Ti"/>
+                                    <constraint firstAttribute="bottom" secondItem="uWx-9I-BAh" secondAttribute="bottom" constant="1" id="vnF-IY-htG"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" placeholderIntrinsicWidth="132" placeholderIntrinsicHeight="45" translatesAutoresizingMaskIntoConstraints="NO" id="viT-sr-wTf" customClass="CloseButton" customModule="NinchatSDKSwift">
@@ -845,7 +922,7 @@ you are next. </string>
                             <constraint firstAttribute="trailing" secondItem="V3Y-9g-qYe" secondAttribute="trailing" id="aLO-IY-Udj"/>
                             <constraint firstItem="qJN-P9-oZ8" firstAttribute="bottom" secondItem="ZKy-WV-dkx" secondAttribute="bottom" id="god-ot-JOL"/>
                             <constraint firstItem="viT-sr-wTf" firstAttribute="top" secondItem="egg-zz-ZkU" secondAttribute="top" constant="10" id="ij2-6O-4LT"/>
-                            <constraint firstItem="V3Y-9g-qYe" firstAttribute="top" secondItem="sPx-WY-SBH" secondAttribute="top" id="m8I-M4-WOv"/>
+                            <constraint firstItem="V3Y-9g-qYe" firstAttribute="top" secondItem="qJN-P9-oZ8" secondAttribute="bottom" id="m8I-M4-WOv"/>
                             <constraint firstItem="V3Y-9g-qYe" firstAttribute="leading" secondItem="sPx-WY-SBH" secondAttribute="leading" id="ovm-56-C1S"/>
                             <constraint firstItem="egg-zz-ZkU" firstAttribute="bottom" secondItem="ii0-zL-XsT" secondAttribute="bottom" id="rKU-Jm-fCr"/>
                             <constraint firstAttribute="trailing" secondItem="cCC-Ez-hrm" secondAttribute="trailing" id="rlv-7k-kFk"/>
@@ -860,21 +937,24 @@ you are next. </string>
                         <outlet property="chatView" destination="X8Y-qB-1Sx" id="jH4-NR-HxX"/>
                         <outlet property="closeChatButton" destination="viT-sr-wTf" id="9OC-me-6zd"/>
                         <outlet property="inputContainer" destination="IYI-Ye-CsI" id="wXC-5T-Nf6"/>
+                        <outlet property="joinVideoButton" destination="rMZ-Jf-WSH" id="to3-5I-aBS"/>
+                        <outlet property="joinVideoContainer" destination="V3Y-9g-qYe" id="1de-Dq-iZD"/>
+                        <outlet property="joinVideoContainerHeight" destination="vU8-LU-4Ti" id="6bI-cp-kL5"/>
+                        <outlet property="joinVideoStack" destination="xv2-Vb-E7a" id="mYm-hR-o9z"/>
                         <outlet property="scrollableViewContainer" destination="ii0-zL-XsT" id="G1x-8l-ZTZ"/>
                         <outlet property="titlebar" destination="ZKy-WV-dkx" id="D2x-zc-kZh"/>
                         <outlet property="titlebarContainer" destination="qJN-P9-oZ8" id="TmO-Mb-gjK"/>
-                        <outlet property="videoContainer" destination="V3Y-9g-qYe" id="dhh-hH-8bd"/>
-                        <outlet property="videoContainerHeight" destination="vU8-LU-4Ti" id="Cee-xL-FuZ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7PC-kj-RKw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1519" y="-610"/>
+            <point key="canvasLocation" x="1518.840579710145" y="-610.04464285714278"/>
         </scene>
     </scenes>
     <resources>
         <image name="chat_bubble_left_series" width="31" height="52"/>
         <image name="icon_avatar_other" width="726" height="725"/>
+        <image name="icon_camera_on" width="35" height="35"/>
         <image name="icon_progress_whirl" width="800" height="800"/>
         <systemColor name="labelColor">
             <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

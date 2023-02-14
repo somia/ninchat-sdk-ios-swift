@@ -6,6 +6,8 @@
 
 import UIKit
 
+// TODO: Jitsi - check landscape and iPad UI
+
 final class NINGroupChatViewController: UIViewController, DeallocatableViewController, KeyboardHandler, HasTitleBar, HasDefaultAvatar {
 
     // MARK: - ViewController
@@ -51,8 +53,8 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     @IBOutlet private(set) weak var scrollableViewContainer: UIView!
     @IBOutlet private(set) weak var backgroundView: UIImageView! /// <--- to hold page background image, it is more flexible to have a dedicated view
 
-    @IBOutlet private(set) weak var videoContainerHeight: NSLayoutConstraint!
-    @IBOutlet private(set) weak var videoContainer: UIView! {
+    @IBOutlet private(set) weak var joinVideoContainerHeight: NSLayoutConstraint!
+    @IBOutlet private(set) weak var joinVideoContainer: UIView! {
         didSet {
 //            let currentVideoView: UIView = queue?.isGroup == true
 //                ? groupVideoView
@@ -65,6 +67,9 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
         }
     }
 
+    @IBOutlet private(set) weak var joinVideoButton: JoinVideoButton!
+    @IBOutlet private(set) weak var joinVideoStack: UIStackView!
+
     @IBOutlet private(set) weak var chatContainerHeight: NSLayoutConstraint!
     @IBOutlet private(set) weak var chatView: ChatView! {
         didSet {
@@ -76,9 +81,9 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     }
     @IBOutlet private(set) weak var closeChatButton: CloseButton! {
         didSet {
-            if self.hasTitlebar {
-                closeChatButton.isHidden = true; return
-            }
+//            if self.hasTitlebar {
+//                closeChatButton.isHidden = true; return
+//            }
 
             let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
             closeChatButton.buttonTitle = closeTitle
@@ -128,6 +133,10 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     @IBOutlet private(set) weak var titlebar: UIView?
     @IBOutlet private(set) weak var titlebarContainer: UIView?
 
+    var hasTitlebar: Bool {
+        true
+    }
+
     var titlebarAvatar: String? {
         /// - agentAvatar:true, show user_attrs.iconurl everywhere
         /// - agentAvatar:url, show that instead
@@ -168,7 +177,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.addTitleBar(parent: self.scrollableViewContainer, adjustToSafeArea: true) { [weak self] in
+        self.addTitleBar(parent: self.scrollableViewContainer, showAvatar: true, adjustToSafeArea: true) { [weak self] in
             DispatchQueue.main.async {
                 self?.onCloseChatTapped()
             }
@@ -187,7 +196,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.updateTitlebar()
+        self.updateTitlebar(showAvatar: true)
         self.addRotationListener()
         self.reloadView()
         self.adjustConstraints(for: self.view.bounds.size, withAnimation: false)
@@ -290,6 +299,8 @@ extension NINGroupChatViewController {
 //        videoView.overrideAssets()
         inputControlsView.overrideAssets()
 
+        joinVideoButton.overrideAssets(with: delegate, isPrimary: true)
+
         if let backgroundImage = self.delegate?.override(imageAsset: .ninchatChatBackground) {
             self.backgroundView.backgroundColor = UIColor(patternImage: backgroundImage)
         } else if let bundleImage = UIImage(named: "chat_background_pattern", in: .SDKBundle, compatibleWith: nil) {
@@ -344,25 +355,25 @@ extension NINGroupChatViewController {
     }
 
     private func adjustConstraints(for size: CGSize, withAnimation animation: Bool) {
-        let hasJoinedVideo = true // webRTCClient != nil
+        let hasJoinedVideo = viewModel.hasJoinedVideo
 
         if UIScreen.main.traitCollection.userInterfaceIdiom == .pad {
             /// On iPad we won't show full-screen videos as there is enough space to chat and video in parallel
-            videoContainerHeight.constant = hasJoinedVideo ? size.height * 0.45 : 0
+            joinVideoContainerHeight.constant = hasJoinedVideo ? 0 : size.height * 0.25
             self.alignInputControlsTopToScreenBottom(false)
         } else if UIDevice.current.orientation.isLandscape {
             // In landscape we make video fullscreen ie. hide the chat view + input controls
             // If no video; get rid of the video view. the input container and video (0-height) will dictate size
-            videoContainerHeight.constant = hasJoinedVideo ? size.height : 0
-            self.alignInputControlsTopToScreenBottom(hasJoinedVideo)
+            joinVideoContainerHeight.constant = hasJoinedVideo ? 0 : size.height
+            self.alignInputControlsTopToScreenBottom(!hasJoinedVideo)
         } else if UIDevice.current.orientation.isPortrait || UIDevice.current.orientation.isFlat || UIDevice.current.orientation == .unknown {
             // In portrait we make the video cover about the top half of the screen
             // If no video; get rid of the video view
-            videoContainerHeight.constant = (hasJoinedVideo) ? size.height * 0.45 : 0
+            joinVideoContainerHeight.constant = hasJoinedVideo ? 0 : size.height * 0.25
             self.alignInputControlsTopToScreenBottom(false)
         }
 
-        videoContainerHeight.isActive = true
+        joinVideoContainerHeight.isActive = true
         chatContainerHeight.isActive = true
         self.setNeedsStatusBarAppearanceUpdate()
 

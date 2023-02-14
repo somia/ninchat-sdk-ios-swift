@@ -8,6 +8,8 @@ import Foundation
 import JitsiMeetSDK
 
 protocol NINGroupChatViewModel: AnyObject, NINChatStateProtocol, NINChatMessageProtocol, NINChatPermissionsProtocol, NINChatAttachmentProtocol {
+    var hasJoinedVideo: Bool { get }
+
     var onChannelClosed: (() -> Void)? { get set }
     var onQueueUpdated: (() -> Void)? { get set }
     var onChannelMessage: ((MessageUpdateType) -> Void)? { get set }
@@ -21,6 +23,8 @@ final class NINGroupChatViewModelImpl: NINGroupChatViewModel {
     private var typingStatus = false
     private var typingStatusQueue: DispatchWorkItem?
     private var isSelectingMedia = false
+
+    private(set) var hasJoinedVideo = false
 
     var backlogMessages: String? {
         didSet {
