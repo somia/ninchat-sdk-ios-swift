@@ -98,7 +98,10 @@ final class NINChatViewModelImpl: NINChatViewModel {
             self?.onChannelClosed?()
         }
         self.sessionManager.bindQueueUpdate(closure: { [weak self] _, _, error in
-            guard error == nil else { try? self?.sessionManager.closeChat(); return }
+            guard error == nil else {
+                try? self?.sessionManager.closeChat(endSession: true, onCompletion: nil)
+                return
+            }
             self?.onQueueUpdated?()
         }, to: self)
         self.sessionManager.onMessageAdded = { [weak self] index in
@@ -329,7 +332,7 @@ extension NINChatViewModelImpl: QueueUpdateCapture {
 
 extension NINChatViewModelImpl {
     func grantVideoCallPermissions(_ completion: @escaping (Error?) -> Void) {
-        Permission.grantPermission(.deviceCamera, .deviceMicrophone) { [weak self] error in
+        Permission.grantPermission(.deviceCamera, .deviceMicrophone) { error in
             debugger("permissions for video call granted with error: \(String(describing: error))")
             completion(error)
         }
@@ -356,11 +359,11 @@ extension NINChatViewModelImpl {
 
         switch source {
         case .photoLibrary:
-            self.grantLibraryPermission { [weak self] error in
+            self.grantLibraryPermission { error in
                 completion(error)
             }
         case .camera:
-            self.grantCameraPermission { [weak self] error in
+            self.grantCameraPermission { error in
                 completion(error)
             }
         default:

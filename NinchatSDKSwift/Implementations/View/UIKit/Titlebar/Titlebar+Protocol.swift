@@ -11,7 +11,7 @@ protocol HasDefaultAvatar {
 }
 
 protocol HasTitleBar {
-    func addTitleBar(parent: UIView?, adjustToSafeArea: Bool, onCloseAction: @escaping () -> Void)
+    func addTitleBar(parent: UIView?, showAvatar: Bool?, adjustToSafeArea: Bool, onCloseAction: @escaping () -> Void)
     func overrideTitlebarAssets()
 
     var hasTitlebar: Bool { get }
@@ -24,8 +24,11 @@ protocol HasTitleBar {
 }
 
 extension HasTitleBar {
-    func addTitleBar(parent: UIView?, adjustToSafeArea: Bool, onCloseAction: @escaping () -> Void) {
+    func addTitleBar(parent: UIView?, showAvatar: Bool?, adjustToSafeArea: Bool, onCloseAction: @escaping () -> Void) {
         fatalError("titlebar is not implemented")
+    }
+    func addTitleBar(parent: UIView?, adjustToSafeArea: Bool, onCloseAction: @escaping () -> Void) {
+        self.addTitleBar(parent: parent, showAvatar: nil, adjustToSafeArea: adjustToSafeArea, onCloseAction: onCloseAction)
     }
 }
 

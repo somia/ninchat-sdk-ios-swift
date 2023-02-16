@@ -26,7 +26,6 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     internal var currentChannelID: String?
     internal var backgroundChannelID: String?
     internal var myUserID: String?
-    internal var channelClosed: Bool = false
     internal var expectedHistoryLength = -1
 
     // MARK: - NINChatSessionManagerInternalActions
@@ -350,7 +349,7 @@ extension NINChatSessionManagerImpl {
 
         if self.session != nil {
             do {
-                try self.closeChat()
+                try self.closeChat(endSession: true, onCompletion: nil)
             } catch {
                 self.disconnect()
             }
@@ -388,7 +387,7 @@ extension NINChatSessionManagerImpl {
     }
 
     /// Low-level shutdown of the chat's session; invalidates session resource.
-    func closeChat(onCompletion: Completion? = nil) throws {
+    func closeChat(endSession end: Bool, onCompletion: Completion? = nil) throws {
         delegate?.log(value: "Shutting down chat Session..")
 
         if self.myUserID == nil {
@@ -397,12 +396,12 @@ extension NINChatSessionManagerImpl {
             endSession()
         } else {
             try self.deleteCurrentUser { [weak self] error in
-                self?.endSession()
+                if end { self?.endSession() }
             }
         }
     }
 
-    internal func endSession(onCompletion: Completion? = nil) {
+    func endSession(onCompletion: Completion? = nil) {
         self.disconnect()
 
         /// Signal the delegate that our session has ended
@@ -417,10 +416,10 @@ extension NINChatSessionManagerImpl {
         
         if let rating = status {
             try self.send(type: .metadata, payload: ["data": ["rating": rating.rawValue]]) { [weak self] _ in
-                try? self?.closeChat()
+                try? self?.closeChat(endSession: true)
             }
         } else {
-            try self.closeChat()
+            try self.closeChat(endSession: true)
         }
     }
 

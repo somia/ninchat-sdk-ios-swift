@@ -16,7 +16,7 @@ protocol QuestionnaireConversationController {
     func updateConversationContentView(_ interval: TimeInterval)
 }
 
-final class NINQuestionnaireViewController: UIViewController, ViewController, KeyboardHandler, HasTitleBar {
+final class NINQuestionnaireViewController: UIViewController, ViewController, KeyboardHandler, HasTitleBar, HasDefaultAvatar {
 
     private let operationQueue = OperationQueue.main
     private let dispatchQueue = DispatchQueue.main
@@ -52,6 +52,11 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
             self?.dataSourceDelegate?.addRegisteredLogic()
         }
     }
+    private var completedElementOperation: BlockOperation? {
+        BlockOperation { [weak self] in
+            self?.dataSourceDelegate?.addCompletedLogic()
+        }
+    }
 
     // MARK: - KeyboardHandler
 
@@ -85,7 +90,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
             viewModel.onErrorOccurred = { [weak self] error in
                 debugger("** ** SDK: error in registering audience: \(error)")
                 if let error = error as? NinchatError, error.type == "queue_is_closed" {
-                    self?.showRegisteredPage(operation: self?.closedRegisteredOperation); return
+                    self?.showRegisteredCompletedPage(operation: self?.closedRegisteredOperation); return
                 }
                 Toast.show(message: .error("Submission Error".localized), onToastDismissed: { [weak self] in
                     self?.delegate?.onDidEnd()
@@ -98,27 +103,45 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
                 }
                 /// Finish the session if it is an `exit` element
                 else if exit {
-                    self?.viewModel.onSessionFinished?()
+                    self?.sessionManager?.endSession(onCompletion: nil)
                 }
                 /// Show _registered element according to `https://github.com/somia/mobile/issues/385`
                 /// If the configuration is a logic
                 else if let configuration = self?.viewModel.registeredElement, let logic = configuration.logic {
                     self?.viewModel.goToPage(logic: logic)
                     self?.dataSourceDelegate?.onUpdateCellContent?()
+                    try? self?.sessionManager?.closeChat(endSession: false, onCompletion: nil)
                 }
-                /// If the configuration is a questionnaire element
-                else if let configuration = self?.viewModel.registeredElement, let operation = self?.registeredElementOperation {
-                    self?.showRegisteredPage(operation: operation)
+                /// If the _registered configuration is a questionnaire element
+                else if self?.viewModel.registeredElement != nil, let operation = self?.registeredElementOperation {
+                    self?.showRegisteredCompletedPage(operation: operation)
+                    try? self?.sessionManager?.closeChat(endSession: false, onCompletion: nil)
+                }
+                /// Show _completed element according to `https://github.com/somia/mobile/issues/386`
+                /// If the configuration is a logic
+                else if let configuration = self?.viewModel.completedElement, let logic = configuration.logic {
+                    self?.viewModel.goToPage(logic: logic)
+                    self?.viewModel.finishPostQuestionnaire()
+                    self?.dataSourceDelegate?.onUpdateCellContent?()
+                    try? self?.sessionManager?.closeChat(endSession: false, onCompletion: nil)
+                }
+                /// If the _completed configuration is a questionnaire element
+                else if self?.viewModel.completedElement != nil, let operation = self?.completedElementOperation {
+                    self?.viewModel.finishPostQuestionnaire()
+                    self?.showRegisteredCompletedPage(operation: operation)
+                    try? self?.sessionManager?.closeChat(endSession: false, onCompletion: nil)
                 }
                 /// Show `AudienceRegisteredText` if it is set in the site configuration
                 /// and queue is NOT closed `https://github.com/somia/ninchat-ng/issues/1057`
                 else if let registeredOperation = self?.audienceRegisteredOperation, !queueIsClosed {
-                    self?.showRegisteredPage(operation: registeredOperation)
+                    self?.showRegisteredCompletedPage(operation: registeredOperation)
+                    try? self?.sessionManager?.closeChat(endSession: false, onCompletion: nil)
                 }
                 /// Show `AudienceRegisteredText` if it is set in the site configuration
                 /// and queue is closed `https://github.com/somia/ninchat-ng/issues/1057`
                 else if let closedOperation = self?.closedRegisteredOperation, queueIsClosed {
-                    self?.showRegisteredPage(operation: closedOperation)
+                    self?.showRegisteredCompletedPage(operation: closedOperation)
+                    try? self?.sessionManager?.closeChat(endSession: false, onCompletion: nil)
                 }
                 /// If not, just finish the session
                 else {
@@ -129,7 +152,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
                 if let ratingViewModel = self?.ratingViewModel, let `self` = self {
                     (self.rating != nil) ? ratingViewModel.rateChat(with: self.rating!) : ratingViewModel.skipRating()
                 } else {
-                    self?.delegate?.onDidEnd()
+                    try? self?.sessionManager?.closeChat(endSession: true, onCompletion: nil)
                 }
             }
         }
@@ -193,8 +216,10 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
                 /// "agent": Display agent avatar/name/jobTitle
                 ///     - agentAvatar:true, show user_attrs.iconurl everywhere
                 ///     - agentAvatar:url, show that instead
-                guard let avatar = self.sessionManager?.siteConfiguration.agentAvatar as? Bool else { return nil }
-                return (self.sessionManager?.siteConfiguration.agentAvatar as? String) ?? (self.sessionManager?.agent?.iconURL)
+                if let avatar = self.sessionManager?.siteConfiguration.agentAvatar as? Bool, avatar {
+                    return self.sessionManager?.agent?.iconURL
+                }
+                return self.sessionManager?.siteConfiguration.agentAvatar as? String
             case .questionnaire:
                 /// "questionnaire": Display questionnaireName and questionnaireAvatar
                 return self.sessionManager?.siteConfiguration.audienceQuestionnaireAvatar as? String
@@ -245,11 +270,26 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
         }
     }
 
+    // MARK: - HasDefaultAvatar
+
+    var defaultAvatar: UIImage? {
+        if let avatar = self.delegate?.override(imageAsset: .ninchatAvatarTitlebar) {
+            return avatar
+        }
+        return UIImage(named: "icon_avatar_other", in: .SDKBundle, compatibleWith: nil)
+    }
+    
     // MARK: - UIViewController life-cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.addTitleBar(parent: nil, adjustToSafeArea: true) { [weak self] in
+        var showAvatar: Bool? {
+            if let agentAvatar = self.sessionManager?.siteConfiguration.audienceQuestionnaireAvatar as? String {
+                return !agentAvatar.isEmpty
+            }
+            return self.sessionManager?.siteConfiguration.audienceQuestionnaireAvatar as? Bool
+        }
+        self.addTitleBar(parent: nil, showAvatar: showAvatar, adjustToSafeArea: true) { [weak self] in
             self?.cancelQuestionnaire?()
         }
         self.overrideAssets()
@@ -310,7 +350,7 @@ final class NINQuestionnaireViewController: UIViewController, ViewController, Ke
         return view
     }
 
-    private func showRegisteredPage(operation: BlockOperation?) {
+    private func showRegisteredCompletedPage(operation: BlockOperation?) {
         guard let operation = operation, let updateOperationTuple: (block: BlockOperation, delay: TimeInterval) = self.updateOperationBlock else { return }
         self.operationQueue.addOperation(updateOperationTuple.block)
 

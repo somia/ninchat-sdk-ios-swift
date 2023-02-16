@@ -9,7 +9,7 @@ import UIKit
 /// Titlebar implementation using UIKit
 
 extension HasTitleBar where Self:ViewController {
-    func addTitleBar(parent: UIView?, adjustToSafeArea: Bool, onCloseAction: @escaping () -> Void) {
+    func addTitleBar(parent: UIView?, showAvatar: Bool?, adjustToSafeArea: Bool, onCloseAction: @escaping () -> Void) {
         defer {
             self.adjustTitlebar(topView: parent, toSafeArea: adjustToSafeArea)
         }
@@ -18,7 +18,7 @@ extension HasTitleBar where Self:ViewController {
         }
 
         let titlebar: Titlebar = Titlebar.loadFromNib()
-        titlebar.setupView(sessionManager, view: self, defaultAvatarView: self as? HasDefaultAvatar)
+        titlebar.setupView(sessionManager, showAvatar, view: self, defaultAvatarView: self as? HasDefaultAvatar)
         titlebar.onCloseTapped = { onCloseAction() }
 
         self.shapeTitlebar(titlebar)

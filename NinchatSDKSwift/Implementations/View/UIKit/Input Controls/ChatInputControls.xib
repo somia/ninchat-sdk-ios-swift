@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -49,7 +49,7 @@
                                     </constraints>
                                 </view>
                                 <stackView opaque="NO" contentMode="scaleToFill" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="Deh-ax-vc8">
-                                    <rect key="frame" x="318" y="85" width="80" height="32"/>
+                                    <rect key="frame" x="326" y="85" width="80" height="32"/>
                                     <subviews>
                                         <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gtd-3Z-Rym">
                                             <rect key="frame" x="0.0" y="0.0" width="32" height="32"/>
@@ -88,7 +88,7 @@
                             <constraints>
                                 <constraint firstAttribute="bottom" secondItem="Deh-ax-vc8" secondAttribute="bottom" constant="16" id="9Zp-MB-urT"/>
                                 <constraint firstItem="Deh-ax-vc8" firstAttribute="top" secondItem="yxJ-Vl-9Ub" secondAttribute="bottom" constant="8" id="DrP-Pq-Pvg"/>
-                                <constraint firstAttribute="trailing" secondItem="Deh-ax-vc8" secondAttribute="trailing" constant="16" id="MFe-2D-7or"/>
+                                <constraint firstAttribute="trailing" secondItem="Deh-ax-vc8" secondAttribute="trailing" constant="8" id="MFe-2D-7or"/>
                                 <constraint firstItem="yxJ-Vl-9Ub" firstAttribute="leading" secondItem="O0S-eu-jhA" secondAttribute="leading" id="NlW-7t-0ZZ"/>
                                 <constraint firstAttribute="trailing" secondItem="yxJ-Vl-9Ub" secondAttribute="trailing" id="V7S-OB-21T"/>
                                 <constraint firstItem="yxJ-Vl-9Ub" firstAttribute="top" secondItem="O0S-eu-jhA" secondAttribute="top" id="nxw-Mw-9Zw"/>

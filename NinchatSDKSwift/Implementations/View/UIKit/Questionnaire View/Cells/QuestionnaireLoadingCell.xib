@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -45,7 +45,7 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="khk-1N-5q3">
-                                <rect key="frame" x="58" y="9.5" width="71.5" height="40"/>
+                                <rect key="frame" x="58" y="0.0" width="71.5" height="40"/>
                                 <subviews>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="999" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Dr Koistinen" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bhh-Jz-21a">
                                         <rect key="frame" x="0.0" y="0.0" width="71.5" height="40"/>
@@ -65,7 +65,7 @@
                                 </constraints>
                             </view>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_bubble_left" translatesAutoresizingMaskIntoConstraints="NO" id="Qb1-Ka-rHL">
-                                <rect key="frame" x="15" y="55" width="150" height="25"/>
+                                <rect key="frame" x="50" y="40" width="150" height="25"/>
                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="25" id="57y-Jz-j4D"/>
@@ -73,7 +73,7 @@
                                 </constraints>
                             </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pz3-Sv-QgC">
-                                <rect key="frame" x="19" y="59" width="142" height="17"/>
+                                <rect key="frame" x="54" y="44" width="142" height="17"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="9ca-Pa-lK8">
                                         <rect key="frame" x="0.0" y="0.0" width="142" height="17"/>
@@ -92,16 +92,16 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="R0o-MX-FBw" firstAttribute="leading" secondItem="218-cB-21Q" secondAttribute="leading" constant="15" id="464-Ge-TDp"/>
-                            <constraint firstItem="Qb1-Ka-rHL" firstAttribute="top" secondItem="218-cB-21Q" secondAttribute="top" constant="55" id="DYa-nF-o01"/>
+                            <constraint firstItem="Qb1-Ka-rHL" firstAttribute="leading" secondItem="R0o-MX-FBw" secondAttribute="trailing" id="7BP-Bv-sC9"/>
+                            <constraint firstItem="Qb1-Ka-rHL" firstAttribute="top" secondItem="khk-1N-5q3" secondAttribute="bottom" id="BJf-FT-VU0"/>
                             <constraint firstItem="Pz3-Sv-QgC" firstAttribute="top" secondItem="Qb1-Ka-rHL" secondAttribute="top" constant="4" id="FAv-KJ-qm6"/>
-                            <constraint firstItem="Qb1-Ka-rHL" firstAttribute="leading" secondItem="H6o-gW-gkz" secondAttribute="leading" id="FVQ-ZA-wdq"/>
                             <constraint firstItem="khk-1N-5q3" firstAttribute="leading" secondItem="R0o-MX-FBw" secondAttribute="trailing" constant="8" id="Gvk-jr-LUp"/>
                             <constraint firstItem="Pz3-Sv-QgC" firstAttribute="bottom" secondItem="Qb1-Ka-rHL" secondAttribute="bottom" constant="-4" id="Ma4-6D-t1q"/>
-                            <constraint firstItem="khk-1N-5q3" firstAttribute="centerY" secondItem="H6o-gW-gkz" secondAttribute="centerY" id="RBc-4x-QSq"/>
                             <constraint firstItem="Pz3-Sv-QgC" firstAttribute="trailing" secondItem="Qb1-Ka-rHL" secondAttribute="trailing" constant="-4" id="bBj-s1-QyZ"/>
                             <constraint firstAttribute="bottom" secondItem="R0o-MX-FBw" secondAttribute="bottom" id="dHQ-az-YgY"/>
                             <constraint firstItem="R0o-MX-FBw" firstAttribute="top" secondItem="218-cB-21Q" secondAttribute="top" id="fu7-5a-vyC"/>
                             <constraint firstItem="Pz3-Sv-QgC" firstAttribute="leading" secondItem="Qb1-Ka-rHL" secondAttribute="leading" constant="4" id="lHB-vW-DIX"/>
+                            <constraint firstItem="khk-1N-5q3" firstAttribute="top" secondItem="218-cB-21Q" secondAttribute="top" id="tah-kg-eBJ"/>
                         </constraints>
                     </view>
                 </subviews>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -25,10 +25,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="770" height="183"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="SU6-tC-VZG">
-                                <rect key="frame" x="8" y="0.0" width="723" height="183"/>
+                                <rect key="frame" x="8" y="0.0" width="719" height="183"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PHU-7o-xjH">
-                                        <rect key="frame" x="596" y="0.0" width="111" height="40"/>
+                                        <rect key="frame" x="600" y="0.0" width="111" height="40"/>
                                         <subviews>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="999" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Dr Koistinen" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7TS-YO-tLp">
                                                 <rect key="frame" x="0.0" y="15" width="71.5" height="18"/>
@@ -57,15 +57,15 @@
                                         </constraints>
                                     </view>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_bubble_right" translatesAutoresizingMaskIntoConstraints="NO" id="b5m-rH-ulk">
-                                        <rect key="frame" x="471.5" y="40" width="243.5" height="143"/>
+                                        <rect key="frame" x="475.5" y="40" width="243.5" height="143"/>
                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </imageView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xf0-OK-Pr9">
-                                        <rect key="frame" x="471.5" y="40" width="243.5" height="143"/>
+                                        <rect key="frame" x="475.5" y="40" width="243.5" height="143"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" text="Bubble chat message content text " textAlignment="right" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5JD-J3-yNj">
-                                        <rect key="frame" x="475.5" y="48" width="235.5" height="127"/>
+                                        <rect key="frame" x="479.5" y="48" width="235.5" height="127"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
@@ -81,7 +81,7 @@
                                     <constraint firstItem="PHU-7o-xjH" firstAttribute="trailing" secondItem="b5m-rH-ulk" secondAttribute="trailing" constant="-8" id="9s5-0w-RMz"/>
                                     <constraint firstAttribute="bottom" secondItem="b5m-rH-ulk" secondAttribute="bottom" id="EjS-ns-155"/>
                                     <constraint firstItem="xf0-OK-Pr9" firstAttribute="leading" secondItem="b5m-rH-ulk" secondAttribute="leading" id="IlL-X3-f15"/>
-                                    <constraint firstAttribute="trailing" secondItem="b5m-rH-ulk" secondAttribute="trailing" constant="8" identifier="trailing-equal" id="PSG-MM-ZQA"/>
+                                    <constraint firstAttribute="trailing" secondItem="b5m-rH-ulk" secondAttribute="trailing" identifier="trailing-equal" id="PSG-MM-ZQA"/>
                                     <constraint firstItem="xf0-OK-Pr9" firstAttribute="trailing" secondItem="b5m-rH-ulk" secondAttribute="trailing" id="R41-sh-pNa"/>
                                     <constraint firstItem="5JD-J3-yNj" firstAttribute="trailing" secondItem="b5m-rH-ulk" secondAttribute="trailing" constant="-4" id="Sct-nT-Nrb"/>
                                     <constraint firstItem="PHU-7o-xjH" firstAttribute="top" secondItem="SU6-tC-VZG" secondAttribute="top" id="XAQ-Xi-y7l"/>
@@ -92,10 +92,10 @@
                                 </constraints>
                             </view>
                             <view tag="2" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qhs-Gr-57g" userLabel="Right avatar container">
-                                <rect key="frame" x="731" y="0.0" width="35" height="183"/>
+                                <rect key="frame" x="727" y="0.0" width="35" height="183"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" image="icon_avatar_mine" translatesAutoresizingMaskIntoConstraints="NO" id="PqD-0T-0eK">
-                                        <rect key="frame" x="0.0" y="12" width="35" height="35"/>
+                                        <rect key="frame" x="0.0" y="8" width="35" height="35"/>
                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="PqD-0T-0eK" secondAttribute="height" id="fNb-rV-XEy"/>
@@ -106,14 +106,14 @@
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstItem="PqD-0T-0eK" firstAttribute="centerX" secondItem="qhs-Gr-57g" secondAttribute="centerX" id="4A8-g8-tcs"/>
-                                    <constraint firstItem="PqD-0T-0eK" firstAttribute="top" secondItem="qhs-Gr-57g" secondAttribute="top" constant="12" id="CPT-tc-4a6"/>
+                                    <constraint firstItem="PqD-0T-0eK" firstAttribute="top" secondItem="qhs-Gr-57g" secondAttribute="top" constant="8" id="CPT-tc-4a6"/>
                                     <constraint firstAttribute="width" constant="35" id="Shy-oZ-ULd"/>
                                 </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="qhs-Gr-57g" secondAttribute="trailing" constant="4" id="Ds0-Hi-h6l"/>
+                            <constraint firstAttribute="trailing" secondItem="qhs-Gr-57g" secondAttribute="trailing" constant="8" id="Ds0-Hi-h6l"/>
                             <constraint firstItem="SU6-tC-VZG" firstAttribute="top" secondItem="Kws-Gn-u3F" secondAttribute="top" id="SBv-hH-8hu"/>
                             <constraint firstItem="SU6-tC-VZG" firstAttribute="leading" secondItem="Kws-Gn-u3F" secondAttribute="leading" constant="8" id="TFR-KT-NBY"/>
                             <constraint firstItem="qhs-Gr-57g" firstAttribute="leading" secondItem="SU6-tC-VZG" secondAttribute="trailing" id="duD-TE-c2B"/>

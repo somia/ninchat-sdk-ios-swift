@@ -1,0 +1,8 @@
+framework module "NinchatLowLevelClient" {
+	header "ref.h"
+    header "NINLowLevelClient.objc.h"
+    header "Universe.objc.h"
+    header "NinchatLowLevelClient.h"
+
+    export *
+}

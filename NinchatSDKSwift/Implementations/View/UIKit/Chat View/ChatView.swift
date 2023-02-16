@@ -139,7 +139,7 @@ final class ChatView: UIView, ChatViewProtocol {
     }
 
     func didUpdateComposeAction(_ id: String, with action: ComposeUIAction) {
-        debugger("Got ui action update for compose for message at: \(index)")
+        debugger("Got ui action update for compose for message at: \(String(describing: index))")
 
         guard self.composeCellActions[id] == nil else { return }
         self.composeCellActions[id] = action

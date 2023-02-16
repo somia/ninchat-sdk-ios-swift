@@ -16,11 +16,11 @@ jobs:
             - name: Shell Environment
               run: export SHELL=/bin/bash
 
-            - name: Force Xcode 12
-              run: sudo xcode-select -switch /Applications/Xcode_12.4.app
+            - name: Force Xcode 14
+              run: sudo xcode-select -switch /Applications/Xcode_14.2.app
 
             - name: Install Cocoapods
               run: pod update
 
             - name: Build SDK. Run Tests
-              run: xcodebuild test -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -destination "platform=iOS Simulator,name=iPhone 11" "OTHER_LDFLAGS=\$(OTHER_LDFLAGS) -read_only_relocs suppress" ONLY_ACTIVE_ARCH=YES
+              run: xcodebuild test -workspace NinchatSDKSwift.xcworkspace -scheme NinchatSDKSwift -destination "platform=iOS Simulator,name=iPhone 14" "OTHER_LDFLAGS=\$(OTHER_LDFLAGS) -read_only_relocs suppress" ONLY_ACTIVE_ARCH=YES

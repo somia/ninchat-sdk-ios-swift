@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -26,10 +26,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="396" height="148"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="y8V-BS-DC4">
-                                <rect key="frame" x="15" y="10" width="366" height="64.5"/>
+                                <rect key="frame" x="10" y="10" width="376" height="64.5"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="info.circle" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="mzw-OU-KFv">
-                                        <rect key="frame" x="18.5" y="23" width="20" height="19"/>
+                                        <rect key="frame" x="23.5" y="23" width="20" height="19"/>
                                         <color key="tintColor" systemColor="systemBlueColor"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="20" id="UYL-ST-CFf"/>
@@ -37,7 +37,7 @@
                                         </constraints>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Conversation started. Oh, did I mention this could take up multiple lines?" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WkV-Az-Oj6">
-                                        <rect key="frame" x="48.5" y="12" width="293" height="40.5"/>
+                                        <rect key="frame" x="53.5" y="12" width="293" height="40.5"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
                                         <nil key="highlightedColor"/>
@@ -75,9 +75,9 @@
                             <constraint firstAttribute="trailing" secondItem="UQg-Rm-BHH" secondAttribute="trailing" id="A5D-cX-MJz"/>
                             <constraint firstItem="UQg-Rm-BHH" firstAttribute="leading" secondItem="x0N-3W-u1q" secondAttribute="leading" id="BDe-EQ-Sya"/>
                             <constraint firstItem="UQg-Rm-BHH" firstAttribute="top" secondItem="y8V-BS-DC4" secondAttribute="bottom" constant="10" id="RQS-KK-MeY"/>
-                            <constraint firstItem="y8V-BS-DC4" firstAttribute="leading" secondItem="x0N-3W-u1q" secondAttribute="leading" constant="15" id="TeU-Aw-s5l"/>
+                            <constraint firstItem="y8V-BS-DC4" firstAttribute="leading" secondItem="x0N-3W-u1q" secondAttribute="leading" constant="10" id="TeU-Aw-s5l"/>
                             <constraint firstAttribute="bottom" secondItem="UQg-Rm-BHH" secondAttribute="bottom" id="gRx-lF-Qg5"/>
-                            <constraint firstAttribute="trailing" secondItem="y8V-BS-DC4" secondAttribute="trailing" constant="15" id="ip1-BH-aSZ"/>
+                            <constraint firstAttribute="trailing" secondItem="y8V-BS-DC4" secondAttribute="trailing" constant="10" id="ip1-BH-aSZ"/>
                             <constraint firstItem="y8V-BS-DC4" firstAttribute="top" secondItem="x0N-3W-u1q" secondAttribute="top" constant="10" id="nh7-MR-YhO"/>
                         </constraints>
                     </view>

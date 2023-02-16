@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -25,10 +25,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="770" height="183"/>
                         <subviews>
                             <view tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HdL-eV-MEx" userLabel="Left avatar container">
-                                <rect key="frame" x="4" y="0.0" width="35" height="183"/>
+                                <rect key="frame" x="8" y="0.0" width="35" height="183"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" image="icon_avatar_other" translatesAutoresizingMaskIntoConstraints="NO" id="phL-77-jqR">
-                                        <rect key="frame" x="0.0" y="12" width="35" height="35"/>
+                                        <rect key="frame" x="0.0" y="8" width="35" height="35"/>
                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="35" id="x63-Cf-SqB"/>
@@ -38,16 +38,16 @@
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstItem="phL-77-jqR" firstAttribute="top" secondItem="HdL-eV-MEx" secondAttribute="top" constant="12" id="CqR-aQ-wP2"/>
+                                    <constraint firstItem="phL-77-jqR" firstAttribute="top" secondItem="HdL-eV-MEx" secondAttribute="top" constant="8" id="CqR-aQ-wP2"/>
                                     <constraint firstItem="phL-77-jqR" firstAttribute="centerX" secondItem="HdL-eV-MEx" secondAttribute="centerX" id="J4l-oS-AyN"/>
                                     <constraint firstAttribute="width" constant="35" id="gjK-rF-Lcx"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fx9-BI-0lx">
-                                <rect key="frame" x="39" y="0.0" width="723" height="183"/>
+                                <rect key="frame" x="43" y="0.0" width="719" height="183"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QOG-Tf-FTs">
-                                        <rect key="frame" x="16" y="0.0" width="111" height="40"/>
+                                        <rect key="frame" x="8" y="0.0" width="111" height="40"/>
                                         <subviews>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="999" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Dr Koistinen" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VRg-mG-gVc">
                                                 <rect key="frame" x="0.0" y="15" width="71.5" height="18"/>
@@ -76,15 +76,15 @@
                                         </constraints>
                                     </view>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_bubble_right" translatesAutoresizingMaskIntoConstraints="NO" id="gfn-Wr-vJx">
-                                        <rect key="frame" x="8" y="40" width="243.5" height="143"/>
+                                        <rect key="frame" x="0.0" y="40" width="243.5" height="143"/>
                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </imageView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wPZ-m9-IiO">
-                                        <rect key="frame" x="8" y="40" width="243.5" height="143"/>
+                                        <rect key="frame" x="0.0" y="40" width="243.5" height="143"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" text="Bubble chat message content text " textAlignment="right" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Oa-qu-IpK">
-                                        <rect key="frame" x="12" y="48" width="235.5" height="127"/>
+                                        <rect key="frame" x="4" y="48" width="235.5" height="127"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
@@ -94,7 +94,7 @@
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstItem="gfn-Wr-vJx" firstAttribute="leading" secondItem="fx9-BI-0lx" secondAttribute="leading" constant="8" identifier="leading-equal" id="00y-BL-T9j"/>
+                                    <constraint firstItem="gfn-Wr-vJx" firstAttribute="leading" secondItem="fx9-BI-0lx" secondAttribute="leading" identifier="leading-equal" id="00y-BL-T9j"/>
                                     <constraint firstItem="wPZ-m9-IiO" firstAttribute="top" secondItem="gfn-Wr-vJx" secondAttribute="top" id="45R-Xi-pKE"/>
                                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="gfn-Wr-vJx" secondAttribute="trailing" constant="8" identifier="trailing-equal" id="51n-nx-yeP"/>
                                     <constraint firstAttribute="bottom" secondItem="gfn-Wr-vJx" secondAttribute="bottom" id="6Ex-lt-Fc8"/>
@@ -116,7 +116,7 @@
                             <constraint firstAttribute="bottom" secondItem="HdL-eV-MEx" secondAttribute="bottom" id="3aN-AM-9WS"/>
                             <constraint firstAttribute="bottom" secondItem="fx9-BI-0lx" secondAttribute="bottom" id="6md-78-sew"/>
                             <constraint firstAttribute="trailing" secondItem="fx9-BI-0lx" secondAttribute="trailing" constant="8" id="9YH-Uv-T6z"/>
-                            <constraint firstItem="HdL-eV-MEx" firstAttribute="leading" secondItem="uQg-cy-EIi" secondAttribute="leading" constant="4" id="K6V-fK-Mpg"/>
+                            <constraint firstItem="HdL-eV-MEx" firstAttribute="leading" secondItem="uQg-cy-EIi" secondAttribute="leading" constant="8" id="K6V-fK-Mpg"/>
                             <constraint firstItem="fx9-BI-0lx" firstAttribute="top" secondItem="uQg-cy-EIi" secondAttribute="top" id="LQz-3Y-DVN"/>
                             <constraint firstItem="HdL-eV-MEx" firstAttribute="top" secondItem="uQg-cy-EIi" secondAttribute="top" id="ewa-28-wA3"/>
                             <constraint firstItem="fx9-BI-0lx" firstAttribute="leading" secondItem="HdL-eV-MEx" secondAttribute="trailing" id="fsU-Bi-0Cc"/>
@@ -142,7 +142,7 @@
                 <outlet property="senderNameLabel" destination="VRg-mG-gVc" id="GnP-Ay-MJh"/>
                 <outlet property="timeLabel" destination="eo7-Ai-Ihr" id="FbL-0g-9xE"/>
             </connections>
-            <point key="canvasLocation" x="-28" y="61"/>
+            <point key="canvasLocation" x="-28.985507246376812" y="60.602678571428569"/>
         </tableViewCell>
     </objects>
     <resources>

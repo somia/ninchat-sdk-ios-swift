@@ -30,9 +30,8 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
                 navigationController?.overrideUserInterfaceStyle = .light
             }
 
-            if !self.sessionManager.siteConfiguration.hideTitlebar {
-                navigationController?.setNavigationBarHidden(true, animated: false)
-            }
+            navigationController?.setNavigationBarHidden(true, animated: false)
+            navigationController?.isNavigationBarHidden = true
             navigationController?.presentationController?.delegate = self
         }
     }
@@ -142,7 +141,7 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
                 } else if self.hasPostAudienceQuestionnaire {
                     self.navigationController?.pushViewController(self.questionnaireViewController(ratingViewModel: nil, rating: nil, questionnaireType: .post), animated: true)
                 } else {
-                    try? self.sessionManager.closeChat()
+                    try? self.sessionManager.closeChat(endSession: true, onCompletion: nil)
                 }
             }
         }
@@ -206,7 +205,7 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
             topViewController = self.initialViewController
         }
         self.navigationController = navigation ?? UINavigationController(rootViewController: topViewController)
-        return (navigation == nil) ? self.navigationController : topViewController
+        return (navigation != nil) ? topViewController : self.navigationController
     }
 
     func deallocate() {
@@ -276,8 +275,8 @@ extension NINCoordinator {
                 } else {
                     /// SDK started with AutoQueue and thus,
                     /// the questionnaire has no previous ViewController to pop to.
-
-                    self.delegate?.onDidEnd()
+                    
+                    try? self.sessionManager.closeChat(endSession: true, onCompletion: nil)
                 }
             }
         }

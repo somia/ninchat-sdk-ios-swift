@@ -65,6 +65,7 @@ final class NINRatingViewController: UIViewController, ViewController, HasTitleB
             userTitle.font = .ninchat
         }
     }
+    @IBOutlet private(set) weak var userTitleContainerView: UIView!
     @IBOutlet private(set) weak var titleConversationBubble: UIImageView!
     @IBOutlet private(set) weak var titleConversationTextView: UITextView!
     @IBOutlet private(set) weak var facesConversationViewContainer: UIView!
@@ -81,8 +82,11 @@ final class NINRatingViewController: UIViewController, ViewController, HasTitleB
     var titlebarAvatar: String? {
         /// - agentAvatar:true, show user_attrs.iconurl everywhere
         /// - agentAvatar:url, show that instead
-        guard let avatar = self.sessionManager?.siteConfiguration.agentAvatar as? Bool else { return nil }
-        return (self.sessionManager?.siteConfiguration.agentAvatar as? String) ?? (self.sessionManager?.agent?.iconURL)
+        
+        if let avatar = self.sessionManager?.siteConfiguration.agentAvatar as? Bool, avatar {
+            return self.sessionManager?.agent?.iconURL
+        }
+        return self.sessionManager?.siteConfiguration.agentAvatar as? String
     }
     var titlebarName: String? {
         self.sessionManager?.siteConfiguration.agentName ?? self.sessionManager?.agent?.displayName
@@ -91,7 +95,7 @@ final class NINRatingViewController: UIViewController, ViewController, HasTitleB
         self.sessionManager?.agent?.info?.job
     }
 
-    // MARK: - HasTitleBar
+    // MARK: - HasDefaultAvatar
 
     var defaultAvatar: UIImage? {
         if let avatar = self.delegate?.override(imageAsset: .ninchatAvatarTitlebar) {
@@ -113,11 +117,17 @@ final class NINRatingViewController: UIViewController, ViewController, HasTitleB
         
         /// Show conversation-style rating view
         /// according to `https://github.com/somia/mobile/issues/314`
-        conversationStyleView.isHidden = (style != .conversation)
-        formStyleView.isHidden = !conversationStyleView.isHidden
         if style == .conversation {
+            self.formStyleView.isHidden = true
+            self.conversationStyleView.isHidden = false
+            self.facesFormViewContainer.isHidden = true
+            self.facesConversationViewContainer.isHidden = false
             self.adjustFaceView(parent: facesConversationViewContainer)
         } else if style == .form {
+            self.formStyleView.isHidden = false
+            self.conversationStyleView.isHidden = true
+            self.facesFormViewContainer.isHidden = false
+            self.facesConversationViewContainer.isHidden = true
             self.adjustFaceView(parent: facesFormViewContainer)
         }
         
@@ -139,6 +149,8 @@ final class NINRatingViewController: UIViewController, ViewController, HasTitleB
             userAvatar.isHidden = !(self.sessionManager?.siteConfiguration.hideTitlebar ?? true)
             userAvatarContainerView.width?.constant = (userAvatar.isHidden) ? 0 : 35
             userAvatar.leading?.constant = (userAvatar.isHidden) ? 0 : 8
+            userTitleContainerView.leading?.constant = (userAvatar.isHidden) ? 16 : 58
+            
             if let avatar = self.sessionManager?.siteConfiguration.audienceQuestionnaireAvatar as? String, !avatar.isEmpty {
                 userAvatar.image(from: avatar, defaultImage: defaultImage)
             } else {
@@ -184,8 +196,6 @@ final class NINRatingViewController: UIViewController, ViewController, HasTitleB
         facesView
             .fix(leading: (0, parent), trailing: (0, parent))
             .fix(top: (0, parent), bottom: (0, parent))
-
-        titleConversationBubble.top?.constant = (userTitle.text?.isEmpty ?? true) ? 15 : 55
     }
 }
 

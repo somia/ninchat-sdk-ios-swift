@@ -176,14 +176,20 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
     var titlebarAvatar: String? {
         /// - agentAvatar:true, show user_attrs.iconurl everywhere
         /// - agentAvatar:url, show that instead
-        guard let avatar = self.sessionManager?.siteConfiguration.agentAvatar as? Bool else { return nil }
-        return (self.sessionManager?.siteConfiguration.agentAvatar as? String) ?? (self.sessionManager?.agent?.iconURL)
+        if let avatar = self.sessionManager?.siteConfiguration.agentAvatar as? Bool, avatar {
+            return self.sessionManager?.agent?.iconURL
+        }
+        return self.sessionManager?.siteConfiguration.agentAvatar as? String
     }
     var titlebarName: String? {
         self.sessionManager?.siteConfiguration.agentName ?? self.sessionManager?.agent?.displayName
     }
     var titlebarJob: String? {
-        self.sessionManager?.agent?.info?.job
+        /// `https://github.com/somia/mobile/issues/411#issuecomment-1249263156`
+        if let agentName = self.sessionManager?.siteConfiguration.agentName, !agentName.isEmpty {
+            return nil
+        }
+        return self.sessionManager?.agent?.info?.job
     }
 
     // MARK: - HasTitleBar
@@ -249,7 +255,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
         self.deallocViewModel()
         self.removeKeyboardListeners()
 
-        NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
     }
 
