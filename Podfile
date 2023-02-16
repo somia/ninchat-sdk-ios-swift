@@ -8,7 +8,7 @@ source 'https://github.com/somia/ninchat-podspecs.git'
 def libraries
   pod 'AnyCodable-FlightSchool', '~> 0.2.3'
   pod 'AutoLayoutSwift', '4.0.0'
-  pod 'NinchatLowLevelClient', :path => './' # '~> 0.3.10'
+  pod 'NinchatLowLevelClient', '~> 0.6.0'
   pod 'JitsiMeetSDK', '7.0.0'
 end
 
