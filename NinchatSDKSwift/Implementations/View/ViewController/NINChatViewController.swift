@@ -255,7 +255,7 @@ final class NINChatViewController: UIViewController, ViewController, KeyboardHan
         self.deallocViewModel()
         self.removeKeyboardListeners()
 
-        NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
     }
 
