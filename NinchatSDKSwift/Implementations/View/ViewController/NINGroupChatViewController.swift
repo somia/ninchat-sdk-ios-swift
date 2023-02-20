@@ -153,6 +153,10 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     }
 
     var titlebarJob: String? {
+        /// Group-chat related logic - we hide job name if title bar is hidden in site configs
+        guard sessionManager?.siteConfiguration.hideTitlebar == false else {
+            return nil
+        }
         /// `https://github.com/somia/mobile/issues/411#issuecomment-1249263156`
         if let agentName = self.sessionManager?.siteConfiguration.agentName, !agentName.isEmpty {
             return nil
