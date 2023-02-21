@@ -62,6 +62,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     @IBOutlet private(set) weak var joinVideoStack: UIStackView!
 
     @IBOutlet private(set) weak var chatContainerTopConstraint: NSLayoutConstraint!
+    @IBOutlet private(set) weak var chatContainerLeadingConstraint: NSLayoutConstraint!
     @IBOutlet private(set) weak var chatContainerHeight: NSLayoutConstraint!
     @IBOutlet private(set) weak var chatView: ChatView! {
         didSet {
@@ -292,6 +293,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
             case .readyToClose:
                 self?.moveVideoContainerToBack()
                 self?.markChatButton(hasUnreadMessages: false)
+                self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: false)
                 self?.toggleChatButton.isHidden = true
                 self?.isChatShownDuringVideo = false
                 self?.chatContainerTopConstraint.constant = self?.joinVideoContainerHeight.constant ?? .zero
@@ -322,8 +324,10 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
 
     @IBAction func onToggleChatDidTap(_ sender: Any) {
         scrollableViewContainer.layer.removeAllAnimations()
-        if chatContainerTopConstraint.constant != 65 {
-            chatContainerTopConstraint.constant = 65
+        let (desiredTopConstraint, desiredLeadingConstraint) = desiredChatConstraints(for: view.bounds.size)
+        if chatContainerTopConstraint.constant != desiredTopConstraint || chatContainerLeadingConstraint.constant != desiredLeadingConstraint {
+            chatContainerTopConstraint.constant = desiredTopConstraint
+            chatContainerLeadingConstraint.constant = desiredLeadingConstraint
             view.layoutSubviews()
         }
         let transformHeight = scrollableViewContainer.bounds.height
@@ -434,24 +438,19 @@ extension NINGroupChatViewController {
 
     private func adjustConstraints(for size: CGSize, withAnimation animation: Bool) {
         let hasJoinedVideo = viewModel.hasJoinedVideo
+        let (desiredTopConstraint, desiredLeadingConstraint) = desiredChatConstraints(for: size)
 
-        if UIScreen.main.traitCollection.userInterfaceIdiom == .pad {
-            /// On iPad we won't show full-screen videos as there is enough space to chat and video in parallel
-            joinVideoContainerHeight.constant = hasJoinedVideo ? 0 : size.height * 0.25
-            self.alignInputControlsTopToScreenBottom(false)
-        } else if UIDevice.current.orientation.isLandscape {
-            // In landscape we make video fullscreen ie. hide the chat view + input controls
-            // If no video; get rid of the video view. the input container and video (0-height) will dictate size
-            joinVideoContainerHeight.constant = hasJoinedVideo ? 0 : size.height
-            self.alignInputControlsTopToScreenBottom(!hasJoinedVideo)
-        } else if UIDevice.current.orientation.isPortrait || UIDevice.current.orientation.isFlat || UIDevice.current.orientation == .unknown {
-            // In portrait we make the video cover about the top half of the screen
-            // If no video; get rid of the video view
-            joinVideoContainerHeight.constant = hasJoinedVideo ? 0 : size.height * 0.25
-            self.alignInputControlsTopToScreenBottom(false)
+        joinVideoContainerHeight.constant = hasJoinedVideo ? 0 : size.height * 0.25
+        alignInputControlsTopToScreenBottom(false)
+
+        if hasJoinedVideo {
+            chatContainerTopConstraint.constant = desiredTopConstraint
+            chatContainerLeadingConstraint.constant = desiredLeadingConstraint
+        } else {
+            chatContainerTopConstraint.constant = joinVideoContainerHeight.constant
+            chatContainerLeadingConstraint.constant = 0
         }
 
-        chatContainerTopConstraint.constant = joinVideoContainerHeight.constant
         joinVideoContainerHeight.isActive = true
         chatContainerHeight.isActive = true
         self.setNeedsStatusBarAppearanceUpdate()
@@ -572,5 +571,18 @@ extension NINGroupChatViewController {
             toggleChatButton.tintColor = .defaultBackgroundButton
             toggleChatButton.overrideAssets(with: delegate, isPrimary: false)
         }
+    }
+
+    private func desiredChatConstraints(for size: CGSize) -> (top: CGFloat, leading: CGFloat) {
+        let desiredTopConstraint: CGFloat = UIDevice.current.orientation.isLandscape
+            ? 0
+            : 65
+        let desiredPadLeadingConstraint: CGFloat = UIDevice.current.orientation.isLandscape
+            ? size.width * (2/3)
+            : 0
+        let desiredLeadingConstraint = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
+            ? desiredPadLeadingConstraint
+            : 0
+        return (desiredTopConstraint, desiredLeadingConstraint)
     }
 }

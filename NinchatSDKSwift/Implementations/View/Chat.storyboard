@@ -826,7 +826,7 @@ chat backlog.</string>
                                     <constraint firstAttribute="bottom" secondItem="uWx-9I-BAh" secondAttribute="bottom" constant="1" id="vnF-IY-htG"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="um1-uH-Swy" userLabel="Video Container View">
+                            <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="um1-uH-Swy" userLabel="Video Container View">
                                 <rect key="frame" x="0.0" y="108" width="414" height="788"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
@@ -943,8 +943,8 @@ chat backlog.</string>
                             <constraint firstItem="egg-zz-ZkU" firstAttribute="trailing" secondItem="WK5-nL-bic" secondAttribute="trailing" constant="8" id="DcH-Zt-wiy"/>
                             <constraint firstAttribute="bottom" secondItem="um1-uH-Swy" secondAttribute="bottom" id="L4T-qs-Ihk"/>
                             <constraint firstAttribute="trailing" secondItem="qJN-P9-oZ8" secondAttribute="trailing" id="LSd-Xy-3ob"/>
-                            <constraint firstItem="um1-uH-Swy" firstAttribute="trailing" secondItem="egg-zz-ZkU" secondAttribute="trailing" id="MIA-JQ-PEs"/>
-                            <constraint firstItem="um1-uH-Swy" firstAttribute="leading" secondItem="egg-zz-ZkU" secondAttribute="leading" id="Nht-Yd-ZMO"/>
+                            <constraint firstItem="um1-uH-Swy" firstAttribute="trailing" secondItem="sPx-WY-SBH" secondAttribute="trailing" id="MIA-JQ-PEs"/>
+                            <constraint firstItem="um1-uH-Swy" firstAttribute="leading" secondItem="sPx-WY-SBH" secondAttribute="leading" id="Nht-Yd-ZMO"/>
                             <constraint firstItem="ZKy-WV-dkx" firstAttribute="leading" secondItem="egg-zz-ZkU" secondAttribute="leading" id="RkJ-6s-gSy"/>
                             <constraint firstItem="WK5-nL-bic" firstAttribute="top" secondItem="egg-zz-ZkU" secondAttribute="top" constant="10" id="W6q-p4-Zn2"/>
                             <constraint firstItem="ii0-zL-XsT" firstAttribute="trailing" secondItem="sPx-WY-SBH" secondAttribute="trailing" id="WVk-X5-ofI"/>
@@ -963,6 +963,7 @@ chat backlog.</string>
                     <connections>
                         <outlet property="backgroundView" destination="cCC-Ez-hrm" id="fgZ-b1-TK0"/>
                         <outlet property="chatContainerHeight" destination="NpX-jX-7QL" id="c5J-kW-37I"/>
+                        <outlet property="chatContainerLeadingConstraint" destination="wtn-mw-Gbx" id="c4u-6L-ODf"/>
                         <outlet property="chatContainerTopConstraint" destination="24S-ra-Asp" id="ilR-Jb-jmA"/>
                         <outlet property="chatControlsContainer" destination="WK5-nL-bic" id="if3-O4-2LP"/>
                         <outlet property="chatView" destination="X8Y-qB-1Sx" id="jH4-NR-HxX"/>
