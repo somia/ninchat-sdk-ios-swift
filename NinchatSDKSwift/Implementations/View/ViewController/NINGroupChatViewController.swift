@@ -269,11 +269,16 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
             self?.onBackToQueue?()
         }
         self.viewModel.onChannelMessage = { [weak self] update in
+            let canMarkChatButtonUnread = self?.viewModel.hasJoinedVideo == true
+                && self?.isChatShownDuringVideo == false
+
             switch update {
             case .insert(let index):
                 self?.chatView.didAddMessage(at: index)
+                self?.markChatButton(hasUnreadMessages: canMarkChatButtonUnread)
             case .remove(let index):
                 self?.chatView.didRemoveMessage(from: index)
+                self?.markChatButton(hasUnreadMessages: canMarkChatButtonUnread)
             case .history, .clean:
                 self?.chatView.didLoadHistory()
             }
@@ -286,6 +291,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
             switch event {
             case .readyToClose:
                 self?.moveVideoContainerToBack()
+                self?.markChatButton(hasUnreadMessages: false)
                 self?.toggleChatButton.isHidden = true
                 self?.isChatShownDuringVideo = false
                 self?.chatContainerTopConstraint.constant = self?.joinVideoContainerHeight.constant ?? .zero
@@ -345,6 +351,8 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
                 options: [.curveEaseIn, .allowUserInteraction, .beginFromCurrentState],
                 animations: {
                     self.scrollableViewContainer.transform = .identity
+                }, completion: { _ in
+                    self.markChatButton(hasUnreadMessages: false)
                 }
             )
         }
