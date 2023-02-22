@@ -61,9 +61,9 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     @IBOutlet private(set) weak var joinVideoButton: JoinVideoButton!
     @IBOutlet private(set) weak var joinVideoStack: UIStackView!
 
+    @IBOutlet private(set) weak var chatContainer: UIView!
     @IBOutlet private(set) weak var chatContainerTopConstraint: NSLayoutConstraint!
     @IBOutlet private(set) weak var chatContainerLeadingConstraint: NSLayoutConstraint!
-    @IBOutlet private(set) weak var chatContainerHeight: NSLayoutConstraint!
     @IBOutlet private(set) weak var chatView: ChatView! {
         didSet {
             chatView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(sender:))))
@@ -181,7 +181,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.addTitleBar(parent: self.scrollableViewContainer, showAvatar: true, adjustToSafeArea: true) { [weak self] in
+        self.addTitleBar(parent: self.chatContainer, showAvatar: true, adjustToSafeArea: true) { [weak self] in
             DispatchQueue.main.async {
                 self?.onCloseChatTapped()
             }
@@ -191,6 +191,8 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
         self.setupView()
         self.setupViewModel()
         self.setupKeyboardClosure()
+
+//        chatContainer.isExclusiveTouch = true
 
         NotificationCenter.default.addObserver(self, selector: #selector(willEnterBackground(notification:)), name: UIApplication.willResignActiveNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didEnterForeground(notification:)), name: UIApplication.didBecomeActiveNotification, object: nil)
@@ -303,8 +305,8 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
                 self?.toggleChatButton.isHidden = true
                 self?.isChatShownDuringVideo = false
                 self?.chatContainerTopConstraint.constant = self?.joinVideoContainerHeight.constant ?? .zero
-                self?.scrollableViewContainer.layer.removeAllAnimations()
-                self?.scrollableViewContainer.transform = .identity
+                self?.chatContainer.layer.removeAllAnimations()
+                self?.chatContainer.transform = .identity
             default:
                 return
             }
@@ -316,6 +318,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     // MARK: - Video Call
 
     @IBAction func onJoinVidoCallDidTap(_ sender: Any) {
+        view.endEditing(true)
         viewModel.joinVideoCall(inside: videoViewContainer) { [weak self] error in
             if error != nil {
                 // TODO: Jitsi - localize error
@@ -329,14 +332,14 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     }
 
     @IBAction func onToggleChatDidTap(_ sender: Any) {
-        scrollableViewContainer.layer.removeAllAnimations()
+        chatContainer.layer.removeAllAnimations()
         let (desiredTopConstraint, desiredLeadingConstraint) = desiredChatConstraints(for: view.bounds.size)
         if chatContainerTopConstraint.constant != desiredTopConstraint || chatContainerLeadingConstraint.constant != desiredLeadingConstraint {
             chatContainerTopConstraint.constant = desiredTopConstraint
             chatContainerLeadingConstraint.constant = desiredLeadingConstraint
             view.layoutSubviews()
         }
-        let transformHeight = scrollableViewContainer.bounds.height
+        let transformHeight = chatContainer.bounds.height
 
         if isChatShownDuringVideo {
             view.endEditing(true)
@@ -345,7 +348,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
                 delay: 0,
                 options: [.curveEaseOut, .allowUserInteraction, .beginFromCurrentState],
                 animations: {
-                    self.scrollableViewContainer.transform = CGAffineTransform(translationX: 0, y: transformHeight)
+                    self.chatContainer.transform = CGAffineTransform(translationX: 0, y: transformHeight)
                 }, completion: { _ in
                     if self.viewModel.hasJoinedVideo && !self.isChatShownDuringVideo {
                         self.moveVideoContainerToFront()
@@ -353,14 +356,14 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
                 }
             )
         } else {
-            scrollableViewContainer.transform = CGAffineTransform(translationX: 0, y: transformHeight)
+            chatContainer.transform = CGAffineTransform(translationX: 0, y: transformHeight)
             moveChatToFront()
             UIView.animate(
                 withDuration: TimeConstants.kAnimationDuration.rawValue,
                 delay: 0,
                 options: [.curveEaseIn, .allowUserInteraction, .beginFromCurrentState],
                 animations: {
-                    self.scrollableViewContainer.transform = .identity
+                    self.chatContainer.transform = .identity
                 }, completion: { _ in
                     self.markChatButton(hasUnreadMessages: false)
                 }
@@ -461,7 +464,6 @@ extension NINGroupChatViewController {
         }
 
         joinVideoContainerHeight.isActive = true
-        chatContainerHeight.isActive = true
         self.setNeedsStatusBarAppearanceUpdate()
 
         guard animation else { return }
@@ -478,8 +480,8 @@ extension NINGroupChatViewController {
         toggleChatButton.isHidden = true
         isChatShownDuringVideo = false
         chatContainerTopConstraint.constant = joinVideoContainerHeight.constant
-        scrollableViewContainer.layer.removeAllAnimations()
-        scrollableViewContainer.transform = .identity
+        chatContainer.layer.removeAllAnimations()
+        chatContainer.transform = .identity
     }
 }
 
@@ -577,7 +579,8 @@ extension NINGroupChatViewController {
     }
 
     private func moveChatToFront() {
-        view.bringSubviewToFront(scrollableViewContainer)
+        view.bringSubviewToFront(chatContainer)
+//        view.bringSubviewToFront(scrollableViewContainer)
         titlebarContainer.map(view.bringSubviewToFront)
         titlebar.map(view.bringSubviewToFront)
         view.bringSubviewToFront(chatControlsContainer)
