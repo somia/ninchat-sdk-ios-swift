@@ -278,18 +278,22 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
             self?.onBackToQueue?()
         }
         self.viewModel.onChannelMessage = { [weak self] update in
-            let canMarkChatButtonUnread = self?.viewModel.hasJoinedVideo == true
-                && self?.isChatShownDuringVideo == false
-
+            guard let self = self else {
+                return
+            }
             switch update {
             case .insert(let index):
-                self?.chatView.didAddMessage(at: index)
-                self?.markChatButton(hasUnreadMessages: canMarkChatButtonUnread)
+                let canMarkChatButtonUnread = self.viewModel.hasJoinedVideo == true
+                    && self.isChatShownDuringVideo == false
+
+                self.chatView.didAddMessage(at: index)
+                if self.chatDataSourceDelegate.message(at: index, self.chatView) is TextMessage {
+                    self.markChatButton(hasUnreadMessages: canMarkChatButtonUnread)
+                }
             case .remove(let index):
-                self?.chatView.didRemoveMessage(from: index)
-                self?.markChatButton(hasUnreadMessages: canMarkChatButtonUnread)
+                self.chatView.didRemoveMessage(from: index)
             case .history, .clean:
-                self?.chatView.didLoadHistory()
+                self.chatView.didLoadHistory()
             }
         }
         self.viewModel.onComposeActionUpdated = { [weak self] id, action in
