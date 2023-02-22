@@ -92,6 +92,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
         }
     }
     private var isChatShownDuringVideo = false
+    private var hasClosedChannel = false
 
     private lazy var inputControlsView: ChatInputControlsProtocol = {
         let view: ChatInputControls = ChatInputControls.loadFromNib()
@@ -263,6 +264,11 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
             }
         }
         self.viewModel.onChannelClosed = { [weak self] in
+            self?.hasClosedChannel = true
+
+            self?.joinVideoContainerHeight.constant = 0
+            self?.viewModel.leaveVideoCall()
+            self?.markVideoCallAsFinished()
             self?.disableView(true)
         }
         self.viewModel.onQueueUpdated = { [weak self] in
@@ -437,15 +443,18 @@ extension NINGroupChatViewController {
     }
 
     private func adjustConstraints(for size: CGSize, withAnimation animation: Bool) {
-        let hasJoinedVideo = viewModel.hasJoinedVideo
-        let (desiredTopConstraint, desiredLeadingConstraint) = desiredChatConstraints(for: size)
+        let shouldShowJoinVideo = !viewModel.hasJoinedVideo && !hasClosedChannel
 
-        joinVideoContainerHeight.constant = hasJoinedVideo ? 0 : size.height * 0.25
+        joinVideoContainerHeight.constant = shouldShowJoinVideo ? size.height * 0.25 : 0
         alignInputControlsTopToScreenBottom(false)
 
-        if hasJoinedVideo {
+        if viewModel.hasJoinedVideo {
+            let (desiredTopConstraint, desiredLeadingConstraint) = desiredChatConstraints(for: size)
             chatContainerTopConstraint.constant = desiredTopConstraint
             chatContainerLeadingConstraint.constant = desiredLeadingConstraint
+        } else if hasClosedChannel {
+            chatContainerTopConstraint.constant = 0
+            chatContainerLeadingConstraint.constant = 0
         } else {
             chatContainerTopConstraint.constant = joinVideoContainerHeight.constant
             chatContainerLeadingConstraint.constant = 0
@@ -460,6 +469,17 @@ extension NINGroupChatViewController {
             self.view.setNeedsLayout()
             self.view.layoutIfNeeded()
         }
+    }
+
+    private func markVideoCallAsFinished() {
+        moveVideoContainerToBack()
+        markChatButton(hasUnreadMessages: false)
+        adjustConstraints(for: view.bounds.size, withAnimation: false)
+        toggleChatButton.isHidden = true
+        isChatShownDuringVideo = false
+        chatContainerTopConstraint.constant = joinVideoContainerHeight.constant
+        scrollableViewContainer.layer.removeAllAnimations()
+        scrollableViewContainer.transform = .identity
     }
 }
 
