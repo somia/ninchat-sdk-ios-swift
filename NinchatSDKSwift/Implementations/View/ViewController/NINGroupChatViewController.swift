@@ -299,21 +299,15 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
         self.viewModel.onComposeActionUpdated = { [weak self] id, action in
             self?.chatView.didUpdateComposeAction(id, with: action)
         }
-
-        self.viewModel.onGroupVideoUpdated = { [weak self] event in
-            switch event {
-            case .readyToClose:
-                self?.moveVideoContainerToBack()
-                self?.markChatButton(hasUnreadMessages: false)
-                self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: false)
-                self?.toggleChatButton.isHidden = true
-                self?.isChatShownDuringVideo = false
-                self?.chatContainerTopConstraint.constant = self?.joinVideoContainerHeight.constant ?? .zero
-                self?.chatContainer.layer.removeAllAnimations()
-                self?.chatContainer.transform = .identity
-            default:
-                return
-            }
+        self.viewModel.onGroupVideoReadyToClose = { [weak self] in
+            self?.moveVideoContainerToBack()
+            self?.markChatButton(hasUnreadMessages: false)
+            self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: false)
+            self?.toggleChatButton.isHidden = true
+            self?.isChatShownDuringVideo = false
+            self?.chatContainerTopConstraint.constant = self?.joinVideoContainerHeight.constant ?? .zero
+            self?.chatContainer.layer.removeAllAnimations()
+            self?.chatContainer.transform = .identity
         }
 
         self.viewModel.loadHistory()
