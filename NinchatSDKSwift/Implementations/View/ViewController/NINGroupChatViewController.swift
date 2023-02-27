@@ -58,7 +58,9 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     @IBOutlet private(set) weak var joinVideoContainerHeight: NSLayoutConstraint!
     @IBOutlet private(set) weak var joinVideoContainer: UIView!
 
+    @IBOutlet private(set) weak var joinVideoTitleLabel: UILabel!
     @IBOutlet private(set) weak var joinVideoButton: JoinVideoButton!
+    @IBOutlet private(set) weak var joinVideoInfoLabel: UILabel!
     @IBOutlet private(set) weak var joinVideoStack: UIStackView!
 
     @IBOutlet private(set) weak var chatContainer: UIView!
@@ -192,8 +194,6 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
         self.setupViewModel()
         self.setupKeyboardClosure()
 
-//        chatContainer.isExclusiveTouch = true
-
         NotificationCenter.default.addObserver(self, selector: #selector(willEnterBackground(notification:)), name: UIApplication.willResignActiveNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didEnterForeground(notification:)), name: UIApplication.didBecomeActiveNotification, object: nil)
         self.navigationItem.setHidesBackButton(true, animated: false)
@@ -240,6 +240,10 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
         self.moveVideoContainerToBack()
         self.toggleChatButton.isHidden = true
         self.chatContainerTopConstraint.constant = joinVideoContainerHeight.constant
+
+        joinVideoButton.setTitle(self.sessionManager?.translate(key: Constants.kJoinVideoMeetingText.rawValue, formatParams: [:]), for: .normal)
+        joinVideoTitleLabel.text = self.sessionManager?.translate(key: Constants.kVideoMeetingText.rawValue, formatParams: [:])
+        joinVideoInfoLabel.text = self.sessionManager?.siteConfiguration.videoMeetingInfoText
 
         self.inputControlsView.onTextSizeChanged = { [weak self] height in
             debugger("new text area height: \(height + Margins.kTextFieldPaddingHeight.rawValue)")
@@ -446,7 +450,12 @@ extension NINGroupChatViewController {
     private func adjustConstraints(for size: CGSize, withAnimation animation: Bool) {
         let shouldShowJoinVideo = !viewModel.hasJoinedVideo && !hasClosedChannel
 
-        joinVideoContainerHeight.constant = shouldShowJoinVideo ? size.height * 0.25 : 0
+        let joinVideoContainerHeightCoeff = self.sessionManager?.siteConfiguration.videoMeetingInfoText == nil
+            ? 0.18
+            : 0.25
+        joinVideoContainerHeight.constant = shouldShowJoinVideo
+            ? size.height * joinVideoContainerHeightCoeff
+            : 0
         alignInputControlsTopToScreenBottom(false)
 
         if viewModel.hasJoinedVideo {

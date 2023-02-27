@@ -155,6 +155,8 @@ public enum Constants: String {
     case kCallInvitationInfoText = "wants to video chat with you"
     case kRatingTitleText = "How was our customer service?"
     case kRatingSkipText = "Skip"
+    case kVideoMeetingText = "Video meeting"
+    case kJoinVideoMeetingText = "Join video meeting"
     
     case kRatingPositiveText = "Good"
     case kRatingNeutralText = "Okay"

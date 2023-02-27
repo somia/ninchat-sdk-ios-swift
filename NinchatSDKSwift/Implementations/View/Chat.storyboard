@@ -345,13 +345,13 @@ you are next. </string>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L5U-F0-l9Y" userLabel="Top part container view">
-                                <rect key="frame" x="0.0" y="88.5" width="414" height="484.5"/>
+                                <rect key="frame" x="0.0" y="88.5" width="414" height="467.5"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="qj1-1U-Y4U">
-                                        <rect key="frame" x="8" y="0.0" width="398" height="484.5"/>
+                                        <rect key="frame" x="8" y="0.0" width="398" height="467.5"/>
                                         <subviews>
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="How was our customer service? Please leave a rating by pressing the buttons below, or hit Skip to bypass this step." textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Ikj-NF-Jwm">
-                                                <rect key="frame" x="0.0" y="0.0" width="398" height="73.5"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="398" height="56.5"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="37" id="VQd-TN-xwp"/>
@@ -361,16 +361,16 @@ you are next. </string>
                                                 <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
                                             </textView>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B6F-ML-XSh" customClass="FacesView" customModule="NinchatSDKSwift">
-                                                <rect key="frame" x="0.0" y="81.5" width="398" height="403"/>
+                                                <rect key="frame" x="0.0" y="64.5" width="398" height="403"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </view>
                                         </subviews>
                                     </stackView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zhu-12-0xh">
-                                        <rect key="frame" x="8" y="0.0" width="398" height="484.5"/>
+                                        <rect key="frame" x="8" y="0.0" width="398" height="467.5"/>
                                         <subviews>
                                             <view tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Vt6-hF-T0g" userLabel="Left avatar container">
-                                                <rect key="frame" x="15" y="0.0" width="35" height="484.5"/>
+                                                <rect key="frame" x="15" y="0.0" width="35" height="467.5"/>
                                                 <subviews>
                                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" fixedFrame="YES" image="icon_avatar_other" translatesAutoresizingMaskIntoConstraints="NO" id="Yfi-1D-cO5">
                                                         <rect key="frame" x="0.0" y="12" width="35" height="35"/>
@@ -387,7 +387,7 @@ you are next. </string>
                                                 <rect key="frame" x="58" y="9.5" width="71.5" height="40"/>
                                                 <subviews>
                                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="999" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Dr Koistinen" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vdr-sU-emu">
-                                                        <rect key="frame" x="0.0" y="11" width="76.5" height="18"/>
+                                                        <rect key="frame" x="0.0" y="11" width="71.5" height="18"/>
                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
                                                         <nil key="highlightedColor"/>
@@ -479,7 +479,7 @@ you are next. </string>
                                 </connections>
                             </button>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed " textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="yEN-f5-12p">
-                                <rect key="frame" x="8" y="597" width="398" height="54.5"/>
+                                <rect key="frame" x="8" y="580" width="398" height="56.5"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="textColor" systemColor="labelColor"/>
                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
@@ -753,7 +753,7 @@ you are next. </string>
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="199"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="xv2-Vb-E7a">
-                                                <rect key="frame" x="0.0" y="30" width="414" height="209.5"/>
+                                                <rect key="frame" x="0.0" y="16" width="414" height="209.5"/>
                                                 <subviews>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="oMz-g1-Vcu">
                                                         <rect key="frame" x="154" y="0.0" width="106.5" height="57"/>
@@ -807,7 +807,7 @@ chat backlog.</string>
                                             <constraint firstAttribute="bottom" secondItem="xv2-Vb-E7a" secondAttribute="bottom" id="P0V-Sb-G0H"/>
                                             <constraint firstItem="xv2-Vb-E7a" firstAttribute="leading" secondItem="uWx-9I-BAh" secondAttribute="leading" id="b0d-dV-m7j"/>
                                             <constraint firstItem="xv2-Vb-E7a" firstAttribute="centerX" secondItem="uWx-9I-BAh" secondAttribute="centerX" id="ePR-JC-e6o"/>
-                                            <constraint firstItem="xv2-Vb-E7a" firstAttribute="top" secondItem="uWx-9I-BAh" secondAttribute="top" constant="30" id="owH-bC-7z4"/>
+                                            <constraint firstItem="xv2-Vb-E7a" firstAttribute="top" secondItem="uWx-9I-BAh" secondAttribute="top" constant="16" id="owH-bC-7z4"/>
                                             <constraint firstAttribute="trailing" secondItem="xv2-Vb-E7a" secondAttribute="trailing" id="pf0-wM-KHs"/>
                                         </constraints>
                                         <viewLayoutGuide key="contentLayoutGuide" id="n4E-0P-jMZ"/>
@@ -984,7 +984,9 @@ chat backlog.</string>
                         <outlet property="joinVideoButton" destination="rMZ-Jf-WSH" id="to3-5I-aBS"/>
                         <outlet property="joinVideoContainer" destination="V3Y-9g-qYe" id="1de-Dq-iZD"/>
                         <outlet property="joinVideoContainerHeight" destination="vU8-LU-4Ti" id="6bI-cp-kL5"/>
+                        <outlet property="joinVideoInfoLabel" destination="qEb-zT-pbh" id="A3q-D9-lZs"/>
                         <outlet property="joinVideoStack" destination="xv2-Vb-E7a" id="mYm-hR-o9z"/>
+                        <outlet property="joinVideoTitleLabel" destination="gM3-CS-0gI" id="uAd-OZ-Jgp"/>
                         <outlet property="scrollableViewContainer" destination="ii0-zL-XsT" id="G1x-8l-ZTZ"/>
                         <outlet property="titlebar" destination="ZKy-WV-dkx" id="D2x-zc-kZh"/>
                         <outlet property="titlebarContainer" destination="qJN-P9-oZ8" id="TmO-Mb-gjK"/>
