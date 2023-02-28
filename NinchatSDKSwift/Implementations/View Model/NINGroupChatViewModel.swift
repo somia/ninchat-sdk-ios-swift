@@ -176,7 +176,7 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMee
         }
         pipViewCoordinator?.hide()
         if force {
-            jitsiView?.leave()
+            jitsiView?.hangUp()
         }
         jitsiView?.delegate = nil
     }
