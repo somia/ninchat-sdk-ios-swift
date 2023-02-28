@@ -6,8 +6,6 @@
 
 import UIKit
 
-// TODO: Jitsi - check landscape and iPad UI
-
 final class NINGroupChatViewController: UIViewController, DeallocatableViewController, KeyboardHandler, HasTitleBar, HasDefaultAvatar {
 
     // MARK: - ViewController
@@ -60,6 +58,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
 
     @IBOutlet private(set) weak var joinVideoTitleLabel: UILabel!
     @IBOutlet private(set) weak var joinVideoButton: JoinVideoButton!
+    @IBOutlet private(set) weak var joinVideoIcon: UIImageView!
     @IBOutlet private(set) weak var joinVideoInfoLabel: UILabel!
     @IBOutlet private(set) weak var joinVideoStack: UIStackView!
 
@@ -389,10 +388,12 @@ extension NINGroupChatViewController {
 
     private func overrideAssets() {
         overrideTitlebarAssets()
-//        videoView.overrideAssets()
         inputControlsView.overrideAssets()
 
         joinVideoButton.overrideAssets(with: delegate, isPrimary: true)
+        if let joinVideoIcon = delegate?.override(imageAsset: .ninchatGroupJoinVideoIcon) {
+            self.joinVideoIcon.image = joinVideoIcon
+        }
 
         if let backgroundImage = self.delegate?.override(imageAsset: .ninchatChatBackground) {
             self.backgroundView.backgroundColor = UIColor(patternImage: backgroundImage)
@@ -400,13 +401,13 @@ extension NINGroupChatViewController {
             self.backgroundView.backgroundColor = UIColor(patternImage: bundleImage)
         }
 
+        if let toggleChatIcon = delegate?.override(imageAsset: .ninchatGroupChatToggleIcon) {
+            toggleChatButton.setImage(toggleChatIcon, for: .normal)
+        }
+
         self.titlebar?.reloadInputViews()
         self.titlebar?.setNeedsLayout()
         self.titlebar?.layoutIfNeeded()
-
-//        self.videoView.reloadInputViews()
-//        self.videoView.setNeedsLayout()
-//        self.videoView.layoutIfNeeded()
 
         self.inputControlsView.reloadInputViews()
         self.inputControlsView.setNeedsLayout()
@@ -587,20 +588,23 @@ extension NINGroupChatViewController {
 
     private func moveChatToFront() {
         view.bringSubviewToFront(chatContainer)
-//        view.bringSubviewToFront(scrollableViewContainer)
         titlebarContainer.map(view.bringSubviewToFront)
         titlebar.map(view.bringSubviewToFront)
         view.bringSubviewToFront(chatControlsContainer)
     }
 
     private func markChatButton(hasUnreadMessages: Bool) {
+        // overrideAssets overrides layer of the button, and usually it can have zero size,
+        // which affects button's layout (it becomes hidden), hence we're saving original frame to keep it after overrideAssets.
+        let originalFrame = toggleChatButton.frame
         if hasUnreadMessages {
-            toggleChatButton.tintColor = .white
+            toggleChatButton.tintColor = delegate?.override(colorAsset: .ninchatColorButtonPrimaryText) ?? .white
             toggleChatButton.overrideAssets(with: delegate, isPrimary: true)
         } else {
-            toggleChatButton.tintColor = .defaultBackgroundButton
+            toggleChatButton.tintColor = delegate?.override(colorAsset: .ninchatColorButtonSecondaryText) ?? .defaultBackgroundButton
             toggleChatButton.overrideAssets(with: delegate, isPrimary: false)
         }
+        toggleChatButton.frame = originalFrame
     }
 
     private func desiredChatConstraints(for size: CGSize) -> (top: CGFloat, leading: CGFloat) {

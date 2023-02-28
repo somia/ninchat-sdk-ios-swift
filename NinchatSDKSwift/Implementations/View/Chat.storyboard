@@ -935,7 +935,7 @@ chat backlog.</string>
                                         </constraints>
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                         <state key="normal" image="icon_chat_toggle"/>
-                                        <buttonConfiguration key="configuration" style="plain" image="icon_chat_toggle"/>
+                                        <buttonConfiguration key="configuration" style="plain" image="icon_chat_toggle" title=" "/>
                                         <connections>
                                             <action selector="onToggleChatDidTap:" destination="rkl-lh-0pE" eventType="touchUpInside" id="gs1-J8-rGI"/>
                                         </connections>
@@ -984,6 +984,7 @@ chat backlog.</string>
                         <outlet property="joinVideoButton" destination="rMZ-Jf-WSH" id="to3-5I-aBS"/>
                         <outlet property="joinVideoContainer" destination="V3Y-9g-qYe" id="1de-Dq-iZD"/>
                         <outlet property="joinVideoContainerHeight" destination="vU8-LU-4Ti" id="6bI-cp-kL5"/>
+                        <outlet property="joinVideoIcon" destination="BDs-BD-POF" id="LyY-hj-6yJ"/>
                         <outlet property="joinVideoInfoLabel" destination="qEb-zT-pbh" id="A3q-D9-lZs"/>
                         <outlet property="joinVideoStack" destination="xv2-Vb-E7a" id="mYm-hR-o9z"/>
                         <outlet property="joinVideoTitleLabel" destination="gM3-CS-0gI" id="uAd-OZ-Jgp"/>
