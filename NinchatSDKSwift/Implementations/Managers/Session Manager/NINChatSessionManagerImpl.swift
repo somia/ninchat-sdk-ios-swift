@@ -64,6 +64,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     var describedQueue: Queue?
     var agent: ChannelUser?
     var composeActions: [ComposeUIAction] = []
+    var isGroupVideoChannel: Bool?
     
     // MARK: - NINChatSessionManagerDelegate
 
@@ -351,6 +352,7 @@ extension NINChatSessionManagerImpl {
         self.currentChannelID = nil
         self.currentQueueID = nil
         self.myUserID = nil
+        self.isGroupVideoChannel = nil
 
         if self.session != nil {
             do {

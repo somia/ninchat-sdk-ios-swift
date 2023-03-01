@@ -195,21 +195,6 @@ extension NINLowLevelClientProps: NINLowLevelQueueProps {
         get { self.get(forKey: "queue_position") }
     }
 
-    var queueIsGroup: NINResult<Bool> {
-        switch self.queueAttributes {
-        case .success(let attributes):
-            let upload: NINResult<String> = attributes.get(forKey: "video")
-            switch upload {
-            case .success(let value):
-                return .success(QueueVideoType(rawValue: value) == .group)
-            case .failure(let error):
-                return .failure(error)
-            }
-        case .failure(let error):
-            return .failure(error)
-        }
-    }
-
     var queueClosed: NINResult<Bool> {
         switch self.queueAttributes {
         case .success(let attributes):
@@ -314,6 +299,21 @@ extension NINLowLevelClientProps: NINLowLevelChannelProps {
         switch self.channelAttributes {
         case .success(let attributes):
             return attributes.get(forKey: "audience_transferred")
+        case .failure(let error):
+            return .failure(error)
+        }
+    }
+
+    var channelIsGroup: NINResult<Bool> {
+        switch self.channelAttributes {
+        case .success(let attributes):
+            let video: NINResult<String> = attributes.get(forKey: "video")
+            switch video {
+            case .success(let value):
+                return .success(ChannelVideoType(rawValue: value) == .group)
+            case .failure(let error):
+                return .failure(error)
+            }
         case .failure(let error):
             return .failure(error)
         }
