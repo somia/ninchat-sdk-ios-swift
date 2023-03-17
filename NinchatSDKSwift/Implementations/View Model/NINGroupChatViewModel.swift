@@ -7,6 +7,13 @@
 import Foundation
 import JitsiMeetSDK
 
+enum GroupVideoCallEvent {
+    case willJoin
+    case joined
+    case readyToClose
+    case terminated
+}
+
 protocol NINGroupChatViewModel: AnyObject, NINChatStateProtocol, NINChatMessageProtocol, NINChatPermissionsProtocol, NINChatAttachmentProtocol {
     var hasJoinedVideo: Bool { get }
 
@@ -14,17 +21,25 @@ protocol NINGroupChatViewModel: AnyObject, NINChatStateProtocol, NINChatMessageP
     var onQueueUpdated: (() -> Void)? { get set }
     var onChannelMessage: ((MessageUpdateType) -> Void)? { get set }
     var onComposeActionUpdated: ((_ id: String, _ action: ComposeUIAction) -> Void)? { get set }
+    var onGroupVideoUpdated: ((GroupVideoCallEvent) -> Void)? { get set }
 
     init(sessionManager: NINChatSessionManager)
+
+    func joinVideoCall(inside parentView: UIView, completion: @escaping (Error?) -> Void)
+    func leaveVideoCall()
 }
 
-final class NINGroupChatViewModelImpl: NINGroupChatViewModel {
-    private unowned var sessionManager: NINChatSessionManager
+final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMeetViewDelegate {
+    private weak var sessionManager: NINChatSessionManager?
+    private var pipViewCoordinator: PiPViewCoordinator?
+    private var jitsiView: JitsiMeetView?
     private var typingStatus = false
     private var typingStatusQueue: DispatchWorkItem?
     private var isSelectingMedia = false
 
-    private(set) var hasJoinedVideo = false
+    var hasJoinedVideo: Bool {
+        jitsiView?.delegate != nil
+    }
 
     var backlogMessages: String? {
         didSet {
@@ -38,37 +53,44 @@ final class NINGroupChatViewModelImpl: NINGroupChatViewModel {
     var onErrorOccurred: ((Error) -> Void)?
     var onChannelMessage: ((MessageUpdateType) -> Void)?
     var onComposeActionUpdated: ((_ id: String, _ action: ComposeUIAction) -> Void)?
+    var onGroupVideoUpdated: ((GroupVideoCallEvent) -> Void)?
 
     init(sessionManager: NINChatSessionManager) {
         self.sessionManager = sessionManager
 
+        super.init()
+
         self.setupListeners()
     }
 
+    deinit {
+        leaveVideoCall()
+    }
+
     private func setupListeners() {
-        self.sessionManager.onChannelClosed = { [weak self] in
+        self.sessionManager?.onChannelClosed = { [weak self] in
             self?.onChannelClosed?()
         }
-        self.sessionManager.bindQueueUpdate(closure: { [weak self] _, _, error in
+        self.sessionManager?.bindQueueUpdate(closure: { [weak self] _, _, error in
             guard error == nil else {
-                try? self?.sessionManager.closeChat(endSession: true, onCompletion: nil)
+                try? self?.sessionManager?.closeChat(endSession: true, onCompletion: nil)
                 return
             }
             self?.onQueueUpdated?()
         }, to: self)
-        self.sessionManager.onMessageAdded = { [weak self] index in
+        self.sessionManager?.onMessageAdded = { [weak self] index in
             self?.onChannelMessage?(.insert(index))
         }
-        self.sessionManager.onHistoryLoaded = { [weak self] _ in
+        self.sessionManager?.onHistoryLoaded = { [weak self] _ in
             self?.onChannelMessage?(.history)
         }
-        self.sessionManager.onMessageRemoved = { [weak self] index in
+        self.sessionManager?.onMessageRemoved = { [weak self] index in
             self?.onChannelMessage?(.remove(index))
         }
-        self.sessionManager.onSessionDeallocated = { [weak self] in
+        self.sessionManager?.onSessionDeallocated = { [weak self] in
             self?.onChannelMessage?(.clean)
         }
-        self.sessionManager.onComposeActionUpdated = { [weak self] id, action in
+        self.sessionManager?.onComposeActionUpdated = { [weak self] id, action in
             self?.onComposeActionUpdated?(id, action)
         }
     }
@@ -82,6 +104,88 @@ final class NINGroupChatViewModelImpl: NINGroupChatViewModel {
 
     private func cancelTimer() {
         self.typingStatusQueue?.cancel()
+    }
+
+    func joinVideoCall(inside parentView: UIView, completion: @escaping (Error?) -> Void) {
+        do {
+            try sessionManager?.discoverJitsi { [weak self] result in
+                guard let self = self, let sessionManager = self.sessionManager else {
+                    return
+                }
+                switch result {
+                case nil:
+                    completion(NinchatError(type: "unknown", props: nil))
+                case let .failure(error):
+                    completion(error)
+                case let .success(credentials):
+                    var serverAddress: String = sessionManager.serverAddress
+                    let apiPrefix = "api."
+                    if serverAddress.hasPrefix(apiPrefix) {
+                        let endIdx = serverAddress.index(serverAddress.startIndex, offsetBy: apiPrefix.count)
+                        serverAddress.removeSubrange(serverAddress.startIndex ..< endIdx)
+                    }
+                    let jitsiServerAddress = "https://jitsi-www." + serverAddress
+                    let options = JitsiMeetConferenceOptions.fromBuilder {
+                        $0.serverURL = URL(string: jitsiServerAddress)
+                        $0.room = credentials.room
+                        $0.token = credentials.token
+                        $0.setFeatureFlag("overflow-menu.enabled", withBoolean: true)
+                        $0.setFeatureFlag("add-people.enabled", withBoolean: false)
+                        $0.setFeatureFlag("calendar.enabled", withBoolean: false)
+                        $0.setFeatureFlag("close-captions.enabled", withBoolean: false)
+                        $0.setFeatureFlag("chat.enabled", withBoolean: false)
+                        $0.setFeatureFlag("filmstrip.enabled", withBoolean: false)
+                        $0.setFeatureFlag("invite.enabled", withBoolean: false)
+                        $0.setFeatureFlag("kick-out.enabled", withBoolean: false)
+                        $0.setFeatureFlag("live-streaming.enabled", withBoolean: false)
+                        $0.setFeatureFlag("meeting-name.enabled", withBoolean: true)
+                        $0.setFeatureFlag("meeting-password.enabled", withBoolean: false)
+                        $0.setFeatureFlag("notifications.enabled", withBoolean: false)
+                        $0.setFeatureFlag("recording.enabled", withBoolean: false)
+                        $0.setFeatureFlag("welcomepage.enabled", withBoolean: false)
+                        $0.setFeatureFlag("video-share.enabled", withBoolean: false)
+                        $0.setFeatureFlag("toolbox.alwaysVisible", withBoolean: true)
+                        $0.setFeatureFlag("fullscreen.enabled'", withBoolean: true)
+                        $0.setFeatureFlag("help.enabled", withBoolean: false)
+                        $0.setFeatureFlag("lobby-mode.enabled", withBoolean: false)
+                        $0.setFeatureFlag("reactions.enabled", withBoolean: false)
+                        $0.setFeatureFlag("prejoinpage.enabled", withBoolean: true)
+                    }
+                    let jitsiMeetView = self.jitsiView ?? JitsiMeetView()
+                    jitsiMeetView.delegate = self
+                    jitsiMeetView.join(options)
+
+                    if self.pipViewCoordinator == nil {
+                        self.pipViewCoordinator = PiPViewCoordinator(withView: jitsiMeetView)
+                    }
+                    self.pipViewCoordinator?.configureAsStickyView(withParentView: parentView)
+
+                    jitsiMeetView.alpha = 0
+
+                    self.jitsiView = jitsiMeetView
+                    self.pipViewCoordinator?.show()
+
+                    completion(nil)
+                }
+            }
+        } catch {
+            completion(error)
+        }
+    }
+
+    func leaveVideoCall() {
+        leaveVideoCall(force: true)
+    }
+
+    private func leaveVideoCall(force: Bool) {
+        guard hasJoinedVideo else {
+            return
+        }
+        pipViewCoordinator?.hide()
+        if force {
+            jitsiView?.leave()
+        }
+        jitsiView?.delegate = nil
     }
 }
 
@@ -140,7 +244,7 @@ extension NINGroupChatViewModelImpl {
 extension NINGroupChatViewModelImpl {
     func send(message: String, completion: @escaping (Error?) -> Void) {
         do {
-            try self.sessionManager.send(message: message, completion: completion)
+            try self.sessionManager?.send(message: message, completion: completion)
         } catch {
             completion(error)
         }
@@ -148,7 +252,7 @@ extension NINGroupChatViewModelImpl {
 
     func send(action: ComposeContentViewProtocol, completion: @escaping (Error?) -> Void) {
         do {
-            try self.sessionManager.send(action: action, completion: completion)
+            try self.sessionManager?.send(action: action, completion: completion)
         } catch {
             completion(error)
         }
@@ -156,7 +260,7 @@ extension NINGroupChatViewModelImpl {
 
     func send(attachment: String, data: Data, completion: @escaping (Error?) -> Void) {
         do {
-            try self.sessionManager.send(attachment: attachment, data: data, completion: completion)
+            try self.sessionManager?.send(attachment: attachment, data: data, completion: completion)
         } catch {
             completion(error)
         }
@@ -164,7 +268,7 @@ extension NINGroupChatViewModelImpl {
 
     func send(type: MessageType, payload: [String:String], completion: @escaping (Error?) -> Void) {
         do {
-            try self.sessionManager.send(type: type, payload: payload, completion: completion)
+            try self.sessionManager?.send(type: type, payload: payload, completion: completion)
         } catch {
             completion(error)
         }
@@ -184,11 +288,11 @@ extension NINGroupChatViewModelImpl {
         }
         self.typingStatus = state
 
-        try? self.sessionManager.update(isWriting: state) { _ in  }
+        try? self.sessionManager?.update(isWriting: state) { _ in  }
     }
 
     func loadHistory() {
-        try? self.sessionManager.loadHistory() { _ in }
+        try? self.sessionManager?.loadHistory() { _ in }
     }
 }
 
@@ -241,5 +345,26 @@ extension NINGroupChatViewModelImpl {
         default:
             fatalError("The source cannot be anything else")
         }
+    }
+}
+
+// MARK: - Jitsi Delegate
+
+extension NINGroupChatViewModelImpl {
+    func ready(toClose data: [AnyHashable : Any]!) {
+        leaveVideoCall(force: false)
+        onGroupVideoUpdated?(.readyToClose)
+    }
+
+    func conferenceTerminated(_ data: [AnyHashable : Any]!) {
+        onGroupVideoUpdated?(.terminated)
+    }
+
+    func conferenceWillJoin(_ data: [AnyHashable : Any]!) {
+        onGroupVideoUpdated?(.willJoin)
+    }
+
+    func conferenceJoined(_ data: [AnyHashable : Any]!) {
+        onGroupVideoUpdated?(.joined)
     }
 }

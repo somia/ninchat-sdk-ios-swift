@@ -53,6 +53,8 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     @IBOutlet private(set) weak var scrollableViewContainer: UIView!
     @IBOutlet private(set) weak var backgroundView: UIImageView! /// <--- to hold page background image, it is more flexible to have a dedicated view
 
+    @IBOutlet private(set) weak var videoViewContainer: UIView!
+
     @IBOutlet private(set) weak var joinVideoContainerHeight: NSLayoutConstraint!
     @IBOutlet private(set) weak var joinVideoContainer: UIView! {
         didSet {
@@ -151,6 +153,10 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     }
 
     var titlebarJob: String? {
+        /// Group-chat related logic - we hide job name if title bar is hidden in site configs
+        guard sessionManager?.siteConfiguration.hideTitlebar == false else {
+            return nil
+        }
         /// `https://github.com/somia/mobile/issues/411#issuecomment-1249263156`
         if let agentName = self.sessionManager?.siteConfiguration.agentName, !agentName.isEmpty {
             return nil
@@ -222,7 +228,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
 //        self.deallocViewModel()
         self.removeKeyboardListeners()
 
-        NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
     }
 
@@ -232,6 +238,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
         self.setupGestures()
         self.reloadView()
         self.updateInputContainerHeight(94.0)
+        self.moveVideoContainerToBack()
 
         self.inputControlsView.onTextSizeChanged = { [weak self] height in
             debugger("new text area height: \(height + Margins.kTextFieldPaddingHeight.rawValue)")
@@ -278,7 +285,30 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
             self?.chatView.didUpdateComposeAction(id, with: action)
         }
 
+        self.viewModel.onGroupVideoUpdated = { [weak self] event in
+            switch event {
+            case .readyToClose:
+                self?.moveVideoContainerToBack()
+            default:
+                return
+            }
+        }
+
         self.viewModel.loadHistory()
+    }
+
+    // MARK: - Video Call
+
+    @IBAction func onJoinVidoCallDidTap(_ sender: Any) {
+        viewModel.joinVideoCall(inside: videoViewContainer) { [weak self] error in
+            if error != nil {
+                // TODO: Jitsi - localize error
+                debugger("Jitsi: join video error: \(error)")
+                Toast.show(message: .error("Failed to join video meeting"))
+            } else {
+                self?.moveVideoContainerToFront()
+            }
+        }
     }
 }
 
@@ -432,7 +462,8 @@ extension NINGroupChatViewController {
             confirmCloseDialog.hideConfirmView()
             guard action == .confirm else { return }
 
-//            self?.disconnectRTC()
+            self?.moveVideoContainerToBack()
+            self?.viewModel.leaveVideoCall()
             self?.onChatClosed?()
         }
         confirmCloseDialog.showConfirmView(on: self.view)
@@ -468,8 +499,12 @@ extension NINGroupChatViewController {
 
 // MARK: - Helpers
 
-extension NINChatViewController {
-    private func disableIdleTimer(_ disable: Bool) {
-        UIApplication.shared.isIdleTimerDisabled = disable
+extension NINGroupChatViewController {
+    private func moveVideoContainerToFront() {
+        view.bringSubviewToFront(videoViewContainer)
+    }
+
+    private func moveVideoContainerToBack() {
+        view.sendSubviewToBack(videoViewContainer)
     }
 }

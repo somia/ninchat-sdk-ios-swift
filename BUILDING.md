@@ -26,7 +26,7 @@ gomobile init
 
 ### Updating the Go Framework
 
-You will need Go 1.8+ installed to perform this step; it requires building the existing Ninchat Go SDK into a static library callable from iOS code.
+You will need Go 1.19+ installed to perform this step; it requires building the existing Ninchat Go SDK into a static library callable from iOS code.
 
 Update the Framework by running the script:
 
@@ -62,12 +62,12 @@ cp -r /tmp/NinchatGo.framework /path/to/project/Frameworks/NinchatGo.framework
 First of all you need to have configured the private podspecs repo:
 
 ```sh
-git repo add ninchat-podspecs git@github.com:somia/ninchat-podspecs.git
+pod repo add ninchat-podspecs git@github.com:somia/ninchat-podspecs.git
 ```
 
 To release a new SDK version on the said podspec repository, take the following steps:
 
-* Update NinchatSDK.podspec and set s.version to match the upcoming tag
+* Update NinchatSDKSwift.podspec and set s.version to match the upcoming tag
 * Commit all your changes, merge all pending accepted *Merge ('pull') Requests*
 * Create a new tag following [Semantic Versioning](http://semver.org/); eg. `git tag -a 1.0.1 -m "Your tag comment"`
 * `git push --tags`
