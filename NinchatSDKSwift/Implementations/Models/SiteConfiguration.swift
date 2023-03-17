@@ -33,6 +33,7 @@ protocol SiteConfiguration  {
     var userName: String? { get }
     var noQueueText: String? { get }
     var audienceAutoQueue: String? { get }
+    var videoMeetingInfoText: String? { get }
     var hideTitlebar: Bool { get }
     var postAudienceQuestionnaireTitlebar: PostAudienceQuestionnaireTitlebarType? { get }
     var audienceQuestionnaireAvatar: AnyHashable? { get }
@@ -121,6 +122,9 @@ struct SiteConfigurationImpl: SiteConfiguration {
     }
     var audienceAutoQueue: String? {
         self.value(for: "audienceAutoQueue")
+    }
+    var videoMeetingInfoText: String? {
+        self.value(for: "videoMeetingInfoText")
     }
 
     // MARK: - Titlebar

@@ -7,13 +7,6 @@
 import Foundation
 import JitsiMeetSDK
 
-enum GroupVideoCallEvent {
-    case willJoin
-    case joined
-    case readyToClose
-    case terminated
-}
-
 protocol NINGroupChatViewModel: AnyObject, NINChatStateProtocol, NINChatMessageProtocol, NINChatPermissionsProtocol, NINChatAttachmentProtocol {
     var hasJoinedVideo: Bool { get }
 
@@ -21,7 +14,7 @@ protocol NINGroupChatViewModel: AnyObject, NINChatStateProtocol, NINChatMessageP
     var onQueueUpdated: (() -> Void)? { get set }
     var onChannelMessage: ((MessageUpdateType) -> Void)? { get set }
     var onComposeActionUpdated: ((_ id: String, _ action: ComposeUIAction) -> Void)? { get set }
-    var onGroupVideoUpdated: ((GroupVideoCallEvent) -> Void)? { get set }
+    var onGroupVideoReadyToClose: (() -> Void)? { get set }
 
     init(sessionManager: NINChatSessionManager)
 
@@ -53,7 +46,7 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMee
     var onErrorOccurred: ((Error) -> Void)?
     var onChannelMessage: ((MessageUpdateType) -> Void)?
     var onComposeActionUpdated: ((_ id: String, _ action: ComposeUIAction) -> Void)?
-    var onGroupVideoUpdated: ((GroupVideoCallEvent) -> Void)?
+    var onGroupVideoReadyToClose: (() -> Void)?
 
     init(sessionManager: NINChatSessionManager) {
         self.sessionManager = sessionManager
@@ -353,18 +346,6 @@ extension NINGroupChatViewModelImpl {
 extension NINGroupChatViewModelImpl {
     func ready(toClose data: [AnyHashable : Any]!) {
         leaveVideoCall(force: false)
-        onGroupVideoUpdated?(.readyToClose)
-    }
-
-    func conferenceTerminated(_ data: [AnyHashable : Any]!) {
-        onGroupVideoUpdated?(.terminated)
-    }
-
-    func conferenceWillJoin(_ data: [AnyHashable : Any]!) {
-        onGroupVideoUpdated?(.willJoin)
-    }
-
-    func conferenceJoined(_ data: [AnyHashable : Any]!) {
-        onGroupVideoUpdated?(.joined)
+        onGroupVideoReadyToClose?()
     }
 }

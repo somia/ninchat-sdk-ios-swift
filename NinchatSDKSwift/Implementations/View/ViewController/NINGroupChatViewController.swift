@@ -6,8 +6,6 @@
 
 import UIKit
 
-// TODO: Jitsi - check landscape and iPad UI
-
 final class NINGroupChatViewController: UIViewController, DeallocatableViewController, KeyboardHandler, HasTitleBar, HasDefaultAvatar {
 
     // MARK: - ViewController
@@ -56,23 +54,17 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     @IBOutlet private(set) weak var videoViewContainer: UIView!
 
     @IBOutlet private(set) weak var joinVideoContainerHeight: NSLayoutConstraint!
-    @IBOutlet private(set) weak var joinVideoContainer: UIView! {
-        didSet {
-//            let currentVideoView: UIView = queue?.isGroup == true
-//                ? groupVideoView
-//                : videoView
-//
-//            videoContainer.addSubview(currentVideoView)
-//            currentVideoView
-//                .fix(leading: (0.0, videoContainer), trailing: (0.0, videoContainer))
-//                .fix(top: (0.0, videoContainer), bottom: (0.0, videoContainer))
-        }
-    }
+    @IBOutlet private(set) weak var joinVideoContainer: UIView!
 
+    @IBOutlet private(set) weak var joinVideoTitleLabel: UILabel!
     @IBOutlet private(set) weak var joinVideoButton: JoinVideoButton!
+    @IBOutlet private(set) weak var joinVideoIcon: UIImageView!
+    @IBOutlet private(set) weak var joinVideoInfoLabel: UILabel!
     @IBOutlet private(set) weak var joinVideoStack: UIStackView!
 
-    @IBOutlet private(set) weak var chatContainerHeight: NSLayoutConstraint!
+    @IBOutlet private(set) weak var chatContainer: UIView!
+    @IBOutlet private(set) weak var chatContainerTopConstraint: NSLayoutConstraint!
+    @IBOutlet private(set) weak var chatContainerLeadingConstraint: NSLayoutConstraint!
     @IBOutlet private(set) weak var chatView: ChatView! {
         didSet {
             chatView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard(sender:))))
@@ -81,12 +73,15 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
             chatView.dataSource = self.chatDataSourceDelegate
         }
     }
+
+    @IBOutlet private(set) weak var chatControlsContainer: UIStackView!
+    @IBOutlet private(set) weak var toggleChatButton: NINButton! {
+        didSet {
+            markChatButton(hasUnreadMessages: false)
+        }
+    }
     @IBOutlet private(set) weak var closeChatButton: CloseButton! {
         didSet {
-//            if self.hasTitlebar {
-//                closeChatButton.isHidden = true; return
-//            }
-
             let closeTitle = self.sessionManager?.translate(key: Constants.kCloseChatText.rawValue, formatParams: [:])
             closeChatButton.buttonTitle = closeTitle
             closeChatButton.overrideAssets(with: self.delegate, in: .chatTopRight)
@@ -97,6 +92,8 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
             }
         }
     }
+    private var isChatShownDuringVideo = false
+    private var hasClosedChannel = false
 
     private lazy var inputControlsView: ChatInputControlsProtocol = {
         let view: ChatInputControls = ChatInputControls.loadFromNib()
@@ -129,6 +126,9 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     // MARK: - KeyboardHandler
 
     var onKeyboardSizeChanged: ((CGFloat) -> Void)?
+    var scrollableView: UIView! {
+        scrollableViewContainer
+    }
 
     // MARK: - HasTitleBar
 
@@ -177,13 +177,12 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
 
     override var prefersStatusBarHidden: Bool {
         // Prefer no status bar if video is active
-//        webRTCClient != nil
-        true
+        viewModel.hasJoinedVideo
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.addTitleBar(parent: self.scrollableViewContainer, showAvatar: true, adjustToSafeArea: true) { [weak self] in
+        self.addTitleBar(parent: self.chatContainer, showAvatar: true, adjustToSafeArea: true) { [weak self] in
             DispatchQueue.main.async {
                 self?.onCloseChatTapped()
             }
@@ -193,7 +192,6 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
         self.setupView()
         self.setupViewModel()
         self.setupKeyboardClosure()
-//        self.connectRTC()
 
         NotificationCenter.default.addObserver(self, selector: #selector(willEnterBackground(notification:)), name: UIApplication.willResignActiveNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didEnterForeground(notification:)), name: UIApplication.didBecomeActiveNotification, object: nil)
@@ -239,6 +237,12 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
         self.reloadView()
         self.updateInputContainerHeight(94.0)
         self.moveVideoContainerToBack()
+        self.toggleChatButton.isHidden = true
+        self.chatContainerTopConstraint.constant = joinVideoContainerHeight.constant
+
+        joinVideoButton.setTitle(self.sessionManager?.translate(key: Constants.kJoinVideoMeetingText.rawValue, formatParams: [:]), for: .normal)
+        joinVideoTitleLabel.text = self.sessionManager?.translate(key: Constants.kVideoMeetingText.rawValue, formatParams: [:])
+        joinVideoInfoLabel.text = self.sessionManager?.siteConfiguration.videoMeetingInfoText
 
         self.inputControlsView.onTextSizeChanged = { [weak self] height in
             debugger("new text area height: \(height + Margins.kTextFieldPaddingHeight.rawValue)")
@@ -248,7 +252,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
 
     /// In case the queue was transferred
     private func reloadView() {
-//        if let queue = self.queue {
+//        if let queue = self.viewModel.queue {
 //            /// Apply queue permissions to view
 //            self.inputControlsView.updatePermissions(queue.permissions)
 //        }
@@ -265,6 +269,11 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
             }
         }
         self.viewModel.onChannelClosed = { [weak self] in
+            self?.hasClosedChannel = true
+
+            self?.joinVideoContainerHeight.constant = 0
+            self?.viewModel.leaveVideoCall()
+            self?.markVideoCallAsFinished()
             self?.disableView(true)
         }
         self.viewModel.onQueueUpdated = { [weak self] in
@@ -272,26 +281,36 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
             self?.onBackToQueue?()
         }
         self.viewModel.onChannelMessage = { [weak self] update in
+            guard let self = self else {
+                return
+            }
             switch update {
             case .insert(let index):
-                self?.chatView.didAddMessage(at: index)
+                let canMarkChatButtonUnread = self.viewModel.hasJoinedVideo == true
+                    && self.isChatShownDuringVideo == false
+
+                self.chatView.didAddMessage(at: index)
+                if self.chatDataSourceDelegate.message(at: index, self.chatView) is TextMessage {
+                    self.markChatButton(hasUnreadMessages: canMarkChatButtonUnread)
+                }
             case .remove(let index):
-                self?.chatView.didRemoveMessage(from: index)
+                self.chatView.didRemoveMessage(from: index)
             case .history, .clean:
-                self?.chatView.didLoadHistory()
+                self.chatView.didLoadHistory()
             }
         }
         self.viewModel.onComposeActionUpdated = { [weak self] id, action in
             self?.chatView.didUpdateComposeAction(id, with: action)
         }
-
-        self.viewModel.onGroupVideoUpdated = { [weak self] event in
-            switch event {
-            case .readyToClose:
-                self?.moveVideoContainerToBack()
-            default:
-                return
-            }
+        self.viewModel.onGroupVideoReadyToClose = { [weak self] in
+            self?.moveVideoContainerToBack()
+            self?.markChatButton(hasUnreadMessages: false)
+            self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: false)
+            self?.toggleChatButton.isHidden = true
+            self?.isChatShownDuringVideo = false
+            self?.chatContainerTopConstraint.constant = self?.joinVideoContainerHeight.constant ?? .zero
+            self?.chatContainer.layer.removeAllAnimations()
+            self?.chatContainer.transform = .identity
         }
 
         self.viewModel.loadHistory()
@@ -300,6 +319,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     // MARK: - Video Call
 
     @IBAction func onJoinVidoCallDidTap(_ sender: Any) {
+        view.endEditing(true)
         viewModel.joinVideoCall(inside: videoViewContainer) { [weak self] error in
             if error != nil {
                 // TODO: Jitsi - localize error
@@ -307,8 +327,50 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
                 Toast.show(message: .error("Failed to join video meeting"))
             } else {
                 self?.moveVideoContainerToFront()
+                self?.toggleChatButton.isHidden = false
             }
         }
+    }
+
+    @IBAction func onToggleChatDidTap(_ sender: Any) {
+        chatContainer.layer.removeAllAnimations()
+        let (desiredTopConstraint, desiredLeadingConstraint) = desiredChatConstraints(for: view.bounds.size)
+        if chatContainerTopConstraint.constant != desiredTopConstraint || chatContainerLeadingConstraint.constant != desiredLeadingConstraint {
+            chatContainerTopConstraint.constant = desiredTopConstraint
+            chatContainerLeadingConstraint.constant = desiredLeadingConstraint
+            view.layoutSubviews()
+        }
+        let transformHeight = chatContainer.bounds.height
+
+        if isChatShownDuringVideo {
+            view.endEditing(true)
+            UIView.animate(
+                withDuration: TimeConstants.kAnimationDuration.rawValue,
+                delay: 0,
+                options: [.curveEaseOut, .allowUserInteraction, .beginFromCurrentState],
+                animations: {
+                    self.chatContainer.transform = CGAffineTransform(translationX: 0, y: transformHeight)
+                }, completion: { _ in
+                    if self.viewModel.hasJoinedVideo && !self.isChatShownDuringVideo {
+                        self.moveVideoContainerToFront()
+                    }
+                }
+            )
+        } else {
+            chatContainer.transform = CGAffineTransform(translationX: 0, y: transformHeight)
+            moveChatToFront()
+            UIView.animate(
+                withDuration: TimeConstants.kAnimationDuration.rawValue,
+                delay: 0,
+                options: [.curveEaseIn, .allowUserInteraction, .beginFromCurrentState],
+                animations: {
+                    self.chatContainer.transform = .identity
+                }, completion: { _ in
+                    self.markChatButton(hasUnreadMessages: false)
+                }
+            )
+        }
+        isChatShownDuringVideo = !isChatShownDuringVideo
     }
 }
 
@@ -326,10 +388,12 @@ extension NINGroupChatViewController {
 
     private func overrideAssets() {
         overrideTitlebarAssets()
-//        videoView.overrideAssets()
         inputControlsView.overrideAssets()
 
         joinVideoButton.overrideAssets(with: delegate, isPrimary: true)
+        if let joinVideoIcon = delegate?.override(imageAsset: .ninchatGroupJoinVideoIcon) {
+            self.joinVideoIcon.image = joinVideoIcon
+        }
 
         if let backgroundImage = self.delegate?.override(imageAsset: .ninchatChatBackground) {
             self.backgroundView.backgroundColor = UIColor(patternImage: backgroundImage)
@@ -337,13 +401,13 @@ extension NINGroupChatViewController {
             self.backgroundView.backgroundColor = UIColor(patternImage: bundleImage)
         }
 
+        if let toggleChatIcon = delegate?.override(imageAsset: .ninchatGroupChatToggleIcon) {
+            toggleChatButton.setImage(toggleChatIcon, for: .normal)
+        }
+
         self.titlebar?.reloadInputViews()
         self.titlebar?.setNeedsLayout()
         self.titlebar?.layoutIfNeeded()
-
-//        self.videoView.reloadInputViews()
-//        self.videoView.setNeedsLayout()
-//        self.videoView.layoutIfNeeded()
 
         self.inputControlsView.reloadInputViews()
         self.inputControlsView.setNeedsLayout()
@@ -385,26 +449,29 @@ extension NINGroupChatViewController {
     }
 
     private func adjustConstraints(for size: CGSize, withAnimation animation: Bool) {
-        let hasJoinedVideo = viewModel.hasJoinedVideo
+        let shouldShowJoinVideo = !viewModel.hasJoinedVideo && !hasClosedChannel
 
-        if UIScreen.main.traitCollection.userInterfaceIdiom == .pad {
-            /// On iPad we won't show full-screen videos as there is enough space to chat and video in parallel
-            joinVideoContainerHeight.constant = hasJoinedVideo ? 0 : size.height * 0.25
-            self.alignInputControlsTopToScreenBottom(false)
-        } else if UIDevice.current.orientation.isLandscape {
-            // In landscape we make video fullscreen ie. hide the chat view + input controls
-            // If no video; get rid of the video view. the input container and video (0-height) will dictate size
-            joinVideoContainerHeight.constant = hasJoinedVideo ? 0 : size.height
-            self.alignInputControlsTopToScreenBottom(!hasJoinedVideo)
-        } else if UIDevice.current.orientation.isPortrait || UIDevice.current.orientation.isFlat || UIDevice.current.orientation == .unknown {
-            // In portrait we make the video cover about the top half of the screen
-            // If no video; get rid of the video view
-            joinVideoContainerHeight.constant = hasJoinedVideo ? 0 : size.height * 0.25
-            self.alignInputControlsTopToScreenBottom(false)
+        let joinVideoContainerHeightCoeff = self.sessionManager?.siteConfiguration.videoMeetingInfoText == nil
+            ? 0.18
+            : 0.25
+        joinVideoContainerHeight.constant = shouldShowJoinVideo
+            ? size.height * joinVideoContainerHeightCoeff
+            : 0
+        alignInputControlsTopToScreenBottom(false)
+
+        if viewModel.hasJoinedVideo {
+            let (desiredTopConstraint, desiredLeadingConstraint) = desiredChatConstraints(for: size)
+            chatContainerTopConstraint.constant = desiredTopConstraint
+            chatContainerLeadingConstraint.constant = desiredLeadingConstraint
+        } else if hasClosedChannel {
+            chatContainerTopConstraint.constant = 0
+            chatContainerLeadingConstraint.constant = 0
+        } else {
+            chatContainerTopConstraint.constant = joinVideoContainerHeight.constant
+            chatContainerLeadingConstraint.constant = 0
         }
 
         joinVideoContainerHeight.isActive = true
-        chatContainerHeight.isActive = true
         self.setNeedsStatusBarAppearanceUpdate()
 
         guard animation else { return }
@@ -412,6 +479,17 @@ extension NINGroupChatViewController {
             self.view.setNeedsLayout()
             self.view.layoutIfNeeded()
         }
+    }
+
+    private func markVideoCallAsFinished() {
+        moveVideoContainerToBack()
+        markChatButton(hasUnreadMessages: false)
+        adjustConstraints(for: view.bounds.size, withAnimation: false)
+        toggleChatButton.isHidden = true
+        isChatShownDuringVideo = false
+        chatContainerTopConstraint.constant = joinVideoContainerHeight.constant
+        chatContainer.layer.removeAllAnimations()
+        chatContainer.transform = .identity
     }
 }
 
@@ -506,5 +584,39 @@ extension NINGroupChatViewController {
 
     private func moveVideoContainerToBack() {
         view.sendSubviewToBack(videoViewContainer)
+    }
+
+    private func moveChatToFront() {
+        view.bringSubviewToFront(chatContainer)
+        titlebarContainer.map(view.bringSubviewToFront)
+        titlebar.map(view.bringSubviewToFront)
+        view.bringSubviewToFront(chatControlsContainer)
+    }
+
+    private func markChatButton(hasUnreadMessages: Bool) {
+        // overrideAssets overrides layer of the button, and usually it can have zero size,
+        // which affects button's layout (it becomes hidden), hence we're saving original frame to keep it after overrideAssets.
+        let originalFrame = toggleChatButton.frame
+        if hasUnreadMessages {
+            toggleChatButton.tintColor = delegate?.override(colorAsset: .ninchatColorButtonPrimaryText) ?? .white
+            toggleChatButton.overrideAssets(with: delegate, isPrimary: true)
+        } else {
+            toggleChatButton.tintColor = delegate?.override(colorAsset: .ninchatColorButtonSecondaryText) ?? .defaultBackgroundButton
+            toggleChatButton.overrideAssets(with: delegate, isPrimary: false)
+        }
+        toggleChatButton.frame = originalFrame
+    }
+
+    private func desiredChatConstraints(for size: CGSize) -> (top: CGFloat, leading: CGFloat) {
+        let desiredTopConstraint: CGFloat = UIDevice.current.orientation.isLandscape
+            ? 0
+            : 65
+        let desiredPadLeadingConstraint: CGFloat = UIDevice.current.orientation.isLandscape
+            ? size.width * (2/3)
+            : 0
+        let desiredLeadingConstraint = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
+            ? desiredPadLeadingConstraint
+            : 0
+        return (desiredTopConstraint, desiredLeadingConstraint)
     }
 }
