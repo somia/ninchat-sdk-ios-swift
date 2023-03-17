@@ -1,63 +1,15 @@
 //
-// Copyright (c) 9.12.2019 Somia Reality Oy. All rights reserved.
+// Copyright (c) 10.2.2023 Somia Reality Oy. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 //
 
 import Foundation
-import WebRTC
+import JitsiMeetSDK
 
-enum MessageUpdateType {
-    case insert(_ index: Int)
-    case history
-    case remove(_ index: Int)
-    case clean
-}
+protocol NINGroupChatViewModel: AnyObject, NINChatStateProtocol, NINChatMessageProtocol, NINChatPermissionsProtocol, NINChatAttachmentProtocol {
+    var hasJoinedVideo: Bool { get }
 
-protocol NINChatRTCProtocol {
-    typealias RTCCallReceive = (ChannelUser?, Error?) -> Void
-    typealias RTCCallInitial = (NINChatWebRTCClient?, Error?) -> Void
-    typealias RTCCallHangup = () -> Void
-
-    func listenToRTCSignaling(delegate: NINChatWebRTCClientDelegate?, onCallReceived: @escaping RTCCallReceive, onCallInitiated: @escaping RTCCallInitial, onCallHangup: @escaping RTCCallHangup)
-    func pickup(answer: Bool, unsupported: Bool?, completion: @escaping (Error?) -> Void)
-    func hangup(completion: @escaping (Error?) -> Void)
-    func disconnectRTC(_ client: NINChatWebRTCClient?, completion: (() -> Void)?)
-    func disableVideoStream(disable: Bool)
-    func disableAudioStream(disable: Bool)
-}
-extension NINChatRTCProtocol {
-    func pickup(answer: Bool, completion: @escaping (Error?) -> ()) {
-        self.pickup(answer: answer, unsupported: nil, completion: completion)
-    }
-}
-
-protocol NINChatStateProtocol {
-    func willEnterBackground()
-    func didEnterForeground()
-}
-
-protocol NINChatMessageProtocol: AnyObject {
-    var onErrorOccurred: ((Error) -> Void)? { get set }
-
-    func updateWriting(state: Bool)
-    func send(message: String, completion: @escaping (Error?) -> Void)
-    func send(action: ComposeContentViewProtocol, completion: @escaping (Error?) -> Void)
-    func send(attachment: String, data: Data, completion: @escaping (Error?) -> Void)
-    func send(type: MessageType, payload: [String:String], completion: @escaping (Error?) -> Void)
-    func loadHistory()
-}
-
-protocol NINChatPermissionsProtocol {
-    func grantVideoCallPermissions(_ completion: @escaping (Error?) -> Void)
-}
-
-protocol NINChatAttachmentProtocol {
-    typealias AttachmentCompletion = (Error?) -> Void
-    func openAttachment(source: UIImagePickerController.SourceType, completion: @escaping AttachmentCompletion)
-}
-
-protocol NINChatViewModel: AnyObject, NINChatRTCProtocol, NINChatStateProtocol, NINChatMessageProtocol, NINChatPermissionsProtocol, NINChatAttachmentProtocol {
     var onChannelClosed: (() -> Void)? { get set }
     var onQueueUpdated: (() -> Void)? { get set }
     var onChannelMessage: ((MessageUpdateType) -> Void)? { get set }
@@ -66,13 +18,13 @@ protocol NINChatViewModel: AnyObject, NINChatRTCProtocol, NINChatStateProtocol, 
     init(sessionManager: NINChatSessionManager)
 }
 
-final class NINChatViewModelImpl: NINChatViewModel {
+final class NINGroupChatViewModelImpl: NINGroupChatViewModel {
     private unowned var sessionManager: NINChatSessionManager
-    private var iceCandidates: [RTCIceCandidate] = []
-    private var client: NINChatWebRTCClient?
     private var typingStatus = false
     private var typingStatusQueue: DispatchWorkItem?
     private var isSelectingMedia = false
+
+    private(set) var hasJoinedVideo = false
 
     var backlogMessages: String? {
         didSet {
@@ -133,104 +85,24 @@ final class NINChatViewModelImpl: NINChatViewModel {
     }
 }
 
-// MARK: - NINChatRTC
-
-extension NINChatViewModelImpl {
-    func listenToRTCSignaling(delegate: NINChatWebRTCClientDelegate?, onCallReceived: @escaping RTCCallReceive, onCallInitiated: @escaping RTCCallInitial, onCallHangup: @escaping RTCCallHangup) {
-        sessionManager.onRTCClientSignal = { [weak self] type, user, signal in
-            debugger("WebRTC: Client Signal: \(type)")
-            guard type == .candidate else { return }
-
-            /// Queue received candidates and inject during initialization
-            guard let iceCandidate = signal?.candidate?.toRTCIceCandidate else { return }
-            debugger("WebRTC: Adding \(iceCandidate) to queue")
-            self?.iceCandidates.append(iceCandidate)
-        }
-
-        sessionManager.onRTCSignal = { [weak self] type, user, signal in
-            switch type {
-            case .call:
-                debugger("WebRTC: call")
-                onCallReceived(user, nil)
-            case .offer:
-                do {
-                    try self?.sessionManager.beginICE { error, stunServers, turnServers in
-                        do {
-                            self?.client = NINChatWebRTCClientImpl(sessionManager: self?.sessionManager, operatingMode: .callee, stunServers: stunServers, turnServers: turnServers, candidates: self?.iceCandidates, delegate: delegate)
-                            try self?.client?.start(with: signal)
-
-                            onCallInitiated(self?.client, error)
-                        } catch {
-                            onCallInitiated(nil, error)
-                        }
-                    }
-                } catch {
-                    onCallInitiated(nil, error)
-                }
-            case .hangup:
-                debugger("WebRTC: hang-up - closing the video call.")
-                onCallHangup()
-            default:
-                break
-            }
-        }
-    }
-
-    func pickup(answer: Bool, unsupported: Bool? = nil, completion: @escaping (Error?) -> Void) {
-        do {
-            var payload = ["answer": answer]
-            if unsupported != nil {
-                payload["unsupported"] = unsupported
-            }
-
-            try self.sessionManager.send(type: .pickup, payload: payload, completion: completion)
-        } catch {
-            completion(error)
-        }
-    }
-
-    func hangup(completion: @escaping (Error?) -> Void) {
-        guard self.client != nil else { debugger("No WebRTC is available, skip hangup instruction"); completion(nil); return }
-
-        debugger("hangup the call...")
-        do {
-            try self.sessionManager.send(type: .hangup, payload: [:], completion: completion)
-        } catch {
-            completion(error)
-        }
-    }
-
-    func disconnectRTC(_ client: NINChatWebRTCClient?, completion: (() -> Void)?) {
-        if let client = client {
-            debugger("webRTC: disconnect resources")
-            client.disconnect()
-            completion?()
-        }
-    }
-    
-    func disableVideoStream(disable: Bool) {
-        self.client?.disableLocalVideo = disable
-    }
-    
-    func disableAudioStream(disable: Bool) {
-        self.client?.disableLocalAudio = disable
-    }
-}
-
 // MARK: - NINChatState
 
-extension NINChatViewModelImpl {
+extension NINGroupChatViewModelImpl {
     func willEnterBackground() {
         debugger("background mode, stop the video stream (if there are any)")
         /// instead of dropping the connection when the app goes to the background
         /// it is better to stop video stream and let the connection be alive
         /// discussed on `https://github.com/somia/mobile/issues/295`
-        self.disableVideoStream(disable: true)
+
+        // TODO: Jitsi - think of PiP
+//        self.disableVideoStream(disable: true)
     }
 
     func didEnterForeground() {
         /// take the video stream back
-        self.disableVideoStream(disable: false)
+
+        // TODO: Jitsi - think of PiP
+//        self.disableVideoStream(disable: false)
 
         /// reload history if the app was in the background
         ///
@@ -265,7 +137,7 @@ extension NINChatViewModelImpl {
 
 // MARK: - NINChatMessage
 
-extension NINChatViewModelImpl {
+extension NINGroupChatViewModelImpl {
     func send(message: String, completion: @escaping (Error?) -> Void) {
         do {
             try self.sessionManager.send(message: message, completion: completion)
@@ -322,15 +194,15 @@ extension NINChatViewModelImpl {
 
 // MARK: - QueueUpdateCapture
 
-extension NINChatViewModelImpl: QueueUpdateCapture {
+extension NINGroupChatViewModelImpl: QueueUpdateCapture {
     var desc: String {
-        "NINChatViewModel"
+        "NINGroupChatViewModel"
     }
 }
 
 // MARK: - NINChatPermissionsProtocol
 
-extension NINChatViewModelImpl {
+extension NINGroupChatViewModelImpl {
     func grantVideoCallPermissions(_ completion: @escaping (Error?) -> Void) {
         Permission.grantPermission(.deviceCamera, .deviceMicrophone) { error in
             debugger("permissions for video call granted with error: \(String(describing: error))")
@@ -353,7 +225,7 @@ extension NINChatViewModelImpl {
 
 // MARK: - NINChatAttachmentProtocol
 
-extension NINChatViewModelImpl {
+extension NINGroupChatViewModelImpl {
     func openAttachment(source: UIImagePickerController.SourceType, completion: @escaping AttachmentCompletion) {
         self.isSelectingMedia = true
 

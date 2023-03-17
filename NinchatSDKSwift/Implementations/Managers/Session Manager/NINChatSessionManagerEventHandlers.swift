@@ -32,6 +32,8 @@ enum Events: String {
     case queueUpdated = "queue_updated"
 
     case connectionSuperseded = "connection_superseded"
+
+    case jitsiDiscovered = "jitsi_discovered"
 }
 
 protocol NINChatSessionManagerEventHandlers {
@@ -146,6 +148,8 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                     try self.didFindChannel(param: param)
                 case .audienceRegistered:
                     try self.didRegisterAudience(param: param)
+                case .jitsiDiscovered:
+                    try self.didDiscoverJitsi(param: param)
                 default:
                     break
                 }

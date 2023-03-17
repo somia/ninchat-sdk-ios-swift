@@ -24,8 +24,8 @@ extension HasTitleBar where Self:ViewController {
         self.shapeTitlebar(titlebar)
     }
 
-    func updateTitlebar() {
+    func updateTitlebar(showAvatar: Bool? = nil) {
         guard let titlebar = self.view.allSubviews.compactMap({ $0 as? Titlebar }).first else { return }
-        titlebar.setupView(sessionManager, view: self, defaultAvatarView: self as? HasDefaultAvatar)
+        titlebar.setupView(sessionManager, showAvatar, view: self, defaultAvatarView: self as? HasDefaultAvatar)
     }
 }

@@ -30,8 +30,16 @@ extension NINChatSessionManagerImpl {
                 if let queue = try? realmQueues.getObject(key),
                    case let .success(queueName) = queue.queueName,
                    case let .success(queueClosed) = queue.queueClosed,
-                   case let .success(queueUploadPermission) = queue.queueUpload {
-                    var target = Queue(queueID: key, name: queueName, isClosed: queueClosed, permissions: QueuePermissions(upload: queueUploadPermission), position: 0)
+                   case let .success(queueUploadPermission) = queue.queueUpload,
+                   case let .success(queueGroup) = queue.queueIsGroup {
+                    var target = Queue(
+                        queueID: key,
+                        name: queueName,
+                        isClosed: queueClosed,
+                        isGroup: queueGroup,
+                        permissions: QueuePermissions(upload: queueUploadPermission),
+                        position: 0
+                    )
                     /// 'queue_position' is an optional parameter: https://github.com/ninchat/ninchat-api/blob/v2/api.md#realm_queues_found
                     if case let .success(queuePosition) = queue.queuePosition {
                         target.position = queuePosition
@@ -364,6 +372,14 @@ extension NINChatSessionManagerImpl {
 
     internal func didRegisterAudience(param: NINLowLevelClientProps) throws {
         self.onActionID?(param.actionID, param.error)
+    }
+
+    internal func didDiscoverJitsi(param: NINLowLevelClientProps) throws {
+        if case let .success(room) = param.jitsiRoom, case let .success(token) = param.jitsiToken {
+            self.onActionJitsiDiscovered?(param.actionID, .success((room: room, token: token)))
+        } else {
+            self.onActionJitsiDiscovered?(param.actionID, (param.error ?? param.ninchatError).map { .failure($0) })
+        }
     }
 }
 

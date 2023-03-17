@@ -31,8 +31,9 @@ class CoordinatorTests: XCTestCase {
     
     func testLazyVariables() {
         XCTAssertNotNil(coordinator.queueViewController)
-        XCTAssertNotNil(coordinator.chatViewController)
         XCTAssertNotNil(coordinator.ratingViewController)
+        // TODO: Jitsi - check tests (chatViewController is no longer a lazy variable)
+        XCTAssertNil(coordinator.chatViewController)
     }
 
     func testStartNINChatSessionViewController() {

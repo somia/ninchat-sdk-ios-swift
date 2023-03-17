@@ -22,6 +22,7 @@ enum NINLowLevelClientActions: String {
     case sendMessage = "send_message"
     case beginICE = "begin_ice"
     case registerAudience = "register_audience"
+    case discoverJitsi = "discover_jitsi"
 }
 
 enum HistoryOrder: Int {
@@ -194,6 +195,21 @@ extension NINLowLevelClientProps: NINLowLevelQueueProps {
         get { self.get(forKey: "queue_position") }
     }
 
+    var queueIsGroup: NINResult<Bool> {
+        switch self.queueAttributes {
+        case .success(let attributes):
+            let upload: NINResult<String> = attributes.get(forKey: "video")
+            switch upload {
+            case .success(let value):
+                return .success(QueueVideoType(rawValue: value) == .group)
+            case .failure(let error):
+                return .failure(error)
+            }
+        case .failure(let error):
+            return .failure(error)
+        }
+    }
+
     var queueClosed: NINResult<Bool> {
         switch self.queueAttributes {
         case .success(let attributes):
@@ -240,6 +256,14 @@ extension NINLowLevelClientProps: NINLowLevelQueueProps {
     var metadata: NINResult<NINLowLevelClientProps> {
         get { self.get(forKey: "audience_metadata") }
         set { self.set(value: newValue.value, forKey: "audience_metadata") }
+    }
+
+    var jitsiRoom: NINResult<String> {
+        get { self.get(forKey: "jitsi_room") }
+    }
+
+    var jitsiToken: NINResult<String> {
+        get { self.get(forKey: "jitsi_token") }
     }
 }
 
