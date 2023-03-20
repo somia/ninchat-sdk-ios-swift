@@ -179,6 +179,9 @@ protocol NINChatSessionManager: NINChatSessionConnectionManager, NINChatSessionM
     /** Agent's attributes */
     var agent: ChannelUser? { get set }
 
+    /** My user's attributes */
+    var myUser: ChannelUser? { get }
+
     /** Whether the current channel supports group video call or not. */
     var isGroupVideoChannel: Bool? { get }
 

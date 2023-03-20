@@ -65,6 +65,10 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     var agent: ChannelUser?
     var composeActions: [ComposeUIAction] = []
     var isGroupVideoChannel: Bool?
+
+    var myUser: ChannelUser? {
+        myUserID.flatMap { channelUsers[$0] }
+    }
     
     // MARK: - NINChatSessionManagerDelegate
 
