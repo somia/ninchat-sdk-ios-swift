@@ -986,6 +986,7 @@ chat backlog.</string>
                         <outlet property="joinVideoContainerHeight" destination="vU8-LU-4Ti" id="6bI-cp-kL5"/>
                         <outlet property="joinVideoIcon" destination="BDs-BD-POF" id="LyY-hj-6yJ"/>
                         <outlet property="joinVideoInfoLabel" destination="qEb-zT-pbh" id="A3q-D9-lZs"/>
+                        <outlet property="joinVideoScrollView" destination="uWx-9I-BAh" id="IlC-Bj-8az"/>
                         <outlet property="joinVideoStack" destination="xv2-Vb-E7a" id="mYm-hR-o9z"/>
                         <outlet property="joinVideoTitleLabel" destination="gM3-CS-0gI" id="uAd-OZ-Jgp"/>
                         <outlet property="scrollableViewContainer" destination="ii0-zL-XsT" id="G1x-8l-ZTZ"/>
