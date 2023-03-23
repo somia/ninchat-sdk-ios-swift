@@ -753,7 +753,7 @@ you are next. </string>
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="199"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="xv2-Vb-E7a">
-                                                <rect key="frame" x="0.0" y="16" width="414" height="209.5"/>
+                                                <rect key="frame" x="0.0" y="16" width="414" height="134"/>
                                                 <subviews>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="oMz-g1-Vcu">
                                                         <rect key="frame" x="154" y="0.0" width="106.5" height="57"/>
@@ -790,12 +790,8 @@ you are next. </string>
                                                             <action selector="onJoinVidoCallDidTap:" destination="rkl-lh-0pE" eventType="touchUpInside" id="IOY-mQ-bIk"/>
                                                         </connections>
                                                     </button>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qEb-zT-pbh">
-                                                        <rect key="frame" x="75.5" y="134" width="263" height="75.5"/>
-                                                        <string key="text">Continue to join video meeting.
-You can toggle text chat from the top.
-Longer text can be scrollable, flows below 
-chat backlog.</string>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qEb-zT-pbh">
+                                                        <rect key="frame" x="207" y="134" width="0.0" height="0.0"/>
                                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="15"/>
                                                         <color key="textColor" red="0.14117647058823529" green="0.14117647058823529" blue="0.14117647058823529" alpha="1" colorSpace="calibratedRGB"/>
                                                         <nil key="highlightedColor"/>
@@ -918,7 +914,7 @@ chat backlog.</string>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZKy-WV-dkx">
-                                <rect key="frame" x="0.0" y="48" width="414" height="60"/>
+                                <rect key="frame" x="0.0" y="48" width="218" height="60"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="245-ed-p9z"/>
@@ -969,7 +965,7 @@ chat backlog.</string>
                             <constraint firstItem="V3Y-9g-qYe" firstAttribute="leading" secondItem="sPx-WY-SBH" secondAttribute="leading" id="ovm-56-C1S"/>
                             <constraint firstAttribute="bottom" secondItem="i9D-mc-XO6" secondAttribute="bottom" id="t1D-cR-x4V"/>
                             <constraint firstItem="qJN-P9-oZ8" firstAttribute="leading" secondItem="sPx-WY-SBH" secondAttribute="leading" id="vcN-rT-wdl"/>
-                            <constraint firstItem="ZKy-WV-dkx" firstAttribute="trailing" secondItem="egg-zz-ZkU" secondAttribute="trailing" id="xLO-hG-F25"/>
+                            <constraint firstItem="WK5-nL-bic" firstAttribute="leading" secondItem="ZKy-WV-dkx" secondAttribute="trailing" id="xLO-hG-F25"/>
                         </constraints>
                     </view>
                     <connections>

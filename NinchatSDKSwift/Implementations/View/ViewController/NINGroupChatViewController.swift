@@ -183,7 +183,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.addTitleBar(parent: self.chatContainer, showAvatar: true, adjustToSafeArea: true) { [weak self] in
+        self.addTitleBar(parent: self.chatContainer, showAvatar: true, collapseCloseButton: true, adjustToSafeArea: true) { [weak self] in
             DispatchQueue.main.async {
                 self?.onCloseChatTapped()
             }
@@ -201,7 +201,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.updateTitlebar(showAvatar: true)
+        self.updateTitlebar(showAvatar: true, collapseCloseButton: true)
         self.addRotationListener()
         self.reloadView()
         self.adjustConstraints(for: self.view.bounds.size, withAnimation: false)
@@ -456,7 +456,7 @@ extension NINGroupChatViewController {
             } else {
                 joinVideoContainerHeight.constant = self.sessionManager?.siteConfiguration.videoMeetingInfoText == nil
                     ? 155
-                    : 200
+                    : 180
             }
         } else {
             joinVideoContainerHeight.constant = 0
