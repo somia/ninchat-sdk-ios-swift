@@ -479,6 +479,11 @@ extension NINLowLevelClientProps: NINLowLevelMessageProps {
         get { self.get(forKey: "message_ttl") }
         set { self.set(value: newValue.value, forKey: "message_ttl") }
     }
+
+    var isMessageDeleted: NINResult<Bool> {
+        get { self.get(forKey: "message_deleted") }
+        set { self.set(value: newValue.value, forKey: "message_deleted") }
+    }
 }
 
 protocol NINLowLevelICEInfoProps {

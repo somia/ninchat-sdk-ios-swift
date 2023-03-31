@@ -321,8 +321,16 @@ extension NINChatSessionManagerImpl {
     }
 
     internal func didReceiveMessage(param: NINLowLevelClientProps, payload: NINLowLevelClientPayload) throws {
+        try didGetMessage(param: param, payload: payload, update: false)
+    }
+
+    internal func didUpdateMessage(param: NINLowLevelClientProps, payload: NINLowLevelClientPayload) throws {
+        try didGetMessage(param: param, payload: payload, update: true)
+    }
+
+    private func didGetMessage(param: NINLowLevelClientProps, payload: NINLowLevelClientPayload, update: Bool) throws {
         if case let .failure(error) = param.messageType { throw error }
-        debugger("Received message of type \(String(describing: param.messageType.value))")
+        debugger("\(update ? "Updated" : "Received") message of type \(String(describing: param.messageType.value))")
 
         /// handle transfers
         if param.messageType.value == .part {
@@ -334,7 +342,11 @@ extension NINChatSessionManagerImpl {
         let actionID = param.actionID
 
         do {
-            try self.handleInbound(param: param, actionID: actionID.value, payload: payload)
+            if update {
+                try self.handleUpdate(param: param, actionID: actionID.value, payload: payload)
+            } else {
+                try self.handleInbound(param: param, actionID: actionID.value, payload: payload)
+            }
             if actionID.value != 0 { self.onActionID?(actionID, nil) }
         } catch {
             if actionID.value != 0 { self.onActionID?(actionID, error) }
@@ -602,7 +614,11 @@ extension NINChatSessionManagerImpl {
         case .candidate, .answer, .offer, .call, .pickup, .hangup:
             try self.handleRTCSignal(type: messageType, user: messageUser, actionID: actionID, payload: payload)
         case .text, .file:
-            try self.handleInbound(message: messageID, user: messageUser, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
+            if case .success(true) = param.isMessageDeleted {
+                self.handleDeleted(message: messageID, user: messageUser, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
+            } else {
+                try self.handleInbound(message: messageID, user: messageUser, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
+            }
         case .compose:
             try self.handleCompose(message: messageID, user: messageUser, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
         case .channel:
@@ -617,6 +633,21 @@ extension NINChatSessionManagerImpl {
 
     }
 
+    internal func handleUpdate(param: NINLowLevelClientProps, actionID: Int, payload: NINLowLevelClientPayload) throws {
+        if case let .failure(error) = param.messageID { throw error }
+        let messageID = param.messageID.value
+        guard
+            case let .success(isMessageDeleted) = param.isMessageDeleted,
+            let messageIdx = self.chatMessages.firstIndex(where: { $0.messageID == messageID }),
+            var message = self.chatMessages[messageIdx] as? TextMessage
+        else {
+            return
+        }
+        message.isDeleted = isMessageDeleted
+        self.chatMessages[messageIdx] = message
+        self.onMessageUpdated?(messageIdx)
+    }
+
     internal func handleRTCSignal(type: MessageType, user: ChannelUser?, actionID: Int, payload: NINLowLevelClientPayload) throws {
         /// This message originates from me; we can ignore it.
         if actionID != 0 { return }
@@ -627,6 +658,10 @@ extension NINChatSessionManagerImpl {
                 self?.onRTCClientSignal?(type, user, signal)
             }
         }
+    }
+
+    internal func handleDeleted(message id: String, user: ChannelUser?, time: Double, actionID: Int, remained: NINResult<Int>, payload: NINLowLevelClientPayload) {
+        self.add(message: TextMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user?.userID == self.myUserID, sender: user, content: nil, attachment: nil, isDeleted: true), remained: remained)
     }
 
     internal func handleInbound(message id: String, user: ChannelUser?, time: Double, actionID: Int, remained: NINResult<Int>, payload: NINLowLevelClientPayload) throws {
