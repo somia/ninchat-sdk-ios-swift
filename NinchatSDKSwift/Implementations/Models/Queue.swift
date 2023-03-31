@@ -10,15 +10,10 @@ enum QueuePermissionType: String {
     case member
 }
 
-enum QueueVideoType: String {
-    case group
-}
-
 struct Queue: Hashable {
     let queueID: String
     let name: String
     let isClosed: Bool
-    let isGroup: Bool
     let permissions: QueuePermissions
     var position: Int
     

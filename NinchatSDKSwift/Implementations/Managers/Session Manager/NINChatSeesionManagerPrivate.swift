@@ -30,13 +30,11 @@ extension NINChatSessionManagerImpl {
                 if let queue = try? realmQueues.getObject(key),
                    case let .success(queueName) = queue.queueName,
                    case let .success(queueClosed) = queue.queueClosed,
-                   case let .success(queueUploadPermission) = queue.queueUpload,
-                   case let .success(queueGroup) = queue.queueIsGroup {
+                   case let .success(queueUploadPermission) = queue.queueUpload {
                     var target = Queue(
                         queueID: key,
                         name: queueName,
                         isClosed: queueClosed,
-                        isGroup: queueGroup,
                         permissions: QueuePermissions(upload: queueUploadPermission),
                         position: 0
                     )
@@ -176,6 +174,10 @@ extension NINChatSessionManagerImpl {
             audienceTransferred = true
         }
 
+        if case let .success(isGroup) = param.channelIsGroup {
+            isGroupVideoChannel = isGroup
+        }
+
         try self.didJoinChannel(channelID: param.channelID.value, message: message, audienceTransferred, param.channelClosed.value || param.channelSuspended.value)
 
         /// Signal channel join event to the asynchronous listener
@@ -236,6 +238,10 @@ extension NINChatSessionManagerImpl {
             debugger("Got channel_updated for wrong channel: \(channelID)"); return
         }
 
+        if case let .success(isGroup) = param.channelIsGroup {
+            isGroupVideoChannel = isGroup
+        }
+
         /// In case of "channel transfer", the corresponded function: "didPartChannel(param:)" is called after this function.
         /// Thus, We will send meta message only if the channel was actually closed, not parted.
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
@@ -252,6 +258,10 @@ extension NINChatSessionManagerImpl {
     internal func didFindChannel(param: NINLowLevelClientProps) throws {
         if case let .failure(error) = param.channelID { throw error }
         guard param.channelID.value == self.currentChannelID else { throw NINSessionExceptions.noActiveChannel }
+
+        if case let .success(isGroup) = param.channelIsGroup {
+            isGroupVideoChannel = isGroup
+        }
 
         if case let .failure(error) = param.channelMembers { throw error }
         let memberParser = NINChatClientPropsParser()

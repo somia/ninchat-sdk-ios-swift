@@ -16,6 +16,10 @@ struct ChatChannelPayload: Codable {
     }
 }
 
+enum ChannelVideoType: String {
+    case group
+}
+
 // MARK: - ChannelAttrsNew
 struct ChannelAttributes: Codable {
     let closed: Bool?
@@ -26,6 +30,7 @@ struct ChannelAttributes: Codable {
     let ownerID: String?
     let channelAttrsOldPrivate: Bool?
     let queueID, requesterID, upload: String?
+    let isGroup: Bool?
 
     enum CodingKeys: String, CodingKey {
         case closed, anonymous
@@ -37,6 +42,7 @@ struct ChannelAttributes: Codable {
         case queueID = "queue_id"
         case requesterID = "requester_id"
         case upload
+        case isGroup = "group"
     }
 
 }

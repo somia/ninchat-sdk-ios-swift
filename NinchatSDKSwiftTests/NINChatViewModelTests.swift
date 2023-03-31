@@ -114,7 +114,7 @@ extension NINChatViewModelTests {
     
     private func simulateChatQueue() {
         (sessionManager as! NINChatSessionManagerImpl).queueUpdateBoundClosures.forEach {
-            $0.value(.audienceEnqueued, Queue(queueID: "1", name: "Name", isClosed: false, isGroup: false, permissions: QueuePermissions(upload: false), position: 0), nil)
+            $0.value(.audienceEnqueued, Queue(queueID: "1", name: "Name", isClosed: false, permissions: QueuePermissions(upload: false), position: 0), nil)
         }
     }
     

@@ -258,7 +258,7 @@ extension NINCoordinator {
         }
         // TODO: Jitsi - remove copy-paste
         let chatVC: DeallocatableViewController
-        if queue?.isGroup == true {
+        if sessionManager.isGroupVideoChannel == true {
             let viewModel: NINGroupChatViewModel = NINGroupChatViewModelImpl(sessionManager: self.sessionManager)
             let mediaDelegate: NINPickerControllerDelegate = chatMediaPicker(viewModel)
             let chatViewController: NINGroupChatViewController = storyboard.instantiateViewController()
