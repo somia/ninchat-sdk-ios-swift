@@ -300,6 +300,8 @@ final class NINChatViewController: UIViewController, DeallocatableViewController
             switch update {
             case .insert(let index):
                 self?.chatView.didAddMessage(at: index)
+            case .update(let index):
+                self?.chatView.didUpdateMessage(at: index)
             case .remove(let index):
                 self?.chatView.didRemoveMessage(from: index)
             case .history, .clean:

@@ -11,6 +11,7 @@ enum FontWeight: String, CaseIterable {
     case regular    = "Regular"
     case semiBold   = "SemiBold"
     case bold       = "Bold"
+    case italic     = "Italic"
 }
 
 extension UIFont {
@@ -31,6 +32,11 @@ extension UIFont {
     static var ninchatLight: UIFont? {
         FontWeight.allCases.forEach({ register(font: "SourceSansPro-\($0.rawValue)") })
         return UIFont(name: "SourceSansPro-\(FontWeight.light.rawValue)", size: 16.0)
+    }
+
+    static var ninchatItalic: UIFont? {
+        FontWeight.allCases.forEach({ register(font: "SourceSansPro-\($0.rawValue)") })
+        return UIFont(name: "SourceSansPro-\(FontWeight.italic.rawValue)", size: 16.0)
     }
 
     static var subtitleNinchat: UIFont? {

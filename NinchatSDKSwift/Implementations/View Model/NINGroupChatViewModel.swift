@@ -74,6 +74,9 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMee
         self.sessionManager?.onMessageAdded = { [weak self] index in
             self?.onChannelMessage?(.insert(index))
         }
+        self.sessionManager?.onMessageUpdated = { [weak self] index in
+            self?.onChannelMessage?(.update(index))
+        }
         self.sessionManager?.onHistoryLoaded = { [weak self] _ in
             self?.onChannelMessage?(.history)
         }

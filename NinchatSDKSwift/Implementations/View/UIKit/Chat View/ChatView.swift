@@ -19,6 +19,9 @@ protocol ChatViewProtocol: UIView {
     /** A new message was added to given index. Updates the view. */
     func didAddMessage(at index: Int)
 
+    /** A message was updated at given index. Updates the view. */
+    func didUpdateMessage(at index: Int)
+
     /** A message was removed from given index. */
     func didRemoveMessage(from index: Int)
 
@@ -121,6 +124,14 @@ final class ChatView: UIView, ChatViewProtocol {
         }
 
        self.tableView.insertRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+    }
+
+    func didUpdateMessage(at index: Int) {
+        guard let messageCount = self.dataSource?.numberOfMessages(for: self), self.tableView.numberOfRows(inSection: 0) == messageCount else {
+            return
+        }
+
+        self.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
     }
 
     func didRemoveMessage(from index: Int) {
