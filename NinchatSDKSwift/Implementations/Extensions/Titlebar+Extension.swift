@@ -9,7 +9,7 @@ import UIKit
 /// Titlebar implementation using UIKit
 
 extension HasTitleBar where Self:ViewController {
-    func addTitleBar(parent: UIView?, showAvatar: Bool?, adjustToSafeArea: Bool, onCloseAction: @escaping () -> Void) {
+    func addTitleBar(parent: UIView?, showAvatar: Bool? = nil, collapseCloseButton: Bool = false, adjustToSafeArea: Bool, onCloseAction: @escaping () -> Void) {
         defer {
             self.adjustTitlebar(topView: parent, toSafeArea: adjustToSafeArea)
         }
@@ -18,14 +18,26 @@ extension HasTitleBar where Self:ViewController {
         }
 
         let titlebar: Titlebar = Titlebar.loadFromNib()
-        titlebar.setupView(sessionManager, showAvatar, view: self, defaultAvatarView: self as? HasDefaultAvatar)
+        titlebar.setupView(
+            sessionManager,
+            showAvatar,
+            collapseCloseButton: collapseCloseButton,
+            view: self,
+            defaultAvatarView: self as? HasDefaultAvatar
+        )
         titlebar.onCloseTapped = { onCloseAction() }
 
         self.shapeTitlebar(titlebar)
     }
 
-    func updateTitlebar(showAvatar: Bool? = nil) {
+    func updateTitlebar(showAvatar: Bool? = nil, collapseCloseButton: Bool = false) {
         guard let titlebar = self.view.allSubviews.compactMap({ $0 as? Titlebar }).first else { return }
-        titlebar.setupView(sessionManager, showAvatar, view: self, defaultAvatarView: self as? HasDefaultAvatar)
+        titlebar.setupView(
+            sessionManager,
+            showAvatar,
+            collapseCloseButton: collapseCloseButton,
+            view: self,
+            defaultAvatarView: self as? HasDefaultAvatar
+        )
     }
 }

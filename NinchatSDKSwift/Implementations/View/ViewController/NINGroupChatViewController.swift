@@ -61,6 +61,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     @IBOutlet private(set) weak var joinVideoIcon: UIImageView!
     @IBOutlet private(set) weak var joinVideoInfoLabel: UILabel!
     @IBOutlet private(set) weak var joinVideoStack: UIStackView!
+    @IBOutlet private(set) weak var joinVideoScrollView: UIScrollView!
 
     @IBOutlet private(set) weak var chatContainer: UIView!
     @IBOutlet private(set) weak var chatContainerTopConstraint: NSLayoutConstraint!
@@ -182,7 +183,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.addTitleBar(parent: self.chatContainer, showAvatar: true, adjustToSafeArea: true) { [weak self] in
+        self.addTitleBar(parent: self.chatContainer, showAvatar: true, collapseCloseButton: true, adjustToSafeArea: true) { [weak self] in
             DispatchQueue.main.async {
                 self?.onCloseChatTapped()
             }
@@ -200,7 +201,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.updateTitlebar(showAvatar: true)
+        self.updateTitlebar(showAvatar: true, collapseCloseButton: true)
         self.addRotationListener()
         self.reloadView()
         self.adjustConstraints(for: self.view.bounds.size, withAnimation: false)
@@ -222,8 +223,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     }
 
     func deallocate() {
-//        self.deallocRTC()
-//        self.deallocViewModel()
+        self.deallocViewModel()
         self.removeKeyboardListeners()
 
         NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
@@ -450,13 +450,18 @@ extension NINGroupChatViewController {
 
     private func adjustConstraints(for size: CGSize, withAnimation animation: Bool) {
         let shouldShowJoinVideo = !viewModel.hasJoinedVideo && !hasClosedChannel
+        if shouldShowJoinVideo {
+            if UIDevice.current.orientation.isLandscape {
+                joinVideoContainerHeight.constant = size.height * 0.2
+            } else {
+                joinVideoContainerHeight.constant = self.sessionManager?.siteConfiguration.videoMeetingInfoText == nil
+                    ? 155
+                    : 180
+            }
+        } else {
+            joinVideoContainerHeight.constant = 0
+        }
 
-        let joinVideoContainerHeightCoeff = self.sessionManager?.siteConfiguration.videoMeetingInfoText == nil
-            ? 0.18
-            : 0.25
-        joinVideoContainerHeight.constant = shouldShowJoinVideo
-            ? size.height * joinVideoContainerHeightCoeff
-            : 0
         alignInputControlsTopToScreenBottom(false)
 
         if viewModel.hasJoinedVideo {
@@ -560,8 +565,14 @@ extension NINGroupChatViewController {
 
 extension NINGroupChatViewController {
     override func orientationChanged(notification: Notification) {
-//        self.videoView.resizeRemoteVideo()
-//        self.videoView.resizeLocalVideo()
+        if UIDevice.current.orientation.isLandscape && UIScreen.main.traitCollection.userInterfaceIdiom != .pad {
+            // scrolling to 'join video' button when device is rotated into landscape mode on small devices
+            let yPosition = joinVideoScrollView.convert(joinVideoButton.frame, from: joinVideoStack).origin.y
+            let padding: CGFloat = 16
+            joinVideoScrollView.contentOffset = CGPoint(x: 0, y: yPosition - padding)
+        } else {
+            joinVideoScrollView.contentOffset = CGPoint(x: 0, y: 0)
+        }
     }
 
     @objc
@@ -618,5 +629,13 @@ extension NINGroupChatViewController {
             ? desiredPadLeadingConstraint
             : 0
         return (desiredTopConstraint, desiredLeadingConstraint)
+    }
+
+    private func deallocViewModel() {
+        debugger("** ** deallocate view model")
+
+        self.viewModel.onChannelClosed = nil
+        self.viewModel.onQueueUpdated = nil
+        self.viewModel.onChannelMessage = nil
     }
 }

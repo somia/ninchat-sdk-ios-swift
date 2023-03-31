@@ -111,6 +111,13 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMee
                 case let .failure(error):
                     completion(error)
                 case let .success(credentials):
+                    let avatarConfig = AvatarConfig(forUser: sessionManager)
+                    let user = sessionManager.myUser
+                    let iconURL = avatarConfig.imageOverrideURL ?? user?.iconURL
+                    let userName = !avatarConfig.nameOverride.isEmpty
+                        ? avatarConfig.nameOverride
+                        : (user?.displayName ?? "Guest".localized)
+
                     var serverAddress: String = sessionManager.serverAddress
                     let apiPrefix = "api."
                     if serverAddress.hasPrefix(apiPrefix) {
@@ -121,9 +128,9 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMee
                     let options = JitsiMeetConferenceOptions.fromBuilder {
                         $0.serverURL = URL(string: jitsiServerAddress)
                         $0.userInfo = .init(
-                            displayName: sessionManager.myUser?.displayName ?? "Customer",
+                            displayName: userName,
                             andEmail: nil,
-                            andAvatar: sessionManager.myUser?.iconURL.flatMap { URL(string: $0) }
+                            andAvatar: iconURL.flatMap { URL(string: $0) }
                         )
                         $0.room = credentials.room
                         $0.token = credentials.token
@@ -139,11 +146,11 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMee
                         $0.setFeatureFlag("filmstrip.enabled", withBoolean: true)
                         $0.setFeatureFlag("fullscreen.enabled", withBoolean: true)
                         $0.setFeatureFlag("invite.enabled", withBoolean: false)
-                        $0.setFeatureFlag("ios.screensharing.enabled", withBoolean: false) // android: true
+                        $0.setFeatureFlag("ios.screensharing.enabled", withBoolean: false)
                         $0.setFeatureFlag("speakerstats.enabled", withBoolean: false)
                         $0.setFeatureFlag("kick-out.enabled", withBoolean: false)
                         $0.setFeatureFlag("live-streaming.enabled", withBoolean: false)
-                        $0.setFeatureFlag("meeting-name.enabled", withBoolean: true)
+                        $0.setFeatureFlag("meeting-name.enabled", withBoolean: false)
                         $0.setFeatureFlag("meeting-password.enabled", withBoolean: false)
                         $0.setFeatureFlag("notifications.enabled", withBoolean: false)
                         $0.setFeatureFlag("overflow-menu.enabled", withBoolean: true)

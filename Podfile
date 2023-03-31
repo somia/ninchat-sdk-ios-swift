@@ -9,7 +9,8 @@ def libraries
   pod 'AnyCodable-FlightSchool', '~> 0.2.3'
   pod 'AutoLayoutSwift', '4.0.0'
   pod 'NinchatLowLevelClient', '~> 0.6.0'
-  pod 'JitsiMeetSDK', '7.0.1'
+  # pod 'JitsiMeetSDK', '0.6.1'
+  pod 'JitsiMeetSDK', :path => './'
 end
 
 target 'NinchatSDKSwift' do
