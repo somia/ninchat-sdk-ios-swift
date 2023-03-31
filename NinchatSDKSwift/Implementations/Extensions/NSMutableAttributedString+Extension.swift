@@ -11,7 +11,7 @@ extension NSMutableAttributedString {
     func override(font: UIFont) -> Self {
         self.beginEditing()
         self.enumerateAttribute(.font, in: NSRange(location: 0, length: self.length)) { (value, range, stop) in
-            if let stringFont = value as? UIFont, let fontDescriptor = stringFont.fontDescriptor.withFamily(font.familyName).withSymbolicTraits(stringFont.fontDescriptor.symbolicTraits) {
+            if let stringFont = value as? UIFont, let fontDescriptor = stringFont.fontDescriptor.withFamily(font.familyName).withSymbolicTraits(font.fontDescriptor.symbolicTraits) {
                 let newFont = UIFont(descriptor: fontDescriptor, size: font.pointSize)
 
                 removeAttribute(.font, range: range)
