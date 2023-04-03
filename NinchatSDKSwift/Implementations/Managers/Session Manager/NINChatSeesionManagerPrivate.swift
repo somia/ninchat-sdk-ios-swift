@@ -524,7 +524,20 @@ extension NINChatSessionManagerImpl {
         self.chatMessages.sort { $0.messageID > $1.messageID }
         return self.chatMessages.map { [weak self] message in
             if var msg = message as? ChannelMessage, let msgIndex = self?.chatMessages.firstIndex(where: { $0.messageID == msg.messageID }), msgIndex < (self?.chatMessages.count ?? 0) - 1, let prevMsg = self?.chatMessages[msgIndex + 1] as? ChannelMessage {
-                msg.series = (msg.sender?.userID == prevMsg.sender?.userID) && (msg.timestamp.minute == prevMsg.timestamp.minute)
+                let prevTextMsg = prevMsg as? TextMessage
+                let textMsg = msg as? TextMessage
+                let bothFromSameUser = msg.sender?.userID == prevMsg.sender?.userID
+                let bothHaveSameDeletionStatus = textMsg?.isDeleted == prevTextMsg?.isDeleted
+                let bothAreDeleted = textMsg?.isDeleted == true && prevTextMsg?.isDeleted == true
+                let prevNotDeletedAndCurrentDeleted = (prevTextMsg?.isDeleted != true) && (textMsg?.isDeleted == true)
+
+                if bothFromSameUser && (bothAreDeleted || prevNotDeletedAndCurrentDeleted) {
+                    msg.series = true
+                } else {
+                    msg.series = bothFromSameUser
+                        && (msg.timestamp.minute == prevMsg.timestamp.minute)
+                        && (bothHaveSameDeletionStatus || prevNotDeletedAndCurrentDeleted)
+                }
                 return msg
             }
             return message
