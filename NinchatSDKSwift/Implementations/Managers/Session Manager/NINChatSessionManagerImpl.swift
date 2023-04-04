@@ -73,6 +73,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     // MARK: - NINChatSessionManagerDelegate
 
     var onMessageAdded: ((_ index: Int) -> Void)?
+    var onMessageUpdated: ((_ index: Int) -> Void)?
     var onMessageRemoved: ((_ index: Int) -> Void)?
     var onHistoryLoaded: ((_ length: Int) -> Void)?
     var onSessionDeallocated: (() -> Void)?

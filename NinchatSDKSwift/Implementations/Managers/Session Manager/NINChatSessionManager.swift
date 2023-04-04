@@ -140,6 +140,7 @@ protocol QueueUpdateCapture: AnyObject {
 
 protocol NINChatSessionManagerDelegate: AnyObject {
     var onMessageAdded: ((_ index: Int) -> Void)? { get set }
+    var onMessageUpdated: ((_ index: Int) -> Void)? { get set }
     var onMessageRemoved: ((_ index: Int) -> Void)? { get set }
     var onHistoryLoaded: ((_ length: Int) -> Void)? { get set }
     var onSessionDeallocated: (() -> Void)? { get set }

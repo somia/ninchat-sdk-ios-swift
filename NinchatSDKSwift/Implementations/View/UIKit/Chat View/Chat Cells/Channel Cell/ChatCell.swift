@@ -7,7 +7,7 @@
 import UIKit
 
 protocol ChatCell: UIView {
-    var session: NINChatSessionAttachment? { get set }
+    var session: (NINChatSessionAttachment & NINChatSessionTranslation)? { get set }
     var videoThumbnailManager: VideoThumbnailManager? { get set }
     var onImageTapped: ((_ attachment: FileInfo, _ image: UIImage?) -> Void)? { get set }
     var onComposeSendTapped: ComposeMessageViewProtocol.OnUIComposeSendActionTapped? { get set }

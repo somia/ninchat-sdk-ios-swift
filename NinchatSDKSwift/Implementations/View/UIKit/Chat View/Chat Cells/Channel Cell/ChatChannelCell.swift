@@ -9,6 +9,10 @@ import UIKit
 class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
     
     internal var message: ChannelMessage?
+
+    internal var isTextMessageDeleted: Bool {
+        return (self.message as? TextMessage)?.isDeleted == true
+    }
     
     // MARK: - Outlets
     
@@ -35,7 +39,7 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
     
     // MARK: - ChatCell
 
-    weak var session: NINChatSessionAttachment?
+    weak var session: (NINChatSessionAttachment & NINChatSessionTranslation)?
     var videoThumbnailManager: VideoThumbnailManager?
     var onImageTapped: ((FileInfo, UIImage?) -> Void)?
     var onComposeSendTapped: ComposeMessageViewProtocol.OnUIComposeSendActionTapped?
@@ -65,10 +69,19 @@ class ChatChannelCell: UITableViewCell, ChatCell, ChannelCell {
         } else {
             self.senderNameLabel.text = "Guest".localized
         }
-        self.timeLabel.text = DateFormatter.shortTime.string(from: message.timestamp)
-        self.infoContainerView.height?.constant = (message.series) ? 0 : 40 /// Hide the name and timestamp if it's a part of series message chain
+        let infoContainerHeight: CGFloat
+        if isTextMessageDeleted {
+            infoContainerHeight = 7
+        } else if message.series {
+            infoContainerHeight = 0
+        } else {
+            infoContainerHeight = 40
+        }
+        // Hide the name and timestamp if it's a part of series message chain or a deleted message
+        self.timeLabel.text = isTextMessageDeleted ? nil : DateFormatter.shortTime.string(from: message.timestamp)
+        self.infoContainerView.height?.constant = infoContainerHeight
         self.infoContainerView.height?.priority = .required
-        self.infoContainerView.allSubviews.forEach { $0.isHidden = message.series }
+        self.infoContainerView.allSubviews.forEach { $0.isHidden = message.series || isTextMessageDeleted }
     
         if let cell = self as? ChannelTextCell, let textMessage = message as? TextMessage {
             cell.populateText(message: textMessage, attachment: textMessage.attachment)
@@ -130,15 +143,31 @@ class ChatChannelMineCell: ChatChannelCell {
     
     override func populateChannel(message: ChannelMessage, configuration: SiteConfiguration?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, layerAssets: NINLayerAssetDictionary?, agentAvatarConfig: AvatarConfig?, userAvatarConfig: AvatarConfig?, composeState: [Bool]?) {
         super.populateChannel(message: message, configuration: configuration, imageAssets: imageAssets, colorAssets: colorAssets, layerAssets: layerAssets, agentAvatarConfig: agentAvatarConfig, userAvatarConfig: userAvatarConfig, composeState: composeState)
-        
-        self.configureMyMessage(avatar: message.sender?.iconURL, imageAssets: imageAssets, colorAssets: colorAssets, config: userAvatarConfig, series: message.series)
+
+        self.configureMyMessage(avatar: message.sender?.iconURL, imageAssets: imageAssets, colorAssets: colorAssets, config: isTextMessageDeleted ? nil : userAvatarConfig, series: message.series)
         
         /// To avoid sending layerAssets down in layers, we shall apply changes here directly
-        if let bubbleLayer = (message.series) ? layerAssets?[.ninchatBubbleRightRepeated] : layerAssets?[.ninchatBubbleRight] {
+        let bubbleLayer: CALayer?
+        if isTextMessageDeleted {
+            bubbleLayer = layerAssets?[.ninchatBubbleRight]
+        } else if message.series {
+            bubbleLayer = layerAssets?[.ninchatBubbleRightRepeated]
+        } else {
+            bubbleLayer = layerAssets?[.ninchatBubbleRight]
+        }
+        if let bubbleLayer = bubbleLayer {
             self.bubbleContainerView.layer.apply(bubbleLayer)
             self.bubbleImageView.isHidden = true
         } else {
-            self.bubbleImageView.image = UIImage(named: (message.series) ? "chat_bubble_right_series" : "chat_bubble_right", in: .SDKBundle, compatibleWith: nil)
+            let imageAsset: String
+            if isTextMessageDeleted {
+                imageAsset = "chat_bubble_right"
+            } else if message.series {
+                imageAsset = "chat_bubble_right_series"
+            } else {
+                imageAsset = "chat_bubble_right"
+            }
+            self.bubbleImageView.image = UIImage(named: imageAsset, in: .SDKBundle, compatibleWith: nil)
             self.bubbleImageView.isHidden = false
         }
     }
@@ -185,15 +214,31 @@ class ChatChannelOthersCell: ChatChannelCell {
 
     override func populateChannel(message: ChannelMessage, configuration: SiteConfiguration?, imageAssets: NINImageAssetDictionary?, colorAssets: NINColorAssetDictionary?, layerAssets: NINLayerAssetDictionary?, agentAvatarConfig: AvatarConfig?, userAvatarConfig: AvatarConfig?, composeState: [Bool]?) {
         super.populateChannel(message: message, configuration: configuration, imageAssets: imageAssets, colorAssets: colorAssets, layerAssets: layerAssets, agentAvatarConfig: agentAvatarConfig, userAvatarConfig: userAvatarConfig, composeState: composeState)
-        
-        self.configureOtherMessage(avatar: message.sender?.iconURL, imageAssets: imageAssets, colorAssets: colorAssets, config: agentAvatarConfig, series: message.series)
-        
+
+        self.configureOtherMessage(avatar: message.sender?.iconURL, imageAssets: imageAssets, colorAssets: colorAssets, config: isTextMessageDeleted ? nil : agentAvatarConfig, series: message.series)
+
         /// To avoid sending layerAssets down in children, we shall apply changes here directly
-        if let bubbleLayer = (message.series) ? layerAssets?[.ninchatBubbleLeftRepeated] : layerAssets?[.ninchatBubbleLeft] {
+        let bubbleLayer: CALayer?
+        if isTextMessageDeleted {
+            bubbleLayer = layerAssets?[.ninchatBubbleLeft]
+        } else if message.series {
+            bubbleLayer = layerAssets?[.ninchatBubbleLeftRepeated]
+        } else {
+            bubbleLayer = layerAssets?[.ninchatBubbleLeft]
+        }
+        if let bubbleLayer = bubbleLayer {
             self.bubbleContainerView.layer.apply(bubbleLayer)
             self.bubbleImageView.isHidden = true
         } else {
-            self.bubbleImageView.image = UIImage(named: (message.series) ? "chat_bubble_left_series" : "chat_bubble_left", in: .SDKBundle, compatibleWith: nil)
+            let imageAsset: String
+            if isTextMessageDeleted {
+                imageAsset = "chat_bubble_left"
+            } else if message.series {
+                imageAsset = "chat_bubble_left_series"
+            } else {
+                imageAsset = "chat_bubble_left"
+            }
+            self.bubbleImageView.image = UIImage(named: imageAsset, in: .SDKBundle, compatibleWith: nil)
             self.bubbleImageView.isHidden = false
         }
     }

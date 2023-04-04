@@ -18,6 +18,7 @@ enum Events: String {
     case iceBegun = "ice_begun"
     case userUpdated = "user_updated"
     case receivedMessage = "message_received"
+    case updatedMessage = "message_updated"
     case historyResult = "history_results"
     case fileFound = "file_found"
 
@@ -128,6 +129,8 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                     try self.didLoadHistory(param: param)
                 case .receivedMessage:
                     try self.didReceiveMessage(param: param, payload: payload)
+                case .updatedMessage:
+                    try self.didUpdateMessage(param: param, payload: payload)
                 case .realmQueueFound:
                     try self.didFindRealmQueues(param: param)
                 case .audienceEnqueued, .queueUpdated:

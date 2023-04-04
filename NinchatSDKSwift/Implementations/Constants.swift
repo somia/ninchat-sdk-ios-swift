@@ -159,6 +159,7 @@ public enum Constants: String {
     case kRatingSkipText = "Skip"
     case kVideoMeetingText = "Video meeting"
     case kJoinVideoMeetingText = "Join video meeting"
+    case kThisMessageWasDeletedText = "This message was deleted"
     
     case kRatingPositiveText = "Good"
     case kRatingNeutralText = "Okay"
