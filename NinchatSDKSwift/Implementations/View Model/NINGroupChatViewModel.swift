@@ -180,7 +180,7 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMee
                         $0.setFeatureFlag("settings.links-section.enabled", withBoolean: false)
                         $0.setFeatureFlag("settings.build-info-section.enabled", withBoolean: false)
                         $0.setFeatureFlag("settings.advanced-section.enabled", withBoolean: false)
-
+                        $0.setFeatureFlag("participants.enabled", withValue: false)
                     }
                     let jitsiMeetView = self.jitsiView ?? JitsiMeetView()
                     jitsiMeetView.delegate = self
