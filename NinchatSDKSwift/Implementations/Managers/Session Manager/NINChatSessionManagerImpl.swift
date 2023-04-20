@@ -12,6 +12,7 @@ protocol NINChatSessionManagerInternalActions {
     var onActionSessionEvent: ((NINSessionCredentials?, Events, Error?) -> Void)? { get set }
     var onProgress: ((Queue, _ position: Int, Events, Error?) -> Void)? { get set }
     var onActionID: ((_ actionID: NINResult<Int>, Error?) -> Void)? { get set }
+    var onActionJitsiDiscovered: ((_ actionID: NINResult<Int>, _ result: NINResult<JitsiCredentials>?) -> Void)? { get set }
     var onChannelJoined: Completion? { get set }
     var onActionSevers: ((_ actionID: NINResult<Int>, _ stunServers: [WebRTCServerInfo]?, _ turnServers: [WebRTCServerInfo]?) -> Void)? { get set }
     var onActionFileInfo: ((_ actionID: NINResult<Int>, _ fileInfo: [String:Any]?, Error?) -> Void)? { get set }
@@ -33,6 +34,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     internal var onActionSessionEvent: ((NINSessionCredentials?, Events, Error?) -> Void)?
     internal var onProgress: ((Queue, Int, Events, Error?) -> Void)?
     internal var onActionID: ((NINResult<Int>, Error?) -> Void)?
+    internal var onActionJitsiDiscovered: ((NINResult<Int>, NINResult<JitsiCredentials>?) -> Void)?
     internal var onChannelJoined: Completion?
     internal var onActionSevers: ((NINResult<Int>, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void)?
     internal var onActionFileInfo: ((NINResult<Int>, [String:Any]?, Error?) -> Void)?
@@ -42,6 +44,7 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     // MARK: - NINChatSessionManagerClosureHandler
 
     internal var actionBoundClosures: [Int: (Error?) -> Void] = [:]
+    internal var actionJitsiBoundClosures: [Int: CompletionWithJitsiCredentials] = [:]
     internal var actionFileBoundClosures: [Int: (Error?, [String:Any]?) -> Void] = [:]
     internal var actionChannelBoundClosures: [Int: (Error?) -> Void] = [:]
     internal var actionICEServersBoundClosures: [Int: (Error?, [WebRTCServerInfo]?, [WebRTCServerInfo]?) -> Void] = [:]
@@ -61,10 +64,16 @@ final class NINChatSessionManagerImpl: NSObject, NINChatSessionManager, NINChatD
     var describedQueue: Queue?
     var agent: ChannelUser?
     var composeActions: [ComposeUIAction] = []
+    var isGroupVideoChannel: Bool?
+
+    var myUser: ChannelUser? {
+        myUserID.flatMap { channelUsers[$0] }
+    }
     
     // MARK: - NINChatSessionManagerDelegate
 
     var onMessageAdded: ((_ index: Int) -> Void)?
+    var onMessageUpdated: ((_ index: Int) -> Void)?
     var onMessageRemoved: ((_ index: Int) -> Void)?
     var onHistoryLoaded: ((_ length: Int) -> Void)?
     var onSessionDeallocated: (() -> Void)?
@@ -181,7 +190,7 @@ extension NINChatSessionManagerImpl {
             }
         }
     }
-    
+
     func openSession(completion: @escaping CompletionWithCredentials) throws {
         delegate?.log(value: "Opening new chat session using server address: \(serverAddress!)")
         try self.initiateSession(params: NINLowLevelClientProps.initiate(), completion: completion)
@@ -325,12 +334,14 @@ extension NINChatSessionManagerImpl {
         self.onProgress = nil
         self.onChannelJoined = nil
         self.onActionID = nil
+        self.onActionJitsiDiscovered = nil
         self.onActionChannel = nil
         self.onActionFileInfo = nil
         self.onActionSessionEvent = nil
         self.onActionSevers = nil
 
         self.actionBoundClosures.keys.forEach { self.actionBoundClosures.removeValue(forKey: $0) }
+        self.actionJitsiBoundClosures.keys.forEach { self.actionJitsiBoundClosures.removeValue(forKey: $0) }
         self.queueUpdateBoundClosures.keys.forEach { self.queueUpdateBoundClosures.removeValue(forKey: $0) }
         self.actionICEServersBoundClosures.keys.forEach { self.actionICEServersBoundClosures.removeValue(forKey: $0) }
         self.actionChannelBoundClosures.keys.forEach { self.actionChannelBoundClosures.removeValue(forKey: $0) }
@@ -346,6 +357,7 @@ extension NINChatSessionManagerImpl {
         self.currentChannelID = nil
         self.currentQueueID = nil
         self.myUserID = nil
+        self.isGroupVideoChannel = nil
 
         if self.session != nil {
             do {
@@ -582,6 +594,22 @@ extension NINChatSessionManagerImpl {
             self.bind(action: actionID, closure: completion)
         } catch {
             completion(error)
+        }
+    }
+
+    func discoverJitsi(completion: @escaping CompletionWithJitsiCredentials) throws {
+        guard let session = self.session else { throw NINSessionExceptions.noActiveSession }
+
+        let param = NINLowLevelClientProps.initiate(action: .discoverJitsi)
+        if let channelID = self.currentChannelID {
+            param.channelID = .success(channelID)
+        }
+
+        do {
+            let actionID = try session.send(param)
+            self.bindJitsi(action: actionID, closure: completion)
+        } catch {
+            completion(.failure(error))
         }
     }
 

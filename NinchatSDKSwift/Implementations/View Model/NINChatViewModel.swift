@@ -9,6 +9,7 @@ import WebRTC
 
 enum MessageUpdateType {
     case insert(_ index: Int)
+    case update(_ index: Int)
     case history
     case remove(_ index: Int)
     case clean
@@ -37,7 +38,7 @@ protocol NINChatStateProtocol {
     func didEnterForeground()
 }
 
-protocol NINChatMessageProtocol {
+protocol NINChatMessageProtocol: AnyObject {
     var onErrorOccurred: ((Error) -> Void)? { get set }
 
     func updateWriting(state: Bool)
@@ -106,6 +107,9 @@ final class NINChatViewModelImpl: NINChatViewModel {
         }, to: self)
         self.sessionManager.onMessageAdded = { [weak self] index in
             self?.onChannelMessage?(.insert(index))
+        }
+        self.sessionManager.onMessageUpdated = { [weak self] index in
+            self?.onChannelMessage?(.update(index))
         }
         self.sessionManager.onHistoryLoaded = { [weak self] _ in
             self?.onChannelMessage?(.history)

@@ -2,7 +2,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "NinchatSDKSwift"
-  s.version      = "0.6.0"
+  s.version      = "0.6.1"
   s.summary      = "iOS SDK for Ninchat, Swift version"
   s.description  = "For building iOS applications using Ninchat messaging."
   s.homepage     = "https://ninchat.com/"
@@ -40,7 +40,7 @@ Pod::Spec.new do |s|
   }
 
   # Cocoapods dependencies
-  s.dependency "JitsiMeetSDK", "7.0.0"
+  s.dependency "JitsiMeetSDK", "~> 0.6.1"
   s.dependency 'AnyCodable-FlightSchool', '~> 0.2.3'
   s.dependency "AutoLayoutSwift", "4.0.0"
   s.dependency "NinchatLowLevelClient", "~> 0.6.0"

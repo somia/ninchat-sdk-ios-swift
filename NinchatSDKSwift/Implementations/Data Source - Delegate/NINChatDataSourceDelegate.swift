@@ -33,14 +33,14 @@ protocol ChatViewDataSource: AnyObject {
     func message(at index: Int, _ view: ChatView) -> ChatMessage
 }
 protocol NINChatDataSource: ChatViewDataSource {
-    init(viewModel: NINChatViewModel)
+    init(viewModel: NINChatMessageProtocol)
 }
 
 protocol NINChatDataSourceDelegate: NINChatDataSource, NINChatDelegate  {}
 
 final class NINChatDataSourceDelegateImpl: NINChatDataSourceDelegate {
     
-    private let viewModel: NINChatViewModel!
+    private let viewModel: NINChatMessageProtocol!
     
     // MARK: - NINChatDelegate
     
@@ -51,7 +51,7 @@ final class NINChatDataSourceDelegateImpl: NINChatDataSourceDelegate {
     
     // MARK: - NINChatDataSource
     
-    init(viewModel: NINChatViewModel) {
+    init(viewModel: NINChatMessageProtocol) {
         self.viewModel = viewModel
     }
 }
