@@ -9,6 +9,8 @@ import NinchatLowLevelClient
 
 typealias CompletionWithError = (Error?) -> Void
 typealias CompletionWithCredentials = (NINSessionCredentials?, _ resume: ResumeMode?, Error?) -> Void
+typealias JitsiCredentials = (room: String, token: String)
+typealias CompletionWithJitsiCredentials = (NINResult<JitsiCredentials>?) -> Void
 typealias Completion = () -> Void
 
 /** Available ratings and assigned status codes for finishing the chat from our end */
@@ -34,6 +36,9 @@ protocol NINChatSessionConnectionManager: AnyObject {
     
     /** Fetch site's configuration using given `server address` in the initialization */
     func fetchSiteConfiguration(config key: String, environments: [String]?, completion: @escaping CompletionWithError)
+
+    /** Discover Jitsi's room and token given `server address` and `channel id` in the initialization */
+    func discoverJitsi(completion: @escaping CompletionWithJitsiCredentials) throws
     
     /** Opens the session with an asynchronous completion callback. */
     func openSession(completion: @escaping CompletionWithCredentials) throws
@@ -135,6 +140,7 @@ protocol QueueUpdateCapture: AnyObject {
 
 protocol NINChatSessionManagerDelegate: AnyObject {
     var onMessageAdded: ((_ index: Int) -> Void)? { get set }
+    var onMessageUpdated: ((_ index: Int) -> Void)? { get set }
     var onMessageRemoved: ((_ index: Int) -> Void)? { get set }
     var onHistoryLoaded: ((_ length: Int) -> Void)? { get set }
     var onSessionDeallocated: (() -> Void)? { get set }
@@ -173,7 +179,13 @@ protocol NINChatSessionManager: NINChatSessionConnectionManager, NINChatSessionM
 
     /** Agent's attributes */
     var agent: ChannelUser? { get set }
-    
+
+    /** My user's attributes */
+    var myUser: ChannelUser? { get }
+
+    /** Whether the current channel supports group video call or not. */
+    var isGroupVideoChannel: Bool? { get }
+
     /** Default initializer for NinchatSessionManager. */
     init(session: NINChatSessionInternalDelegate?, serverAddress: String, audienceMetadata: NINLowLevelClientProps?, configuration: NINSiteConfiguration?)
 }

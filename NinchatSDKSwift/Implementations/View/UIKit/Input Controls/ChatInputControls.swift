@@ -18,7 +18,6 @@ protocol ChatInputActions {
 protocol ChatInputControlsProtocol: UIView, ChatInputActions {
     var delegate: NINChatSessionInternalDelegate? { get set }
     var sessionManager: NINChatSessionManager? { get set }
-    var viewModel: NINChatViewModel! { get set }
     var isSelected: Bool! { get set }
     
     func overrideAssets()
@@ -47,7 +46,6 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
     weak var delegate: NINChatSessionInternalDelegate?
     weak var sessionManager: NINChatSessionManager?
 
-    var viewModel: NINChatViewModel!
     var isSelected: Bool! = false {
         didSet {
             textInput.becomeFirstResponder()

@@ -13,18 +13,6 @@ protocol ChannelTextCell {
     func populateText(message: TextMessage, attachment: FileInfo?)
 }
 
-extension ChannelTextCell {
-    func populateText(message: TextMessage, attachment: FileInfo?) {
-        self.messageTextView.contentInset = (message.series) ? UIEdgeInsets(top: 3.5, left: 0.0, bottom: 0.0, right: 0.0) : .zero
-        if attachment?.isPDF ?? false, let url = attachment?.url, let name = attachment?.name {
-            self.messageTextView.setAttributed(text: "<a href=\"\(url)\">\(name)</a>", font: .ninchat)
-        } else if let text = message.content {
-            /// remove attributed texts if any
-            self.messageTextView.setPlain(text: text, font: .ninchat)
-        }
-    }
-}
-
 final class ChatChannelTextMineCell: ChatChannelMineCell, ChannelTextCell {
     @IBOutlet weak var messageTextView: UITextView! {
         didSet {
@@ -46,6 +34,22 @@ final class ChatChannelTextMineCell: ChatChannelMineCell, ChannelTextCell {
             self.messageTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: linkColor]
         }
         
+    }
+
+    func populateText(message: TextMessage, attachment: FileInfo?) {
+        self.messageTextView.contentInset = (message.series) ? UIEdgeInsets(top: 3.5, left: 0.0, bottom: 0.0, right: 0.0) : .zero
+        if message.isDeleted {
+            let text = Constants.kThisMessageWasDeletedText.rawValue
+            self.messageTextView.setPlain(
+                text: session?.translate(key: text, formatParams: [:]) ?? text,
+                font: .ninchatItalic
+            )
+        } else if attachment?.isPDF ?? false, let url = attachment?.url, let name = attachment?.name {
+            self.messageTextView.setAttributed(text: "<a href=\"\(url)\">\(name)</a>", font: .ninchat)
+        } else if let text = message.content {
+            /// remove attributed texts if any
+            self.messageTextView.setPlain(text: text, font: .ninchat)
+        }
     }
 }
 
@@ -73,7 +77,13 @@ final class ChatChannelTextOthersCell: ChatChannelOthersCell, ChannelTextCell {
     
     func populateText(message: TextMessage, attachment: FileInfo?) {
         self.messageTextView.contentInset = (message.series) ? UIEdgeInsets(top: 3.5, left: 0.0, bottom: 0.0, right: 0.0) : .zero
-        if attachment?.isPDF ?? false, let url = attachment?.url, let name = attachment?.name {
+        if message.isDeleted {
+            let text = Constants.kThisMessageWasDeletedText.rawValue
+            self.messageTextView.setPlain(
+                text: session?.translate(key: text, formatParams: [:]) ?? text,
+                font: .ninchatItalic
+            )
+        } else if attachment?.isPDF ?? false, let url = attachment?.url, let name = attachment?.name {
             /// A related conversation about the issue: `https://github.com/somia/nin/issues/1522`
             let text = "<a href='\(url)'>\(name.precomposedStringWithCanonicalMapping)</a>"
             self.messageTextView.setAttributed(text: text, font: .ninchat)

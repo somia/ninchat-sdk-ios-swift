@@ -59,7 +59,7 @@ final class Titlebar: UIView {
     
     // MARK: - Setup View
     
-    func setupView(_ session: NINChatSessionManager?, _ showAvatar: Bool? = nil, view: HasTitleBar, defaultAvatarView: HasDefaultAvatar?) {
+    func setupView(_ session: NINChatSessionManager?, _ showAvatar: Bool? = nil, collapseCloseButton: Bool, view: HasTitleBar, defaultAvatarView: HasDefaultAvatar?) {
         self.setupName(view)
         self.setupJob(view)
         
@@ -68,7 +68,7 @@ final class Titlebar: UIView {
             self.setupAvatar(view, defaultAvatar: defaultAvatarView?.defaultAvatar)
         }
         
-        self.setupCloseButton(session)
+        self.setupCloseButton(session, collapse: collapseCloseButton)
         overrideAssets(delegate: session?.delegate)
     }
     
@@ -129,10 +129,14 @@ private extension Titlebar {
         }
     }
     
-    private func setupCloseButton(_ session: NINChatSessionManager?) {
+    private func setupCloseButton(_ session: NINChatSessionManager?, collapse: Bool) {
         closeButton.buttonTitle = session?.translate(key: Constants.kCloseText.rawValue, formatParams: [:]) ?? ""
         
         guard let session = session else { return }
-        closeButton.isHidden = session.siteConfiguration.hideTitlebar
+        let isHidden = collapse || session.siteConfiguration.hideTitlebar
+        closeButton.isHidden = isHidden
+        // button can be hidden by siteConfiguration but still keep its width for backward compatibility with older views,
+        // however we're using our own close button for group video call and hence this one shouldn't even take extra space.
+        closeButton.widthAnchor.constraint(equalToConstant: collapse ? 0 : 122).isActive = true
     }
 }

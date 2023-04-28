@@ -220,6 +220,9 @@
 		B704E3E68829ED0963294E84 /* NSUserDefaults+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B704E5FC177573DF56D2369A /* NSUserDefaults+Extension.swift */; };
 		B704E8410F0ECA2A17505879 /* URL+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B704E5C0EFFB626F12366601 /* URL+Extension.swift */; };
 		B704EE2B2995404843CAE75E /* QuestionnaireElementConnectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B704EFBC22755FDA9C9A8FC3 /* QuestionnaireElementConnectorTests.swift */; };
+		FA026FE9299BAC6100C4D3E4 /* JoinVideoButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA026FE8299BAC6100C4D3E4 /* JoinVideoButton.swift */; };
+		FA026FEB299BAC7A00C4D3E4 /* NINGroupChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA026FEA299BAC7A00C4D3E4 /* NINGroupChatViewController.swift */; };
+		FA026FED299BAC8C00C4D3E4 /* NINGroupChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA026FEC299BAC8C00C4D3E4 /* NINGroupChatViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -475,6 +478,10 @@
 		D463517AB20A2F6A738E2978 /* Pods-NinchatSDKSwiftUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftUITests.debug.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftUITests/Pods-NinchatSDKSwiftUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		ED659B1BF359B2E2971FF138 /* Pods-NinchatSDKSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwift.debug.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwift/Pods-NinchatSDKSwift.debug.xcconfig"; sourceTree = "<group>"; };
 		F6176315081A11762D37BC6C /* Pods_NinchatSDKSwiftServerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDKSwiftServerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FA026FE8299BAC6100C4D3E4 /* JoinVideoButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JoinVideoButton.swift; sourceTree = "<group>"; };
+		FA026FEA299BAC7A00C4D3E4 /* NINGroupChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINGroupChatViewController.swift; sourceTree = "<group>"; };
+		FA026FEC299BAC8C00C4D3E4 /* NINGroupChatViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINGroupChatViewModel.swift; sourceTree = "<group>"; };
+		FA7958B329FBB821006527A7 /* JitsiMeetSDK.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = JitsiMeetSDK.podspec; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -668,6 +675,7 @@
 			children = (
 				855B9F9D238ED9DC0081A9C6 /* Podfile */,
 				852751D8238EE67000B6A44A /* NinchatSDKSwift.podspec */,
+				FA7958B329FBB821006527A7 /* JitsiMeetSDK.podspec */,
 				852751DA238EE67800B6A44A /* BUILDING.md */,
 				851ECF6323969297006D332F /* README.md */,
 				855B9F13238ECDB30081A9C6 /* NinchatSDKSwift */,
@@ -806,6 +814,7 @@
 				91A1611EF0E38FD4DEB8B4AC /* NINQuestionnaireViewController.swift */,
 				855CBE3D2397FAE900A024A7 /* NINQueueViewController.swift */,
 				8530EC8023AD3FC300BAA52A /* NINChatViewController.swift */,
+				FA026FEA299BAC7A00C4D3E4 /* NINGroupChatViewController.swift */,
 				8563003F23B230350098A7B0 /* NINFullScreenViewController.swift */,
 				8563004823B286360098A7B0 /* NINRatingViewController.swift */,
 			);
@@ -941,6 +950,7 @@
 			children = (
 				85DC59CB239E4C42007ABAE3 /* NINButton.swift */,
 				85A6C9A723CE35F7001CED6D /* CloseButton.swift */,
+				FA026FE8299BAC6100C4D3E4 /* JoinVideoButton.swift */,
 			);
 			path = Button;
 			sourceTree = "<group>";
@@ -995,6 +1005,7 @@
 			isa = PBXGroup;
 			children = (
 				8530EC9423ADFEA600BAA52A /* NINChatViewModel.swift */,
+				FA026FEC299BAC8C00C4D3E4 /* NINGroupChatViewModel.swift */,
 				85DC59D4239E7C3B007ABAE3 /* NINQueueViewModel.swift */,
 				8563004623B249010098A7B0 /* NINFullScreenViewModel.swift */,
 				8563004F23B291600098A7B0 /* NINRatingViewModel.swift */,
@@ -1525,6 +1536,7 @@
 				91A16DE58D34AA4B9D3713AB /* ComposeContentView.swift in Sources */,
 				91A166E41455F2CB32736453 /* NSMutableAttributedString+Extension.swift in Sources */,
 				91A165EE393A8B5E007FA670 /* String+Extension.swift in Sources */,
+				FA026FEB299BAC7A00C4D3E4 /* NINGroupChatViewController.swift in Sources */,
 				91A16914F0B5CA995B9CD28D /* UIImageView+Extension.swift in Sources */,
 				91A16B43A0A5F40049590528 /* Permission.swift in Sources */,
 				91A16662A64C445F2BE70776 /* AvatarConfig.swift in Sources */,
@@ -1566,6 +1578,7 @@
 				91A1621313714ACDFE35E97C /* NSAttributedString+Extension.swift in Sources */,
 				5C08BD6E2626CC3100AB9397 /* PHAssetResourceType+Extension.swift in Sources */,
 				91A165F1E03C8A728D1EEF12 /* QuestionnaireElementConnector.swift in Sources */,
+				FA026FED299BAC8C00C4D3E4 /* NINGroupChatViewModel.swift in Sources */,
 				91A1658F97223291E9FBBD4B /* NINQuestionnaireViewModel.swift in Sources */,
 				5C0857D7266F85B2009E3F55 /* Titlebar+Protocol.swift in Sources */,
 				91A167F485DBCDFEEA0261F6 /* QuestionnaireElementLikert.swift in Sources */,
@@ -1580,6 +1593,7 @@
 				91A1601A6F8D21DA68AC39A6 /* ComposeUIAction.swift in Sources */,
 				91A16813665172FFFA81A455 /* NINChatError.swift in Sources */,
 				91A162DDA99D9DDB9D0B8436 /* Thread+Extension.swift in Sources */,
+				FA026FE9299BAC6100C4D3E4 /* JoinVideoButton.swift in Sources */,
 				B704E3E68829ED0963294E84 /* NSUserDefaults+Extension.swift in Sources */,
 				B704E8410F0ECA2A17505879 /* URL+Extension.swift in Sources */,
 				B704E05E59C5C5B5C615308D /* QuestionnaireElementHyperlink.swift in Sources */,

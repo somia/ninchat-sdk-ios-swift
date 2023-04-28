@@ -31,7 +31,13 @@ extension NINChatSessionManagerImpl {
                    case let .success(queueName) = queue.queueName,
                    case let .success(queueClosed) = queue.queueClosed,
                    case let .success(queueUploadPermission) = queue.queueUpload {
-                    var target = Queue(queueID: key, name: queueName, isClosed: queueClosed, permissions: QueuePermissions(upload: queueUploadPermission), position: 0)
+                    var target = Queue(
+                        queueID: key,
+                        name: queueName,
+                        isClosed: queueClosed,
+                        permissions: QueuePermissions(upload: queueUploadPermission),
+                        position: 0
+                    )
                     /// 'queue_position' is an optional parameter: https://github.com/ninchat/ninchat-api/blob/v2/api.md#realm_queues_found
                     if case let .success(queuePosition) = queue.queuePosition {
                         target.position = queuePosition
@@ -168,6 +174,10 @@ extension NINChatSessionManagerImpl {
             audienceTransferred = true
         }
 
+        if case let .success(isGroup) = param.channelIsGroup {
+            isGroupVideoChannel = isGroup
+        }
+
         try self.didJoinChannel(channelID: param.channelID.value, message: message, audienceTransferred, param.channelClosed.value || param.channelSuspended.value)
 
         /// Signal channel join event to the asynchronous listener
@@ -228,6 +238,10 @@ extension NINChatSessionManagerImpl {
             debugger("Got channel_updated for wrong channel: \(channelID)"); return
         }
 
+        if case let .success(isGroup) = param.channelIsGroup {
+            isGroupVideoChannel = isGroup
+        }
+
         /// In case of "channel transfer", the corresponded function: "didPartChannel(param:)" is called after this function.
         /// Thus, We will send meta message only if the channel was actually closed, not parted.
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
@@ -244,6 +258,10 @@ extension NINChatSessionManagerImpl {
     internal func didFindChannel(param: NINLowLevelClientProps) throws {
         if case let .failure(error) = param.channelID { throw error }
         guard param.channelID.value == self.currentChannelID else { throw NINSessionExceptions.noActiveChannel }
+
+        if case let .success(isGroup) = param.channelIsGroup {
+            isGroupVideoChannel = isGroup
+        }
 
         if case let .failure(error) = param.channelMembers { throw error }
         let memberParser = NINChatClientPropsParser()
@@ -303,8 +321,16 @@ extension NINChatSessionManagerImpl {
     }
 
     internal func didReceiveMessage(param: NINLowLevelClientProps, payload: NINLowLevelClientPayload) throws {
+        try didGetMessage(param: param, payload: payload, update: false)
+    }
+
+    internal func didUpdateMessage(param: NINLowLevelClientProps, payload: NINLowLevelClientPayload) throws {
+        try didGetMessage(param: param, payload: payload, update: true)
+    }
+
+    private func didGetMessage(param: NINLowLevelClientProps, payload: NINLowLevelClientPayload, update: Bool) throws {
         if case let .failure(error) = param.messageType { throw error }
-        debugger("Received message of type \(String(describing: param.messageType.value))")
+        debugger("\(update ? "Updated" : "Received") message of type \(String(describing: param.messageType.value))")
 
         /// handle transfers
         if param.messageType.value == .part {
@@ -316,7 +342,11 @@ extension NINChatSessionManagerImpl {
         let actionID = param.actionID
 
         do {
-            try self.handleInbound(param: param, actionID: actionID.value, payload: payload)
+            if update {
+                try self.handleUpdate(param: param, actionID: actionID.value, payload: payload)
+            } else {
+                try self.handleInbound(param: param, actionID: actionID.value, payload: payload)
+            }
             if actionID.value != 0 { self.onActionID?(actionID, nil) }
         } catch {
             if actionID.value != 0 { self.onActionID?(actionID, error) }
@@ -364,6 +394,14 @@ extension NINChatSessionManagerImpl {
 
     internal func didRegisterAudience(param: NINLowLevelClientProps) throws {
         self.onActionID?(param.actionID, param.error)
+    }
+
+    internal func didDiscoverJitsi(param: NINLowLevelClientProps) throws {
+        if case let .success(room) = param.jitsiRoom, case let .success(token) = param.jitsiToken {
+            self.onActionJitsiDiscovered?(param.actionID, .success((room: room, token: token)))
+        } else {
+            self.onActionJitsiDiscovered?(param.actionID, (param.error ?? param.ninchatError).map { .failure($0) })
+        }
     }
 }
 
@@ -486,7 +524,20 @@ extension NINChatSessionManagerImpl {
         self.chatMessages.sort { $0.messageID > $1.messageID }
         return self.chatMessages.map { [weak self] message in
             if var msg = message as? ChannelMessage, let msgIndex = self?.chatMessages.firstIndex(where: { $0.messageID == msg.messageID }), msgIndex < (self?.chatMessages.count ?? 0) - 1, let prevMsg = self?.chatMessages[msgIndex + 1] as? ChannelMessage {
-                msg.series = (msg.sender?.userID == prevMsg.sender?.userID) && (msg.timestamp.minute == prevMsg.timestamp.minute)
+                let prevTextMsg = prevMsg as? TextMessage
+                let textMsg = msg as? TextMessage
+                let bothFromSameUser = msg.sender?.userID == prevMsg.sender?.userID
+                let bothHaveSameDeletionStatus = textMsg?.isDeleted == prevTextMsg?.isDeleted
+                let bothAreDeleted = textMsg?.isDeleted == true && prevTextMsg?.isDeleted == true
+                let prevNotDeletedAndCurrentDeleted = (prevTextMsg?.isDeleted != true) && (textMsg?.isDeleted == true)
+
+                if bothFromSameUser && (bothAreDeleted || prevNotDeletedAndCurrentDeleted) {
+                    msg.series = true
+                } else {
+                    msg.series = bothFromSameUser
+                        && (msg.timestamp.minute == prevMsg.timestamp.minute)
+                        && (bothHaveSameDeletionStatus || prevNotDeletedAndCurrentDeleted)
+                }
                 return msg
             }
             return message
@@ -576,7 +627,11 @@ extension NINChatSessionManagerImpl {
         case .candidate, .answer, .offer, .call, .pickup, .hangup:
             try self.handleRTCSignal(type: messageType, user: messageUser, actionID: actionID, payload: payload)
         case .text, .file:
-            try self.handleInbound(message: messageID, user: messageUser, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
+            if case .success(true) = param.isMessageDeleted {
+                self.handleDeleted(message: messageID, user: messageUser, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
+            } else {
+                try self.handleInbound(message: messageID, user: messageUser, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
+            }
         case .compose:
             try self.handleCompose(message: messageID, user: messageUser, time: messageTime, actionID: actionID, remained: param.historyLength, payload: payload)
         case .channel:
@@ -591,6 +646,21 @@ extension NINChatSessionManagerImpl {
 
     }
 
+    internal func handleUpdate(param: NINLowLevelClientProps, actionID: Int, payload: NINLowLevelClientPayload) throws {
+        if case let .failure(error) = param.messageID { throw error }
+        let messageID = param.messageID.value
+        guard
+            case let .success(isMessageDeleted) = param.isMessageDeleted,
+            let messageIdx = self.chatMessages.firstIndex(where: { $0.messageID == messageID }),
+            var message = self.chatMessages[messageIdx] as? TextMessage
+        else {
+            return
+        }
+        message.isDeleted = isMessageDeleted
+        self.chatMessages[messageIdx] = message
+        self.onMessageUpdated?(messageIdx)
+    }
+
     internal func handleRTCSignal(type: MessageType, user: ChannelUser?, actionID: Int, payload: NINLowLevelClientPayload) throws {
         /// This message originates from me; we can ignore it.
         if actionID != 0 { return }
@@ -601,6 +671,10 @@ extension NINChatSessionManagerImpl {
                 self?.onRTCClientSignal?(type, user, signal)
             }
         }
+    }
+
+    internal func handleDeleted(message id: String, user: ChannelUser?, time: Double, actionID: Int, remained: NINResult<Int>, payload: NINLowLevelClientPayload) {
+        self.add(message: TextMessage(timestamp: Date(timeIntervalSince1970: time), messageID: id, mine: user?.userID == self.myUserID, sender: user, content: nil, attachment: nil, isDeleted: true), remained: remained)
     }
 
     internal func handleInbound(message id: String, user: ChannelUser?, time: Double, actionID: Int, remained: NINResult<Int>, payload: NINLowLevelClientPayload) throws {

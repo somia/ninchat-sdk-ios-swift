@@ -18,6 +18,7 @@ enum Events: String {
     case iceBegun = "ice_begun"
     case userUpdated = "user_updated"
     case receivedMessage = "message_received"
+    case updatedMessage = "message_updated"
     case historyResult = "history_results"
     case fileFound = "file_found"
 
@@ -32,6 +33,8 @@ enum Events: String {
     case queueUpdated = "queue_updated"
 
     case connectionSuperseded = "connection_superseded"
+
+    case jitsiDiscovered = "jitsi_discovered"
 }
 
 protocol NINChatSessionManagerEventHandlers {
@@ -126,6 +129,8 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                     try self.didLoadHistory(param: param)
                 case .receivedMessage:
                     try self.didReceiveMessage(param: param, payload: payload)
+                case .updatedMessage:
+                    try self.didUpdateMessage(param: param, payload: payload)
                 case .realmQueueFound:
                     try self.didFindRealmQueues(param: param)
                 case .audienceEnqueued, .queueUpdated:
@@ -146,6 +151,8 @@ extension NINChatSessionManagerImpl: NINChatSessionManagerEventHandlers {
                     try self.didFindChannel(param: param)
                 case .audienceRegistered:
                     try self.didRegisterAudience(param: param)
+                case .jitsiDiscovered:
+                    try self.didDiscoverJitsi(param: param)
                 default:
                     break
                 }

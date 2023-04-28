@@ -19,6 +19,8 @@ public enum AssetConstants {
     case ninchatChatAvatarLeft
     case ninchatAvatarTitlebar
     case ninchatChatPlayVideo
+    case ninchatGroupChatToggleIcon
+    case ninchatGroupJoinVideoIcon
     case ninchatIconTextareaCamera      /* not used */
     case ninchatIconTextareaAttachment
     case ninchatIconMetadata
@@ -155,6 +157,9 @@ public enum Constants: String {
     case kCallInvitationInfoText = "wants to video chat with you"
     case kRatingTitleText = "How was our customer service?"
     case kRatingSkipText = "Skip"
+    case kVideoMeetingText = "Video meeting"
+    case kJoinVideoMeetingText = "Join video meeting"
+    case kThisMessageWasDeletedText = "This message was deleted"
     
     case kRatingPositiveText = "Good"
     case kRatingNeutralText = "Okay"

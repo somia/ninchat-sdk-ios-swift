@@ -22,6 +22,7 @@ enum NINLowLevelClientActions: String {
     case sendMessage = "send_message"
     case beginICE = "begin_ice"
     case registerAudience = "register_audience"
+    case discoverJitsi = "discover_jitsi"
 }
 
 enum HistoryOrder: Int {
@@ -241,6 +242,14 @@ extension NINLowLevelClientProps: NINLowLevelQueueProps {
         get { self.get(forKey: "audience_metadata") }
         set { self.set(value: newValue.value, forKey: "audience_metadata") }
     }
+
+    var jitsiRoom: NINResult<String> {
+        get { self.get(forKey: "jitsi_room") }
+    }
+
+    var jitsiToken: NINResult<String> {
+        get { self.get(forKey: "jitsi_token") }
+    }
 }
 
 protocol NINLowLevelChannelProps {
@@ -290,6 +299,21 @@ extension NINLowLevelClientProps: NINLowLevelChannelProps {
         switch self.channelAttributes {
         case .success(let attributes):
             return attributes.get(forKey: "audience_transferred")
+        case .failure(let error):
+            return .failure(error)
+        }
+    }
+
+    var channelIsGroup: NINResult<Bool> {
+        switch self.channelAttributes {
+        case .success(let attributes):
+            let video: NINResult<String> = attributes.get(forKey: "video")
+            switch video {
+            case .success(let value):
+                return .success(ChannelVideoType(rawValue: value) == .group)
+            case .failure(let error):
+                return .failure(error)
+            }
         case .failure(let error):
             return .failure(error)
         }
@@ -454,6 +478,11 @@ extension NINLowLevelClientProps: NINLowLevelMessageProps {
     var messageTTL: NINResult<Int> {
         get { self.get(forKey: "message_ttl") }
         set { self.set(value: newValue.value, forKey: "message_ttl") }
+    }
+
+    var isMessageDeleted: NINResult<Bool> {
+        get { self.get(forKey: "message_deleted") }
+        set { self.set(value: newValue.value, forKey: "message_deleted") }
     }
 }
 
