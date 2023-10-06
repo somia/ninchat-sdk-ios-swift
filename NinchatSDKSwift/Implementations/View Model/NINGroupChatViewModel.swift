@@ -438,11 +438,13 @@ extension NINGroupChatViewModelImpl {
 
 extension NINGroupChatViewModelImpl {
     func openVideoCallInWebView(request: URLRequest, parentView: UIView) {
-        // Initialize webView
-        let webView = WKWebView()
+        // Initialize webView with configuration to allow inline media playback
+        let webConfig = WKWebViewConfiguration()
+        webConfig.allowsInlineMediaPlayback = true
+        let webView = WKWebView(frame: .zero, configuration: webConfig)
         self.webView = webView
         
-        // Set a custom non iPhone user agent, otherwise Jitsi will not load
+        // Set a custom non-iPhone user agent, otherwise Jitsi might not load
         self.webView?.customUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
         
         // Set up Auto Layout constraints
@@ -478,6 +480,15 @@ extension NINGroupChatViewModelImpl: WKNavigationDelegate {
     }
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-
+        // Inject JavaScript to prevent full screen and set playsinline attribute
+        let preventFullscreenScript = """
+        document.addEventListener('DOMContentLoaded', function() {
+            var elems = document.querySelectorAll("video");
+            for(var i = 0; i < elems.length; i++) {
+                elems[i].setAttribute("playsinline", "true");
+            }
+        });
+        """
+        webView.evaluateJavaScript(preventFullscreenScript, completionHandler: nil)
     }
 }
