@@ -753,7 +753,7 @@ you are next. </string>
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="199"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="xv2-Vb-E7a">
-                                                <rect key="frame" x="0.0" y="16" width="414" height="134"/>
+                                                <rect key="frame" x="0.0" y="16" width="414" height="195"/>
                                                 <subviews>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="oMz-g1-Vcu">
                                                         <rect key="frame" x="154" y="0.0" width="106.5" height="57"/>
@@ -774,8 +774,24 @@ you are next. </string>
                                                             </label>
                                                         </subviews>
                                                     </stackView>
-                                                    <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rMZ-Jf-WSH" customClass="JoinVideoButton" customModule="NinchatSDKSwift">
+                                                    <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8jJ-cO-sX8" customClass="JoinVideoButton" customModule="NinchatSDKSwift">
                                                         <rect key="frame" x="117" y="73" width="180" height="45"/>
+                                                        <color key="backgroundColor" red="0.0" green="0.54117647059999996" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="45" id="L7E-nA-nba"/>
+                                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="180" id="xz6-Qf-d5G"/>
+                                                        </constraints>
+                                                        <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
+                                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                        <state key="normal" title="Join Video Meeting Web">
+                                                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="onJoinWebVideoCallDidTap:" destination="rkl-lh-0pE" eventType="touchUpInside" id="AgE-90-uL8"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rMZ-Jf-WSH" customClass="JoinVideoButton" customModule="NinchatSDKSwift">
+                                                        <rect key="frame" x="117" y="134" width="180" height="45"/>
                                                         <color key="backgroundColor" red="0.0" green="0.54117647059999996" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="45" id="Wdj-LA-s0H"/>
@@ -791,7 +807,7 @@ you are next. </string>
                                                         </connections>
                                                     </button>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qEb-zT-pbh">
-                                                        <rect key="frame" x="207" y="134" width="0.0" height="0.0"/>
+                                                        <rect key="frame" x="207" y="195" width="0.0" height="0.0"/>
                                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="15"/>
                                                         <color key="textColor" red="0.14117647058823529" green="0.14117647058823529" blue="0.14117647058823529" alpha="1" colorSpace="calibratedRGB"/>
                                                         <nil key="highlightedColor"/>
@@ -821,6 +837,10 @@ you are next. </string>
                                     <constraint firstAttribute="height" constant="200" id="vU8-LU-4Ti"/>
                                     <constraint firstAttribute="bottom" secondItem="uWx-9I-BAh" secondAttribute="bottom" constant="1" id="vnF-IY-htG"/>
                                 </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8Z7-y9-T6O">
+                                <rect key="frame" x="0.0" y="108" width="414" height="754"/>
+                                <color key="backgroundColor" systemColor="systemBlueColor"/>
                             </view>
                             <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="um1-uH-Swy" userLabel="Video Container View">
                                 <rect key="frame" x="0.0" y="108" width="414" height="788"/>
@@ -947,7 +967,9 @@ you are next. </string>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="ZKy-WV-dkx" firstAttribute="top" secondItem="egg-zz-ZkU" secondAttribute="top" id="6cr-oC-Cfe"/>
+                            <constraint firstItem="8Z7-y9-T6O" firstAttribute="leading" secondItem="sPx-WY-SBH" secondAttribute="leading" id="9UF-9z-Qgv"/>
                             <constraint firstItem="egg-zz-ZkU" firstAttribute="trailing" secondItem="WK5-nL-bic" secondAttribute="trailing" constant="8" id="DcH-Zt-wiy"/>
+                            <constraint firstAttribute="bottom" secondItem="8Z7-y9-T6O" secondAttribute="bottom" constant="34" id="G2B-09-joU"/>
                             <constraint firstAttribute="bottom" secondItem="um1-uH-Swy" secondAttribute="bottom" id="L4T-qs-Ihk"/>
                             <constraint firstAttribute="trailing" secondItem="qJN-P9-oZ8" secondAttribute="trailing" id="LSd-Xy-3ob"/>
                             <constraint firstItem="um1-uH-Swy" firstAttribute="trailing" secondItem="sPx-WY-SBH" secondAttribute="trailing" id="MIA-JQ-PEs"/>
@@ -958,8 +980,10 @@ you are next. </string>
                             <constraint firstItem="WK5-nL-bic" firstAttribute="top" secondItem="egg-zz-ZkU" secondAttribute="top" constant="10" id="W6q-p4-Zn2"/>
                             <constraint firstItem="qJN-P9-oZ8" firstAttribute="top" secondItem="sPx-WY-SBH" secondAttribute="top" id="YCT-gy-4zm"/>
                             <constraint firstAttribute="trailing" secondItem="V3Y-9g-qYe" secondAttribute="trailing" id="aLO-IY-Udj"/>
+                            <constraint firstItem="8Z7-y9-T6O" firstAttribute="top" secondItem="qJN-P9-oZ8" secondAttribute="bottom" id="aWO-a1-MCC"/>
                             <constraint firstItem="um1-uH-Swy" firstAttribute="top" secondItem="qJN-P9-oZ8" secondAttribute="bottom" id="eLe-jx-vwg"/>
                             <constraint firstItem="qJN-P9-oZ8" firstAttribute="bottom" secondItem="ZKy-WV-dkx" secondAttribute="bottom" id="god-ot-JOL"/>
+                            <constraint firstAttribute="trailing" secondItem="8Z7-y9-T6O" secondAttribute="trailing" id="iVW-xB-0vS"/>
                             <constraint firstItem="V3Y-9g-qYe" firstAttribute="top" secondItem="qJN-P9-oZ8" secondAttribute="bottom" id="m8I-M4-WOv"/>
                             <constraint firstItem="i9D-mc-XO6" firstAttribute="trailing" secondItem="sPx-WY-SBH" secondAttribute="trailing" id="mxJ-Dl-qQs"/>
                             <constraint firstItem="V3Y-9g-qYe" firstAttribute="leading" secondItem="sPx-WY-SBH" secondAttribute="leading" id="ovm-56-C1S"/>
@@ -990,6 +1014,7 @@ you are next. </string>
                         <outlet property="titlebarContainer" destination="qJN-P9-oZ8" id="TmO-Mb-gjK"/>
                         <outlet property="toggleChatButton" destination="qZN-BW-LAa" id="vtW-rm-dAG"/>
                         <outlet property="videoViewContainer" destination="um1-uH-Swy" id="krk-lF-HWE"/>
+                        <outlet property="webVideoViewContainer" destination="8Z7-y9-T6O" id="MSF-99-esb"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7PC-kj-RKw" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1008,6 +1033,9 @@ you are next. </string>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemBlueColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

@@ -52,6 +52,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     @IBOutlet private(set) weak var backgroundView: UIImageView! /// <--- to hold page background image, it is more flexible to have a dedicated view
 
     @IBOutlet private(set) weak var videoViewContainer: UIView!
+    @IBOutlet private(set) weak var webVideoViewContainer: UIView!
 
     @IBOutlet private(set) weak var joinVideoContainerHeight: NSLayoutConstraint!
     @IBOutlet private(set) weak var joinVideoContainer: UIView!
@@ -237,6 +238,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
         self.reloadView()
         self.updateInputContainerHeight(94.0)
         self.moveVideoContainerToBack()
+        self.moveWebVideoContainerToBack()
         self.toggleChatButton.isHidden = true
         self.chatContainerTopConstraint.constant = joinVideoContainerHeight.constant
 
@@ -338,6 +340,12 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
                 self?.toggleChatButton.isHidden = false
             }
         }
+    }
+    
+    @IBAction func onJoinWebVideoCallDidTap(_ sender: Any) {
+        view.endEditing(true)
+        moveWebVideoContainerToFront()
+        toggleChatButton.isHidden = false
     }
 
     @IBAction func onToggleChatDidTap(_ sender: Any) {
@@ -603,6 +611,14 @@ extension NINGroupChatViewController {
 
     private func moveVideoContainerToBack() {
         view.sendSubviewToBack(videoViewContainer)
+    }
+    
+    private func moveWebVideoContainerToFront() {
+        view.bringSubviewToFront(webVideoViewContainer)
+    }
+
+    private func moveWebVideoContainerToBack() {
+        view.sendSubviewToBack(webVideoViewContainer)
     }
 
     private func moveChatToFront() {
