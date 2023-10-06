@@ -22,6 +22,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     var onOpenGallery: ((UIImagePickerController.SourceType) -> Void)?
     var onOpenPhotoAttachment: ((UIImage, FileInfo) -> Void)?
     var onOpenVideoAttachment: ((FileInfo) -> Void)?
+    var isWebVideoCall = false
 
     var chatDataSourceDelegate: NINChatDataSourceDelegate! {
         didSet {
@@ -237,8 +238,10 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
         self.setupGestures()
         self.reloadView()
         self.updateInputContainerHeight(94.0)
+        
         self.moveVideoContainerToBack()
         self.moveWebVideoContainerToBack()
+        
         self.toggleChatButton.isHidden = true
         self.chatContainerTopConstraint.constant = joinVideoContainerHeight.constant
 
@@ -314,6 +317,8 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
         }
         self.viewModel.onGroupVideoReadyToClose = { [weak self] in
             self?.moveVideoContainerToBack()
+            self?.moveWebVideoContainerToBack()
+            
             self?.markChatButton(hasUnreadMessages: false)
             self?.adjustConstraints(for: self?.view.bounds.size ?? .zero, withAnimation: false)
             self?.toggleChatButton.isHidden = true
@@ -329,6 +334,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     // MARK: - Video Call
 
     @IBAction func onJoinVideoCallDidTap(_ sender: Any) {
+        isWebVideoCall = false
         view.endEditing(true)
         viewModel.joinVideoCall(inside: videoViewContainer) { [weak self] error in
             if error != nil {
@@ -343,9 +349,18 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     }
     
     @IBAction func onJoinWebVideoCallDidTap(_ sender: Any) {
+        isWebVideoCall = true
         view.endEditing(true)
-        moveWebVideoContainerToFront()
-        toggleChatButton.isHidden = false
+        viewModel.joinWebVideoCall(inside: webVideoViewContainer) { [weak self] error in
+            if error != nil {
+                // TODO: Jitsi - localize error
+                debugger("Jitsi: join video error: \(error)")
+                Toast.show(message: .error("Failed to join video meeting"))
+            } else {
+                self?.moveWebVideoContainerToFront()
+                self?.toggleChatButton.isHidden = false
+            }
+        }
     }
 
     @IBAction func onToggleChatDidTap(_ sender: Any) {
@@ -369,6 +384,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
                 }, completion: { _ in
                     if self.viewModel.hasJoinedVideo && !self.isChatShownDuringVideo {
                         self.moveVideoContainerToFront()
+                        self.moveWebVideoContainerToFront()
                     }
                 }
             )
@@ -504,6 +520,8 @@ extension NINGroupChatViewController {
 
     private func markVideoCallAsFinished() {
         moveVideoContainerToBack()
+        moveWebVideoContainerToBack()
+        
         markChatButton(hasUnreadMessages: false)
         adjustConstraints(for: view.bounds.size, withAnimation: false)
         toggleChatButton.isHidden = true
@@ -562,6 +580,8 @@ extension NINGroupChatViewController {
             guard action == .confirm else { return }
 
             self?.moveVideoContainerToBack()
+            self?.moveWebVideoContainerToBack()
+            
             self?.viewModel.leaveVideoCall()
             self?.onChatClosed?()
         }
@@ -614,7 +634,9 @@ extension NINGroupChatViewController {
     }
     
     private func moveWebVideoContainerToFront() {
-        view.bringSubviewToFront(webVideoViewContainer)
+        if isWebVideoCall {
+            view.bringSubviewToFront(webVideoViewContainer)
+        }
     }
 
     private func moveWebVideoContainerToBack() {

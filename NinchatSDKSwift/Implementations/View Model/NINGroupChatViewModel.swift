@@ -5,6 +5,7 @@
 //
 
 import Foundation
+import WebKit
 import JitsiMeetSDK
 
 protocol NINGroupChatViewModel: AnyObject, NINChatStateProtocol, NINChatMessageProtocol, NINChatPermissionsProtocol, NINChatAttachmentProtocol {
@@ -19,6 +20,7 @@ protocol NINGroupChatViewModel: AnyObject, NINChatStateProtocol, NINChatMessageP
     init(sessionManager: NINChatSessionManager)
 
     func joinVideoCall(inside parentView: UIView, completion: @escaping (Error?) -> Void)
+    func joinWebVideoCall(inside parentView: UIView, completion: @escaping (Error?) -> Void)
     func leaveVideoCall()
 }
 
@@ -26,6 +28,7 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMee
     private weak var sessionManager: NINChatSessionManager?
     private var pipViewCoordinator: PiPViewCoordinator?
     private var jitsiView: JitsiMeetView?
+    private var webView: WKWebView?
     private var typingStatus = false
     private var typingStatusQueue: DispatchWorkItem?
     private var isSelectingMedia = false
@@ -203,9 +206,51 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMee
             completion(error)
         }
     }
+    
+    func joinWebVideoCall(inside parentView: UIView, completion: @escaping (Error?) -> Void) {
+        do {
+            try sessionManager?.discoverJitsi { [weak self] result in
+                guard let self = self, let sessionManager = self.sessionManager else {
+                    return
+                }
+                switch result {
+                case nil:
+                    completion(NinchatError(type: "unknown", props: nil))
+                case let .failure(error):
+                    completion(error)
+                case let .success(credentials):
+                    // Make a jitsi url
+                    var serverAddress: String = sessionManager.serverAddress
+                    let apiPrefix = "api."
+                    if serverAddress.hasPrefix(apiPrefix) {
+                        let endIdx = serverAddress.index(serverAddress.startIndex, offsetBy: apiPrefix.count)
+                        serverAddress.removeSubrange(serverAddress.startIndex ..< endIdx)
+                    }
+                    let jitsiServerAddress = "https://jitsi-www." + serverAddress
+
+                    let jitsiURL = "\(jitsiServerAddress)/\(credentials.room)?jwt=\(credentials.token)"
+
+                    guard let url = URL(string: jitsiURL) else {
+                        completion(NinchatError(type: "unknown", props: nil))
+                        return
+                    }
+                    
+                    // Open request with jitsi url
+                    let request = URLRequest(url: url)
+                    openVideoCallInWebView(request: request, parentView: parentView)
+                    
+                    completion(nil)
+                }
+            }
+        } catch {
+            completion(error)
+        }
+    }
+
 
     func leaveVideoCall() {
         leaveVideoCall(force: true)
+        leaveWebVideoCall()
     }
 
     private func leaveVideoCall(force: Bool) {
@@ -385,5 +430,54 @@ extension NINGroupChatViewModelImpl {
     func ready(toClose data: [AnyHashable : Any]!) {
         leaveVideoCall(force: false)
         onGroupVideoReadyToClose?()
+    }
+}
+
+
+// MARK: - Jitsi video calls through web view
+
+extension NINGroupChatViewModelImpl {
+    func openVideoCallInWebView(request: URLRequest, parentView: UIView) {
+        // Initialize webView
+        let webView = WKWebView()
+        self.webView = webView
+        
+        // Set a custom non iPhone user agent, otherwise Jitsi will not load
+        self.webView?.customUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
+        
+        // Set up Auto Layout constraints
+        parentView.addSubview(webView)
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            webView.topAnchor.constraint(equalTo: parentView.topAnchor),
+            webView.bottomAnchor.constraint(equalTo: parentView.bottomAnchor),
+            webView.leadingAnchor.constraint(equalTo: parentView.leadingAnchor),
+            webView.trailingAnchor.constraint(equalTo: parentView.trailingAnchor)
+        ])
+
+        // Set delegates
+        webView.navigationDelegate = self
+
+        // Load request
+        webView.load(request)
+    }
+    
+    func leaveWebVideoCall() {
+        self.webView?.stopLoading()
+        self.webView?.navigationDelegate = nil
+        self.webView?.removeFromSuperview()
+        self.webView = nil
+    }
+}
+
+// MARK: - WKWebView delegates
+
+extension NINGroupChatViewModelImpl: WKNavigationDelegate {
+    func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+        // print("WebView error: \(error.localizedDescription)")
+    }
+
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+
     }
 }
