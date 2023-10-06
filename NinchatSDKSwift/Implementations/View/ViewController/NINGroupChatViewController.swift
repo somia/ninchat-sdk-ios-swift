@@ -326,7 +326,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
 
     // MARK: - Video Call
 
-    @IBAction func onJoinVidoCallDidTap(_ sender: Any) {
+    @IBAction func onJoinVideoCallDidTap(_ sender: Any) {
         view.endEditing(true)
         viewModel.joinVideoCall(inside: videoViewContainer) { [weak self] error in
             if error != nil {
