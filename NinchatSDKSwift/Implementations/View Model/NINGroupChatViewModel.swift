@@ -232,55 +232,28 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMee
 
                     // Append feature flags as URL parameters
                     let featureFlags: [String: Any] = [
-                        "add-people.enabled": "false",
-                        "audio-mute.enabled": "true",
-                        "calendar.enabled": "false",
-                        "call-integration.enabled": "true",
-                        "car-mode.enabled": "false",
-                        "close-captions.enabled": "false",
-                        "conference-timer.enabled": "true",
-                        "chat.enabled": "false",
-                        "filmstrip.enabled": "true",
-                        "fullscreen.enabled": "true",
-                        "invite.enabled": "false",
-                        "ios.screensharing.enabled": "false",
-                        "speakerstats.enabled": "false",
-                        "kick-out.enabled": "false",
-                        "live-streaming.enabled": "false",
-                        "meeting-name.enabled": "false",
-                        "meeting-password.enabled": "false",
-                        "notifications.enabled": "false",
-                        "overflow-menu.enabled": "true",
-                        "pip.enabled": "false",
-                        "pip-while-screen-sharing.enabled": "false",
-                        "prejoinpage.enabled": "true",
-                        "prejoinpage.hide-display-name.enabled": "true",
-                        "raise-hand.enabled": "false",
-                        "recording.enabled": "false",
-                        "server-url-change.enabled": "false",
-                        "settings.enabled": "true",
-                        "tile-view.enabled": "true",
-                        "toolbox.alwaysVisible": "false",
-                        "toolbox.enabled": "true",
-                        "video-mute.enabled": "true",
-                        "video-share.enabled": "false",
-                        "welcomepage.enabled": "false",
-                        "help.enabled": "false",
-                        "lobby-mode.enabled": "false",
-                        "reactions.enabled": "false",
-                        "security-options.enabled": "true",
-                        "settings.profile-section.enabled": "false",
-                        "settings.conference-section-only-self-view.enabled": "true",
-                        "settings.links-section.enabled": "false",
-                        "settings.build-info-section.enabled": "false",
-                        "settings.advanced-section.enabled": "false",
-                        "participants.enabled": "false"
+                        "prejoinConfig.enabled": "true",
+                        "disableInviteFunctions": "true",
+                        "disableThirdPartyRequests": "true",
+                        "startWithVideoMuted": "false",
+                        "disableAudioLevels": "true",
+                        "disableRemoteMute": "false",
+                        "startWithAudioMuted": "false",
+                        "startSilent": "false"
                     ]
 
+                    var isFirstFlag = true
                     for (key, value) in featureFlags {
-                        jitsiURL += "&config.\(key)=\(value)"
+                        if isFirstFlag {
+                            jitsiURL += "#config.\(key)=\(value)"
+                            isFirstFlag = false
+                        } else {
+                            jitsiURL += "&config.\(key)=\(value)"
+                        }
                     }
 
+                    print(jitsiURL)
+                    
                     guard let url = URL(string: jitsiURL) else {
                         completion(NinchatError(type: "unknown", props: nil))
                         return
