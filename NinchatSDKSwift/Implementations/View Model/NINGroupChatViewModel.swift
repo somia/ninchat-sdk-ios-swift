@@ -353,12 +353,12 @@ extension NINGroupChatViewModelImpl {
     
     func openVideoCallInWebViewWithIframe(jitsiServer: String, room: String, jwt: String, parentView: UIView) {
         let domain = jitsiServer.replacingOccurrences(of: "https://", with: "")
-        
+
         let htmlContent = """
         <html>
             <head>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <script src="https://meet.jit.si/external_api.js"></script>
+                <script src="https://jitsi-www.ninchat.com/libs/external_api.min.js"></script>
             </head>
             <body>
                 <div id="jitsi-meet"></div>
@@ -405,6 +405,7 @@ extension NINGroupChatViewModelImpl {
         let webConfig = WKWebViewConfiguration()
         webConfig.allowsInlineMediaPlayback = true
         webConfig.mediaTypesRequiringUserActionForPlayback = []
+        webConfig.preferences.setValue(true, forKey: "developerExtrasEnabled")
         
         // Enable JavaScript messaging
         let contentController = WKUserContentController()
