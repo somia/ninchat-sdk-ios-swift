@@ -404,6 +404,7 @@ extension NINGroupChatViewModelImpl {
         // Initialize WKWebView with configuration
         let webConfig = WKWebViewConfiguration()
         webConfig.allowsInlineMediaPlayback = true
+        webConfig.mediaTypesRequiringUserActionForPlayback = []
         
         // Enable JavaScript messaging
         let contentController = WKUserContentController()
@@ -457,7 +458,7 @@ extension NINGroupChatViewModelImpl: WKNavigationDelegate, WKScriptMessageHandle
             }
         });
         """
-        webView.evaluateJavaScript(preventFullscreenScript, completionHandler: nil)
+       // webView.evaluateJavaScript(preventFullscreenScript, completionHandler: nil)
     }
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
