@@ -20,7 +20,8 @@ protocol NINGroupChatViewModel: AnyObject, NINChatStateProtocol, NINChatMessageP
     init(sessionManager: NINChatSessionManager)
 
     func joinVideoCall(inside parentView: UIView, completion: @escaping (Error?) -> Void)
-    func joinWebVideoCall(inside parentView: UIView, completion: @escaping (Error?) -> Void)
+    func joinWebVideoCallWithUrl(inside parentView: UIView, completion: @escaping (Error?) -> Void)
+    func joinWebVideoCallWithIframe(inside parentView: UIView, completion: @escaping (Error?) -> Void)
     func leaveVideoCall()
 }
 
@@ -207,7 +208,7 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMee
         }
     }
     
-    func joinWebVideoCall(inside parentView: UIView, completion: @escaping (Error?) -> Void) {
+    func joinWebVideoCallWithUrl(inside parentView: UIView, completion: @escaping (Error?) -> Void) {
         do {
             try sessionManager?.discoverJitsi { [weak self] result in
                 guard let self = self, let sessionManager = self.sessionManager else {
@@ -251,8 +252,6 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMee
                             jitsiURL += "&config.\(key)=\(value)"
                         }
                     }
-
-                    print(jitsiURL)
                     
                     guard let url = URL(string: jitsiURL) else {
                         completion(NinchatError(type: "unknown", props: nil))
@@ -261,7 +260,7 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMee
                     
                     // Open request with jitsi url
                     let request = URLRequest(url: url)
-                    openVideoCallInWebView(request: request, parentView: parentView)
+                    openVideoCallInWebViewWithUrl(request: request, parentView: parentView)
                     
                     completion(nil)
                 }
@@ -271,6 +270,40 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMee
         }
     }
 
+
+    func joinWebVideoCallWithIframe(inside parentView: UIView, completion: @escaping (Error?) -> Void) {
+        do {
+            try sessionManager?.discoverJitsi { [weak self] result in
+                guard let self = self, let sessionManager = self.sessionManager else {
+                    return
+                }
+                switch result {
+                case nil:
+                    completion(NinchatError(type: "unknown", props: nil))
+                case let .failure(error):
+                    completion(error)
+                case let .success(credentials):
+                    // Make a jitsi url
+                    var serverAddress: String = sessionManager.serverAddress
+                    let apiPrefix = "api."
+                    if serverAddress.hasPrefix(apiPrefix) {
+                        let endIdx = serverAddress.index(serverAddress.startIndex, offsetBy: apiPrefix.count)
+                        serverAddress.removeSubrange(serverAddress.startIndex ..< endIdx)
+                    }
+                    let jitsiServerAddress = "https://jitsi-www." + serverAddress
+
+                    var jitsiURL = "\(jitsiServerAddress)/\(credentials.room)?jwt=\(credentials.token)"
+
+                    openVideoCallInWebViewWithIframe(jitsiServer: jitsiServerAddress, room: credentials.room, jwt: credentials.token, parentView: parentView)
+
+                    completion(nil)
+                }
+            }
+        } catch {
+            completion(error)
+        }
+    }
+    
     func leaveVideoCall() {
         leaveVideoCall(force: true)
         leaveWebVideoCall()
@@ -287,6 +320,159 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMee
         jitsiView?.delegate = nil
     }
 }
+
+// MARK: - Jitsi video calls through web view
+
+extension NINGroupChatViewModelImpl {
+    func openVideoCallInWebViewWithUrl(request: URLRequest, parentView: UIView) {
+        // Initialize webView with configuration to allow inline media playback
+        let webConfig = WKWebViewConfiguration()
+        webConfig.allowsInlineMediaPlayback = true
+        let webView = WKWebView(frame: .zero, configuration: webConfig)
+        self.webView = webView
+        
+        // Set a custom non-iPhone user agent, otherwise Jitsi might not load
+        self.webView?.customUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
+        
+        // Set up Auto Layout constraints
+        parentView.addSubview(webView)
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            webView.topAnchor.constraint(equalTo: parentView.topAnchor),
+            webView.bottomAnchor.constraint(equalTo: parentView.bottomAnchor),
+            webView.leadingAnchor.constraint(equalTo: parentView.leadingAnchor),
+            webView.trailingAnchor.constraint(equalTo: parentView.trailingAnchor)
+        ])
+
+        // Set delegates
+        webView.navigationDelegate = self
+
+        // Load request
+        webView.load(request)
+    }
+    
+    func openVideoCallInWebViewWithIframe(jitsiServer: String, room: String, jwt: String, parentView: UIView) {
+        let domain = jitsiServer.replacingOccurrences(of: "https://", with: "")
+        
+        let htmlContent = """
+        <html>
+            <head>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <script src="https://meet.jit.si/external_api.js"></script>
+            </head>
+            <body>
+                <div id="jitsi-meet"></div>
+                <script>
+                    var domain = "\(domain)";
+                    var options = {
+                        roomName: "\(room)",
+                        jwt: "\(jwt)",
+                        width: "100%",
+                        height: "100%",
+                        parentNode: document.querySelector("#jitsi-meet"),
+                        configOverwrite: {
+                            "prejoinConfig.enabled": "true",
+                            "disableInviteFunctions": "true",
+                            "disableThirdPartyRequests": "true",
+                            "startWithVideoMuted": "false",
+                            "disableAudioLevels": "true",
+                            "disableRemoteMute": "false",
+                            "startWithAudioMuted": "false",
+                            "startSilent": "false"
+                        },
+                        interfaceConfigOverwrite: {
+                            // Add any interface config options here
+                        }
+                    };
+                    var api = new JitsiMeetExternalAPI(domain, options);
+
+                    // Add event listeners
+                    api.addEventListener('videoConferenceJoined', function(event) {
+                        window.webkit.messageHandlers.videoConferenceJoined.postMessage(event);
+                    });
+
+                    api.addEventListener('videoConferenceLeft', function(event) {
+                        window.webkit.messageHandlers.videoConferenceLeft.postMessage(event);
+                    });
+
+                    // Add more event listeners as needed
+                </script>
+            </body>
+        </html>
+        """
+
+        // Initialize WKWebView with configuration
+        let webConfig = WKWebViewConfiguration()
+        webConfig.allowsInlineMediaPlayback = true
+        
+        // Enable JavaScript messaging
+        let contentController = WKUserContentController()
+        contentController.add(self, name: "videoConferenceJoined")
+        contentController.add(self, name: "videoConferenceLeft")
+        webConfig.userContentController = contentController
+
+        let webView = WKWebView(frame: .zero, configuration: webConfig)
+        webView.navigationDelegate = self
+        self.webView = webView
+        
+        // Set a custom non-iPhone user agent, otherwise Jitsi might not load
+        webView.customUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
+
+        // Set up Auto Layout constraints
+        parentView.addSubview(webView)
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            webView.topAnchor.constraint(equalTo: parentView.topAnchor),
+            webView.bottomAnchor.constraint(equalTo: parentView.bottomAnchor),
+            webView.leadingAnchor.constraint(equalTo: parentView.leadingAnchor),
+            webView.trailingAnchor.constraint(equalTo: parentView.trailingAnchor)
+        ])
+
+        // Load the HTML content
+        webView.loadHTMLString(htmlContent, baseURL: nil)
+    }
+    
+    func leaveWebVideoCall() {
+        self.webView?.stopLoading()
+        self.webView?.navigationDelegate = nil
+        self.webView?.removeFromSuperview()
+        self.webView = nil
+    }
+}
+
+// MARK: - WKWebView delegates
+
+extension NINGroupChatViewModelImpl: WKNavigationDelegate, WKScriptMessageHandler {
+    func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+        // print("WebView error: \(error.localizedDescription)")
+    }
+
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        // Inject JavaScript to prevent full screen and set playsinline attribute
+        let preventFullscreenScript = """
+        document.addEventListener('DOMContentLoaded', function() {
+            var elems = document.querySelectorAll("video");
+            for(var i = 0; i < elems.length; i++) {
+                elems[i].setAttribute("playsinline", "true");
+            }
+        });
+        """
+        webView.evaluateJavaScript(preventFullscreenScript, completionHandler: nil)
+    }
+    
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        if message.name == "videoConferenceJoined" {
+            // Handle the videoConferenceJoined event
+            print("Video conference joined!")
+        } else if message.name == "videoConferenceLeft" {
+            // Handle the videoConferenceLeft event
+            print("Video conference left!")
+            leaveWebVideoCall()
+        }
+    }
+}
+
+
 
 // MARK: - NINChatState
 
@@ -453,65 +639,5 @@ extension NINGroupChatViewModelImpl {
     func ready(toClose data: [AnyHashable : Any]!) {
         leaveVideoCall(force: false)
         onGroupVideoReadyToClose?()
-    }
-}
-
-
-// MARK: - Jitsi video calls through web view
-
-extension NINGroupChatViewModelImpl {
-    func openVideoCallInWebView(request: URLRequest, parentView: UIView) {
-        // Initialize webView with configuration to allow inline media playback
-        let webConfig = WKWebViewConfiguration()
-        webConfig.allowsInlineMediaPlayback = true
-        let webView = WKWebView(frame: .zero, configuration: webConfig)
-        self.webView = webView
-        
-        // Set a custom non-iPhone user agent, otherwise Jitsi might not load
-        self.webView?.customUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
-        
-        // Set up Auto Layout constraints
-        parentView.addSubview(webView)
-        webView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            webView.topAnchor.constraint(equalTo: parentView.topAnchor),
-            webView.bottomAnchor.constraint(equalTo: parentView.bottomAnchor),
-            webView.leadingAnchor.constraint(equalTo: parentView.leadingAnchor),
-            webView.trailingAnchor.constraint(equalTo: parentView.trailingAnchor)
-        ])
-
-        // Set delegates
-        webView.navigationDelegate = self
-
-        // Load request
-        webView.load(request)
-    }
-    
-    func leaveWebVideoCall() {
-        self.webView?.stopLoading()
-        self.webView?.navigationDelegate = nil
-        self.webView?.removeFromSuperview()
-        self.webView = nil
-    }
-}
-
-// MARK: - WKWebView delegates
-
-extension NINGroupChatViewModelImpl: WKNavigationDelegate {
-    func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
-        // print("WebView error: \(error.localizedDescription)")
-    }
-
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        // Inject JavaScript to prevent full screen and set playsinline attribute
-        let preventFullscreenScript = """
-        document.addEventListener('DOMContentLoaded', function() {
-            var elems = document.querySelectorAll("video");
-            for(var i = 0; i < elems.length; i++) {
-                elems[i].setAttribute("playsinline", "true");
-            }
-        });
-        """
-        webView.evaluateJavaScript(preventFullscreenScript, completionHandler: nil)
     }
 }
