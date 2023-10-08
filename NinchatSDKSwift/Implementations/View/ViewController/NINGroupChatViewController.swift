@@ -377,6 +377,21 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
             }
         }
     }
+    
+    @IBAction func onNinchatNewUrlDidTap(_ sender: Any) {
+        isWebVideoCall = true
+        view.endEditing(true)
+        viewModel.openNinchatNewUrl(inside: webVideoViewContainer) { [weak self] error in
+            if error != nil {
+                // TODO: Jitsi - localize error
+                debugger("Jitsi: join video error: \(error)")
+                Toast.show(message: .error("Failed to join video meeting"))
+            } else {
+                self?.moveWebVideoContainerToFront()
+                self?.toggleChatButton.isHidden = false
+            }
+        }
+    }
 
     @IBAction func onToggleChatDidTap(_ sender: Any) {
         chatContainer.layer.removeAllAnimations()

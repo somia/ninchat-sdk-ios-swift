@@ -753,7 +753,7 @@ you are next. </string>
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="199"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="xv2-Vb-E7a">
-                                                <rect key="frame" x="0.0" y="16" width="414" height="256"/>
+                                                <rect key="frame" x="0.0" y="16" width="414" height="317"/>
                                                 <subviews>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="oMz-g1-Vcu">
                                                         <rect key="frame" x="154" y="0.0" width="106.5" height="57"/>
@@ -806,8 +806,24 @@ you are next. </string>
                                                             <action selector="onJoinWebVideoWithURLCallDidTap:" destination="rkl-lh-0pE" eventType="touchUpInside" id="AgE-90-uL8"/>
                                                         </connections>
                                                     </button>
-                                                    <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rMZ-Jf-WSH" customClass="JoinVideoButton" customModule="NinchatSDKSwift">
+                                                    <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PBl-U5-5DW" customClass="JoinVideoButton" customModule="NinchatSDKSwift">
                                                         <rect key="frame" x="117" y="195" width="180" height="45"/>
+                                                        <color key="backgroundColor" red="0.0" green="0.54117647059999996" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="180" id="cFu-Ws-hNf"/>
+                                                            <constraint firstAttribute="height" constant="45" id="v5X-xV-0M0"/>
+                                                        </constraints>
+                                                        <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
+                                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                        <state key="normal" title="Ninchat New page">
+                                                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="onNinchatNewUrlDidTap:" destination="rkl-lh-0pE" eventType="touchUpInside" id="dEH-WR-Vlr"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rMZ-Jf-WSH" customClass="JoinVideoButton" customModule="NinchatSDKSwift">
+                                                        <rect key="frame" x="117" y="256" width="180" height="45"/>
                                                         <color key="backgroundColor" red="0.0" green="0.54117647059999996" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="45" id="Wdj-LA-s0H"/>
@@ -823,7 +839,7 @@ you are next. </string>
                                                         </connections>
                                                     </button>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qEb-zT-pbh">
-                                                        <rect key="frame" x="207" y="256" width="0.0" height="0.0"/>
+                                                        <rect key="frame" x="207" y="317" width="0.0" height="0.0"/>
                                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="15"/>
                                                         <color key="textColor" red="0.14117647058823529" green="0.14117647058823529" blue="0.14117647058823529" alpha="1" colorSpace="calibratedRGB"/>
                                                         <nil key="highlightedColor"/>

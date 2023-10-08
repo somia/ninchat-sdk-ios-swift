@@ -22,6 +22,7 @@ protocol NINGroupChatViewModel: AnyObject, NINChatStateProtocol, NINChatMessageP
     func joinVideoCall(inside parentView: UIView, completion: @escaping (Error?) -> Void)
     func joinWebVideoCallWithUrl(inside parentView: UIView, completion: @escaping (Error?) -> Void)
     func joinWebVideoCallWithIframe(inside parentView: UIView, completion: @escaping (Error?) -> Void)
+    func openNinchatNewUrl(inside parentView: UIView, completion: @escaping (Error?) -> Void)
     func leaveVideoCall()
 }
 
@@ -208,6 +209,29 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMee
         }
     }
     
+    func openNinchatNewUrl(inside parentView: UIView, completion: @escaping (Error?) -> Void) {
+        do {
+            try sessionManager?.discoverJitsi { [weak self] result in
+                guard let self = self, let sessionManager = self.sessionManager else {
+                    return
+                }
+                switch result {
+                case nil:
+                    completion(NinchatError(type: "unknown", props: nil))
+                case let .failure(error):
+                    completion(error)
+                case let .success(credentials):
+                    let request = URLRequest(url: URL(string: "https://ninchat.com/new")!)
+                    openVideoCallInWebViewWithUrl(request: request, parentView: parentView)
+                    
+                    completion(nil)
+                }
+            }
+        } catch {
+            completion(error)
+        }
+    }
+    
     func joinWebVideoCallWithUrl(inside parentView: UIView, completion: @escaping (Error?) -> Void) {
         do {
             try sessionManager?.discoverJitsi { [weak self] result in
@@ -269,7 +293,6 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMee
             completion(error)
         }
     }
-
 
     func joinWebVideoCallWithIframe(inside parentView: UIView, completion: @escaping (Error?) -> Void) {
         do {
