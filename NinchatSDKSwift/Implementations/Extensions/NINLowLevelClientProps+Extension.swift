@@ -34,6 +34,8 @@ enum HistoryOrder: Int {
 
 extension NINLowLevelClientProps {
     static func initiate(action: NINLowLevelClientActions? = nil, name: String? = nil) -> NINLowLevelClientProps {
+        debugger("action initiated: \(action)")
+        
         let props = NINLowLevelClientProps()
 
         if let action = action {
@@ -118,6 +120,7 @@ extension NINLowLevelClientProps: NINLowLevelSessionProps {
     }
 
     func setAction(_ action: NINLowLevelClientActions) {
+        debugger("action set: \(action)")
         self.set(value: action.rawValue, forKey: "action")
     }
 }
