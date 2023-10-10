@@ -86,7 +86,7 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         get { sessionManager.appDetails }
     }
 
-    public init(configKey: String, queueID: String? = nil, environments: [String]? = nil, metadata: NINLowLevelClientProps? = nil, configuration: NINSiteConfiguration? = nil, modalPresentationStyle: UIModalPresentationStyle) {
+    public init(configKey: String, queueID: String? = nil, environments: [String]? = nil, metadata: NINLowLevelClientProps? = nil, configuration: NINSiteConfiguration? = nil, modalPresentationStyle: UIModalPresentationStyle = .fullScreen) {
         self.configKey = configKey
         self.queueID = queueID
         self.environments = environments
