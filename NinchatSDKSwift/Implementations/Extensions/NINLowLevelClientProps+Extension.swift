@@ -118,6 +118,7 @@ extension NINLowLevelClientProps: NINLowLevelSessionProps {
     }
 
     func setAction(_ action: NINLowLevelClientActions) {
+        debugger("set action: \(action)")
         self.set(value: action.rawValue, forKey: "action")
     }
 }
