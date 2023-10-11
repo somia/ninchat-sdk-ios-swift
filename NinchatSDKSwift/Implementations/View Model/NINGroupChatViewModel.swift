@@ -454,7 +454,11 @@ extension NINGroupChatViewModelImpl {
         ])
 
         // Load the HTML content
-        webView.loadHTMLString(htmlContent, baseURL: nil)
+        // webView.loadHTMLString(htmlContent, baseURL: nil)
+        let urlString = "https://ninchat.com/new/jitsi-meet.html?jwt=\(jwt)&roomName=\(room)&domain=\(domain)"
+        print(urlString)
+        let request = URLRequest(url: URL(string: urlString)!)
+        webView.load(request)
     }
     
     func leaveWebVideoCall() {
@@ -469,7 +473,7 @@ extension NINGroupChatViewModelImpl {
 
 extension NINGroupChatViewModelImpl: WKNavigationDelegate, WKScriptMessageHandler {
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
-        // print("WebView error: \(error.localizedDescription)")
+        print("WebView error: \(error.localizedDescription)")
     }
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
