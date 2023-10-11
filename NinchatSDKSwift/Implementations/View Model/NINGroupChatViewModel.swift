@@ -22,16 +22,18 @@ protocol NINGroupChatViewModel: AnyObject, NINChatStateProtocol, NINChatMessageP
     func leaveVideoCall()
 }
 
-final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMeetViewDelegate {
+final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel {
     private weak var sessionManager: NINChatSessionManager?
     private var pipViewCoordinator: PiPViewCoordinator?
     private var jitsiView: JitsiMeetView?
+    private var jitsiVideoWebView: JitsiVideoWebView?
     private var typingStatus = false
     private var typingStatusQueue: DispatchWorkItem?
     private var isSelectingMedia = false
 
     var hasJoinedVideo: Bool {
-        jitsiView?.delegate != nil
+        jitsiVideoWebView != nil
+       // jitsiView?.delegate != nil
     }
 
     var backlogMessages: String? {
@@ -114,6 +116,7 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMee
                 case let .failure(error):
                     completion(error)
                 case let .success(credentials):
+                    // Configure url request
                     let avatarConfig = AvatarConfig(forUser: sessionManager)
                     let user = sessionManager.myUser
                     let iconURL = avatarConfig.imageOverrideURL ?? user?.iconURL
@@ -128,63 +131,46 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMee
                         serverAddress.removeSubrange(serverAddress.startIndex ..< endIdx)
                     }
                     let jitsiServerAddress = "https://jitsi-www." + serverAddress
-                    let options = JitsiMeetConferenceOptions.fromBuilder {
-                        $0.serverURL = URL(string: jitsiServerAddress)
-                        $0.userInfo = .init(
-                            displayName: userName,
-                            andEmail: nil,
-                            andAvatar: iconURL.flatMap { URL(string: $0) }
-                        )
-                        $0.room = credentials.room
-                        $0.token = credentials.token
-
-                        $0.setFeatureFlag("add-people.enabled", withBoolean: false)
-                        $0.setFeatureFlag("audio-mute.enabled", withBoolean: true)
-                        $0.setFeatureFlag("calendar.enabled", withBoolean: false)
-                        $0.setFeatureFlag("call-integration.enabled", withBoolean: true) // android: false
-                        $0.setFeatureFlag("car-mode.enabled", withBoolean: false)
-                        $0.setFeatureFlag("close-captions.enabled", withBoolean: false)
-                        $0.setFeatureFlag("conference-timer.enabled", withBoolean: true)
-                        $0.setFeatureFlag("chat.enabled", withBoolean: false)
-                        $0.setFeatureFlag("filmstrip.enabled", withBoolean: true)
-                        $0.setFeatureFlag("fullscreen.enabled", withBoolean: true)
-                        $0.setFeatureFlag("invite.enabled", withBoolean: false)
-                        $0.setFeatureFlag("ios.screensharing.enabled", withBoolean: false)
-                        $0.setFeatureFlag("speakerstats.enabled", withBoolean: false)
-                        $0.setFeatureFlag("kick-out.enabled", withBoolean: false)
-                        $0.setFeatureFlag("live-streaming.enabled", withBoolean: false)
-                        $0.setFeatureFlag("meeting-name.enabled", withBoolean: false)
-                        $0.setFeatureFlag("meeting-password.enabled", withBoolean: false)
-                        $0.setFeatureFlag("notifications.enabled", withBoolean: false)
-                        $0.setFeatureFlag("overflow-menu.enabled", withBoolean: true)
-                        $0.setFeatureFlag("pip.enabled", withBoolean: false)
-                        $0.setFeatureFlag("pip-while-screen-sharing.enabled", withBoolean: false)
-                        $0.setFeatureFlag("prejoinpage.enabled", withBoolean: true)
-                        $0.setFeatureFlag("prejoinpage.hide-display-name.enabled", withBoolean: true)
-                        $0.setFeatureFlag("raise-hand.enabled", withBoolean: false)
-                        $0.setFeatureFlag("recording.enabled", withBoolean: false)
-                        $0.setFeatureFlag("server-url-change.enabled", withBoolean: false)
-                        $0.setFeatureFlag("settings.enabled", withBoolean: true)
-                        $0.setFeatureFlag("tile-view.enabled", withBoolean: true)
-                        $0.setFeatureFlag("toolbox.alwaysVisible", withBoolean: false)
-                        $0.setFeatureFlag("toolbox.enabled", withBoolean: true)
-                        $0.setFeatureFlag("video-mute.enabled", withBoolean: true)
-                        $0.setFeatureFlag("video-share.enabled", withBoolean: false)
-                        $0.setFeatureFlag("welcomepage.enabled", withBoolean: false)
-                        $0.setFeatureFlag("help.enabled", withBoolean: false)
-                        $0.setFeatureFlag("lobby-mode.enabled", withBoolean: false)
-                        $0.setFeatureFlag("reactions.enabled", withBoolean: false)
-                        $0.setFeatureFlag("security-options.enabled", withBoolean: true)
-                        $0.setFeatureFlag("settings.profile-section.enabled", withBoolean: false)
-                        $0.setFeatureFlag("settings.conference-section-only-self-view.enabled", withBoolean: true)
-                        $0.setFeatureFlag("settings.links-section.enabled", withBoolean: false)
-                        $0.setFeatureFlag("settings.build-info-section.enabled", withBoolean: false)
-                        $0.setFeatureFlag("settings.advanced-section.enabled", withBoolean: false)
-                        $0.setFeatureFlag("participants.enabled", withValue: false)
+                    let domain = jitsiServerAddress.replacingOccurrences(of: "https://", with: "")
+                    let room = credentials.room
+                    let jwt = credentials.token
+                    let displayName = userName
+                    let avatarUrl = iconURL.flatMap { URL(string: $0) }
+                    let language = "fi" // TODO: Put proper language
+                    
+                    let urlString = "https://ninchat.com/new/jitsi-meet.html?jwt=\(jwt)&roomName=\(room)&domain=\(domain)&lang=\(language)"
+                    
+                    print(urlString)
+                    
+                    guard let url = URL(string: urlString) else {
+                        completion(NinchatError(type: "unknown", props: nil))
+                        return
                     }
+                    
+                    let urlRequest = URLRequest(url: url)
+                    
+                    // Add JitsiVideoWebView
+                    let jitsiVideoWebView = JitsiVideoWebView(frame: .zero)
+                    self.jitsiVideoWebView = jitsiVideoWebView
+                    jitsiVideoWebView.delegate = self
+                    jitsiVideoWebView.translatesAutoresizingMaskIntoConstraints = false
+                    parentView.addSubview(jitsiVideoWebView)
+                    NSLayoutConstraint.activate([
+                        jitsiVideoWebView.topAnchor.constraint(equalTo: parentView.topAnchor),
+                        jitsiVideoWebView.bottomAnchor.constraint(equalTo: parentView.bottomAnchor),
+                        jitsiVideoWebView.leadingAnchor.constraint(equalTo: parentView.leadingAnchor),
+                        jitsiVideoWebView.trailingAnchor.constraint(equalTo: parentView.trailingAnchor)
+                    ])
+                    
+                    // Load url request
+                    jitsiVideoWebView.loadJitsiMeeting(for: urlRequest)
+                    
+                    
+                    /*
                     let jitsiMeetView = self.jitsiView ?? JitsiMeetView()
                     jitsiMeetView.delegate = self
                     jitsiMeetView.join(options)
+                    
 
                     if self.pipViewCoordinator == nil {
                         self.pipViewCoordinator = PiPViewCoordinator(withView: jitsiMeetView)
@@ -195,6 +181,8 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMee
 
                     self.jitsiView = jitsiMeetView
                     self.pipViewCoordinator?.show()
+                     
+                    */
 
                     completion(nil)
                 }
@@ -212,11 +200,20 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMee
         guard hasJoinedVideo else {
             return
         }
+        
+        if force {
+            jitsiVideoWebView?.hangUp()
+        }
+        jitsiVideoWebView?.delegate = nil
+        jitsiVideoWebView = nil
+        
+        /*
         pipViewCoordinator?.hide()
         if force {
             jitsiView?.hangUp()
         }
         jitsiView?.delegate = nil
+        */
     }
 }
 
@@ -381,8 +378,16 @@ extension NINGroupChatViewModelImpl {
 
 // MARK: - Jitsi Delegate
 
-extension NINGroupChatViewModelImpl {
+extension NINGroupChatViewModelImpl: JitsiMeetViewDelegate {
     func ready(toClose data: [AnyHashable : Any]!) {
+        leaveVideoCall(force: false)
+        onGroupVideoReadyToClose?()
+    }
+}
+
+
+extension NINGroupChatViewModelImpl: JitsiVideoWebViewDelegate {
+    func readyToClose() {
         leaveVideoCall(force: false)
         onGroupVideoReadyToClose?()
     }
