@@ -233,6 +233,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     // MARK: - Setup View
 
     private func setupView() {
+        self.addJitsiVideoWebView()
         self.setupGestures()
         self.reloadView()
         self.updateInputContainerHeight(94.0)
@@ -494,6 +495,18 @@ extension NINGroupChatViewController {
         }
     }
 
+    private func addJitsiVideoWebView() {
+        let jitsiVideoWebView = JitsiVideoWebView(frame: .zero)
+        jitsiVideoWebView.translatesAutoresizingMaskIntoConstraints = false
+        videoViewContainer.addSubview(jitsiVideoWebView)
+        NSLayoutConstraint.activate([
+            jitsiVideoWebView.topAnchor.constraint(equalTo: videoViewContainer.topAnchor),
+            jitsiVideoWebView.bottomAnchor.constraint(equalTo: videoViewContainer.bottomAnchor),
+            jitsiVideoWebView.leadingAnchor.constraint(equalTo: videoViewContainer.leadingAnchor),
+            jitsiVideoWebView.trailingAnchor.constraint(equalTo: videoViewContainer.trailingAnchor)
+        ])
+    }
+    
     private func markVideoCallAsFinished() {
         moveVideoContainerToBack()
         markChatButton(hasUnreadMessages: false)

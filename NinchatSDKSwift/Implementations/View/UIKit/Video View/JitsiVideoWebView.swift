@@ -29,11 +29,13 @@ class JitsiVideoWebView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = .clear
+        self.addWebView()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         self.backgroundColor = .clear
+        self.addWebView()
     }
     
     deinit {
@@ -79,10 +81,6 @@ extension JitsiVideoWebView {
 // MARK: - Loading Jitsi
 extension JitsiVideoWebView {
     func loadJitsiMeeting(for urlRequest: URLRequest) {
-        if webView == nil {
-            addWebView()
-        }
-        
         if isDebugMode {
             let htmlContent = getJitsiVideoWebViewHtml(for: urlRequest)
             webView.loadHTMLString(htmlContent, baseURL: nil)
@@ -96,10 +94,7 @@ extension JitsiVideoWebView {
 extension JitsiVideoWebView {
     func hangUp() {
         webView.evaluateJavaScript("hangUpConference();", completionHandler: { [weak self](result, error) in
-            self?.webView?.stopLoading()
-            self?.webView?.navigationDelegate = nil
-            self?.webView?.removeFromSuperview()
-            self?.webView = nil
+            print("Hang up result: \(result), error: \(error)")
         })
     }
 }

@@ -150,21 +150,12 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel {
                     let urlRequest = URLRequest(url: url)
                     
                     // Add JitsiVideoWebView
-                    let jitsiVideoWebView = JitsiVideoWebView(frame: .zero)
+                    let jitsiVideoWebView = parentView.subviews.filter { $0 is JitsiVideoWebView }.first as? JitsiVideoWebView
                     self.jitsiVideoWebView = jitsiVideoWebView
-                    jitsiVideoWebView.delegate = self
-                    jitsiVideoWebView.translatesAutoresizingMaskIntoConstraints = false
-                    parentView.addSubview(jitsiVideoWebView)
-                    NSLayoutConstraint.activate([
-                        jitsiVideoWebView.topAnchor.constraint(equalTo: parentView.topAnchor),
-                        jitsiVideoWebView.bottomAnchor.constraint(equalTo: parentView.bottomAnchor),
-                        jitsiVideoWebView.leadingAnchor.constraint(equalTo: parentView.leadingAnchor),
-                        jitsiVideoWebView.trailingAnchor.constraint(equalTo: parentView.trailingAnchor)
-                    ])
+                    jitsiVideoWebView?.delegate = self
                     
                     // Load url request
-                    jitsiVideoWebView.loadJitsiMeeting(for: urlRequest)
-                    
+                    jitsiVideoWebView?.loadJitsiMeeting(for: urlRequest)
                     
                     /*
                     let jitsiMeetView = self.jitsiView ?? JitsiMeetView()
