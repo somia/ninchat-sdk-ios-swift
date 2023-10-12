@@ -59,6 +59,9 @@ extension JitsiVideoWebView {
         webConfig.userContentController = contentController
         
         self.webView = WKWebView(frame: .zero, configuration: webConfig)
+        webView.backgroundColor = .black
+        webView.isOpaque = false
+        webView.scrollView.backgroundColor = .black
         
         // Set a custom non-iPhone user agent, otherwise Jitsi might not load
         webView.customUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
