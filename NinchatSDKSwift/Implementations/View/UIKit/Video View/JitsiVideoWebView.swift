@@ -8,7 +8,7 @@
 import UIKit
 import WebKit
 
-protocol JitsiVideoWebViewDelegate: class {
+protocol JitsiVideoWebViewDelegate: AnyObject {
     func readyToClose()
 }
 
