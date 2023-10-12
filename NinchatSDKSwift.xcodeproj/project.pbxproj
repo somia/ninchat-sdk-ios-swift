@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -17,6 +17,7 @@
 		5C7A2AF227D20AF90067F2F1 /* QuestionnaireCellForm.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5C7A2AF127D20AF90067F2F1 /* QuestionnaireCellForm.xib */; };
 		5CD4F1C82540CAAF009856AC /* Notification+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD4F1C62540CAAF009856AC /* Notification+Extension.swift */; };
 		5CD4F1C92540CAAF009856AC /* KeyboardHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD4F1C72540CAAF009856AC /* KeyboardHandler.swift */; };
+		75990FEF2AD7E95500EBC306 /* JitsiVideoWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75990FEE2AD7E95500EBC306 /* JitsiVideoWebView.swift */; };
 		7C44F1A84C25C4445CF3B955 /* Pods_NinchatSDKSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 495ADA60487CD354EDC07332 /* Pods_NinchatSDKSwift.framework */; };
 		851E359923B1214E000FA966 /* AutolayouTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851E359823B1214E000FA966 /* AutolayouTests.swift */; };
 		851ECF6423969297006D332F /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 851ECF6323969297006D332F /* README.md */; };
@@ -265,6 +266,7 @@
 		5CD4F1C62540CAAF009856AC /* Notification+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Notification+Extension.swift"; sourceTree = "<group>"; };
 		5CD4F1C72540CAAF009856AC /* KeyboardHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardHandler.swift; sourceTree = "<group>"; };
 		62C8D99D572F0DB4B5E6D255 /* Pods-NinchatSDKSwiftUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftUITests.release.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftUITests/Pods-NinchatSDKSwiftUITests.release.xcconfig"; sourceTree = "<group>"; };
+		75990FEE2AD7E95500EBC306 /* JitsiVideoWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JitsiVideoWebView.swift; sourceTree = "<group>"; };
 		7B50C1E321841F3749D5D05A /* Pods-NinchatSDKSwiftServerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftServerTests.release.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftServerTests/Pods-NinchatSDKSwiftServerTests.release.xcconfig"; sourceTree = "<group>"; };
 		832BEC3E467C0EEE45282F1B /* Pods-NinchatSDKSwiftTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKSwiftTests.debug.xcconfig"; path = "Target Support Files/Pods-NinchatSDKSwiftTests/Pods-NinchatSDKSwiftTests.debug.xcconfig"; sourceTree = "<group>"; };
 		851E359823B1214E000FA966 /* AutolayouTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutolayouTests.swift; sourceTree = "<group>"; };
@@ -611,6 +613,7 @@
 		8530EC8223AD405200BAA52A /* Video View */ = {
 			isa = PBXGroup;
 			children = (
+				75990FEE2AD7E95500EBC306 /* JitsiVideoWebView.swift */,
 				8530EC8423AD405200BAA52A /* VideoView.swift */,
 				8530EC8323AD405200BAA52A /* VideoView.xib */,
 			);
@@ -1548,6 +1551,7 @@
 				91A16D46F4A792C00EC23086 /* ComposeMessage.swift in Sources */,
 				91A165F76F51AC329049D95E /* Dictionary+Extension.swift in Sources */,
 				91A1637BC9B1BCF029EE608F /* Queue.swift in Sources */,
+				75990FEF2AD7E95500EBC306 /* JitsiVideoWebView.swift in Sources */,
 				91A166157BBD01A10A8A6520 /* WebRTCServerInfo.swift in Sources */,
 				91A161BA5B39C92B92F6B56B /* RTCSessionDescription+Extension.swift in Sources */,
 				91A164EF2633C3EEEC657848 /* RTCIceCandidate+Extension.swift in Sources */,
