@@ -195,8 +195,8 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel {
         if force {
             jitsiVideoWebView?.hangUp()
         }
-        jitsiVideoWebView?.delegate = nil
-        jitsiVideoWebView = nil
+        self.jitsiVideoWebView?.delegate = nil
+        self.jitsiVideoWebView = nil
         
         /*
         pipViewCoordinator?.hide()

@@ -93,9 +93,7 @@ extension JitsiVideoWebView {
 // MARK: - Finishing a Jitsi meeting
 extension JitsiVideoWebView {
     func hangUp() {
-        webView.evaluateJavaScript("hangUpConference();", completionHandler: { [weak self](result, error) in
-            print("Hang up result: \(result), error: \(error)")
-        })
+        webView.evaluateJavaScript("hangUpConference();")
     }
 }
 
@@ -113,7 +111,6 @@ extension JitsiVideoWebView: WKScriptMessageHandler {
         case "videoConferenceJoined":
             print("Video conference joined!")
         case "videoConferenceLeft":
-            print("Video conference left!")
             delegate?.readyToClose()
         default:
             break
