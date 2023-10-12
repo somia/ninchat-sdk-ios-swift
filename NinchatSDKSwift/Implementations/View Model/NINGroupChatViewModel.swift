@@ -133,7 +133,16 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel {
                     let jwt = credentials.token
                     let displayName = userName
                     let avatarUrl = iconURL.flatMap { URL(string: $0) }
-                    let language = "fi" // TODO: Put proper language
+                    
+                    var language = "en"
+                    switch Locale.current.languageCode {
+                    case "fi":
+                        language = "fi"
+                    case "sv":
+                        language = "sv"
+                    default:
+                        language = "en"
+                    }
                     
                     let urlString = "https://ninchat.com/new/jitsi-meet.html?jwt=\(jwt)&roomName=\(room)&domain=\(domain)&lang=\(language)"
                     
