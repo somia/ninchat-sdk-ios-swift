@@ -483,7 +483,6 @@
 		FA026FE8299BAC6100C4D3E4 /* JoinVideoButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JoinVideoButton.swift; sourceTree = "<group>"; };
 		FA026FEA299BAC7A00C4D3E4 /* NINGroupChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINGroupChatViewController.swift; sourceTree = "<group>"; };
 		FA026FEC299BAC8C00C4D3E4 /* NINGroupChatViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NINGroupChatViewModel.swift; sourceTree = "<group>"; };
-		FA7958B329FBB821006527A7 /* JitsiMeetSDK.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = JitsiMeetSDK.podspec; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -678,7 +677,6 @@
 			children = (
 				855B9F9D238ED9DC0081A9C6 /* Podfile */,
 				852751D8238EE67000B6A44A /* NinchatSDKSwift.podspec */,
-				FA7958B329FBB821006527A7 /* JitsiMeetSDK.podspec */,
 				852751DA238EE67800B6A44A /* BUILDING.md */,
 				851ECF6323969297006D332F /* README.md */,
 				855B9F13238ECDB30081A9C6 /* NinchatSDKSwift */,
