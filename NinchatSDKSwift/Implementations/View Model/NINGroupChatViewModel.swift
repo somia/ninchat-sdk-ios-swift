@@ -146,8 +146,6 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel {
                     
                     let urlString = "https://ninchat.com/new/jitsi-meet.html?jwt=\(jwt)&roomName=\(room)&domain=\(domain)&lang=\(language)"
                     
-                    print(urlString)
-                    
                     guard let url = URL(string: urlString) else {
                         completion(NinchatError(type: "unknown", props: nil))
                         return

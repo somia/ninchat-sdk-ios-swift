@@ -386,7 +386,7 @@ extension NINChatWebRTCClientImpl {
     @objc
     private func didSessionRouteChange(_ notification: Notification) {
         if let userInfo = notification.userInfo, let reasonKey = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt, let reason = AVAudioSession.RouteChangeReason(rawValue: reasonKey) {
-            print("Route Changed: \(userInfo)")
+            debugger("Route Changed: \(userInfo)")
             
             /// Force Speaker in case the app tries to use earning as the output
             if RTCAudioSession.sharedInstance().currentRoute.outputs.first?.portType.rawValue ?? "" == "Receiver" || AVAudioSession.sharedInstance().currentRoute.outputs.first?.portType.rawValue ?? "" == "Receiver" {

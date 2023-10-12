@@ -37,10 +37,6 @@ class JitsiVideoWebView: UIView {
         self.backgroundColor = .clear
         self.addWebView()
     }
-    
-    deinit {
-        print("JitsiVideoWebView deinited!")
-    }
 }
 
 // MARK: - WKWebView setup
@@ -59,6 +55,8 @@ extension JitsiVideoWebView {
         webConfig.userContentController = contentController
         
         self.webView = WKWebView(frame: .zero, configuration: webConfig)
+        
+        // Use black background for the web view while it loads Jitsy video
         webView.backgroundColor = .black
         webView.isOpaque = false
         webView.scrollView.backgroundColor = .black
@@ -103,7 +101,7 @@ extension JitsiVideoWebView {
 // MARK: - WKNavigationDelegate
 extension JitsiVideoWebView: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
-        print("WebView error: \(error.localizedDescription)")
+        // debugger("WebView error: \(error.localizedDescription)")
     }
 }
 
@@ -111,8 +109,6 @@ extension JitsiVideoWebView: WKNavigationDelegate {
 extension JitsiVideoWebView: WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         switch message.name {
-        case "videoConferenceJoined":
-            print("Video conference joined!")
         case "videoConferenceLeft":
             delegate?.readyToClose()
         default:
