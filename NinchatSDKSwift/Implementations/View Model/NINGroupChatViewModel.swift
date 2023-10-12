@@ -5,7 +5,6 @@
 //
 
 import Foundation
-import JitsiMeetSDK
 
 protocol NINGroupChatViewModel: AnyObject, NINChatStateProtocol, NINChatMessageProtocol, NINChatPermissionsProtocol, NINChatAttachmentProtocol {
     var hasJoinedVideo: Bool { get }
@@ -24,8 +23,6 @@ protocol NINGroupChatViewModel: AnyObject, NINChatStateProtocol, NINChatMessageP
 
 final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel {
     private weak var sessionManager: NINChatSessionManager?
-    private var pipViewCoordinator: PiPViewCoordinator?
-    private var jitsiView: JitsiMeetView?
     private var jitsiVideoWebView: JitsiVideoWebView?
     private var typingStatus = false
     private var typingStatusQueue: DispatchWorkItem?
@@ -156,25 +153,6 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel {
                     
                     // Load url request
                     jitsiVideoWebView?.loadJitsiMeeting(for: urlRequest)
-                    
-                    /*
-                    let jitsiMeetView = self.jitsiView ?? JitsiMeetView()
-                    jitsiMeetView.delegate = self
-                    jitsiMeetView.join(options)
-                    
-
-                    if self.pipViewCoordinator == nil {
-                        self.pipViewCoordinator = PiPViewCoordinator(withView: jitsiMeetView)
-                    }
-                    self.pipViewCoordinator?.configureAsStickyView(withParentView: parentView)
-
-                    jitsiMeetView.alpha = 0
-
-                    self.jitsiView = jitsiMeetView
-                    self.pipViewCoordinator?.show()
-                     
-                    */
-
                     completion(nil)
                 }
             }
@@ -367,15 +345,7 @@ extension NINGroupChatViewModelImpl {
     }
 }
 
-// MARK: - Jitsi Delegate
-
-extension NINGroupChatViewModelImpl: JitsiMeetViewDelegate {
-    func ready(toClose data: [AnyHashable : Any]!) {
-        leaveVideoCall(force: false)
-        onGroupVideoReadyToClose?()
-    }
-}
-
+// MARK: - JitsiVideoWebViewDelegate
 
 extension NINGroupChatViewModelImpl: JitsiVideoWebViewDelegate {
     func readyToClose() {
