@@ -156,7 +156,7 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel {
                     // Add JitsiVideoWebView
                     let jitsiVideoWebView = parentView.subviews.filter { $0 is JitsiVideoWebView }.first as? JitsiVideoWebView
                     self.jitsiVideoWebView = jitsiVideoWebView
-                    jitsiVideoWebView?.delegate = self
+                    jitsiVideoWebView?.eventsDelegate = self
                     
                     // Load url request
                     jitsiVideoWebView?.loadJitsiMeeting(for: urlRequest)
@@ -180,16 +180,8 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel {
         if force {
             jitsiVideoWebView?.hangUp()
         }
-        self.jitsiVideoWebView?.delegate = nil
+        self.jitsiVideoWebView?.eventsDelegate = nil
         self.jitsiVideoWebView = nil
-        
-        /*
-        pipViewCoordinator?.hide()
-        if force {
-            jitsiView?.hangUp()
-        }
-        jitsiView?.delegate = nil
-        */
     }
 }
 
@@ -354,7 +346,7 @@ extension NINGroupChatViewModelImpl {
 
 // MARK: - JitsiVideoWebViewDelegate
 
-extension NINGroupChatViewModelImpl: JitsiVideoWebViewDelegate {
+extension NINGroupChatViewModelImpl: JitsiVideoWebViewEventsDelegate {
     func readyToClose() {
         leaveVideoCall(force: false)
         onGroupVideoReadyToClose?()

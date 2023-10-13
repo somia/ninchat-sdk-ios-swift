@@ -52,6 +52,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     @IBOutlet private(set) weak var backgroundView: UIImageView! /// <--- to hold page background image, it is more flexible to have a dedicated view
 
     @IBOutlet private(set) weak var videoViewContainer: UIView!
+    private var jitsiVideoWebView: JitsiVideoWebView?
 
     @IBOutlet private(set) weak var joinVideoContainerHeight: NSLayoutConstraint!
     @IBOutlet private(set) weak var joinVideoContainer: UIView!
@@ -497,6 +498,8 @@ extension NINGroupChatViewController {
 
     private func addJitsiVideoWebView() {
         let jitsiVideoWebView = JitsiVideoWebView(frame: .zero)
+        self.jitsiVideoWebView = jitsiVideoWebView
+        self.jitsiVideoWebView?.tapDelegate = self
         jitsiVideoWebView.translatesAutoresizingMaskIntoConstraints = false
         videoViewContainer.addSubview(jitsiVideoWebView)
         NSLayoutConstraint.activate([
@@ -658,5 +661,15 @@ extension NINGroupChatViewController {
         self.viewModel.onChannelClosed = nil
         self.viewModel.onQueueUpdated = nil
         self.viewModel.onChannelMessage = nil
+    }
+}
+
+extension NINGroupChatViewController: JitsiVideoWebViewTapDelegate {
+    func didTapOnVideoContainer() {
+        // First we check if the video container is on front.
+        // If it isn't, it means that it is covered by the chat view and we hide it when user taps on the video container.
+        if let superview = videoViewContainer.superview, superview.subviews.last != videoViewContainer {
+            onToggleChatDidTap("")
+        }
     }
 }
