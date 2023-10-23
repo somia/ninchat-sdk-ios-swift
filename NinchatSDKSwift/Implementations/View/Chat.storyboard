@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="YpM-11-QhB">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22154" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="YpM-11-QhB">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22130"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -37,7 +36,7 @@
                                 <rect key="frame" x="0.0" y="108" width="414" height="250.5"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="7p5-JL-Lp6">
-                                        <rect key="frame" x="45" y="68" width="324" height="114.5"/>
+                                        <rect key="frame" x="45" y="69" width="324" height="112.5"/>
                                         <subviews>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_progress_whirl" translatesAutoresizingMaskIntoConstraints="NO" id="9Zh-Yi-kTD">
                                                 <rect key="frame" x="137" y="0.0" width="50" height="50"/>
@@ -48,7 +47,7 @@
                                                 </constraints>
                                             </imageView>
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="LqB-7o-Qb9">
-                                                <rect key="frame" x="46.5" y="58" width="231" height="56.5"/>
+                                                <rect key="frame" x="38.5" y="58" width="247" height="54.5"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <string key="text">Joined audience queue {{name}},
 you are next. </string>
@@ -73,7 +72,7 @@ you are next. </string>
                                 <rect key="frame" x="0.0" y="358.5" width="414" height="537.5"/>
                                 <subviews>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed " textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="RGm-bx-l81">
-                                        <rect key="frame" x="20" y="50" width="374" height="56.5"/>
+                                        <rect key="frame" x="20" y="50" width="374" height="54.5"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="textColor" systemColor="labelColor"/>
                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
@@ -81,7 +80,7 @@ you are next. </string>
                                         <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
                                     </textView>
                                     <view contentMode="scaleToFill" placeholderIntrinsicWidth="135" placeholderIntrinsicHeight="45" translatesAutoresizingMaskIntoConstraints="NO" id="8zZ-5c-Lgm" customClass="CloseButton" customModule="NinchatSDKSwift">
-                                        <rect key="frame" x="139.5" y="146.5" width="135" height="45"/>
+                                        <rect key="frame" x="139.5" y="144.5" width="135" height="45"/>
                                         <color key="backgroundColor" red="1" green="0.0" blue="0.2431916516" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </view>
                                 </subviews>
@@ -345,13 +344,13 @@ you are next. </string>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L5U-F0-l9Y" userLabel="Top part container view">
-                                <rect key="frame" x="0.0" y="88.5" width="414" height="467.5"/>
+                                <rect key="frame" x="0.0" y="88.5" width="414" height="484.5"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="qj1-1U-Y4U">
-                                        <rect key="frame" x="8" y="0.0" width="398" height="467.5"/>
+                                        <rect key="frame" x="8" y="0.0" width="398" height="484.5"/>
                                         <subviews>
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="How was our customer service? Please leave a rating by pressing the buttons below, or hit Skip to bypass this step." textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Ikj-NF-Jwm">
-                                                <rect key="frame" x="0.0" y="0.0" width="398" height="56.5"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="398" height="73.5"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="37" id="VQd-TN-xwp"/>
@@ -361,16 +360,16 @@ you are next. </string>
                                                 <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
                                             </textView>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B6F-ML-XSh" customClass="FacesView" customModule="NinchatSDKSwift">
-                                                <rect key="frame" x="0.0" y="64.5" width="398" height="403"/>
+                                                <rect key="frame" x="0.0" y="81.5" width="398" height="403"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </view>
                                         </subviews>
                                     </stackView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zhu-12-0xh">
-                                        <rect key="frame" x="8" y="0.0" width="398" height="467.5"/>
+                                        <rect key="frame" x="8" y="0.0" width="398" height="484.5"/>
                                         <subviews>
                                             <view tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Vt6-hF-T0g" userLabel="Left avatar container">
-                                                <rect key="frame" x="15" y="0.0" width="35" height="467.5"/>
+                                                <rect key="frame" x="15" y="0.0" width="35" height="484.5"/>
                                                 <subviews>
                                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" fixedFrame="YES" image="icon_avatar_other" translatesAutoresizingMaskIntoConstraints="NO" id="Yfi-1D-cO5">
                                                         <rect key="frame" x="0.0" y="12" width="35" height="35"/>
@@ -387,7 +386,7 @@ you are next. </string>
                                                 <rect key="frame" x="58" y="9.5" width="71.5" height="40"/>
                                                 <subviews>
                                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="999" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Dr Koistinen" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vdr-sU-emu">
-                                                        <rect key="frame" x="0.0" y="11" width="71.5" height="18"/>
+                                                        <rect key="frame" x="0.0" y="11" width="76.5" height="18"/>
                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
                                                         <nil key="highlightedColor"/>
@@ -479,7 +478,7 @@ you are next. </string>
                                 </connections>
                             </button>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed " textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="yEN-f5-12p">
-                                <rect key="frame" x="8" y="580" width="398" height="56.5"/>
+                                <rect key="frame" x="8" y="597" width="398" height="54.5"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="textColor" systemColor="labelColor"/>
                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
@@ -543,13 +542,13 @@ you are next. </string>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wa1-0U-Lj7" userLabel="Top container view">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="316.5"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="314.5"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wXY-o9-goJ" userLabel="Welcome text container view">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="136.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="134.5"/>
                                         <subviews>
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed " textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="sio-TM-FLm">
-                                                <rect key="frame" x="20" y="50" width="374" height="56.5"/>
+                                                <rect key="frame" x="20" y="50" width="374" height="54.5"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <color key="textColor" systemColor="labelColor"/>
                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
@@ -566,7 +565,7 @@ you are next. </string>
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MP0-uv-PXT" userLabel="Button container view">
-                                        <rect key="frame" x="0.0" y="136.5" width="414" height="180"/>
+                                        <rect key="frame" x="0.0" y="134.5" width="414" height="180"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="kgP-Ty-5vY">
                                                 <rect key="frame" x="87" y="5" width="240" height="60"/>
@@ -643,10 +642,10 @@ you are next. </string>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3xg-1C-FCR" userLabel="Bottom container view">
-                                <rect key="frame" x="0.0" y="316.5" width="414" height="579.5"/>
+                                <rect key="frame" x="0.0" y="314.5" width="414" height="581.5"/>
                                 <subviews>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="D4q-k8-gpN">
-                                        <rect key="frame" x="20" y="40" width="374" height="117"/>
+                                        <rect key="frame" x="20" y="40" width="374" height="131"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. </string>
                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
@@ -753,13 +752,13 @@ you are next. </string>
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="199"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="xv2-Vb-E7a">
-                                                <rect key="frame" x="0.0" y="16" width="414" height="134"/>
+                                                <rect key="frame" x="0.0" y="16" width="414" height="132"/>
                                                 <subviews>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="oMz-g1-Vcu">
-                                                        <rect key="frame" x="154" y="0.0" width="106.5" height="57"/>
+                                                        <rect key="frame" x="149.5" y="0.0" width="115.5" height="55"/>
                                                         <subviews>
                                                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_camera_on" translatesAutoresizingMaskIntoConstraints="NO" id="BDs-BD-POF">
-                                                                <rect key="frame" x="20.5" y="0.0" width="65" height="26"/>
+                                                                <rect key="frame" x="25" y="0.0" width="65" height="26"/>
                                                                 <color key="tintColor" red="0.49411764705882355" green="0.58431372549019611" blue="0.68627450980392157" alpha="1" colorSpace="calibratedRGB"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="height" constant="26" id="17B-Jk-EB8"/>
@@ -767,7 +766,7 @@ you are next. </string>
                                                                 </constraints>
                                                             </imageView>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Video Meeting" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gM3-CS-0gI">
-                                                                <rect key="frame" x="0.0" y="34" width="106.5" height="23"/>
+                                                                <rect key="frame" x="0.0" y="34" width="115.5" height="21"/>
                                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="18"/>
                                                                 <color key="textColor" red="0.14117647058823529" green="0.14117647058823529" blue="0.14117647058823529" alpha="1" colorSpace="calibratedRGB"/>
                                                                 <nil key="highlightedColor"/>
@@ -775,7 +774,7 @@ you are next. </string>
                                                         </subviews>
                                                     </stackView>
                                                     <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rMZ-Jf-WSH" customClass="JoinVideoButton" customModule="NinchatSDKSwift">
-                                                        <rect key="frame" x="117" y="73" width="180" height="45"/>
+                                                        <rect key="frame" x="117" y="71" width="180" height="45"/>
                                                         <color key="backgroundColor" red="0.0" green="0.54117647059999996" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="45" id="Wdj-LA-s0H"/>
@@ -787,11 +786,11 @@ you are next. </string>
                                                             <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         </state>
                                                         <connections>
-                                                            <action selector="onJoinVidoCallDidTap:" destination="rkl-lh-0pE" eventType="touchUpInside" id="IOY-mQ-bIk"/>
+                                                            <action selector="onJoinVideoCallDidTap:" destination="rkl-lh-0pE" eventType="touchUpInside" id="IOY-mQ-bIk"/>
                                                         </connections>
                                                     </button>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qEb-zT-pbh">
-                                                        <rect key="frame" x="207" y="134" width="0.0" height="0.0"/>
+                                                        <rect key="frame" x="207" y="132" width="0.0" height="0.0"/>
                                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="15"/>
                                                         <color key="textColor" red="0.14117647058823529" green="0.14117647058823529" blue="0.14117647058823529" alpha="1" colorSpace="calibratedRGB"/>
                                                         <nil key="highlightedColor"/>
@@ -1004,7 +1003,7 @@ you are next. </string>
         <image name="icon_chat_toggle" width="19" height="19"/>
         <image name="icon_progress_whirl" width="800" height="800"/>
         <systemColor name="labelColor">
-            <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

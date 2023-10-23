@@ -52,6 +52,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     @IBOutlet private(set) weak var backgroundView: UIImageView! /// <--- to hold page background image, it is more flexible to have a dedicated view
 
     @IBOutlet private(set) weak var videoViewContainer: UIView!
+    private var jitsiVideoWebView: JitsiVideoWebView?
 
     @IBOutlet private(set) weak var joinVideoContainerHeight: NSLayoutConstraint!
     @IBOutlet private(set) weak var joinVideoContainer: UIView!
@@ -233,6 +234,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     // MARK: - Setup View
 
     private func setupView() {
+        self.addJitsiVideoWebView()
         self.setupGestures()
         self.reloadView()
         self.updateInputContainerHeight(94.0)
@@ -326,7 +328,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
 
     // MARK: - Video Call
 
-    @IBAction func onJoinVidoCallDidTap(_ sender: Any) {
+    @IBAction func onJoinVideoCallDidTap(_ sender: Any) {
         view.endEditing(true)
         viewModel.joinVideoCall(inside: videoViewContainer) { [weak self] error in
             if error != nil {
@@ -494,6 +496,20 @@ extension NINGroupChatViewController {
         }
     }
 
+    private func addJitsiVideoWebView() {
+        let jitsiVideoWebView = JitsiVideoWebView(frame: .zero)
+        self.jitsiVideoWebView = jitsiVideoWebView
+        self.jitsiVideoWebView?.tapDelegate = self
+        jitsiVideoWebView.translatesAutoresizingMaskIntoConstraints = false
+        videoViewContainer.addSubview(jitsiVideoWebView)
+        NSLayoutConstraint.activate([
+            jitsiVideoWebView.topAnchor.constraint(equalTo: videoViewContainer.topAnchor),
+            jitsiVideoWebView.bottomAnchor.constraint(equalTo: videoViewContainer.bottomAnchor),
+            jitsiVideoWebView.leadingAnchor.constraint(equalTo: videoViewContainer.leadingAnchor),
+            jitsiVideoWebView.trailingAnchor.constraint(equalTo: videoViewContainer.trailingAnchor)
+        ])
+    }
+    
     private func markVideoCallAsFinished() {
         moveVideoContainerToBack()
         markChatButton(hasUnreadMessages: false)
@@ -645,5 +661,15 @@ extension NINGroupChatViewController {
         self.viewModel.onChannelClosed = nil
         self.viewModel.onQueueUpdated = nil
         self.viewModel.onChannelMessage = nil
+    }
+}
+
+extension NINGroupChatViewController: JitsiVideoWebViewTapDelegate {
+    func didTapOnVideoContainer() {
+        // First we check if the video container is on front.
+        // If it isn't, it means that it is covered by the chat view and we hide it when user taps on the video container.
+        if let superview = videoViewContainer.superview, superview.subviews.last != videoViewContainer {
+            onToggleChatDidTap("")
+        }
     }
 }
