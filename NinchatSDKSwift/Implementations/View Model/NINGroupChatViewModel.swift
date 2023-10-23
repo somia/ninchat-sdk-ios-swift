@@ -113,45 +113,68 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel {
                 case let .failure(error):
                     completion(error)
                 case let .success(credentials):
-                    // Configure url request
-                    let avatarConfig = AvatarConfig(forUser: sessionManager)
+                    // User
                     let user = sessionManager.myUser
-                    let iconURL = avatarConfig.imageOverrideURL ?? user?.iconURL
+
+                    // Use imageOverrideURL or iconURL (if available) or default to nil if both are absent.
+                    let avatarConfig = AvatarConfig(forUser: sessionManager)
+                    let iconURLString = avatarConfig.imageOverrideURL ?? user?.iconURL
+
+                    // Choose nameOverride if available, otherwise use user's displayName or a default "Guest" label.
                     let userName = !avatarConfig.nameOverride.isEmpty
                         ? avatarConfig.nameOverride
                         : (user?.displayName ?? "Guest".localized)
 
+                    // Get server address
                     var serverAddress: String = sessionManager.serverAddress
                     let apiPrefix = "api."
                     if serverAddress.hasPrefix(apiPrefix) {
                         let endIdx = serverAddress.index(serverAddress.startIndex, offsetBy: apiPrefix.count)
                         serverAddress.removeSubrange(serverAddress.startIndex ..< endIdx)
                     }
+
+                    // Construct Jitsi server address and extract domain.
                     let jitsiServerAddress = "https://jitsi-www." + serverAddress
                     let domain = jitsiServerAddress.replacingOccurrences(of: "https://", with: "")
+
+                    // Prepare other necessary variables.
                     let room = credentials.room
                     let jwt = credentials.token
-                    let displayName = userName
-                    let avatarUrl = iconURL.flatMap { URL(string: $0) }
-                    
-                    var language = "en"
-                    switch Locale.current.languageCode {
-                    case "fi":
-                        language = "fi"
-                    case "sv":
-                        language = "sv"
-                    default:
-                        language = "en"
+                    let displayName = userName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+
+                    // Determine the appropriate language.
+                    let supportedLanguages = ["fi", "sv", "en"]
+                    let currentLanguage = Locale.current.languageCode ?? "en"
+                    let language = supportedLanguages.contains(currentLanguage) ? currentLanguage : "en"
+
+                    // Construct the URL query items, adding displayName and avatarURL if available.
+                    var queryItems: [URLQueryItem] = [
+                        URLQueryItem(name: "jwt", value: jwt),
+                        URLQueryItem(name: "roomName", value: room),
+                        URLQueryItem(name: "domain", value: domain),
+                        URLQueryItem(name: "lang", value: language)
+                    ]
+
+                    if let encodedDisplayName = displayName {
+                        queryItems.append(URLQueryItem(name: "displayName", value: encodedDisplayName))
                     }
-                    
-                    let urlString = "https://ninchat.com/new/jitsi-meet.html?jwt=\(jwt)&roomName=\(room)&domain=\(domain)&lang=\(language)"
-                    
-                    guard let url = URL(string: urlString) else {
+
+                    if let iconURLString = iconURLString, let avatarUrl = URL(string: iconURLString) {
+                        queryItems.append(URLQueryItem(name: "avatarURL", value: avatarUrl.absoluteString))
+                    }
+
+                    // Build the final URL.
+                    var urlComponents = URLComponents(string: "https://ninchat.com/new/jitsi-meet.html")
+                    urlComponents?.queryItems = queryItems
+
+                    // Validate and use the final URL.
+                    guard let finalUrl = urlComponents?.url else {
                         completion(NinchatError(type: "unknown", props: nil))
                         return
                     }
-                    
-                    let urlRequest = URLRequest(url: url)
+
+                    // If we're here, it means the URL is valid, and we can create the URLRequest.
+                    let urlRequest = URLRequest(url: finalUrl)
                     
                     // Add JitsiVideoWebView
                     let jitsiVideoWebView = parentView.subviews.filter { $0 is JitsiVideoWebView }.first as? JitsiVideoWebView
