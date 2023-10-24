@@ -12,10 +12,6 @@ protocol JitsiVideoWebViewEventsDelegate: AnyObject {
     func readyToClose()
 }
 
-protocol JitsiVideoWebViewTapDelegate: AnyObject {
-    func didTapOnVideoContainer()
-}
-
 class JitsiVideoWebView: UIView {
 
     // MARK: - PROPERTIES
@@ -25,7 +21,6 @@ class JitsiVideoWebView: UIView {
     
     // MARK: - Delegate
     var eventsDelegate: JitsiVideoWebViewEventsDelegate?
-    var tapDelegate: JitsiVideoWebViewTapDelegate?
     
     // MARK: - Debug mode
     private var isDebugMode = false
@@ -84,23 +79,6 @@ extension JitsiVideoWebView {
             webView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             webView.trailingAnchor.constraint(equalTo: self.trailingAnchor)
         ])
-        
-        // Set a tap gesture recognizer on the webView
-        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture))
-        tapRecognizer.cancelsTouchesInView = false
-        tapRecognizer.delegate = self
-        webView.addGestureRecognizer(tapRecognizer)
-    }
-}
-
-// MARK: - UIGestureRecognizerDelegate
-extension JitsiVideoWebView: UIGestureRecognizerDelegate {
-    @objc private func handleTapGesture(recognizer: UITapGestureRecognizer) {
-        tapDelegate?.didTapOnVideoContainer()
-    }
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-      return true
     }
 }
 

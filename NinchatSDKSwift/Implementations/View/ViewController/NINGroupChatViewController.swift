@@ -53,6 +53,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
 
     @IBOutlet private(set) weak var videoViewContainer: UIView!
     private var jitsiVideoWebView: JitsiVideoWebView?
+    private var tapOverlayView: UIView? // This transparent overlay is added on top of video when chat is shown. It is used for intercepting taps and hiding the chat when user taps on video
 
     @IBOutlet private(set) weak var joinVideoContainerHeight: NSLayoutConstraint!
     @IBOutlet private(set) weak var joinVideoContainer: UIView!
@@ -499,7 +500,6 @@ extension NINGroupChatViewController {
     private func addJitsiVideoWebView() {
         let jitsiVideoWebView = JitsiVideoWebView(frame: .zero)
         self.jitsiVideoWebView = jitsiVideoWebView
-        self.jitsiVideoWebView?.tapDelegate = self
         jitsiVideoWebView.translatesAutoresizingMaskIntoConstraints = false
         videoViewContainer.addSubview(jitsiVideoWebView)
         NSLayoutConstraint.activate([
@@ -614,6 +614,7 @@ extension NINGroupChatViewController {
 
 extension NINGroupChatViewController {
     private func moveVideoContainerToFront() {
+        removeTapOverlayView()
         view.bringSubviewToFront(videoViewContainer)
     }
 
@@ -622,10 +623,36 @@ extension NINGroupChatViewController {
     }
 
     private func moveChatToFront() {
+        addTapOverlayView()
         view.bringSubviewToFront(chatContainer)
         titlebarContainer.map(view.bringSubviewToFront)
         titlebar.map(view.bringSubviewToFront)
         view.bringSubviewToFront(chatControlsContainer)
+    }
+    
+    private func addTapOverlayView() {
+        let tapOverlayView = UIView()
+        tapOverlayView.backgroundColor = UIColor.clear
+        videoViewContainer.addSubview(tapOverlayView)
+        tapOverlayView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            tapOverlayView.leadingAnchor.constraint(equalTo: videoViewContainer.leadingAnchor),
+            tapOverlayView.trailingAnchor.constraint(equalTo: videoViewContainer.trailingAnchor),
+            tapOverlayView.topAnchor.constraint(equalTo: videoViewContainer.topAnchor),
+            tapOverlayView.bottomAnchor.constraint(equalTo: videoViewContainer.bottomAnchor)
+        ])
+        self.tapOverlayView = tapOverlayView
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture))
+        tapOverlayView.addGestureRecognizer(tapRecognizer)
+    }
+
+    private func removeTapOverlayView() {
+        self.tapOverlayView?.removeFromSuperview()
+        self.tapOverlayView = nil
+    }
+    
+    @objc private func handleTapGesture() {
+        didTapOnVideoContainer()
     }
 
     private func markChatButton(hasUnreadMessages: Bool) {
@@ -664,7 +691,7 @@ extension NINGroupChatViewController {
     }
 }
 
-extension NINGroupChatViewController: JitsiVideoWebViewTapDelegate {
+extension NINGroupChatViewController {
     func didTapOnVideoContainer() {
         // First we check if the video container is on front.
         // If it isn't, it means that it is covered by the chat view and we hide it when user taps on the video container.
