@@ -51,7 +51,10 @@ extension JitsiVideoWebView {
         let webConfig = WKWebViewConfiguration()
         webConfig.allowsInlineMediaPlayback = true
         webConfig.mediaTypesRequiringUserActionForPlayback = []
-        webConfig.preferences.setValue(true, forKey: "developerExtrasEnabled") // uncomment this if you want to debug using the web inspector
+        if #available(iOS 13.0, *) {
+            webConfig.defaultWebpagePreferences.preferredContentMode = .mobile // this setting is necessary for iPad
+        }
+        // webConfig.preferences.setValue(true, forKey: "developerExtrasEnabled") // uncomment this if you want to debug using the web inspector
         
         // Enable JavaScript messaging
         let contentController = WKUserContentController()
