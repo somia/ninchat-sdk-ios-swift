@@ -4,8 +4,7 @@
 // license that can be found in the LICENSE file.
 //
 
-import Foundation
-import JitsiMeetSDK
+import UIKit
 
 protocol NINGroupChatViewModel: AnyObject, NINChatStateProtocol, NINChatMessageProtocol, NINChatPermissionsProtocol, NINChatAttachmentProtocol {
     var hasJoinedVideo: Bool { get }
@@ -22,16 +21,16 @@ protocol NINGroupChatViewModel: AnyObject, NINChatStateProtocol, NINChatMessageP
     func leaveVideoCall()
 }
 
-final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMeetViewDelegate {
+final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel {
     private weak var sessionManager: NINChatSessionManager?
-    private var pipViewCoordinator: PiPViewCoordinator?
-    private var jitsiView: JitsiMeetView?
+    private var jitsiVideoWebView: JitsiVideoWebView?
     private var typingStatus = false
     private var typingStatusQueue: DispatchWorkItem?
     private var isSelectingMedia = false
 
     var hasJoinedVideo: Bool {
-        jitsiView?.delegate != nil
+        jitsiVideoWebView != nil
+       // jitsiView?.delegate != nil
     }
 
     var backlogMessages: String? {
@@ -114,88 +113,76 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMee
                 case let .failure(error):
                     completion(error)
                 case let .success(credentials):
-                    let avatarConfig = AvatarConfig(forUser: sessionManager)
+                    // User
                     let user = sessionManager.myUser
-                    let iconURL = avatarConfig.imageOverrideURL ?? user?.iconURL
+
+                    // Use imageOverrideURL or iconURL (if available) or default to nil if both are absent.
+                    let avatarConfig = AvatarConfig(forUser: sessionManager)
+                    let iconURLString = avatarConfig.imageOverrideURL ?? user?.iconURL
+
+                    // Choose nameOverride if available, otherwise use user's displayName or a default "Guest" label.
                     let userName = !avatarConfig.nameOverride.isEmpty
                         ? avatarConfig.nameOverride
                         : (user?.displayName ?? "Guest".localized)
 
+                    // Get server address
                     var serverAddress: String = sessionManager.serverAddress
                     let apiPrefix = "api."
                     if serverAddress.hasPrefix(apiPrefix) {
                         let endIdx = serverAddress.index(serverAddress.startIndex, offsetBy: apiPrefix.count)
                         serverAddress.removeSubrange(serverAddress.startIndex ..< endIdx)
                     }
+
+                    // Construct Jitsi server address and extract domain.
                     let jitsiServerAddress = "https://jitsi-www." + serverAddress
-                    let options = JitsiMeetConferenceOptions.fromBuilder {
-                        $0.serverURL = URL(string: jitsiServerAddress)
-                        $0.userInfo = .init(
-                            displayName: userName,
-                            andEmail: nil,
-                            andAvatar: iconURL.flatMap { URL(string: $0) }
-                        )
-                        $0.room = credentials.room
-                        $0.token = credentials.token
+                    let domain = jitsiServerAddress.replacingOccurrences(of: "https://", with: "")
 
-                        $0.setFeatureFlag("add-people.enabled", withBoolean: false)
-                        $0.setFeatureFlag("audio-mute.enabled", withBoolean: true)
-                        $0.setFeatureFlag("calendar.enabled", withBoolean: false)
-                        $0.setFeatureFlag("call-integration.enabled", withBoolean: true) // android: false
-                        $0.setFeatureFlag("car-mode.enabled", withBoolean: false)
-                        $0.setFeatureFlag("close-captions.enabled", withBoolean: false)
-                        $0.setFeatureFlag("conference-timer.enabled", withBoolean: true)
-                        $0.setFeatureFlag("chat.enabled", withBoolean: false)
-                        $0.setFeatureFlag("filmstrip.enabled", withBoolean: true)
-                        $0.setFeatureFlag("fullscreen.enabled", withBoolean: true)
-                        $0.setFeatureFlag("invite.enabled", withBoolean: false)
-                        $0.setFeatureFlag("ios.screensharing.enabled", withBoolean: false)
-                        $0.setFeatureFlag("speakerstats.enabled", withBoolean: false)
-                        $0.setFeatureFlag("kick-out.enabled", withBoolean: false)
-                        $0.setFeatureFlag("live-streaming.enabled", withBoolean: false)
-                        $0.setFeatureFlag("meeting-name.enabled", withBoolean: false)
-                        $0.setFeatureFlag("meeting-password.enabled", withBoolean: false)
-                        $0.setFeatureFlag("notifications.enabled", withBoolean: false)
-                        $0.setFeatureFlag("overflow-menu.enabled", withBoolean: true)
-                        $0.setFeatureFlag("pip.enabled", withBoolean: false)
-                        $0.setFeatureFlag("pip-while-screen-sharing.enabled", withBoolean: false)
-                        $0.setFeatureFlag("prejoinpage.enabled", withBoolean: true)
-                        $0.setFeatureFlag("prejoinpage.hide-display-name.enabled", withBoolean: true)
-                        $0.setFeatureFlag("raise-hand.enabled", withBoolean: false)
-                        $0.setFeatureFlag("recording.enabled", withBoolean: false)
-                        $0.setFeatureFlag("server-url-change.enabled", withBoolean: false)
-                        $0.setFeatureFlag("settings.enabled", withBoolean: true)
-                        $0.setFeatureFlag("tile-view.enabled", withBoolean: true)
-                        $0.setFeatureFlag("toolbox.alwaysVisible", withBoolean: false)
-                        $0.setFeatureFlag("toolbox.enabled", withBoolean: true)
-                        $0.setFeatureFlag("video-mute.enabled", withBoolean: true)
-                        $0.setFeatureFlag("video-share.enabled", withBoolean: false)
-                        $0.setFeatureFlag("welcomepage.enabled", withBoolean: false)
-                        $0.setFeatureFlag("help.enabled", withBoolean: false)
-                        $0.setFeatureFlag("lobby-mode.enabled", withBoolean: false)
-                        $0.setFeatureFlag("reactions.enabled", withBoolean: false)
-                        $0.setFeatureFlag("security-options.enabled", withBoolean: true)
-                        $0.setFeatureFlag("settings.profile-section.enabled", withBoolean: false)
-                        $0.setFeatureFlag("settings.conference-section-only-self-view.enabled", withBoolean: true)
-                        $0.setFeatureFlag("settings.links-section.enabled", withBoolean: false)
-                        $0.setFeatureFlag("settings.build-info-section.enabled", withBoolean: false)
-                        $0.setFeatureFlag("settings.advanced-section.enabled", withBoolean: false)
-                        $0.setFeatureFlag("participants.enabled", withValue: false)
+                    // Prepare other necessary variables.
+                    let room = credentials.room
+                    let jwt = credentials.token
+                    let displayName = userName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+
+                    // Determine the appropriate language.
+                    let supportedLanguages = ["fi", "sv", "en"]
+                    let currentLanguage = Locale.current.languageCode ?? "en"
+                    let language = supportedLanguages.contains(currentLanguage) ? currentLanguage : "en"
+
+                    // Construct the URL query items, adding displayName and avatarURL if available.
+                    var queryItems: [URLQueryItem] = [
+                        URLQueryItem(name: "jwt", value: jwt),
+                        URLQueryItem(name: "roomName", value: room),
+                        URLQueryItem(name: "domain", value: domain),
+                        URLQueryItem(name: "lang", value: language)
+                    ]
+
+                    if let encodedDisplayName = displayName {
+                        queryItems.append(URLQueryItem(name: "displayName", value: encodedDisplayName))
                     }
-                    let jitsiMeetView = self.jitsiView ?? JitsiMeetView()
-                    jitsiMeetView.delegate = self
-                    jitsiMeetView.join(options)
 
-                    if self.pipViewCoordinator == nil {
-                        self.pipViewCoordinator = PiPViewCoordinator(withView: jitsiMeetView)
+                    if let iconURLString = iconURLString, let avatarUrl = URL(string: iconURLString) {
+                        queryItems.append(URLQueryItem(name: "avatarURL", value: avatarUrl.absoluteString))
                     }
-                    self.pipViewCoordinator?.configureAsStickyView(withParentView: parentView)
 
-                    jitsiMeetView.alpha = 0
+                    // Build the final URL.
+                    var urlComponents = URLComponents(string: "https://ninchat.com/new/jitsi-meet.html")
+                    urlComponents?.queryItems = queryItems
 
-                    self.jitsiView = jitsiMeetView
-                    self.pipViewCoordinator?.show()
+                    // Validate and use the final URL.
+                    guard let finalUrl = urlComponents?.url else {
+                        completion(NinchatError(type: "unknown", props: nil))
+                        return
+                    }
 
+                    // If we're here, it means the URL is valid, and we can create the URLRequest.
+                    let urlRequest = URLRequest(url: finalUrl)
+                    
+                    // Add JitsiVideoWebView
+                    let jitsiVideoWebView = parentView.subviews.filter { $0 is JitsiVideoWebView }.first as? JitsiVideoWebView
+                    self.jitsiVideoWebView = jitsiVideoWebView
+                    jitsiVideoWebView?.eventsDelegate = self
+                    
+                    // Load url request
+                    jitsiVideoWebView?.loadJitsiMeeting(for: urlRequest)
                     completion(nil)
                 }
             }
@@ -212,11 +199,12 @@ final class NINGroupChatViewModelImpl: NSObject, NINGroupChatViewModel, JitsiMee
         guard hasJoinedVideo else {
             return
         }
-        pipViewCoordinator?.hide()
+        
         if force {
-            jitsiView?.hangUp()
+            jitsiVideoWebView?.hangUp()
         }
-        jitsiView?.delegate = nil
+        self.jitsiVideoWebView?.eventsDelegate = nil
+        self.jitsiVideoWebView = nil
     }
 }
 
@@ -379,10 +367,10 @@ extension NINGroupChatViewModelImpl {
     }
 }
 
-// MARK: - Jitsi Delegate
+// MARK: - JitsiVideoWebViewDelegate
 
-extension NINGroupChatViewModelImpl {
-    func ready(toClose data: [AnyHashable : Any]!) {
+extension NINGroupChatViewModelImpl: JitsiVideoWebViewEventsDelegate {
+    func readyToClose() {
         leaveVideoCall(force: false)
         onGroupVideoReadyToClose?()
     }

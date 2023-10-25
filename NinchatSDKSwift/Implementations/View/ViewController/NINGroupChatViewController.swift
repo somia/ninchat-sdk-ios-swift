@@ -52,6 +52,8 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     @IBOutlet private(set) weak var backgroundView: UIImageView! /// <--- to hold page background image, it is more flexible to have a dedicated view
 
     @IBOutlet private(set) weak var videoViewContainer: UIView!
+    private var jitsiVideoWebView: JitsiVideoWebView?
+    private var tapOverlayView: UIView? // This transparent overlay is added on top of video when chat is shown. It is used for intercepting taps and hiding the chat when user taps on video
 
     @IBOutlet private(set) weak var joinVideoContainerHeight: NSLayoutConstraint!
     @IBOutlet private(set) weak var joinVideoContainer: UIView!
@@ -233,6 +235,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     // MARK: - Setup View
 
     private func setupView() {
+        self.addJitsiVideoWebView()
         self.setupGestures()
         self.reloadView()
         self.updateInputContainerHeight(94.0)
@@ -326,7 +329,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
 
     // MARK: - Video Call
 
-    @IBAction func onJoinVidoCallDidTap(_ sender: Any) {
+    @IBAction func onJoinVideoCallDidTap(_ sender: Any) {
         view.endEditing(true)
         viewModel.joinVideoCall(inside: videoViewContainer) { [weak self] error in
             if error != nil {
@@ -494,6 +497,19 @@ extension NINGroupChatViewController {
         }
     }
 
+    private func addJitsiVideoWebView() {
+        let jitsiVideoWebView = JitsiVideoWebView(frame: .zero)
+        self.jitsiVideoWebView = jitsiVideoWebView
+        jitsiVideoWebView.translatesAutoresizingMaskIntoConstraints = false
+        videoViewContainer.addSubview(jitsiVideoWebView)
+        NSLayoutConstraint.activate([
+            jitsiVideoWebView.topAnchor.constraint(equalTo: videoViewContainer.topAnchor),
+            jitsiVideoWebView.bottomAnchor.constraint(equalTo: videoViewContainer.bottomAnchor),
+            jitsiVideoWebView.leadingAnchor.constraint(equalTo: videoViewContainer.leadingAnchor),
+            jitsiVideoWebView.trailingAnchor.constraint(equalTo: videoViewContainer.trailingAnchor)
+        ])
+    }
+    
     private func markVideoCallAsFinished() {
         moveVideoContainerToBack()
         markChatButton(hasUnreadMessages: false)
@@ -598,6 +614,7 @@ extension NINGroupChatViewController {
 
 extension NINGroupChatViewController {
     private func moveVideoContainerToFront() {
+        removeTapOverlayView()
         view.bringSubviewToFront(videoViewContainer)
     }
 
@@ -606,10 +623,36 @@ extension NINGroupChatViewController {
     }
 
     private func moveChatToFront() {
+        addTapOverlayView()
         view.bringSubviewToFront(chatContainer)
         titlebarContainer.map(view.bringSubviewToFront)
         titlebar.map(view.bringSubviewToFront)
         view.bringSubviewToFront(chatControlsContainer)
+    }
+    
+    private func addTapOverlayView() {
+        let tapOverlayView = UIView()
+        tapOverlayView.backgroundColor = UIColor.clear
+        videoViewContainer.addSubview(tapOverlayView)
+        tapOverlayView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            tapOverlayView.leadingAnchor.constraint(equalTo: videoViewContainer.leadingAnchor),
+            tapOverlayView.trailingAnchor.constraint(equalTo: videoViewContainer.trailingAnchor),
+            tapOverlayView.topAnchor.constraint(equalTo: videoViewContainer.topAnchor),
+            tapOverlayView.bottomAnchor.constraint(equalTo: videoViewContainer.bottomAnchor)
+        ])
+        self.tapOverlayView = tapOverlayView
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture))
+        tapOverlayView.addGestureRecognizer(tapRecognizer)
+    }
+
+    private func removeTapOverlayView() {
+        self.tapOverlayView?.removeFromSuperview()
+        self.tapOverlayView = nil
+    }
+    
+    @objc private func handleTapGesture() {
+        didTapOnVideoContainer()
     }
 
     private func markChatButton(hasUnreadMessages: Bool) {
@@ -645,5 +688,15 @@ extension NINGroupChatViewController {
         self.viewModel.onChannelClosed = nil
         self.viewModel.onQueueUpdated = nil
         self.viewModel.onChannelMessage = nil
+    }
+}
+
+extension NINGroupChatViewController {
+    func didTapOnVideoContainer() {
+        // First we check if the video container is on front.
+        // If it isn't, it means that it is covered by the chat view and we hide it when user taps on the video container.
+        if let superview = videoViewContainer.superview, superview.subviews.last != videoViewContainer {
+            onToggleChatDidTap("")
+        }
     }
 }

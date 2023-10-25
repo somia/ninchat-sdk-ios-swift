@@ -105,6 +105,9 @@ final class ChatInputControls: UIView, ChatInputControlsProtocol {
             self.textInput.textColor = inputTextColor
             textColor = inputTextColor
         }
+        if let inputSelectedTextColor = self.delegate?.override(colorAsset: .ninchatColorTextareaSelectedText) {
+            self.textInput.tintColor = inputSelectedTextColor
+        }
         if let inputTextLayer = self.delegate?.override(layerAsset: .ninchatColorTextareaTextInput) {
             self.textInput.layer.apply(inputTextLayer)
         }

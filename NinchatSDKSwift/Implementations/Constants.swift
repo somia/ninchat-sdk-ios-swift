@@ -54,6 +54,7 @@ public enum ColorConstants {
     case ninchatColorChatBubbleRightTint
     case ninchatColorChatBubbleComposeTint
     case ninchatColorTextareaText
+    case ninchatColorTextareaSelectedText
     case ninchatColorTextareaPlaceholder
     case ninchatColorTextareaSubmitText
     case ninchatColorChatBubbleLeftLink

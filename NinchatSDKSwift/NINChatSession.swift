@@ -25,15 +25,15 @@ public protocol NINChatSessionProtocol {
     var session: NINResult<NINLowLevelClientSession?> { get }
     var delegate: NINChatSessionDelegate? { get set }
 
-    init(configKey: String, queueID: String?, environments: [String]?, metadata: NINLowLevelClientProps?, configuration: NINSiteConfiguration?)
+    init(configKey: String, queueID: String?, environments: [String]?, metadata: NINLowLevelClientProps?, configuration: NINSiteConfiguration?, modalPresentationStyle: UIModalPresentationStyle)
     func start(completion: @escaping NinchatSessionCompletion) throws
     func start(credentials: NINSessionCredentials, completion: @escaping NinchatSessionCompletion) throws
     func chatSession(within navigationController: UINavigationController?) throws -> UIViewController?
     func deallocate()
 }
 extension NINChatSessionProtocol {
-    init(configKey: String, queueID: String?, environments: [String]?, metadata: NINLowLevelClientProps?) {
-        self.init(configKey: configKey, queueID: queueID, environments: environments, metadata: metadata, configuration: nil)
+    init(configKey: String, queueID: String?, environments: [String]?, metadata: NINLowLevelClientProps?, modalPresentationStyle: UIModalPresentationStyle) {
+        self.init(configKey: configKey, queueID: queueID, environments: environments, metadata: metadata, configuration: nil, modalPresentationStyle: modalPresentationStyle)
     }
 }
 
@@ -42,7 +42,7 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         NINChatSessionManagerImpl(session: self, serverAddress: self.defaultServerAddress, audienceMetadata: self.audienceMetadata, configuration: self.configuration)
     }()
     private lazy var coordinator: Coordinator? = {
-        NINCoordinator(with: self.sessionManager, delegate: self) { [weak self] in
+        NINCoordinator(with: self.sessionManager, delegate: self, modalPresentationStyle: self.modalPresentationStyle) { [weak self] in
             self?.deallocate()
         }
     }()
@@ -61,6 +61,7 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
             return Constants.kProductionServerAddress.rawValue
         #endif
     }
+    private var modalPresentationStyle: UIModalPresentationStyle
 
     // MARK: - NINChatDevHelper
 
@@ -85,12 +86,13 @@ public final class NINChatSession: NINChatSessionProtocol, NINChatDevHelper {
         get { sessionManager.appDetails }
     }
 
-    public init(configKey: String, queueID: String? = nil, environments: [String]? = nil, metadata: NINLowLevelClientProps? = nil, configuration: NINSiteConfiguration? = nil) {
+    public init(configKey: String, queueID: String? = nil, environments: [String]? = nil, metadata: NINLowLevelClientProps? = nil, configuration: NINSiteConfiguration? = nil, modalPresentationStyle: UIModalPresentationStyle = .fullScreen) {
         self.configKey = configKey
         self.queueID = queueID
         self.environments = environments
         self.audienceMetadata = metadata
         self.configuration = configuration
+        self.modalPresentationStyle = modalPresentationStyle
         self.serverAddress = Constants.kProductionServerAddress.rawValue
     }
 

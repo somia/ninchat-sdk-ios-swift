@@ -11,7 +11,7 @@ import WebRTC
 import NinchatLowLevelClient
 
 protocol Coordinator: AnyObject {
-    init(with sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?, onPresentationCompletion: @escaping () -> Void)
+    init(with sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?, modalPresentationStyle: UIModalPresentationStyle, onPresentationCompletion: @escaping () -> Void)
     func start(with queue: String?, resume: ResumeMode?, within navigation: UINavigationController?) -> UIViewController?
     func prepareNINQuestionnaireViewModel(onCompletion: @escaping () -> Void)
     func deallocate()
@@ -38,6 +38,8 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
     internal lazy var storyboard: UIStoryboard = {
         UIStoryboard(name: "Chat", bundle: .SDKBundle)
     }()
+    
+    private let modalPresentationStyle: UIModalPresentationStyle
     
     // MARK: - Questionnaire helpers
 
@@ -142,9 +144,10 @@ final class NINCoordinator: NSObject, Coordinator, UIAdaptivePresentationControl
 
     // MARK: - Coordinator
 
-    init(with sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?, onPresentationCompletion: @escaping () -> Void) {
+    init(with sessionManager: NINChatSessionManager, delegate: NINChatSessionInternalDelegate?, modalPresentationStyle: UIModalPresentationStyle, onPresentationCompletion: @escaping () -> Void) {
         self.delegate = delegate
         self.sessionManager = sessionManager
+        self.modalPresentationStyle = modalPresentationStyle
         self.onPresentationCompletion = onPresentationCompletion
     }
 
@@ -402,5 +405,9 @@ extension NINCoordinator {
 extension NINCoordinator {
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
         self.onPresentationCompletion?()
+    }
+    
+    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
+        return modalPresentationStyle
     }
 }
