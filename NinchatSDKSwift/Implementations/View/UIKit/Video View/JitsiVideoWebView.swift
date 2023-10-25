@@ -76,7 +76,7 @@ extension JitsiVideoWebView {
         self.addSubview(webView)
         NSLayoutConstraint.activate([
             webView.topAnchor.constraint(equalTo: self.topAnchor),
-            webView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            webView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
             webView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             webView.trailingAnchor.constraint(equalTo: self.trailingAnchor)
         ])
