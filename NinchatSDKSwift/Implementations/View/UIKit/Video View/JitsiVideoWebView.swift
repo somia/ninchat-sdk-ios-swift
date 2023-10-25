@@ -12,10 +12,6 @@ protocol JitsiVideoWebViewEventsDelegate: AnyObject {
     func readyToClose()
 }
 
-protocol JitsiVideoWebViewTapDelegate: AnyObject {
-    func didTapOnVideoContainer()
-}
-
 class JitsiVideoWebView: UIView {
 
     // MARK: - PROPERTIES
@@ -25,7 +21,6 @@ class JitsiVideoWebView: UIView {
     
     // MARK: - Delegate
     var eventsDelegate: JitsiVideoWebViewEventsDelegate?
-    var tapDelegate: JitsiVideoWebViewTapDelegate?
     
     // MARK: - Debug mode
     private var isDebugMode = false
@@ -51,7 +46,10 @@ extension JitsiVideoWebView {
         let webConfig = WKWebViewConfiguration()
         webConfig.allowsInlineMediaPlayback = true
         webConfig.mediaTypesRequiringUserActionForPlayback = []
-        webConfig.preferences.setValue(true, forKey: "developerExtrasEnabled") // uncomment this if you want to debug using the web inspector
+        if #available(iOS 13.0, *) {
+            webConfig.defaultWebpagePreferences.preferredContentMode = .mobile // this setting is necessary for iPad
+        }
+        // webConfig.preferences.setValue(true, forKey: "developerExtrasEnabled") // uncomment this if you want to debug using the web inspector
         
         // Enable JavaScript messaging
         let contentController = WKUserContentController()
@@ -65,6 +63,7 @@ extension JitsiVideoWebView {
         webView.backgroundColor = .black
         webView.isOpaque = false
         webView.scrollView.backgroundColor = .black
+        webView.scrollView.isScrollEnabled = false
         
         // Set a custom non-iPhone user agent, otherwise Jitsi might not load
         webView.customUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
@@ -77,27 +76,10 @@ extension JitsiVideoWebView {
         self.addSubview(webView)
         NSLayoutConstraint.activate([
             webView.topAnchor.constraint(equalTo: self.topAnchor),
-            webView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            webView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
             webView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             webView.trailingAnchor.constraint(equalTo: self.trailingAnchor)
         ])
-        
-        // Set a tap gesture recognizer on the webView
-        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture))
-        tapRecognizer.cancelsTouchesInView = false
-        tapRecognizer.delegate = self
-        webView.addGestureRecognizer(tapRecognizer)
-    }
-}
-
-// MARK: - UIGestureRecognizerDelegate
-extension JitsiVideoWebView: UIGestureRecognizerDelegate {
-    @objc private func handleTapGesture(recognizer: UITapGestureRecognizer) {
-        tapDelegate?.didTapOnVideoContainer()
-    }
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-      return true
     }
 }
 
