@@ -9,6 +9,10 @@ import Foundation
 extension Thread {
     /// Taken from `https://stackoverflow.com/a/59732115/7264553`
     var isRunningXCTests: Bool {
-        self.threadDictionary.allKeys.compactMap({ $0 as? String }).filter({ $0.split(separator: ".").contains("xctest") }).count > 0
+        let allKeys = self.threadDictionary.allKeys
+        let stringKeys = allKeys.compactMap({ $0 as? String })
+        let hasXCTestContextKey = stringKeys.contains("kXCTContextStackThreadKey")
+        let hasXCTestSubstring = stringKeys.contains(where: { $0.split(separator: ".").contains("xctest") })
+        return hasXCTestContextKey || hasXCTestSubstring
     }
 }
