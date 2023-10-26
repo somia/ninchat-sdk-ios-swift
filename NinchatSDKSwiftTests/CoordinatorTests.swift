@@ -16,7 +16,7 @@ class CoordinatorTests: XCTestCase {
     override func setUp() {
         let config = SiteConfigurationImpl(configuration: try! openAsset(forResource: "site-configuration-mock"), environments: ["fi-restart", "fi"])
         (session.sessionManager as? NINChatSessionManagerImpl)?.setSiteConfiguration(config)
-        coordinator = NINCoordinator(with: session.sessionManager, delegate: session) { }
+        coordinator = NINCoordinator(with: session.sessionManager, delegate: session, modalPresentationStyle: .fullScreen) { }
     }
 
     override func tearDown() { }
