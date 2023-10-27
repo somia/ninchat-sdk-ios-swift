@@ -2,14 +2,14 @@
 
 Pod::Spec.new do |s|
   s.name         = "NinchatSDKSwift"
-  s.version      = "0.8.0"
+  s.version      = "0.8.1"
   s.summary      = "iOS SDK for Ninchat, Swift version"
   s.description  = "For building iOS applications using Ninchat messaging."
   s.homepage     = "https://ninchat.com/"
   s.license      = { :type => "Ninchat", :file => "LICENSE.md" }
-  s.author       = { "Hassan Shahbazi" => "hassan@ninchat.com" }
+  s.author       = { "Antti Hollanti" => "antti.hollanti@terveystalo.com" }
   s.source       = { :git => "https://github.com/somia/ninchat-sdk-ios-swift.git", :tag => "#{s.version}" }
-  s.ios.deployment_target = "13.0"
+  s.ios.deployment_target = "14.3"
 
   # Handle the SDK itself as a subspec with dependencies to the frameworks
   s.subspec "SDKSwift" do |ss|
