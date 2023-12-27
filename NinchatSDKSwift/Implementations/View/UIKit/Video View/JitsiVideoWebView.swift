@@ -94,15 +94,6 @@ extension JitsiVideoWebView {
             webView.load(urlRequest)
         }
     }
-
-    @available(iOS 15.0, *)
-    func webView(_ webView: WKWebView,
-                 requestMediaCapturePermissionFor origin: WKSecurityOrigin,
-                 initiatedBy frame: WKFrameInfo,
-                 type: WKMediaCaptureType,
-                 decisionHandler: @escaping (WKPermissionDecision) -> Void) {
-        decisionHandler(.grant)
-    }
 }
 
 // MARK: - Finishing a Jitsi meeting
@@ -123,7 +114,7 @@ extension JitsiVideoWebView: WKUIDelegate {
     @available(iOS 15.0, *)
     func webView(_ webView: WKWebView, requestMediaCapturePermissionFor origin: WKSecurityOrigin, initiatedByFrame frame: WKFrameInfo, type: WKMediaCaptureType, decisionHandler: @escaping (WKPermissionDecision) -> Void) {
         decisionHandler(.grant)
-    }   
+    }
 }
 
 // MARK: - WKScriptMessageHandler
