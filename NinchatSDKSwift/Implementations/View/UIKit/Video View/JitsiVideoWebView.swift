@@ -12,7 +12,7 @@ protocol JitsiVideoWebViewEventsDelegate: AnyObject {
     func readyToClose()
 }
 
-class JitsiVideoWebView: UIView, WKUIDelegate {
+class JitsiVideoWebView: UIView {
 
     // MARK: - PROPERTIES
 
@@ -117,6 +117,13 @@ extension JitsiVideoWebView: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
         // debugger("WebView error: \(error.localizedDescription)")
     }
+}
+
+extension JitsiVideoWebView: WKUIDelegate {
+    @available(iOS 15.0, *)
+    func webView(_ webView: WKWebView, requestMediaCapturePermissionFor origin: WKSecurityOrigin, initiatedByFrame frame: WKFrameInfo, type: WKMediaCaptureType, decisionHandler: @escaping (WKPermissionDecision) -> Void) {
+        decisionHandler(.grant)
+    }   
 }
 
 // MARK: - WKScriptMessageHandler
