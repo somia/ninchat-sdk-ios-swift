@@ -16,7 +16,7 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     // MARK: - Injected
 
     var viewModel: NINGroupChatViewModel!
-    
+
     var onChatClosed: (() -> Void)?
     var onBackToQueue: (() -> Void)?
     var onOpenGallery: ((UIImagePickerController.SourceType) -> Void)?
@@ -330,15 +330,24 @@ final class NINGroupChatViewController: UIViewController, DeallocatableViewContr
     // MARK: - Video Call
 
     @IBAction func onJoinVideoCallDidTap(_ sender: Any) {
-        view.endEditing(true)
-        viewModel.joinVideoCall(inside: videoViewContainer) { [weak self] error in
-            if error != nil {
-                // TODO: Jitsi - localize error
-                debugger("Jitsi: join video error: \(error)")
-                Toast.show(message: .error("Failed to join video meeting"))
-            } else {
-                self?.moveVideoContainerToFront()
-                self?.toggleChatButton.isHidden = false
+        self.viewModel.grantVideoCallPermissions { error in
+            if error as? PermissionError != nil {
+                /// 1. Show toast to notify the user
+                Toast.show(message: .error("\("Permission denied".localized)\n\("Update Settings".localized)"))
+                return
+            }
+            DispatchQueue.main.async {
+                self.view.endEditing(true)
+                self.viewModel.joinVideoCall(inside: self.videoViewContainer) { [weak self] error in
+                    if error != nil {
+                        // TODO: Jitsi - localize error
+                        debugger("Jitsi: join video error: \(error)")
+                        Toast.show(message: .error("Failed to join video meeting"))
+                    } else {
+                        self?.moveVideoContainerToFront()
+                        self?.toggleChatButton.isHidden = false
+                    }
+                }
             }
         }
     }
@@ -509,7 +518,7 @@ extension NINGroupChatViewController {
             jitsiVideoWebView.trailingAnchor.constraint(equalTo: videoViewContainer.trailingAnchor)
         ])
     }
-    
+
     private func markVideoCallAsFinished() {
         moveVideoContainerToBack()
         markChatButton(hasUnreadMessages: false)
@@ -629,7 +638,7 @@ extension NINGroupChatViewController {
         titlebar.map(view.bringSubviewToFront)
         view.bringSubviewToFront(chatControlsContainer)
     }
-    
+
     private func addTapOverlayView() {
         let tapOverlayView = UIView()
         tapOverlayView.backgroundColor = UIColor.clear
@@ -650,7 +659,7 @@ extension NINGroupChatViewController {
         self.tapOverlayView?.removeFromSuperview()
         self.tapOverlayView = nil
     }
-    
+
     @objc private func handleTapGesture() {
         didTapOnVideoContainer()
     }
